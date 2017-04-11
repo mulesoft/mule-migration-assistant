@@ -8,7 +8,7 @@ import org.jdom2.Namespace;
 public class SetNodeNamespace extends MigrationStep {
 
     private String newNamespace;
-    private String newNameSpaceUri;
+    private String newNamespaceUri;
     private String schemaLocationUrl;
 
     public String getNewNamespace() {
@@ -19,12 +19,12 @@ public class SetNodeNamespace extends MigrationStep {
         this.newNamespace = newNamespace;
     }
 
-    public String getNewNameSpaceUri() {
-        return newNameSpaceUri;
+    public String getNewNamespaceUri() {
+        return newNamespaceUri;
     }
 
-    public void setNewNameSpaceUri(String newNameSpaceUri) {
-        this.newNameSpaceUri = newNameSpaceUri;
+    public void setNewNamespaceUri(String newNameSpaceUri) {
+        this.newNamespaceUri = newNameSpaceUri;
     }
 
     public String getSchemaLocationUrl() {
@@ -35,9 +35,9 @@ public class SetNodeNamespace extends MigrationStep {
         this.schemaLocationUrl = schemaLocationUrl;
     }
 
-    public SetNodeNamespace(String newNamespace, String newNameSpaceUri, String schemaLocationUrl) {
+    public SetNodeNamespace(String newNamespace, String newNamespaceUri, String schemaLocationUrl) {
         setNewNamespace(newNamespace);
-        setNewNameSpaceUri(newNameSpaceUri);
+        setNewNamespaceUri(newNamespaceUri);
         setSchemaLocationUrl(schemaLocationUrl);
     }
 
@@ -45,13 +45,13 @@ public class SetNodeNamespace extends MigrationStep {
 
     public void execute() throws Exception {
         try {
-            Namespace nspc = Namespace.getNamespace(getNewNamespace(), getNewNameSpaceUri());
+            Namespace nspc = Namespace.getNamespace(getNewNamespace(), getNewNamespaceUri());
             if (nspc != null && getDocument() != null) {
                 Element muleNode = getDocument().getRootElement();
                 muleNode.addNamespaceDeclaration(nspc);
                 Attribute muleSchemaLocation = muleNode.getAttributes().get(0);
                 if (schemaLocationNotDefined(muleNode)) {
-                    muleSchemaLocation.setValue(muleSchemaLocation.getValue() + " " + getNewNameSpaceUri()
+                    muleSchemaLocation.setValue(muleSchemaLocation.getValue() + " " + getNewNamespaceUri()
                                                     + " " + getSchemaLocationUrl() + " ");
                 }
                 if (this.getNodes() != null) {
@@ -67,7 +67,7 @@ public class SetNodeNamespace extends MigrationStep {
 
     private boolean schemaLocationNotDefined(Element node) {
         Attribute att = node.getAttribute("schemaLocation", node.getNamespace("xsi"));
-        if (att.getValue().contains(this.getNewNameSpaceUri()) && att.getValue().contains(this.getSchemaLocationUrl())) {
+        if (att.getValue().contains(this.getNewNamespaceUri()) && att.getValue().contains(this.getSchemaLocationUrl())) {
             return false;
         } else {
             return true;
