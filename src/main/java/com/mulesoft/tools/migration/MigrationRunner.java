@@ -1,50 +1,78 @@
 package com.mulesoft.tools.migration;
 
-import org.apache.commons.lang3.StringUtils;
+import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
+import org.apache.commons.cli.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MigrationRunner {
 
-    //TODO Add extra love to this
-
-    public static final String CONFIG_FILE_PARAMETER = "-migrationConfigFile";
-    public static final String FILES_PARAMETER = "-files";
-    public static final String BACKUP_PARAMETER = "-backup";
+    private ArrayList<String> files;
+    private String migrationConfigFile;
+    private Boolean backup;
 
     public static void main(String args[]) throws Exception {
-
-        String configFile = null;
-        Boolean backUp = false;
-        String paths;
-        ArrayList<String> files = new ArrayList<>();
-
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equalsIgnoreCase(CONFIG_FILE_PARAMETER)) {
-                configFile = args[i + 1];
-            } else if (args[i].equalsIgnoreCase(FILES_PARAMETER)) {
-                paths = args[i + 1];
-                if (StringUtils.isEmpty(paths)) {
-                    throw new  IllegalArgumentException("Need to provide the paths of files to migrate. Argument: " + FILES_PARAMETER + ":<path1;path2...etc>");
-                } else {
-                    files = new ArrayList<>(Arrays.asList(paths.split(";")));
-                }
-            } else if (args[i].equalsIgnoreCase(BACKUP_PARAMETER)) {
-                backUp = Boolean.parseBoolean(args[i + 1]);
-            }
-        }
-
-        if (StringUtils.isEmpty(configFile)) {
-            throw new  IllegalArgumentException("Need to provide a configuration file with the details of the migration. Argument: " + CONFIG_FILE_PARAMETER + ":<path>");
-        }
+        MigrationRunner migrationRunner = new MigrationRunner();
+        migrationRunner.initializeOptions(args);
 
         MigrationJob job = new MigrationJob();
-        job.setBackUpProfile(backUp);
-        job.setDocuments(files);
-        job.setConfigFilePath(configFile);
+        job.setBackUpProfile(migrationRunner.backup);
+        job.setDocuments(migrationRunner.files);
+        job.setConfigFilePath(migrationRunner.migrationConfigFile);
 
         job.execute();
     }
 
+    /**
+     * Initialises the console options with Apache Command Line
+     * @param args
+     */
+    private void initializeOptions(String[] args) {
+
+        Options options = new Options();
+
+        options.addOption("migrationConfigFile",true,"Migration config file (json) containing all the rules and steps" );
+        options.addOption("files",true,"List of paths separated by ';' example: path1;path2...etc");
+        options.addOption("backup",true,"Flag to determine if you want a backup of your original files");
+        options.addOption("help",false,"Shows the help");
+
+        try {
+            CommandLineParser parser = new GnuParser();
+            CommandLine line = parser.parse(options, args);
+
+            if(line.hasOption( "migrationConfigFile" )) {
+                this.migrationConfigFile = line.getOptionValue( "migrationConfigFile" );
+            }else{
+                throw new ConsoleOptionsException("You must specify a migration config file");
+            }
+
+            if(line.hasOption( "files" )) {
+                this.files = new ArrayList<>(Arrays.asList(line.getOptionValue( "files" ).split(";")));
+            }else{
+                throw new ConsoleOptionsException("You must specify a file path or a list of paths separated by ';' example: path1;path2...etc");
+            }
+
+            if(line.hasOption( "backup" )) {
+                this.backup = Boolean.parseBoolean(line.getOptionValue( "backup" ));
+            }else{
+                this.backup = Boolean.FALSE;
+            }
+
+            if(line.hasOption( "help" )) {
+                printHelp(options);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        } catch (ConsoleOptionsException e) {
+            printHelp(options);
+            System.exit(-1);
+        }
+    }
+
+    private void printHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("migration-tool - Help", options);
+    }
 }
