@@ -7,7 +7,7 @@ import org.jdom2.Element;
 public class UpdateAttributeName extends MigrationStep {
 
     private String attributeName;
-    private String newValue;
+    private String newName;
 
     public String getAttributeName() {
         return attributeName;
@@ -17,17 +17,17 @@ public class UpdateAttributeName extends MigrationStep {
         this.attributeName = attributeName;
     }
 
-    public String getNewValue() {
-        return newValue;
+    public String getNewName() {
+        return newName;
     }
 
-    public void setNewValue(String newValue) {
-        this.newValue = newValue;
+    public void setNewName(String newName) {
+        this.newName = newName;
     }
 
-    public UpdateAttributeName(String attributeName, String newValue) {
+    public UpdateAttributeName(String attributeName, String newName) {
         setAttributeName(attributeName);
-        setNewValue(newValue);
+        setNewName(newName);
     }
 
     public UpdateAttributeName() {}
@@ -37,7 +37,7 @@ public class UpdateAttributeName extends MigrationStep {
             for (Element node : getNodes()) {
                 Attribute att = node.getAttribute(getAttributeName());
                 if (att != null) {
-                    att.setName(getNewValue());
+                    att.setName(getNewName());
                 }
             }
         } catch (Exception ex) {
