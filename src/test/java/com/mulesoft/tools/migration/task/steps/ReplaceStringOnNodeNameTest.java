@@ -6,16 +6,19 @@ import org.junit.Test;
 
 import java.util.Collections;
 
-import static com.mulesoft.tools.migration.helpers.DocumentHelpers.GetNodesFromFile;
+import static com.mulesoft.tools.migration.helpers.DocumentHelpers.getNodesFromFile;
 import static org.junit.Assert.*;
 
 public class ReplaceStringOnNodeNameTest {
+
     private ReplaceStringOnNodeName replaceStringStep;
+
+    private static final String EXAMPLE_FILE_PATH = "src/test/resources/munit/examples/sample-file.xml";
 
     @Test
     public void nodeNotContainStringToRemove() throws Exception {
         replaceStringStep = new ReplaceStringOnNodeName("when2", "pepe");
-        GetNodesFromFile("//mock:when", replaceStringStep, "src/test/resources/sample-file.xml");
+        getNodesFromFile("//mock:when", replaceStringStep, EXAMPLE_FILE_PATH);
         replaceStringStep.execute();
         Element node = replaceStringStep.getNodes().get(0);
         assertFalse(node.getName().equals("pepe"));
@@ -24,21 +27,21 @@ public class ReplaceStringOnNodeNameTest {
     @Test (expected = MigrationStepException.class)
     public void replaceToNullString() throws Exception {
         replaceStringStep = new ReplaceStringOnNodeName("when", null);
-        GetNodesFromFile("//mock:when", replaceStringStep, "src/test/resources/sample-file.xml");
+        getNodesFromFile("//mock:when", replaceStringStep, EXAMPLE_FILE_PATH);
         replaceStringStep.execute();
     }
 
     @Test (expected = MigrationStepException.class)
     public void replaceToEmptyString() throws Exception {
         replaceStringStep = new ReplaceStringOnNodeName("when", "");
-        GetNodesFromFile("//mock:when", replaceStringStep, "src/test/resources/sample-file.xml");
+        getNodesFromFile("//mock:when", replaceStringStep, EXAMPLE_FILE_PATH);
         replaceStringStep.execute();
     }
 
     @Test
     public void replaceSimpleString() throws Exception {
         replaceStringStep = new ReplaceStringOnNodeName("true", "that");
-        GetNodesFromFile("//munit:assert-true", replaceStringStep, "src/test/resources/sample-file.xml");
+        getNodesFromFile("//munit:assert-true", replaceStringStep, EXAMPLE_FILE_PATH);
         replaceStringStep.execute();
         Element node = replaceStringStep.getNodes().get(0);
         assertTrue(node.getName().equals("assert-that"));

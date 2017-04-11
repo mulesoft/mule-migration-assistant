@@ -6,16 +6,19 @@ import org.junit.Test;
 
 import java.util.Collections;
 
-import static com.mulesoft.tools.migration.helpers.DocumentHelpers.GetNodesFromFile;
+import static com.mulesoft.tools.migration.helpers.DocumentHelpers.getNodesFromFile;
 import static org.junit.Assert.*;
 
 public class UpdateAttributeNameTest {
+
     private UpdateAttributeName updateAttributeName;
+
+    private static final String EXAMPLE_FILE_PATH = "src/test/resources/munit/examples/sample-file.xml";
 
     @Test
     public void updateNameToNonExistingAttribute() throws Exception {
         updateAttributeName = new UpdateAttributeName("condi", "pepe");
-        GetNodesFromFile("//munit:assert-true", updateAttributeName, "src/test/resources/sample-file.xml");
+        getNodesFromFile("//munit:assert-true", updateAttributeName, EXAMPLE_FILE_PATH);
         updateAttributeName.execute();
         Element node = updateAttributeName.getNodes().get(0);
         assertNull(node.getAttribute("pepe"));
@@ -24,7 +27,7 @@ public class UpdateAttributeNameTest {
     @Test
     public void updateNameToAttribute() throws Exception {
         updateAttributeName = new UpdateAttributeName("condition", "pepe");
-        GetNodesFromFile("//munit:assert-true", updateAttributeName, "src/test/resources/sample-file.xml");
+        getNodesFromFile("//munit:assert-true", updateAttributeName, EXAMPLE_FILE_PATH);
         updateAttributeName.execute();
         Element node = updateAttributeName.getNodes().get(0);
         assertNotNull(node.getAttribute("pepe"));
@@ -33,7 +36,7 @@ public class UpdateAttributeNameTest {
     @Test
     public void updateNameToAttributeToAlreadyDeclaredOne() throws Exception {
         updateAttributeName = new UpdateAttributeName("message", "level");
-        GetNodesFromFile("//*[contains(local-name(),'logger')]", updateAttributeName, "src/test/resources/sample-file.xml");
+        getNodesFromFile("//*[contains(local-name(),'logger')]", updateAttributeName, EXAMPLE_FILE_PATH);
         updateAttributeName.execute();
         Element node = updateAttributeName.getNodes().get(0);
         assertNotNull(node.getAttribute("level"));
@@ -42,7 +45,7 @@ public class UpdateAttributeNameTest {
     @Test (expected = MigrationStepException.class)
     public void updateNameToEmptyString() throws Exception {
         updateAttributeName = new UpdateAttributeName("message", "");
-        GetNodesFromFile("//*[contains(local-name(),'logger')]", updateAttributeName, "src/test/resources/sample-file.xml");
+        getNodesFromFile("//*[contains(local-name(),'logger')]", updateAttributeName, EXAMPLE_FILE_PATH);
         updateAttributeName.execute();
         Element node = updateAttributeName.getNodes().get(0);
     }
@@ -50,7 +53,7 @@ public class UpdateAttributeNameTest {
     @Test (expected = MigrationStepException.class)
     public void updateNameToNullString() throws Exception {
         updateAttributeName = new UpdateAttributeName("message", null);
-        GetNodesFromFile("//*[contains(local-name(),'logger')]", updateAttributeName, "src/test/resources/sample-file.xml");
+        getNodesFromFile("//*[contains(local-name(),'logger')]", updateAttributeName, EXAMPLE_FILE_PATH);
         updateAttributeName.execute();
         Element node = updateAttributeName.getNodes().get(0);
     }
@@ -58,9 +61,8 @@ public class UpdateAttributeNameTest {
     @Test
     public void executeTaskToEmptyNodeList() throws Exception {
         updateAttributeName = new UpdateAttributeName("message", "test");
-        GetNodesFromFile("//lala", updateAttributeName, "src/test/resources/sample-file.xml");
+        getNodesFromFile("//lala", updateAttributeName, EXAMPLE_FILE_PATH);
         updateAttributeName.execute();
         assertEquals(Collections.<Element>emptyList(), updateAttributeName.getNodes());
     }
-
 }

@@ -1,9 +1,10 @@
 package com.mulesoft.tools.migration.task.steps;
 
-import com.mulesoft.tools.migration.helpers.DocumentHelpers;
 import org.jdom2.Element;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static com.mulesoft.tools.migration.helpers.DocumentHelpers.getNodesFromFile;
 
 public class MoveNodeToNewChildNodeTest {
 
@@ -12,9 +13,9 @@ public class MoveNodeToNewChildNodeTest {
     private static final String EXAMPLE_FILE_PATH = "src/test/resources/mule/examples/http-all-use-case.xml";
 
     @Test
-    public void moveNodeToChildNode() throws Exception {
+    public void testMoveNodeToChildNode() throws Exception {
         moveNodeToNewChildNodeStep = new MoveNodeToNewChildNode("response-builder", "http", "http://www.mulesoft.org/schema/mule/http", "new-target", "http", "http://www.mulesoft.org/schema/mule/http");
-        DocumentHelpers.GetNodesFromFile("//http:listener", moveNodeToNewChildNodeStep, EXAMPLE_FILE_PATH);
+        getNodesFromFile("//http:listener", moveNodeToNewChildNodeStep, EXAMPLE_FILE_PATH);
         moveNodeToNewChildNodeStep.execute();
 
         Element node = moveNodeToNewChildNodeStep.getNodes().get(0).getChildren().get(0);
@@ -28,7 +29,7 @@ public class MoveNodeToNewChildNodeTest {
     @Test
     public void testBadSource() throws Exception {
         moveNodeToNewChildNodeStep = new MoveNodeToNewChildNode("response-builder1", "http", "http://www.mulesoft.org/schema/mule/http", "new-target", "http", "http://www.mulesoft.org/schema/mule/http");
-        DocumentHelpers.GetNodesFromFile("//http:listener", moveNodeToNewChildNodeStep, EXAMPLE_FILE_PATH);
+        getNodesFromFile("//http:listener", moveNodeToNewChildNodeStep, EXAMPLE_FILE_PATH);
         moveNodeToNewChildNodeStep.execute();
 
         Element node = moveNodeToNewChildNodeStep.getNodes().get(0).getChildren().get(0);

@@ -1,9 +1,10 @@
 package com.mulesoft.tools.migration.task.steps;
 
-import com.mulesoft.tools.migration.helpers.DocumentHelpers;
 import org.jdom2.Element;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static com.mulesoft.tools.migration.helpers.DocumentHelpers.getNodesFromFile;
 
 public class MoveNodeToChildNodeTest {
 
@@ -12,9 +13,11 @@ public class MoveNodeToChildNodeTest {
     private static final String EXAMPLE_FILE_PATH = "src/test/resources/mule/examples/http-all-use-case.xml";
 
     @Test
-    public void moveNodeToChildNode() throws Exception {
-        moveNodeToChildNodeStep = new MoveNodeToChildNode("response-builder", "http", "http://www.mulesoft.org/schema/mule/http", "error-response-builder", "http", "http://www.mulesoft.org/schema/mule/http");
-        DocumentHelpers.GetNodesFromFile("//http:listener", moveNodeToChildNodeStep, EXAMPLE_FILE_PATH);
+    public void testMoveNodeToChildNode() throws Exception {
+        moveNodeToChildNodeStep = new MoveNodeToChildNode("response-builder", "http",
+                "http://www.mulesoft.org/schema/mule/http", "error-response-builder",
+                "http", "http://www.mulesoft.org/schema/mule/http");
+        getNodesFromFile("//http:listener", moveNodeToChildNodeStep, EXAMPLE_FILE_PATH);
         moveNodeToChildNodeStep.execute();
 
         Element node = moveNodeToChildNodeStep.getNodes().get(0).getChildren().get(0);
@@ -27,20 +30,22 @@ public class MoveNodeToChildNodeTest {
 
     @Test
     public void testBadSource() throws Exception {
-        moveNodeToChildNodeStep = new MoveNodeToChildNode("response-builder1", "http", "http://www.mulesoft.org/schema/mule/http", "error-response-builder", "http", "http://www.mulesoft.org/schema/mule/http");
-        DocumentHelpers.GetNodesFromFile("//http:listener", moveNodeToChildNodeStep, EXAMPLE_FILE_PATH);
+        moveNodeToChildNodeStep = new MoveNodeToChildNode("response-builder1", "http",
+                "http://www.mulesoft.org/schema/mule/http", "error-response-builder",
+                "http", "http://www.mulesoft.org/schema/mule/http");
+        getNodesFromFile("//http:listener", moveNodeToChildNodeStep, EXAMPLE_FILE_PATH);
         moveNodeToChildNodeStep.execute();
-
         Element node = moveNodeToChildNodeStep.getNodes().get(0).getChildren().get(0);
         Assert.assertTrue(node.getChildren().size() == 2);
     }
 
     @Test
     public void testBadTarget() throws Exception {
-        moveNodeToChildNodeStep = new MoveNodeToChildNode("response-builder", "http", "http://www.mulesoft.org/schema/mule/http", "error-response-builder1", "http", "http://www.mulesoft.org/schema/mule/http");
-        DocumentHelpers.GetNodesFromFile("//http:listener", moveNodeToChildNodeStep, EXAMPLE_FILE_PATH);
+        moveNodeToChildNodeStep = new MoveNodeToChildNode("response-builder", "http",
+                "http://www.mulesoft.org/schema/mule/http", "error-response-builder1",
+                "http", "http://www.mulesoft.org/schema/mule/http");
+        getNodesFromFile("//http:listener", moveNodeToChildNodeStep, EXAMPLE_FILE_PATH);
         moveNodeToChildNodeStep.execute();
-
         Element node = moveNodeToChildNodeStep.getNodes().get(0).getChildren().get(0);
         Assert.assertTrue(node.getChildren().size() == 2);
     }

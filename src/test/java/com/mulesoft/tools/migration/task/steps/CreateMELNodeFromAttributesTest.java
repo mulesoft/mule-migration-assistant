@@ -1,8 +1,8 @@
 package com.mulesoft.tools.migration.task.steps;
 
-import com.mulesoft.tools.migration.helpers.DocumentHelpers;
 import org.junit.Test;
 
+import static com.mulesoft.tools.migration.helpers.DocumentHelpers.getNodesFromFile;
 import static org.junit.Assert.assertTrue;
 
 public class CreateMELNodeFromAttributesTest {
@@ -16,7 +16,7 @@ public class CreateMELNodeFromAttributesTest {
         createMELNodeFromAttributesStep = new CreateMELNodeFromAttributes("header1", "headers",
                 "http", "http://www.mulesoft.org/schema/mule/http",
                 "headerName", "value");
-        DocumentHelpers.GetNodesFromFile("//http:request-builder",createMELNodeFromAttributesStep,EXAMPLE_FILE_PATH);
+        getNodesFromFile("//http:request-builder",createMELNodeFromAttributesStep,EXAMPLE_FILE_PATH);
         createMELNodeFromAttributesStep.execute();
         assertTrue(createMELNodeFromAttributesStep.getNodes().get(0).getChildren().size() == 8);
     }
@@ -26,17 +26,17 @@ public class CreateMELNodeFromAttributesTest {
         createMELNodeFromAttributesStep = new CreateMELNodeFromAttributes("header", "headers",
                 "http", "http://www.mulesoft.org/schema/mule/http",
                 "headerNamexx", "valuexx");
-        DocumentHelpers.GetNodesFromFile("//http:request-builder",createMELNodeFromAttributesStep,EXAMPLE_FILE_PATH);
+        getNodesFromFile("//http:request-builder",createMELNodeFromAttributesStep,EXAMPLE_FILE_PATH);
         createMELNodeFromAttributesStep.execute();
         assertTrue(createMELNodeFromAttributesStep.getNodes().get(0).getChildren().size() == 8);
     }
 
     @Test
-    public void testHappyPath() throws Exception {
+    public void testCreateMELNodeFromAttributes() throws Exception {
         createMELNodeFromAttributesStep = new CreateMELNodeFromAttributes("header", "headers",
                 "http", "http://www.mulesoft.org/schema/mule/http",
                 "headerName", "value");
-        DocumentHelpers.GetNodesFromFile("//http:request-builder",createMELNodeFromAttributesStep,EXAMPLE_FILE_PATH);
+        getNodesFromFile("//http:request-builder",createMELNodeFromAttributesStep,EXAMPLE_FILE_PATH);
         createMELNodeFromAttributesStep.execute();
         assertTrue(createMELNodeFromAttributesStep.getNodes().get(0).getChildren().size() == 7);
     }

@@ -11,7 +11,10 @@ import static com.mulesoft.tools.migration.helpers.DocumentHelpers.getDocument;
 import static org.junit.Assert.*;
 
 public class MigrationTaskTest {
+
     private MigrationTask migrationTask;
+
+    private static final String EXAMPLE_FILE_PATH = "src/test/resources/munit/examples/sample-file.xml";
 
     @Test
     public void setNullSelector() throws Exception {
@@ -30,7 +33,7 @@ public class MigrationTaskTest {
     @Test
     public void setSelectorForNoNode() throws Exception {
         migrationTask = new MigrationTask("//pepe");
-        migrationTask.setDocument(getDocument("src/test/resources/sample-file.xml"));
+        migrationTask.setDocument(getDocument(EXAMPLE_FILE_PATH));
         migrationTask.execute();
         assertEquals(0, getListSize(migrationTask));
     }
@@ -38,7 +41,7 @@ public class MigrationTaskTest {
     @Test
     public void addNullStepToTask() throws Exception {
         migrationTask = new MigrationTask("//pepe");
-        migrationTask.setDocument(getDocument("src/test/resources/sample-file.xml"));
+        migrationTask.setDocument(getDocument(EXAMPLE_FILE_PATH));
         migrationTask.addStep(null);
         migrationTask.execute();
         assertEquals(0, getListSize(migrationTask));
@@ -47,7 +50,7 @@ public class MigrationTaskTest {
     @Test
     public void setSelectorForNodes() throws Exception {
         migrationTask = new MigrationTask("//munit:test");
-        migrationTask.setDocument(getDocument("src/test/resources/sample-file.xml"));
+        migrationTask.setDocument(getDocument(EXAMPLE_FILE_PATH));
         migrationTask.execute();
         assertEquals(7, getListSize(migrationTask));
     }
@@ -55,7 +58,7 @@ public class MigrationTaskTest {
     @Test
     public void setSelectorForNodesAndExecuteStep() throws Exception {
         migrationTask = new MigrationTask("//munit:test");
-        migrationTask.setDocument(getDocument("src/test/resources/sample-file.xml"));
+        migrationTask.setDocument(getDocument(EXAMPLE_FILE_PATH));
         MigrationStep step = new AddAttribute("pepe", "pepa");
         migrationTask.addStep(step);
         migrationTask.execute();
@@ -79,5 +82,4 @@ public class MigrationTaskTest {
         size = ((List)field.get(task)).size();
         return size;
     }
-
 }

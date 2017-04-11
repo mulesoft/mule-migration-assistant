@@ -14,9 +14,9 @@ public class MoveAttributesToChildNodeTest {
     private static final String EXAMPLE_FILE_PATH = "src/test/resources/mule/examples/http-all-use-case.xml";
 
     @Test
-    public void moveAttributesToChildNode() throws Exception {
+    public void testMoveAttributesToChildNode() throws Exception {
         moveAttributesToChildNodeStep = new MoveAttributesToChildNode("path;allowedMethods", "response-builder");
-        DocumentHelpers.GetNodesFromFile("//http:listener", moveAttributesToChildNodeStep, EXAMPLE_FILE_PATH);
+        DocumentHelpers.getNodesFromFile("//http:listener", moveAttributesToChildNodeStep, EXAMPLE_FILE_PATH);
         moveAttributesToChildNodeStep.execute();
         Element node = moveAttributesToChildNodeStep.getNodes().get(0);
         assertNotNull(node.getChildren().get(0).getAttribute("path"));
@@ -25,7 +25,7 @@ public class MoveAttributesToChildNodeTest {
     @Test
     public void testBadChildNode() throws Exception {
         moveAttributesToChildNodeStep = new MoveAttributesToChildNode("host;protocol;port", "node");
-        DocumentHelpers.GetNodesFromFile("//http:listener-config", moveAttributesToChildNodeStep, EXAMPLE_FILE_PATH);
+        DocumentHelpers.getNodesFromFile("//http:listener-config", moveAttributesToChildNodeStep, EXAMPLE_FILE_PATH);
         moveAttributesToChildNodeStep.execute();
         Element node = moveAttributesToChildNodeStep.getNodes().get(0);
         assertNull(node.getChildren().get(0).getAttribute("host"));
@@ -34,7 +34,7 @@ public class MoveAttributesToChildNodeTest {
     @Test
     public void testEmptyAttributes() throws Exception {
         moveAttributesToChildNodeStep = new MoveAttributesToChildNode("", "listener-connection");
-        DocumentHelpers.GetNodesFromFile("//http:listener-config", moveAttributesToChildNodeStep, EXAMPLE_FILE_PATH);
+        DocumentHelpers.getNodesFromFile("//http:listener-config", moveAttributesToChildNodeStep, EXAMPLE_FILE_PATH);
         moveAttributesToChildNodeStep.execute();
         Element node = moveAttributesToChildNodeStep.getNodes().get(0);
         assertNull(node.getChildren().get(0).getAttribute("host"));

@@ -15,16 +15,21 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 public class MigrationJobTest {
+
     private MigrationJob migrationJob;
     private Document docRestoreFile1;
     private Document docRestoreFile2;
 
+    private static final String EXAMPLE_1_FILE_PATH = "src/test/resources/munit/examples/sample-file.xml";
+    private static final String EXAMPLE_2_FILE_PATH = "src/test/resources/munit/examples/set-payload.xml";
+    private static final String TASKS_FILE_PATH = "src/test/resources/munit/tasks/munit-tasks.json";
+
     @Before
     public void setUp() throws Exception {
         ArrayList<String> filePath1 = new ArrayList<String>();
-        filePath1.add("src/test/resources/sample-file.xml");
+        filePath1.add(EXAMPLE_1_FILE_PATH);
         ArrayList<String> filePath2 = new ArrayList<String>();
-        filePath2.add("src/test/resources/set-payload.xml");
+        filePath2.add(EXAMPLE_2_FILE_PATH);
 
         migrationJob = new MigrationJob();
         migrationJob.setDocuments(filePath1);
@@ -80,7 +85,7 @@ public class MigrationJobTest {
 //    public void checkMoveSetMessagePayloadExecution() throws Exception {
 //
 //        migrationJob = new MigrationJob();
-//        migrationJob.setDocuments(new ArrayList<String>(Arrays.asList("src/test/resources/set-payload.xml")));
+//        migrationJob.setDocuments(new ArrayList<String>(Arrays.asList(EXAMPLE_2_FILE_PATH)));
 //
 //        SetTasksForSetMessageNodesMigration();
 //
@@ -94,7 +99,7 @@ public class MigrationJobTest {
 //    @Test
 //    public void changeAssertDSL() throws Exception {
 //        migrationJob = new MigrationJob();
-//        migrationJob.setDocuments(new ArrayList<String>(Arrays.asList("src/test/resources/set-payload.xml")));
+//        migrationJob.setDocuments(new ArrayList<String>(Arrays.asList(EXAMPLE_2_FILE_PATH)));
 //
 //        SetTasksForAssertsNodesMigration();
 //
@@ -107,7 +112,7 @@ public class MigrationJobTest {
 //    @Test
 //    public void executeMultipleTasks() throws Exception {
 //        migrationJob = new MigrationJob();
-//        migrationJob.setDocuments(new ArrayList<String>(Arrays.asList("src/test/resources/set-payload.xml")));
+//        migrationJob.setDocuments(new ArrayList<String>(Arrays.asList(EXAMPLE_2_FILE_PATH)));
 //
 //        SetTasksForAssertsNodesMigration();
 //        SetTasksForSetMessageNodesMigration();
@@ -122,7 +127,7 @@ public class MigrationJobTest {
     @Test
     public void migrateMultipleFiles() throws Exception {
 
-        ArrayList<String> files = new ArrayList<String>(Arrays.asList("src/test/resources/set-payload.xml","src/test/resources/sample-file.xml"));
+        ArrayList<String> files = new ArrayList<String>(Arrays.asList(EXAMPLE_2_FILE_PATH, EXAMPLE_1_FILE_PATH));
 
         SetTasksForAssertsNodesMigration();
         SetTasksForSetMessageNodesMigration();
@@ -134,18 +139,18 @@ public class MigrationJobTest {
 
     @Test
     public void jobWithTasksOnConfigFile() throws Exception {
-        ArrayList<String> files = new ArrayList<String>(Arrays.asList("src/test/resources/set-payload.xml","src/test/resources/sample-file.xml"));
+        ArrayList<String> files = new ArrayList<String>(Arrays.asList(EXAMPLE_2_FILE_PATH, EXAMPLE_1_FILE_PATH));
 
         migrationJob.setDocuments(files);
-        migrationJob.setConfigFilePath("src/test/resources/migrationPOJO.json");
+        migrationJob.setConfigFilePath(TASKS_FILE_PATH);
         migrationJob.execute();
     }
 
 
     @After
     public void restoreFileState() throws Exception {
-        DocumentHelpers.restoreTestDocument(docRestoreFile1,"src/test/resources/sample-file.xml");
-        DocumentHelpers.restoreTestDocument(docRestoreFile2,"src/test/resources/set-payload.xml");
+        DocumentHelpers.restoreTestDocument(docRestoreFile1, EXAMPLE_1_FILE_PATH);
+        DocumentHelpers.restoreTestDocument(docRestoreFile2, EXAMPLE_2_FILE_PATH);
     }
 
     private void SetTasksForAssertsNodesMigration() {
