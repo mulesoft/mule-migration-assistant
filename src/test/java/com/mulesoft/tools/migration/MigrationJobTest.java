@@ -129,8 +129,8 @@ public class MigrationJobTest {
 
         ArrayList<String> files = new ArrayList<String>(Arrays.asList(EXAMPLE_2_FILE_PATH, EXAMPLE_1_FILE_PATH));
 
-        SetTasksForAssertsNodesMigration();
-        SetTasksForSetMessageNodesMigration();
+        setTasksForAssertsNodesMigration();
+        setTasksForSetMessageNodesMigration();
 
         migrationJob.setDocuments(files);
         migrationJob.execute();
@@ -153,7 +153,7 @@ public class MigrationJobTest {
         DocumentHelpers.restoreTestDocument(docRestoreFile2, EXAMPLE_2_FILE_PATH);
     }
 
-    private void SetTasksForAssertsNodesMigration() {
+    private void setTasksForAssertsNodesMigration() {
 
         MigrationTask assertTask;
         MigrationStep step;
@@ -240,7 +240,7 @@ public class MigrationJobTest {
         migrationJob.addTask(assertTask);
     }
 
-    private void SetTasksForSetMessageNodesMigration() {
+    private void setTasksForSetMessageNodesMigration() {
 
         MigrationTask task = new MigrationTask("//munit:test/munit:set");
         MigrationStep step;

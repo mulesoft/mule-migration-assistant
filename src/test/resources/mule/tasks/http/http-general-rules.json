@@ -1,0 +1,31 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//http:*",
+      "taskDescriptor" : "Update Mule HTTP Components Namespace",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Delete http namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.DeleteNamespace",
+          "parameters" : {
+            "namespace" : "http",
+            "namespaceUri" : "http://www.mulesoft.org/schema/mule/http",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd"
+          }
+        },
+        {
+          "stepDescriptor" : "Update http namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.SetNodeNamespace",
+          "parameters" : {
+            "newNamespace" : "httpn",
+            "newNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd"
+          }
+        }
+
+      ]
+    }
+  ]
+}
+

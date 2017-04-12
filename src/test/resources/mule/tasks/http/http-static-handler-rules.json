@@ -1,0 +1,28 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//httpn:static-resource-handler",
+      "taskDescriptor" : "Update Mule HTTP Static Resource Handler",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Rename static-resource-handler builder",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "static-resource-handler",
+            "newValue" : "load-static-resource"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename resourceBasePath attribute",
+          "type" : "com.mulesoft.tools.migration.task.steps.UpdateAttributeName",
+          "parameters" : {
+            "attributeName" : "resourceBase",
+            "newName" : "resourceBasePath"
+          }
+        }
+      ]
+    }
+  ]
+}
+

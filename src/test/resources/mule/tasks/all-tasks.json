@@ -1,0 +1,338 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//http:*",
+      "taskDescriptor" : "Update Mule HTTP Components Namespace",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Delete http namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.DeleteNamespace",
+          "parameters" : {
+            "namespace" : "http",
+            "namespaceUri" : "http://www.mulesoft.org/schema/mule/http",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd"
+          }
+        },
+        {
+          "stepDescriptor" : "Update http namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.SetNodeNamespace",
+          "parameters" : {
+            "newNamespace" : "httpn",
+            "newNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd"
+          }
+        }
+
+      ]
+    },
+    {
+      "xpathSelector" : "//httpn:listener-config",
+      "taskDescriptor" : "Update Mule HTTP Listener Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateChildNode",
+          "parameters" : {
+            "name" : "listener-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;tlsContext-ref",
+            "childNode" : "listener-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename tlsContext attribute",
+          "type" : "com.mulesoft.tools.migration.task.steps.UpdateAttributeName",
+          "parameters" : {
+            "attributeName" : "tlsContext-ref",
+            "newName" : "tlsContext"
+          }
+        },
+        {
+          "stepDescriptor" : "Move tls node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "context",
+            "sourceNodeNamespace" : "tls",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/tls",
+            "targetNode" : "listener-connection",
+            "targetNodeNamespace" : "httpn",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//httpn:response-builder",
+      "taskDescriptor" : "Update Mule HTTP Listener Response Builder ",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create Headers MEL expression node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
+          "parameters" : {
+            "originalNode" : "header",
+            "newNodeName" : "headers",
+            "newNodeNamespace" : "httpn",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "attributeKeyName" : "headerName",
+            "attributeValueName" : "value"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename response builder",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "response-builder",
+            "newValue" : "response"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//httpn:error-response-builder",
+      "taskDescriptor" : "Update Mule HTTP Listener Error Response Builder ",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create Headers MEL expression node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
+          "parameters" : {
+            "originalNode" : "header",
+            "newNodeName" : "headers",
+            "newNodeNamespace" : "httpn",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "attributeKeyName" : "headerName",
+            "attributeValueName" : "value"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename error response builder",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "error-response-builder",
+            "newValue" : "error-response"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//httpn:headers",
+      "taskDescriptor" : "Update HTTP Headers ",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Move Headers expression attribute to node content",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributeToMELContent",
+          "parameters" : {
+            "attributeName" : "expression",
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//httpn:uri-params",
+      "taskDescriptor" : "Update HTTP URI Parameters",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Move URI Parameters expression attribute to node content",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributeToMELContent",
+          "parameters" : {
+            "attributeName" : "expression",
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//httpn:query-params",
+      "taskDescriptor" : "Update HTTP Query Parameters",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Move URI Parameters expression attribute to node content",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributeToMELContent",
+          "parameters" : {
+            "attributeName" : "expression",
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//httpn:request-config",
+      "taskDescriptor" : "Update Mule HTTP Request",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create Request Connection child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateChildNode",
+          "parameters" : {
+            "name" : "request-connection"
+          }
+
+        },
+        {
+          "stepDescriptor" : "Move HTT Request Config attributes to Request Connection child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;responseTimeout;tlsContext-ref",
+            "childNode" : "request-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename tlsContext attribute",
+          "type" : "com.mulesoft.tools.migration.task.steps.UpdateAttributeName",
+          "parameters" : {
+            "attributeName" : "tlsContext-ref",
+            "newName" : "tlsContext"
+          }
+        },
+        {
+          "stepDescriptor" : "Move tls node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "context",
+            "sourceNodeNamespace" : "tls",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/tls",
+            "targetNode" : "request-connection",
+            "targetNodeNamespace" : "httpn",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//httpn:request",
+      "taskDescriptor" : "Update Mule HTTP Request",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Move success-status-code-validator node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToNewChildNode",
+          "parameters" : {
+            "sourceNode" : "success-status-code-validator",
+            "sourceNodeNamespace" : "httpn",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "targetNode" : "response-validator",
+            "targetNodeNamespace" : "httpn",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+          }
+        },
+        {
+          "stepDescriptor" : "Move failure-status-code-validator node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToNewChildNode",
+          "parameters" : {
+            "sourceNode" : "failure-status-code-validator",
+            "sourceNodeNamespace" : "httpn",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "targetNode" : "response-validator",
+            "targetNodeNamespace" : "httpn",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//httpn:request-builder",
+      "taskDescriptor" : "Update Mule HTTP Request Builder ",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create headers MEL expression node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
+          "parameters" : {
+            "originalNode" : "header",
+            "newNodeName" : "headers",
+            "newNodeNamespace" : "httpn",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "attributeKeyName" : "headerName",
+            "attributeValueName" : "value"
+          }
+        },
+        {
+          "stepDescriptor" : "Create query params MEL expression node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
+          "parameters" : {
+            "originalNode" : "query-param",
+            "newNodeName" : "query-params",
+            "newNodeNamespace" : "httpn",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "attributeKeyName" : "paramName",
+            "attributeValueName" : "value"
+          }
+        },
+        {
+          "stepDescriptor" : "Create uri params expression node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
+          "parameters" : {
+            "originalNode" : "uri-param",
+            "newNodeName" : "uri-params",
+            "newNodeNamespace" : "httpn",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "attributeKeyName" : "paramName",
+            "attributeValueName" : "value"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//httpn:static-resource-handler",
+      "taskDescriptor" : "Update Mule HTTP Static Resource Handler",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Rename static-resource-handler builder",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "static-resource-handler",
+            "newValue" : "load-static-resource"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename resourceBasePath attribute",
+          "type" : "com.mulesoft.tools.migration.task.steps.UpdateAttributeName",
+          "parameters" : {
+            "attributeName" : "resourceBase",
+            "newName" : "resourceBasePath"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//dw:*",
+      "taskDescriptor" : "Update Mule DW Namespace",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Delete http namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.DeleteNamespace",
+          "parameters" : {
+            "namespace" : "dw",
+            "namespaceUri" : "http://www.mulesoft.org/schema/mule/ee/dw",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd"
+          }
+        },
+        {
+          "stepDescriptor" : "Update http namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.SetNodeNamespace",
+          "parameters" : {
+            "newNamespace" : "ee",
+            "newNamespaceUri" : "http://www.mulesoft.org/schema/mule/ee/core",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+          }
+        }
+
+      ]
+    },
+    {
+      "xpathSelector" : "//ee:*",
+      "taskDescriptor" : "Update Mule DW Components",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Rename transform message",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "transform-message",
+            "newValue" : "transform"
+          }
+        }
+      ]
+    }
+  ]
+}
+

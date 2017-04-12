@@ -1,0 +1,45 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//dw:*",
+      "taskDescriptor" : "Update Mule DW Namespace",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Delete http namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.DeleteNamespace",
+          "parameters" : {
+            "namespace" : "dw",
+            "namespaceUri" : "http://www.mulesoft.org/schema/mule/ee/dw",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd"
+          }
+        },
+        {
+          "stepDescriptor" : "Update http namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.SetNodeNamespace",
+          "parameters" : {
+            "newNamespace" : "ee",
+            "newNamespaceUri" : "http://www.mulesoft.org/schema/mule/ee/core",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+          }
+        }
+
+      ]
+    },
+    {
+      "xpathSelector" : "//ee:*",
+      "taskDescriptor" : "Update Mule DW Components",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Rename transform message",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "transform-message",
+            "newValue" : "transform"
+          }
+        }
+      ]
+    }
+  ]
+}
+

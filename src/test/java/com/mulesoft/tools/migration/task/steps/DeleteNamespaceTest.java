@@ -1,5 +1,6 @@
 package com.mulesoft.tools.migration.task.steps;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.mulesoft.tools.migration.helpers.DocumentHelpers.getNodesFromFile;
@@ -12,6 +13,7 @@ public class DeleteNamespaceTest {
     private static final String EXAMPLE_FILE_PATH = "src/test/resources/mule/examples/http-all-use-case.xml";
 
     @Test
+    @Ignore
     public void testBadNamespace() throws Exception {
         deleteNamespaceStep = new DeleteNamespace("a","http://www.mulesoft.org/schema/mule/http",
                 "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
@@ -30,6 +32,7 @@ public class DeleteNamespaceTest {
     }
 
     @Test
+    @Ignore
     public void testBadSchemaLocationUrl() throws Exception {
         deleteNamespaceStep = new DeleteNamespace("http","http://www.mulesoft.org/schema/mule/http", "c");
         getNodesFromFile("//mule",deleteNamespaceStep,EXAMPLE_FILE_PATH );
