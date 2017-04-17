@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
-  <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration" />
-  <http:request-config name="HTTP_Request_Configuration" host="localhost" port="8081" doc:name="HTTP Request Configuration" />
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:httpn="http://www.mulesoft.org/schema/mule/httpn" xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:tcp="http://www.mulesoft.org/schema/mule/tcp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd   http://www.mulesoft.org/schema/mule/tcp http://www.mulesoft.org/schema/mule/tcp/current/mule-tcp.xsd   http://www.mulesoft.org/schema/mule/httpn http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd  http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd  http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+  <sockets:tcp-client-socket-properties name="Client_Socket_Properties" connectionTimeout="30000" doc:name="Client Socket Properties" />
+  <httpn:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener Configuration">
+    <httpn:listener-connection host="0.0.0.0" port="8081" />
+  </httpn:listener-config>
+  <httpn:request-config name="HTTP_Request_Configuration" doc:name="HTTP Request Configuration">
+    <httpn:request-connection host="localhost" port="8081" />
+  </httpn:request-config>
   <flow name="use-case-proxy-sender">
-    <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP" />
-    <dw:transform-message doc:name="Transform Message">
-      <dw:set-payload><![CDATA[%dw 1.0
+    <httpn:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP" />
+    <ee:transform doc:name="Transform Message">
+      <ee:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
 {
 	hello: "Mule4"
-}]]></dw:set-payload>
-    </dw:transform-message>
-    <http:request config-ref="HTTP_Request_Configuration" path="/in" method="POST" doc:name="HTTP">
-      <http:request-builder>
-        <http:query-param paramName="name" value="Mule4" />
-        <http:header headerName="X-MULE" value="Mule4" />
-      </http:request-builder>
-    </http:request>
+}]]></ee:set-payload>
+    </ee:transform>
+    <httpn:request config-ref="HTTP_Request_Configuration" path="/in" method="POST" doc:name="HTTP">
+      <httpn:headers>#[mel:['X-MULE':'Mule4']]</httpn:headers>
+      <httpn:query-params>#[mel:['name':'Mule4']]</httpn:query-params>
+    </httpn:request>
   </flow>
   <flow name="use-case-proxy-receiver">
-    <http:listener config-ref="HTTP_Listener_Configuration" path="/in" doc:name="HTTP" />
+    <httpn:listener config-ref="HTTP_Listener_Configuration" path="/in" doc:name="HTTP" />
     <logger message="#[payload]" level="INFO" doc:name="Logger" />
   </flow>
 </mule>

@@ -23,13 +23,16 @@ http://www.mulesoft.org/schema/mule/tcp http://www.mulesoft.org/schema/mule/tcp/
     </http:listener-config>
 
     <http:request-config name="HTTP_Request_Configuration" host="localhost" port="8081" doc:name="HTTP Request Configuration"   responseTimeout="1233" protocol="HTTPS" usePersistentConnections="false" >
-        <http:basic-authentication username="dsf" password="fdsfds"/>
         <tcp:client-socket-properties connectionTimeout="30000" keepAlive="true" receiveBufferSize="12" sendBufferSize="12"/>
         <tls:context>
             <tls:trust-store path="das" password="das" type="jks" algorithm="asd" insecure="true"/>
             <tls:key-store type="jks" path="asd" alias="asd" keyPassword="asd" password="asd" algorithm="asd"/>
         </tls:context>
         <http:proxy host="asdsa" port="12" username="dsa" password="asd"/>
+        <http:ntlm-proxy host="localhost" port="9091" username="david" password="12345"/>
+        <http:basic-authentication username="12" password="12"/>
+        <http:ntlm-authentication />
+        <http:digest-authentication />
     </http:request-config>
 
     <tls:context name="TLS_Context" doc:name="TLS Context">
