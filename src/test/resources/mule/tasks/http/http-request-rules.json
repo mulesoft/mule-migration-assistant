@@ -83,36 +83,6 @@
       ]
     },
     {
-      "xpathSelector" : "//httpn:request",
-      "taskDescriptor" : "Update Mule HTTP Request",
-      "stepsDefinition" : [
-        {
-          "stepDescriptor" : "Move success-status-code-validator node to child node",
-          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToNewChildNode",
-          "parameters" : {
-            "sourceNode" : "success-status-code-validator",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
-            "targetNode" : "response-validator",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
-          }
-        },
-        {
-          "stepDescriptor" : "Move failure-status-code-validator node to child node",
-          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToNewChildNode",
-          "parameters" : {
-            "sourceNode" : "failure-status-code-validator",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
-            "targetNode" : "response-validator",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
-          }
-        }
-      ]
-    },
-    {
       "xpathSelector" : "//httpn:request-builder",
       "taskDescriptor" : "Update Mule HTTP Request Builder ",
       "stepsDefinition" : [
@@ -129,6 +99,15 @@
           }
         },
         {
+          "stepDescriptor" : "Move headers to parent node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToParentNode",
+          "parameters" : {
+            "sourceNode" : "headers",
+            "sourceNodeNamespace" : "httpn",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+          }
+        },
+        {
           "stepDescriptor" : "Create query params MEL expression node",
           "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
           "parameters" : {
@@ -138,6 +117,15 @@
             "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
             "attributeKeyName" : "paramName",
             "attributeValueName" : "value"
+          }
+        },
+        {
+          "stepDescriptor" : "Move query params to parent node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToParentNode",
+          "parameters" : {
+            "sourceNode" : "query-params",
+            "sourceNodeNamespace" : "httpn",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
           }
         },
         {
@@ -151,9 +139,57 @@
             "attributeKeyName" : "paramName",
             "attributeValueName" : "value"
           }
+        },
+        {
+          "stepDescriptor" : "Move uri params to parent node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToParentNode",
+          "parameters" : {
+            "sourceNode" : "uri-params",
+            "sourceNodeNamespace" : "httpn",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+          }
         }
       ]
-    }
+    },
+    {
+    "xpathSelector" : "//httpn:request",
+    "taskDescriptor" : "Update Mule HTTP Request",
+    "stepsDefinition" : [
+      {
+        "stepDescriptor" : "Move success-status-code-validator node to child node",
+        "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToNewChildNode",
+        "parameters" : {
+          "sourceNode" : "success-status-code-validator",
+          "sourceNodeNamespace" : "httpn",
+          "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+          "targetNode" : "response-validator",
+          "targetNodeNamespace" : "httpn",
+          "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+        }
+      },
+      {
+        "stepDescriptor" : "Move failure-status-code-validator node to child node",
+        "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToNewChildNode",
+        "parameters" : {
+          "sourceNode" : "failure-status-code-validator",
+          "sourceNodeNamespace" : "httpn",
+          "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+          "targetNode" : "response-validator",
+          "targetNodeNamespace" : "httpn",
+          "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+        }
+      },
+      {
+        "stepDescriptor" : "Delete request-builder child node",
+        "type" : "com.mulesoft.tools.migration.task.steps.DeleteChildNode",
+        "parameters" : {
+          "node" : "request-builder",
+          "nodeNamespace" : "httpn",
+          "nodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+        }
+      }
+    ]
+  },
   ]
 }
 

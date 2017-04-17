@@ -201,6 +201,75 @@
       ]
     },
     {
+      "xpathSelector" : "//httpn:request-builder",
+      "taskDescriptor" : "Update Mule HTTP Request Builder ",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create headers MEL expression node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
+          "parameters" : {
+            "originalNode" : "header",
+            "newNodeName" : "headers",
+            "newNodeNamespace" : "httpn",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "attributeKeyName" : "headerName",
+            "attributeValueName" : "value"
+          }
+        },
+        {
+          "stepDescriptor" : "Move headers to parent node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToParentNode",
+          "parameters" : {
+            "sourceNode" : "headers",
+            "sourceNodeNamespace" : "httpn",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+          }
+        },
+        {
+          "stepDescriptor" : "Create query params MEL expression node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
+          "parameters" : {
+            "originalNode" : "query-param",
+            "newNodeName" : "query-params",
+            "newNodeNamespace" : "httpn",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "attributeKeyName" : "paramName",
+            "attributeValueName" : "value"
+          }
+        },
+        {
+          "stepDescriptor" : "Move query params to parent node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToParentNode",
+          "parameters" : {
+            "sourceNode" : "query-params",
+            "sourceNodeNamespace" : "httpn",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+          }
+        },
+        {
+          "stepDescriptor" : "Create uri params expression node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
+          "parameters" : {
+            "originalNode" : "uri-param",
+            "newNodeName" : "uri-params",
+            "newNodeNamespace" : "httpn",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "attributeKeyName" : "paramName",
+            "attributeValueName" : "value"
+          }
+        },
+        {
+          "stepDescriptor" : "Move uri params to parent node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToParentNode",
+          "parameters" : {
+            "sourceNode" : "uri-params",
+            "sourceNodeNamespace" : "httpn",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+          }
+        }
+      ]
+    },
+    {
       "xpathSelector" : "//httpn:request",
       "taskDescriptor" : "Update Mule HTTP Request",
       "stepsDefinition" : [
@@ -227,47 +296,14 @@
             "targetNodeNamespace" : "httpn",
             "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
           }
-        }
-      ]
-    },
-    {
-      "xpathSelector" : "//httpn:request-builder",
-      "taskDescriptor" : "Update Mule HTTP Request Builder ",
-      "stepsDefinition" : [
-        {
-          "stepDescriptor" : "Create headers MEL expression node",
-          "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
-          "parameters" : {
-            "originalNode" : "header",
-            "newNodeName" : "headers",
-            "newNodeNamespace" : "httpn",
-            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
-            "attributeKeyName" : "headerName",
-            "attributeValueName" : "value"
-          }
         },
         {
-          "stepDescriptor" : "Create query params MEL expression node",
-          "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
+          "stepDescriptor" : "Delete request-builder child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.DeleteChildNode",
           "parameters" : {
-            "originalNode" : "query-param",
-            "newNodeName" : "query-params",
-            "newNodeNamespace" : "httpn",
-            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
-            "attributeKeyName" : "paramName",
-            "attributeValueName" : "value"
-          }
-        },
-        {
-          "stepDescriptor" : "Create uri params expression node",
-          "type" : "com.mulesoft.tools.migration.task.steps.CreateMELNodeFromAttributes",
-          "parameters" : {
-            "originalNode" : "uri-param",
-            "newNodeName" : "uri-params",
-            "newNodeNamespace" : "httpn",
-            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
-            "attributeKeyName" : "paramName",
-            "attributeValueName" : "value"
+            "node" : "request-builder",
+            "nodeNamespace" : "httpn",
+            "nodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
           }
         }
       ]
