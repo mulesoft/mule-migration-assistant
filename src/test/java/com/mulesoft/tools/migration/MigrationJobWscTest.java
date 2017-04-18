@@ -11,11 +11,12 @@ import java.util.Arrays;
 import static com.mulesoft.tools.migration.helpers.DocumentHelpers.getDocument;
 import static com.mulesoft.tools.migration.helpers.DocumentHelpers.restoreTestDocument;
 
-public class MigrationJobHttpTest {
+public class MigrationJobWscTest {
+
     private MigrationJob migrationJob;
     private Document docRestoreFile;
-    private String USE_CASE_FILE_PATH = "src/test/resources/mule/examples/http/http-all-use-case.xml";
-    private String TASKS_FILE_PATH = "src/test/resources/mule/tasks/all-tasks.json";
+    private String USE_CASE_FILE_PATH = "src/test/resources/mule/examples/wsc/wsc-use-case.xml";
+    private String TASKS_FILE_PATH = "src/test/resources/mule/tasks/wsc/wsc-config-rules.json";
 
     @Before
     public void setUp() throws Exception {
@@ -39,6 +40,6 @@ public class MigrationJobHttpTest {
 
     @After
     public void restoreFileState() throws Exception {
-        restoreTestDocument(docRestoreFile,USE_CASE_FILE_PATH);
+        //restoreTestDocument(docRestoreFile,USE_CASE_FILE_PATH);
     }
 }
