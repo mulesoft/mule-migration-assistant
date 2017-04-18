@@ -53,14 +53,6 @@
 
         },
         {
-          "stepDescriptor" : "Move HTT Request Config attributes to Request Connection child node",
-          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributesToChildNode",
-          "parameters" : {
-            "attributes" : "host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;responseTimeout;tlsContext-ref;clientSocketProperties-ref",
-            "childNode" : "request-connection"
-          }
-        },
-        {
           "stepDescriptor" : "Rename tlsContext attribute",
           "type" : "com.mulesoft.tools.migration.task.steps.UpdateAttributeName",
           "parameters" : {
@@ -74,6 +66,14 @@
           "parameters" : {
             "attributeName" : "clientSocketProperties-ref",
             "newName" : "clientSocketProperties"
+          }
+        },
+        {
+          "stepDescriptor" : "Move HTT Request Config attributes to Request Connection child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;responseTimeout;tlsContext;clientSocketProperties",
+            "childNode" : "request-connection"
           }
         },
         {

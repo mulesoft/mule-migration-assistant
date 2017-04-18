@@ -13,19 +13,19 @@
           }
         },
         {
-          "stepDescriptor" : "Move attributes to child node",
-          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributesToChildNode",
-          "parameters" : {
-            "attributes" : "host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;tlsContext-ref",
-            "childNode" : "listener-connection"
-          }
-        },
-        {
           "stepDescriptor" : "Rename tlsContext attribute",
           "type" : "com.mulesoft.tools.migration.task.steps.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "tlsContext-ref",
             "newName" : "tlsContext"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;tlsContext",
+            "childNode" : "listener-connection"
           }
         },
         {

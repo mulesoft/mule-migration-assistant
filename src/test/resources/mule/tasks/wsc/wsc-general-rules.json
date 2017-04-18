@@ -1,0 +1,31 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//ws:*",
+      "taskDescriptor" : "Update Mule Webservice Consumer Namespace",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Delete http namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.DeleteNamespace",
+          "parameters" : {
+            "namespace" : "ws",
+            "namespaceUri" : "http://www.mulesoft.org/schema/mule/ws",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd"
+          }
+        },
+        {
+          "stepDescriptor" : "Update wsc namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.SetNodeNamespace",
+          "parameters" : {
+            "newNamespace" : "wsc",
+            "newNamespaceUri" : "http://www.mulesoft.org/schema/mule/wsc",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd"
+          }
+        }
+
+      ]
+    }
+  ]
+}
+

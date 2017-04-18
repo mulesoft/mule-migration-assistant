@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="EE-3.8.3 http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd " xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+  <wsc:config name="Web_Service_Consumer" doc:name="Web Service Consumer" connectorConfig="HTTP_Request_Configuration_IN">
+    <wsc:connection service="v" port="1989" wsdlLocation="locat" address="asdd" mtomEnabled="false">
+      <wsc:security-strategies>
+        <wsc:wss-username-token-security-strategy username="12" password="12" passwordType="DIGEST" addCreated="true" addNonce="true" />
+        <wsc:wss-timestamp-security-strategy expires="123" />
+        <wsc:wss-sign-security-strategy tlsContext-ref="TLS_Context" />
+        <wsc:wss-verify-signature-security-strategy tlsContext-ref="TLS_Context" />
+        <wsc:wss-encrypt-security-strategy tlsContext-ref="TLS_Context" alias="12" />
+        <wsc:wss-decrypt-security-strategy tlsContext-ref="TLS_Context" />
+      </wsc:security-strategies>
+    </wsc:connection>
+  </wsc:config>
+  <wsc:config name="Web_Service_Consumer2" doc:name="Web Service Consumer" connectorConfig="HTTP_Request_Configuration_IN">
+    <wsc:connection service="v" port="1989" wsdlLocation="locat" address="asdd" mtomEnabled="true" />
+  </wsc:config>
+  <flow name="use-case-1Flow1">
+    <wsc:consume config-ref="Web_Service_Consumer" operation="opera" doc:name="Web Service Consumer" />
+    <wsc:consume config-ref="Web_Service_Consumer2" operation="opera" doc:name="Web Service Consumer" />
+  </flow>
+</mule>

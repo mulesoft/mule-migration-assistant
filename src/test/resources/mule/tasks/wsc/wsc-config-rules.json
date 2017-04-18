@@ -1,0 +1,203 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//ws:*",
+      "taskDescriptor" : "Update Mule Webservice Consumer Namespace",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Delete http namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.DeleteNamespace",
+          "parameters" : {
+            "namespace" : "ws",
+            "namespaceUri" : "http://www.mulesoft.org/schema/mule/ws",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd"
+          }
+        },
+        {
+          "stepDescriptor" : "Update wsc namespace",
+          "type" : "com.mulesoft.tools.migration.task.steps.SetNodeNamespace",
+          "parameters" : {
+            "newNamespace" : "wsc",
+            "newNamespaceUri" : "http://www.mulesoft.org/schema/mule/wsc",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd"
+          }
+        }
+
+      ]
+    },
+    {
+      "xpathSelector" : "//wsc:consumer",
+      "taskDescriptor" : "Update WSC Consumer Configurations",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Move MTOM config to Consumer Config",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttribute",
+          "parameters" : {
+            "attribute" : "mtomEnabled",
+            "targetNode" : "consumer-config",
+            "targetNodeNamespace" : "wsc",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/wsc",
+            "sourceReferenceAttribute" : "config-ref",
+            "targetReferenceAttribute" : "name"
+          }
+        },
+        {
+          "stepDescriptor" : "Update WSC Consumer Node Name",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "consumer",
+            "newValue" : "consume"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//wsc:consumer-config",
+      "taskDescriptor" : "Update Mule WSC Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateChildNode",
+          "parameters" : {
+            "name" : "connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename serviceAddress attribute",
+          "type" : "com.mulesoft.tools.migration.task.steps.UpdateAttributeName",
+          "parameters" : {
+            "attributeName" : "serviceAddress",
+            "newName" : "address"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "service;port;wsdlLocation;address;mtomEnabled",
+            "childNode" : "connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename consumer config",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "consumer-config",
+            "newValue" : "config"
+          }
+        },
+        {
+          "stepDescriptor" : "Move security node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "security",
+            "sourceNodeNamespace" : "wsc",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/wsc",
+            "targetNode" : "connection",
+            "targetNodeNamespace" : "wsc",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/wsc"
+          }
+        },
+      ]
+    },
+    {
+      "xpathSelector" : "//wsc:security",
+      "taskDescriptor" : "Update WSC Security Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Rename security config",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "security",
+            "newValue" : "security-strategies"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//wsc:wss-username-token",
+      "taskDescriptor" : "Update WSC WSS Username Token Strategy Configurations",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Update WSC WSS Username Token Strategy Node Name",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "wss-username-token",
+            "newValue" : "wss-username-token-security-strategy"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//wsc:wss-timestamp",
+      "taskDescriptor" : "Update WSC WSS Timestamp Strategy Configurations",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Update WSC WSS Timestamp Strategy Node Name",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "wss-timestamp",
+            "newValue" : "wss-timestamp-security-strategy"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//wsc:wss-sign",
+      "taskDescriptor" : "Update WSC WSS Sign Strategy Configurations",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Update WSC WSS Sign Strategy Node Name",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "wss-sign",
+            "newValue" : "wss-sign-security-strategy"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//wsc:wss-verify-signature",
+      "taskDescriptor" : "Update WSC WSS Verify Signature Strategy Configurations",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Update WSC WSS Verify Signature Strategy Node Name",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "wss-verify-signature",
+            "newValue" : "wss-verify-signature-security-strategy"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//wsc:wss-encrypt",
+      "taskDescriptor" : "Update WSC WSS Encrypt Strategy Configurations",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Update WSC WSS Encrypt Strategy Node Name",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "wss-encrypt",
+            "newValue" : "wss-encrypt-security-strategy"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//wsc:wss-decrypt",
+      "taskDescriptor" : "Update WSC WSS Decrypt Strategy Configurations",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Update WSC WSS Decrypt Strategy Node Name",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "wss-decrypt",
+            "newValue" : "wss-decrypt-security-strategy"
+          }
+        }
+      ]
+    }
+  ]
+}
