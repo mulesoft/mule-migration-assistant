@@ -7,6 +7,8 @@ import org.jdom2.Namespace;
 
 import java.util.*;
 
+import static com.mulesoft.tools.migration.mel.MELUtils.getMELExpressionFromMap;
+
 
 public class CreateMELNodeFromAttributes extends MigrationStep {
 
@@ -21,10 +23,6 @@ public class CreateMELNodeFromAttributes extends MigrationStep {
     private String attributeKeyName;
 
     private String attributeValueName;
-
-    private static final String SINGLE_QUOTE = "'";
-
-    private static final String SEPARATOR = ":";
 
     public String getOriginalNode() {
         return originalNode;
@@ -108,36 +106,12 @@ public class CreateMELNodeFromAttributes extends MigrationStep {
                     }
                     Namespace newNodeNamespace = Namespace.getNamespace(getNewNodeNamespace(), getNewNodeNamespaceUri());
                     Element child = new Element(getNewNodeName(), newNodeNamespace);
-                    child.setText(getMELExpression(attributesMap));
+                    child.setText(getMELExpressionFromMap(attributesMap));
                     node.addContent(child);
                 }
             }
         } catch (Exception ex) {
             throw new MigrationStepException("Create mel node from attributes exception. " + ex.getMessage());
         }
-    }
-
-    private String getMELExpression(Map<String, String> attributesMap) {
-        StringJoiner mapJoiner = new StringJoiner(",");
-        StringBuilder melExpressionBuilder = new StringBuilder();
-        Iterator<Map.Entry<String,String>> it = attributesMap.entrySet().iterator();
-
-        while (it.hasNext()) {
-            Map.Entry<String,String> pair = it.next();
-            StringBuilder entryBuilder = new StringBuilder();
-            entryBuilder.append(SINGLE_QUOTE);
-            entryBuilder.append(pair.getKey());
-            entryBuilder.append(SINGLE_QUOTE);
-            entryBuilder.append(SEPARATOR);
-            entryBuilder.append(SINGLE_QUOTE);
-            entryBuilder.append(pair.getValue());
-            entryBuilder.append(SINGLE_QUOTE);
-            mapJoiner.add(entryBuilder.toString());
-        }
-
-        melExpressionBuilder.append("#[mel:[");
-        melExpressionBuilder.append(mapJoiner.toString());
-        melExpressionBuilder.append("]]");
-        return melExpressionBuilder.toString();
     }
 }

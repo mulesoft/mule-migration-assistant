@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ws="http://www.mulesoft.org/schema/mule/ws"
+<mule xmlns:ws="http://www.mulesoft.org/schema/mule/ws" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
       xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
       xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.8.3"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
+  <tls:context name="TLS_Context" doc:name="TLS Context">
+    <tls:trust-store path="asd" password="asd" type="jks" algorithm="das"/>
+    <tls:key-store type="jks" path="dsa" alias="asd" keyPassword="das" password="asd" algorithm="asd"/>
+  </tls:context>
+
+  <tls:context name="TLS_Context3" doc:name="TLS Context">
+    <tls:trust-store path="asd" password="asd" type="jks" algorithm="das"/>
+    <tls:key-store type="jks1212121" path="21212" alias="dd" keyPassword="aa" password="dddddd" algorithm="120000"/>
+  </tls:context>
 
   <ws:consumer-config name="Web_Service_Consumer" service="v" port="1989" serviceAddress="asdd" wsdlLocation="locat" doc:name="Web Service Consumer" connectorConfig="HTTP_Request_Configuration_IN">
     <ws:security>
       <ws:wss-username-token username="12" password="12" passwordType="DIGEST" addCreated="true" addNonce="true"/>
       <ws:wss-timestamp expires="123"/>
-      <ws:wss-sign tlsContext-ref="TLS_Context"/>
+      <ws:wss-sign tlsContext-ref="TLS_Context3"/>
       <ws:wss-verify-signature tlsContext-ref="TLS_Context"/>
       <ws:wss-encrypt tlsContext-ref="TLS_Context" alias="12"/>
       <ws:wss-decrypt tlsContext-ref="TLS_Context"/>

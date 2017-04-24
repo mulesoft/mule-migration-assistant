@@ -140,7 +140,15 @@
             "stringToReplace" : "wss-timestamp",
             "newValue" : "wss-timestamp-security-strategy"
           }
-        }
+        },
+        {
+          "stepDescriptor" : "Rename expires attribute",
+          "type" : "com.mulesoft.tools.migration.task.steps.UpdateAttributeName",
+          "parameters" : {
+            "attributeName" : "expires",
+            "newName" : "timeToLive"
+          }
+        },
       ]
     },
     {
@@ -153,6 +161,22 @@
           "parameters" : {
             "stringToReplace" : "wss-sign",
             "newValue" : "wss-sign-security-strategy"
+          }
+        },
+        {
+          "stepDescriptor" : "Create key-store child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateChildNode",
+          "parameters" : {
+            "name" : "key-store-configuration"
+          }
+        },
+        {
+          "stepDescriptor" : "Move tlsContext to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributeToChildNode",
+          "parameters" : {
+            "attribute" : "tlsContext-ref",
+            "childNode" : "key-store-configuration"
+
           }
         }
       ]
@@ -168,6 +192,22 @@
             "stringToReplace" : "wss-verify-signature",
             "newValue" : "wss-verify-signature-security-strategy"
           }
+        },
+        {
+          "stepDescriptor" : "Create trust-store child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateChildNode",
+          "parameters" : {
+            "name" : "trust-store-configuration"
+          }
+        },
+        {
+          "stepDescriptor" : "Move tlsContext to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributeToChildNode",
+          "parameters" : {
+            "attribute" : "tlsContext-ref",
+            "childNode" : "trust-store-configuration"
+
+          }
         }
       ]
     },
@@ -182,6 +222,22 @@
             "stringToReplace" : "wss-encrypt",
             "newValue" : "wss-encrypt-security-strategy"
           }
+        },
+        {
+          "stepDescriptor" : "Create key-store child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateChildNode",
+          "parameters" : {
+            "name" : "key-store-configuration"
+          }
+        },
+        {
+          "stepDescriptor" : "Move tlsContext to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributeToChildNode",
+          "parameters" : {
+            "attribute" : "tlsContext-ref",
+            "childNode" : "key-store-configuration"
+
+          }
         }
       ]
     },
@@ -195,6 +251,89 @@
           "parameters" : {
             "stringToReplace" : "wss-decrypt",
             "newValue" : "wss-decrypt-security-strategy"
+          }
+        },
+        {
+          "stepDescriptor" : "Create key-store child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateChildNode",
+          "parameters" : {
+            "name" : "key-store-configuration"
+          }
+        },
+        {
+          "stepDescriptor" : "Move tlsContext to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributeToChildNode",
+          "parameters" : {
+            "attribute" : "tlsContext-ref",
+            "childNode" : "key-store-configuration"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//wsc:key-store-configuration",
+      "taskDescriptor" : "Update Key Store Configurations",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Get Attributes From global TLS Context",
+          "type" : "com.mulesoft.tools.migration.task.steps.GetAttributesFromReference",
+          "parameters" : {
+            "sourceReferenceAttribute" : "tlsContext-ref",
+            "targetReferenceAttribute" : "name",
+            "referenceNode" : "context",
+            "referenceNodeNamespace" : "tls",
+            "referenceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/tls",
+            "referenceChildNode" : "key-store",
+            "referenceAttributes" : "type;path;alias;keyPassword;password;algorithm"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename path attribute",
+          "type" : "com.mulesoft.tools.migration.task.steps.UpdateAttributeName",
+          "parameters" : {
+            "attributeName" : "path",
+            "newName" : "keyStorePath"
+          }
+        },
+        {
+          "stepDescriptor" : "Delete tlsContext attribute",
+          "type" : "com.mulesoft.tools.migration.task.steps.DeleteAttribute",
+          "parameters" : {
+            "attributeName" : "tlsContext-ref"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//wsc:trust-store-configuration",
+      "taskDescriptor" : "Update Trust Store Configurations",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Get Attributes From global TLS Context",
+          "type" : "com.mulesoft.tools.migration.task.steps.GetAttributesFromReference",
+          "parameters" : {
+            "sourceReferenceAttribute" : "tlsContext-ref",
+            "targetReferenceAttribute" : "name",
+            "referenceNode" : "context",
+            "referenceNodeNamespace" : "tls",
+            "referenceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/tls",
+            "referenceChildNode" : "trust-store",
+            "referenceAttributes" : "type;path;password;algorithm;insecure"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename path attribute",
+          "type" : "com.mulesoft.tools.migration.task.steps.UpdateAttributeName",
+          "parameters" : {
+            "attributeName" : "path",
+            "newName" : "trustStorePath"
+          }
+        },
+        {
+          "stepDescriptor" : "Delete tlsContext ref attribute",
+          "type" : "com.mulesoft.tools.migration.task.steps.DeleteAttribute",
+          "parameters" : {
+            "attributeName" : "tlsContext-ref"
           }
         }
       ]
