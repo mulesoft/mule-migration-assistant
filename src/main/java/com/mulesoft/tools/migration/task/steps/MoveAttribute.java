@@ -1,12 +1,12 @@
 package com.mulesoft.tools.migration.task.steps;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
-import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import java.util.List;
+import static com.mulesoft.tools.migration.dom.DomUtils.findChildElement;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class MoveAttribute extends MigrationStep {
 
@@ -80,9 +80,9 @@ public class MoveAttribute extends MigrationStep {
     public void execute() throws Exception {
         try {
 
-            if (!StringUtils.isBlank(getAttribute()) && !StringUtils.isBlank(getTargetNode())
-                    && !StringUtils.isBlank(getTargetNodeNamespace())
-                    && !StringUtils.isBlank(getTargetNodeNamespaceUri())) {
+            if (!isBlank(getAttribute()) && !isBlank(getTargetNode())
+                    && !isBlank(getTargetNodeNamespace())
+                    && !isBlank(getTargetNodeNamespaceUri())) {
 
                 Attribute attribute;
                 String referenceValue;
@@ -93,7 +93,7 @@ public class MoveAttribute extends MigrationStep {
                     if (attribute != null) {
                         Namespace namespace = Namespace.getNamespace(getTargetNodeNamespace(), getTargetNodeNamespaceUri());
                         if(null != namespace) {
-                            Element element = findChild(getTargetNode(), referenceValue, namespace, getDocument().getRootElement());
+                            Element element = findChildElement(getTargetNode(), referenceValue, getTargetReferenceAttribute(), namespace, getDocument().getRootElement());
                             if (null != element) {
                                 node.removeAttribute(attribute);
                                 element.setAttribute(attribute);
@@ -105,21 +105,5 @@ public class MoveAttribute extends MigrationStep {
         }catch (Exception ex) {
             throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
         }
-    }
-
-    private Element findChild(String nodeName, String referenceValue, Namespace namespace, Element element) {
-
-        if (element.getNamespace().equals(namespace)
-                && element.getName().equals(nodeName) && element.getAttributeValue(getTargetReferenceAttribute()).equals(referenceValue)) {
-            return element;
-        } else {
-            for (Element childElement : element.getChildren()) {
-                Element child = findChild(nodeName, referenceValue, namespace, childElement);
-                if (null != child) {
-                    return child;
-                }
-            }
-        }
-        return null;
     }
 }
