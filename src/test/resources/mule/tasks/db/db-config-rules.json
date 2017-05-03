@@ -1,0 +1,217 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//db:derby-config",
+      "taskDescriptor" : "Update DB Derby Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateChildNode",
+          "parameters" : {
+            "name" : "derby-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "user;password;connectionTimeout;useXaTransactions;parameterTable",
+            "childNode" : "derby-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move pooling profile node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "pooling-profile",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "derby-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move connection properties node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "connection-properties",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "derby-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename db config",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "derby-config",
+            "newValue" : "config"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//db:mysql-config",
+      "taskDescriptor" : "Update DB MYSQL Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateChildNode",
+          "parameters" : {
+            "name" : "mysql-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "host;port;user;password;database;connectionTimeout;useXaTransactions;transactionIsolation;parameterTable;driverClassName",
+            "childNode" : "mysql-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move pooling profile node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "pooling-profile",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "mysql-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move connection properties node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "connection-properties",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "mysql-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename db config",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "mysql-config",
+            "newValue" : "config"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//db:oracle-config",
+      "taskDescriptor" : "Update DB Oracle Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateChildNode",
+          "parameters" : {
+            "name" : "oracle-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "host;port;instance;user;password;;connectionTimeout;useXaTransactions;transactionIsolation;parameterTable;driverClassName",
+            "childNode" : "oracle-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move pooling profile node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "pooling-profile",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "oracle-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move connection properties node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "connection-properties",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "oracle-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename db config",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "oracle-config",
+            "newValue" : "config"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//db:generic-config",
+      "taskDescriptor" : "Update DB Generic Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.CreateChildNode",
+          "parameters" : {
+            "name" : "generic-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "url;connectionTimeout;useXaTransactions;transactionIsolation;parameterTable;driverClassName",
+            "childNode" : "generic-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move pooling profile node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "pooling-profile",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "generic-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move connection properties node to child node",
+          "type" : "com.mulesoft.tools.migration.task.steps.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "connection-properties",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "generic-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename db config",
+          "type" : "com.mulesoft.tools.migration.task.steps.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "generic-config",
+            "newValue" : "config"
+          }
+        }
+      ]
+    }
+  ]
+}

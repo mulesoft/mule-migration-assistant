@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+  <db:generic-config name="Generic_Database_Configuration" url="url" driverClassName="dasdasdsa" useXaTransactions="true" connectionTimeout="123" transactionIsolation="READ_COMMITTED" doc:name="Generic Database Configuration">
+    <db:connection-properties>
+      <db:property key="param1" value="123"/>
+    </db:connection-properties>
+    <db:pooling-profile maxPoolSize="1" minPoolSize="2" acquireIncrement="1" preparedStatementCacheSize="1" maxWaitMillis="123"/>
+    <reconnect frequency="2001" count="3"/>
+  </db:generic-config>
+
+  <db:derby-config name="Derby_Configuration" user="us" password="pass" useXaTransactions="true" connectionTimeout="124" doc:name="Derby Configuration">
+    <db:pooling-profile maxPoolSize="1" minPoolSize="1" acquireIncrement="1" preparedStatementCacheSize="1" maxWaitMillis="1234"/>
+  </db:derby-config>
+
+  <db:mysql-config name="MySQL_Configuration" host="h" port="p" user="123" password="123" database="sa" connectionTimeout="123" doc:name="MySQL Configuration"/>
+  <db:oracle-config name="Oracle_Configuration" host="123" port="12" instance="ads" user="usr" password="pass" doc:name="Oracle Configuration"/>
+
+  <flow name="db-usecaseFlow">
+    <db:select config-ref="Generic_Database_Configuration" streaming="true" doc:name="Database">
+      <db:parameterized-query><![CDATA[SELECT * FROM Table]]></db:parameterized-query>
+    </db:select>
+  </flow>
+  <flow name="db-usecaseFlow1">
+    <db:delete config-ref="Derby_Configuration" doc:name="Database">
+      <db:parameterized-query><![CDATA[DELETE FROM Table]]></db:parameterized-query>
+    </db:delete>
+  </flow>
+  <flow name="db-usecaseFlow2">
+    <db:bulk-execute config-ref="MySQL_Configuration" doc:name="Database"><![CDATA[SELECT]]></db:bulk-execute>
+  </flow>
+  <flow name="db-usecaseFlow3">
+    <db:execute-ddl config-ref="Oracle_Configuration" doc:name="Database">
+      <db:dynamic-query><![CDATA[SELECT * FROM Table]]></db:dynamic-query>
+    </db:execute-ddl>
+  </flow>
+  <flow name="db-usecaseFlow4">
+    <db:insert config-ref="Generic_Database_Configuration" doc:name="Database">
+      <db:parameterized-query><![CDATA[INSERT INTO Table VALUES (1,2)]]></db:parameterized-query>
+    </db:insert>
+  </flow>
+</mule>
