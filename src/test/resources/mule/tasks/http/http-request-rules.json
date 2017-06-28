@@ -2,7 +2,7 @@
   "tasks":
   [
     {
-      "xpathSelector" : "//httpn:request-config",
+      "xpathSelector" : "//http:request-config",
       "taskDescriptor" : "Update Mule HTTP Request",
       "stepsDefinition" : [
         {
@@ -45,8 +45,8 @@
             "sourceNodeNamespace" : "tls",
             "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/tls",
             "targetNode" : "request-connection",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -54,11 +54,11 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "proxy",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "request-connection",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -66,11 +66,11 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "ntlm-proxy",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "request-connection",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -78,11 +78,11 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "basic-authentication",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "request-connection",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -90,11 +90,11 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "ntlm-authentication",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "request-connection",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -102,11 +102,11 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "digest-authentication",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "request-connection",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -117,14 +117,14 @@
             "sourceNodeNamespace" : "tcp",
             "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/tcp",
             "targetNode" : "request-connection",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         }
       ]
     },
     {
-      "xpathSelector" : "//httpn:request-connection",
+      "xpathSelector" : "//http:request-connection",
       "taskDescriptor" : "Update Mule HTTP Request Connection elements",
       "stepsDefinition" : [
         {
@@ -135,8 +135,8 @@
             "sourceNodeNamespace" : "tcp",
             "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/tcp",
             "targetNode" : "client-socket-properties",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -144,11 +144,11 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "proxy",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "proxy-config",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -156,11 +156,11 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "ntlm-proxy",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "proxy-config",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -168,11 +168,11 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "basic-authentication",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "authentication",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -180,11 +180,11 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "ntlm-authentication",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "authentication",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -192,17 +192,17 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "digest-authentication",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "authentication",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         }
       ]
     },
     {
-      "xpathSelector" : "//httpn:request-builder",
+      "xpathSelector" : "//http:request-builder",
       "taskDescriptor" : "Update Mule HTTP Request Builder ",
       "stepsDefinition" : [
         {
@@ -211,8 +211,8 @@
           "parameters" : {
             "originalNode" : "header",
             "newNodeName" : "headers",
-            "newNodeNamespace" : "httpn",
-            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "newNodeNamespace" : "http",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "attributeKeyName" : "headerName",
             "attributeValueName" : "value"
           }
@@ -222,8 +222,8 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToParentNode",
           "parameters" : {
             "sourceNode" : "headers",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -232,8 +232,8 @@
           "parameters" : {
             "originalNode" : "query-param",
             "newNodeName" : "query-params",
-            "newNodeNamespace" : "httpn",
-            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "newNodeNamespace" : "http",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "attributeKeyName" : "paramName",
             "attributeValueName" : "value"
           }
@@ -243,8 +243,8 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToParentNode",
           "parameters" : {
             "sourceNode" : "query-params",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -253,8 +253,8 @@
           "parameters" : {
             "originalNode" : "uri-param",
             "newNodeName" : "uri-params",
-            "newNodeNamespace" : "httpn",
-            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "newNodeNamespace" : "http",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "attributeKeyName" : "paramName",
             "attributeValueName" : "value"
           }
@@ -264,14 +264,14 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToParentNode",
           "parameters" : {
             "sourceNode" : "uri-params",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         }
       ]
     },
     {
-      "xpathSelector" : "//httpn:request",
+      "xpathSelector" : "//http:request",
       "taskDescriptor" : "Update Mule HTTP Request",
       "stepsDefinition" : [
         {
@@ -279,11 +279,11 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "success-status-code-validator",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "response-validator",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -291,11 +291,11 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "failure-status-code-validator",
-            "sourceNodeNamespace" : "httpn",
-            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "sourceNodeNamespace" : "http",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "targetNode" : "response-validator",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         },
         {
@@ -303,14 +303,14 @@
           "type" : "com.mulesoft.tools.migration.task.step.DeleteChildNode",
           "parameters" : {
             "node" : "request-builder",
-            "nodeNamespace" : "httpn",
-            "nodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "nodeNamespace" : "http",
+            "nodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         }
       ]
     },
     {
-      "xpathSelector" : "//httpn:headers",
+      "xpathSelector" : "//http:headers",
       "taskDescriptor" : "Update HTTP Headers ",
       "stepsDefinition" : [
         {
@@ -328,7 +328,7 @@
       ]
     },
     {
-      "xpathSelector" : "//httpn:uri-params",
+      "xpathSelector" : "//http:uri-params",
       "taskDescriptor" : "Update HTTP URI Parameters",
       "stepsDefinition" : [
         {
@@ -346,7 +346,7 @@
       ]
     },
     {
-      "xpathSelector" : "//httpn:query-params",
+      "xpathSelector" : "//http:query-params",
       "taskDescriptor" : "Update HTTP Query Parameters",
       "stepsDefinition" : [
         {

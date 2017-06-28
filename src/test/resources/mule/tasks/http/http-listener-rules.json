@@ -2,7 +2,7 @@
   "tasks":
   [
     {
-      "xpathSelector" : "//httpn:listener-config",
+      "xpathSelector" : "//http:listener-config",
       "taskDescriptor" : "Update Mule HTTP Listener Configuration",
       "stepsDefinition" : [
         {
@@ -36,14 +36,14 @@
             "sourceNodeNamespace" : "tls",
             "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/tls",
             "targetNode" : "listener-connection",
-            "targetNodeNamespace" : "httpn",
-            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn"
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
           }
         }
       ]
     },
     {
-      "xpathSelector" : "//httpn:response-builder",
+      "xpathSelector" : "//http:response-builder",
       "taskDescriptor" : "Update Mule HTTP Listener Response Builder ",
       "stepsDefinition" : [
         {
@@ -52,8 +52,8 @@
           "parameters" : {
             "originalNode" : "header",
             "newNodeName" : "headers",
-            "newNodeNamespace" : "httpn",
-            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "newNodeNamespace" : "http",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "attributeKeyName" : "headerName",
             "attributeValueName" : "value"
           }
@@ -69,7 +69,7 @@
       ]
     },
     {
-      "xpathSelector" : "//httpn:error-response-builder",
+      "xpathSelector" : "//http:error-response-builder",
       "taskDescriptor" : "Update Mule HTTP Listener Error Response Builder ",
       "stepsDefinition" : [
         {
@@ -78,8 +78,8 @@
           "parameters" : {
             "originalNode" : "header",
             "newNodeName" : "headers",
-            "newNodeNamespace" : "httpn",
-            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/httpn",
+            "newNodeNamespace" : "http",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
             "attributeKeyName" : "headerName",
             "attributeValueName" : "value"
           }
