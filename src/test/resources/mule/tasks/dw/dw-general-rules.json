@@ -18,7 +18,7 @@
       "taskDescriptor" : "Update Mule DW Namespace",
       "stepsDefinition" : [
         {
-          "stepDescriptor" : "Delete http namespace",
+          "stepDescriptor" : "Delete dw namespace",
           "type" : "com.mulesoft.tools.migration.task.step.DeleteNamespace",
           "parameters" : {
             "namespace" : "dw",
@@ -27,7 +27,7 @@
           }
         },
         {
-          "stepDescriptor" : "Update http namespace",
+          "stepDescriptor" : "Update dw namespace",
           "type" : "com.mulesoft.tools.migration.task.step.SetNodeNamespace",
           "parameters" : {
             "newNamespace" : "ee",
@@ -60,6 +60,31 @@
           "stepDescriptor" : "Update mule message structure",
           "type" : "com.mulesoft.tools.migration.task.step.UpdateMuleMessageContent",
           "parameters" : {
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector": "//ee:transform",
+      "taskDescriptor" : "Update transform children",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create child node",
+          "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
+          "parameters" : {
+            "name" : "message"
+          }
+        },
+        {
+          "stepDescriptor" : "Move set-payload node to child node",
+          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "set-payload",
+            "sourceNodeNamespace" : "ee",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/ee/core",
+            "targetNode" : "message",
+            "targetNodeNamespace" : "ee",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/ee/core"
           }
         }
       ]
