@@ -6,7 +6,7 @@
       "taskDescriptor" : "Update Mapping Exceptions Connector Configuration",
       "stepsDefinition" : [
         {
-          "stepDescriptor" : "Delete node",
+          "stepDescriptor" : "Delete node apikit:mapping-exception-strategy",
           "type" : "com.mulesoft.tools.migration.task.step.DeleteNode",
           "parameters" : {
 

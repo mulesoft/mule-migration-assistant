@@ -6,7 +6,7 @@
       "taskDescriptor" : "Update Mule HTTP Listener Configuration",
       "stepsDefinition" : [
         {
-          "stepDescriptor" : "Create child node",
+          "stepDescriptor" : "Create child node listener-connection",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
             "name" : "listener-connection"
@@ -21,7 +21,7 @@
           }
         },
         {
-          "stepDescriptor" : "Move attributes to child node",
+          "stepDescriptor" : "Move attributes to child node listener-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveAttributesToChildNode",
           "parameters" : {
             "attributes" : "host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;tlsContext",
@@ -29,7 +29,7 @@
           }
         },
         {
-          "stepDescriptor" : "Move tls node to child node",
+          "stepDescriptor" : "Move tls node to child node listener-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "context",
@@ -73,7 +73,7 @@
       "taskDescriptor" : "Update Mule HTTP Listener Error Response Builder ",
       "stepsDefinition" : [
         {
-          "stepDescriptor" : "Create Headers MEL expression node",
+          "stepDescriptor" : "Create Headers MEL expression node headers",
           "type" : "com.mulesoft.tools.migration.task.step.CreateMELNodeFromAttributes",
           "parameters" : {
             "originalNode" : "header",
@@ -85,7 +85,7 @@
           }
         },
         {
-          "stepDescriptor" : "Rename error response builder",
+          "stepDescriptor" : "Rename error response builder to error-response",
           "type" : "com.mulesoft.tools.migration.task.step.ReplaceStringOnNodeName",
           "parameters" : {
             "stringToReplace" : "error-response-builder",

@@ -57,7 +57,7 @@
       "taskDescriptor" : "Update Mule WSC Configuration",
       "stepsDefinition" : [
         {
-          "stepDescriptor" : "Create child node",
+          "stepDescriptor" : "Create child node connection",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
             "name" : "connection"
@@ -88,7 +88,7 @@
           }
         },
         {
-          "stepDescriptor" : "Move security node to child node",
+          "stepDescriptor" : "Move security node to child node connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "security",
@@ -98,7 +98,7 @@
             "targetNodeNamespace" : "wsc",
             "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/wsc"
           }
-        },
+        }
       ]
     },
     {
@@ -148,7 +148,7 @@
             "attributeName" : "expires",
             "newName" : "timeToLive"
           }
-        },
+        }
       ]
     },
     {
@@ -164,7 +164,7 @@
           }
         },
         {
-          "stepDescriptor" : "Create key-store child node",
+          "stepDescriptor" : "Create child node key-store-configuration",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
             "name" : "key-store-configuration"
@@ -194,14 +194,14 @@
           }
         },
         {
-          "stepDescriptor" : "Create trust-store child node",
+          "stepDescriptor" : "Create child node trust-store-configuration",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
             "name" : "trust-store-configuration"
           }
         },
         {
-          "stepDescriptor" : "Move tlsContext to child node",
+          "stepDescriptor" : "Move tlsContext to child node trust-store-configuration",
           "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToChildNode",
           "parameters" : {
             "attribute" : "tlsContext-ref",
@@ -224,14 +224,14 @@
           }
         },
         {
-          "stepDescriptor" : "Create key-store child node",
+          "stepDescriptor" : "Create child node key-store-configuration",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
             "name" : "key-store-configuration"
           }
         },
         {
-          "stepDescriptor" : "Move tlsContext to child node",
+          "stepDescriptor" : "Move tlsContext to child node key-store-configuration",
           "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToChildNode",
           "parameters" : {
             "attribute" : "tlsContext-ref",
@@ -254,7 +254,7 @@
           }
         },
         {
-          "stepDescriptor" : "Create key-store child node",
+          "stepDescriptor" : "Create child node key-store-configuration",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
             "name" : "key-store-configuration"

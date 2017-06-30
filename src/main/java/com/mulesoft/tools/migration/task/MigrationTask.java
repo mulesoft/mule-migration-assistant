@@ -3,7 +3,6 @@ package com.mulesoft.tools.migration.task;
 import com.google.common.base.Strings;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.report.ConsoleReportStrategy;
-import com.mulesoft.tools.migration.report.ReportCategory;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.task.step.MigrationStep;
 import org.jdom2.Document;
@@ -16,9 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.mulesoft.tools.migration.report.ReportCategory.ERROR;
-import static com.mulesoft.tools.migration.report.ReportCategory.SKIPPED;
-import static com.mulesoft.tools.migration.report.ReportCategory.WORKING_WITH_NODES;
+import static com.mulesoft.tools.migration.report.ReportCategory.*;
 
 public class MigrationTask {
 
@@ -57,6 +54,7 @@ public class MigrationTask {
                 step.setDocument(this.doc);
                 step.setOnErrorStop(this.onErrorStop);
                 step.setNodes(nodes);
+                getReportingStrategy().log(step.getStepDescriptor(), TRYING_TO_APPLY);
                 step.execute();
             }
         } catch (Exception ex) {

@@ -6,14 +6,14 @@
       "taskDescriptor" : "Update DB Derby Configuration",
       "stepsDefinition" : [
         {
-          "stepDescriptor" : "Create child node",
+          "stepDescriptor" : "Create child node derby-connection",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
             "name" : "derby-connection"
           }
         },
         {
-          "stepDescriptor" : "Move attributes to child node",
+          "stepDescriptor" : "Move attributes to child node derby-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveAttributesToChildNode",
           "parameters" : {
             "attributes" : "user;password;connectionTimeout;useXaTransactions;parameterTable",
@@ -21,7 +21,7 @@
           }
         },
         {
-          "stepDescriptor" : "Move pooling profile node to child node",
+          "stepDescriptor" : "Move pooling profile node to child node derby-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "pooling-profile",
@@ -33,7 +33,7 @@
           }
         },
         {
-          "stepDescriptor" : "Move connection properties node to child node",
+          "stepDescriptor" : "Move connection properties node to child node derby-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "connection-properties",
@@ -86,7 +86,7 @@
           }
         },
         {
-          "stepDescriptor" : "Move connection properties node to child node",
+          "stepDescriptor" : "Move connection-properties node to child node mysql-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "connection-properties",
@@ -112,14 +112,14 @@
       "taskDescriptor" : "Update DB Oracle Configuration",
       "stepsDefinition" : [
         {
-          "stepDescriptor" : "Create child node",
+          "stepDescriptor" : "Create child node oracle-connection",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
             "name" : "oracle-connection"
           }
         },
         {
-          "stepDescriptor" : "Move attributes to child node",
+          "stepDescriptor" : "Move attributes to child node oracle-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveAttributesToChildNode",
           "parameters" : {
             "attributes" : "host;port;instance;user;password;;connectionTimeout;useXaTransactions;transactionIsolation;parameterTable;driverClassName",
@@ -127,7 +127,7 @@
           }
         },
         {
-          "stepDescriptor" : "Move pooling profile node to child node",
+          "stepDescriptor" : "Move pooling profile node to child node oracle-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "pooling-profile",
@@ -139,7 +139,7 @@
           }
         },
         {
-          "stepDescriptor" : "Move connection properties node to child node",
+          "stepDescriptor" : "Move connection-properties node to child node oracle-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "connection-properties",
@@ -165,14 +165,14 @@
       "taskDescriptor" : "Update DB Generic Configuration",
       "stepsDefinition" : [
         {
-          "stepDescriptor" : "Create child node",
+          "stepDescriptor" : "Create child node generic-connection",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
             "name" : "generic-connection"
           }
         },
         {
-          "stepDescriptor" : "Move attributes to child node",
+          "stepDescriptor" : "Move attributes to child node generic-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveAttributesToChildNode",
           "parameters" : {
             "attributes" : "url;connectionTimeout;useXaTransactions;transactionIsolation;parameterTable;driverClassName",
@@ -180,7 +180,7 @@
           }
         },
         {
-          "stepDescriptor" : "Move pooling profile node to child node",
+          "stepDescriptor" : "Move pooling profile node to child node generic-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "pooling-profile",
@@ -192,7 +192,7 @@
           }
         },
         {
-          "stepDescriptor" : "Move connection properties node to child node",
+          "stepDescriptor" : "Move connection properties node to child node generic-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "connection-properties",

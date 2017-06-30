@@ -9,7 +9,8 @@ public enum ReportCategory {
     WORKING_WITH_NODES("\033[36mWORKING WITH NODE\033[0m"),
     ERROR("\033[31mERROR\033[0m"),
     WORKING_WITH_FILE("\033[35mWORKING WITH FILE\033[0m"),
-    SKIPPED("\033[33mSKIPPED\033[0m");
+    SKIPPED("\033[37mSKIPPED\033[0m"),
+    TRYING_TO_APPLY("\033[33mTRYING TO APPLY\033[0m");
 
     private final String description;
 

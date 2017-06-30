@@ -6,14 +6,14 @@
       "taskDescriptor" : "Update JMS Connector Configuration",
       "stepsDefinition" : [
         {
-          "stepDescriptor" : "Create child node",
+          "stepDescriptor" : "Create child node smtp-connection",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
             "name" : "smtp-connection"
           }
         },
         {
-          "stepDescriptor" : "Move attributes to child node",
+          "stepDescriptor" : "Move attributes to child node smtp-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveAttributesToChildNode",
           "parameters" : {
             "attributes" : "username;password;validateConnections;jndiProviderUrl;clientId;maxRedelivery;numberOfConsumers;durable;persistentDelivery",

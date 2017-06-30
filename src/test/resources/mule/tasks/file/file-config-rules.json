@@ -6,14 +6,14 @@
       "taskDescriptor" : "Update File Connector Configuration",
       "stepsDefinition" : [
         {
-          "stepDescriptor" : "Create child node",
+          "stepDescriptor" : "Create child node connection",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
             "name" : "connection"
           }
         },
         {
-          "stepDescriptor" : "Move attributes to child node",
+          "stepDescriptor" : "Move attributes to child node connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveAttributesToChildNode",
           "parameters" : {
             "attributes" : "outputPattern;writeToDirectory;readFromDirectory;workDirectory;workFileNamePattern;autoDelete;outputAppend;streaming;recursive;validateConnections;pollingFrequency;fileAge;moveToPattern;moveToDirectory;dynamicNotification;serialiseObjects;dispatcherPoolFactory-ref",
