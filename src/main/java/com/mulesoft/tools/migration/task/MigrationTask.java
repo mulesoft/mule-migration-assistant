@@ -15,7 +15,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.mulesoft.tools.migration.report.ReportCategory.*;
+import static com.mulesoft.tools.migration.report.ReportCategory.ERROR;
+import static com.mulesoft.tools.migration.report.ReportCategory.SKIPPED;
+import static com.mulesoft.tools.migration.report.ReportCategory.WORKING_WITH_NODES;
+import static com.mulesoft.tools.migration.report.ReportCategory.TRYING_TO_APPLY;
 
 public class MigrationTask {
 
