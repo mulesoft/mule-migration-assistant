@@ -30,6 +30,7 @@ public class MoveNodeToNewChildNode extends MigrationStep {
         try {
             Namespace sourceNamespace = Namespace.getNamespace(getSourceNodeNamespace(), getSourceNodeNamespaceUri());
             Namespace targetNamespace = Namespace.getNamespace(getTargetNodeNamespace(), getTargetNodeNamespaceUri());
+            Element newTargetElement = null;
             for (Element node : getNodes()) {
                 Element sourceElement = node.getChild(getSourceNode(),sourceNamespace);
                 if (sourceElement != null) {
@@ -38,15 +39,15 @@ public class MoveNodeToNewChildNode extends MigrationStep {
                         node.removeChild(getSourceNode(),sourceNamespace);
                         targetElement.getChildren().add(sourceElement);
                     } else {
-                        Element newTargetElement = new Element(getTargetNode(),targetNamespace);
+                        newTargetElement = new Element(getTargetNode(),targetNamespace);
                         node.removeChild(getSourceNode(),sourceNamespace);
                         newTargetElement.getChildren().add(sourceElement);
                         node.addContent(newTargetElement);
                     }
-                    getReportingStrategy().log("Node moved to new child node:" + sourceElement, RULE_APPLIED);
+                    getReportingStrategy().log("<" + sourceElement.getQualifiedName() + "> node is now a child of <" + (targetElement != null ? targetElement.getQualifiedName() : newTargetElement.getQualifiedName()) + "> node", RULE_APPLIED);
                 }
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
         }
     }

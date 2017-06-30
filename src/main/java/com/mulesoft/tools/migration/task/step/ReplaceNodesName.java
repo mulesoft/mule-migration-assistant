@@ -24,10 +24,11 @@ public class ReplaceNodesName extends MigrationStep {
                 Namespace namespace = getDocument().getRootElement().getNamespace(getNodeNamespace());
                 if (namespace != null) {
                     for (Element node : getNodes()) {
+                        String legacyNode = node.getQualifiedName();
                         node.setNamespace(namespace);
                         node.setName(getNewNodeName());
 
-                        getReportingStrategy().log("Node replaced:" + newNodeName, RULE_APPLIED);
+                        getReportingStrategy().log("Node <" + legacyNode + "> has been replaced with <" + node.getQualifiedName() + "> node" , RULE_APPLIED);
                     }
                 }
             }

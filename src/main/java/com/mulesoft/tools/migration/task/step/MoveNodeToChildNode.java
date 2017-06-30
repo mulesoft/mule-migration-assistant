@@ -38,11 +38,11 @@ public class MoveNodeToChildNode extends MigrationStep {
                         node.removeChild(getSourceNode(),sourceNamespace);
                         targetElement.getChildren().add(sourceElement);
 
-                        getReportingStrategy().log("Node moved to child node:" + sourceElement, RULE_APPLIED);
+                        getReportingStrategy().log("<" + sourceElement.getQualifiedName() + "> node is now a child of <" + targetElement.getQualifiedName() + "> node", RULE_APPLIED);
                     }
                 }
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
         }
     }

@@ -25,7 +25,7 @@ public class AddAttribute extends MigrationStep {
                 Attribute att = new Attribute(getAttributeName(), getAttributeValue());
                 node.setAttribute(att);
 
-                getReportingStrategy().log("Attribute added:" + attributeName + ":" + attributeValue, RULE_APPLIED);
+                getReportingStrategy().log("Added attribute: " + attributeName + "=\""+ attributeValue + "\" into <" + node.getQualifiedName() + ">", RULE_APPLIED);
             }
         } catch (Exception ex) {
             throw new MigrationStepException("Add Attribute step exception. " + ex.getMessage());

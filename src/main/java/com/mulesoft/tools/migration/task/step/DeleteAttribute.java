@@ -20,7 +20,7 @@ public class DeleteAttribute extends MigrationStep {
             for (Element node : this.getNodes()) {
                 node.removeAttribute(getAttributeName());
 
-                getReportingStrategy().log("Attribute deleted:" + attributeName, RULE_APPLIED);
+                getReportingStrategy().log("Attribute " + attributeName + " was deleted", RULE_APPLIED);
             }
         } catch (Exception ex) {
             throw new MigrationStepException("Remove Attribute step exception. " + ex.getMessage());

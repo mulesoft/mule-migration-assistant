@@ -25,7 +25,7 @@ public class MoveAttributeToMELContent extends MigrationStep {
                     node.removeAttribute(att);
                     node.setText(getMELExpressionFromValue(att.getValue()));
 
-                    getReportingStrategy().log("Attribute moved to MEL content:" + att, RULE_APPLIED);
+                    getReportingStrategy().log("Attribute" + att + "was replaced by the following MEL: " + node.getText(), RULE_APPLIED);
                 }
             }
         }catch (Exception ex) {

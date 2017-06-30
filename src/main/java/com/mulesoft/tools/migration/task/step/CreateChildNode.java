@@ -25,7 +25,7 @@ public class CreateChildNode extends MigrationStep {
                     child.setNamespace(node.getNamespace());
                     node.addContent(child);
 
-                    getReportingStrategy().log("Child node created:" + name, RULE_APPLIED);
+                    getReportingStrategy().log("<" + child.getQualifiedName() + "> node was created. Namespace " + child.getNamespaceURI(), RULE_APPLIED);
                 }
             }
         }catch (Exception ex) {

@@ -28,10 +28,10 @@ public class DeleteChildNode extends MigrationStep {
                 if (element != null) {
                     node.removeChild(getNode(),namespace);
 
-                    getReportingStrategy().log("Child Node deleted:" + node, RULE_APPLIED);
+                    getReportingStrategy().log("Child Node <" + node.getQualifiedName() + "> was deleted", RULE_APPLIED);
                 }
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             throw new MigrationStepException("Remove child node exception. " + ex.getMessage());
         }
     }

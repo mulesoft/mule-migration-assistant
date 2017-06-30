@@ -33,7 +33,7 @@ public class DeleteNamespace extends MigrationStep {
                     if (schemaLocationDefined(muleNode)) {
                         muleSchemaLocation.setValue(muleSchemaLocation.getValue().replace(getSchemaLocationUrl(), "").replace(getNamespaceUri(), ""));
 
-                        getReportingStrategy().log("Namespace deleted:" + namespace, RULE_APPLIED);
+                        getReportingStrategy().log("Namespace " + namespace + ":" + nspc.getURI() + " was deleted", RULE_APPLIED);
                     }
                 }
             }
@@ -44,11 +44,7 @@ public class DeleteNamespace extends MigrationStep {
 
     private boolean schemaLocationDefined(Element node) {
         Attribute att = node.getAttribute("schemaLocation", node.getNamespace("xsi"));
-        if (att.getValue().contains(this.getNamespaceUri()) && att.getValue().contains(this.getSchemaLocationUrl())) {
-            return true;
-        } else {
-            return false;
-        }
+        return att.getValue().contains(this.getNamespaceUri()) && att.getValue().contains(this.getSchemaLocationUrl());
     }
 
     public String getNamespace() {

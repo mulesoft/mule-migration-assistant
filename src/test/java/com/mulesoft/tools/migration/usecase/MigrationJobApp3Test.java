@@ -41,6 +41,6 @@ public class MigrationJobApp3Test {
 
     @After
     public void restoreFileState() throws Exception {
-        //restoreTestDocument(docRestoreFile,USE_CASE_FILE_PATH);
+        restoreTestDocument(docRestoreFile,USE_CASE_FILE_PATH);
     }
 }

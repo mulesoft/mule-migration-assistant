@@ -21,9 +21,10 @@ public class ReplaceStringOnNodeName extends MigrationStep{
         try {
             for (Element node : this.getNodes()) {
                 if (node.getName().contains(getStringToReplace())) {
+                    String legacyNode = node.getQualifiedName();
                     node.setName(node.getName().replace(getStringToReplace(), getNewValue()));
 
-                    getReportingStrategy().log("Node string replaced:" + stringToReplace, RULE_APPLIED);
+                    getReportingStrategy().log("The Node <" + legacyNode + "> that contained " + stringToReplace + " was replaced to <" + node.getQualifiedName() + ">", RULE_APPLIED);
                 }
             }
         } catch (Exception ex) {

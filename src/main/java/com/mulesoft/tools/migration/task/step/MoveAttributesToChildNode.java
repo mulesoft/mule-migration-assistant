@@ -30,12 +30,12 @@ public class MoveAttributesToChildNode extends MigrationStep {
                             node.removeAttribute(att);
                             child.setAttribute(att);
 
-                            getReportingStrategy().log("Attribute moved to child:" + att, RULE_APPLIED);
+                            getReportingStrategy().log("Moved attribute " + att.getName() + "=\""+ att.getValue() + "\" to child node <" + node.getQualifiedName() + ">", RULE_APPLIED);
                         }
                     }
                 }
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
         }
     }

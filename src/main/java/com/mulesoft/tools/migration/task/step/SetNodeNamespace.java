@@ -34,9 +34,10 @@ public class SetNodeNamespace extends MigrationStep {
                 }
                 if (this.getNodes() != null) {
                     for (Element node : this.getNodes()) {
+                        String legacyNode = node.getQualifiedName();
                         node.setNamespace(nspc);
 
-                        getReportingStrategy().log("Node namespace changed, node: " + node + " changed namespace to:" + nspc, RULE_APPLIED);
+                        getReportingStrategy().log("Node namespace has changed, node <" + legacyNode + "> changed to <" + node.getQualifiedName() + ">", RULE_APPLIED);
                     }
                 }
             }

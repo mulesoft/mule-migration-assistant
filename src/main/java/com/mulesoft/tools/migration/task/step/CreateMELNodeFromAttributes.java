@@ -63,7 +63,7 @@ public class CreateMELNodeFromAttributes extends MigrationStep {
                     child.setText(getMELExpressionFromMap(attributesMap));
                     node.addContent(child);
 
-                    getReportingStrategy().log("MEL node created node:" + newNodeName + " attributes-map:" + attributesMap, RULE_APPLIED);
+                    getReportingStrategy().log("MEL node <" + child.getQualifiedName() + "> was created, attributes-map:" + attributesMap, RULE_APPLIED);
                 }
             }
         } catch (Exception ex) {

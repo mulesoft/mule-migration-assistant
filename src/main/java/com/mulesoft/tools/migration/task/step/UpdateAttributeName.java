@@ -25,7 +25,7 @@ public class UpdateAttributeName extends MigrationStep {
                 if (att != null) {
                     att.setName(getNewName());
 
-                    getReportingStrategy().log("Attribute name updated:" + att, RULE_APPLIED);
+                    getReportingStrategy().log("Attribute " + attributeName + " updated it's name to " + getNewName(), RULE_APPLIED);
                 }
             }
         } catch (Exception ex) {

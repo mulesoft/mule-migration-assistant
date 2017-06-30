@@ -17,10 +17,10 @@ public class MigrateDataweaveScript extends MigrationStep {
 
                 if(!isEmpty(node.getText())) {
                     node.setText(DataweaveUtils.getMigratedScript(node.getText()));
-                    getReportingStrategy().log("Dataweave script migrated to dw 2", RULE_APPLIED);
+                    getReportingStrategy().log("Dataweave script has been migrated to Dataweave 2", RULE_APPLIED);
                 }
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             throw new MigrationStepException("Move attribute to MEL content exception. " + ex.getMessage());
         }
     }

@@ -29,7 +29,7 @@ public class MoveNodeToParentNode extends MigrationStep {
                     node.removeChild(getSourceNode(),sourceNamespace);
                     node.getParentElement().getChildren().add(sourceElement);
 
-                    getReportingStrategy().log("Node moved to parent node:" + sourceElement, RULE_APPLIED);
+                    getReportingStrategy().log("Node <" + sourceElement.getQualifiedName() + "> moved to parent node <" + node.getParentElement().getQualifiedName() + ">" , RULE_APPLIED);
                 }
             }
         } catch (Exception ex) {

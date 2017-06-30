@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.mulesoft.tools.migration.report.ReportCategory.ERROR;
+import static com.mulesoft.tools.migration.report.ReportCategory.SKIPPED;
 import static com.mulesoft.tools.migration.report.ReportCategory.WORKING_WITH_NODES;
 
 public class MigrationTask {
@@ -59,7 +60,12 @@ public class MigrationTask {
                 step.execute();
             }
         } catch (Exception ex) {
-            getReportingStrategy().log("Executing the task for:" + this.xpathSelector, ERROR);
+            if(ex.getMessage().endsWith("has not been declared.")) {
+                getReportingStrategy().log("Task " + this.xpathSelector + " - " + ex.getMessage(), SKIPPED);
+            }
+            else {
+                getReportingStrategy().log("Executing the task for:" + this.xpathSelector, ERROR);
+            }
             if(onErrorStop) {
                 throw new MigrationTaskException("Task execution exception. " + ex.getMessage());
             }

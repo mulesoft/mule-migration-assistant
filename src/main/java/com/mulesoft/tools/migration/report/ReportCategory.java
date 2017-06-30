@@ -5,10 +5,11 @@ package com.mulesoft.tools.migration.report;
  */
 public enum ReportCategory {
 
-    RULE_APPLIED("RULE APPLIED"),
-    WORKING_WITH_NODES("WORKING WITH NODE"),
-    ERROR("ERROR"),
-    WORKING_WITH_FILE("WORKING WITH FILE");
+    RULE_APPLIED("\033[32mRULE APPLIED\033[0m"),
+    WORKING_WITH_NODES("\033[36mWORKING WITH NODE\033[0m"),
+    ERROR("\033[31mERROR\033[0m"),
+    WORKING_WITH_FILE("\033[35mWORKING WITH FILE\033[0m"),
+    SKIPPED("\033[33mSKIPPED\033[0m");
 
     private final String description;
 
