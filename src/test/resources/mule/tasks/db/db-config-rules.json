@@ -62,7 +62,7 @@
           "stepDescriptor" : "Create child node",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
-            "name" : "mysql-connection"
+            "name" : "my-sql-connection"
           }
         },
         {
@@ -70,7 +70,7 @@
           "type" : "com.mulesoft.tools.migration.task.step.MoveAttributesToChildNode",
           "parameters" : {
             "attributes" : "host;port;user;password;database;connectionTimeout;useXaTransactions;transactionIsolation;parameterTable;driverClassName",
-            "childNode" : "mysql-connection"
+            "childNode" : "my-sql-connection"
           }
         },
         {
@@ -80,13 +80,13 @@
             "sourceNode" : "pooling-profile",
             "sourceNodeNamespace" : "db",
             "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
-            "targetNode" : "mysql-connection",
+            "targetNode" : "my-sql-connection",
             "targetNodeNamespace" : "db",
             "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
           }
         },
         {
-          "stepDescriptor" : "Move connection-properties node to child node mysql-connection",
+          "stepDescriptor" : "Move connection-properties node to child node my-sql-connection",
           "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "connection-properties",
