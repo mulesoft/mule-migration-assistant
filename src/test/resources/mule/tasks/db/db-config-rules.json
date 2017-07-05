@@ -165,6 +165,14 @@
       "taskDescriptor" : "Update DB Generic Configuration",
       "stepsDefinition" : [
         {
+          "stepDescriptor" : "asda",
+          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToChildNode",
+          "parameters" : {
+            "attribute" : "connectionTimeout",
+            "childNode" : "connection-properties"
+          }
+        },
+        {
           "stepDescriptor" : "Create child node generic-connection",
           "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
           "parameters" : {
@@ -209,6 +217,36 @@
           "parameters" : {
             "stringToReplace" : "generic-config",
             "newValue" : "config"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//db:connection-properties",
+      "taskDescriptor" : "Create or update <db:property> for connectionTimeout attribute",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Move connectionTimeout to connection-properties",
+          "type": "com.mulesoft.tools.migration.task.step.MoveAttributeToNewRepeatableChildNode",
+          "parameters" : {
+            "attribute" : "connectionTimeout",
+            "childNode" : "property",
+            "newAttributeMappingName" : "key",
+            "newAttributeMappingValue" : "value"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//db:property",
+      "taskDescriptor" : "Rename connection properties items",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Rename property to connection-property",
+          "type" : "com.mulesoft.tools.migration.task.step.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "property",
+            "newValue" : "connection-property"
           }
         }
       ]
