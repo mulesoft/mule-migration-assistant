@@ -28,7 +28,15 @@ public class MoveAttributeToChildNode extends MigrationStep {
                         node.removeAttribute(att);
                         child.setAttribute(att);
 
-                        getReportingStrategy().log("Moved attribute " + att.getName() + "=\""+ att.getValue() + "\" to child node <" + node.getQualifiedName() + ">", RULE_APPLIED);
+                        getReportingStrategy().log("Moved attribute " + att.getName() + "=\""+ att.getValue() + "\" to child node <" + child.getQualifiedName() + ">", RULE_APPLIED);
+                    }
+                    else {
+                        Element newChild = new Element(getChildNode(), node.getNamespace());
+                        node.removeAttribute(att);
+                        newChild.setAttribute(att);
+                        node.addContent(newChild);
+
+                        getReportingStrategy().log("Moved attribute " + att.getName() + "=\""+ att.getValue() + "\" to new child node <" + newChild.getQualifiedName() + ">", RULE_APPLIED);
                     }
                 }
             }
