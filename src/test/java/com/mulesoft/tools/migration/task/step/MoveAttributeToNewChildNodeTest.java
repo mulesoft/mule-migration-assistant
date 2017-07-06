@@ -4,18 +4,21 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
+import java.util.List;
+
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getNodesFromFile;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-public class MoveAttributeToChildNodeTest {
+public class MoveAttributeToNewChildNodeTest {
 
-    private MoveAttributeToChildNode moveAttStep;
+    private MoveAttributeToNewChildNode moveAttStep;
 
     private static final String EXAMPLE_FILE_PATH = "src/test/resources/munit/examples/sample-file.xml";
 
     @Test
     public void moveToChildNode() throws Exception {
-        moveAttStep = new MoveAttributeToChildNode("messageProcessor", "with-attributes");
+        moveAttStep = new MoveAttributeToNewChildNode("messageProcessor", "with-attributes");
         getNodesFromFile("//mock:when", moveAttStep, EXAMPLE_FILE_PATH);
         moveAttStep.execute();
         Element node = moveAttStep.getNodes().get(0);
@@ -24,16 +27,17 @@ public class MoveAttributeToChildNodeTest {
 
     @Test
     public void moveAttributeToNotDefinedChildNode() throws Exception {
-        moveAttStep = new MoveAttributeToChildNode("messageProcessor", "pepe");
+        moveAttStep = new MoveAttributeToNewChildNode("messageProcessor", "pepe");
         getNodesFromFile("//mock:when", moveAttStep, EXAMPLE_FILE_PATH);
         moveAttStep.execute();
         Element node = moveAttStep.getNodes().get(0);
-        assertNull(node.getChild("pepe", Namespace.getNamespace("mock", "http://www.mulesoft.org/schema/mule/mock")));
+        final List<Element> children = node.getChildren();
+        assertNotNull(node.getChild("pepe", Namespace.getNamespace("mock", "http://www.mulesoft.org/schema/mule/mock")));
     }
 
     @Test
     public void moveAttributeNotExistsOnNode() throws Exception {
-        moveAttStep = new MoveAttributeToChildNode("pepe", "with-attributes");
+        moveAttStep = new MoveAttributeToNewChildNode("pepe", "with-attributes");
         getNodesFromFile("//mock:when", moveAttStep, EXAMPLE_FILE_PATH);
         moveAttStep.execute();
         Element node = moveAttStep.getNodes().get(0);

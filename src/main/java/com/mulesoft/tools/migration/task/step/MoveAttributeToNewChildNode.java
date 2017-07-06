@@ -6,17 +6,17 @@ import org.jdom2.Element;
 
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
-public class MoveAttributeToChildNode extends MigrationStep {
+public class MoveAttributeToNewChildNode extends MigrationStep {
 
     private String attribute;
     private String childNode;
 
-    public MoveAttributeToChildNode(String attribute, String childNode) {
+    public MoveAttributeToNewChildNode(String attribute, String childNode) {
         setAttribute(attribute);
         setChildNode(childNode);
     }
 
-    public MoveAttributeToChildNode(){}
+    public MoveAttributeToNewChildNode(){}
 
     public void execute() throws Exception {
         try {
@@ -29,6 +29,14 @@ public class MoveAttributeToChildNode extends MigrationStep {
                         child.setAttribute(att);
 
                         getReportingStrategy().log("Moved attribute " + att.getName() + "=\""+ att.getValue() + "\" to child node <" + child.getQualifiedName() + ">", RULE_APPLIED);
+                    }
+                    else {
+                        Element newChild = new Element(getChildNode(), node.getNamespace());
+                        node.removeAttribute(att);
+                        newChild.setAttribute(att);
+                        node.addContent(newChild);
+
+                        getReportingStrategy().log("Moved attribute " + att.getName() + "=\""+ att.getValue() + "\" to new child node <" + newChild.getQualifiedName() + ">", RULE_APPLIED);
                     }
                 }
             }
