@@ -1,0 +1,83 @@
+{
+  "tasks": [
+    {
+      "xpathSelector" : "//munit:test/munit:set",
+      "taskDescriptor" : "Update MUnit Set Event processor",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Update attribute expectedValue to new DSL",
+          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "parameters" : {
+            "nodeNamespace" : "munit",
+            "newNodeName" : "set-event"
+          }
+        },
+        {
+          "stepDescriptor" : "Move Set Payload property to a child node",
+          "type" : "com.mulesoft.tools.migration.task.step.CreateChildNodeFromAttribute",
+          "parameters" : {
+            "attribute" : "payload"
+          }
+        },
+        {
+          "stepDescriptor" : "Move encoding attribute to child node payload",
+          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToChildNode",
+          "parameters" : {
+            "attribute" : "encoding",
+            "childNode" : "payload"
+          }
+        },
+        {
+          "stepDescriptor" : "Move mimeType attribute to child node payload",
+          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToChildNode",
+          "parameters" : {
+            "attribute" : "mimeType",
+            "childNode" : "payload"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//munit:test/munit:set-event/descendant::*[attribute::mimeType]",
+      "taskDescriptor" : "Update MUnit Set Event processor",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Update MimeType property name to MediaType",
+          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "parameters" : {
+            "attributeName" : "mimeType",
+            "newName" : "mediaType"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//munit:test/munit:set-event/munit:invocation-properties",
+      "taskDescriptor" : "Invocation Properties are now Variables",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Change invocation properties to variables",
+          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "parameters" : {
+            "nodeNamespace" : "munit",
+            "newNodeName" : "variables"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//munit:test/munit:set-event/munit:variables/munit:invocation-property",
+      "taskDescriptor" : "Update each invocation property on Set Event to variable",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Update invocation property on Set Event to variable",
+          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "parameters" : {
+            "nodeNamespace" : "munit",
+            "newNodeName" : "variable"
+          }
+        }
+      ]
+    }
+  ]
+}

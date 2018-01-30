@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.*;
 
@@ -20,10 +21,12 @@ public class MigrationJobMunitTest {
     private MigrationJob migrationJob;
     private Document docRestoreFile1;
     private Document docRestoreFile2;
+    private Document docRestoreFile3;
 
     private static final String EXAMPLE_1_FILE_PATH = "src/test/resources/munit/examples/sample-file.xml";
     private static final String EXAMPLE_2_FILE_PATH = "src/test/resources/munit/examples/set-payload.xml";
-    private static final String TASKS_FILE_PATH = "src/test/resources/munit/tasks/munit-tasks.json";
+    private static final String EXAMPLE_3_FILE_PATH = "src/test/resources/munit/examples/munit-sections-sample.xml";
+    private static final String MUNIT_TASKS_PATH = "src/test/resources/munit/tasks";
 
     @Before
     public void setUp() throws Exception {
@@ -31,12 +34,15 @@ public class MigrationJobMunitTest {
         filePath1.add(EXAMPLE_1_FILE_PATH);
         ArrayList<String> filePath2 = new ArrayList<String>();
         filePath2.add(EXAMPLE_2_FILE_PATH);
+        ArrayList<String> filePath3 = new ArrayList<String>();
+        filePath3.add(EXAMPLE_3_FILE_PATH);
 
         migrationJob = new MigrationJob();
         migrationJob.setDocuments(filePath1);
 
         docRestoreFile1 = DocumentHelper.getDocument(filePath1.get(0));
         docRestoreFile2 = DocumentHelper.getDocument(filePath2.get(0));
+        docRestoreFile3 = DocumentHelper.getDocument(filePath3.get(0));
     }
 
     @Ignore
@@ -143,15 +149,34 @@ public class MigrationJobMunitTest {
         ArrayList<String> files = new ArrayList<String>(Arrays.asList(EXAMPLE_2_FILE_PATH, EXAMPLE_1_FILE_PATH));
 
         migrationJob.setDocuments(files);
-        migrationJob.setConfigFilePath(TASKS_FILE_PATH);
+        migrationJob.setConfigFileDir(MUNIT_TASKS_PATH);
         migrationJob.execute();
     }
 
+    @Test
+    public void executeMockTask() throws Exception {
+        ArrayList<String> files = new ArrayList<String>(Arrays.asList("src/test/resources/munit/examples/mock-sample.xml"));
+
+        migrationJob.setDocuments(files);
+        migrationJob.setConfigFileDir(MUNIT_TASKS_PATH);
+        migrationJob.execute();
+    }
+
+    @Test
+    public void executeCompleteMUnitMigrationTasks() throws Exception {
+        ArrayList<String> files = new ArrayList<String>(Arrays.asList(EXAMPLE_3_FILE_PATH));
+
+        migrationJob.setDocuments(files);
+        migrationJob.setConfigFileDir(MUNIT_TASKS_PATH);
+        migrationJob.setOnErrorStop(false);
+        migrationJob.execute();
+    }
 
     @After
     public void restoreFileState() throws Exception {
         DocumentHelper.restoreTestDocument(docRestoreFile1, EXAMPLE_1_FILE_PATH);
         DocumentHelper.restoreTestDocument(docRestoreFile2, EXAMPLE_2_FILE_PATH);
+        DocumentHelper.restoreTestDocument(docRestoreFile3, EXAMPLE_3_FILE_PATH);
     }
 
     private void setTasksForAssertsNodesMigration() {

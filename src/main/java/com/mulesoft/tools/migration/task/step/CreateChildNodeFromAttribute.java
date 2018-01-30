@@ -25,7 +25,7 @@ public class CreateChildNodeFromAttribute extends MigrationStep {
                     child.setNamespace(node.getNamespace());
                     Attribute newAtt = new Attribute("value", att.getValue());
                     child.setAttribute(newAtt);
-                    node.addContent(child);
+                    node.addContent(0,child);
                     node.removeAttribute(att);
 
                     getReportingStrategy().log("Child node from attribute created:" + attribute, RULE_APPLIED, this.getDocument().getBaseURI(), null , this);

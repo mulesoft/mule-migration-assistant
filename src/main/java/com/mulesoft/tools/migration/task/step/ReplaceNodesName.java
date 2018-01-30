@@ -27,13 +27,21 @@ public class ReplaceNodesName extends MigrationStep {
                         String legacyNode = node.getQualifiedName();
                         node.setNamespace(namespace);
                         node.setName(getNewNodeName());
-
                         getReportingStrategy().log("Node <" + legacyNode + "> has been replaced with <" + node.getQualifiedName() + "> node" , RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
                     }
                 }
             }
         } catch (Exception ex) {
             throw new MigrationStepException("Replace node name exception. " + ex.getMessage());
+        }
+    }
+
+    public void replaceChildNodesNamespace(Element node, Namespace namespace) {
+        node.setNamespace(namespace);
+        if (node.getChildren().size() > 0) {
+            for (Element childNode : node.getChildren()) {
+                replaceChildNodesNamespace(childNode, namespace);
+            }
         }
     }
 
