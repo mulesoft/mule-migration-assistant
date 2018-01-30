@@ -28,7 +28,7 @@ public class DeleteChildNode extends MigrationStep {
                 if (element != null) {
                     node.removeChild(getNode(),namespace);
 
-                    getReportingStrategy().log("Child Node <" + node.getQualifiedName() + "> was deleted", RULE_APPLIED);
+                    getReportingStrategy().log("Child Node <" + node.getQualifiedName() + "> was deleted", RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
                 }
             }
         } catch (Exception ex) {

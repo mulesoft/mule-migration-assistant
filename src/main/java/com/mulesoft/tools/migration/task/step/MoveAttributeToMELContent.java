@@ -4,7 +4,7 @@ import com.mulesoft.tools.migration.exception.MigrationStepException;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
-import static com.mulesoft.tools.migration.mel.MELUtils.getMELExpressionFromValue;
+import static com.mulesoft.tools.migration.tools.mel.MELUtils.getMELExpressionFromValue;
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 public class MoveAttributeToMELContent extends MigrationStep {
@@ -25,7 +25,7 @@ public class MoveAttributeToMELContent extends MigrationStep {
                     node.removeAttribute(att);
                     node.setText(getMELExpressionFromValue(att.getValue()));
 
-                    getReportingStrategy().log("Attribute" + att + "was replaced by the following MEL: " + node.getText(), RULE_APPLIED);
+                    getReportingStrategy().log("Attribute" + att + "was replaced by the following MEL: " + node.getText(), RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
                 }
             }
         }catch (Exception ex) {

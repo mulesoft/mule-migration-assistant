@@ -3,9 +3,9 @@ package com.mulesoft.tools.migration;
 
 import com.mulesoft.tools.migration.builder.TaskBuilder;
 import com.mulesoft.tools.migration.exception.MigrationJobException;
-import com.mulesoft.tools.migration.report.ConsoleReportStrategy;
-import com.mulesoft.tools.migration.report.ReportCategory;
+import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
+import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 import com.mulesoft.tools.migration.task.MigrationTask;
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Document;
@@ -65,7 +65,7 @@ public class MigrationJob {
         try {
             for (String filePath : this.filePaths){
                 this.document = generateDoc(filePath);
-                getReportingStrategy().log(filePath, WORKING_WITH_FILE);
+                getReportingStrategy().log(filePath, WORKING_WITH_FILE, filePath, null, null);
                 for (MigrationTask task : tasks) {
                     task.setReportingStrategy(this.reportingStrategy);
                     task.setDocument(this.document);
@@ -75,6 +75,11 @@ public class MigrationJob {
                 XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
                 xmlOutputter.output(this.document, new FileOutputStream(filePath));
             }
+
+            if (this.reportingStrategy instanceof HTMLReportStrategy) {
+                ((HTMLReportStrategy) this.reportingStrategy).generateReport();
+            }
+
         } catch (Exception ex) {
             throw new MigrationJobException("Failed to migrate the file: " + this.document.getBaseURI() + ". " + ex.getMessage() + "/n" + ex.getStackTrace());
         }

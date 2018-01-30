@@ -1,4 +1,4 @@
-package com.mulesoft.tools.migration.mel;
+package com.mulesoft.tools.migration.tools.mel;
 
 import java.util.Iterator;
 import java.util.Map;

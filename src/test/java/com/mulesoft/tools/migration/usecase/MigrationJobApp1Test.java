@@ -1,6 +1,7 @@
 package com.mulesoft.tools.migration.usecase;
 
 import com.mulesoft.tools.migration.MigrationJob;
+import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 import org.jdom2.Document;
 import org.junit.After;
 import org.junit.Before;

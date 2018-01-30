@@ -1,4 +1,4 @@
-package com.mulesoft.tools.migration.dw;
+package com.mulesoft.tools.migration.tools.dw;
 
 
 import static org.mule.weave.v2.V2LangMigrant.migrateToV2;

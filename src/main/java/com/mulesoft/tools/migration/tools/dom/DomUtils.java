@@ -1,4 +1,4 @@
-package com.mulesoft.tools.migration.dom;
+package com.mulesoft.tools.migration.tools.dom;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;

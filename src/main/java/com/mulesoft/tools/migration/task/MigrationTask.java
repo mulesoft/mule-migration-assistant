@@ -2,7 +2,7 @@ package com.mulesoft.tools.migration.task;
 
 import com.google.common.base.Strings;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
-import com.mulesoft.tools.migration.report.ConsoleReportStrategy;
+import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.task.step.MigrationStep;
 import org.jdom2.Document;
@@ -52,23 +52,21 @@ public class MigrationTask {
             }
             nodes = getNodesFromXPath(this.xpathSelector);
             if (nodes.size() > 0) {
-                getReportingStrategy().log(this.xpathSelector + " (" + this.taskDescriptor + ")", WORKING_WITH_NODES);
+                getReportingStrategy().log(this.xpathSelector + " (" + this.taskDescriptor + ")", WORKING_WITH_NODES, this.doc.getBaseURI(), this, null);
                 for (MigrationStep step : steps) {
                     step.setReportingStrategy(this.reportingStrategy);
                     step.setDocument(this.doc);
                     step.setOnErrorStop(this.onErrorStop);
                     step.setNodes(nodes);
-                    getReportingStrategy().log(step.getStepDescriptor(), TRYING_TO_APPLY);
+                    getReportingStrategy().log(step.getStepDescriptor(), TRYING_TO_APPLY, this.doc.getBaseURI(), this, null);
                     step.execute();
                 }
-            } else {
-                getReportingStrategy().log("Task " + this.xpathSelector + " - " + "No elements to migrate found.", SKIPPED);
             }
         } catch (Exception ex) {
             if(ex.getMessage().endsWith("has not been declared.")) {
-                getReportingStrategy().log("Task " + this.xpathSelector + " - " + ex.getMessage(), SKIPPED);
+                getReportingStrategy().log("Task " + this.xpathSelector + " - " + ex.getMessage(), SKIPPED, this.doc.getBaseURI(), this, null);
             } else {
-                getReportingStrategy().log("Executing the task for:" + this.xpathSelector + ":" + ex.getMessage(), ERROR);
+                getReportingStrategy().log("Executing the task for:" + this.xpathSelector + ":" + ex.getMessage(), ERROR, this.doc.getBaseURI(), this, null);
                 ex.printStackTrace();
             }
             if(onErrorStop) {

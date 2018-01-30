@@ -1,7 +1,6 @@
 package com.mulesoft.tools.migration.task.step;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.report.ReportCategory;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
@@ -29,7 +28,7 @@ public class CreateChildNodeFromAttribute extends MigrationStep {
                     node.addContent(0,child);
                     node.removeAttribute(att);
 
-                    getReportingStrategy().log("Child node from attribute created:" + attribute, RULE_APPLIED);
+                    getReportingStrategy().log("Child node from attribute created:" + attribute, RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
                 }
             }
         }catch (Exception ex) {

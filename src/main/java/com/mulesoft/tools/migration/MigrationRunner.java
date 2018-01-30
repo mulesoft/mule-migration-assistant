@@ -1,8 +1,9 @@
 package com.mulesoft.tools.migration;
 
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
-import com.mulesoft.tools.migration.report.ConsoleReportStrategy;
+import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
+import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 import org.apache.commons.cli.*;
 
 import java.util.ArrayList;
@@ -81,8 +82,11 @@ public class MigrationRunner {
             }
 
             if(line.hasOption(REPORT)) {
-                //change this to the specific strategy
-                this.reportingStrategy = new ConsoleReportStrategy();
+                if(line.getOptionValue(REPORT).equals("html")) {
+                    this.reportingStrategy = new HTMLReportStrategy();
+                } else {
+                    this.reportingStrategy = new ConsoleReportStrategy();
+                }
             }else {
                 this.reportingStrategy = new ConsoleReportStrategy();
             }

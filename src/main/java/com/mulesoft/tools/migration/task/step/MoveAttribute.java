@@ -5,7 +5,7 @@ import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import static com.mulesoft.tools.migration.dom.DomUtils.findChildElement;
+import static com.mulesoft.tools.migration.tools.dom.DomUtils.findChildElement;
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -51,7 +51,7 @@ public class MoveAttribute extends MigrationStep {
                                 node.removeAttribute(attribute);
                                 element.setAttribute(attribute);
 
-                                getReportingStrategy().log("Moved " + attribute + " attribute into <" + node.getQualifiedName() + ">", RULE_APPLIED);
+                                getReportingStrategy().log("Moved " + attribute + " attribute into <" + node.getQualifiedName() + ">", RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
                             }
                         }
                     }

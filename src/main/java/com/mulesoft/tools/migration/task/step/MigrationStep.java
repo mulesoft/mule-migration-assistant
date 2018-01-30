@@ -1,6 +1,6 @@
 package com.mulesoft.tools.migration.task.step;
 
-import com.mulesoft.tools.migration.report.ConsoleReportStrategy;
+import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import org.jdom2.Document;
 import org.jdom2.Element;

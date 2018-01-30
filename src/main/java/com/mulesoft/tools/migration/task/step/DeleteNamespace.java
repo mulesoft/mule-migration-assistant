@@ -33,7 +33,7 @@ public class DeleteNamespace extends MigrationStep {
                     if (schemaLocationDefined(muleNode)) {
                         muleSchemaLocation.setValue(muleSchemaLocation.getValue().replace(getSchemaLocationUrl(), "").replace(getNamespaceUri(), ""));
 
-                        getReportingStrategy().log("Namespace " + namespace + ":" + nspc.getURI() + " was deleted", RULE_APPLIED);
+                        getReportingStrategy().log("Namespace " + namespace + ":" + nspc.getURI() + " was deleted", RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
                     }
                 }
             }

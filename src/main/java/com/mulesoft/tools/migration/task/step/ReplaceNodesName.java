@@ -27,12 +27,7 @@ public class ReplaceNodesName extends MigrationStep {
                         String legacyNode = node.getQualifiedName();
                         node.setNamespace(namespace);
                         node.setName(getNewNodeName());
-
-                        for (Element childNode : node.getChildren()) {
-                            replaceChildNodesNamespace(childNode, namespace);
-                        }
-
-                        getReportingStrategy().log("Node <" + legacyNode + "> has been replaced with <" + node.getQualifiedName() + "> node" , RULE_APPLIED);
+                        getReportingStrategy().log("Node <" + legacyNode + "> has been replaced with <" + node.getQualifiedName() + "> node" , RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
                     }
                 }
             }

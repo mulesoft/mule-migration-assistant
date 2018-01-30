@@ -16,7 +16,7 @@ public class UpdateMuleMessageContent extends MigrationStep {
                 if(null != node.getText()) {
                     node.setText(MuleMessageUtils.replaceContent(node.getText()));
 
-                    getReportingStrategy().log("Mule Message content has been updated for node <" + node.getQualifiedName() + "> to " + node.getText(), RULE_APPLIED);
+                    getReportingStrategy().log("Mule Message content has been updated for node <" + node.getQualifiedName() + "> to " + node.getText(), RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
                 }
             }
         } catch (Exception ex) {

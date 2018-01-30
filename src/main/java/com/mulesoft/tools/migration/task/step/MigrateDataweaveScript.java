@@ -1,6 +1,6 @@
 package com.mulesoft.tools.migration.task.step;
 
-import com.mulesoft.tools.migration.dw.DataweaveUtils;
+import com.mulesoft.tools.migration.tools.dw.DataweaveUtils;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import org.jdom2.Element;
 
@@ -17,7 +17,7 @@ public class MigrateDataweaveScript extends MigrationStep {
 
                 if(!isEmpty(node.getText())) {
                     node.setText(DataweaveUtils.getMigratedScript(node.getText()));
-                    getReportingStrategy().log("Dataweave script has been migrated to Dataweave 2", RULE_APPLIED);
+                    getReportingStrategy().log("Dataweave script has been migrated to Dataweave 2", RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
                 }
             }
         } catch (Exception ex) {

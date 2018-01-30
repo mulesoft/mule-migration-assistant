@@ -44,7 +44,7 @@ public class MoveNodeToNewChildNode extends MigrationStep {
                         newTargetElement.getChildren().add(sourceElement);
                         node.addContent(newTargetElement);
                     }
-                    getReportingStrategy().log("<" + sourceElement.getQualifiedName() + "> node is now a child of <" + (targetElement != null ? targetElement.getQualifiedName() : newTargetElement.getQualifiedName()) + "> node", RULE_APPLIED);
+                    getReportingStrategy().log("<" + sourceElement.getQualifiedName() + "> node is now a child of <" + (targetElement != null ? targetElement.getQualifiedName() : newTargetElement.getQualifiedName()) + "> node", RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
                 }
             }
         } catch (Exception ex) {
