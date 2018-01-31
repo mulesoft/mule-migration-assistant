@@ -10,9 +10,29 @@
 
     <name>Migration Tool</name>
 
+    <url>https://github.com/mulesoft-labs/mule4-migration-tool</url>
+
+    <licenses>
+        <license>
+            <name>CPAL v1.0</name>
+            <url>https://www.mulesoft.com/CPAL</url>
+        </license>
+    </licenses>
+    <issueManagement>
+        <system>jira</system>
+        <url>https://www.mulesoft.org/jira/browse/MMT</url>
+    </issueManagement>
+    <organization>
+        <name>MuleSoft Inc</name>
+        <url>https://www.mulesoft.com/</url>
+    </organization>
+
+
     <properties>
         <commonsCliVersion>1.2</commonsCliVersion>
         <lib-dir>${basedir}/lib</lib-dir>
+        <licensePath>LICENSE_HEADER.txt</licensePath>
+        <license.plugin.version>2.6</license.plugin.version>
     </properties>
 
     <build>
@@ -70,6 +90,28 @@
                         <id>default-report</id>
                         <phase>prepare-package</phase>
                         <goals><goal>report</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${license.plugin.version}</version>
+                <configuration>
+                    <header>${licensePath}</header>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
