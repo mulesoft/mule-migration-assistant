@@ -24,14 +24,17 @@ import static org.junit.Assert.*;
 
 public class MigrationJobMunitTest {
 
+//    @TODO Improve this shit
     private MigrationJob migrationJob;
     private Document docRestoreFile1;
     private Document docRestoreFile2;
     private Document docRestoreFile3;
+    private Document docRestoreFile4;
 
     private static final String EXAMPLE_1_FILE_PATH = "src/test/resources/munit/examples/sample-file.xml";
     private static final String EXAMPLE_2_FILE_PATH = "src/test/resources/munit/examples/set-payload.xml";
     private static final String EXAMPLE_3_FILE_PATH = "src/test/resources/munit/examples/munit-sections-sample.xml";
+    private static final String EXAMPLE_4_FILE_PATH = "src/test/resources/munit/examples/mock-sample.xml";
     private static final String MUNIT_TASKS_PATH = "src/test/resources/munit/tasks";
 
     @Before
@@ -42,6 +45,8 @@ public class MigrationJobMunitTest {
         filePath2.add(EXAMPLE_2_FILE_PATH);
         ArrayList<String> filePath3 = new ArrayList<String>();
         filePath3.add(EXAMPLE_3_FILE_PATH);
+        ArrayList<String> filePath4 = new ArrayList<String>();
+        filePath4.add(EXAMPLE_4_FILE_PATH);
 
         migrationJob = new MigrationJob();
         migrationJob.setDocuments(filePath1);
@@ -49,6 +54,7 @@ public class MigrationJobMunitTest {
         docRestoreFile1 = DocumentHelper.getDocument(filePath1.get(0));
         docRestoreFile2 = DocumentHelper.getDocument(filePath2.get(0));
         docRestoreFile3 = DocumentHelper.getDocument(filePath3.get(0));
+        docRestoreFile4 = DocumentHelper.getDocument(filePath4.get(0));
     }
 
     @Ignore
@@ -161,7 +167,7 @@ public class MigrationJobMunitTest {
 
     @Test
     public void executeMockTask() throws Exception {
-        ArrayList<String> files = new ArrayList<String>(Arrays.asList("src/test/resources/munit/examples/mock-sample.xml"));
+        ArrayList<String> files = new ArrayList<String>(Arrays.asList(EXAMPLE_4_FILE_PATH));
 
         migrationJob.setDocuments(files);
         migrationJob.setConfigFileDir(MUNIT_TASKS_PATH);
@@ -183,6 +189,7 @@ public class MigrationJobMunitTest {
         DocumentHelper.restoreTestDocument(docRestoreFile1, EXAMPLE_1_FILE_PATH);
         DocumentHelper.restoreTestDocument(docRestoreFile2, EXAMPLE_2_FILE_PATH);
         DocumentHelper.restoreTestDocument(docRestoreFile3, EXAMPLE_3_FILE_PATH);
+        DocumentHelper.restoreTestDocument(docRestoreFile4, EXAMPLE_4_FILE_PATH);
     }
 
     private void setTasksForAssertsNodesMigration() {
