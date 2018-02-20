@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.helper;
 
@@ -22,28 +22,29 @@ import java.util.List;
 
 public class DocumentHelper {
 
-    public static Document getDocument(String path) throws Exception {
-        SAXBuilder saxBuilder = new SAXBuilder();
-        File file = new File(path);
-        Document document = saxBuilder.build(file);
-        return document;
-    }
+  public static Document getDocument(String path) throws Exception {
+    SAXBuilder saxBuilder = new SAXBuilder();
+    File file = new File(path);
+    Document document = saxBuilder.build(file);
+    return document;
+  }
 
-    public static void restoreTestDocument(Document doc, String path) throws Exception {
-        XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
-        xmlOutputter.output(doc, new FileOutputStream(path));
-    }
+  public static void restoreTestDocument(Document doc, String path) throws Exception {
+    XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
+    xmlOutputter.output(doc, new FileOutputStream(path));
+  }
 
-    public static List<Element> getElementsFromDocument(Document doc, String xPathExpression) {
-        XPathExpression<Element> xpath = XPathFactory.instance().compile(xPathExpression, Filters.element(), null, doc.getRootElement().getAdditionalNamespaces());
-        List<Element> nodes = xpath.evaluate(doc);
-        return nodes;
-    }
+  public static List<Element> getElementsFromDocument(Document doc, String xPathExpression) {
+    XPathExpression<Element> xpath =
+        XPathFactory.instance().compile(xPathExpression, Filters.element(), null, doc.getRootElement().getAdditionalNamespaces());
+    List<Element> nodes = xpath.evaluate(doc);
+    return nodes;
+  }
 
-    public static void getNodesFromFile(String Xpath, MigrationStep step, String filePath) throws Exception {
-        Document document = getDocument(filePath);
-        List<Element> nodes = getElementsFromDocument(document, Xpath);
-        step.setDocument(document);
-        step.setNodes(nodes);
-    }
+  public static void getNodesFromFile(String Xpath, MigrationStep step, String filePath) throws Exception {
+    Document document = getDocument(filePath);
+    List<Element> nodes = getElementsFromDocument(document, Xpath);
+    step.setDocument(document);
+    step.setNodes(nodes);
+  }
 }

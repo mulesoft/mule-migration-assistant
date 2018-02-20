@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.task.step;
 
@@ -12,47 +12,54 @@ import org.jdom2.Element;
 
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
+/**
+ * Update the name of an attribute
+ * 
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class UpdateAttributeName extends MigrationStep {
 
-    private String attributeName;
-    private String newName;
+  private String attributeName;
+  private String newName;
 
-    public UpdateAttributeName(String attributeName, String newName) {
-        setAttributeName(attributeName);
-        setNewName(newName);
-    }
+  public UpdateAttributeName(String attributeName, String newName) {
+    setAttributeName(attributeName);
+    setNewName(newName);
+  }
 
-    public UpdateAttributeName() {}
+  public UpdateAttributeName() {}
 
-    public void execute() throws Exception {
-        try {
-            for (Element node : getNodes()) {
-                Attribute att = node.getAttribute(getAttributeName());
-                if (att != null) {
-                    att.setName(getNewName());
+  public void execute() throws Exception {
+    try {
+      for (Element node : getNodes()) {
+        Attribute att = node.getAttribute(getAttributeName());
+        if (att != null) {
+          att.setName(getNewName());
 
-                    getReportingStrategy().log("Attribute " + attributeName + " updated it's name to " + getNewName(), RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
-                }
-            }
-        } catch (Exception ex) {
-            throw new MigrationStepException("Update attribute name exception. " + ex.getMessage());
+          getReportingStrategy().log("Attribute " + attributeName + " updated it's name to " + getNewName(), RULE_APPLIED,
+                                     this.getDocument().getBaseURI(), null, this);
         }
+      }
+    } catch (Exception ex) {
+      throw new MigrationStepException("Update attribute name exception. " + ex.getMessage());
     }
+  }
 
-    public String getAttributeName() {
-        return attributeName;
-    }
+  public String getAttributeName() {
+    return attributeName;
+  }
 
-    public void setAttributeName(String attributeName) {
-        this.attributeName = attributeName;
-    }
+  public void setAttributeName(String attributeName) {
+    this.attributeName = attributeName;
+  }
 
-    public String getNewName() {
-        return newName;
-    }
+  public String getNewName() {
+    return newName;
+  }
 
-    public void setNewName(String newName) {
-        this.newName = newName;
-    }
+  public void setNewName(String newName) {
+    this.newName = newName;
+  }
 
 }

@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.task.step;
 
@@ -15,120 +15,129 @@ import static com.mulesoft.tools.migration.tools.dom.DomUtils.findChildElement;
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+/**
+ * something with attrs //TODO improve doc
+ * 
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class GetAttributeFromReference extends MigrationStep {
 
 
-    private String sourceReferenceAttribute;
-    private String targetReferenceAttribute;
-    private String referenceNode;
-    private String referenceNodeNamespace;
-    private String referenceNodeNamespaceUri;
-    private String referenceChildNode;
-    private String referenceAttribute;
+  private String sourceReferenceAttribute;
+  private String targetReferenceAttribute;
+  private String referenceNode;
+  private String referenceNodeNamespace;
+  private String referenceNodeNamespaceUri;
+  private String referenceChildNode;
+  private String referenceAttribute;
 
-    public GetAttributeFromReference(String sourceReferenceAttribute, String targetReferenceAttribute,
-                                     String referenceNode, String referenceNodeNamespace,
-                                     String referenceNodeNamespaceUri, String referenceChildNode,
-                                     String referenceAttribute) {
+  public GetAttributeFromReference() {}
 
-        this.sourceReferenceAttribute = sourceReferenceAttribute;
-        this.targetReferenceAttribute = targetReferenceAttribute;
-        this.referenceNode = referenceNode;
-        this.referenceNodeNamespace = referenceNodeNamespace;
-        this.referenceNodeNamespaceUri = referenceNodeNamespaceUri;
-        this.referenceChildNode = referenceChildNode;
-        this.referenceAttribute = referenceAttribute;
-    }
+  public GetAttributeFromReference(String sourceReferenceAttribute, String targetReferenceAttribute,
+                                   String referenceNode, String referenceNodeNamespace,
+                                   String referenceNodeNamespaceUri, String referenceChildNode,
+                                   String referenceAttribute) {
 
-    public GetAttributeFromReference(){}
+    this.sourceReferenceAttribute = sourceReferenceAttribute;
+    this.targetReferenceAttribute = targetReferenceAttribute;
+    this.referenceNode = referenceNode;
+    this.referenceNodeNamespace = referenceNodeNamespace;
+    this.referenceNodeNamespaceUri = referenceNodeNamespaceUri;
+    this.referenceChildNode = referenceChildNode;
+    this.referenceAttribute = referenceAttribute;
+  }
 
-    public void execute() throws Exception {
-        try {
 
-            if (!isBlank(getSourceReferenceAttribute()) && !isBlank(getTargetReferenceAttribute())) {
 
-                String referenceValue;
-                Namespace namespace;
+  public void execute() throws Exception {
+    try {
 
-                for (Element node : getNodes()) {
-                    referenceValue = node.getAttributeValue(getSourceReferenceAttribute());
-                    namespace = Namespace.getNamespace(getReferenceNodeNamespace(), getReferenceNodeNamespaceUri());
-                    if(null != namespace) {
-                        Element referenceElement = findChildElement(getReferenceNode(), referenceValue, getTargetReferenceAttribute(),
-                                namespace, getDocument().getRootElement());
-                        if (null != referenceElement && null != getReferenceChildNode()) {
-                            Element referenceChildElement = findChildElement(getReferenceChildNode(), referenceElement);
-                            if (null != referenceChildElement) {
-                                Attribute originalAttribute = referenceChildElement.getAttribute(getReferenceAttribute());
-                                if(null != originalAttribute) {
-                                    Attribute newAttribute = new Attribute(originalAttribute.getName(), originalAttribute.getValue());
-                                    node.setAttribute(newAttribute);
+      if (!isBlank(getSourceReferenceAttribute()) && !isBlank(getTargetReferenceAttribute())) {
 
-                                    getReportingStrategy().log("Get attribute from reference:" + newAttribute, RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
-                                }
-                            }
-                        }
-                    }
+        String referenceValue;
+        Namespace namespace;
+
+        for (Element node : getNodes()) {
+          referenceValue = node.getAttributeValue(getSourceReferenceAttribute());
+          namespace = Namespace.getNamespace(getReferenceNodeNamespace(), getReferenceNodeNamespaceUri());
+          if (null != namespace) {
+            Element referenceElement = findChildElement(getReferenceNode(), referenceValue, getTargetReferenceAttribute(),
+                                                        namespace, getDocument().getRootElement());
+            if (null != referenceElement && null != getReferenceChildNode()) {
+              Element referenceChildElement = findChildElement(getReferenceChildNode(), referenceElement);
+              if (null != referenceChildElement) {
+                Attribute originalAttribute = referenceChildElement.getAttribute(getReferenceAttribute());
+                if (null != originalAttribute) {
+                  Attribute newAttribute = new Attribute(originalAttribute.getName(), originalAttribute.getValue());
+                  node.setAttribute(newAttribute);
+
+                  getReportingStrategy().log("Get attribute from reference:" + newAttribute, RULE_APPLIED,
+                                             this.getDocument().getBaseURI(), null, this);
                 }
+              }
             }
-        }catch (Exception ex) {
-            throw new MigrationStepException("Get attribute from reference exception. " + ex.getMessage());
+          }
         }
+      }
+    } catch (Exception ex) {
+      throw new MigrationStepException("Get attribute from reference exception. " + ex.getMessage());
     }
+  }
 
-    public String getSourceReferenceAttribute() {
-        return sourceReferenceAttribute;
-    }
+  public String getSourceReferenceAttribute() {
+    return sourceReferenceAttribute;
+  }
 
-    public void setSourceReferenceAttribute(String sourceReferenceAttribute) {
-        this.sourceReferenceAttribute = sourceReferenceAttribute;
-    }
+  public void setSourceReferenceAttribute(String sourceReferenceAttribute) {
+    this.sourceReferenceAttribute = sourceReferenceAttribute;
+  }
 
-    public String getTargetReferenceAttribute() {
-        return targetReferenceAttribute;
-    }
+  public String getTargetReferenceAttribute() {
+    return targetReferenceAttribute;
+  }
 
-    public void setTargetReferenceAttribute(String targetReferenceAttribute) {
-        this.targetReferenceAttribute = targetReferenceAttribute;
-    }
+  public void setTargetReferenceAttribute(String targetReferenceAttribute) {
+    this.targetReferenceAttribute = targetReferenceAttribute;
+  }
 
-    public String getReferenceNode() {
-        return referenceNode;
-    }
+  public String getReferenceNode() {
+    return referenceNode;
+  }
 
-    public void setReferenceNode(String referenceNode) {
-        this.referenceNode = referenceNode;
-    }
+  public void setReferenceNode(String referenceNode) {
+    this.referenceNode = referenceNode;
+  }
 
-    public String getReferenceNodeNamespace() {
-        return referenceNodeNamespace;
-    }
+  public String getReferenceNodeNamespace() {
+    return referenceNodeNamespace;
+  }
 
-    public void setReferenceNodeNamespace(String referenceNodeNamespace) {
-        this.referenceNodeNamespace = referenceNodeNamespace;
-    }
+  public void setReferenceNodeNamespace(String referenceNodeNamespace) {
+    this.referenceNodeNamespace = referenceNodeNamespace;
+  }
 
-    public String getReferenceNodeNamespaceUri() {
-        return referenceNodeNamespaceUri;
-    }
+  public String getReferenceNodeNamespaceUri() {
+    return referenceNodeNamespaceUri;
+  }
 
-    public void setReferenceNodeNamespaceUri(String referenceNodeNamespaceUri) {
-        this.referenceNodeNamespaceUri = referenceNodeNamespaceUri;
-    }
+  public void setReferenceNodeNamespaceUri(String referenceNodeNamespaceUri) {
+    this.referenceNodeNamespaceUri = referenceNodeNamespaceUri;
+  }
 
-    public String getReferenceChildNode() {
-        return referenceChildNode;
-    }
+  public String getReferenceChildNode() {
+    return referenceChildNode;
+  }
 
-    public void setReferenceChildNode(String referenceChildNode) {
-        this.referenceChildNode = referenceChildNode;
-    }
+  public void setReferenceChildNode(String referenceChildNode) {
+    this.referenceChildNode = referenceChildNode;
+  }
 
-    public String getReferenceAttribute() {
-        return referenceAttribute;
-    }
+  public String getReferenceAttribute() {
+    return referenceAttribute;
+  }
 
-    public void setReferenceAttribute(String referenceAttribute) {
-        this.referenceAttribute = referenceAttribute;
-    }
+  public void setReferenceAttribute(String referenceAttribute) {
+    this.referenceAttribute = referenceAttribute;
+  }
 }

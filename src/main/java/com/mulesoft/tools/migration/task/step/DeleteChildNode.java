@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.task.step;
 
@@ -12,57 +12,64 @@ import org.jdom2.Namespace;
 
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
+/**
+ * Removes a child node
+ * 
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class DeleteChildNode extends MigrationStep {
 
-    private String node;
-    private String nodeNamespace;
-    private String nodeNamespaceUri;
+  private String node;
+  private String nodeNamespace;
+  private String nodeNamespaceUri;
 
-    public DeleteChildNode(String node, String nodeNamespace, String nodeNamespaceUri) {
-        setNode(node);
-        setNodeNamespace(nodeNamespace);
-        setNodeNamespaceUri(nodeNamespaceUri);
-    }
+  public DeleteChildNode(String node, String nodeNamespace, String nodeNamespaceUri) {
+    setNode(node);
+    setNodeNamespace(nodeNamespace);
+    setNodeNamespaceUri(nodeNamespaceUri);
+  }
 
-    public DeleteChildNode(){}
+  public DeleteChildNode() {}
 
-    public void execute() throws Exception {
-        try {
-            Namespace namespace = Namespace.getNamespace(getNodeNamespace(), getNodeNamespaceUri());
-            for (Element node : getNodes()) {
-                Element element = node.getChild(getNode(),namespace);
-                if (element != null) {
-                    node.removeChild(getNode(),namespace);
+  public void execute() throws Exception {
+    try {
+      Namespace namespace = Namespace.getNamespace(getNodeNamespace(), getNodeNamespaceUri());
+      for (Element node : getNodes()) {
+        Element element = node.getChild(getNode(), namespace);
+        if (element != null) {
+          node.removeChild(getNode(), namespace);
 
-                    getReportingStrategy().log("Child Node <" + node.getQualifiedName() + "> was deleted", RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
-                }
-            }
-        } catch (Exception ex) {
-            throw new MigrationStepException("Remove child node exception. " + ex.getMessage());
+          getReportingStrategy().log("Child Node <" + node.getQualifiedName() + "> was deleted", RULE_APPLIED,
+                                     this.getDocument().getBaseURI(), null, this);
         }
+      }
+    } catch (Exception ex) {
+      throw new MigrationStepException("Remove child node exception. " + ex.getMessage());
     }
+  }
 
-    public String getNode() {
-        return node;
-    }
+  public String getNode() {
+    return node;
+  }
 
-    public void setNode(String node) {
-        this.node = node;
-    }
+  public void setNode(String node) {
+    this.node = node;
+  }
 
-    public String getNodeNamespace() {
-        return nodeNamespace;
-    }
+  public String getNodeNamespace() {
+    return nodeNamespace;
+  }
 
-    public void setNodeNamespace(String nodeNamespace) {
-        this.nodeNamespace = nodeNamespace;
-    }
+  public void setNodeNamespace(String nodeNamespace) {
+    this.nodeNamespace = nodeNamespace;
+  }
 
-    public String getNodeNamespaceUri() {
-        return nodeNamespaceUri;
-    }
+  public String getNodeNamespaceUri() {
+    return nodeNamespaceUri;
+  }
 
-    public void setNodeNamespaceUri(String nodeNamespaceUri) {
-        this.nodeNamespaceUri = nodeNamespaceUri;
-    }
+  public void setNodeNamespaceUri(String nodeNamespaceUri) {
+    this.nodeNamespaceUri = nodeNamespaceUri;
+  }
 }

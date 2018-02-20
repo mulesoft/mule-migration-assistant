@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.task.step;
 
@@ -13,42 +13,51 @@ import org.jdom2.Element;
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 import static com.mulesoft.tools.migration.report.ReportCategory.SKIPPED;
 
+/**
+ * Creates a child node
+ * 
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class CreateChildNode extends MigrationStep {
 
-    private String name;
+  private String name;
 
-    public CreateChildNode(String name) {
-        setName(name);
-    }
+  public CreateChildNode(String name) {
+    setName(name);
+  }
 
-    public CreateChildNode(){}
+  public CreateChildNode() {}
 
-    public void execute() throws Exception {
-        try {
-            if(!StringUtils.isBlank(name)) {
-                for (Element node : getNodes()) {
-                    if (node.getChild(getName(), node.getNamespace()) != null) {
-                        getReportingStrategy().log("<" + node.getChild(getName(), node.getNamespace()).getQualifiedName() + "> node already exists.", SKIPPED, this.getDocument().getBaseURI(), null , this);
-                    }
-                    else {
-                        Element child = new Element(getName());
-                        child.setNamespace(node.getNamespace());
-                        node.addContent(child);
+  public void execute() throws Exception {
+    try {
+      if (!StringUtils.isBlank(name)) {
+        for (Element node : getNodes()) {
+          if (node.getChild(getName(), node.getNamespace()) != null) {
+            getReportingStrategy()
+                .log("<" + node.getChild(getName(), node.getNamespace()).getQualifiedName() + "> node already exists.", SKIPPED,
+                     this.getDocument().getBaseURI(), null, this);
+          } else {
+            Element child = new Element(getName());
+            child.setNamespace(node.getNamespace());
+            node.addContent(child);
 
-                        getReportingStrategy().log("<" + child.getQualifiedName() + "> node was created. Namespace " + child.getNamespaceURI(), RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            throw new MigrationStepException("Create child node exception. " + ex.getMessage());
+            getReportingStrategy()
+                .log("<" + child.getQualifiedName() + "> node was created. Namespace " + child.getNamespaceURI(), RULE_APPLIED,
+                     this.getDocument().getBaseURI(), null, this);
+          }
         }
+      }
+    } catch (Exception ex) {
+      throw new MigrationStepException("Create child node exception. " + ex.getMessage());
     }
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 }

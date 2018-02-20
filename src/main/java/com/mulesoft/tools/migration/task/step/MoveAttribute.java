@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.task.step;
 
@@ -15,104 +15,112 @@ import static com.mulesoft.tools.migration.tools.dom.DomUtils.findChildElement;
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+/**
+ * It moves an attribute from one node to another
+ * 
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class MoveAttribute extends MigrationStep {
 
-    private String attribute;
-    private String targetNode;
-    private String targetNodeNamespace;
-    private String targetNodeNamespaceUri;
-    private String sourceReferenceAttribute;
-    private String targetReferenceAttribute;
+  private String attribute;
+  private String targetNode;
+  private String targetNodeNamespace;
+  private String targetNodeNamespaceUri;
+  private String sourceReferenceAttribute;
+  private String targetReferenceAttribute;
 
-    public MoveAttribute(String attribute, String targetNode, String targetNodeNamespace, String targetNodeNamespaceUri,
-                         String sourceReferenceAttribute, String targetReferenceAttribute) {
-        setAttribute(attribute);
-        setTargetNode(targetNode);
-        setTargetNodeNamespace(targetNodeNamespace);
-        setTargetNodeNamespaceUri(targetNodeNamespaceUri);
-        setSourceReferenceAttribute(sourceReferenceAttribute);
-        setTargetReferenceAttribute(targetReferenceAttribute);
-    }
+  public MoveAttribute() {}
 
-    public MoveAttribute(){}
+  public MoveAttribute(String attribute, String targetNode, String targetNodeNamespace, String targetNodeNamespaceUri,
+                       String sourceReferenceAttribute, String targetReferenceAttribute) {
+    setAttribute(attribute);
+    setTargetNode(targetNode);
+    setTargetNodeNamespace(targetNodeNamespace);
+    setTargetNodeNamespaceUri(targetNodeNamespaceUri);
+    setSourceReferenceAttribute(sourceReferenceAttribute);
+    setTargetReferenceAttribute(targetReferenceAttribute);
+  }
 
-    public void execute() throws Exception {
-        try {
+  public void execute() throws Exception {
+    try {
 
-            if (!isBlank(getAttribute()) && !isBlank(getTargetNode())
-                    && !isBlank(getTargetNodeNamespace())
-                    && !isBlank(getTargetNodeNamespaceUri())) {
+      if (!isBlank(getAttribute()) && !isBlank(getTargetNode())
+          && !isBlank(getTargetNodeNamespace())
+          && !isBlank(getTargetNodeNamespaceUri())) {
 
-                Attribute attribute;
-                String referenceValue;
+        Attribute attribute;
+        String referenceValue;
 
-                for (Element node : getNodes()) {
-                    attribute = node.getAttribute(getAttribute());
-                    referenceValue = node.getAttributeValue(getSourceReferenceAttribute());
-                    if (attribute != null) {
-                        Namespace namespace = Namespace.getNamespace(getTargetNodeNamespace(), getTargetNodeNamespaceUri());
-                        if(null != namespace) {
-                            Element element = findChildElement(getTargetNode(), referenceValue, getTargetReferenceAttribute(), namespace, getDocument().getRootElement());
-                            if (null != element) {
-                                node.removeAttribute(attribute);
-                                element.setAttribute(attribute);
+        for (Element node : getNodes()) {
+          attribute = node.getAttribute(getAttribute());
+          referenceValue = node.getAttributeValue(getSourceReferenceAttribute());
+          if (attribute != null) {
+            Namespace namespace = Namespace.getNamespace(getTargetNodeNamespace(), getTargetNodeNamespaceUri());
+            if (null != namespace) {
+              Element element = findChildElement(getTargetNode(), referenceValue, getTargetReferenceAttribute(), namespace,
+                                                 getDocument().getRootElement());
+              if (null != element) {
+                node.removeAttribute(attribute);
+                element.setAttribute(attribute);
 
-                                getReportingStrategy().log("Moved " + attribute + " attribute into <" + node.getQualifiedName() + ">", RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
-                            }
-                        }
-                    }
-                }
+                getReportingStrategy().log("Moved " + attribute + " attribute into <" + node.getQualifiedName() + ">",
+                                           RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+              }
             }
-        }catch (Exception ex) {
-            throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
+          }
         }
+      }
+    } catch (Exception ex) {
+      throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
     }
+  }
 
-    public String getAttribute() {
-        return attribute;
-    }
+  public String getAttribute() {
+    return attribute;
+  }
 
-    public void setAttribute(String attribute) {
-        this.attribute = attribute;
-    }
+  public void setAttribute(String attribute) {
+    this.attribute = attribute;
+  }
 
-    public String getTargetNode() {
-        return targetNode;
-    }
+  public String getTargetNode() {
+    return targetNode;
+  }
 
-    public void setTargetNode(String targetNode) {
-        this.targetNode = targetNode;
-    }
+  public void setTargetNode(String targetNode) {
+    this.targetNode = targetNode;
+  }
 
-    public String getTargetNodeNamespace() {
-        return targetNodeNamespace;
-    }
+  public String getTargetNodeNamespace() {
+    return targetNodeNamespace;
+  }
 
-    public void setTargetNodeNamespace(String targetNodeNamespace) {
-        this.targetNodeNamespace = targetNodeNamespace;
-    }
+  public void setTargetNodeNamespace(String targetNodeNamespace) {
+    this.targetNodeNamespace = targetNodeNamespace;
+  }
 
-    public String getTargetNodeNamespaceUri() {
-        return targetNodeNamespaceUri;
-    }
+  public String getTargetNodeNamespaceUri() {
+    return targetNodeNamespaceUri;
+  }
 
-    public void setTargetNodeNamespaceUri(String targetNodeNamespaceUri) {
-        this.targetNodeNamespaceUri = targetNodeNamespaceUri;
-    }
+  public void setTargetNodeNamespaceUri(String targetNodeNamespaceUri) {
+    this.targetNodeNamespaceUri = targetNodeNamespaceUri;
+  }
 
-    public String getSourceReferenceAttribute() {
-        return sourceReferenceAttribute;
-    }
+  public String getSourceReferenceAttribute() {
+    return sourceReferenceAttribute;
+  }
 
-    public void setSourceReferenceAttribute(String sourceReferenceAttribute) {
-        this.sourceReferenceAttribute = sourceReferenceAttribute;
-    }
+  public void setSourceReferenceAttribute(String sourceReferenceAttribute) {
+    this.sourceReferenceAttribute = sourceReferenceAttribute;
+  }
 
-    public String getTargetReferenceAttribute() {
-        return targetReferenceAttribute;
-    }
+  public String getTargetReferenceAttribute() {
+    return targetReferenceAttribute;
+  }
 
-    public void setTargetReferenceAttribute(String targetReferenceAttribute) {
-        this.targetReferenceAttribute = targetReferenceAttribute;
-    }
+  public void setTargetReferenceAttribute(String targetReferenceAttribute) {
+    this.targetReferenceAttribute = targetReferenceAttribute;
+  }
 }

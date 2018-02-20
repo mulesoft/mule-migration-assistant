@@ -4,24 +4,21 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.tools.dw;
+package com.mulesoft.tools.migration.report.html.model;
 
-
-import static org.mule.weave.v2.V2LangMigrant.migrateToV2;
+import java.util.ArrayList;
 
 /**
- * Utilities to work with data weave
+ * Stores data of a executed job
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class DataweaveUtils {
+public class JobExecutionStatus {
 
-  // private DataweaveUtils() {
-  //
-  // }
+  private ArrayList<FileExecutionStatus> filesMigrationStatus = new ArrayList<>();
 
-  public static String getMigratedScript(String dwOriginalScript) throws Exception {
-    return migrateToV2(dwOriginalScript);
+  public void addFileMigrationStatus(FileExecutionStatus file) {
+    filesMigrationStatus.add(file);
   }
 }

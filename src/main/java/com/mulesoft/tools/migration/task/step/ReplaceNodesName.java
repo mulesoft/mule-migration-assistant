@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.task.step;
 
@@ -12,59 +12,65 @@ import org.jdom2.Namespace;
 
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
+/**
+ *   Change node name
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class ReplaceNodesName extends MigrationStep {
 
-    private String nodeNamespace;
-    private String newNodeName;
+  private String nodeNamespace;
+  private String newNodeName;
 
-    public ReplaceNodesName(){}
+  public ReplaceNodesName() {}
 
-    public ReplaceNodesName(String nodeNamespace, String newNodeName) {
-        setNodeNamespace(nodeNamespace);
-        setNewNodeName(newNodeName);
-    }
+  public ReplaceNodesName(String nodeNamespace, String newNodeName) {
+    setNodeNamespace(nodeNamespace);
+    setNewNodeName(newNodeName);
+  }
 
-    public void execute() throws Exception {
-        try {
-            if (getDocument() != null) {
-                Namespace namespace = getDocument().getRootElement().getNamespace(getNodeNamespace());
-                if (namespace != null) {
-                    for (Element node : getNodes()) {
-                        String legacyNode = node.getQualifiedName();
-                        node.setNamespace(namespace);
-                        node.setName(getNewNodeName());
-                        getReportingStrategy().log("Node <" + legacyNode + "> has been replaced with <" + node.getQualifiedName() + "> node" , RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            throw new MigrationStepException("Replace node name exception. " + ex.getMessage());
+  public void execute() throws Exception {
+    try {
+      if (getDocument() != null) {
+        Namespace namespace = getDocument().getRootElement().getNamespace(getNodeNamespace());
+        if (namespace != null) {
+          for (Element node : getNodes()) {
+            String legacyNode = node.getQualifiedName();
+            node.setNamespace(namespace);
+            node.setName(getNewNodeName());
+            getReportingStrategy().log("Node <" + legacyNode + "> has been replaced with <" + node.getQualifiedName() + "> node",
+                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+          }
         }
+      }
+    } catch (Exception ex) {
+      throw new MigrationStepException("Replace node name exception. " + ex.getMessage());
     }
+  }
 
-    public void replaceChildNodesNamespace(Element node, Namespace namespace) {
-        node.setNamespace(namespace);
-        if (node.getChildren().size() > 0) {
-            for (Element childNode : node.getChildren()) {
-                replaceChildNodesNamespace(childNode, namespace);
-            }
-        }
+  public void replaceChildNodesNamespace(Element node, Namespace namespace) {
+    node.setNamespace(namespace);
+    if (node.getChildren().size() > 0) {
+      for (Element childNode : node.getChildren()) {
+        replaceChildNodesNamespace(childNode, namespace);
+      }
     }
+  }
 
-    public String getNodeNamespace() {
-        return nodeNamespace;
-    }
+  public String getNodeNamespace() {
+    return nodeNamespace;
+  }
 
-    public void setNodeNamespace(String nodeNamespace) {
-        this.nodeNamespace = nodeNamespace;
-    }
+  public void setNodeNamespace(String nodeNamespace) {
+    this.nodeNamespace = nodeNamespace;
+  }
 
-    public String getNewNodeName() {
-        return newNodeName;
-    }
+  public String getNewNodeName() {
+    return newNodeName;
+  }
 
-    public void setNewNodeName(String newNodeName) {
-        this.newNodeName = newNodeName;
-    }
+  public void setNewNodeName(String newNodeName) {
+    this.newNodeName = newNodeName;
+  }
 
 }
