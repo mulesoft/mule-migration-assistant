@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.task.step;
 
@@ -12,53 +12,62 @@ import org.jdom2.Element;
 
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
+/**
+ * Moves attributes to a child node
+ * 
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class MoveAttributesToChildNode extends MigrationStep {
 
-    private String attributes;
-    private String childNode;
+  private String attributes;
+  private String childNode;
 
-    public MoveAttributesToChildNode(String attributes, String childNode) {
-        setAttributes(attributes);
-        setChildNode(childNode);
-    }
+  public MoveAttributesToChildNode(String attributes, String childNode) {
+    setAttributes(attributes);
+    setChildNode(childNode);
+  }
 
-    public MoveAttributesToChildNode(){}
+  public MoveAttributesToChildNode() {}
 
-    public void execute() throws Exception {
-        try {
-            for (Element node : getNodes()) {
-                String [] attributesArray = getAttributes().split(";");
-                for (String attributeString : attributesArray){
-                    Attribute att = node.getAttribute(attributeString);
-                    if (att != null) {
-                        Element child = node.getChild(getChildNode(), node.getNamespace());
-                        if (child != null) {
-                            node.removeAttribute(att);
-                            child.setAttribute(att);
+  public void execute() throws Exception {
+    try {
+      for (Element node : getNodes()) {
+        String[] attributesArray = getAttributes().split(";");
+        for (String attributeString : attributesArray) {
+          Attribute att = node.getAttribute(attributeString);
+          if (att != null) {
+            Element child = node.getChild(getChildNode(), node.getNamespace());
+            if (child != null) {
+              node.removeAttribute(att);
+              child.setAttribute(att);
 
-                            getReportingStrategy().log("Moved attribute " + att.getName() + "=\""+ att.getValue() + "\" to child node <" + node.getQualifiedName() + ">", RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
-                        }
-                    }
-                }
+              getReportingStrategy().log(
+                                         "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to child node <"
+                                             + node.getQualifiedName() + ">",
+                                         RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
             }
-        } catch (Exception ex) {
-            throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
+          }
         }
+      }
+    } catch (Exception ex) {
+      throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
     }
+  }
 
-    public String getAttributes() {
-        return attributes;
-    }
+  public String getAttributes() {
+    return attributes;
+  }
 
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
-    }
+  public void setAttributes(String attributes) {
+    this.attributes = attributes;
+  }
 
-    public String getChildNode() {
-        return childNode;
-    }
+  public String getChildNode() {
+    return childNode;
+  }
 
-    public void setChildNode(String childNode) {
-        this.childNode = childNode;
-    }
+  public void setChildNode(String childNode) {
+    this.childNode = childNode;
+  }
 }

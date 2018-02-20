@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.message;
 
@@ -13,38 +13,42 @@ import java.util.Properties;
 import java.util.StringJoiner;
 
 /**
- * Created by davidcisneros on 5/10/17.
+ * I knows how to replace properties in a string based on a set of mapping files
+ * 
+ * @author Mulesoft Inc.
+ * @since 1.0.0
  */
+// TODO rename this class, and re think how it's used
 public class MuleMessageUtils {
 
-    private static final String HTTP_PROPERTIES_PACKAGE = "/message/http.keys.properties";
-    private static final String WS_PROPERTIES_PACKAGE = "/message/ws.keys.properties";
+  private static final String WS_PROPERTIES_PACKAGE = "/message/ws.keys.properties";
+  private static final String HTTP_PROPERTIES_PACKAGE = "/message/http.keys.properties";
 
-    private static Properties properties;
+  // TODO no no
+  private static Properties properties;
 
-    private MuleMessageUtils() {
+  private MuleMessageUtils() {}
+
+  public static String replaceContent(String content) throws Exception {
+    for (Map.Entry<Object, Object> property : getProperties().entrySet()) {
+      content = content.replace(property.getKey().toString(), property.getValue().toString());
+      content = content.replace("'" + property.getKey().toString() + "'", property.getValue().toString());
     }
+    return content;
+  }
 
-    public static String replaceContent(String content) throws Exception {
-        for(Map.Entry<Object, Object> property : getProperties().entrySet()) {
-            content = content.replace(property.getKey().toString(),property.getValue().toString());
-            content = content.replace("'"+property.getKey().toString()+"'",property.getValue().toString());
-        }
-        return content;
+  private static Properties getProperties() throws Exception {
+    if (properties == null) {
+      properties = new Properties();
+      loadProperties(properties, HTTP_PROPERTIES_PACKAGE);
+      loadProperties(properties, WS_PROPERTIES_PACKAGE);
     }
+    return properties;
+  }
 
-    private static Properties getProperties() throws Exception {
-        if(properties == null) {
-            properties = new Properties();
-            loadProperties(properties, HTTP_PROPERTIES_PACKAGE);
-            loadProperties(properties, WS_PROPERTIES_PACKAGE);
-        }
-        return properties;
-    }
-
-    private static void loadProperties(Properties properties, String path) throws Exception {
-        InputStream in = MuleMessageUtils.class.getResourceAsStream(path);
-        properties.load(in);
-        in.close();
-    }
+  private static void loadProperties(Properties properties, String path) throws Exception {
+    InputStream in = MuleMessageUtils.class.getResourceAsStream(path);
+    properties.load(in);
+    in.close();
+  }
 }

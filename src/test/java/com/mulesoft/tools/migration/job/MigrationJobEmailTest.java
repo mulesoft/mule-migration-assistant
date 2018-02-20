@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.job;
 
@@ -19,33 +19,34 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.restoreTestDocument;
 
 public class MigrationJobEmailTest {
-    private MigrationJob migrationJob;
-    private Document docRestoreFile;
-    private String USE_CASE_FILE_PATH = "src/test/resources/mule/examples/email/email-use-case.xml";
-    private String TASKS_DIR_PATH = "src/test/resources/mule/tasks/email";
 
-    @Before
-    public void setUp() throws Exception {
-        ArrayList<String> filePath1 = new ArrayList<>();
-        filePath1.add(USE_CASE_FILE_PATH);
+  private MigrationJob migrationJob;
+  private Document docRestoreFile;
+  private String USE_CASE_FILE_PATH = "src/test/resources/mule/examples/email/email-use-case.xml";
+  private String TASKS_DIR_PATH = "src/test/resources/mule/tasks/email";
 
-        migrationJob = new MigrationJob();
-        migrationJob.setDocuments(filePath1);
-        migrationJob.setBackUpProfile(Boolean.FALSE);
-        docRestoreFile = getDocument(filePath1.get(0));
-    }
+  @Before
+  public void setUp() throws Exception {
+    ArrayList<String> filePath1 = new ArrayList<>();
+    filePath1.add(USE_CASE_FILE_PATH);
 
-    @Test
-    public void jobWithTasksOnConfigFile() throws Exception {
-        ArrayList<String> files = new ArrayList<String>(Arrays.asList(USE_CASE_FILE_PATH));
+    migrationJob = new MigrationJob();
+    migrationJob.setDocuments(filePath1);
+    migrationJob.setBackUpProfile(Boolean.FALSE);
+    docRestoreFile = getDocument(filePath1.get(0));
+  }
 
-        migrationJob.setDocuments(files);
-        migrationJob.setConfigFileDir(TASKS_DIR_PATH);
-        migrationJob.execute();
-    }
+  @Test
+  public void jobWithTasksOnConfigFile() throws Exception {
+    ArrayList<String> files = new ArrayList<String>(Arrays.asList(USE_CASE_FILE_PATH));
 
-    @After
-    public void restoreFileState() throws Exception {
-        restoreTestDocument(docRestoreFile,USE_CASE_FILE_PATH);
-    }
+    migrationJob.setDocuments(files);
+    migrationJob.setConfigFileDir(TASKS_DIR_PATH);
+    migrationJob.execute();
+  }
+
+  @After
+  public void restoreFileState() throws Exception {
+    restoreTestDocument(docRestoreFile, USE_CASE_FILE_PATH);
+  }
 }

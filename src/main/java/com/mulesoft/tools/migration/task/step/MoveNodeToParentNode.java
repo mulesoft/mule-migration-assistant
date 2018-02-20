@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.task.step;
 
@@ -12,58 +12,66 @@ import org.jdom2.Namespace;
 
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
+/**
+ * Move node to parent node
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class MoveNodeToParentNode extends MigrationStep {
 
-    private String sourceNode;
-    private String sourceNodeNamespace;
-    private String sourceNodeNamespaceUri;
+  private String sourceNode;
+  private String sourceNodeNamespace;
+  private String sourceNodeNamespaceUri;
 
-    public MoveNodeToParentNode(String sourceNode, String sourceNodeNamespace, String sourceNodeNamespaceUri) {
-        setSourceNode(sourceNode);
-        setSourceNodeNamespace(sourceNodeNamespace);
-        setSourceNodeNamespaceUri(sourceNodeNamespaceUri);
-    }
+  public MoveNodeToParentNode(String sourceNode, String sourceNodeNamespace, String sourceNodeNamespaceUri) {
+    setSourceNode(sourceNode);
+    setSourceNodeNamespace(sourceNodeNamespace);
+    setSourceNodeNamespaceUri(sourceNodeNamespaceUri);
+  }
 
-    public MoveNodeToParentNode(){}
+  public MoveNodeToParentNode() {}
 
-    public void execute() throws Exception {
-        try {
-            Namespace sourceNamespace = Namespace.getNamespace(getSourceNodeNamespace(), getSourceNodeNamespaceUri());
-            for (Element node : getNodes()) {
-                Element sourceElement = node.getChild(getSourceNode(),sourceNamespace);
-                if (sourceElement != null) {
-                    node.removeChild(getSourceNode(),sourceNamespace);
-                    node.getParentElement().getChildren().add(sourceElement);
+  public void execute() throws Exception {
+    try {
+      Namespace sourceNamespace = Namespace.getNamespace(getSourceNodeNamespace(), getSourceNodeNamespaceUri());
+      for (Element node : getNodes()) {
+        Element sourceElement = node.getChild(getSourceNode(), sourceNamespace);
+        if (sourceElement != null) {
+          node.removeChild(getSourceNode(), sourceNamespace);
+          node.getParentElement().getChildren().add(sourceElement);
 
-                    getReportingStrategy().log("Node <" + sourceElement.getQualifiedName() + "> moved to parent node <" + node.getParentElement().getQualifiedName() + ">" , RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
-                }
-            }
-        } catch (Exception ex) {
-            throw new MigrationStepException("Move node to parent exception. " + ex.getMessage());
+          getReportingStrategy().log(
+                                     "Node <" + sourceElement.getQualifiedName() + "> moved to parent node <"
+                                         + node.getParentElement().getQualifiedName() + ">",
+                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
         }
+      }
+    } catch (Exception ex) {
+      throw new MigrationStepException("Move node to parent exception. " + ex.getMessage());
     }
+  }
 
-    public String getSourceNode() {
-        return sourceNode;
-    }
+  public String getSourceNode() {
+    return sourceNode;
+  }
 
-    public void setSourceNode(String sourceNode) {
-        this.sourceNode = sourceNode;
-    }
+  public void setSourceNode(String sourceNode) {
+    this.sourceNode = sourceNode;
+  }
 
-    public String getSourceNodeNamespace() {
-        return sourceNodeNamespace;
-    }
+  public String getSourceNodeNamespace() {
+    return sourceNodeNamespace;
+  }
 
-    public void setSourceNodeNamespace(String sourceNodeNamespace) {
-        this.sourceNodeNamespace = sourceNodeNamespace;
-    }
+  public void setSourceNodeNamespace(String sourceNodeNamespace) {
+    this.sourceNodeNamespace = sourceNodeNamespace;
+  }
 
-    public String getSourceNodeNamespaceUri() {
-        return sourceNodeNamespaceUri;
-    }
+  public String getSourceNodeNamespaceUri() {
+    return sourceNodeNamespaceUri;
+  }
 
-    public void setSourceNodeNamespaceUri(String sourceNodeNamespaceUri) {
-        this.sourceNodeNamespaceUri = sourceNodeNamespaceUri;
-    }
+  public void setSourceNodeNamespaceUri(String sourceNodeNamespaceUri) {
+    this.sourceNodeNamespaceUri = sourceNodeNamespaceUri;
+  }
 }

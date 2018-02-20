@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.task.step;
 
@@ -13,23 +13,23 @@ import static org.junit.Assert.assertTrue;
 
 public class CreateChildNodeTest {
 
-    private CreateChildNode createChildNodeStep;
+  private CreateChildNode createChildNodeStep;
 
-    private static final String EXAMPLE_FILE_PATH = "src/test/resources/munit/examples/simple.xml";
+  private static final String EXAMPLE_FILE_PATH = "src/test/resources/munit/examples/simple.xml";
 
-    @Test
-    public void createNodeWithEmptyName() throws Exception {
-        createChildNodeStep = new CreateChildNode("");
-        getNodesFromFile("//munit:assert-true", createChildNodeStep, EXAMPLE_FILE_PATH);
-        createChildNodeStep.execute();
-        assertTrue(createChildNodeStep.getNodes().get(0).getChildren().size() == 0);
-    }
+  @Test
+  public void createNodeWithEmptyName() throws Exception {
+    createChildNodeStep = new CreateChildNode("");
+    getNodesFromFile("//munit:assert-true", createChildNodeStep, EXAMPLE_FILE_PATH);
+    createChildNodeStep.execute();
+    assertTrue(createChildNodeStep.getNodes().get(0).getChildren().size() == 0);
+  }
 
-    @Test
-    public void createNodeFromName() throws Exception {
-        createChildNodeStep = new CreateChildNode("newNode");
-        getNodesFromFile("//munit:assert-true", createChildNodeStep, EXAMPLE_FILE_PATH);
-        createChildNodeStep.execute();
-        assertTrue(createChildNodeStep.getNodes().get(0).getChildren().size() == 1);
-    }
+  @Test
+  public void createNodeFromName() throws Exception {
+    createChildNodeStep = new CreateChildNode("newNode");
+    getNodesFromFile("//munit:assert-true", createChildNodeStep, EXAMPLE_FILE_PATH);
+    createChildNodeStep.execute();
+    assertTrue(createChildNodeStep.getNodes().get(0).getChildren().size() == 1);
+  }
 }

@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.task.step;
 
@@ -15,66 +15,72 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getNodesFromFil
 import static org.junit.Assert.fail;
 
 public class MoveAttributeToNewRepeatableChildNodeTest {
-    private static final String ATTRIBUTE = "connectionTimeout";
-    private static final String NEW_ATTRIBUTE_NAME = "key";
-    private static final String NEW_ATTRIBUTE_VALUE = "value";
-    private MoveAttributeToNewRepeatableChildNode moveAttributeToNewRepeatableChildNode;
 
-    private static final String EXAMPLE_FILE_PATH_ONE_DB_PROPERTY = "src/test/resources/mule/examples/db/connection-properties-with-one-db-property-use-case.xml";
-    private static final String EXAMPLE_FILE_PATH_WITH_ZERO_DB_PROPERTIES = "src/test/resources/mule/examples/db/connection-properties-with-zero-db-properties-use-case.xml";
-    private static final String EXAMPLE_FILE_PATH_WITH_ATTRIBUTE_PROPERTY = "src/test/resources/mule/examples/db/connection-properties-with-connectionTimeout-property-use-case.xml";
+  private static final String ATTRIBUTE = "connectionTimeout";
+  private static final String NEW_ATTRIBUTE_NAME = "key";
+  private static final String NEW_ATTRIBUTE_VALUE = "value";
+  private MoveAttributeToNewRepeatableChildNode moveAttributeToNewRepeatableChildNode;
 
-    @Test
-    public void testMoveAttributeToNewRepeatableChildNodeWithOneProperty() throws Exception {
-        moveAttributeToNewRepeatableChildNode = new MoveAttributeToNewRepeatableChildNode(ATTRIBUTE, "property",
-                NEW_ATTRIBUTE_NAME, NEW_ATTRIBUTE_VALUE);
-        getNodesFromFile("//db:connection-properties", moveAttributeToNewRepeatableChildNode, EXAMPLE_FILE_PATH_ONE_DB_PROPERTY);
-        moveAttributeToNewRepeatableChildNode.execute();
-        final List<Element> children = moveAttributeToNewRepeatableChildNode.getNodes().get(0).getChildren();
-        if(children.size() == 2) {
-            Element node = children.get(1);
-            if (!node.getAttribute(NEW_ATTRIBUTE_NAME).getValue().equals(ATTRIBUTE) || !node.getAttribute(NEW_ATTRIBUTE_VALUE).getValue().equals("1000")) {
-                fail("Could not find " + ATTRIBUTE + "attribute");
-            }
-        }
-        else {
-            fail("There should only be two <db:property> nodes");
-        }
+  private static final String EXAMPLE_FILE_PATH_ONE_DB_PROPERTY =
+      "src/test/resources/mule/examples/db/connection-properties-with-one-db-property-use-case.xml";
+  private static final String EXAMPLE_FILE_PATH_WITH_ZERO_DB_PROPERTIES =
+      "src/test/resources/mule/examples/db/connection-properties-with-zero-db-properties-use-case.xml";
+  private static final String EXAMPLE_FILE_PATH_WITH_ATTRIBUTE_PROPERTY =
+      "src/test/resources/mule/examples/db/connection-properties-with-connectionTimeout-property-use-case.xml";
+
+  @Test
+  public void testMoveAttributeToNewRepeatableChildNodeWithOneProperty() throws Exception {
+    moveAttributeToNewRepeatableChildNode = new MoveAttributeToNewRepeatableChildNode(ATTRIBUTE, "property",
+                                                                                      NEW_ATTRIBUTE_NAME, NEW_ATTRIBUTE_VALUE);
+    getNodesFromFile("//db:connection-properties", moveAttributeToNewRepeatableChildNode, EXAMPLE_FILE_PATH_ONE_DB_PROPERTY);
+    moveAttributeToNewRepeatableChildNode.execute();
+    final List<Element> children = moveAttributeToNewRepeatableChildNode.getNodes().get(0).getChildren();
+    if (children.size() == 2) {
+      Element node = children.get(1);
+      if (!node.getAttribute(NEW_ATTRIBUTE_NAME).getValue().equals(ATTRIBUTE)
+          || !node.getAttribute(NEW_ATTRIBUTE_VALUE).getValue().equals("1000")) {
+        fail("Could not find " + ATTRIBUTE + "attribute");
+      }
+    } else {
+      fail("There should only be two <db:property> nodes");
     }
+  }
 
-    @Test
-    public void testMoveAttributeToNewRepeatableChildNodeWithZeroProperties() throws Exception {
-        moveAttributeToNewRepeatableChildNode = new MoveAttributeToNewRepeatableChildNode(ATTRIBUTE, "property",
-                NEW_ATTRIBUTE_NAME, NEW_ATTRIBUTE_VALUE);
-        getNodesFromFile("//db:connection-properties", moveAttributeToNewRepeatableChildNode, EXAMPLE_FILE_PATH_WITH_ZERO_DB_PROPERTIES);
-        moveAttributeToNewRepeatableChildNode.execute();
-        final List<Element> children = moveAttributeToNewRepeatableChildNode.getNodes().get(0).getChildren();
-        if(children.size() == 1) {
-            Element node = children.get(0);
-            if (!node.getAttribute(NEW_ATTRIBUTE_NAME).getValue().equals(ATTRIBUTE) || !node.getAttribute(NEW_ATTRIBUTE_VALUE).getValue().equals("1000")) {
-                fail("Could not find " + ATTRIBUTE + "attribute");
-            }
-        }
-        else {
-            fail("There should only one <db:property> node");
-        }
+  @Test
+  public void testMoveAttributeToNewRepeatableChildNodeWithZeroProperties() throws Exception {
+    moveAttributeToNewRepeatableChildNode = new MoveAttributeToNewRepeatableChildNode(ATTRIBUTE, "property",
+                                                                                      NEW_ATTRIBUTE_NAME, NEW_ATTRIBUTE_VALUE);
+    getNodesFromFile("//db:connection-properties", moveAttributeToNewRepeatableChildNode,
+                     EXAMPLE_FILE_PATH_WITH_ZERO_DB_PROPERTIES);
+    moveAttributeToNewRepeatableChildNode.execute();
+    final List<Element> children = moveAttributeToNewRepeatableChildNode.getNodes().get(0).getChildren();
+    if (children.size() == 1) {
+      Element node = children.get(0);
+      if (!node.getAttribute(NEW_ATTRIBUTE_NAME).getValue().equals(ATTRIBUTE)
+          || !node.getAttribute(NEW_ATTRIBUTE_VALUE).getValue().equals("1000")) {
+        fail("Could not find " + ATTRIBUTE + "attribute");
+      }
+    } else {
+      fail("There should only one <db:property> node");
     }
+  }
 
-    @Test
-    public void testMoveAttributeToNewRepeatableChildNode() throws Exception {
-        moveAttributeToNewRepeatableChildNode = new MoveAttributeToNewRepeatableChildNode(ATTRIBUTE, "property",
-                NEW_ATTRIBUTE_NAME, NEW_ATTRIBUTE_VALUE);
-        getNodesFromFile("//db:connection-properties", moveAttributeToNewRepeatableChildNode, EXAMPLE_FILE_PATH_WITH_ATTRIBUTE_PROPERTY);
-        moveAttributeToNewRepeatableChildNode.execute();
-        final List<Element> children = moveAttributeToNewRepeatableChildNode.getNodes().get(0).getChildren();
-        if(children.size() == 1) {
-            Element node = children.get(0);
-            if (!node.getAttribute(NEW_ATTRIBUTE_NAME).getValue().equals(ATTRIBUTE) || !node.getAttribute(NEW_ATTRIBUTE_VALUE).getValue().equals("1000")) {
-                fail("Could not find " + ATTRIBUTE + "attribute");
-            }
-        }
-        else {
-            fail("There should only one <db:property> node");
-        }
+  @Test
+  public void testMoveAttributeToNewRepeatableChildNode() throws Exception {
+    moveAttributeToNewRepeatableChildNode = new MoveAttributeToNewRepeatableChildNode(ATTRIBUTE, "property",
+                                                                                      NEW_ATTRIBUTE_NAME, NEW_ATTRIBUTE_VALUE);
+    getNodesFromFile("//db:connection-properties", moveAttributeToNewRepeatableChildNode,
+                     EXAMPLE_FILE_PATH_WITH_ATTRIBUTE_PROPERTY);
+    moveAttributeToNewRepeatableChildNode.execute();
+    final List<Element> children = moveAttributeToNewRepeatableChildNode.getNodes().get(0).getChildren();
+    if (children.size() == 1) {
+      Element node = children.get(0);
+      if (!node.getAttribute(NEW_ATTRIBUTE_NAME).getValue().equals(ATTRIBUTE)
+          || !node.getAttribute(NEW_ATTRIBUTE_VALUE).getValue().equals("1000")) {
+        fail("Could not find " + ATTRIBUTE + "attribute");
+      }
+    } else {
+      fail("There should only one <db:property> node");
     }
+  }
 }

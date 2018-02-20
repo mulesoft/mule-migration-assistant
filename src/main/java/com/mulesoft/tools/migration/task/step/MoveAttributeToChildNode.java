@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.task.step;
 
@@ -12,50 +12,60 @@ import org.jdom2.Element;
 
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
+/**
+ * Moves an attribute to a child node
+ * 
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
+// TODO can we make this a particular case fo MoveAttributeSToChildNode
 public class MoveAttributeToChildNode extends MigrationStep {
 
-    private String attribute;
-    private String childNode;
+  private String attribute;
+  private String childNode;
 
-    public MoveAttributeToChildNode(String attribute, String childNode) {
-        setAttribute(attribute);
-        setChildNode(childNode);
-    }
+  public MoveAttributeToChildNode(String attribute, String childNode) {
+    setAttribute(attribute);
+    setChildNode(childNode);
+  }
 
-    public MoveAttributeToChildNode(){}
+  public MoveAttributeToChildNode() {}
 
-    public void execute() throws Exception {
-        try {
-            for (Element node : getNodes()) {
-                Attribute att = node.getAttribute(getAttribute());
-                if (att != null) {
-                    Element child = node.getChild(getChildNode(), node.getNamespace());
-                    if (child != null) {
-                        node.removeAttribute(att);
-                        child.setAttribute(att);
+  public void execute() throws Exception {
+    try {
+      for (Element node : getNodes()) {
+        Attribute att = node.getAttribute(getAttribute());
+        if (att != null) {
+          Element child = node.getChild(getChildNode(), node.getNamespace());
+          if (child != null) {
+            node.removeAttribute(att);
+            child.setAttribute(att);
 
-                        getReportingStrategy().log("Moved attribute " + att.getName() + "=\""+ att.getValue() + "\" to child node <" + child.getQualifiedName() + ">", RULE_APPLIED, this.getDocument().getBaseURI(), null , this);
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
+            getReportingStrategy().log(
+                                       "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to child node <"
+                                           + child.getQualifiedName() + ">",
+                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+          }
         }
+      }
+    } catch (Exception ex) {
+      throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
     }
+  }
 
-    public String getAttribute() {
-        return attribute;
-    }
+  public String getAttribute() {
+    return attribute;
+  }
 
-    public void setAttribute(String attribute) {
-        this.attribute = attribute;
-    }
+  public void setAttribute(String attribute) {
+    this.attribute = attribute;
+  }
 
-    public String getChildNode() {
-        return childNode;
-    }
+  public String getChildNode() {
+    return childNode;
+  }
 
-    public void setChildNode(String childNode) {
-        this.childNode = childNode;
-    }
+  public void setChildNode(String childNode) {
+    this.childNode = childNode;
+  }
 }
