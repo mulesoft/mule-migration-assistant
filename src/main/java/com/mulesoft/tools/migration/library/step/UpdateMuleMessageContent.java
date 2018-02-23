@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.library.step;
 
 import com.mulesoft.tools.migration.engine.MigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import com.mulesoft.tools.migration.message.MuleMessageUtils;
+import com.mulesoft.tools.migration.library.message.MuleMessageUtils;
 import org.jdom2.Element;
 
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;

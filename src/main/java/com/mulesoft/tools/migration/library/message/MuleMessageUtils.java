@@ -4,13 +4,11 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.message;
+package com.mulesoft.tools.migration.library.message;
 
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.StringJoiner;
 
 /**
  * I knows how to replace properties in a string based on a set of mapping files

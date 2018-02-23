@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.engine;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import org.jdom2.Document;
@@ -19,13 +20,17 @@ import java.util.List;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public abstract class MigrationStep {
+public abstract class MigrationStep implements Executable {
 
-  private List<Element> nodes;
-  private Document document;
-  private Boolean onErrorStop;
-  private ReportingStrategy reportingStrategy;
   private String stepDescriptor;
+
+  private ApplicationModel applicationModel;
+
+  // private Document document;
+  // private List<Element> nodes;
+
+  // private Boolean onErrorStop;
+  private ReportingStrategy reportingStrategy;
 
   public void setStepDescriptor(String descriptor) {
     this.stepDescriptor = descriptor;
@@ -35,21 +40,25 @@ public abstract class MigrationStep {
     return this.stepDescriptor;
   }
 
-  public void setNodes(List<Element> nodes) {
-    this.nodes = nodes;
+  // public void setNodes(List<Element> nodes) {
+  // this.nodes = nodes;
+  // }
+  //
+  // public List<Element> getNodes() {
+  // return this.nodes;
+  // }
+
+  public ApplicationModel getApplicationModel() {
+    return applicationModel;
   }
 
-  public List<Element> getNodes() {
-    return this.nodes;
-  }
+  // public void setDocument(Document document) {
+  // this.document = document;
+  // }
 
-  public void setDocument(Document document) {
-    this.document = document;
-  }
-
-  public Document getDocument() {
-    return this.document;
-  }
+  // public Document getDocument() {
+  // return this.document;
+  // }
 
   public ReportingStrategy getReportingStrategy() {
     if (null == this.reportingStrategy) {
@@ -62,13 +71,12 @@ public abstract class MigrationStep {
     this.reportingStrategy = reportingStrategy;
   }
 
-  public Boolean getOnErrorStop() {
-    return onErrorStop;
-  }
+  // public Boolean getOnErrorStop() {
+  // return onErrorStop;
+  // }
+  //
+  // public void setOnErrorStop(Boolean onErrorStop) {
+  // this.onErrorStop = onErrorStop;
+  // }
 
-  public void setOnErrorStop(Boolean onErrorStop) {
-    this.onErrorStop = onErrorStop;
-  }
-
-  public abstract void execute() throws Exception;
 }

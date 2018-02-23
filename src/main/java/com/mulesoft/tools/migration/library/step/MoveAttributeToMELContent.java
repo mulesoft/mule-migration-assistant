@@ -11,7 +11,7 @@ import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
-import static com.mulesoft.tools.migration.tools.mel.MELUtils.getMELExpressionFromValue;
+import static com.mulesoft.tools.migration.library.tools.mel.MELUtils.getMELExpressionFromValue;
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**

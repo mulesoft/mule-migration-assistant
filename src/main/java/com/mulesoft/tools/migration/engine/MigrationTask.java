@@ -32,7 +32,7 @@ import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MigrationTask {
+public class MigrationTask implements Executable {
 
   private String xpathSelector;
 
@@ -65,6 +65,8 @@ public class MigrationTask {
       if (null == reportingStrategy) {
         reportingStrategy = new ConsoleReportStrategy();
       }
+
+
       nodes = getNodesFromXPath(this.xpathSelector);
       if (nodes.size() > 0) {
         getReportingStrategy().log(this.xpathSelector + " (" + this.taskDescriptor + ")", WORKING_WITH_NODES,
@@ -72,7 +74,7 @@ public class MigrationTask {
         for (MigrationStep step : steps) {
           step.setReportingStrategy(this.reportingStrategy);
           step.setDocument(this.doc);
-          step.setOnErrorStop(this.onErrorStop);
+          // step.setOnErrorStop(this.onErrorStop);
           step.setNodes(nodes);
           getReportingStrategy().log(step.getStepDescriptor(), TRYING_TO_APPLY, this.doc.getBaseURI(), this, null);
           step.execute();

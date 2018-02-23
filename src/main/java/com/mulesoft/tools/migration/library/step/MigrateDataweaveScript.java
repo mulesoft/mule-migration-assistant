@@ -7,7 +7,7 @@
 package com.mulesoft.tools.migration.library.step;
 
 import com.mulesoft.tools.migration.engine.MigrationStep;
-import com.mulesoft.tools.migration.tools.dw.DataweaveUtils;
+import com.mulesoft.tools.migration.library.tools.dw.DataweaveUtils;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Element;
 

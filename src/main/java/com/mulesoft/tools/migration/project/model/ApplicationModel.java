@@ -6,20 +6,24 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
-import static com.mulesoft.tools.migration.project.structure.BasicProject.getFiles;
+import static com.google.common.base.Preconditions.*;
+import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Attribute;
 import org.jdom2.Document;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
 
-import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 
 /**
  * Represent the application to be migrated
@@ -30,7 +34,7 @@ public class ApplicationModel {
 
   private Map<Path, Document> applicationDocuments;
 
-  private ApplicationModel(Map<Path, Document> applicationDocuments) {
+  protected ApplicationModel(Map<Path, Document> applicationDocuments) {
     this.applicationDocuments = applicationDocuments;
   }
 
@@ -38,37 +42,59 @@ public class ApplicationModel {
     return applicationDocuments;
   }
 
-  public static class ApplicationModelBuilder {
+  public List<Element> getNodes(String xpathExpression) {
+    checkArgument(StringUtils.isNotBlank(xpathExpression), "The Xpath Expression must not be null nor empty");
 
-    private MuleApplicationProject project;
+    List<Element> nodes = new ArrayList<>();
 
-    public ApplicationModelBuilder(MuleApplicationProject project) {
-      this.project = project;
+    for (Document doc : applicationDocuments.values()) {
+      XPathExpression<Element> xpath = getXPathExpression(xpathExpression, doc);
+      nodes.addAll(xpath.evaluate(doc));
     }
 
-    public ApplicationModel build() throws Exception {
-      Set<Path> applicationFilePaths = new HashSet<>();
-      if (project.srcMainConfiguration().toFile().exists()) {
-        applicationFilePaths.addAll(getFiles(project.srcMainConfiguration()));
-      }
-      if (project.srcTestConfiguration().toFile().exists()) {
-        applicationFilePaths.addAll(getFiles(project.srcTestConfiguration()));
-      }
+    return nodes;
+  }
 
-      Map<Path, Document> applicationDocuments = new HashMap<>();
-      for (Path afp : applicationFilePaths) {
-        try {
-          applicationDocuments.put(afp, generateDocument(afp));
-        } catch (JDOMException | IOException e) {
-          throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + afp);
-        }
-      }
-      return new ApplicationModel(applicationDocuments);
-    }
+  public void replaceNodeName(String nameSpace, String nodeName, String xpath) {
+    for (Document doc : applicationDocuments.values()) {
+      Namespace namespace = doc.getRootElement().getNamespace(nameSpace);
 
-    private Document generateDocument(Path filePath) throws JDOMException, IOException {
-      SAXBuilder saxBuilder = new SAXBuilder();
-      return saxBuilder.build(filePath.toFile());
+      for (Element node : getXPathExpression(xpath, doc).evaluate(doc)) {
+        node.setNamespace(namespace);
+        node.setName(nodeName);
+        // TODO missing reporting com.mulesoft.tools.migration.library.step.ReplaceNodesName.execute()
+      }
     }
   }
+
+  public void updateAttributeName(String oldName, String newName, String xpath) {
+    for (Document doc : applicationDocuments.values()) {
+
+      for (Element node : getXPathExpression(xpath, doc).evaluate(doc)) {
+        Attribute attribute = node.getAttribute(oldName);
+        if (attribute != null) {
+          attribute.setName(newName);
+          // TODO missing reporting com.mulesoft.tools.migration.library.step.UpdateAttributeName.execute
+        }
+      }
+    }
+  }
+
+  public void addAttribute(String attributeName, String attributeValue, String xpath){
+    for (Document doc : applicationDocuments.values()) {
+
+      for (Element node : getXPathExpression(xpath, doc).evaluate(doc)) {
+        Attribute att = new Attribute(attributeName, attributeValue);
+        node.setAttribute(att);
+        // TODO missing reporting com.mulesoft.tools.migration.library.step.AddAttribute.execute
+      }
+    }
+  }
+
+  private XPathExpression<Element> getXPathExpression(String xpath, Document doc) {
+    return XPathFactory.instance().compile(xpath, Filters.element(), null, doc.getRootElement().getAdditionalNamespaces());
+  }
+
+
+
 }

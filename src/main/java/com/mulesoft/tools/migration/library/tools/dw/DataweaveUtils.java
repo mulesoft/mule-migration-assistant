@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.tools.dw;
+package com.mulesoft.tools.migration.library.tools.dw;
 
 
 import static org.mule.weave.v2.V2LangMigrant.migrateToV2;

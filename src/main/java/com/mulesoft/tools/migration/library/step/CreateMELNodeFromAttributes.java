@@ -14,7 +14,7 @@ import org.jdom2.Namespace;
 
 import java.util.*;
 
-import static com.mulesoft.tools.migration.tools.mel.MELUtils.getMELExpressionFromMap;
+import static com.mulesoft.tools.migration.library.tools.mel.MELUtils.getMELExpressionFromMap;
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
