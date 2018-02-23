@@ -10,7 +10,7 @@ import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 import org.jdom2.Element;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 
 /**
  * Removes an attribute from a node

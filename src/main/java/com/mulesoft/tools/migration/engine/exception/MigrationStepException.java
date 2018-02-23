@@ -4,17 +4,18 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.exception;
+package com.mulesoft.tools.migration.engine.exception;
 
 /**
- * Signals an issue in a {@link com.mulesoft.tools.migration.task.MigrationTask}
+ * Signals an issue in a {@link com.mulesoft.tools.migration.task.step.MigrationStep}
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MigrationTaskException extends Exception {
+public class MigrationStepException extends Exception {
 
-  public MigrationTaskException(String message) {
+  public MigrationStepException(String message) {
     super(message);
   }
+
 }

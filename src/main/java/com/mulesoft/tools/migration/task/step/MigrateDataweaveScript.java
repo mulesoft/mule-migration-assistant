@@ -7,7 +7,7 @@
 package com.mulesoft.tools.migration.task.step;
 
 import com.mulesoft.tools.migration.tools.dw.DataweaveUtils;
-import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Element;
 
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;

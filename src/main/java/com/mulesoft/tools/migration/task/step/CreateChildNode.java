@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.task.step;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 

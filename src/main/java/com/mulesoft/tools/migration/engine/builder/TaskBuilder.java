@@ -4,11 +4,10 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.builder;
+package com.mulesoft.tools.migration.engine.builder;
 
 import com.google.gson.Gson;
 import com.mulesoft.tools.migration.task.MigrationTask;
-import com.mulesoft.tools.migration.task.step.MigrationStep;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 

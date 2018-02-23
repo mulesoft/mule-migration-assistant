@@ -6,10 +6,9 @@
  */
 package com.mulesoft.tools.migration.task.step;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.util.ArrayList;
 import java.util.List;

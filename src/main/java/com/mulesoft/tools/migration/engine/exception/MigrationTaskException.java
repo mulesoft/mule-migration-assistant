@@ -4,26 +4,17 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.exception;
+package com.mulesoft.tools.migration.engine.exception;
 
 /**
- * Signals a failures in a {@link com.mulesoft.tools.migration.MigrationJob}
+ * Signals an issue in a {@link com.mulesoft.tools.migration.task.MigrationTask}
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MigrationJobException extends Exception {
+public class MigrationTaskException extends Exception {
 
-  // private String filePath;
-  // private List<String> exceptions;
-
-  public MigrationJobException(String message) {
-    // , List<String> exceptions, String filePath) {
+  public MigrationTaskException(String message) {
     super(message);
-    // this.filePath = filePath;
-    // this.exceptions = exceptions;
   }
-
-
-
 }

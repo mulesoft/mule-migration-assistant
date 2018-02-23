@@ -6,25 +6,26 @@
  */
 package com.mulesoft.tools.migration.task;
 
-import com.google.common.base.Strings;
-import com.mulesoft.tools.migration.exception.MigrationTaskException;
-import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
-import com.mulesoft.tools.migration.report.ReportingStrategy;
-import com.mulesoft.tools.migration.task.step.MigrationStep;
+import static com.mulesoft.tools.migration.report.ReportCategory.ERROR;
+import static com.mulesoft.tools.migration.report.ReportCategory.SKIPPED;
+import static com.mulesoft.tools.migration.report.ReportCategory.TRYING_TO_APPLY;
+import static com.mulesoft.tools.migration.report.ReportCategory.WORKING_WITH_NODES;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.ERROR;
-import static com.mulesoft.tools.migration.report.ReportCategory.SKIPPED;
-import static com.mulesoft.tools.migration.report.ReportCategory.WORKING_WITH_NODES;
-import static com.mulesoft.tools.migration.report.ReportCategory.TRYING_TO_APPLY;
+import com.google.common.base.Strings;
+import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
+import com.mulesoft.tools.migration.report.ReportingStrategy;
+import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
+import com.mulesoft.tools.migration.task.step.MigrationStep;
 
 /**
  * A task is composed by one or more steps
@@ -35,12 +36,15 @@ import static com.mulesoft.tools.migration.report.ReportCategory.TRYING_TO_APPLY
 public class MigrationTask {
 
   private String xpathSelector;
+
   private Document doc;
-  private Boolean onErrorStop;
-  private ReportingStrategy reportingStrategy;
-  private ArrayList<MigrationStep> steps;
   private List<Element> nodes;
   private String taskDescriptor;
+
+  private Boolean onErrorStop;
+
+  private ArrayList<MigrationStep> steps;
+  private ReportingStrategy reportingStrategy;
 
   public MigrationTask(String xpathSelector) {
     this.xpathSelector = xpathSelector;
@@ -92,8 +96,8 @@ public class MigrationTask {
 
   private List<Element> getNodesFromXPath(String XpathExpression) {
     if (!Strings.isNullOrEmpty(XpathExpression) && doc != null) {
-      XPathExpression<Element> xpath = XPathFactory.instance().compile(XpathExpression, Filters.element(), null,
-                                                                       doc.getRootElement().getAdditionalNamespaces());
+      XPathExpression<Element> xpath = XPathFactory.instance()
+          .compile(XpathExpression, Filters.element(), null, doc.getRootElement().getAdditionalNamespaces());
       List<Element> nodes = xpath.evaluate(doc);
       return nodes;
     } else {
