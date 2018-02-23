@@ -6,8 +6,10 @@
  */
 package com.mulesoft.tools.migration.engine.exception;
 
+import com.mulesoft.tools.migration.engine.MigrationTask;
+
 /**
- * Signals an issue in a {@link com.mulesoft.tools.migration.task.MigrationTask}
+ * Signals an issue in a {@link MigrationTask}
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0

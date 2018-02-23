@@ -7,14 +7,14 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Create child node connection",
-          "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNode",
           "parameters" : {
             "name" : "connection"
           }
         },
         {
           "stepDescriptor" : "Move attributes to child node connection",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributesToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributesToChildNode",
           "parameters" : {
             "attributes" : "outputPattern;writeToDirectory;readFromDirectory;workDirectory;workFileNamePattern;autoDelete;outputAppend;streaming;recursive;validateConnections;pollingFrequency;fileAge;moveToPattern;moveToDirectory;dynamicNotification;serialiseObjects;dispatcherPoolFactory-ref",
             "childNode" : "connection"
@@ -22,7 +22,7 @@
         },
         {
           "stepDescriptor" : "Rename db config",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceStringOnNodeName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
           "parameters" : {
             "stringToReplace" : "connector",
             "newValue" : "config"

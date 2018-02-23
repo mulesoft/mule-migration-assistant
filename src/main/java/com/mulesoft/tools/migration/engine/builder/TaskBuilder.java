@@ -7,7 +7,7 @@
 package com.mulesoft.tools.migration.engine.builder;
 
 import com.google.gson.Gson;
-import com.mulesoft.tools.migration.task.MigrationTask;
+import com.mulesoft.tools.migration.engine.MigrationTask;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 

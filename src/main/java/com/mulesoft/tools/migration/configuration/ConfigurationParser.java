@@ -21,7 +21,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.mulesoft.tools.migration.engine.builder.TaskBuilder;
-import com.mulesoft.tools.migration.task.MigrationTask;
+import com.mulesoft.tools.migration.engine.MigrationTask;
 
 /**
  * @author Mulesoft Inc.

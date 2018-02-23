@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.helper;
 
-import com.mulesoft.tools.migration.task.step.MigrationStep;
+import com.mulesoft.tools.migration.engine.MigrationStep;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;

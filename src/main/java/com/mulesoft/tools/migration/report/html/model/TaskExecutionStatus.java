@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.report.html.model;
 
 import java.util.ArrayList;
 
-import com.mulesoft.tools.migration.task.step.MigrationStep;
+import com.mulesoft.tools.migration.engine.MigrationStep;
 
 /**
  * Stores data of a executed task

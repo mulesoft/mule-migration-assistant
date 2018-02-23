@@ -11,6 +11,7 @@ import static java.lang.Boolean.parseBoolean;
 
 import java.nio.file.Paths;
 
+import com.mulesoft.tools.migration.engine.MigrationTask;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -28,7 +29,7 @@ import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 
 /**
- * Base entry point to run {@link com.mulesoft.tools.migration.task.MigrationTask}s
+ * Base entry point to run {@link MigrationTask}s
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0

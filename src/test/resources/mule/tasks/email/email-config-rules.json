@@ -7,14 +7,14 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Create child node smtp-connection",
-          "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNode",
           "parameters" : {
             "name" : "smtp-connection"
           }
         },
         {
           "stepDescriptor" : "Move attributes to child node smtp-connection",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributesToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributesToChildNode",
           "parameters" : {
             "attributes" : "username;password;validateConnections;jndiProviderUrl;clientId;maxRedelivery;numberOfConsumers;durable;persistentDelivery",
             "childNode" : "smtp-connection"
@@ -22,7 +22,7 @@
         },
         {
           "stepDescriptor" : "Rename smtp config",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceStringOnNodeName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
           "parameters" : {
             "stringToReplace" : "connector",
             "newValue" : "config"

@@ -6,7 +6,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Split message processors inside test into the three new MUnit test section",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveMUnitProcessors",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveMUnitProcessors",
           "parameters" : {}
         }
       ]

@@ -60,8 +60,7 @@ public class ApplicationModel {
         try {
           applicationDocuments.put(afp, generateDocument(afp));
         } catch (JDOMException | IOException e) {
-          // TODO REPLACE THIS WITH A MORE SPECIFIC EXCEPTION
-          throw new RuntimeException("Fail to parse file: " + afp);
+          throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + afp);
         }
       }
       return new ApplicationModel(applicationDocuments);

@@ -23,16 +23,16 @@ import org.junit.rules.TemporaryFolder;
 import com.mulesoft.tools.migration.configuration.ConfigurationParser;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
-import com.mulesoft.tools.migration.task.MigrationTask;
-import com.mulesoft.tools.migration.task.step.AddAttribute;
-import com.mulesoft.tools.migration.task.step.CreateChildNodeFromAttribute;
-import com.mulesoft.tools.migration.task.step.MigrationStep;
-import com.mulesoft.tools.migration.task.step.MoveAttributeToChildNode;
-import com.mulesoft.tools.migration.task.step.NegateAttributeValue;
-import com.mulesoft.tools.migration.task.step.ReplaceNodesName;
-import com.mulesoft.tools.migration.task.step.ReplaceStringOnNodeName;
-import com.mulesoft.tools.migration.task.step.SetNodeNamespace;
-import com.mulesoft.tools.migration.task.step.UpdateAttributeName;
+import com.mulesoft.tools.migration.engine.MigrationTask;
+import com.mulesoft.tools.migration.library.step.AddAttribute;
+import com.mulesoft.tools.migration.library.step.CreateChildNodeFromAttribute;
+import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.library.step.MoveAttributeToChildNode;
+import com.mulesoft.tools.migration.library.step.NegateAttributeValue;
+import com.mulesoft.tools.migration.library.step.ReplaceNodesName;
+import com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName;
+import com.mulesoft.tools.migration.library.step.SetNodeNamespace;
+import com.mulesoft.tools.migration.library.step.UpdateAttributeName;
 
 public class MigrationJobMunitTest {
 

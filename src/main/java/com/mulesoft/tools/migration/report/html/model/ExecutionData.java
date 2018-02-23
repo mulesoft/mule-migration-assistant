@@ -7,8 +7,8 @@
 package com.mulesoft.tools.migration.report.html.model;
 
 import com.mulesoft.tools.migration.report.ReportCategory;
-import com.mulesoft.tools.migration.task.MigrationTask;
-import com.mulesoft.tools.migration.task.step.MigrationStep;
+import com.mulesoft.tools.migration.engine.MigrationTask;
+import com.mulesoft.tools.migration.engine.MigrationStep;
 
 /**
  * Store data of a reported event

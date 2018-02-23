@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mulesoft.tools.migration.task.step.MigrationStep;
+import com.mulesoft.tools.migration.engine.MigrationStep;
 
 /**
  * It knows how to build as {@link MigrationStep}

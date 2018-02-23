@@ -27,7 +27,6 @@ import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplication
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
-import com.mulesoft.tools.migration.task.MigrationTask;
 
 /**
  * It represent a migration job which is composed by one or more {@link MigrationTask}
@@ -59,7 +58,6 @@ public class MigrationJob {
 
     for (Entry<Path, Document> entry : applicationModel.getApplicationDocuments().entrySet()) {
       try {
-        // TODO we are persisting this over the original file
         migrateFile(entry.getKey(), entry.getValue(), migrationTasks);
       } catch (Exception e) {
         throw new MigrationJobException("Failed to migrate the file: " + entry.getKey() + ". ", e);

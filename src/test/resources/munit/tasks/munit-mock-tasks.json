@@ -7,7 +7,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Add munit tools namespace",
-          "type" : "com.mulesoft.tools.migration.task.step.SetNodeNamespace",
+          "type" : "com.mulesoft.tools.migration.library.step.SetNodeNamespace",
           "parameters" : {
             "newNamespace" : "munit-tools",
             "newNamespaceUri" : "http://www.mulesoft.org/schema/mule/munit-tools",
@@ -16,7 +16,7 @@
         },
         {
           "stepDescriptor" : "Update mock namespace on nodes",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit-tools",
             "newNodeName" : "mock-when"
@@ -24,7 +24,7 @@
         },
         {
           "stepDescriptor": "Update messageProcessor property on mock",
-          "type": "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type": "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters": {
             "attributeName": "messageProcessor",
             "newName": "processor"
@@ -32,7 +32,7 @@
         },
         {
           "stepDescriptor" : "Delete mock namespace from file",
-          "type" : "com.mulesoft.tools.migration.task.step.DeleteNamespace",
+          "type" : "com.mulesoft.tools.migration.library.step.DeleteNamespace",
           "parameters" : {
             "namespace" : "mock",
             "namespaceUri" : "http://www.mulesoft.org/schema/mule/mock",
@@ -47,7 +47,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update attribute name property on mock",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "name",
             "newName" : "attributeName"
@@ -61,14 +61,14 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Move Set Payload property to a child node",
-          "type" : "com.mulesoft.tools.migration.task.step.CreateChildNodeFromAttribute",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNodeFromAttribute",
           "parameters" : {
             "attribute" : "payload"
           }
         },
         {
           "stepDescriptor" : "Move encoding attribute to child node payload",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributeToChildNode",
           "parameters" : {
             "attribute" : "encoding",
             "childNode" : "payload"
@@ -76,7 +76,7 @@
         },
         {
           "stepDescriptor" : "Move mimeType attribute to child node payload",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributeToChildNode",
           "parameters" : {
             "attribute" : "mimeType",
             "childNode" : "payload"
@@ -90,7 +90,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Change invocation properties to variables",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit-tools",
             "newNodeName" : "variables"
@@ -104,7 +104,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update invocation property on Mock to variable",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit-tools",
             "newNodeName" : "variable"
@@ -118,7 +118,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update mimeType attribute to mediaType",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "mimeType",
             "newName" : "mediaType"

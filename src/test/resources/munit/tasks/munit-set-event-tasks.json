@@ -6,7 +6,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update attribute expectedValue to new DSL",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit",
             "newNodeName" : "set-event"
@@ -14,14 +14,14 @@
         },
         {
           "stepDescriptor" : "Move Set Payload property to a child node",
-          "type" : "com.mulesoft.tools.migration.task.step.CreateChildNodeFromAttribute",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNodeFromAttribute",
           "parameters" : {
             "attribute" : "payload"
           }
         },
         {
           "stepDescriptor" : "Move encoding attribute to child node payload",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributeToChildNode",
           "parameters" : {
             "attribute" : "encoding",
             "childNode" : "payload"
@@ -29,7 +29,7 @@
         },
         {
           "stepDescriptor" : "Move mimeType attribute to child node payload",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributeToChildNode",
           "parameters" : {
             "attribute" : "mimeType",
             "childNode" : "payload"
@@ -43,7 +43,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update MimeType property name to MediaType",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "mimeType",
             "newName" : "mediaType"
@@ -57,7 +57,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Change invocation properties to variables",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit",
             "newNodeName" : "variables"
@@ -71,7 +71,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update invocation property on Set Event to variable",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit",
             "newNodeName" : "variable"

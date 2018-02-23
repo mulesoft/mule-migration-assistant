@@ -7,7 +7,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Rename 'static-resource-handler' to 'load-static-resource'",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceStringOnNodeName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
           "parameters" : {
             "stringToReplace" : "static-resource-handler",
             "newValue" : "load-static-resource"
@@ -15,7 +15,7 @@
         },
         {
           "stepDescriptor" : "Rename 'resourceBase' attribute to 'resourceBasePath'",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "resourceBase",
             "newName" : "resourceBasePath"
