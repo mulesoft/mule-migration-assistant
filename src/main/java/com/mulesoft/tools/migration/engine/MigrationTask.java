@@ -73,9 +73,9 @@ public class MigrationTask implements Executable {
                                    this.doc.getBaseURI(), this, null);
         for (MigrationStep step : steps) {
           step.setReportingStrategy(this.reportingStrategy);
-          step.setDocument(this.doc);
+          // step.setDocument(this.doc);
           // step.setOnErrorStop(this.onErrorStop);
-          step.setNodes(nodes);
+          // step.setNodes(nodes);
           getReportingStrategy().log(step.getStepDescriptor(), TRYING_TO_APPLY, this.doc.getBaseURI(), this, null);
           step.execute();
         }

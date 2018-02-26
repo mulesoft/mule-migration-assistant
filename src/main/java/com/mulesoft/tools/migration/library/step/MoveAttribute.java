@@ -12,12 +12,12 @@ import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import static com.mulesoft.tools.migration.library.tools.dom.DomUtils.findChildElement;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.findChildElement;
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * It moves an attribute from one node to another
+ * It moves a node's attribute as a child node from a different node
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0

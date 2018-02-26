@@ -12,7 +12,7 @@ import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import static com.mulesoft.tools.migration.library.tools.dom.DomUtils.findChildElement;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.findChildElement;
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -55,19 +55,21 @@ public class GetAttributeFromReference extends MigrationStep {
     try {
 
       if (!isBlank(getSourceReferenceAttribute()) && !isBlank(getTargetReferenceAttribute())) {
-
-        String referenceValue;
-        Namespace namespace;
-
         for (Element node : getNodes()) {
-          referenceValue = node.getAttributeValue(getSourceReferenceAttribute());
-          namespace = Namespace.getNamespace(getReferenceNodeNamespace(), getReferenceNodeNamespaceUri());
+          String referenceValue = node.getAttributeValue(getSourceReferenceAttribute());
+          Namespace namespace = Namespace.getNamespace(getReferenceNodeNamespace(), getReferenceNodeNamespaceUri());
+
           if (null != namespace) {
             Element referenceElement = findChildElement(getReferenceNode(), referenceValue, getTargetReferenceAttribute(),
                                                         namespace, getDocument().getRootElement());
+
+
             if (null != referenceElement && null != getReferenceChildNode()) {
+
               Element referenceChildElement = findChildElement(getReferenceChildNode(), referenceElement);
+
               if (null != referenceChildElement) {
+
                 Attribute originalAttribute = referenceChildElement.getAttribute(getReferenceAttribute());
                 if (null != originalAttribute) {
                   Attribute newAttribute = new Attribute(originalAttribute.getName(), originalAttribute.getValue());

@@ -56,7 +56,7 @@ public class ReplaceStringOnNodeNameTest {
   @Test
   public void executeTaskOverEmptyNodeCollection() throws Exception {
     replaceStringStep = new ReplaceStringOnNodeName("true", "that");
-    replaceStringStep.setNodes(Collections.<Element>emptyList());
+    //    replaceStringStep.setNodes(Collections.<Element>emptyList());
     replaceStringStep.execute();
     assertEquals(Collections.<Element>emptyList(), replaceStringStep.getNodes());
   }

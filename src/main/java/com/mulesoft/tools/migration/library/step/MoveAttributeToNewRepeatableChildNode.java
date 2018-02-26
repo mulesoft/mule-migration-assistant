@@ -6,15 +6,17 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
-import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
+import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
+import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 
 /**
- *    Moves an attribute to a new repeatable child node
+ * Moves an attribute to a new repeatable child node
+ * 
  * @author Mulesoft Inc.
  * @since 1.0.0
  */

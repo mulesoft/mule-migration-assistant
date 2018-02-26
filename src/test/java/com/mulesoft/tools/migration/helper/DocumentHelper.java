@@ -44,7 +44,7 @@ public class DocumentHelper {
   public static void getNodesFromFile(String Xpath, MigrationStep step, String filePath) throws Exception {
     Document document = getDocument(filePath);
     List<Element> nodes = getElementsFromDocument(document, Xpath);
-    step.setDocument(document);
-    step.setNodes(nodes);
+    //    step.setDocument(document);
+    //    step.setNodes(nodes);
   }
 }

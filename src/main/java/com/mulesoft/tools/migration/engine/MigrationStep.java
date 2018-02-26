@@ -6,13 +6,14 @@
  */
 package com.mulesoft.tools.migration.engine;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
-import com.mulesoft.tools.migration.report.ReportingStrategy;
+import java.util.List;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 
-import java.util.List;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.report.ReportingStrategy;
+import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 
 /**
  * Basic unit of execution
@@ -44,21 +45,22 @@ public abstract class MigrationStep implements Executable {
   // this.nodes = nodes;
   // }
   //
-  // public List<Element> getNodes() {
-  // return this.nodes;
+  // public void setDocument(Document document) {
+  // this.document = document;
   // }
+  @Deprecated
+  public List<Element> getNodes() {
+    return null;
+  }
+
+  @Deprecated
+  public Document getDocument() {
+    return null;
+  }
 
   public ApplicationModel getApplicationModel() {
     return applicationModel;
   }
-
-  // public void setDocument(Document document) {
-  // this.document = document;
-  // }
-
-  // public Document getDocument() {
-  // return this.document;
-  // }
 
   public ReportingStrategy getReportingStrategy() {
     if (null == this.reportingStrategy) {

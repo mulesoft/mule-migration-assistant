@@ -18,11 +18,11 @@ import com.mulesoft.tools.migration.engine.MigrationStep;
  */
 public class ExecutionData {
 
-  private String message;
   private ReportCategory reportCategory;
   private String filePath;
   private MigrationTask task;
   private MigrationStep step;
+  private String message;
 
   public ExecutionData(String message, ReportCategory reportCategory, String filePath, MigrationTask task, MigrationStep step) {
     this.message = message;

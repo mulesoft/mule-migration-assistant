@@ -16,13 +16,13 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.ApplicationModelBuilder;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
