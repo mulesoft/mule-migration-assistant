@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.engine;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.List;
 
 import org.jdom2.Document;
@@ -23,14 +25,11 @@ import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
  */
 public abstract class MigrationStep implements Executable {
 
+  // TODO rename to description
   private String stepDescriptor;
 
   private ApplicationModel applicationModel;
 
-  // private Document document;
-  // private List<Element> nodes;
-
-  // private Boolean onErrorStop;
   private ReportingStrategy reportingStrategy;
 
   public void setStepDescriptor(String descriptor) {
@@ -41,27 +40,16 @@ public abstract class MigrationStep implements Executable {
     return this.stepDescriptor;
   }
 
-  // public void setNodes(List<Element> nodes) {
-  // this.nodes = nodes;
-  // }
-  //
-  // public void setDocument(Document document) {
-  // this.document = document;
-  // }
-  @Deprecated
-  public List<Element> getNodes() {
-    return null;
-  }
-
-  @Deprecated
-  public Document getDocument() {
-    return null;
+  public void setApplicationModel(ApplicationModel applicationModel) {
+    checkArgument(applicationModel != null, "The application model must not be null.");
+    this.applicationModel = applicationModel;
   }
 
   public ApplicationModel getApplicationModel() {
     return applicationModel;
   }
 
+  // TODO avoid this default it should come from another place (builder or ReportStrategyLocator)
   public ReportingStrategy getReportingStrategy() {
     if (null == this.reportingStrategy) {
       this.reportingStrategy = new ConsoleReportStrategy();
@@ -73,12 +61,13 @@ public abstract class MigrationStep implements Executable {
     this.reportingStrategy = reportingStrategy;
   }
 
-  // public Boolean getOnErrorStop() {
-  // return onErrorStop;
-  // }
-  //
-  // public void setOnErrorStop(Boolean onErrorStop) {
-  // this.onErrorStop = onErrorStop;
-  // }
+  @Deprecated
+  public List<Element> getNodes() {
+    return null;
+  }
 
+  @Deprecated
+  public Document getDocument() {
+    return null;
+  }
 }

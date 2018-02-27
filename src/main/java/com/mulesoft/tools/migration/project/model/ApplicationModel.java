@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.project.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.project.structure.BasicProject.getFiles;
 import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
+import static org.apache.commons.lang3.StringUtils.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -51,7 +52,7 @@ public class ApplicationModel {
   }
 
   public List<Element> getNodes(String xpathExpression) {
-    checkArgument(StringUtils.isNotBlank(xpathExpression), "The Xpath Expression must not be null nor empty");
+    checkArgument(isNotBlank(xpathExpression), "The Xpath Expression must not be null nor empty");
 
     List<Element> nodes = new ArrayList<>();
     for (Document doc : applicationDocuments.values()) {

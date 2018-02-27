@@ -16,13 +16,14 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
+import com.mulesoft.tools.migration.project.structure.BasicProject;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
@@ -36,38 +37,79 @@ import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
  */
 public class MigrationJob implements Executable {
 
-  // TODO this should be Basic project and casted
-  private MuleApplicationProject project;
-  private MuleApplicationProject outputProject;
+  private BasicProject project;
+  private BasicProject outputProject;
 
   private List<MigrationTask> migrationTasks;
 
   private Boolean onErrorStop;
   private ReportingStrategy reportingStrategy;
 
-  private MigrationJob(MuleApplicationProject project, MuleApplicationProject outputProject, List<MigrationTask> migrationTasks,
+  private MigrationJob(BasicProject project, BasicProject outputProject, List<MigrationTask> migrationTasks,
                        Boolean onErrorStop, ReportingStrategy reportingStrategy) {
     this.project = project;
     this.outputProject = outputProject;
+
     this.migrationTasks = migrationTasks;
+
     this.onErrorStop = onErrorStop;
     this.reportingStrategy = reportingStrategy;
   }
 
   public void execute() throws Exception {
-    ApplicationModel applicationModel = new ApplicationModelBuilder(project).build();
+    // TODO this casting should be smarter
+    ApplicationModel applicationModel = new ApplicationModelBuilder((MuleApplicationProject) project).build();
 
-    for (Entry<Path, Document> entry : applicationModel.getApplicationDocuments().entrySet()) {
+    for (MigrationTask task : migrationTasks) {
+      task.setOnErrorStop(onErrorStop);
+      task.setApplicationModel(applicationModel);
+      task.setReportingStrategy(reportingStrategy);
+
       try {
-        migrateFile(entry.getKey(), entry.getValue(), migrationTasks);
+        task.execute();
+        // TODO we should review this
+        persistApplicationModel(applicationModel);
       } catch (Exception e) {
-        throw new MigrationJobException("Failed to migrate the file: " + entry.getKey() + ". ", e);
+        throw new MigrationJobException("Failed to execute task: " + task.getTaskDescriptor() + ". ", e);
       }
     }
-
     generateReport();
   }
 
+  private void persistApplicationModel(ApplicationModel applicationModel) throws IOException {
+    for (Entry<Path, Document> entry : applicationModel.getApplicationDocuments().entrySet()) {
+      Path originalFilePath = entry.getKey();
+      Document document = entry.getValue();
+
+      // TODO this is just wrong
+      String targetFilePath = outputProject.getBaseFolder().resolve(originalFilePath.getFileName()).toString();
+      XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
+      xmlOutputter.output(document, new FileOutputStream(targetFilePath));
+    }
+  }
+
+  private void generateReport() {
+    // TODO this GOES TO ANOTHER CLASS
+    if (reportingStrategy instanceof HTMLReportStrategy) {
+      ((HTMLReportStrategy) this.reportingStrategy).generateReport();
+    }
+  }
+
+  // public void execute() throws Exception {
+  // ApplicationModel applicationModel = new ApplicationModelBuilder(project).build();
+  //
+  // for (Entry<Path, Document> entry : applicationModel.getApplicationDocuments().entrySet()) {
+  // try {
+  // migrateFile(entry.getKey(), entry.getValue(), migrationTasks);
+  // } catch (Exception e) {
+  // throw new MigrationJobException("Failed to migrate the file: " + entry.getKey() + ". ", e);
+  // }
+  // }
+  //
+  // generateReport();
+  // }
+
+  @Deprecated
   private void migrateFile(Path filePath, Document document, List<MigrationTask> tasks) throws Exception {
     // TODO let's see if there another way to do this
     reportingStrategy.log(filePath.toString(), WORKING_WITH_FILE, filePath.toString(), null, null);
@@ -80,20 +122,7 @@ public class MigrationJob implements Executable {
       task.execute();
     }
 
-    serializeMigratedFile(filePath, document);
-  }
-
-  private void serializeMigratedFile(Path filePath, Document document) throws IOException {
-    XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
-    // TODO this is just wrong
-    String targetFilePath = outputProject.getBaseFolder().resolve(filePath.getFileName()).toString();
-    xmlOutputter.output(document, new FileOutputStream(targetFilePath));
-  }
-
-  private void generateReport() {
-    if (this.reportingStrategy instanceof HTMLReportStrategy) {
-      ((HTMLReportStrategy) this.reportingStrategy).generateReport();
-    }
+    // serializeMigratedFile(filePath, document);
   }
 
   public static class MigrationJobBuilder {
