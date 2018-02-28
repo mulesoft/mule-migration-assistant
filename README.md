@@ -1,5 +1,7 @@
-# Mule4 Migration Tool
-This tool is intended to help with the Mule 3.x - Mule 4.x migration effort.
+# Mule Migration Tool
+This tool's goal is to migrate projects. 
+
+Initially is intended to help with the Mule 3.x - Mule 4.x migration effort.
 
 ## Approach
 The tool works at xml level, making DOM operations/manipulation based on a set of configurable tasks and steps described in json files.
