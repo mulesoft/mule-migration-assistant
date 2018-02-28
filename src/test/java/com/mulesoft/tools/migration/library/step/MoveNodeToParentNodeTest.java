@@ -8,10 +8,12 @@ package com.mulesoft.tools.migration.library.step;
 
 import org.jdom2.Element;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getNodesFromFile;
 
+@Ignore
 public class MoveNodeToParentNodeTest {
 
   private MoveNodeToParentNode moveNodeToParentNodeStep;

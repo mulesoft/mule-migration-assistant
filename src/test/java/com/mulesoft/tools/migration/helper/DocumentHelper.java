@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
+//TODO This class is no longer valid, we can have something similar but to obtain an application model
 public class DocumentHelper {
 
   public static Document getDocument(String path) throws Exception {

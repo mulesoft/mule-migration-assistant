@@ -12,6 +12,7 @@ import org.junit.Test;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getNodesFromFile;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class DeleteNamespaceTest {
 
   private DeleteNamespace deleteNamespaceStep;

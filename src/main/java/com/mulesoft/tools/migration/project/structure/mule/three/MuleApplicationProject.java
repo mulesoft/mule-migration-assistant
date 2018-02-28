@@ -11,6 +11,8 @@ import java.nio.file.Path;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
 
 /**
+ * Represents a mule three application project structure
+ *
  * @author Mulesoft Inc.
  */
 public class MuleApplicationProject extends MuleProject {

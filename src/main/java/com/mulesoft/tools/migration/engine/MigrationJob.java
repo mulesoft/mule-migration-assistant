@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.mulesoft.tools.migration.project.structure.mule.four.MuleApplication;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -125,6 +126,12 @@ public class MigrationJob implements Executable {
     // serializeMigratedFile(filePath, document);
   }
 
+  /**
+   * It represent the builder to obtain a {@link MigrationJob}
+   *
+   * @author Mulesoft Inc.
+   * @since 1.0.0
+   */
   public static class MigrationJobBuilder {
 
     private MuleApplicationProject project;

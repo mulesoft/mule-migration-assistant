@@ -11,6 +11,8 @@ import com.mulesoft.tools.migration.project.structure.JavaProject;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
 
 /**
+ * Represents a mule three domain project structure
+ *
  * @author Mulesoft Inc.
  */
 public class MuleDomain extends MuleProject {

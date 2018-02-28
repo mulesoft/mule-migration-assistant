@@ -6,11 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getNodesFromFile;
 import static org.junit.Assert.*;
 
+@Ignore
 public class CreateChildNodeFromAttributeTest {
 
   private CreateChildNodeFromAttribute createAttNodeStep;

@@ -24,6 +24,8 @@ import com.mulesoft.tools.migration.engine.builder.TaskBuilder;
 import com.mulesoft.tools.migration.engine.MigrationTask;
 
 /**
+ * It parse json configuration files that will obtain one or more {@link MigrationTask}
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */

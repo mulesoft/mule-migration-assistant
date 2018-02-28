@@ -7,11 +7,13 @@
 package com.mulesoft.tools.migration.library.step;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getNodesFromFile;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class AddAttributeTest {
 
   private AddAttribute attributeStep;

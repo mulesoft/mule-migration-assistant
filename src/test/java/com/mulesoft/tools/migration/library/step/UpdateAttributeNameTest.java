@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.step;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Element;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getNodesFromFile;
 import static org.junit.Assert.*;
 
+@Ignore
 public class UpdateAttributeNameTest {
 
   private UpdateAttributeName updateAttributeName;

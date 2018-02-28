@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.step;
 
 import org.jdom2.Element;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -15,6 +16,7 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getNodesFromFil
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class ReplaceNodesNameTest {
 
   private ReplaceNodesName replaceQName;

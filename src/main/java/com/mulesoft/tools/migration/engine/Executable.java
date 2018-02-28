@@ -6,6 +6,12 @@
  */
 package com.mulesoft.tools.migration.engine;
 
+/**
+ * An interface to handle the execution
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public interface Executable {
 
   void execute() throws Exception;

@@ -38,6 +38,7 @@ import org.jdom2.xpath.XPathFactory;
  * Represent the application to be migrated
  * 
  * @author Mulesoft Inc.
+ * @since 1.0.0
  */
 public class ApplicationModel {
 
@@ -78,6 +79,12 @@ public class ApplicationModel {
   }
 
 
+  /**
+   * It represent the builder to obtain a {@link ApplicationModel}
+   *
+   * @author Mulesoft Inc.
+   * @since 1.0.0
+   */
   public static class ApplicationModelBuilder {
 
     private MuleApplicationProject project;

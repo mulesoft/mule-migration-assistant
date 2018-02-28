@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import com.mulesoft.tools.migration.project.structure.JavaProject;
 
 /**
+ * Represents a mule project structure
+ *
  * @author Mulesoft Inc.
  */
 public abstract class MuleProject extends JavaProject {

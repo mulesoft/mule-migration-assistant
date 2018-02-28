@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.task;
 import com.mulesoft.tools.migration.engine.MigrationTask;
 import com.mulesoft.tools.migration.library.step.AddAttribute;
 import com.mulesoft.tools.migration.engine.MigrationStep;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -17,6 +18,7 @@ import java.util.List;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static org.junit.Assert.*;
 
+@Ignore
 public class MigrationTaskTest {
 
   private MigrationTask migrationTask;

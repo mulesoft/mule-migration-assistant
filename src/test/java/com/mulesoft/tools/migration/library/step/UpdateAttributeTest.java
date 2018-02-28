@@ -9,10 +9,12 @@ package com.mulesoft.tools.migration.library.step;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import com.mulesoft.tools.migration.helper.DocumentHelper;
 import org.jdom2.Element;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+@Ignore
 public class UpdateAttributeTest {
 
   private UpdateAttribute updateAttribute;

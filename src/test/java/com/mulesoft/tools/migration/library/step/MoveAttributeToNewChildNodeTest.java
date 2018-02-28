@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.step;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getNodesFromFil
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+@Ignore
 public class MoveAttributeToNewChildNodeTest {
 
   private MoveAttributeToNewChildNode moveAttStep;
