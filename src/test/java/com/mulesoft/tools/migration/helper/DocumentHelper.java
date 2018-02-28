@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.helper;
 
-import com.mulesoft.tools.migration.task.step.MigrationStep;
+import com.mulesoft.tools.migration.engine.MigrationStep;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
+//TODO This class is no longer valid, we can have something similar but to obtain an application model
 public class DocumentHelper {
 
   public static Document getDocument(String path) throws Exception {
@@ -44,7 +45,7 @@ public class DocumentHelper {
   public static void getNodesFromFile(String Xpath, MigrationStep step, String filePath) throws Exception {
     Document document = getDocument(filePath);
     List<Element> nodes = getElementsFromDocument(document, Xpath);
-    step.setDocument(document);
-    step.setNodes(nodes);
+    //    step.setDocument(document);
+    //    step.setNodes(nodes);
   }
 }

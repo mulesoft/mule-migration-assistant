@@ -6,19 +6,12 @@
  */
 package com.mulesoft.tools.migration;
 
-import static com.mulesoft.tools.migration.MigrationRunner.MigrationConsoleOptions.BACKUP;
-import static com.mulesoft.tools.migration.MigrationRunner.MigrationConsoleOptions.FILES;
-import static com.mulesoft.tools.migration.MigrationRunner.MigrationConsoleOptions.FILES_DIR;
-import static com.mulesoft.tools.migration.MigrationRunner.MigrationConsoleOptions.HELP;
-import static com.mulesoft.tools.migration.MigrationRunner.MigrationConsoleOptions.MIGRATION_CONFIG_DIR;
-import static com.mulesoft.tools.migration.MigrationRunner.MigrationConsoleOptions.MIGRATION_CONFIG_FILE;
-import static com.mulesoft.tools.migration.MigrationRunner.MigrationConsoleOptions.ON_ERROR_STOP;
-import static com.mulesoft.tools.migration.MigrationRunner.MigrationConsoleOptions.REPORT;
+import static java.lang.Boolean.TRUE;
+import static java.lang.Boolean.parseBoolean;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.nio.file.Paths;
 
+import com.mulesoft.tools.migration.engine.MigrationTask;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -26,40 +19,58 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.mulesoft.tools.migration.configuration.ConfigurationParser;
+import com.mulesoft.tools.migration.engine.MigrationJob;
+import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
+import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 
 /**
- * Base entry point to run {@link com.mulesoft.tools.migration.task.MigrationTask}s
+ * Base entry point to run {@link MigrationTask}s
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
 public class MigrationRunner {
 
-  private List<String> files;
-  private String filesDir;
-  private String migrationConfigFile;
-  private String migrationConfigDir;
-  private Boolean backup;
+  private final static String HELP = "help";
+
+  private final static String REPORT = "report";
+  private final static String ON_ERROR_STOP = "onErrorStop";
+
+  private final static String PROJECT_BASE_PATH = "projectBasePath";
+  private final static String DESTINATION_PROJECT_BASE_PATH = "destinationProjectBasePath";
+  private final static String MIGRATION_CONFIGURATION_PATH = "migrationConfigurationPath";
+
+
   private Boolean onErrorStop;
+
+  private String projectBasePath;
+  private String destinationProjectBasePath;
+  private String migrationConfigurationPath;
+
   private ReportingStrategy reportingStrategy;
 
   public static void main(String args[]) throws Exception {
     MigrationRunner migrationRunner = new MigrationRunner();
     migrationRunner.initializeOptions(args);
 
-    MigrationJob job = new MigrationJob();
-    job.setBackUpProfile(migrationRunner.backup);
-    job.setOnErrorStop(migrationRunner.onErrorStop);
-    job.setDocuments(migrationRunner.files);
-    job.setFilesDir(migrationRunner.filesDir);
-    job.setConfigFilePath(migrationRunner.migrationConfigFile);
-    job.setConfigFileDir(migrationRunner.migrationConfigDir);
-    job.setReportingStrategy(migrationRunner.reportingStrategy);
+    MigrationJob job = migrationRunner.buildMigrationJob();
     job.execute();
+  }
+
+  private MigrationJob buildMigrationJob() {
+    MigrationJobBuilder builder = new MigrationJobBuilder()
+        .withProject(new MuleApplicationProject(Paths.get(projectBasePath)))
+        .withOutputProject(new MuleApplicationProject(Paths.get(destinationProjectBasePath)))
+        .withMigrationTasks(new ConfigurationParser(Paths.get(migrationConfigurationPath)).parse())
+        .withOnErrorStop(onErrorStop)
+        .withReportingStrategy(reportingStrategy);
+
+    return builder.build();
   }
 
   /**
@@ -71,13 +82,11 @@ public class MigrationRunner {
 
     Options options = new Options();
 
-    options.addOption(MIGRATION_CONFIG_FILE, true, "Migration config file (json) containing all the rules and step");
-    options.addOption(MIGRATION_CONFIG_DIR, true,
-                      "Migration config root directory containing all the json files with the rules configurations");
-    options.addOption(FILES, true, "List of paths separated by ';' example: path1;path2...etc");
-    options.addOption(FILES_DIR, true, "Root directory of the files to be migrated");
-    options.addOption(BACKUP, true, "Flag to determine if you want a backup of your original files");
     options.addOption(HELP, false, "Shows the help");
+    options.addOption(MIGRATION_CONFIGURATION_PATH, true,
+                      "Migration configuration path containing all the json files with the rules configurations");
+    options.addOption(PROJECT_BASE_PATH, true, "Base directory of the project  to be migrated");
+    options.addOption(DESTINATION_PROJECT_BASE_PATH, true, "Base directory of the migrated project");
     options.addOption(REPORT, false, "Reporting strategy (default: console)");
     options.addOption(ON_ERROR_STOP, false, "Defines if the tool should stop when an error happens (default:true)");
 
@@ -85,28 +94,24 @@ public class MigrationRunner {
       CommandLineParser parser = new DefaultParser();
       CommandLine line = parser.parse(options, args);
 
-      if (line.hasOption(MIGRATION_CONFIG_FILE) && !line.hasOption(MIGRATION_CONFIG_DIR)) {
-        this.migrationConfigFile = line.getOptionValue(MIGRATION_CONFIG_FILE);
-      } else if (!line.hasOption(MIGRATION_CONFIG_FILE) && line.hasOption(MIGRATION_CONFIG_DIR)) {
-        this.migrationConfigDir = line.getOptionValue(MIGRATION_CONFIG_DIR);
+      if (line.hasOption(MIGRATION_CONFIGURATION_PATH)) {
+        this.migrationConfigurationPath = line.getOptionValue(MIGRATION_CONFIGURATION_PATH);
       } else {
-        throw new ConsoleOptionsException("You must specify a migration config file OR a config dir");
+        throw new ConsoleOptionsException("You must specify a migration configuration path");
       }
 
-      if (line.hasOption(FILES) && !line.hasOption(FILES_DIR)) {
-        this.files = new ArrayList<>(Arrays.asList(line.getOptionValue(FILES).split(";")));
-      } else if (!line.hasOption(FILES) && line.hasOption(FILES_DIR)) {
-        this.filesDir = line.getOptionValue(FILES_DIR);
+      if (line.hasOption(PROJECT_BASE_PATH)) {
+        this.projectBasePath = line.getOptionValue(PROJECT_BASE_PATH);
       } else {
-        throw new ConsoleOptionsException("You must specify a root directory of the files to be migrated OR a list " +
-            "of paths separated by ';' example: path1;path2...etc");
+        throw new ConsoleOptionsException("You must specify a project base path of the files to be migrated");
       }
 
-      if (line.hasOption(BACKUP)) {
-        this.backup = Boolean.parseBoolean(line.getOptionValue(BACKUP));
+      if (line.hasOption(DESTINATION_PROJECT_BASE_PATH)) {
+        this.destinationProjectBasePath = line.getOptionValue(DESTINATION_PROJECT_BASE_PATH);
       } else {
-        this.backup = Boolean.FALSE;
+        throw new ConsoleOptionsException("You must specify a destination project base path");
       }
+
 
       if (line.hasOption(REPORT)) {
         if (line.getOptionValue(REPORT).equals("html")) {
@@ -118,11 +123,7 @@ public class MigrationRunner {
         this.reportingStrategy = new ConsoleReportStrategy();
       }
 
-      if (line.hasOption(ON_ERROR_STOP)) {
-        this.onErrorStop = Boolean.parseBoolean(line.getOptionValue(ON_ERROR_STOP));
-      } else {
-        this.onErrorStop = Boolean.TRUE;
-      }
+      this.onErrorStop = line.hasOption(ON_ERROR_STOP) ? parseBoolean(line.getOptionValue(ON_ERROR_STOP)) : TRUE;
 
       if (line.hasOption(HELP)) {
         printHelp(options);
@@ -139,17 +140,5 @@ public class MigrationRunner {
   private void printHelp(Options options) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.printHelp("migration-tool - Help", options);
-  }
-
-  static class MigrationConsoleOptions {
-
-    public final static String MIGRATION_CONFIG_FILE = "migrationConfigFile";
-    public final static String MIGRATION_CONFIG_DIR = "migrationConfigDir";
-    public final static String FILES = "files";
-    public final static String FILES_DIR = "filesDir";
-    public final static String BACKUP = "backup";
-    public final static String REPORT = "report";
-    public final static String ON_ERROR_STOP = "onErrorStop";
-    public final static String HELP = "help";
   }
 }

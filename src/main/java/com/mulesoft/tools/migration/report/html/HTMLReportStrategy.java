@@ -14,8 +14,8 @@ import com.mulesoft.tools.migration.report.html.model.ExecutionData;
 import com.mulesoft.tools.migration.report.html.model.FileExecutionStatus;
 import com.mulesoft.tools.migration.report.html.model.JobExecutionStatus;
 import com.mulesoft.tools.migration.report.html.model.TaskExecutionStatus;
-import com.mulesoft.tools.migration.task.MigrationTask;
-import com.mulesoft.tools.migration.task.step.MigrationStep;
+import com.mulesoft.tools.migration.engine.MigrationTask;
+import com.mulesoft.tools.migration.engine.MigrationStep;
 
 /**
  * It knows how to report data which will be printed in HTML format

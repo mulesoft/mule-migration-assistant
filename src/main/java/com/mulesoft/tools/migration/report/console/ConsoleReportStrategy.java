@@ -8,8 +8,8 @@ package com.mulesoft.tools.migration.report.console;
 
 import com.mulesoft.tools.migration.report.ReportCategory;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
-import com.mulesoft.tools.migration.task.MigrationTask;
-import com.mulesoft.tools.migration.task.step.MigrationStep;
+import com.mulesoft.tools.migration.engine.MigrationTask;
+import com.mulesoft.tools.migration.engine.MigrationStep;
 
 /**
  * I know how to report data through a Console

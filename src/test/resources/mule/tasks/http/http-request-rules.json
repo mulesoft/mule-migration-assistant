@@ -7,14 +7,14 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Create 'request-connection' child node",
-          "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNode",
           "parameters" : {
             "name" : "request-connection"
           }
         },
         {
           "stepDescriptor" : "Rename 'tlsContext-ref' attribute to 'tlsContext'",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "tlsContext-ref",
             "newName" : "tlsContext"
@@ -22,7 +22,7 @@
         },
         {
           "stepDescriptor" : "Rename 'clientSocketProperties-ref' attribute to clientSocketProperties",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "clientSocketProperties-ref",
             "newName" : "clientSocketProperties"
@@ -30,7 +30,7 @@
         },
         {
           "stepDescriptor" : "Move 'request-config' attributes to 'request-connection' child node, host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;responseTimeout;tlsContext;clientSocketProperties",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributesToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributesToChildNode",
           "parameters" : {
             "attributes" : "host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;responseTimeout;tlsContext;clientSocketProperties",
             "childNode" : "request-connection"
@@ -38,7 +38,7 @@
         },
         {
           "stepDescriptor" : "Move 'tls' node to 'request-connection' child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "context",
             "sourceNodeNamespace" : "tls",
@@ -50,7 +50,7 @@
         },
         {
           "stepDescriptor" : "Move 'proxy' node to 'request-connection' child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "proxy",
             "sourceNodeNamespace" : "http",
@@ -62,7 +62,7 @@
         },
         {
           "stepDescriptor" : "Move 'ntlm-proxy' node to 'request-connection' child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "ntlm-proxy",
             "sourceNodeNamespace" : "http",
@@ -74,7 +74,7 @@
         },
         {
           "stepDescriptor" : "Move 'basic-authentication' node to 'request-connection' child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "basic-authentication",
             "sourceNodeNamespace" : "http",
@@ -86,7 +86,7 @@
         },
         {
           "stepDescriptor" : "Move 'ntlm-authentication' node to 'request-connection' child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "ntlm-authentication",
             "sourceNodeNamespace" : "http",
@@ -98,7 +98,7 @@
         },
         {
           "stepDescriptor" : "Move 'digest-authentication' node to 'request-connection' child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "digest-authentication",
             "sourceNodeNamespace" : "http",
@@ -110,7 +110,7 @@
         },
         {
           "stepDescriptor" : "Move 'client-socket-properties' node to 'request-connection' child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "client-socket-properties",
             "sourceNodeNamespace" : "tcp",
@@ -128,7 +128,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Move 'client-socket-properties' node to 'client-socket-properties' new child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "client-socket-properties",
             "sourceNodeNamespace" : "tcp",
@@ -140,7 +140,7 @@
         },
         {
           "stepDescriptor" : "Move 'proxy' node to 'proxy-config' new child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "proxy",
             "sourceNodeNamespace" : "http",
@@ -152,7 +152,7 @@
         },
         {
           "stepDescriptor" : "Move 'ntlm-proxy' node to 'proxy-config' new child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "ntlm-proxy",
             "sourceNodeNamespace" : "http",
@@ -164,7 +164,7 @@
         },
         {
           "stepDescriptor" : "Move 'basic-authentication' node to 'authentication' new child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "basic-authentication",
             "sourceNodeNamespace" : "http",
@@ -176,7 +176,7 @@
         },
         {
           "stepDescriptor" : "Move 'ntlm-authentication' node to 'authentication' new child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "ntlm-authentication",
             "sourceNodeNamespace" : "http",
@@ -188,7 +188,7 @@
         },
         {
           "stepDescriptor" : "Move 'digest-authentication' node to 'authentication' new child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "digest-authentication",
             "sourceNodeNamespace" : "http",
@@ -206,7 +206,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Create 'headers' node with MEL content from 'header' nodes",
-          "type" : "com.mulesoft.tools.migration.task.step.CreateMELNodeFromAttributes",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateMELNodeFromAttributes",
           "parameters" : {
             "originalNode" : "header",
             "newNodeName" : "headers",
@@ -218,7 +218,7 @@
         },
         {
           "stepDescriptor" : "Move 'headers' node to parent node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToParentNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToParentNode",
           "parameters" : {
             "sourceNode" : "headers",
             "sourceNodeNamespace" : "http",
@@ -227,7 +227,7 @@
         },
         {
           "stepDescriptor" : "Create 'query-params' node with MEL content from 'query-param' nodes",
-          "type" : "com.mulesoft.tools.migration.task.step.CreateMELNodeFromAttributes",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateMELNodeFromAttributes",
           "parameters" : {
             "originalNode" : "query-param",
             "newNodeName" : "query-params",
@@ -239,7 +239,7 @@
         },
         {
           "stepDescriptor" : "Move 'query-params' node to parent node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToParentNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToParentNode",
           "parameters" : {
             "sourceNode" : "query-params",
             "sourceNodeNamespace" : "http",
@@ -248,7 +248,7 @@
         },
         {
           "stepDescriptor" : "Create 'uri-params' node with MEL content from 'uri-param' nodes",
-          "type" : "com.mulesoft.tools.migration.task.step.CreateMELNodeFromAttributes",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateMELNodeFromAttributes",
           "parameters" : {
             "originalNode" : "uri-param",
             "newNodeName" : "uri-params",
@@ -260,7 +260,7 @@
         },
         {
           "stepDescriptor" : "Move 'uri-params' node to parent node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToParentNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToParentNode",
           "parameters" : {
             "sourceNode" : "uri-params",
             "sourceNodeNamespace" : "http",
@@ -275,7 +275,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Move 'success-status-code-validator' node to 'response-validator' child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "success-status-code-validator",
             "sourceNodeNamespace" : "http",
@@ -287,7 +287,7 @@
         },
         {
           "stepDescriptor" : "Move 'failure-status-code-validator' node to 'response-validator' child node",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToNewChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToNewChildNode",
           "parameters" : {
             "sourceNode" : "failure-status-code-validator",
             "sourceNodeNamespace" : "http",
@@ -299,7 +299,7 @@
         },
         {
           "stepDescriptor" : "Delete 'request-builder' child node",
-          "type" : "com.mulesoft.tools.migration.task.step.DeleteChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.DeleteChildNode",
           "parameters" : {
             "node" : "request-builder",
             "nodeNamespace" : "http",
@@ -314,14 +314,14 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Move headers 'expression' attribute to MEL node content",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToMELContent",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributeToMELContent",
           "parameters" : {
             "attributeName" : "expression"
           }
         },
         {
           "stepDescriptor" : "Update Mule Message structure",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateMuleMessageContent",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateMuleMessageContent",
           "parameters" : {}
         }
       ]
@@ -332,14 +332,14 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Move uri-params 'expression' attribute to MEL node content",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToMELContent",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributeToMELContent",
           "parameters" : {
             "attributeName" : "expression"
           }
         },
         {
           "stepDescriptor" : "Update Mule Message structure",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateMuleMessageContent",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateMuleMessageContent",
           "parameters" : {}
         }
       ]
@@ -350,14 +350,14 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Move query-params 'expression' attribute to MEL node content",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributeToMELContent",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributeToMELContent",
           "parameters" : {
             "attributeName" : "expression"
           }
         },
         {
           "stepDescriptor" : "Update Mule Message structure",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateMuleMessageContent",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateMuleMessageContent",
           "parameters" : {}
         }
       ]

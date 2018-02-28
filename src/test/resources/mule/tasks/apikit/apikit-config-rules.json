@@ -7,7 +7,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Delete node apikit:mapping-exception-strategy",
-          "type" : "com.mulesoft.tools.migration.task.step.DeleteNode",
+          "type" : "com.mulesoft.tools.migration.library.step.DeleteNode",
           "parameters" : {
 
           }

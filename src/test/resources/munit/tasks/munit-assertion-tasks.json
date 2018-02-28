@@ -7,7 +7,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Add munit tools namespace on file",
-          "type" : "com.mulesoft.tools.migration.task.step.SetNodeNamespace",
+          "type" : "com.mulesoft.tools.migration.library.step.SetNodeNamespace",
           "parameters" : {
             "newNamespace" : "munit-tools",
             "newNamespaceUri" : "http://www.mulesoft.org/schema/mule/munit-tools",
@@ -16,7 +16,7 @@
         },
         {
           "stepDescriptor" : "Remove all assertion namespace on nodes",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceStringOnNodeName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
           "parameters" : {
             "stringToReplace" : "assert-",
             "newValue" : ""
@@ -30,7 +30,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update assertion namespace",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit-tools",
             "newNodeName" : "assert-that"
@@ -38,7 +38,7 @@
         },
         {
           "stepDescriptor" : "Update attribute expectedValue to new DSL",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "expectedValue",
             "newName" : "is"
@@ -46,7 +46,7 @@
         },
         {
           "stepDescriptor" : "Update attribute actualValue to new DSL",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "actualValue",
             "newName" : "expression"
@@ -60,7 +60,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update assertion namespace",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit-tools",
             "newNodeName" : "assert-that"
@@ -68,7 +68,7 @@
         },
         {
           "stepDescriptor" : "Add new expression attribute for munit assertion DSL",
-          "type" : "com.mulesoft.tools.migration.task.step.AddAttribute",
+          "type" : "com.mulesoft.tools.migration.library.step.AddAttribute",
           "parameters" : {
             "attributeName" : "expression",
             "attributeValue" : "#[payload]"
@@ -76,7 +76,7 @@
         },
         {
           "stepDescriptor" : "Update attribute actualValue to new DSL",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "expectedValue",
             "newName" : "is"
@@ -90,7 +90,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update assertion namespace",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit-tools",
             "newNodeName" : "assert-that"
@@ -98,7 +98,7 @@
         },
         {
           "stepDescriptor" : "Add new expression attribute for munit assertion DSL",
-          "type" : "com.mulesoft.tools.migration.task.step.AddAttribute",
+          "type" : "com.mulesoft.tools.migration.library.step.AddAttribute",
           "parameters" : {
             "attributeName" : "expression",
             "attributeValue" : "#[payload]"
@@ -106,7 +106,7 @@
         },
         {
           "stepDescriptor" : "Add new is attribute for munit assertion DSL",
-          "type" : "com.mulesoft.tools.migration.task.step.AddAttribute",
+          "type" : "com.mulesoft.tools.migration.library.step.AddAttribute",
           "parameters" : {
             "attributeName" : "is",
             "attributeValue" : "#[notNullValue()]"
@@ -120,7 +120,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update assertion namespace",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit-tools",
             "newNodeName" : "assert-that"
@@ -128,7 +128,7 @@
         },
         {
           "stepDescriptor" : "Add new expression attribute for munit assertion DSL",
-          "type" : "com.mulesoft.tools.migration.task.step.AddAttribute",
+          "type" : "com.mulesoft.tools.migration.library.step.AddAttribute",
           "parameters" : {
             "attributeName" : "expression",
             "attributeValue" : "#[payload]"
@@ -136,7 +136,7 @@
         },
         {
           "stepDescriptor" : "Add new is attribute for munit assertion DSL",
-          "type" : "com.mulesoft.tools.migration.task.step.AddAttribute",
+          "type" : "com.mulesoft.tools.migration.library.step.AddAttribute",
           "parameters" : {
             "attributeName" : "is",
             "attributeValue" : "#[nullValue()]"
@@ -150,7 +150,7 @@
     "stepsDefinition" : [
       {
         "stepDescriptor" : "Update assertion namespace",
-        "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+        "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
         "parameters" : {
           "nodeNamespace" : "munit-tools",
           "newNodeName" : "assert-that"
@@ -158,7 +158,7 @@
       },
       {
         "stepDescriptor" : "Update condition attribute to expression",
-        "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+        "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
         "parameters" : {
           "attributeName" : "condition",
           "newName" : "expression"
@@ -166,7 +166,7 @@
       },
       {
         "stepDescriptor" : "Add new is attribute for munit assertion DSL",
-        "type" : "com.mulesoft.tools.migration.task.step.AddAttribute",
+        "type" : "com.mulesoft.tools.migration.library.step.AddAttribute",
         "parameters" : {
           "attributeName" : "is",
           "attributeValue" : "#[equalTo(false)]"
@@ -180,7 +180,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update assertion namespace",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit-tools",
             "newNodeName" : "assert-that"
@@ -188,7 +188,7 @@
         },
         {
           "stepDescriptor" : "Update condition attribute to expression",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "condition",
             "newName" : "expression"
@@ -196,7 +196,7 @@
         },
         {
           "stepDescriptor" : "Add new is attribute for munit assertion DSL",
-          "type" : "com.mulesoft.tools.migration.task.step.AddAttribute",
+          "type" : "com.mulesoft.tools.migration.library.step.AddAttribute",
           "parameters" : {
             "attributeName" : "is",
             "attributeValue" : "#[equalTo(true)]"
@@ -210,7 +210,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update assertion namespace",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceNodesName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceNodesName",
           "parameters" : {
             "nodeNamespace" : "munit-tools",
             "newNodeName" : "assert-that"
@@ -218,7 +218,7 @@
         },
         {
           "stepDescriptor" : "Update expectedValue attribute to is",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "expectedValue",
             "newName" : "is"
@@ -226,7 +226,7 @@
         },
         {
           "stepDescriptor" : "Update actualValue attribute to expression",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "actualValue",
             "newName" : "expression"
@@ -234,7 +234,7 @@
         },
         {
           "stepDescriptor" : "Add new is attribute for munit assertion DSL",
-          "type" : "com.mulesoft.tools.migration.task.step.NegateAttributeValue",
+          "type" : "com.mulesoft.tools.migration.library.step.NegateAttributeValue",
           "parameters" : {
             "attributeName" : "is"
           }

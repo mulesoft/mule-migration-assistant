@@ -7,14 +7,14 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Create child node 'listener-connection'",
-          "type" : "com.mulesoft.tools.migration.task.step.CreateChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNode",
           "parameters" : {
             "name" : "listener-connection"
           }
         },
         {
           "stepDescriptor" : "Rename 'tlsContext-ref' attribute to 'tlsContext'",
-          "type" : "com.mulesoft.tools.migration.task.step.UpdateAttributeName",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
           "parameters" : {
             "attributeName" : "tlsContext-ref",
             "newName" : "tlsContext"
@@ -22,7 +22,7 @@
         },
         {
           "stepDescriptor" : "Move attributes to child node 'listener-connection',  host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;tlsContext",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveAttributesToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributesToChildNode",
           "parameters" : {
             "attributes" : "host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;tlsContext",
             "childNode" : "listener-connection"
@@ -30,7 +30,7 @@
         },
         {
           "stepDescriptor" : "Move 'tls' node to child node 'listener-connection'",
-          "type" : "com.mulesoft.tools.migration.task.step.MoveNodeToChildNode",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
           "parameters" : {
             "sourceNode" : "context",
             "sourceNodeNamespace" : "tls",
@@ -48,7 +48,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Create 'headers' node with MEL content from 'header' nodes",
-          "type" : "com.mulesoft.tools.migration.task.step.CreateMELNodeFromAttributes",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateMELNodeFromAttributes",
           "parameters" : {
             "originalNode" : "header",
             "newNodeName" : "headers",
@@ -60,7 +60,7 @@
         },
         {
           "stepDescriptor" : "Rename 'response-builder' to 'response'",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceStringOnNodeName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
           "parameters" : {
             "stringToReplace" : "response-builder",
             "newValue" : "response"
@@ -74,7 +74,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Create 'headers' node with MEL content from 'header' nodes",
-          "type" : "com.mulesoft.tools.migration.task.step.CreateMELNodeFromAttributes",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateMELNodeFromAttributes",
           "parameters" : {
             "originalNode" : "header",
             "newNodeName" : "headers",
@@ -86,7 +86,7 @@
         },
         {
           "stepDescriptor" : "Rename 'error-response-builder' to 'error-response'",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceStringOnNodeName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
           "parameters" : {
             "stringToReplace" : "error-response-builder",
             "newValue" : "error-response"

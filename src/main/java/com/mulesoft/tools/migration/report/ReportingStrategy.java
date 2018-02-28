@@ -6,8 +6,8 @@
  */
 package com.mulesoft.tools.migration.report;
 
-import com.mulesoft.tools.migration.task.MigrationTask;
-import com.mulesoft.tools.migration.task.step.MigrationStep;
+import com.mulesoft.tools.migration.engine.MigrationTask;
+import com.mulesoft.tools.migration.engine.MigrationStep;
 
 /**
  * Defines a generic way of reporting information

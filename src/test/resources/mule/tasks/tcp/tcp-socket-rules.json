@@ -7,7 +7,7 @@
       "stepsDefinition" : [
         {
           "stepDescriptor" : "Update client socket namespace",
-          "type" : "com.mulesoft.tools.migration.task.step.SetNodeNamespace",
+          "type" : "com.mulesoft.tools.migration.library.step.SetNodeNamespace",
           "parameters" : {
             "newNamespace" : "sockets",
             "newNamespaceUri" : "http://www.mulesoft.org/schema/mule/sockets",
@@ -16,7 +16,7 @@
         },
         {
           "stepDescriptor" : "Rename client socket properties",
-          "type" : "com.mulesoft.tools.migration.task.step.ReplaceStringOnNodeName",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
           "parameters" : {
             "stringToReplace" : "client-socket-properties",
             "newValue" : "tcp-client-socket-properties"
