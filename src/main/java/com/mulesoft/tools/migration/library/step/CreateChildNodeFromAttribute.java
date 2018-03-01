@@ -41,8 +41,8 @@ public class CreateChildNodeFromAttribute extends MigrationStep {
           node.addContent(0, child);
           node.removeAttribute(att);
 
-          getReportingStrategy().log("Child node from attribute created:" + attribute, RULE_APPLIED,
-                                     this.getDocument().getBaseURI(), null, this);
+          //          getReportingStrategy().log("Child node from attribute created:" + attribute, RULE_APPLIED,
+          //                                     this.getDocument().getBaseURI(), null, this);
         }
       }
     } catch (Exception ex) {

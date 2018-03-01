@@ -71,8 +71,8 @@ public class GetAttributesFromReference extends MigrationStep {
                     Attribute newAttribute = new Attribute(originalAttribute.getName(), originalAttribute.getValue());
                     node.setAttribute(newAttribute);
 
-                    getReportingStrategy().log("Get attribute from reference:" + newAttribute, RULE_APPLIED,
-                                               this.getDocument().getBaseURI(), null, this);
+                    //                    getReportingStrategy().log("Get attribute from reference:" + newAttribute, RULE_APPLIED,
+                    //                                               this.getDocument().getBaseURI(), null, this);
                   }
                 }
               }

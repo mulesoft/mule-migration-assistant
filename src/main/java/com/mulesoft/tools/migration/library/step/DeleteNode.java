@@ -28,8 +28,8 @@ public class DeleteNode extends MigrationStep {
       for (Element node : getNodes()) {
         node.detach();
 
-        getReportingStrategy().log("Node <" + node.getQualifiedName() + "> was deleted", RULE_APPLIED,
-                                   this.getDocument().getBaseURI(), null, this);
+        //        getReportingStrategy().log("Node <" + node.getQualifiedName() + "> was deleted", RULE_APPLIED,
+        //                                   this.getDocument().getBaseURI(), null, this);
       }
     } catch (Exception ex) {
       throw new MigrationStepException("Remove node exception. " + ex.getMessage());

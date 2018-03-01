@@ -47,7 +47,7 @@ public class NegateAttributeValue extends MigrationStep {
               att.setValue("#[not(" + attValue + ")]");
             }
 
-            getReportingStrategy().log("Attribute negated:" + att, RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+            //            getReportingStrategy().log("Attribute negated:" + att, RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
           }
         }
       }

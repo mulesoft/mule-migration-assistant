@@ -37,9 +37,9 @@ public class AddAttribute extends MigrationStep {
         Attribute att = new Attribute(getAttributeName(), getAttributeValue());
         node.setAttribute(att);
 
-        getReportingStrategy()
-            .log("Added attribute: " + attributeName + "=\"" + attributeValue + "\" into <" + node.getQualifiedName() + ">",
-                 RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+        //        getReportingStrategy()
+        //            .log("Added attribute: " + attributeName + "=\"" + attributeValue + "\" into <" + node.getQualifiedName() + ">",
+        //                 RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
       }
     } catch (Exception ex) {
       throw new MigrationStepException("Add Attribute step exception. " + ex.getMessage());

@@ -41,20 +41,20 @@ public class MoveAttributeToNewChildNode extends MigrationStep {
             node.removeAttribute(att);
             child.setAttribute(att);
 
-            getReportingStrategy().log(
-                                       "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to child node <"
-                                           + child.getQualifiedName() + ">",
-                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+            //            getReportingStrategy().log(
+            //                                       "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to child node <"
+            //                                           + child.getQualifiedName() + ">",
+            //                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
           } else {
             Element newChild = new Element(getChildNode(), node.getNamespace());
             node.removeAttribute(att);
             newChild.setAttribute(att);
             node.addContent(newChild);
 
-            getReportingStrategy().log(
-                                       "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to new child node <"
-                                           + newChild.getQualifiedName() + ">",
-                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+            //            getReportingStrategy().log(
+            //                                       "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to new child node <"
+            //                                           + newChild.getQualifiedName() + ">",
+            //                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
           }
         }
       }

@@ -44,7 +44,7 @@ public class HTMLReportStrategy implements ReportingStrategy {
         fileReport = new FileExecutionStatus(data.getFilePath());
         jobReport.addFileMigrationStatus(fileReport);
       } else if (data.getReportCategory().equals(ReportCategory.WORKING_WITH_NODES)) {
-        taskReport = new TaskExecutionStatus(data.getTask().getTaskDescriptor(), "Applied");
+        taskReport = new TaskExecutionStatus(data.getTask().getDescription(), "Applied");
         fileReport.addTaskApplied(taskReport);
       } else if (data.getReportCategory().equals(ReportCategory.RULE_APPLIED)
           | data.getReportCategory().equals(ReportCategory.ERROR)) {

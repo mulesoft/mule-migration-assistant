@@ -35,17 +35,17 @@ public class CreateChildNode extends MigrationStep {
       if (!StringUtils.isBlank(name)) {
         for (Element node : getNodes()) {
           if (node.getChild(getName(), node.getNamespace()) != null) {
-            getReportingStrategy()
-                .log("<" + node.getChild(getName(), node.getNamespace()).getQualifiedName() + "> node already exists.", SKIPPED,
-                     this.getDocument().getBaseURI(), null, this);
+            //            getReportingStrategy()
+            //                .log("<" + node.getChild(getName(), node.getNamespace()).getQualifiedName() + "> node already exists.", SKIPPED,
+            //                     this.getDocument().getBaseURI(), null, this);
           } else {
             Element child = new Element(getName());
             child.setNamespace(node.getNamespace());
             node.addContent(child);
 
-            getReportingStrategy()
-                .log("<" + child.getQualifiedName() + "> node was created. Namespace " + child.getNamespaceURI(), RULE_APPLIED,
-                     this.getDocument().getBaseURI(), null, this);
+            //            getReportingStrategy()
+            //                .log("<" + child.getQualifiedName() + "> node was created. Namespace " + child.getNamespaceURI(), RULE_APPLIED,
+            //                     this.getDocument().getBaseURI(), null, this);
           }
         }
       }

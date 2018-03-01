@@ -37,10 +37,10 @@ public class ReplaceStringOnNodeName extends MigrationStep {
           String legacyNode = node.getQualifiedName();
           node.setName(node.getName().replace(getStringToReplace(), getNewValue()));
 
-          getReportingStrategy().log(
-                                     "The Node <" + legacyNode + "> that contained the string '" + stringToReplace
-                                         + "' was replaced to <" + node.getQualifiedName() + ">",
-                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+          //          getReportingStrategy().log(
+          //                                     "The Node <" + legacyNode + "> that contained the string '" + stringToReplace
+          //                                         + "' was replaced to <" + node.getQualifiedName() + ">",
+          //                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
         }
       }
     } catch (Exception ex) {

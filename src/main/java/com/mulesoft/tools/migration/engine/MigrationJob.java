@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.mulesoft.tools.migration.project.structure.mule.four.MuleApplication;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -38,13 +37,13 @@ import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
  */
 public class MigrationJob implements Executable {
 
+  private Boolean onErrorStop;
+  private ReportingStrategy reportingStrategy;
+
   private BasicProject project;
   private BasicProject outputProject;
 
   private List<MigrationTask> migrationTasks;
-
-  private Boolean onErrorStop;
-  private ReportingStrategy reportingStrategy;
 
   private MigrationJob(BasicProject project, BasicProject outputProject, List<MigrationTask> migrationTasks,
                        Boolean onErrorStop, ReportingStrategy reportingStrategy) {
@@ -64,14 +63,13 @@ public class MigrationJob implements Executable {
     for (MigrationTask task : migrationTasks) {
       task.setOnErrorStop(onErrorStop);
       task.setApplicationModel(applicationModel);
-      task.setReportingStrategy(reportingStrategy);
 
       try {
         task.execute();
         // TODO we should review this
         persistApplicationModel(applicationModel);
       } catch (Exception e) {
-        throw new MigrationJobException("Failed to execute task: " + task.getTaskDescriptor() + ". ", e);
+        throw new MigrationJobException("Failed to execute task: " + task.getDescription() + ". ", e);
       }
     }
     generateReport();
@@ -94,36 +92,6 @@ public class MigrationJob implements Executable {
     if (reportingStrategy instanceof HTMLReportStrategy) {
       ((HTMLReportStrategy) this.reportingStrategy).generateReport();
     }
-  }
-
-  // public void execute() throws Exception {
-  // ApplicationModel applicationModel = new ApplicationModelBuilder(project).build();
-  //
-  // for (Entry<Path, Document> entry : applicationModel.getApplicationDocuments().entrySet()) {
-  // try {
-  // migrateFile(entry.getKey(), entry.getValue(), migrationTasks);
-  // } catch (Exception e) {
-  // throw new MigrationJobException("Failed to migrate the file: " + entry.getKey() + ". ", e);
-  // }
-  // }
-  //
-  // generateReport();
-  // }
-
-  @Deprecated
-  private void migrateFile(Path filePath, Document document, List<MigrationTask> tasks) throws Exception {
-    // TODO let's see if there another way to do this
-    reportingStrategy.log(filePath.toString(), WORKING_WITH_FILE, filePath.toString(), null, null);
-
-    // TODO TASKs should receive appmodel
-    for (MigrationTask task : tasks) {
-      task.setReportingStrategy(reportingStrategy);
-      task.setDocument(document);
-      task.setOnErrorStop(onErrorStop);
-      task.execute();
-    }
-
-    // serializeMigratedFile(filePath, document);
   }
 
   /**

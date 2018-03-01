@@ -51,10 +51,10 @@ public class MoveNodeToChildNode extends MigrationStep {
             node.removeChild(getSourceNode(), sourceNamespace);
             targetElement.getChildren().add(sourceElement);
 
-            getReportingStrategy().log(
-                                       "<" + sourceElement.getQualifiedName() + "> node is now a child of <"
-                                           + targetElement.getQualifiedName() + "> node",
-                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+            //            getReportingStrategy().log(
+            //                                       "<" + sourceElement.getQualifiedName() + "> node is now a child of <"
+            //                                           + targetElement.getQualifiedName() + "> node",
+            //                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
           }
         }
       }

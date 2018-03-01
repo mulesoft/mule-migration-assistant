@@ -14,8 +14,6 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.report.ReportingStrategy;
-import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 
 /**
  * Basic unit of execution
@@ -25,40 +23,24 @@ import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
  */
 public abstract class MigrationStep implements Executable {
 
-  // TODO rename to description
-  private String stepDescriptor;
-
+  private String description;
   private ApplicationModel applicationModel;
 
-  private ReportingStrategy reportingStrategy;
-
-  public void setStepDescriptor(String descriptor) {
-    this.stepDescriptor = descriptor;
+  public String getDescription() {
+    return this.description;
   }
 
-  public String getStepDescriptor() {
-    return this.stepDescriptor;
-  }
-
-  public void setApplicationModel(ApplicationModel applicationModel) {
-    checkArgument(applicationModel != null, "The application model must not be null.");
-    this.applicationModel = applicationModel;
+  public void setDescription(String descriptor) {
+    this.description = descriptor;
   }
 
   public ApplicationModel getApplicationModel() {
     return applicationModel;
   }
 
-  // TODO avoid this default it should come from another place (builder or ReportStrategyLocator)
-  public ReportingStrategy getReportingStrategy() {
-    if (null == this.reportingStrategy) {
-      this.reportingStrategy = new ConsoleReportStrategy();
-    }
-    return reportingStrategy;
-  }
-
-  public void setReportingStrategy(ReportingStrategy reportingStrategy) {
-    this.reportingStrategy = reportingStrategy;
+  public void setApplicationModel(ApplicationModel applicationModel) {
+    checkArgument(applicationModel != null, "The application model must not be null.");
+    this.applicationModel = applicationModel;
   }
 
   @Deprecated

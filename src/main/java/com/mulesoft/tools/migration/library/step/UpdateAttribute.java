@@ -38,10 +38,10 @@ public class UpdateAttribute extends MigrationStep {
         if (att != null) {
           att.setValue(getNewValue());
 
-          getReportingStrategy().log(
-                                     "Attribute " + att.getName() + "=\"" + att.getValue() + "\" updated it's value to"
-                                         + att.getName() + "=\"" + newValue + "\"",
-                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+          //          getReportingStrategy().log(
+          //                                     "Attribute " + att.getName() + "=\"" + att.getValue() + "\" updated it's value to"
+          //                                         + att.getName() + "=\"" + newValue + "\"",
+          //                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
         }
       }
     } catch (Exception ex) {

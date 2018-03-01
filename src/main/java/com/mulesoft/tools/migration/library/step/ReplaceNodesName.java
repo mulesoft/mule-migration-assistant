@@ -39,8 +39,8 @@ public class ReplaceNodesName extends MigrationStep {
             String legacyNode = node.getQualifiedName();
             node.setNamespace(namespace);
             node.setName(getNewNodeName());
-            getReportingStrategy().log("Node <" + legacyNode + "> has been replaced with <" + node.getQualifiedName() + "> node",
-                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+            //            getReportingStrategy().log("Node <" + legacyNode + "> has been replaced with <" + node.getQualifiedName() + "> node",
+            //                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
           }
         }
       }

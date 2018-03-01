@@ -51,9 +51,9 @@ public class MoveAttributeToNewRepeatableChildNode extends MigrationStep {
           else if (child.getAttribute(getNewAttributeMappingName()) != null
               && child.getAttribute(getNewAttributeMappingName()).getValue().equals(att.getName())) {
             child.getAttribute(getNewAttributeMappingValue()).setValue(att.getValue());
-            getReportingStrategy().log("Moved attribute " + att.getName() + "=\"" + att.getValue()
-                + "\" to an already existing child node <" + child.getQualifiedName() + "> with key " + getAttribute(),
-                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+            //            getReportingStrategy().log("Moved attribute " + att.getName() + "=\"" + att.getValue()
+            //                + "\" to an already existing child node <" + child.getQualifiedName() + "> with key " + getAttribute(),
+            //                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
           }
           // Otherwise, just create the new child node
           else {
@@ -71,10 +71,10 @@ public class MoveAttributeToNewRepeatableChildNode extends MigrationStep {
     newTargetElement.setAttribute(getNewAttributeMappingName(), att.getName());
     newTargetElement.setAttribute(getNewAttributeMappingValue(), att.getValue());
     node.addContent(newTargetElement);
-    getReportingStrategy().log(
-                               "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to new child node <"
-                                   + newTargetElement.getQualifiedName() + ">",
-                               RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+    //    getReportingStrategy().log(
+    //                               "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to new child node <"
+    //                                   + newTargetElement.getQualifiedName() + ">",
+    //                               RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
   }
 
   public String getAttribute() {

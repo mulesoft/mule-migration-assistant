@@ -65,8 +65,8 @@ public class MoveAttribute extends MigrationStep {
                 node.removeAttribute(attribute);
                 element.setAttribute(attribute);
 
-                getReportingStrategy().log("Moved " + attribute + " attribute into <" + node.getQualifiedName() + ">",
-                                           RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+                //                getReportingStrategy().log("Moved " + attribute + " attribute into <" + node.getQualifiedName() + ">",
+                //                                           RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
               }
             }
           }

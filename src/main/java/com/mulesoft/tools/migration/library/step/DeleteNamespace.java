@@ -49,8 +49,8 @@ public class DeleteNamespace extends MigrationStep {
             muleSchemaLocation
                 .setValue(muleSchemaLocation.getValue().replace(getSchemaLocationUrl(), "").replace(getNamespaceUri(), ""));
 
-            getReportingStrategy().log("Namespace " + namespace + ":" + nspc.getURI() + " was deleted", RULE_APPLIED,
-                                       this.getDocument().getBaseURI(), null, this);
+            //            getReportingStrategy().log("Namespace " + namespace + ":" + nspc.getURI() + " was deleted", RULE_APPLIED,
+            //                                       this.getDocument().getBaseURI(), null, this);
           }
         }
       }

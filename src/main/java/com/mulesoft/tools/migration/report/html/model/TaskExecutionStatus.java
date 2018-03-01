@@ -44,7 +44,7 @@ public class TaskExecutionStatus {
   }
 
   public void addStepApplied(MigrationStep step, String status) {
-    StepExecutionStatus stepStatus = new StepExecutionStatus(step.getStepDescriptor(), status);
+    StepExecutionStatus stepStatus = new StepExecutionStatus(step.getDescription(), status);
     stepsApplied.add(stepStatus);
   }
 }
