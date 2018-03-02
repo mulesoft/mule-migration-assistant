@@ -8,17 +8,11 @@ package com.mulesoft.tools.migration.engine.step;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.List;
-
-import com.mulesoft.tools.migration.engine.step.MigrationStep;
-import org.jdom2.Document;
-import org.jdom2.Element;
-
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
 /**
  * Basic unit of execution
- * 
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -33,16 +27,7 @@ public abstract class DefaultMigrationStep implements MigrationStep {
 
   @Override
   public void setApplicationModel(ApplicationModel applicationModel) {
+    checkArgument(applicationModel != null, "The application model must not be null.");
     this.applicationModel = applicationModel;
-  }
-
-  @Deprecated
-  public List<Element> getNodes() {
-    return null;
-  }
-
-  @Deprecated
-  public Document getDocument() {
-    return null;
   }
 }

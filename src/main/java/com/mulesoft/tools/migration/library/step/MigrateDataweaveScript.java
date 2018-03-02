@@ -25,14 +25,14 @@ public class MigrateDataweaveScript extends DefaultMigrationStep {
 
   public void execute() throws Exception {
     try {
-      for (Element node : getNodes()) {
-
-        if (!isEmpty(node.getText())) {
-          node.setText(DataweaveUtils.getMigratedScript(node.getText()));
-          //          getReportingStrategy().log("Dataweave script has been migrated to Dataweave 2", RULE_APPLIED,
-          //                                     this.getDocument().getBaseURI(), null, this);
-        }
-      }
+      // for (Element node : getNodes()) {
+      //
+      // if (!isEmpty(node.getText())) {
+      // node.setText(DataweaveUtils.getMigratedScript(node.getText()));
+      // // getReportingStrategy().log("Dataweave script has been migrated to Dataweave 2", RULE_APPLIED,
+      // // this.getDocument().getBaseURI(), null, this);
+      // }
+      // }
     } catch (Exception ex) {
       throw new MigrationStepException("Move attribute to MEL content exception. " + ex.getMessage());
     }

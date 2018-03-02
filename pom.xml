@@ -34,7 +34,6 @@
         <!-- Dependencies -->
         <gson.version>2.6.2</gson.version>
         <guava.version>19.0</guava.version>
-        <junit.version>4.12</junit.version>
         <jaxen.version>1.1.6</jaxen.version>
         <jdom2.version>2.0.5</jdom2.version>
         <commons.io.version>2.5</commons.io.version>
@@ -42,6 +41,11 @@
         <json.simple.version>1.1.1</json.simple.version>
         <migrant.version>1.2.0-SNAPSHOT</migrant.version>
         <commons.lang3.version>3.0</commons.lang3.version>
+
+        <junit.version>4.12</junit.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <mockito.version>1.10.19</mockito.version>
+
 
         <!-- Properties -->
         <lib-dir>${basedir}/lib</lib-dir>
@@ -317,9 +321,23 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>${hamcrest.version}</version>
+        </dependency>
     </dependencies>
-
-
 
 
     <url>https://github.com/mulesoft-labs/mule4-migration-tool</url>
@@ -332,10 +350,10 @@
         <url>https://www.mulesoft.com/</url>
     </organization>
     <!--<scm>-->
-        <!--<connection>scm:git:git://github.com:mulesoft/munit-runtime.git-->
-        <!--</connection>-->
-        <!--<developerConnection>scm:git:git@github.com:mulesoft/munit-runtime.git</developerConnection>-->
-        <!--<url>http://github.com/mulesoft/munit-runtime</url>-->
-        <!--<tag>HEAD</tag>-->
+    <!--<connection>scm:git:git://github.com:mulesoft/munit-runtime.git-->
+    <!--</connection>-->
+    <!--<developerConnection>scm:git:git@github.com:mulesoft/munit-runtime.git</developerConnection>-->
+    <!--<url>http://github.com/mulesoft/munit-runtime</url>-->
+    <!--<tag>HEAD</tag>-->
     <!--</scm>-->
 </project>
