@@ -6,12 +6,9 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
-import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Attribute;
-import org.jdom2.Element;
 
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 
 /**
  * Adds an attribute to a node.
@@ -19,7 +16,7 @@ import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class AddAttribute extends MigrationStep {
+public class AddAttribute /* extends DefaultMigrationStep */ {
 
   private String attributeName;
   private String attributeValue;
@@ -33,14 +30,14 @@ public class AddAttribute extends MigrationStep {
 
   public void execute() throws Exception {
     try {
-      for (Element node : this.getNodes()) {
-        Attribute att = new Attribute(getAttributeName(), getAttributeValue());
-        node.setAttribute(att);
+      // for (Element node : this.getNodes()) {
+      Attribute att = new Attribute(getAttributeName(), getAttributeValue());
+      // node.setAttribute(att);
 
-        //        getReportingStrategy()
-        //            .log("Added attribute: " + attributeName + "=\"" + attributeValue + "\" into <" + node.getQualifiedName() + ">",
-        //                 RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-      }
+      // getReportingStrategy()
+      // .log("Added attribute: " + attributeName + "=\"" + attributeValue + "\" into <" + node.getQualifiedName() + ">",
+      // RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+      // }
     } catch (Exception ex) {
       throw new MigrationStepException("Add Attribute step exception. " + ex.getMessage());
     }
@@ -61,4 +58,5 @@ public class AddAttribute extends MigrationStep {
   public String getAttributeValue() {
     return attributeValue;
   }
+
 }

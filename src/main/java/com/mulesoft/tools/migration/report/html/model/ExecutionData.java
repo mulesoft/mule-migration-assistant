@@ -7,8 +7,8 @@
 package com.mulesoft.tools.migration.report.html.model;
 
 import com.mulesoft.tools.migration.report.ReportCategory;
-import com.mulesoft.tools.migration.engine.MigrationTask;
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 
 /**
  * Store data of a reported event
@@ -20,11 +20,12 @@ public class ExecutionData {
 
   private ReportCategory reportCategory;
   private String filePath;
-  private MigrationTask task;
-  private MigrationStep step;
+  private DefaultMigrationTask task;
+  private DefaultMigrationStep step;
   private String message;
 
-  public ExecutionData(String message, ReportCategory reportCategory, String filePath, MigrationTask task, MigrationStep step) {
+  public ExecutionData(String message, ReportCategory reportCategory, String filePath, DefaultMigrationTask task,
+                       DefaultMigrationStep step) {
     this.message = message;
     this.reportCategory = reportCategory;
     this.filePath = filePath;
@@ -44,11 +45,11 @@ public class ExecutionData {
     return filePath;
   }
 
-  public MigrationTask getTask() {
+  public DefaultMigrationTask getTask() {
     return task;
   }
 
-  public MigrationStep getStep() {
+  public DefaultMigrationStep getStep() {
     return step;
   }
 }

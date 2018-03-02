@@ -6,10 +6,10 @@
  */
 package com.mulesoft.tools.migration.engine.exception;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 
 /**
- * Signals an issue in a {@link MigrationStep}
+ * Signals an issue in a {@link DefaultMigrationStep}
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0

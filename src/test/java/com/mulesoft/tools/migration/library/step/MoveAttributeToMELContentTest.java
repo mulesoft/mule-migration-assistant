@@ -15,23 +15,23 @@ import static org.junit.Assert.assertTrue;
 @Ignore
 public class MoveAttributeToMELContentTest {
 
-  private MoveAttributeToMELContent moveAttributeToMELContentStep;
-
-  private static final String EXAMPLE_FILE_PATH = "src/test/resources/mule/examples/http/http-all-use-case.xml";
-
-  @Test
-  public void testMoveAttributeToMELContent() throws Exception {
-    moveAttributeToMELContentStep = new MoveAttributeToMELContent("expression");
-    getNodesFromFile("//http:uri-params", moveAttributeToMELContentStep, EXAMPLE_FILE_PATH);
-    moveAttributeToMELContentStep.execute();
-    assertTrue(moveAttributeToMELContentStep.getNodes().get(0).getText().contains("mel"));
-  }
-
-  @Test
-  public void testBadAttribute() throws Exception {
-    moveAttributeToMELContentStep = new MoveAttributeToMELContent("expression1");
-    getNodesFromFile("//http:uri-params", moveAttributeToMELContentStep, EXAMPLE_FILE_PATH);
-    moveAttributeToMELContentStep.execute();
-    assertTrue(!moveAttributeToMELContentStep.getNodes().get(0).getText().contains("mel"));
-  }
+  //  private MoveAttributeToMELContent moveAttributeToMELContentStep;
+  //
+  //  private static final String EXAMPLE_FILE_PATH = "src/test/resources/mule/examples/http/http-all-use-case.xml";
+  //
+  //  @Test
+  //  public void testMoveAttributeToMELContent() throws Exception {
+  //    moveAttributeToMELContentStep = new MoveAttributeToMELContent("expression");
+  //    getNodesFromFile("//http:uri-params", moveAttributeToMELContentStep, EXAMPLE_FILE_PATH);
+  //    moveAttributeToMELContentStep.execute();
+  //    assertTrue(moveAttributeToMELContentStep.getNodes().get(0).getText().contains("mel"));
+  //  }
+  //
+  //  @Test
+  //  public void testBadAttribute() throws Exception {
+  //    moveAttributeToMELContentStep = new MoveAttributeToMELContent("expression1");
+  //    getNodesFromFile("//http:uri-params", moveAttributeToMELContentStep, EXAMPLE_FILE_PATH);
+  //    moveAttributeToMELContentStep.execute();
+  //    assertTrue(!moveAttributeToMELContentStep.getNodes().get(0).getText().contains("mel"));
+  //  }
 }

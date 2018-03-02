@@ -16,34 +16,34 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getNodesFromFil
 @Ignore
 public class MoveNodeToParentNodeTest {
 
-  private MoveNodeToParentNode moveNodeToParentNodeStep;
-
-  private static final String EXAMPLE_FILE_PATH = "src/test/resources/mule/examples/http/http-all-use-case.xml";
-
-  @Test
-  public void testMoveNodeToParentNode() throws Exception {
-    moveNodeToParentNodeStep = new MoveNodeToParentNode("query-param", "http",
-                                                        "http://www.mulesoft.org/schema/mule/http");
-    getNodesFromFile("//http:request-builder", moveNodeToParentNodeStep, EXAMPLE_FILE_PATH);
-    moveNodeToParentNodeStep.execute();
-
-    Element node = moveNodeToParentNodeStep.getNodes().get(0).getParentElement();
-    int counter = 0;
-    for (Element child : node.getChildren()) {
-      if (child.getName().equals("query-param")) {
-        counter++;
-      }
-    }
-    Assert.assertTrue(counter > 0);
-  }
-
-  @Test
-  public void testBadSource() throws Exception {
-    moveNodeToParentNodeStep = new MoveNodeToParentNode("query-param1", "http",
-                                                        "http://www.mulesoft.org/schema/mule/http");
-    getNodesFromFile("//http:request-builder", moveNodeToParentNodeStep, EXAMPLE_FILE_PATH);
-    moveNodeToParentNodeStep.execute();
-    Element node = moveNodeToParentNodeStep.getNodes().get(0).getParentElement();
-    Assert.assertTrue(node.getChildren().size() == 2);
-  }
+  //  private MoveNodeToParentNode moveNodeToParentNodeStep;
+  //
+  //  private static final String EXAMPLE_FILE_PATH = "src/test/resources/mule/examples/http/http-all-use-case.xml";
+  //
+  //  @Test
+  //  public void testMoveNodeToParentNode() throws Exception {
+  //    moveNodeToParentNodeStep = new MoveNodeToParentNode("query-param", "http",
+  //                                                        "http://www.mulesoft.org/schema/mule/http");
+  //    getNodesFromFile("//http:request-builder", moveNodeToParentNodeStep, EXAMPLE_FILE_PATH);
+  //    moveNodeToParentNodeStep.execute();
+  //
+  //    Element node = moveNodeToParentNodeStep.getNodes().get(0).getParentElement();
+  //    int counter = 0;
+  //    for (Element child : node.getChildren()) {
+  //      if (child.getName().equals("query-param")) {
+  //        counter++;
+  //      }
+  //    }
+  //    Assert.assertTrue(counter > 0);
+  //  }
+  //
+  //  @Test
+  //  public void testBadSource() throws Exception {
+  //    moveNodeToParentNodeStep = new MoveNodeToParentNode("query-param1", "http",
+  //                                                        "http://www.mulesoft.org/schema/mule/http");
+  //    getNodesFromFile("//http:request-builder", moveNodeToParentNodeStep, EXAMPLE_FILE_PATH);
+  //    moveNodeToParentNodeStep.execute();
+  //    Element node = moveNodeToParentNodeStep.getNodes().get(0).getParentElement();
+  //    Assert.assertTrue(node.getChildren().size() == 2);
+  //  }
 }

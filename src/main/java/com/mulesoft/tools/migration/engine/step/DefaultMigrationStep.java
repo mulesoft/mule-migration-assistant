@@ -4,12 +4,13 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.engine;
+package com.mulesoft.tools.migration.engine.step;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.List;
 
+import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -21,25 +22,17 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public abstract class MigrationStep implements Executable {
+public abstract class DefaultMigrationStep implements MigrationStep {
 
-  private String description;
   private ApplicationModel applicationModel;
 
-  public String getDescription() {
-    return this.description;
-  }
-
-  public void setDescription(String descriptor) {
-    this.description = descriptor;
-  }
-
+  @Override
   public ApplicationModel getApplicationModel() {
     return applicationModel;
   }
 
+  @Override
   public void setApplicationModel(ApplicationModel applicationModel) {
-    checkArgument(applicationModel != null, "The application model must not be null.");
     this.applicationModel = applicationModel;
   }
 

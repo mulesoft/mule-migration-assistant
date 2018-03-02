@@ -6,12 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  * Transform an attribute in a child node
@@ -19,7 +17,7 @@ import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class CreateChildNodeFromAttribute extends MigrationStep {
+public class CreateChildNodeFromAttribute /*extends DefaultMigrationStep */ {
 
   private String attribute;
 
@@ -31,20 +29,20 @@ public class CreateChildNodeFromAttribute extends MigrationStep {
 
   public void execute() throws Exception {
     try {
-      for (Element node : getNodes()) {
-        Attribute att = node.getAttribute(getAttribute());
-        if (att != null) {
-          Element child = new Element(getAttribute());
-          child.setNamespace(node.getNamespace());
-          Attribute newAtt = new Attribute("value", att.getValue());
-          child.setAttribute(newAtt);
-          node.addContent(0, child);
-          node.removeAttribute(att);
-
-          //          getReportingStrategy().log("Child node from attribute created:" + attribute, RULE_APPLIED,
-          //                                     this.getDocument().getBaseURI(), null, this);
-        }
-      }
+      //      for (Element node : getNodes()) {
+      //        Attribute att = node.getAttribute(getAttribute());
+      //        if (att != null) {
+      //          Element child = new Element(getAttribute());
+      //          child.setNamespace(node.getNamespace());
+      //          Attribute newAtt = new Attribute("value", att.getValue());
+      //          child.setAttribute(newAtt);
+      //          node.addContent(0, child);
+      //          node.removeAttribute(att);
+      //
+      //          //          getReportingStrategy().log("Child node from attribute created:" + attribute, RULE_APPLIED,
+      //          //                                     this.getDocument().getBaseURI(), null, this);
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Create child node exception. " + ex.getMessage());
     }

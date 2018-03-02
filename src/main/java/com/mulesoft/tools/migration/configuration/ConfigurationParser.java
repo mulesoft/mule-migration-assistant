@@ -21,10 +21,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.mulesoft.tools.migration.engine.builder.TaskBuilder;
-import com.mulesoft.tools.migration.engine.MigrationTask;
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
 
 /**
- * It parse json configuration files that will obtain one or more {@link MigrationTask}
+ * It parse json configuration files that will obtain one or more {@link DefaultMigrationTask}
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -41,7 +41,7 @@ public class ConfigurationParser {
     this.configurationPath = configurationPath;
   }
 
-  public List<MigrationTask> parse() {
+  public List<DefaultMigrationTask> parse() {
     List<Path> paths;
     if (configurationPath.toFile().isFile()) {
       paths = singletonList(configurationPath);
@@ -50,14 +50,14 @@ public class ConfigurationParser {
           .collect(Collectors.toList());
     }
 
-    List<MigrationTask> migrationTasks = new ArrayList<>();
+    List<DefaultMigrationTask> migrationTasks = new ArrayList<>();
     for (Path path : paths) {
       migrationTasks.addAll(parseConfigurationFile(path));
     }
     return migrationTasks;
   }
 
-  private List<MigrationTask> parseConfigurationFile(Path configurationFilePath) {
+  private List<DefaultMigrationTask> parseConfigurationFile(Path configurationFilePath) {
     try {
       // TODO this should change for GSon too after we re define the model
       JSONParser parser = new JSONParser();
@@ -66,7 +66,7 @@ public class ConfigurationParser {
 
       JSONArray tasks = (JSONArray) jsonObject.get(TASK_FIELD);
 
-      List<MigrationTask> migrationTasks = new ArrayList<>();
+      List<DefaultMigrationTask> migrationTasks = new ArrayList<>();
 
       for (Object task : tasks) {
         JSONObject taskObj = (JSONObject) task;

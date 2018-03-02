@@ -6,12 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  * Update Attribute value
@@ -19,7 +17,7 @@ import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class UpdateAttribute extends MigrationStep {
+public class UpdateAttribute /*extends DefaultMigrationStep */ {
 
   private String attributeName;
   private String newValue;
@@ -33,17 +31,17 @@ public class UpdateAttribute extends MigrationStep {
 
   public void execute() throws Exception {
     try {
-      for (Element node : getNodes()) {
-        Attribute att = node.getAttribute(getAttributeName());
-        if (att != null) {
-          att.setValue(getNewValue());
-
-          //          getReportingStrategy().log(
-          //                                     "Attribute " + att.getName() + "=\"" + att.getValue() + "\" updated it's value to"
-          //                                         + att.getName() + "=\"" + newValue + "\"",
-          //                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-        }
-      }
+      //      for (Element node : getNodes()) {
+      //        Attribute att = node.getAttribute(getAttributeName());
+      //        if (att != null) {
+      //          att.setValue(getNewValue());
+      //
+      //          //          getReportingStrategy().log(
+      //          //                                     "Attribute " + att.getName() + "=\"" + att.getValue() + "\" updated it's value to"
+      //          //                                         + att.getName() + "=\"" + newValue + "\"",
+      //          //                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Update attribute exception. " + ex.getMessage());
     }

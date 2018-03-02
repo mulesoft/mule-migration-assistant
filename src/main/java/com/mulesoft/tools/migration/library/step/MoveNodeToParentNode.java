@@ -6,19 +6,17 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  * Move node to parent node
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MoveNodeToParentNode extends MigrationStep {
+public class MoveNodeToParentNode /*extends DefaultMigrationStep */ {
 
   private String sourceNode;
   private String sourceNodeNamespace;
@@ -35,18 +33,18 @@ public class MoveNodeToParentNode extends MigrationStep {
   public void execute() throws Exception {
     try {
       Namespace sourceNamespace = Namespace.getNamespace(getSourceNodeNamespace(), getSourceNodeNamespaceUri());
-      for (Element node : getNodes()) {
-        Element sourceElement = node.getChild(getSourceNode(), sourceNamespace);
-        if (sourceElement != null) {
-          node.removeChild(getSourceNode(), sourceNamespace);
-          node.getParentElement().getChildren().add(sourceElement);
-
-          //          getReportingStrategy().log(
-          //                                     "Node <" + sourceElement.getQualifiedName() + "> moved to parent node <"
-          //                                         + node.getParentElement().getQualifiedName() + ">",
-          //                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-        }
-      }
+      //      for (Element node : getNodes()) {
+      //        Element sourceElement = node.getChild(getSourceNode(), sourceNamespace);
+      //        if (sourceElement != null) {
+      //          node.removeChild(getSourceNode(), sourceNamespace);
+      //          node.getParentElement().getChildren().add(sourceElement);
+      //
+      //          //          getReportingStrategy().log(
+      //          //                                     "Node <" + sourceElement.getQualifiedName() + "> moved to parent node <"
+      //          //                                         + node.getParentElement().getQualifiedName() + ">",
+      //          //                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Move node to parent exception. " + ex.getMessage());
     }

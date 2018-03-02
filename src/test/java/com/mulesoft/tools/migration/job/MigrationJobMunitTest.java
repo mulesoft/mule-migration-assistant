@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -24,16 +22,6 @@ import org.junit.rules.TemporaryFolder;
 import com.mulesoft.tools.migration.configuration.ConfigurationParser;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
-import com.mulesoft.tools.migration.engine.MigrationTask;
-import com.mulesoft.tools.migration.library.step.AddAttribute;
-import com.mulesoft.tools.migration.library.step.CreateChildNodeFromAttribute;
-import com.mulesoft.tools.migration.engine.MigrationStep;
-import com.mulesoft.tools.migration.library.step.MoveAttributeToChildNode;
-import com.mulesoft.tools.migration.library.step.NegateAttributeValue;
-import com.mulesoft.tools.migration.library.step.ReplaceNodesName;
-import com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName;
-import com.mulesoft.tools.migration.library.step.SetNodeNamespace;
-import com.mulesoft.tools.migration.library.step.UpdateAttributeName;
 
 @Ignore
 public class MigrationJobMunitTest {

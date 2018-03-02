@@ -7,12 +7,12 @@
 package com.mulesoft.tools.migration.engine.builder;
 
 import com.google.gson.Gson;
-import com.mulesoft.tools.migration.engine.MigrationTask;
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
- * It knows how to build a {@link MigrationTask}
+ * It knows how to build a {@link DefaultMigrationTask}
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -21,9 +21,9 @@ public class TaskBuilder {
 
   public static final String STEPS_FIELD = "stepsDefinition";
 
-  public static MigrationTask build(JSONObject taskDef) throws Exception {
+  public static DefaultMigrationTask build(JSONObject taskDef) throws Exception {
 
-    MigrationTask migrationTask = new Gson().fromJson(taskDef.toJSONString(), MigrationTask.class);
+    DefaultMigrationTask migrationTask = new Gson().fromJson(taskDef.toJSONString(), DefaultMigrationTask.class);
 
     JSONArray steps = (JSONArray) taskDef.get(STEPS_FIELD);
 

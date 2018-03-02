@@ -6,14 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.findChildElement;
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -22,7 +21,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MoveAttribute extends MigrationStep {
+public class MoveAttribute /*extends DefaultMigrationStep */ {
 
   private String attribute;
   private String targetNode;
@@ -53,24 +52,24 @@ public class MoveAttribute extends MigrationStep {
         Attribute attribute;
         String referenceValue;
 
-        for (Element node : getNodes()) {
-          attribute = node.getAttribute(getAttribute());
-          referenceValue = node.getAttributeValue(getSourceReferenceAttribute());
-          if (attribute != null) {
-            Namespace namespace = Namespace.getNamespace(getTargetNodeNamespace(), getTargetNodeNamespaceUri());
-            if (null != namespace) {
-              Element element = findChildElement(getTargetNode(), referenceValue, getTargetReferenceAttribute(), namespace,
-                                                 getDocument().getRootElement());
-              if (null != element) {
-                node.removeAttribute(attribute);
-                element.setAttribute(attribute);
-
-                //                getReportingStrategy().log("Moved " + attribute + " attribute into <" + node.getQualifiedName() + ">",
-                //                                           RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-              }
-            }
-          }
-        }
+        //        for (Element node : getNodes()) {
+        //          attribute = node.getAttribute(getAttribute());
+        //          referenceValue = node.getAttributeValue(getSourceReferenceAttribute());
+        //          if (attribute != null) {
+        //            Namespace namespace = Namespace.getNamespace(getTargetNodeNamespace(), getTargetNodeNamespaceUri());
+        //            if (null != namespace) {
+        //              Element element = findChildElement(getTargetNode(), referenceValue, getTargetReferenceAttribute(), namespace,
+        //                                                 getDocument().getRootElement());
+        //              if (null != element) {
+        //                node.removeAttribute(attribute);
+        //                element.setAttribute(attribute);
+        //
+        //                //                getReportingStrategy().log("Moved " + attribute + " attribute into <" + node.getQualifiedName() + ">",
+        //                //                                           RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+        //              }
+        //            }
+        //          }
+        //        }
       }
     } catch (Exception ex) {
       throw new MigrationStepException("Move attribute exception. " + ex.getMessage());

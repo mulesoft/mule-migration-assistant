@@ -14,8 +14,8 @@ import com.mulesoft.tools.migration.report.html.model.ExecutionData;
 import com.mulesoft.tools.migration.report.html.model.FileExecutionStatus;
 import com.mulesoft.tools.migration.report.html.model.JobExecutionStatus;
 import com.mulesoft.tools.migration.report.html.model.TaskExecutionStatus;
-import com.mulesoft.tools.migration.engine.MigrationTask;
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 
 /**
  * It knows how to report data which will be printed in HTML format
@@ -28,7 +28,8 @@ public class HTMLReportStrategy implements ReportingStrategy {
   private ArrayList<ExecutionData> collectedData = new ArrayList<>();
 
   @Override
-  public void log(String message, ReportCategory reportCategory, String filePath, MigrationTask task, MigrationStep step) {
+  public void log(String message, ReportCategory reportCategory, String filePath, DefaultMigrationTask task,
+                  DefaultMigrationStep step) {
     ExecutionData data = new ExecutionData(message, reportCategory, filePath, task, step);
     collectedData.add(data);
   }

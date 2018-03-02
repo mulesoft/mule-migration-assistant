@@ -8,7 +8,6 @@ package com.mulesoft.tools.migration.engine;
 
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.mulesoft.tools.migration.report.ReportCategory.WORKING_WITH_FILE;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -30,7 +30,7 @@ import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 
 /**
- * It represent a migration job which is composed by one or more {@link MigrationTask}
+ * It represent a migration job which is composed by one or more {@link DefaultMigrationTask}
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -43,9 +43,9 @@ public class MigrationJob implements Executable {
   private BasicProject project;
   private BasicProject outputProject;
 
-  private List<MigrationTask> migrationTasks;
+  private List<DefaultMigrationTask> migrationTasks;
 
-  private MigrationJob(BasicProject project, BasicProject outputProject, List<MigrationTask> migrationTasks,
+  private MigrationJob(BasicProject project, BasicProject outputProject, List<DefaultMigrationTask> migrationTasks,
                        Boolean onErrorStop, ReportingStrategy reportingStrategy) {
     this.project = project;
     this.outputProject = outputProject;
@@ -60,8 +60,7 @@ public class MigrationJob implements Executable {
     // TODO this casting should be smarter
     ApplicationModel applicationModel = new ApplicationModelBuilder((MuleApplicationProject) project).build();
 
-    for (MigrationTask task : migrationTasks) {
-      task.setOnErrorStop(onErrorStop);
+    for (DefaultMigrationTask task : migrationTasks) {
       task.setApplicationModel(applicationModel);
 
       try {
@@ -104,7 +103,7 @@ public class MigrationJob implements Executable {
 
     private MuleApplicationProject project;
     private MuleApplicationProject outputProject;
-    private List<MigrationTask> migrationTasks;
+    private List<DefaultMigrationTask> migrationTasks;
 
     private Boolean onErrorStop;
     private ReportingStrategy reportingStrategy = new ConsoleReportStrategy();
@@ -119,7 +118,7 @@ public class MigrationJob implements Executable {
       return this;
     }
 
-    public MigrationJobBuilder withMigrationTasks(List<MigrationTask> migrationTasks) {
+    public MigrationJobBuilder withMigrationTasks(List<DefaultMigrationTask> migrationTasks) {
       this.migrationTasks = migrationTasks;
       return this;
     }

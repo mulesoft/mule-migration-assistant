@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -15,7 +15,6 @@ import org.jdom2.Namespace;
 import java.util.*;
 
 import static com.mulesoft.tools.migration.library.tools.mel.MELUtils.getMELExpressionFromMap;
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  * Transform an attribute in a mel child node
@@ -23,7 +22,7 @@ import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class CreateMELNodeFromAttributes extends MigrationStep {
+public class CreateMELNodeFromAttributes /*extends DefaultMigrationStep */ {
 
   private String originalNode;
 
@@ -51,34 +50,34 @@ public class CreateMELNodeFromAttributes extends MigrationStep {
 
   public void execute() throws Exception {
     try {
-      for (Element node : getNodes()) {
-        Map<String, String> attributesMap = new HashMap<>();
-        List<Element> elementsToRemove = new ArrayList<>();
-
-        for (Element childNode : node.getChildren()) {
-          if (childNode.getName().equals(getOriginalNode())) {
-            Attribute keyAttribute = childNode.getAttribute(getAttributeKeyName());
-            Attribute valueAttribute = childNode.getAttribute(getAttributeValueName());
-            if (null != keyAttribute && null != valueAttribute) {
-              elementsToRemove.add(childNode);
-              attributesMap.put(keyAttribute.getValue(), valueAttribute.getValue());
-            }
-          }
-        }
-
-        if (attributesMap.size() > 0) {
-          for (Element elementToRemove : elementsToRemove) {
-            node.removeContent(elementToRemove);
-          }
-          Namespace newNodeNamespace = Namespace.getNamespace(getNewNodeNamespace(), getNewNodeNamespaceUri());
-          Element child = new Element(getNewNodeName(), newNodeNamespace);
-          child.setText(getMELExpressionFromMap(attributesMap));
-          node.addContent(child);
-
-          //          getReportingStrategy().log("MEL node <" + child.getQualifiedName() + "> was created, attributes-map:" + attributesMap,
-          //                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-        }
-      }
+      //      for (Element node : getNodes()) {
+      //        Map<String, String> attributesMap = new HashMap<>();
+      //        List<Element> elementsToRemove = new ArrayList<>();
+      //
+      //        for (Element childNode : node.getChildren()) {
+      //          if (childNode.getName().equals(getOriginalNode())) {
+      //            Attribute keyAttribute = childNode.getAttribute(getAttributeKeyName());
+      //            Attribute valueAttribute = childNode.getAttribute(getAttributeValueName());
+      //            if (null != keyAttribute && null != valueAttribute) {
+      //              elementsToRemove.add(childNode);
+      //              attributesMap.put(keyAttribute.getValue(), valueAttribute.getValue());
+      //            }
+      //          }
+      //        }
+      //
+      //        if (attributesMap.size() > 0) {
+      //          for (Element elementToRemove : elementsToRemove) {
+      //            node.removeContent(elementToRemove);
+      //          }
+      //          Namespace newNodeNamespace = Namespace.getNamespace(getNewNodeNamespace(), getNewNodeNamespaceUri());
+      //          Element child = new Element(getNewNodeName(), newNodeNamespace);
+      //          child.setText(getMELExpressionFromMap(attributesMap));
+      //          node.addContent(child);
+      //
+      //          //          getReportingStrategy().log("MEL node <" + child.getQualifiedName() + "> was created, attributes-map:" + attributesMap,
+      //          //                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Create mel node from attributes exception. " + ex.getMessage());
     }

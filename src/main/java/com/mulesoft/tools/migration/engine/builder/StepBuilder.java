@@ -15,10 +15,10 @@ import org.json.simple.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 
 /**
- * It knows how to build as {@link MigrationStep}
+ * It knows how to build as {@link DefaultMigrationStep}
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -30,7 +30,7 @@ public class StepBuilder {
   public static final String DESCRIPTION_FIELD = "stepDescriptor";
   public static final String SET_METHOD = "set";
 
-  public static MigrationStep build(JSONObject stepDef) throws Exception {
+  public static DefaultMigrationStep build(JSONObject stepDef) throws Exception {
 
     String stepType = stepDef.get(TYPE_FIELD).toString();
     String stepParameters = stepDef.get(PARAMETERS_FIELD).toString();
@@ -44,7 +44,7 @@ public class StepBuilder {
     try {
 
       Class<?> clazz = Class.forName(stepType);
-      MigrationStep step = (MigrationStep) clazz.newInstance();
+      DefaultMigrationStep step = (DefaultMigrationStep) clazz.newInstance();
 
       for (String parameter : parameters.keySet()) {
         methodName = SET_METHOD + StringUtils.capitalize(parameter);

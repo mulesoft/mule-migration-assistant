@@ -6,8 +6,8 @@
  */
 package com.mulesoft.tools.migration.report;
 
-import com.mulesoft.tools.migration.engine.MigrationTask;
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 
 /**
  * Defines a generic way of reporting information
@@ -27,5 +27,5 @@ public interface ReportingStrategy {
    * @param step
    */
   // TODO change this method name
-  void log(String message, ReportCategory reportCategory, String filePath, MigrationTask task, MigrationStep step);
+  void log(String message, ReportCategory reportCategory, String filePath, DefaultMigrationTask task, DefaultMigrationStep step);
 }

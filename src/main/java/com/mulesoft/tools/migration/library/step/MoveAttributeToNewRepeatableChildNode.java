@@ -6,12 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
-
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 
 /**
@@ -20,7 +18,7 @@ import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MoveAttributeToNewRepeatableChildNode extends MigrationStep {
+public class MoveAttributeToNewRepeatableChildNode /*extends DefaultMigrationStep */ {
 
   private String attribute;
   private String childNode;
@@ -39,28 +37,28 @@ public class MoveAttributeToNewRepeatableChildNode extends MigrationStep {
 
   public void execute() throws Exception {
     try {
-      for (Element node : getNodes()) {
-        Attribute att = node.getAttribute(getAttribute());
-        if (att != null) {
-          node.removeAttribute(att);
-          Element child = node.getChild(getChildNode(), node.getNamespace());
-          if (child == null) {
-            createNewChildNode(node, att);
-          }
-          // If newAttributeMappingName exists in a child node, will only update the value
-          else if (child.getAttribute(getNewAttributeMappingName()) != null
-              && child.getAttribute(getNewAttributeMappingName()).getValue().equals(att.getName())) {
-            child.getAttribute(getNewAttributeMappingValue()).setValue(att.getValue());
-            //            getReportingStrategy().log("Moved attribute " + att.getName() + "=\"" + att.getValue()
-            //                + "\" to an already existing child node <" + child.getQualifiedName() + "> with key " + getAttribute(),
-            //                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-          }
-          // Otherwise, just create the new child node
-          else {
-            createNewChildNode(node, att);
-          }
-        }
-      }
+      //      for (Element node : getNodes()) {
+      //        Attribute att = node.getAttribute(getAttribute());
+      //        if (att != null) {
+      //          node.removeAttribute(att);
+      //          Element child = node.getChild(getChildNode(), node.getNamespace());
+      //          if (child == null) {
+      //            createNewChildNode(node, att);
+      //          }
+      //          // If newAttributeMappingName exists in a child node, will only update the value
+      //          else if (child.getAttribute(getNewAttributeMappingName()) != null
+      //              && child.getAttribute(getNewAttributeMappingName()).getValue().equals(att.getName())) {
+      //            child.getAttribute(getNewAttributeMappingValue()).setValue(att.getValue());
+      //            //            getReportingStrategy().log("Moved attribute " + att.getName() + "=\"" + att.getValue()
+      //            //                + "\" to an already existing child node <" + child.getQualifiedName() + "> with key " + getAttribute(),
+      //            //                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+      //          }
+      //          // Otherwise, just create the new child node
+      //          else {
+      //            createNewChildNode(node, att);
+      //          }
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
     }

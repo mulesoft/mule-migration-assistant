@@ -6,28 +6,43 @@
  */
 package com.mulesoft.tools.migration.library.step.other;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
 /**
  * This steps migrates the MUnit 1.x assert-true
  *
  * @author Mulesoft Inc.
  */
-public class MunitToolsAssertTrue extends MigrationStep {
+public class AssertTrueMigrationStep extends DefaultMigrationStep implements ApplicationModelContribution {
 
   private static final String XPATH_SELECTOR = "//munit:test/*[contains(local-name(),'true')]";
+
+  private ApplicationModel applicationModel;
+
+  @Override
+  public String getDescription() {
+    return null;
+  }
+
+  public void setApplicationModel(ApplicationModel applicationModel) {
+    checkArgument(applicationModel != null, "The application model must not be null.");
+    this.applicationModel = applicationModel;
+  }
 
   public void execute() throws Exception {
     try {
 
-      getApplicationModel().getNodes(XPATH_SELECTOR)
+      applicationModel.getNodes(XPATH_SELECTOR)
           .forEach(n -> changeNodeName("munit-tools", "assert-that")
               .andThen(changeAttribute("condition", of("expression"), empty()))
               .andThen(addAttribute("is", "#[equalTo(true)]"))
