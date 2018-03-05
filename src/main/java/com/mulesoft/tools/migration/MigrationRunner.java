@@ -11,7 +11,6 @@ import static java.lang.Boolean.parseBoolean;
 
 import java.nio.file.Paths;
 
-import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -19,9 +18,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.mulesoft.tools.migration.configuration.ConfigurationParser;
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
@@ -66,7 +65,7 @@ public class MigrationRunner {
     MigrationJobBuilder builder = new MigrationJobBuilder()
         .withProject(new MuleApplicationProject(Paths.get(projectBasePath)))
         .withOutputProject(new MuleApplicationProject(Paths.get(destinationProjectBasePath)))
-        .withMigrationTasks(new ConfigurationParser(Paths.get(migrationConfigurationPath)).parse())
+        // .withMigrationTasks(new ConfigurationParser(Paths.get(migrationConfigurationPath)).parse())
         .withOnErrorStop(onErrorStop)
         .withReportingStrategy(reportingStrategy);
 
