@@ -18,7 +18,10 @@ import com.mulesoft.tools.migration.engine.step.category.PomContribution;
 import com.mulesoft.tools.migration.engine.step.category.ProjectStructureContribution;
 
 /**
+ * It knows how to classify a set of steps
+ *
  * @author Mulesoft Inc.
+ * @since 1.0.0
  */
 public class MigrationStepSorter {
 

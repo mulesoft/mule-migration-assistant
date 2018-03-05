@@ -9,11 +9,22 @@ package com.mulesoft.tools.migration.engine.task;
 import java.util.Set;
 import com.mulesoft.tools.migration.engine.Executable;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
+/**
+ * It is a container of {@link MigrationStep} that can be categorized
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public interface MigrationTask extends Executable, Categorizable {
 
   String getDescription();
 
   Set<MigrationStep> getSteps();
+
+  ApplicationModel getApplicationModel();
+
+  void setApplicationModel(ApplicationModel applicationModel);
 
 }

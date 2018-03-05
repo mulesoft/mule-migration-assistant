@@ -9,6 +9,12 @@ package com.mulesoft.tools.migration.engine.step.category;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
+/**
+ * Migration Step that works over the application model
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public interface ApplicationModelContribution extends MigrationStep {
 
   void setApplicationModel(ApplicationModel applicationModel);

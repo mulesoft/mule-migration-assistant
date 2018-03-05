@@ -29,7 +29,7 @@ public class TaskBuilder {
 
     for (Object step : steps) {
       JSONObject stepObj = (JSONObject) step;
-      migrationTask.addStep(StepBuilder.build(stepObj));
+      // migrationTask.addStep(StepBuilder.build(stepObj));
     }
 
     return migrationTask;

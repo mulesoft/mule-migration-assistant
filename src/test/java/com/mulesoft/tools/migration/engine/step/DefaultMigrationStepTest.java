@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 MuleSoft, Inc. This software is protected under international
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
  * copyright law. All use of this software is subject to MuleSoft's Master Subscription
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
@@ -10,11 +10,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
 /**
  * @author Mulesoft Inc.

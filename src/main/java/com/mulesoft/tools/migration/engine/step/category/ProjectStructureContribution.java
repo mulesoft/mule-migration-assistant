@@ -8,6 +8,12 @@ package com.mulesoft.tools.migration.engine.step.category;
 
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 
+/**
+ * Migration Step that works over the project structure
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public interface ProjectStructureContribution extends MigrationStep {
 
 }

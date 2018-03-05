@@ -11,9 +11,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Set;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
-import org.jdom2.Document;
-
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.step.MigrationStepSorter;
@@ -29,6 +26,12 @@ public abstract class DefaultMigrationTask implements MigrationTask {
 
   private ApplicationModel applicationModel;
 
+  @Override
+  public ApplicationModel getApplicationModel() {
+    return applicationModel;
+  }
+
+  @Override
   public void setApplicationModel(ApplicationModel applicationModel) {
     checkArgument(applicationModel != null, "The application model must not be null.");
     this.applicationModel = applicationModel;
@@ -39,16 +42,18 @@ public abstract class DefaultMigrationTask implements MigrationTask {
     checkState(applicationModel != null, "An application model must be provided.");
 
     try {
-      MigrationStepSorter stepSorter = new MigrationStepSorter(getSteps());
+      if (getSteps() != null) {
+        MigrationStepSorter stepSorter = new MigrationStepSorter(getSteps());
 
-      executeSteps(stepSorter.getNameSpaceContributionSteps());
+        executeSteps(stepSorter.getNameSpaceContributionSteps());
 
-      stepSorter.getApplicationModelContributionSteps().stream().forEach(s -> s.setApplicationModel(applicationModel));
-      executeSteps(stepSorter.getApplicationModelContributionSteps());
+        stepSorter.getApplicationModelContributionSteps().stream().forEach(s -> s.setApplicationModel(applicationModel));
+        executeSteps(stepSorter.getApplicationModelContributionSteps());
 
-      executeSteps(stepSorter.getExpressionContributionSteps());
-      executeSteps(stepSorter.getProjectStructureContributionSteps());
-      executeSteps(stepSorter.getPomContributionSteps());
+        executeSteps(stepSorter.getExpressionContributionSteps());
+        executeSteps(stepSorter.getProjectStructureContributionSteps());
+        executeSteps(stepSorter.getPomContributionSteps());
+      }
 
     } catch (Exception e) {
       throw new MigrationTaskException("Task execution exception. " + e.getMessage());
@@ -66,16 +71,4 @@ public abstract class DefaultMigrationTask implements MigrationTask {
     }
   }
 
-
-  @Deprecated
-  public void setDocument(Document document) {
-    // this.doc = document;
-  }
-
-  @Deprecated
-  public void addStep(DefaultMigrationStep step) {
-    // if (step != null) {
-    // this.migrationSteps.add(step);
-    // }
-  }
 }

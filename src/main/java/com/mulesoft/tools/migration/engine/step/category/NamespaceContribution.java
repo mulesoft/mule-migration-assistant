@@ -9,7 +9,10 @@ package com.mulesoft.tools.migration.engine.step.category;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 
 /**
+ * Migration Step that works over the application model adding name spaces
+ *
  * @author Mulesoft Inc.
+ * @since 1.0.0
  */
 public interface NamespaceContribution extends MigrationStep {
 

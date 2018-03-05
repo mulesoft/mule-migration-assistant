@@ -9,6 +9,12 @@ package com.mulesoft.tools.migration.engine.step;
 import com.mulesoft.tools.migration.engine.Executable;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
+/**
+ * Building block of the execution engine
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public interface MigrationStep extends Executable {
 
   String getDescription();
