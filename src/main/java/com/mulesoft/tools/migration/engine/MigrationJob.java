@@ -8,7 +8,6 @@ package com.mulesoft.tools.migration.engine;
 
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.mulesoft.tools.migration.report.ReportCategory.WORKING_WITH_FILE;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,7 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.mulesoft.tools.migration.project.structure.mule.four.MuleApplication;
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -31,22 +30,22 @@ import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 
 /**
- * It represent a migration job which is composed by one or more {@link MigrationTask}
+ * It represent a migration job which is composed by one or more {@link DefaultMigrationTask}
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
 public class MigrationJob implements Executable {
 
-  private BasicProject project;
-  private BasicProject outputProject;
-
-  private List<MigrationTask> migrationTasks;
-
   private Boolean onErrorStop;
   private ReportingStrategy reportingStrategy;
 
-  private MigrationJob(BasicProject project, BasicProject outputProject, List<MigrationTask> migrationTasks,
+  private BasicProject project;
+  private BasicProject outputProject;
+
+  private List<DefaultMigrationTask> migrationTasks;
+
+  private MigrationJob(BasicProject project, BasicProject outputProject, List<DefaultMigrationTask> migrationTasks,
                        Boolean onErrorStop, ReportingStrategy reportingStrategy) {
     this.project = project;
     this.outputProject = outputProject;
@@ -61,17 +60,15 @@ public class MigrationJob implements Executable {
     // TODO this casting should be smarter
     ApplicationModel applicationModel = new ApplicationModelBuilder((MuleApplicationProject) project).build();
 
-    for (MigrationTask task : migrationTasks) {
-      task.setOnErrorStop(onErrorStop);
+    for (DefaultMigrationTask task : migrationTasks) {
       task.setApplicationModel(applicationModel);
-      task.setReportingStrategy(reportingStrategy);
 
       try {
         task.execute();
         // TODO we should review this
         persistApplicationModel(applicationModel);
       } catch (Exception e) {
-        throw new MigrationJobException("Failed to execute task: " + task.getTaskDescriptor() + ". ", e);
+        throw new MigrationJobException("Failed to execute task: " + task.getDescription() + ". ", e);
       }
     }
     generateReport();
@@ -96,36 +93,6 @@ public class MigrationJob implements Executable {
     }
   }
 
-  // public void execute() throws Exception {
-  // ApplicationModel applicationModel = new ApplicationModelBuilder(project).build();
-  //
-  // for (Entry<Path, Document> entry : applicationModel.getApplicationDocuments().entrySet()) {
-  // try {
-  // migrateFile(entry.getKey(), entry.getValue(), migrationTasks);
-  // } catch (Exception e) {
-  // throw new MigrationJobException("Failed to migrate the file: " + entry.getKey() + ". ", e);
-  // }
-  // }
-  //
-  // generateReport();
-  // }
-
-  @Deprecated
-  private void migrateFile(Path filePath, Document document, List<MigrationTask> tasks) throws Exception {
-    // TODO let's see if there another way to do this
-    reportingStrategy.log(filePath.toString(), WORKING_WITH_FILE, filePath.toString(), null, null);
-
-    // TODO TASKs should receive appmodel
-    for (MigrationTask task : tasks) {
-      task.setReportingStrategy(reportingStrategy);
-      task.setDocument(document);
-      task.setOnErrorStop(onErrorStop);
-      task.execute();
-    }
-
-    // serializeMigratedFile(filePath, document);
-  }
-
   /**
    * It represent the builder to obtain a {@link MigrationJob}
    *
@@ -136,7 +103,7 @@ public class MigrationJob implements Executable {
 
     private MuleApplicationProject project;
     private MuleApplicationProject outputProject;
-    private List<MigrationTask> migrationTasks;
+    private List<DefaultMigrationTask> migrationTasks;
 
     private Boolean onErrorStop;
     private ReportingStrategy reportingStrategy = new ConsoleReportStrategy();
@@ -151,7 +118,7 @@ public class MigrationJob implements Executable {
       return this;
     }
 
-    public MigrationJobBuilder withMigrationTasks(List<MigrationTask> migrationTasks) {
+    public MigrationJobBuilder withMigrationTasks(List<DefaultMigrationTask> migrationTasks) {
       this.migrationTasks = migrationTasks;
       return this;
     }

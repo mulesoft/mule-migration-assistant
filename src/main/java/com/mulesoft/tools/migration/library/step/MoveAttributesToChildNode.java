@@ -6,12 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  * Moves attributes to a child node
@@ -19,7 +17,7 @@ import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MoveAttributesToChildNode extends MigrationStep {
+public class MoveAttributesToChildNode /*extends DefaultMigrationStep */ {
 
   private String attributes;
   private String childNode;
@@ -33,24 +31,24 @@ public class MoveAttributesToChildNode extends MigrationStep {
 
   public void execute() throws Exception {
     try {
-      for (Element node : getNodes()) {
-        String[] attributesArray = getAttributes().split(";");
-        for (String attributeString : attributesArray) {
-          Attribute att = node.getAttribute(attributeString);
-          if (att != null) {
-            Element child = node.getChild(getChildNode(), node.getNamespace());
-            if (child != null) {
-              node.removeAttribute(att);
-              child.setAttribute(att);
-
-              getReportingStrategy().log(
-                                         "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to child node <"
-                                             + node.getQualifiedName() + ">",
-                                         RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-            }
-          }
-        }
-      }
+      //      for (Element node : getNodes()) {
+      //        String[] attributesArray = getAttributes().split(";");
+      //        for (String attributeString : attributesArray) {
+      //          Attribute att = node.getAttribute(attributeString);
+      //          if (att != null) {
+      //            Element child = node.getChild(getChildNode(), node.getNamespace());
+      //            if (child != null) {
+      //              node.removeAttribute(att);
+      //              child.setAttribute(att);
+      //
+      //              //              getReportingStrategy().log(
+      //              //                                         "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to child node <"
+      //              //                                             + node.getQualifiedName() + ">",
+      //              //                                         RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+      //            }
+      //          }
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
     }

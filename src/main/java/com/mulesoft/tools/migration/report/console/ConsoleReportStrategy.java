@@ -8,8 +8,8 @@ package com.mulesoft.tools.migration.report.console;
 
 import com.mulesoft.tools.migration.report.ReportCategory;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
-import com.mulesoft.tools.migration.engine.MigrationTask;
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 
 /**
  * I know how to report data through a Console
@@ -20,7 +20,8 @@ import com.mulesoft.tools.migration.engine.MigrationStep;
 public class ConsoleReportStrategy implements ReportingStrategy {
 
   @Override
-  public void log(String message, ReportCategory reportCategory, String filePath, MigrationTask task, MigrationStep step) {
+  public void log(String message, ReportCategory reportCategory, String filePath, DefaultMigrationTask task,
+                  DefaultMigrationStep step) {
     System.out.println(reportCategory.getDescription() + " : " + message);
   }
 }

@@ -6,14 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.findChildElement;
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -22,7 +21,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class GetAttributeFromReference extends MigrationStep {
+public class GetAttributeFromReference /*extends DefaultMigrationStep */ {
 
 
   private String sourceReferenceAttribute;
@@ -55,33 +54,33 @@ public class GetAttributeFromReference extends MigrationStep {
     try {
 
       if (!isBlank(getSourceReferenceAttribute()) && !isBlank(getTargetReferenceAttribute())) {
-        for (Element node : getNodes()) {
-          String referenceValue = node.getAttributeValue(getSourceReferenceAttribute());
-          Namespace namespace = Namespace.getNamespace(getReferenceNodeNamespace(), getReferenceNodeNamespaceUri());
-
-          if (null != namespace) {
-            Element referenceElement = findChildElement(getReferenceNode(), referenceValue, getTargetReferenceAttribute(),
-                                                        namespace, getDocument().getRootElement());
-
-
-            if (null != referenceElement && null != getReferenceChildNode()) {
-
-              Element referenceChildElement = findChildElement(getReferenceChildNode(), referenceElement);
-
-              if (null != referenceChildElement) {
-
-                Attribute originalAttribute = referenceChildElement.getAttribute(getReferenceAttribute());
-                if (null != originalAttribute) {
-                  Attribute newAttribute = new Attribute(originalAttribute.getName(), originalAttribute.getValue());
-                  node.setAttribute(newAttribute);
-
-                  getReportingStrategy().log("Get attribute from reference:" + newAttribute, RULE_APPLIED,
-                                             this.getDocument().getBaseURI(), null, this);
-                }
-              }
-            }
-          }
-        }
+        //        for (Element node : getNodes()) {
+        //          String referenceValue = node.getAttributeValue(getSourceReferenceAttribute());
+        //          Namespace namespace = Namespace.getNamespace(getReferenceNodeNamespace(), getReferenceNodeNamespaceUri());
+        //
+        //          if (null != namespace) {
+        //            Element referenceElement = findChildElement(getReferenceNode(), referenceValue, getTargetReferenceAttribute(),
+        //                                                        namespace, getDocument().getRootElement());
+        //
+        //
+        //            if (null != referenceElement && null != getReferenceChildNode()) {
+        //
+        //              Element referenceChildElement = findChildElement(getReferenceChildNode(), referenceElement);
+        //
+        //              if (null != referenceChildElement) {
+        //
+        //                Attribute originalAttribute = referenceChildElement.getAttribute(getReferenceAttribute());
+        //                if (null != originalAttribute) {
+        //                  Attribute newAttribute = new Attribute(originalAttribute.getName(), originalAttribute.getValue());
+        //                  node.setAttribute(newAttribute);
+        //
+        //                  //                  getReportingStrategy().log("Get attribute from reference:" + newAttribute, RULE_APPLIED,
+        //                  //                                             this.getDocument().getBaseURI(), null, this);
+        //                }
+        //              }
+        //            }
+        //          }
+        //        }
       }
     } catch (Exception ex) {
       throw new MigrationStepException("Get attribute from reference exception. " + ex.getMessage());

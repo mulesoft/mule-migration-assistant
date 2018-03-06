@@ -6,12 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  * Removes a child node
@@ -19,7 +17,7 @@ import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class DeleteChildNode extends MigrationStep {
+public class DeleteChildNode /*extends DefaultMigrationStep */ {
 
   private String node;
   private String nodeNamespace;
@@ -36,15 +34,15 @@ public class DeleteChildNode extends MigrationStep {
   public void execute() throws Exception {
     try {
       Namespace namespace = Namespace.getNamespace(getNodeNamespace(), getNodeNamespaceUri());
-      for (Element node : getNodes()) {
-        Element element = node.getChild(getNode(), namespace);
-        if (element != null) {
-          node.removeChild(getNode(), namespace);
-
-          getReportingStrategy().log("Child Node <" + node.getQualifiedName() + "> was deleted", RULE_APPLIED,
-                                     this.getDocument().getBaseURI(), null, this);
-        }
-      }
+      //      for (Element node : getNodes()) {
+      //        Element element = node.getChild(getNode(), namespace);
+      //        if (element != null) {
+      //          node.removeChild(getNode(), namespace);
+      //
+      //          //          getReportingStrategy().log("Child Node <" + node.getQualifiedName() + "> was deleted", RULE_APPLIED,
+      //          //                                     this.getDocument().getBaseURI(), null, this);
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Remove child node exception. " + ex.getMessage());
     }

@@ -6,12 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  * Moves an attribute to a child node
@@ -20,7 +18,7 @@ import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
  * @since 1.0.0
  */
 // TODO can we make this a particular case fo MoveAttributeSToChildNode
-public class MoveAttributeToChildNode extends MigrationStep {
+public class MoveAttributeToChildNode /*extends DefaultMigrationStep */ {
 
   private String attribute;
   private String childNode;
@@ -34,21 +32,21 @@ public class MoveAttributeToChildNode extends MigrationStep {
 
   public void execute() throws Exception {
     try {
-      for (Element node : getNodes()) {
-        Attribute att = node.getAttribute(getAttribute());
-        if (att != null) {
-          Element child = node.getChild(getChildNode(), node.getNamespace());
-          if (child != null) {
-            node.removeAttribute(att);
-            child.setAttribute(att);
-
-            getReportingStrategy().log(
-                                       "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to child node <"
-                                           + child.getQualifiedName() + ">",
-                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-          }
-        }
-      }
+      //      for (Element node : getNodes()) {
+      //        Attribute att = node.getAttribute(getAttribute());
+      //        if (att != null) {
+      //          Element child = node.getChild(getChildNode(), node.getNamespace());
+      //          if (child != null) {
+      //            node.removeAttribute(att);
+      //            child.setAttribute(att);
+      //
+      //            //            getReportingStrategy().log(
+      //            //                                       "Moved attribute " + att.getName() + "=\"" + att.getValue() + "\" to child node <"
+      //            //                                           + child.getQualifiedName() + ">",
+      //            //                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+      //          }
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
     }

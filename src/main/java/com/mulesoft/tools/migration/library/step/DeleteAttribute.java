@@ -6,9 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
-
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import org.jdom2.Element;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
@@ -19,7 +17,7 @@ import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class DeleteAttribute extends MigrationStep {
+public class DeleteAttribute /*extends DefaultMigrationStep */ {
 
   private String attributeName;
 
@@ -31,12 +29,12 @@ public class DeleteAttribute extends MigrationStep {
 
   public void execute() throws Exception {
     try {
-      for (Element node : this.getNodes()) {
-        node.removeAttribute(getAttributeName());
-
-        getReportingStrategy().log("Attribute " + attributeName + " was deleted", RULE_APPLIED, this.getDocument().getBaseURI(),
-                                   null, this);
-      }
+      //      for (Element node : this.getNodes()) {
+      //        node.removeAttribute(getAttributeName());
+      //
+      //        //        getReportingStrategy().log("Attribute " + attributeName + " was deleted", RULE_APPLIED, this.getDocument().getBaseURI(),
+      //        //                                   null, this);
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Remove Attribute step exception. " + ex.getMessage());
     }

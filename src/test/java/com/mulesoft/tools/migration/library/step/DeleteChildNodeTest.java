@@ -16,27 +16,27 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getNodesFromFil
 @Ignore
 public class DeleteChildNodeTest {
 
-  private DeleteChildNode deleteChildNodeStep;
-
-  private static final String EXAMPLE_FILE_PATH = "src/test/resources/mule/examples/http/http-all-use-case.xml";
-
-  @Test
-  public void testMoveNodeToParentNode() throws Exception {
-    deleteChildNodeStep = new DeleteChildNode("request-builder", "http",
-                                              "http://www.mulesoft.org/schema/mule/http");
-    getNodesFromFile("//http:request", deleteChildNodeStep, EXAMPLE_FILE_PATH);
-    deleteChildNodeStep.execute();
-    Element node = deleteChildNodeStep.getNodes().get(0);
-    Assert.assertTrue(node.getChildren().size() == 1);
-  }
-
-  @Test
-  public void testBadSource() throws Exception {
-    deleteChildNodeStep = new DeleteChildNode("request-builder1", "http",
-                                              "http://www.mulesoft.org/schema/mule/http");
-    getNodesFromFile("//http:request", deleteChildNodeStep, EXAMPLE_FILE_PATH);
-    deleteChildNodeStep.execute();
-    Element node = deleteChildNodeStep.getNodes().get(0);
-    Assert.assertTrue(node.getChildren().size() == 2);
-  }
+  //  private DeleteChildNode deleteChildNodeStep;
+  //
+  //  private static final String EXAMPLE_FILE_PATH = "src/test/resources/mule/examples/http/http-all-use-case.xml";
+  //
+  //  @Test
+  //  public void testMoveNodeToParentNode() throws Exception {
+  //    deleteChildNodeStep = new DeleteChildNode("request-builder", "http",
+  //                                              "http://www.mulesoft.org/schema/mule/http");
+  //    getNodesFromFile("//http:request", deleteChildNodeStep, EXAMPLE_FILE_PATH);
+  //    deleteChildNodeStep.execute();
+  //    Element node = deleteChildNodeStep.getNodes().get(0);
+  //    Assert.assertTrue(node.getChildren().size() == 1);
+  //  }
+  //
+  //  @Test
+  //  public void testBadSource() throws Exception {
+  //    deleteChildNodeStep = new DeleteChildNode("request-builder1", "http",
+  //                                              "http://www.mulesoft.org/schema/mule/http");
+  //    getNodesFromFile("//http:request", deleteChildNodeStep, EXAMPLE_FILE_PATH);
+  //    deleteChildNodeStep.execute();
+  //    Element node = deleteChildNodeStep.getNodes().get(0);
+  //    Assert.assertTrue(node.getChildren().size() == 2);
+  //  }
 }

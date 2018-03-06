@@ -6,19 +6,17 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  *   Change node name
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class ReplaceNodesName extends MigrationStep {
+public class ReplaceNodesName /*extends DefaultMigrationStep */ {
 
   private String nodeNamespace;
   private String newNodeName;
@@ -32,18 +30,18 @@ public class ReplaceNodesName extends MigrationStep {
 
   public void execute() throws Exception {
     try {
-      if (getDocument() != null) {
-        Namespace namespace = getDocument().getRootElement().getNamespace(getNodeNamespace());
-        if (namespace != null) {
-          for (Element node : getNodes()) {
-            String legacyNode = node.getQualifiedName();
-            node.setNamespace(namespace);
-            node.setName(getNewNodeName());
-            getReportingStrategy().log("Node <" + legacyNode + "> has been replaced with <" + node.getQualifiedName() + "> node",
-                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-          }
-        }
-      }
+      //      if (getDocument() != null) {
+      //        Namespace namespace = getDocument().getRootElement().getNamespace(getNodeNamespace());
+      //        if (namespace != null) {
+      //          for (Element node : getNodes()) {
+      //            String legacyNode = node.getQualifiedName();
+      //            node.setNamespace(namespace);
+      //            node.setName(getNewNodeName());
+      //            //            getReportingStrategy().log("Node <" + legacyNode + "> has been replaced with <" + node.getQualifiedName() + "> node",
+      //            //                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+      //          }
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Replace node name exception. " + ex.getMessage());
     }

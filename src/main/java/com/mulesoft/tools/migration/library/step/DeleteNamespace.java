@@ -6,56 +6,67 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
+import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 
 /**
- * Removes a namespace from a file
+ * Removes a namespacePrefix from a file
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class DeleteNamespace extends MigrationStep {
+public class DeleteNamespace /*extends DefaultMigrationStep */ {
 
-  private String namespace;
+  private String namespacePrefix;
   private String namespaceUri;
   private String schemaLocationUrl;
 
   public DeleteNamespace() {}
 
-  public DeleteNamespace(String namespace, String namespaceUri, String schemaLocationUrl) {
-    setNamespace(namespace);
+  public DeleteNamespace(String namespacePrefix, String namespaceUri, String schemaLocationUrl) {
+    setNamespacePrefix(namespacePrefix);
     setNamespaceUri(namespaceUri);
-    setSchemaLocationUrl(schemaLocationUrl);
+    // setSchemaLocationUrl(schemaLocationUrl);
   }
 
   public void execute() throws Exception {
     try {
-      if (!StringUtils.isBlank(getNamespace()) && !StringUtils.isBlank(getNamespaceUri())
+      if (!StringUtils.isBlank(getNamespacePrefix()) && !StringUtils.isBlank(getNamespaceUri())
           && !StringUtils.isBlank(getSchemaLocationUrl())) {
-        Namespace nspc = Namespace.getNamespace(getNamespace(), getNamespaceUri());
-        if (null != nspc && null != getDocument()) {
-          Element muleNode = getDocument().getRootElement();
-          muleNode.removeNamespaceDeclaration(nspc);
-          Attribute muleSchemaLocation = muleNode.getAttributes().get(0);
-          if (schemaLocationDefined(muleNode)) {
-            muleSchemaLocation
-                .setValue(muleSchemaLocation.getValue().replace(getSchemaLocationUrl(), "").replace(getNamespaceUri(), ""));
-
-            getReportingStrategy().log("Namespace " + namespace + ":" + nspc.getURI() + " was deleted", RULE_APPLIED,
-                                       this.getDocument().getBaseURI(), null, this);
-          }
-        }
+        Namespace namespaceToRemove = Namespace.getNamespace(getNamespacePrefix(), getNamespaceUri());
+        //        Document document = getDocument();
+        //        if (null != namespaceToRemove && null != document) {
+        //
+        //
+        //          Element rootElement = document.getRootElement();
+        //          rootElement.removeNamespaceDeclaration(namespaceToRemove);
+        //
+        //          Attribute schemaLocationAttribute = rootElement.getAttribute("schemaLocation", rootElement.getNamespace("xsi"));
+        //          boolean b = schemaLocationAttribute.getValue().contains(this.getNamespaceUri()) &&
+        //              schemaLocationAttribute.getValue().contains(this.getSchemaLocationUrl());
+        //
+        //          if (schemaLocationDefined(rootElement)) {
+        //            String value = schemaLocationAttribute.getValue();
+        //            value.replace(getSchemaLocationUrl(), EMPTY);
+        //            value.replace(getNamespaceUri(), EMPTY);
+        //
+        //            schemaLocationAttribute.setValue(value);
+        //
+        //            // getReportingStrategy().log("Namespace " + namespacePrefix + ":" + nspc.getURI() + " was deleted", RULE_APPLIED,
+        //            // this.getDocument().getBaseURI(), null, this);
+        //          }
+        //        }
       }
     } catch (Exception ex) {
-      throw new MigrationStepException("Delete node namespace exception. " + ex.getMessage());
+      throw new MigrationStepException("Delete node namespacePrefix exception. " + ex.getMessage());
     }
   }
 
@@ -64,12 +75,12 @@ public class DeleteNamespace extends MigrationStep {
     return att.getValue().contains(this.getNamespaceUri()) && att.getValue().contains(this.getSchemaLocationUrl());
   }
 
-  public String getNamespace() {
-    return namespace;
+  public String getNamespacePrefix() {
+    return namespacePrefix;
   }
 
-  public void setNamespace(String namespace) {
-    this.namespace = namespace;
+  public void setNamespacePrefix(String namespacePrefix) {
+    this.namespacePrefix = namespacePrefix;
   }
 
   public String getNamespaceUri() {
@@ -84,7 +95,7 @@ public class DeleteNamespace extends MigrationStep {
     return schemaLocationUrl;
   }
 
-  public void setSchemaLocationUrl(String schemaLocationUrl) {
-    this.schemaLocationUrl = schemaLocationUrl;
-  }
+  // public void setSchemaLocationUrl(String schemaLocationUrl) {
+  // this.schemaLocationUrl = schemaLocationUrl;
+  // }
 }

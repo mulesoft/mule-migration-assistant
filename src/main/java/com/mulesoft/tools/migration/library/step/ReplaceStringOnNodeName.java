@@ -6,11 +6,9 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  * Replace string on node name
@@ -18,7 +16,7 @@ import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class ReplaceStringOnNodeName extends MigrationStep {
+public class ReplaceStringOnNodeName /*extends DefaultMigrationStep */ {
 
   private String stringToReplace;
   private String newValue;
@@ -32,17 +30,17 @@ public class ReplaceStringOnNodeName extends MigrationStep {
 
   public void execute() throws Exception {
     try {
-      for (Element node : this.getNodes()) {
-        if (node.getName().contains(getStringToReplace())) {
-          String legacyNode = node.getQualifiedName();
-          node.setName(node.getName().replace(getStringToReplace(), getNewValue()));
-
-          getReportingStrategy().log(
-                                     "The Node <" + legacyNode + "> that contained the string '" + stringToReplace
-                                         + "' was replaced to <" + node.getQualifiedName() + ">",
-                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-        }
-      }
+      //      for (Element node : this.getNodes()) {
+      //        if (node.getName().contains(getStringToReplace())) {
+      //          String legacyNode = node.getQualifiedName();
+      //          node.setName(node.getName().replace(getStringToReplace(), getNewValue()));
+      //
+      //          //          getReportingStrategy().log(
+      //          //                                     "The Node <" + legacyNode + "> that contained the string '" + stringToReplace
+      //          //                                         + "' was replaced to <" + node.getQualifiedName() + ">",
+      //          //                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Replace string on node step exception. " + ex.getMessage());
     }

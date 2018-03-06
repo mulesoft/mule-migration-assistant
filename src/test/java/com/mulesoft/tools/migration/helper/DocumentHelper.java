@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.helper;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
@@ -42,7 +42,7 @@ public class DocumentHelper {
     return nodes;
   }
 
-  public static void getNodesFromFile(String Xpath, MigrationStep step, String filePath) throws Exception {
+  public static void getNodesFromFile(String Xpath, DefaultMigrationStep step, String filePath) throws Exception {
     Document document = getDocument(filePath);
     List<Element> nodes = getElementsFromDocument(document, Xpath);
     //    step.setDocument(document);

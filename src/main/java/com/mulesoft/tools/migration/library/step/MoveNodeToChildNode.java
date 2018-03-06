@@ -6,19 +6,17 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  * Moves a node to a child node
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MoveNodeToChildNode extends MigrationStep {
+public class MoveNodeToChildNode /*extends DefaultMigrationStep*/ {
 
   private String sourceNode;
   private String sourceNodeNamespace;
@@ -43,21 +41,21 @@ public class MoveNodeToChildNode extends MigrationStep {
     try {
       Namespace sourceNamespace = Namespace.getNamespace(getSourceNodeNamespace(), getSourceNodeNamespaceUri());
       Namespace targetNamespace = Namespace.getNamespace(getTargetNodeNamespace(), getTargetNodeNamespaceUri());
-      for (Element node : getNodes()) {
-        Element sourceElement = node.getChild(getSourceNode(), sourceNamespace);
-        if (sourceElement != null) {
-          Element targetElement = node.getChild(getTargetNode(), targetNamespace);
-          if (targetElement != null) {
-            node.removeChild(getSourceNode(), sourceNamespace);
-            targetElement.getChildren().add(sourceElement);
-
-            getReportingStrategy().log(
-                                       "<" + sourceElement.getQualifiedName() + "> node is now a child of <"
-                                           + targetElement.getQualifiedName() + "> node",
-                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-          }
-        }
-      }
+      //      for (Element node : getNodes()) {
+      //        Element sourceElement = node.getChild(getSourceNode(), sourceNamespace);
+      //        if (sourceElement != null) {
+      //          Element targetElement = node.getChild(getTargetNode(), targetNamespace);
+      //          if (targetElement != null) {
+      //            node.removeChild(getSourceNode(), sourceNamespace);
+      //            targetElement.getChildren().add(sourceElement);
+      //
+      //            //            getReportingStrategy().log(
+      //            //                                       "<" + sourceElement.getQualifiedName() + "> node is now a child of <"
+      //            //                                           + targetElement.getQualifiedName() + "> node",
+      //            //                                       RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+      //          }
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
     }

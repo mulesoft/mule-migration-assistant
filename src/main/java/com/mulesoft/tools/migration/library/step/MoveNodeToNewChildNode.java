@@ -6,12 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  * Move node to new childnode
@@ -19,7 +17,7 @@ import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MoveNodeToNewChildNode extends MigrationStep {
+public class MoveNodeToNewChildNode /*extends DefaultMigrationStep*/ {
 
   private String sourceNode;
   private String sourceNodeNamespace;
@@ -45,27 +43,27 @@ public class MoveNodeToNewChildNode extends MigrationStep {
       Namespace sourceNamespace = Namespace.getNamespace(getSourceNodeNamespace(), getSourceNodeNamespaceUri());
       Namespace targetNamespace = Namespace.getNamespace(getTargetNodeNamespace(), getTargetNodeNamespaceUri());
       Element newTargetElement = null;
-      for (Element node : getNodes()) {
-        Element sourceElement = node.getChild(getSourceNode(), sourceNamespace);
-        if (sourceElement != null) {
-          Element targetElement = node.getChild(getTargetNode(), targetNamespace);
-          if (targetElement != null) {
-            node.removeChild(getSourceNode(), sourceNamespace);
-            targetElement.getChildren().add(sourceElement);
-          } else {
-            newTargetElement = new Element(getTargetNode(), targetNamespace);
-            node.removeChild(getSourceNode(), sourceNamespace);
-            newTargetElement.getChildren().add(sourceElement);
-            node.addContent(newTargetElement);
-          }
-          getReportingStrategy().log(
-                                     "<" + sourceElement.getQualifiedName() + "> node is now a child of <"
-                                         + (targetElement != null ? targetElement.getQualifiedName()
-                                             : newTargetElement.getQualifiedName())
-                                         + "> node",
-                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
-        }
-      }
+      //      for (Element node : getNodes()) {
+      //        Element sourceElement = node.getChild(getSourceNode(), sourceNamespace);
+      //        if (sourceElement != null) {
+      //          Element targetElement = node.getChild(getTargetNode(), targetNamespace);
+      //          if (targetElement != null) {
+      //            node.removeChild(getSourceNode(), sourceNamespace);
+      //            targetElement.getChildren().add(sourceElement);
+      //          } else {
+      //            newTargetElement = new Element(getTargetNode(), targetNamespace);
+      //            node.removeChild(getSourceNode(), sourceNamespace);
+      //            newTargetElement.getChildren().add(sourceElement);
+      //            node.addContent(newTargetElement);
+      //          }
+      //          //          getReportingStrategy().log(
+      //          //                                     "<" + sourceElement.getQualifiedName() + "> node is now a child of <"
+      //          //                                         + (targetElement != null ? targetElement.getQualifiedName()
+      //          //                                             : newTargetElement.getQualifiedName())
+      //          //                                         + "> node",
+      //          //                                     RULE_APPLIED, this.getDocument().getBaseURI(), null, this);
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Move attribute exception. " + ex.getMessage());
     }

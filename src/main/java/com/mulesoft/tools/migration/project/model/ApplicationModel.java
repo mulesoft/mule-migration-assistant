@@ -73,6 +73,28 @@ public class ApplicationModel {
     doc.getRootElement().addNamespaceDeclaration(Namespace.getNamespace(prefix, uri));
   }
 
+  public void removeNameSpace(String prefix, String uri, String schemaLocation) {
+    Namespace namespace = Namespace.getNamespace(prefix, uri);
+    for (Document doc : applicationDocuments.values()) {
+      removeNameSpace(namespace, schemaLocation, doc);
+    }
+  }
+
+  protected void removeNameSpace(Namespace namespace, String schemaLocation, Document document) {
+    Element rootElement = document.getRootElement();
+    rootElement.removeNamespaceDeclaration(namespace);
+
+    Attribute schemaLocationAttribute = rootElement.getAttribute("schemaLocation", rootElement.getNamespace("xsi"));
+
+    if (schemaLocationAttribute.getValue().contains(namespace.getURI())
+        && schemaLocationAttribute.getValue().contains(schemaLocation)) {
+
+      String value = schemaLocationAttribute.getValue();
+      value.replace(namespace.getURI(), EMPTY);
+      value.replace(schemaLocation, EMPTY);
+      schemaLocationAttribute.setValue(value);
+    }
+  }
 
   private XPathExpression<Element> getXPathExpression(String xpath, Document doc) {
     return XPathFactory.instance().compile(xpath, Filters.element(), null, doc.getRootElement().getAdditionalNamespaces());

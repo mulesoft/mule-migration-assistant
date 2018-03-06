@@ -25,7 +25,7 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
         <dw:transform-message doc:name="Build Request Message">
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/xml
-%namespace ns0 http://www.webserviceX.NET/
+%namespacePrefix ns0 http://www.webserviceX.NET/
 ---
 {
 	ns0#ConversionRate: {

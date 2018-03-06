@@ -8,13 +8,14 @@ package com.mulesoft.tools.migration.project.structure.mule;
 
 import java.nio.file.Path;
 import com.mulesoft.tools.migration.project.structure.JavaProject;
+import com.mulesoft.tools.migration.project.structure.MavenProject;
 
 /**
  * Represents a mule project structure
  *
  * @author Mulesoft Inc.
  */
-public abstract class MuleProject extends JavaProject {
+public abstract class MuleProject extends MavenProject {
 
 
   public MuleProject(Path baseFolder) {

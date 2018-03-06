@@ -6,12 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
 
 /**
  * Update the name of an attribute
@@ -19,7 +17,7 @@ import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class UpdateAttributeName extends MigrationStep {
+public class UpdateAttributeName /*extends DefaultMigrationStep */ {
 
   private String attributeName;
   private String newName;
@@ -33,15 +31,15 @@ public class UpdateAttributeName extends MigrationStep {
 
   public void execute() throws Exception {
     try {
-      for (Element node : getNodes()) {
-        Attribute att = node.getAttribute(getAttributeName());
-        if (att != null) {
-          att.setName(getNewName());
-
-          getReportingStrategy().log("Attribute " + attributeName + " updated it's name to " + getNewName(), RULE_APPLIED,
-                                     this.getDocument().getBaseURI(), null, this);
-        }
-      }
+      //      for (Element node : getNodes()) {
+      //        Attribute att = node.getAttribute(getAttributeName());
+      //        if (att != null) {
+      //          att.setName(getNewName());
+      //
+      //          //          getReportingStrategy().log("Attribute " + attributeName + " updated it's name to " + getNewName(), RULE_APPLIED,
+      //          //                                     this.getDocument().getBaseURI(), null, this);
+      //        }
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Update attribute name exception. " + ex.getMessage());
     }

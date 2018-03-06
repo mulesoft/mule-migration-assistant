@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jdom2.Element;
@@ -20,22 +20,21 @@ import java.util.List;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MoveMUnitProcessors extends MigrationStep {
+public class MoveMUnitProcessors /*extends DefaultMigrationStep*/ {
 
   private static String[] sections = new String[] {"munit:behavior", "munit:execution", "munit:validation"};
 
   public MoveMUnitProcessors() {}
 
-  @Override
   public void execute() throws Exception {
     try {
-      for (Element element : getNodes()) {
-
-        List<Element> childNodes = element.getChildren();
-        CreateBehaviorSection(childNodes, element);
-        CreateExecutionSection(childNodes, element);
-        CreateValidationSection(childNodes, element);
-      }
+      //      for (Element element : getNodes()) {
+      //
+      //        List<Element> childNodes = element.getChildren();
+      //        CreateBehaviorSection(childNodes, element);
+      //        CreateExecutionSection(childNodes, element);
+      //        CreateValidationSection(childNodes, element);
+      //      }
     } catch (Exception ex) {
       throw new MigrationStepException("Update Mule Message Content exception. " + ex.getMessage());
     }
