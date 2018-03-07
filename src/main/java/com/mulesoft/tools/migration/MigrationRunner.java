@@ -61,7 +61,7 @@ public class MigrationRunner {
   private MigrationJob buildMigrationJob() {
     MigrationJobBuilder builder = new MigrationJobBuilder()
         .withProject(new MuleApplicationProject(Paths.get(projectBasePath)))
-        .withOutputProject(new MuleApplication(Paths.get(destinationProjectBasePath)))
+        .withOutputProject(new MuleApplicationProject(Paths.get(destinationProjectBasePath)))
         // .withMigrationTasks(new ConfigurationParser(Paths.get(migrationConfigurationPath)).parse())
         .withReportingStrategy(reportingStrategy);
 

@@ -31,6 +31,8 @@ import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplication
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * It represent a migration job which is composed by one or more {@link DefaultMigrationTask}
@@ -40,11 +42,11 @@ import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
  */
 public class MigrationJob implements Executable {
 
-  private ReportingStrategy reportingStrategy;
+  private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
+  private ReportingStrategy reportingStrategy;
   private BasicProject project;
   private BasicProject outputProject;
-
   private List<DefaultMigrationTask> migrationTasks;
 
   private MigrationJob(BasicProject project, BasicProject outputProject, List<DefaultMigrationTask> migrationTasks,
@@ -59,16 +61,16 @@ public class MigrationJob implements Executable {
 
   public void execute() throws Exception {
     // TODO this casting should be smarter
-    ApplicationModel applicationModel = new ApplicationModelBuilder((MuleApplicationProject) project).build();
+    ApplicationModel applicationModel = generateApplicationModel(project);
 
     for (DefaultMigrationTask task : migrationTasks) {
       task.setApplicationModel(applicationModel);
       try {
         task.execute();
         persistApplicationModel(applicationModel);
-        applicationModel = generateNewApplicationModel();
+        applicationModel = generateApplicationModel(outputProject);
       } catch (MigrationTaskException ex) {
-        //TODO we should not stop execution, just log the failing task for the report and continue
+        logger.error("Failed to apply task, rolling back and continuing with the next one.");
       } catch (Exception e) {
         throw new MigrationJobException("Failed to continue executing migration: " + e.getMessage());
       }
@@ -89,8 +91,8 @@ public class MigrationJob implements Executable {
   }
 
   // TODO MMT-74 - Once we have the factory, we can obtain the app model from there and remove this.
-  private ApplicationModel generateNewApplicationModel() throws Exception {
-    ApplicationModel appModel = new ApplicationModel.ApplicationModelBuilder((MuleApplication) outputProject).build();
+  private ApplicationModel generateApplicationModel(BasicProject project) throws Exception {
+    ApplicationModel appModel = new ApplicationModel.ApplicationModelBuilder((MuleApplicationProject) project).build();
     return appModel;
   }
 
@@ -110,7 +112,7 @@ public class MigrationJob implements Executable {
   public static class MigrationJobBuilder {
 
     private MuleApplicationProject project;
-    private MuleApplication outputProject;
+    private MuleApplicationProject outputProject;
     private List<DefaultMigrationTask> migrationTasks;
 
     private ReportingStrategy reportingStrategy = new ConsoleReportStrategy();
@@ -120,7 +122,7 @@ public class MigrationJob implements Executable {
       return this;
     }
 
-    public MigrationJobBuilder withOutputProject(MuleApplication outputProject) {
+    public MigrationJobBuilder withOutputProject(MuleApplicationProject outputProject) {
       this.outputProject = outputProject;
       return this;
     }

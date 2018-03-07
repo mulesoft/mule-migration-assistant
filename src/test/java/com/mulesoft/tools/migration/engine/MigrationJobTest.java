@@ -12,7 +12,6 @@ import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
 import com.mulesoft.tools.migration.engine.task.MigrationTask;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
-import com.mulesoft.tools.migration.project.structure.mule.four.MuleApplication;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -72,39 +71,12 @@ public class MigrationJobTest {
     FileUtils.copyURLToFile(sample, new File(app, MUNIT_SECTIONS_SAMPLE_PATH.getFileName().toString()));
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void setProjectNull() {
-    migrationJob = new MigrationJob.MigrationJobBuilder()
-        .withProject(null).build();
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void setOutputProjectNull() {
-    migrationJob = new MigrationJob.MigrationJobBuilder()
-        .withOutputProject(null).build();
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void setMigrationTasksNull() {
-    migrationJob = new MigrationJob.MigrationJobBuilder()
-        .withMigrationTasks(null).build();
-  }
-
-  @Test
-  public void buildMigrationJob() throws Exception {
-    migrationJob = new MigrationJob.MigrationJobBuilder()
-        .withMigrationTasks(tasks)
-        .withProject(new MuleApplicationProject(originalProjectPath))
-        .withOutputProject(new MuleApplication(migratedProjectPath))
-        .build();
-  }
-
   @Test
   public void executeWithNullSteps() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withMigrationTasks(tasks)
         .withProject(new MuleApplicationProject(originalProjectPath))
-        .withOutputProject(new MuleApplication(migratedProjectPath))
+        .withOutputProject(new MuleApplicationProject(migratedProjectPath))
         .build();
 
     migrationJob.execute();
@@ -121,7 +93,7 @@ public class MigrationJobTest {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withMigrationTasks(tasks)
         .withProject(new MuleApplicationProject(originalProjectPath))
-        .withOutputProject(new MuleApplication(migratedProjectPath))
+        .withOutputProject(new MuleApplicationProject(migratedProjectPath))
         .build();
     migrationJob.execute();
     verify(migrationTask, times(1)).execute();

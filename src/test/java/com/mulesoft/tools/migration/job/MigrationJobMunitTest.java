@@ -50,7 +50,7 @@ public class MigrationJobMunitTest {
 
     migrationJobBuilder = new MigrationJobBuilder()
         .withProject(new MuleApplicationProject(originalProjectPath))
-        .withOutputProject(new MuleApplication(migratedProjectPath));
+        .withOutputProject(new MuleApplicationProject(migratedProjectPath));
   }
 
   private void buildOriginalProject() throws IOException {
