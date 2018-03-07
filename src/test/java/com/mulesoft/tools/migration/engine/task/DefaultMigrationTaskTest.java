@@ -9,15 +9,15 @@ package com.mulesoft.tools.migration.engine.task;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.InOrder.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
+import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
 import com.mulesoft.tools.migration.engine.step.category.ExpressionContribution;
 import com.mulesoft.tools.migration.engine.step.category.NamespaceContribution;
@@ -120,6 +120,21 @@ public class DefaultMigrationTaskTest {
     inOrder.verify(projectStructureContributionMock).execute();
     inOrder.verify(pomContributionMock).execute();
 
+  }
+
+  @Test(expected = MigrationTaskException.class)
+  public void executeWithFailedMigrationStep() throws Exception {
+    ExpressionContribution expressionContributionMock = mock(ExpressionContribution.class);
+    doThrow(NullPointerException.class)
+        .when(expressionContributionMock)
+        .execute();
+    Set<MigrationStep> steps = new HashSet<>();
+    steps.add(expressionContributionMock);
+
+    migrationTask.setApplicationModel(applicationModelMock);
+    ((MigrationTaskImpl) migrationTask).setMigrationSteps(steps);
+
+    migrationTask.execute();
   }
 
   private static final class MigrationTaskImpl extends DefaultMigrationTask {

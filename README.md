@@ -18,12 +18,11 @@ Option | Description | Mandatory | Default
 -filesDir | Root directory to search mule xml's files to migrate | Yes, if not using -files | -
 -migrationConfigFile | Migration config file (json) containing all the rules and steps | Yes if not using -migrationConfigDir | -
 -migrationConfigDir | Root directory to search the tasks and steps json files | Yes if not using -migrationConfigFile | -
--onErrorStop | Defines if the tool should stop when an error happens, options: true, false | No | true
 -report | Reporting strategy, options: console | No | console
 -backup | Flag to determine if you want a backup of your original files, options: true, false | No | true
 
 ## Example
-`java -jar migration-tool-1.0.0-SNAPSHOT.jar -filesDir myApps/usecase01 -migrationConfigDir rules/mule/tasks -onErrorStop false -report console -backup true`
+`java -jar migration-tool-1.0.0-SNAPSHOT.jar -filesDir myApps/usecase01 -migrationConfigDir rules/mule/tasks -report console -backup true`
 
 ![Output Example](/img/output_example.png)
 

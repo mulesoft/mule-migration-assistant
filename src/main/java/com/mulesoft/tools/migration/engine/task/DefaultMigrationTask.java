@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Set;
 
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.step.MigrationStepSorter;
@@ -60,14 +61,13 @@ public abstract class DefaultMigrationTask implements MigrationTask {
     }
   }
 
-  private <T extends MigrationStep> void executeSteps(Set<T> steps) throws MigrationTaskException {
+  private <T extends MigrationStep> void executeSteps(Set<T> steps) throws MigrationStepException {
     try {
       for (MigrationStep step : steps) {
         step.execute();
       }
     } catch (Exception ex) {
-      // TODO report this failure properly
-      throw new MigrationTaskException("Task execution exception. " + ex.getMessage());
+      throw new MigrationStepException("Step execution exception. " + ex.getMessage());
     }
   }
 
