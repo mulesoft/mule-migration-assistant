@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
@@ -109,9 +110,9 @@ public class ApplicationModel {
    */
   public static class ApplicationModelBuilder {
 
-    private MuleApplicationProject project;
+    private MuleProject project;
 
-    public ApplicationModelBuilder(MuleApplicationProject project) {
+    public ApplicationModelBuilder(MuleProject project) {
       this.project = project;
     }
 

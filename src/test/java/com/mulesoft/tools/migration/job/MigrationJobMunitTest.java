@@ -12,6 +12,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.mulesoft.tools.migration.project.structure.mule.four.MuleApplication;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -47,12 +48,9 @@ public class MigrationJobMunitTest {
     buildOriginalProject();
     migratedProjectPath = temporaryFolder.newFolder(MIGRATED_PROJECT_NAME).toPath();
 
-
     migrationJobBuilder = new MigrationJobBuilder()
         .withProject(new MuleApplicationProject(originalProjectPath))
         .withOutputProject(new MuleApplicationProject(migratedProjectPath));
-
-
   }
 
   private void buildOriginalProject() throws IOException {

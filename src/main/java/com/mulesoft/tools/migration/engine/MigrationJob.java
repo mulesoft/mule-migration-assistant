@@ -9,13 +9,16 @@ package com.mulesoft.tools.migration.engine;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.project.structure.mule.four.MuleApplication;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -28,6 +31,8 @@ import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplication
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * It represent a migration job which is composed by one or more {@link DefaultMigrationTask}
@@ -37,38 +42,37 @@ import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
  */
 public class MigrationJob implements Executable {
 
-  private Boolean onErrorStop;
-  private ReportingStrategy reportingStrategy;
+  private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
+  private ReportingStrategy reportingStrategy;
   private BasicProject project;
   private BasicProject outputProject;
-
   private List<DefaultMigrationTask> migrationTasks;
 
   private MigrationJob(BasicProject project, BasicProject outputProject, List<DefaultMigrationTask> migrationTasks,
-                       Boolean onErrorStop, ReportingStrategy reportingStrategy) {
+                       ReportingStrategy reportingStrategy) {
     this.project = project;
     this.outputProject = outputProject;
 
     this.migrationTasks = migrationTasks;
 
-    this.onErrorStop = onErrorStop;
     this.reportingStrategy = reportingStrategy;
   }
 
   public void execute() throws Exception {
     // TODO this casting should be smarter
-    ApplicationModel applicationModel = new ApplicationModelBuilder((MuleApplicationProject) project).build();
+    ApplicationModel applicationModel = generateApplicationModel(project);
 
     for (DefaultMigrationTask task : migrationTasks) {
       task.setApplicationModel(applicationModel);
-
       try {
         task.execute();
-        // TODO we should review this
         persistApplicationModel(applicationModel);
+        applicationModel = generateApplicationModel(outputProject);
+      } catch (MigrationTaskException ex) {
+        logger.error("Failed to apply task, rolling back and continuing with the next one.");
       } catch (Exception e) {
-        throw new MigrationJobException("Failed to execute task: " + task.getDescription() + ". ", e);
+        throw new MigrationJobException("Failed to continue executing migration: " + e.getMessage());
       }
     }
     generateReport();
@@ -79,11 +83,17 @@ public class MigrationJob implements Executable {
       Path originalFilePath = entry.getKey();
       Document document = entry.getValue();
 
-      // TODO this is just wrong
+      //TODO Find a way to identify the output project in order to persist properly
       String targetFilePath = outputProject.getBaseFolder().resolve(originalFilePath.getFileName()).toString();
       XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
       xmlOutputter.output(document, new FileOutputStream(targetFilePath));
     }
+  }
+
+  // TODO MMT-74 - Once we have the factory, we can obtain the app model from there and remove this.
+  private ApplicationModel generateApplicationModel(BasicProject project) throws Exception {
+    ApplicationModel appModel = new ApplicationModel.ApplicationModelBuilder((MuleApplicationProject) project).build();
+    return appModel;
   }
 
   private void generateReport() {
@@ -105,7 +115,6 @@ public class MigrationJob implements Executable {
     private MuleApplicationProject outputProject;
     private List<DefaultMigrationTask> migrationTasks;
 
-    private Boolean onErrorStop;
     private ReportingStrategy reportingStrategy = new ConsoleReportStrategy();
 
     public MigrationJobBuilder withProject(MuleApplicationProject project) {
@@ -123,11 +132,6 @@ public class MigrationJob implements Executable {
       return this;
     }
 
-    public MigrationJobBuilder withOnErrorStop(Boolean onErrorStop) {
-      this.onErrorStop = onErrorStop;
-      return this;
-    }
-
     public MigrationJobBuilder withReportingStrategy(ReportingStrategy reportingStrategy) {
       this.reportingStrategy = reportingStrategy;
       return this;
@@ -138,7 +142,7 @@ public class MigrationJob implements Executable {
       checkState(outputProject != null, "The output project must not be null");
       checkState(migrationTasks != null, "The migration task  must not be null");
 
-      return new MigrationJob(project, outputProject, migrationTasks, onErrorStop, reportingStrategy);
+      return new MigrationJob(project, outputProject, migrationTasks, reportingStrategy);
     }
   }
 

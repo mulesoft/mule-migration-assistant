@@ -11,6 +11,7 @@ import static java.lang.Boolean.parseBoolean;
 
 import java.nio.file.Paths;
 
+import com.mulesoft.tools.migration.project.structure.mule.four.MuleApplication;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -38,14 +39,10 @@ public class MigrationRunner {
   private final static String HELP = "help";
 
   private final static String REPORT = "report";
-  private final static String ON_ERROR_STOP = "onErrorStop";
 
   private final static String PROJECT_BASE_PATH = "projectBasePath";
   private final static String DESTINATION_PROJECT_BASE_PATH = "destinationProjectBasePath";
   private final static String MIGRATION_CONFIGURATION_PATH = "migrationConfigurationPath";
-
-
-  private Boolean onErrorStop;
 
   private String projectBasePath;
   private String destinationProjectBasePath;
@@ -66,7 +63,6 @@ public class MigrationRunner {
         .withProject(new MuleApplicationProject(Paths.get(projectBasePath)))
         .withOutputProject(new MuleApplicationProject(Paths.get(destinationProjectBasePath)))
         // .withMigrationTasks(new ConfigurationParser(Paths.get(migrationConfigurationPath)).parse())
-        .withOnErrorStop(onErrorStop)
         .withReportingStrategy(reportingStrategy);
 
     return builder.build();
@@ -87,7 +83,6 @@ public class MigrationRunner {
     options.addOption(PROJECT_BASE_PATH, true, "Base directory of the project  to be migrated");
     options.addOption(DESTINATION_PROJECT_BASE_PATH, true, "Base directory of the migrated project");
     options.addOption(REPORT, false, "Reporting strategy (default: console)");
-    options.addOption(ON_ERROR_STOP, false, "Defines if the tool should stop when an error happens (default:true)");
 
     try {
       CommandLineParser parser = new DefaultParser();
@@ -121,8 +116,6 @@ public class MigrationRunner {
       } else {
         this.reportingStrategy = new ConsoleReportStrategy();
       }
-
-      this.onErrorStop = line.hasOption(ON_ERROR_STOP) ? parseBoolean(line.getOptionValue(ON_ERROR_STOP)) : TRUE;
 
       if (line.hasOption(HELP)) {
         printHelp(options);
