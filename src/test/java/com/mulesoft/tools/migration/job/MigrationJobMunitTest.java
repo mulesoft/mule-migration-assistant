@@ -49,8 +49,8 @@ public class MigrationJobMunitTest {
     migratedProjectPath = temporaryFolder.newFolder(MIGRATED_PROJECT_NAME).toPath();
 
     migrationJobBuilder = new MigrationJobBuilder()
-        .withProject(new MuleApplicationProject(originalProjectPath))
-        .withOutputProject(new MuleApplicationProject(migratedProjectPath));
+        .withProject(originalProjectPath)
+        .withOutputProject(migratedProjectPath);
   }
 
   private void buildOriginalProject() throws IOException {

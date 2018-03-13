@@ -6,9 +6,9 @@
  */
 package com.mulesoft.tools.migration.project.structure.mule.four;
 
-import java.nio.file.Path;
-import com.mulesoft.tools.migration.project.structure.JavaProject;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
+
+import java.nio.file.Path;
 
 /**
  * Represents a mule four application project structure
@@ -17,17 +17,20 @@ import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
  */
 public class MuleApplication extends MuleProject {
 
+  public static final String srcMainConfigurationPath = "src/main/mule";
+  public static final String srcTestConfigurationPath = "src/test/munit";
+
   public MuleApplication(Path baseFolder) {
     super(baseFolder);
   }
 
   @Override
   public Path srcMainConfiguration() {
-    return baseFolder.resolve("src").resolve("main").resolve("mule");
+    return baseFolder.resolve(srcMainConfigurationPath);
   }
 
   @Override
   public Path srcTestConfiguration() {
-    return baseFolder.resolve("src").resolve("test").resolve("munit");
+    return baseFolder.resolve(srcTestConfigurationPath);
   }
 }

@@ -63,8 +63,8 @@ public class MigrationJobBuilderTest {
   public void buildMigrationJob() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withMigrationTasks(tasks)
-        .withProject(new MuleApplicationProject(originalProjectPath))
-        .withOutputProject(new MuleApplicationProject(migratedProjectPath))
+        .withProject(originalProjectPath)
+        .withOutputProject(migratedProjectPath)
         .build();
   }
 }

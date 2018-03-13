@@ -17,6 +17,8 @@ import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
  */
 public class MuleApplicationProject extends MuleProject {
 
+  public static final String srcMainConfigurationPath = "src/main/app";
+  public static final String srcTestsConfigurationPath = "src/test/munit";
 
   public MuleApplicationProject(Path baseFolder) {
     super(baseFolder);
@@ -24,11 +26,11 @@ public class MuleApplicationProject extends MuleProject {
 
   @Override
   public Path srcMainConfiguration() {
-    return baseFolder.resolve("src").resolve("main").resolve("app");
+    return baseFolder.resolve(srcMainConfigurationPath);
   }
 
   @Override
   public Path srcTestConfiguration() {
-    return baseFolder.resolve("src").resolve("test").resolve("munit");
+    return baseFolder.resolve(srcTestsConfigurationPath);
   }
 }

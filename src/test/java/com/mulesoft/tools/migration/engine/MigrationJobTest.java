@@ -75,8 +75,8 @@ public class MigrationJobTest {
   public void executeWithNullSteps() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withMigrationTasks(tasks)
-        .withProject(new MuleApplicationProject(originalProjectPath))
-        .withOutputProject(new MuleApplicationProject(migratedProjectPath))
+        .withProject(originalProjectPath)
+        .withOutputProject(migratedProjectPath)
         .build();
 
     migrationJob.execute();
@@ -92,8 +92,8 @@ public class MigrationJobTest {
     tasks.add((DefaultMigrationTask) migrationTask);
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withMigrationTasks(tasks)
-        .withProject(new MuleApplicationProject(originalProjectPath))
-        .withOutputProject(new MuleApplicationProject(migratedProjectPath))
+        .withProject(originalProjectPath)
+        .withOutputProject(migratedProjectPath)
         .build();
     migrationJob.execute();
     verify(migrationTask, times(1)).execute();

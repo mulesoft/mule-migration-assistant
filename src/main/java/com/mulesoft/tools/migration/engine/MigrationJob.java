@@ -45,11 +45,11 @@ public class MigrationJob implements Executable {
   private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private ReportingStrategy reportingStrategy;
-  private BasicProject project;
-  private BasicProject outputProject;
+  private Path project;
+  private Path outputProject;
   private List<DefaultMigrationTask> migrationTasks;
 
-  private MigrationJob(BasicProject project, BasicProject outputProject, List<DefaultMigrationTask> migrationTasks,
+  private MigrationJob(Path project, Path outputProject, List<DefaultMigrationTask> migrationTasks,
                        ReportingStrategy reportingStrategy) {
     this.project = project;
     this.outputProject = outputProject;
@@ -84,15 +84,16 @@ public class MigrationJob implements Executable {
       Document document = entry.getValue();
 
       //TODO Find a way to identify the output project in order to persist properly
-      String targetFilePath = outputProject.getBaseFolder().resolve(originalFilePath.getFileName()).toString();
+      String targetFilePath = outputProject.resolve(originalFilePath.getFileName()).toString();
       XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
       xmlOutputter.output(document, new FileOutputStream(targetFilePath));
     }
   }
 
   // TODO MMT-74 - Once we have the factory, we can obtain the app model from there and remove this.
-  private ApplicationModel generateApplicationModel(BasicProject project) throws Exception {
-    ApplicationModel appModel = new ApplicationModel.ApplicationModelBuilder((MuleApplicationProject) project).build();
+  private ApplicationModel generateApplicationModel(Path project) throws Exception {
+    MuleApplicationProject muleProject = new MuleApplicationProject(project);
+    ApplicationModel appModel = new ApplicationModel.ApplicationModelBuilder(muleProject).build();
     return appModel;
   }
 
@@ -111,18 +112,18 @@ public class MigrationJob implements Executable {
    */
   public static class MigrationJobBuilder {
 
-    private MuleApplicationProject project;
-    private MuleApplicationProject outputProject;
+    private Path project;
+    private Path outputProject;
     private List<DefaultMigrationTask> migrationTasks;
 
     private ReportingStrategy reportingStrategy = new ConsoleReportStrategy();
 
-    public MigrationJobBuilder withProject(MuleApplicationProject project) {
+    public MigrationJobBuilder withProject(Path project) {
       this.project = project;
       return this;
     }
 
-    public MigrationJobBuilder withOutputProject(MuleApplicationProject outputProject) {
+    public MigrationJobBuilder withOutputProject(Path outputProject) {
       this.outputProject = outputProject;
       return this;
     }
