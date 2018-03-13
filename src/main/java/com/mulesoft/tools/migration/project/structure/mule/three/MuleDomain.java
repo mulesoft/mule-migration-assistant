@@ -17,13 +17,15 @@ import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
  */
 public class MuleDomain extends MuleProject {
 
+  public static final String srcMainConfigurationPath = "src/main/domain";
+
   public MuleDomain(Path baseFolder) {
     super(baseFolder);
   }
 
   @Override
   public Path srcMainConfiguration() {
-    return baseFolder.resolve("src").resolve("main").resolve("domain");
+    return baseFolder.resolve(srcMainConfigurationPath);
   }
 
   @Override
