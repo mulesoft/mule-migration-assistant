@@ -17,9 +17,9 @@ import com.mulesoft.tools.migration.project.structure.ProjectType;
 // TODO this may be annotations
 public interface Categorizable {
 
-  String getTo();
+  Version getTo();
 
-  String getFrom();
+  Version getFrom();
 
   ProjectType getProjectType();
 }

@@ -6,37 +6,34 @@
  */
 package com.mulesoft.tools.migration.library.step.other;
 
-import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_APPLICATION;
-
 import java.util.HashSet;
 import java.util.Set;
-import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
 import com.mulesoft.tools.migration.engine.task.Version;
-import com.mulesoft.tools.migration.engine.task.Version.VersionBuilder;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
 
 /**
- * JUST A CONCEPT todo delete
- * 
+ * JUST A CONCEPT
+ * todo delete
  * @author Mulesoft Inc.
  */
-public class MunitMigrationTask extends DefaultMigrationTask {
-
-  @Override
-  public Version getFrom() {
-    return new VersionBuilder().withMajor("3").withMinor("8").withRevision("0").build();
-  }
+public class AnotherMigrationTask extends DefaultMigrationTask {
 
   @Override
   public Version getTo() {
-    return new VersionBuilder().withMajor("4").withMinor("0").withRevision("0").build();
+    return null;
   }
 
+  @Override
+  public Version getFrom() {
+    return null;
+  }
 
   @Override
   public ProjectType getProjectType() {
-    return MULE_APPLICATION;
+    return null;
   }
 
 
