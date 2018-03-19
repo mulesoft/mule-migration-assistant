@@ -48,7 +48,6 @@ public class MigrationTaskLocatorTest {
     assertThat("The migration task project type is wrong", migrationTask.getProjectType(), is(projectType));
   }
 
-  @Ignore
   @Test
   public void locateFromAnyToAny() throws Exception {
     MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(ANY_VERSION, ANY_VERSION, projectType);
