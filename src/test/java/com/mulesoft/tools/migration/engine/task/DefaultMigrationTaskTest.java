@@ -142,12 +142,12 @@ public class DefaultMigrationTaskTest {
 
 
     @Override
-    public String getTo() {
+    public Version getTo() {
       return null;
     }
 
     @Override
-    public String getFrom() {
+    public Version getFrom() {
       return null;
     }
 

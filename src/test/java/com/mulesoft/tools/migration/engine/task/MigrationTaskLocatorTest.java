@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
+ */
+package com.mulesoft.tools.migration.engine.task;
+
+import static com.mulesoft.tools.migration.engine.task.Version.VersionBuilder.ANY_VERSION;
+import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_APPLICATION;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import com.mulesoft.tools.migration.engine.task.Version.VersionBuilder;
+import com.mulesoft.tools.migration.library.step.other.MunitMigrationTask;
+import com.mulesoft.tools.migration.project.structure.ProjectType;
+
+public class MigrationTaskLocatorTest {
+
+  private Version from;
+  private Version to;
+  private ProjectType projectType;
+
+  @Before
+  public void setUp() throws Exception {
+    from = new VersionBuilder().withMajor("3").withMinor("8").withRevision("0").build();
+    to = new VersionBuilder().withMajor("4").withMinor("0").withRevision("0").build();
+    projectType = MULE_APPLICATION;
+  }
+
+  @Test
+  public void locate() throws Exception {
+    MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(from, to, projectType);
+    List<MigrationTask> migrationTaskList = migrationTaskLocator.locate();
+
+    assertThat("The number of migration task is wrong", migrationTaskList.size(), is(1));
+    MigrationTask migrationTask = migrationTaskList.get(0);
+    assertThat("The migration task type is wrong", migrationTask, instanceOf(MunitMigrationTask.class));
+    assertThat("The migration task from is wrong", migrationTask.getFrom(), is(from));
+    assertThat("The migration task to is wrong", migrationTask.getTo(), is(to));
+    assertThat("The migration task project type is wrong", migrationTask.getProjectType(), is(projectType));
+  }
+
+  @Ignore
+  @Test
+  public void locateFromAnyToAny() throws Exception {
+    MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(ANY_VERSION, ANY_VERSION, projectType);
+    List<MigrationTask> migrationTaskList = migrationTaskLocator.locate();
+
+    assertThat("The number of migration task is wrong", migrationTaskList.size(), is(1));
+    MigrationTask migrationTask = migrationTaskList.get(0);
+    assertThat("The migration task type is wrong", migrationTask, instanceOf(MunitMigrationTask.class));
+    assertThat("The migration task from is wrong", migrationTask.getFrom(), is(from));
+    assertThat("The migration task to is wrong", migrationTask.getTo(), is(to));
+    assertThat("The migration task project type is wrong", migrationTask.getProjectType(), is(projectType));
+  }
+
+}
