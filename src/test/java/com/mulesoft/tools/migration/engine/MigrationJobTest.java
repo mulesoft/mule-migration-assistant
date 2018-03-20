@@ -10,6 +10,7 @@ import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
 import com.mulesoft.tools.migration.engine.task.MigrationTask;
+import com.mulesoft.tools.migration.engine.task.Version;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
@@ -119,12 +120,12 @@ public class MigrationJobTest {
 
 
     @Override
-    public String getTo() {
+    public Version getTo() {
       return null;
     }
 
     @Override
-    public String getFrom() {
+    public Version getFrom() {
       return null;
     }
 
