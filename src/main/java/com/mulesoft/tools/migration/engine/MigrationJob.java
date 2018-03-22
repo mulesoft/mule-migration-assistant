@@ -9,16 +9,18 @@ package com.mulesoft.tools.migration.engine;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map.Entry;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.pom.model.PomModel;
 import com.mulesoft.tools.migration.project.structure.mule.four.MuleApplication;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -83,7 +85,7 @@ public class MigrationJob implements Executable {
       Path originalFilePath = entry.getKey();
       Document document = entry.getValue();
 
-      //TODO Find a way to identify the output project in order to persist properly
+      // TODO Find a way to identify the output project in order to persist properly
       String targetFilePath = outputProject.resolve(originalFilePath.getFileName()).toString();
       XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
       xmlOutputter.output(document, new FileOutputStream(targetFilePath));

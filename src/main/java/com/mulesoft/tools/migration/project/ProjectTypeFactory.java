@@ -22,7 +22,7 @@ import static java.nio.file.Files.exists;
  *
  * @author Mulesoft Inc.
  */
-public class ProjectFactory {
+public class ProjectTypeFactory {
 
   public ProjectType getProjectType(Path projectPath) throws Exception {
     if (exists(projectPath.resolve(MuleApplication.srcMainConfigurationPath))) {

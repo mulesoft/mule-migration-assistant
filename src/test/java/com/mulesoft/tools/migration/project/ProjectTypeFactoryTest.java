@@ -21,13 +21,13 @@ import java.nio.file.Path;
 /**
  * @author Mulesoft Inc.
  */
-public class ProjectFactoryTest {
+public class ProjectTypeFactoryTest {
 
   private static final String APP_NAME = "test-app";
 
   @Rule
   public TemporaryFolder temporaryFolder = new TemporaryFolder();
-  private ProjectFactory projectFactory = new ProjectFactory();
+  private ProjectTypeFactory projectTypeFactory = new ProjectTypeFactory();
   private Path projectPath;
 
   @Before
@@ -38,7 +38,7 @@ public class ProjectFactoryTest {
   @Test
   public void getProjectTypeBasic() throws Exception {
     assertThat("The expected project type is not the same",
-               projectFactory.getProjectType(projectPath),
+               projectTypeFactory.getProjectType(projectPath),
                is(ProjectType.BASIC));
   }
 
@@ -46,7 +46,7 @@ public class ProjectFactoryTest {
   public void getProjectTypeJava() throws Exception {
     createFolder("src/main/java");
     assertThat("The expected project type is not the same",
-               projectFactory.getProjectType(projectPath),
+               projectTypeFactory.getProjectType(projectPath),
                is(ProjectType.JAVA));
   }
 
@@ -54,7 +54,7 @@ public class ProjectFactoryTest {
   public void getProjectTypeMuleThree() throws Exception {
     createFolder("src/main/app");
     assertThat("The expected project type is not the same",
-               projectFactory.getProjectType(projectPath),
+               projectTypeFactory.getProjectType(projectPath),
                is(ProjectType.MULE));
   }
 
@@ -63,7 +63,7 @@ public class ProjectFactoryTest {
     createFolder("src/main/app");
     createFolder("src/main/java");
     assertThat("The expected project type is not the same",
-               projectFactory.getProjectType(projectPath),
+               projectTypeFactory.getProjectType(projectPath),
                is(ProjectType.MULE));
   }
 
@@ -71,7 +71,7 @@ public class ProjectFactoryTest {
   public void getProjectTypeMuleFour() throws Exception {
     createFolder("src/main/mule");
     assertThat("The expected project type is not the same",
-               projectFactory.getProjectType(projectPath),
+               projectTypeFactory.getProjectType(projectPath),
                is(ProjectType.MULE_APPLICATION));
   }
 
@@ -79,7 +79,7 @@ public class ProjectFactoryTest {
   public void getProjectTypeDomain() throws Exception {
     createFolder("src/main/domain");
     assertThat("The expected project type is not the same",
-               projectFactory.getProjectType(projectPath),
+               projectTypeFactory.getProjectType(projectPath),
                is(ProjectType.MULE_DOMAIN));
   }
 

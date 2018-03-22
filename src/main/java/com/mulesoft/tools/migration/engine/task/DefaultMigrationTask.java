@@ -9,12 +9,14 @@ package com.mulesoft.tools.migration.engine.task;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.Optional;
 import java.util.Set;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.step.MigrationStepSorter;
+import com.mulesoft.tools.migration.pom.model.PomModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
 /**
@@ -48,11 +50,13 @@ public abstract class DefaultMigrationTask implements MigrationTask {
 
         executeSteps(stepSorter.getNameSpaceContributionSteps());
 
-        stepSorter.getApplicationModelContributionSteps().stream().forEach(s -> s.setApplicationModel(applicationModel));
+        stepSorter.getApplicationModelContributionSteps().forEach(s -> s.setApplicationModel(applicationModel));
         executeSteps(stepSorter.getApplicationModelContributionSteps());
 
         executeSteps(stepSorter.getExpressionContributionSteps());
         executeSteps(stepSorter.getProjectStructureContributionSteps());
+
+        stepSorter.getPomContributionSteps().forEach(s -> s.setPomModel(applicationModel.getPomModel().orElse(new PomModel())));
         executeSteps(stepSorter.getPomContributionSteps());
       }
 
