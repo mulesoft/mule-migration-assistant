@@ -17,6 +17,7 @@ import com.mulesoft.tools.migration.engine.step.category.ExpressionContribution;
 import com.mulesoft.tools.migration.engine.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.engine.step.category.PomContribution;
 import com.mulesoft.tools.migration.engine.step.category.ProjectStructureContribution;
+import com.mulesoft.tools.migration.pom.model.PomModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.DiagnosingMatcher;
@@ -202,6 +203,11 @@ public class MigrationStepSorterTest {
 
     @Override
     public void execute() throws Exception {
+
+    }
+
+    @Override
+    public void setPomModel(PomModel pomModel) {
 
     }
   }

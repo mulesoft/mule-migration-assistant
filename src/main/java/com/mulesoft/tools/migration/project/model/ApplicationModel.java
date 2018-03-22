@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import com.mulesoft.tools.migration.pom.model.PomModel;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +45,7 @@ import org.jdom2.xpath.XPathFactory;
 public class ApplicationModel {
 
   private Map<Path, Document> applicationDocuments;
+  private PomModel pomModel;
 
   protected ApplicationModel(Map<Path, Document> applicationDocuments) {
     this.applicationDocuments = applicationDocuments;
@@ -101,6 +103,14 @@ public class ApplicationModel {
     return XPathFactory.instance().compile(xpath, Filters.element(), null, doc.getRootElement().getAdditionalNamespaces());
   }
 
+  private void setPomModel(PomModel pomModel) {
+    this.pomModel = pomModel;
+  }
+
+  public Optional<PomModel> getPomModel() {
+    return Optional.ofNullable(pomModel);
+  }
+
 
   /**
    * It represent the builder to obtain a {@link ApplicationModel}
@@ -133,7 +143,10 @@ public class ApplicationModel {
           throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + afp);
         }
       }
-      return new ApplicationModel(applicationDocuments);
+      ApplicationModel applicationModel = new ApplicationModel(applicationDocuments);
+      PomModel pomModel = new PomModel.PomModelBuilder().withPom(project.pom()).build();
+      applicationModel.setPomModel(pomModel);
+      return applicationModel;
     }
 
     private Document generateDocument(Path filePath) throws JDOMException, IOException {
@@ -141,7 +154,5 @@ public class ApplicationModel {
       return saxBuilder.build(filePath.toFile());
     }
   }
-
-
 
 }

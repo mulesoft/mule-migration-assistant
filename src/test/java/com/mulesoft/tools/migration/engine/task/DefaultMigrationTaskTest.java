@@ -11,10 +11,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.InOrder.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
@@ -23,6 +20,7 @@ import com.mulesoft.tools.migration.engine.step.category.ExpressionContribution;
 import com.mulesoft.tools.migration.engine.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.engine.step.category.PomContribution;
 import com.mulesoft.tools.migration.engine.step.category.ProjectStructureContribution;
+import com.mulesoft.tools.migration.pom.model.PomModel;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,6 +43,7 @@ public class DefaultMigrationTaskTest {
   public void setUp() throws Exception {
     migrationTask = new MigrationTaskImpl();
     applicationModelMock = mock(ApplicationModel.class);
+    when(applicationModelMock.getPomModel()).thenReturn(Optional.empty());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -112,6 +111,7 @@ public class DefaultMigrationTaskTest {
     verify(applicationModelContributionMock, times(1)).setApplicationModel(applicationModelMock);
     verify(expressionContributionMock, times(1)).execute();
     verify(projectStructureContributionMock, times(1)).execute();
+    verify(pomContributionMock, times(1)).setPomModel(any(PomModel.class));
     verify(pomContributionMock, times(1)).execute();
 
     inOrder.verify(namespaceContributionMock).execute();

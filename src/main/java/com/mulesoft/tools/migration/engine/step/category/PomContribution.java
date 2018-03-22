@@ -7,6 +7,9 @@
 package com.mulesoft.tools.migration.engine.step.category;
 
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
+import com.mulesoft.tools.migration.pom.model.PomModel;
+
+import java.util.Optional;
 
 /**
  * Migration Step that contributes to the pom model
@@ -16,4 +19,5 @@ import com.mulesoft.tools.migration.engine.step.MigrationStep;
  */
 public interface PomContribution extends MigrationStep {
 
+  void setPomModel(PomModel pomModel);
 }
