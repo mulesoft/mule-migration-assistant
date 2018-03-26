@@ -12,7 +12,9 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.structure.BasicProject;
 import com.mulesoft.tools.migration.project.structure.MavenProject;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
+import com.mulesoft.tools.migration.project.structure.mule.four.MuleFourDomain;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeApplication;
+import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeDomain;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.jdom2.Document;
@@ -76,6 +78,9 @@ public class ApplicationPersister {
       if (originalFilePath.toString().contains(MuleThreeApplication.srcMainConfigurationPath)) {
         targetFilePath = outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
             .resolve(originalFilePath.getFileName()).toString();
+      } else if (originalFilePath.toString().contains(MuleThreeDomain.srcMainConfigurationPath)) {
+        targetFilePath = outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
+            .resolve(originalFilePath.getFileName()).toString();
       } else {
         targetFilePath = outputAppPath.resolve(((MuleProject) projectOutput).srcTestConfiguration())
             .resolve(originalFilePath.getFileName()).toString();
@@ -107,9 +112,11 @@ public class ApplicationPersister {
       app = project.srcMainConfiguration().toFile();
       app.mkdirs();
     }
-    if (!exists(project.srcTestConfiguration())) {
-      app = project.srcTestConfiguration().toFile();
-      app.mkdirs();
+    if (!(project instanceof MuleFourDomain)) {
+      if (!exists(project.srcTestConfiguration())) {
+        app = project.srcTestConfiguration().toFile();
+        app.mkdirs();
+      }
     }
   }
 
