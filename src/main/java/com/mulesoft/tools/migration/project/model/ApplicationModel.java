@@ -6,35 +6,22 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.project.structure.BasicProject.getFiles;
-import static com.mulesoft.tools.migration.report.ReportCategory.RULE_APPLIED;
-import static org.apache.commons.lang3.StringUtils.*;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-
 import com.mulesoft.tools.migration.pom.model.PomModel;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
-import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
-import org.apache.commons.lang3.StringUtils;
-import org.jdom2.Attribute;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.Namespace;
+import org.jdom2.*;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.mulesoft.tools.migration.project.structure.BasicProject.getFiles;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Represent the application to be migrated
@@ -46,6 +33,7 @@ public class ApplicationModel {
 
   private Map<Path, Document> applicationDocuments;
   private PomModel pomModel;
+  private Path projectBasePath;
 
   protected ApplicationModel(Map<Path, Document> applicationDocuments) {
     this.applicationDocuments = applicationDocuments;
@@ -111,6 +99,13 @@ public class ApplicationModel {
     return Optional.ofNullable(pomModel);
   }
 
+  private void setProjectBasePath(Path projectBasePath) {
+    this.projectBasePath = projectBasePath;
+  }
+
+  public Path getProjectBasePath() {
+    return this.projectBasePath;
+  }
 
   /**
    * It represent the builder to obtain a {@link ApplicationModel}
@@ -146,6 +141,7 @@ public class ApplicationModel {
       ApplicationModel applicationModel = new ApplicationModel(applicationDocuments);
       PomModel pomModel = new PomModel.PomModelBuilder().withPom(project.pom()).build();
       applicationModel.setPomModel(pomModel);
+      applicationModel.setProjectBasePath(project.getBaseFolder());
       return applicationModel;
     }
 

@@ -6,21 +6,19 @@
  */
 package com.mulesoft.tools.migration.engine.task;
 
-import static com.mulesoft.tools.migration.engine.task.Version.VersionBuilder.ANY_VERSION;
-import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_APPLICATION;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.mulesoft.tools.migration.engine.task.Version.VersionBuilder;
 import com.mulesoft.tools.migration.library.step.other.MunitMigrationTask;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
+
+import static com.mulesoft.tools.migration.engine.task.Version.VersionBuilder.ANY_VERSION;
+import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_FOUR_APPLICATION;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class MigrationTaskLocatorTest {
 
@@ -32,7 +30,7 @@ public class MigrationTaskLocatorTest {
   public void setUp() throws Exception {
     from = new VersionBuilder().withMajor("3").withMinor("8").withRevision("0").build();
     to = new VersionBuilder().withMajor("4").withMinor("0").withRevision("0").build();
-    projectType = MULE_APPLICATION;
+    projectType = MULE_FOUR_APPLICATION;
   }
 
   @Test

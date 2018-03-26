@@ -8,16 +8,15 @@ package com.mulesoft.tools.migration.project;
 
 import com.mulesoft.tools.migration.project.structure.JavaProject;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
-import com.mulesoft.tools.migration.project.structure.mule.four.MuleApplication;
-import com.mulesoft.tools.migration.project.structure.mule.three.MuleDomain;
-import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
+import com.mulesoft.tools.migration.project.structure.mule.four.*;
+import com.mulesoft.tools.migration.project.structure.mule.three.*;
 
 import java.nio.file.Path;
 
 import static com.mulesoft.tools.migration.project.structure.ProjectType.*;
 import static java.nio.file.Files.exists;
 
-/**
+/**MuleFourApplication
  * It gets the project type based on the project path
  *
  * @author Mulesoft Inc.
@@ -25,16 +24,19 @@ import static java.nio.file.Files.exists;
 public class ProjectTypeFactory {
 
   public ProjectType getProjectType(Path projectPath) throws Exception {
-    if (exists(projectPath.resolve(MuleApplication.srcMainConfigurationPath))) {
-      return MULE_APPLICATION;
-    } else if (exists(projectPath.resolve(MuleDomain.srcMainConfigurationPath))) {
-      return MULE_DOMAIN;
-    } else if (exists(projectPath.resolve(MuleApplicationProject.srcMainConfigurationPath))) {
-      return MULE;
+    if (exists(projectPath.resolve(MuleThreeApplication.srcMainConfigurationPath))) {
+      return MULE_THREE_APPLICATION;
+    } else if (exists(projectPath.resolve(MuleThreeDomain.srcMainConfigurationPath))) {
+      return MULE_THREE_DOMAIN;
+    } else if (exists(projectPath.resolve(MuleFourApplication.srcMainConfigurationPath))) {
+      return MULE_FOUR_APPLICATION;
+    } else if (exists(projectPath.resolve(MuleFourDomain.srcMainConfigurationPath))) {
+      return MULE_FOUR_DOMAIN;
     } else if (exists(projectPath.resolve(JavaProject.srcMainJavaPath))) {
       return JAVA;
     } else {
       return BASIC;
     }
   }
+
 }

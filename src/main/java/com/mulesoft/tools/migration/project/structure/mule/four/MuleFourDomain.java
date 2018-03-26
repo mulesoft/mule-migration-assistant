@@ -8,15 +8,29 @@ package com.mulesoft.tools.migration.project.structure.mule.four;
 
 import java.nio.file.Path;
 import com.mulesoft.tools.migration.project.structure.JavaProject;
+import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
 
 /**
  * Represents a mule four domain project structure
  *
  * @author Mulesoft Inc.
  */
-public class MuleDomain extends JavaProject {
+public class MuleFourDomain extends MuleProject {
 
-  public MuleDomain(Path baseFolder) {
+  public static final String srcMainConfigurationPath = "src/main/domain";
+
+  public MuleFourDomain(Path baseFolder) {
     super(baseFolder);
+  }
+
+  @Override
+  public Path srcMainConfiguration() {
+    return baseFolder.resolve(srcMainConfigurationPath);
+  }
+
+  @Override
+  public Path srcTestConfiguration() {
+    // TODO throw a better exception
+    throw new RuntimeException("No test configuration folder");
   }
 }

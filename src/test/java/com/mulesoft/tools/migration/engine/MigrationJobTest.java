@@ -13,7 +13,6 @@ import com.mulesoft.tools.migration.engine.task.MigrationTask;
 import com.mulesoft.tools.migration.engine.task.Version;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
-import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;

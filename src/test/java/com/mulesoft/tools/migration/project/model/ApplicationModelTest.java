@@ -6,11 +6,13 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addAttribute;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
+import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
+import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeApplication;
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,14 +20,9 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
-import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.*;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 /**
  * @author Mulesoft Inc.
@@ -45,14 +42,14 @@ public class ApplicationModelTest {
 
   private Path originalProjectPath;
   private Path migratedProjectPath;
-  private MuleApplicationProject muleApplicationProject;
+  private MuleThreeApplication muleApplicationProject;
 
   @Before
   public void setUp() throws Exception {
     buildOriginalProject();
     migratedProjectPath = temporaryFolder.newFolder(MIGRATED_PROJECT_NAME).toPath();
 
-    muleApplicationProject = new MuleApplicationProject(originalProjectPath);
+    muleApplicationProject = new MuleThreeApplication(originalProjectPath);
   }
 
   private static final String XPATH_SELECTOR = "//munit:test/*[contains(local-name(),'true')]";

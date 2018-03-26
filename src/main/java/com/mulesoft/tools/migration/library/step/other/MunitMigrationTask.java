@@ -6,15 +6,16 @@
  */
 package com.mulesoft.tools.migration.library.step.other;
 
-import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_APPLICATION;
-
-import java.util.HashSet;
-import java.util.Set;
-import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
 import com.mulesoft.tools.migration.engine.task.Version;
 import com.mulesoft.tools.migration.engine.task.Version.VersionBuilder;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_FOUR_APPLICATION;
 
 /**
  * JUST A CONCEPT todo delete
@@ -36,7 +37,7 @@ public class MunitMigrationTask extends DefaultMigrationTask {
 
   @Override
   public ProjectType getProjectType() {
-    return MULE_APPLICATION;
+    return MULE_FOUR_APPLICATION;
   }
 
 

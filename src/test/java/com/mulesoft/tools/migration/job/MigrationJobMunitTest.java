@@ -6,13 +6,7 @@
  */
 package com.mulesoft.tools.migration.job;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import com.mulesoft.tools.migration.project.structure.mule.four.MuleApplication;
+import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -20,8 +14,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
-import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Ignore
 public class MigrationJobMunitTest {
