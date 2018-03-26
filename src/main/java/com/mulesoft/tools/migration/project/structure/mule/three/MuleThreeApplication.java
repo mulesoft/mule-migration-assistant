@@ -15,12 +15,12 @@ import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
  *
  * @author Mulesoft Inc.
  */
-public class MuleApplicationProject extends MuleProject {
+public class MuleThreeApplication extends MuleProject {
 
   public static final String srcMainConfigurationPath = "src/main/app";
   public static final String srcTestsConfigurationPath = "src/test/munit";
 
-  public MuleApplicationProject(Path baseFolder) {
+  public MuleThreeApplication(Path baseFolder) {
     super(baseFolder);
   }
 

@@ -55,7 +55,7 @@ public class ProjectTypeFactoryTest {
     createFolder("src/main/app");
     assertThat("The expected project type is not the same",
                projectTypeFactory.getProjectType(projectPath),
-               is(ProjectType.MULE));
+               is(ProjectType.MULE_THREE_APPLICATION));
   }
 
   @Test
@@ -64,7 +64,7 @@ public class ProjectTypeFactoryTest {
     createFolder("src/main/java");
     assertThat("The expected project type is not the same",
                projectTypeFactory.getProjectType(projectPath),
-               is(ProjectType.MULE));
+               is(ProjectType.MULE_THREE_APPLICATION));
   }
 
   @Test
@@ -72,7 +72,7 @@ public class ProjectTypeFactoryTest {
     createFolder("src/main/mule");
     assertThat("The expected project type is not the same",
                projectTypeFactory.getProjectType(projectPath),
-               is(ProjectType.MULE_APPLICATION));
+               is(ProjectType.MULE_FOUR_APPLICATION));
   }
 
   @Test
@@ -80,7 +80,7 @@ public class ProjectTypeFactoryTest {
     createFolder("src/main/domain");
     assertThat("The expected project type is not the same",
                projectTypeFactory.getProjectType(projectPath),
-               is(ProjectType.MULE_DOMAIN));
+               is(ProjectType.MULE_THREE_DOMAIN));
   }
 
   public void createFolder(String path) {

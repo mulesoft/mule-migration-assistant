@@ -4,22 +4,23 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.project.structure.mule.three;
+package com.mulesoft.tools.migration.project.structure.mule.four;
 
-import java.nio.file.Path;
-import com.mulesoft.tools.migration.project.structure.JavaProject;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
 
+import java.nio.file.Path;
+
 /**
- * Represents a mule three domain project structure
+ * Represents a mule four application project structure
  *
  * @author Mulesoft Inc.
  */
-public class MuleDomain extends MuleProject {
+public class MuleFourApplication extends MuleProject {
 
-  public static final String srcMainConfigurationPath = "src/main/domain";
+  public static final String srcMainConfigurationPath = "src/main/mule";
+  public static final String srcTestConfigurationPath = "src/test/munit";
 
-  public MuleDomain(Path baseFolder) {
+  public MuleFourApplication(Path baseFolder) {
     super(baseFolder);
   }
 
@@ -30,7 +31,6 @@ public class MuleDomain extends MuleProject {
 
   @Override
   public Path srcTestConfiguration() {
-    // TODO throw a better exception
-    throw new RuntimeException("No test configuration folder");
+    return baseFolder.resolve(srcTestConfigurationPath);
   }
 }

@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.engine;
 
 import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
-import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

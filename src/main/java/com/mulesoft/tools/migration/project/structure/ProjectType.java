@@ -13,5 +13,5 @@ package com.mulesoft.tools.migration.project.structure;
  * @since 1.0.0
  */
 public enum ProjectType {
-  BASIC, JAVA, MAVEN, MULE, MULE_APPLICATION, MULE_DOMAIN;
+  BASIC, JAVA, MULE_THREE_APPLICATION, MULE_FOUR_APPLICATION, MULE_THREE_DOMAIN, MULE_FOUR_DOMAIN;
 }

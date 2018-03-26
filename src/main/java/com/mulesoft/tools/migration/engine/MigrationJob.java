@@ -7,34 +7,30 @@
 package com.mulesoft.tools.migration.engine;
 
 
-import static com.google.common.base.Preconditions.checkState;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map.Entry;
-
-import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
-import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
-import com.mulesoft.tools.migration.pom.model.PomModel;
-import com.mulesoft.tools.migration.project.structure.mule.four.MuleApplication;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.jdom2.Document;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
+import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
+import com.mulesoft.tools.migration.engine.structure.ApplicationPersister;
+import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.project.ProjectTypeFactory;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
-import com.mulesoft.tools.migration.project.structure.BasicProject;
-import com.mulesoft.tools.migration.project.structure.mule.three.MuleApplicationProject;
+import com.mulesoft.tools.migration.project.structure.ProjectType;
+import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
+import com.mulesoft.tools.migration.project.structure.mule.four.MuleFourApplication;
+import com.mulesoft.tools.migration.project.structure.mule.four.MuleFourDomain;
+import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeApplication;
+import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeDomain;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkState;
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
+import static com.mulesoft.tools.migration.project.structure.ProjectType.*;
 
 /**
  * It represent a migration job which is composed by one or more {@link DefaultMigrationTask}
@@ -45,6 +41,7 @@ import org.slf4j.LoggerFactory;
 public class MigrationJob implements Executable {
 
   private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static ProjectTypeFactory projectFactory = new ProjectTypeFactory();
 
   private ReportingStrategy reportingStrategy;
   private Path project;
@@ -62,9 +59,7 @@ public class MigrationJob implements Executable {
   }
 
   public void execute() throws Exception {
-    // TODO this casting should be smarter
     ApplicationModel applicationModel = generateApplicationModel(project);
-
     for (DefaultMigrationTask task : migrationTasks) {
       task.setApplicationModel(applicationModel);
       try {
@@ -80,22 +75,26 @@ public class MigrationJob implements Executable {
     generateReport();
   }
 
-  private void persistApplicationModel(ApplicationModel applicationModel) throws IOException {
-    for (Entry<Path, Document> entry : applicationModel.getApplicationDocuments().entrySet()) {
-      Path originalFilePath = entry.getKey();
-      Document document = entry.getValue();
-
-      // TODO Find a way to identify the output project in order to persist properly
-      String targetFilePath = outputProject.resolve(originalFilePath.getFileName()).toString();
-      XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
-      xmlOutputter.output(document, new FileOutputStream(targetFilePath));
-    }
+  private void persistApplicationModel(ApplicationModel applicationModel) throws Exception {
+    ApplicationPersister persister = new ApplicationPersister(applicationModel, outputProject);
+    persister.persist();
   }
 
-  // TODO MMT-74 - Once we have the factory, we can obtain the app model from there and remove this.
   private ApplicationModel generateApplicationModel(Path project) throws Exception {
-    MuleApplicationProject muleProject = new MuleApplicationProject(project);
-    ApplicationModel appModel = new ApplicationModel.ApplicationModelBuilder(muleProject).build();
+    MuleProject muleProject = null;
+    ProjectType type = projectFactory.getProjectType(project);
+    if (!type.equals(BASIC) && !type.equals(JAVA)) {
+      if (type.equals(MULE_THREE_APPLICATION)) {
+        muleProject = new MuleThreeApplication(project);
+      } else if (type.equals(MULE_FOUR_APPLICATION)) {
+        muleProject = new MuleFourApplication(project);
+      } else if (type.equals(MULE_THREE_DOMAIN)) {
+        muleProject = new MuleThreeDomain(project);
+      } else if (type.equals(MULE_FOUR_DOMAIN)) {
+        muleProject = new MuleFourDomain(project);
+      }
+    }
+    ApplicationModel appModel = new ApplicationModelBuilder(muleProject).build();
     return appModel;
   }
 
