@@ -67,11 +67,6 @@ public class ApplicationModelTest {
             .apply(n));
   }
 
-  @Test
-  public void test2() throws Exception {
-    ApplicationModel applicationModel = new ApplicationModelBuilder(null).build();
-  }
-
   private void buildOriginalProject() throws IOException {
     originalProjectPath = temporaryFolder.newFolder(ORIGINAL_PROJECT_NAME).toPath();
 
