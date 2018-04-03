@@ -6,20 +6,26 @@
  */
 package com.mulesoft.tools.migration.pom;
 
-import com.mulesoft.tools.migration.pom.model.PomModelDependency;
-
 import java.util.HashSet;
 import java.util.Set;
 
 public class PomModelTestCaseUtils {
 
-  static Set<PomModelDependency> getPomModelDependencies() {
-    PomModelDependency dep1 = buildDependency("org.dependency", "dependency", "1.0.0", null);
-    PomModelDependency dep2 = buildDependency("org.runtime.dependency", "runtime-dependency", "1.0.0", "runtime");
-    PomModelDependency dep3 = buildDependency("org.compile.dependency", "compile-dependency", "1.0.0", "compile");
-    PomModelDependency dep4 = buildDependency("org.test.dependency", "test-dependency", "1.0.0", "test");
+  public static final String ARTIFACT_ID = "artifact-id";
+  public static final String GROUP_ID = "group.id";
+  public static final String VERSION = "3.0.0";
 
-    Set<PomModelDependency> pomModelDependencies = new HashSet<>(4);
+  public static Dependency getEmptyDependency() {
+    return new Dependency();
+  }
+
+  public static Set<Dependency> getPomModelDependencies() {
+    Dependency dep1 = buildDependency("org.dependency", "dependency", "1.0.0", null);
+    Dependency dep2 = buildDependency("org.runtime.dependency", "runtime-dependency", "1.0.0", "runtime");
+    Dependency dep3 = buildDependency("org.compile.dependency", "compile-dependency", "1.0.0", "compile");
+    Dependency dep4 = buildDependency("org.test.dependency", "test-dependency", "1.0.0", "test");
+
+    Set<Dependency> pomModelDependencies = new HashSet<>(4);
     pomModelDependencies.add(dep1);
     pomModelDependencies.add(dep2);
     pomModelDependencies.add(dep3);
@@ -28,14 +34,12 @@ public class PomModelTestCaseUtils {
     return pomModelDependencies;
   }
 
-  static PomModelDependency buildDependency(String groupId, String artifactId, String version, String scope) {
-    PomModelDependency dependency = new PomModelDependency();
-    dependency.setGroupId(groupId);
-    dependency.setArtifactId(artifactId);
-    dependency.setVersion(version);
-    if (scope != null) {
-      dependency.setScope(scope);
-    }
-    return dependency;
+  public static Dependency buildDependency(String groupId, String artifactId, String version, String scope) {
+    return new Dependency.DependencyBuilder()
+        .withGroupId(groupId)
+        .withArtifactId(artifactId)
+        .withVersion(version)
+        .withScope(scope)
+        .build();
   }
 }

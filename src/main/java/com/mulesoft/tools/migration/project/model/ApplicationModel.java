@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
-import com.mulesoft.tools.migration.pom.model.PomModel;
+import com.mulesoft.tools.migration.pom.PomModel;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
 import org.jdom2.*;
 import org.jdom2.filter.Filters;
