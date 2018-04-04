@@ -10,11 +10,11 @@ import com.mulesoft.tools.migration.engine.step.category.*;
 import com.mulesoft.tools.migration.pom.PomModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import org.jdom2.Element;
+import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -89,7 +89,7 @@ public class MigrationStepSorterTest {
   private static final class NamespaceContributionStepImpl implements NamespaceContribution {
 
     @Override
-    public String getAppliedTo() {
+    public XPathExpression getAppliedTo() {
       return null;
     }
 
@@ -109,7 +109,7 @@ public class MigrationStepSorterTest {
     }
 
     @Override
-    public void setAppliedTo(String xpathExpression) {
+    public void setAppliedTo(String expression) {
 
     }
 
@@ -127,7 +127,7 @@ public class MigrationStepSorterTest {
   private static final class ApplicationModelContributionStepImpl implements ApplicationModelContribution {
 
     @Override
-    public String getAppliedTo() {
+    public XPathExpression getAppliedTo() {
       return null;
     }
 
@@ -147,7 +147,7 @@ public class MigrationStepSorterTest {
     }
 
     @Override
-    public void setAppliedTo(String xpathExpression) {
+    public void setAppliedTo(String expression) {
 
     }
 
@@ -166,7 +166,7 @@ public class MigrationStepSorterTest {
     }
 
     @Override
-    public String getAppliedTo() {
+    public XPathExpression getAppliedTo() {
       return null;
     }
 
@@ -186,7 +186,7 @@ public class MigrationStepSorterTest {
     }
 
     @Override
-    public void setAppliedTo(String xpathExpression) {
+    public void setAppliedTo(String expression) {
 
     }
   }
@@ -194,7 +194,7 @@ public class MigrationStepSorterTest {
   private static final class ProjectStructureContributionStepImpl implements ProjectStructureContribution {
 
     @Override
-    public String getAppliedTo() {
+    public XPathExpression getAppliedTo() {
       return null;
     }
 
@@ -214,7 +214,7 @@ public class MigrationStepSorterTest {
     }
 
     @Override
-    public void setAppliedTo(String xpathExpression) {
+    public void setAppliedTo(String expression) {
 
     }
 
@@ -227,7 +227,7 @@ public class MigrationStepSorterTest {
   private static final class PomContributionStepImpl implements PomContribution {
 
     @Override
-    public String getAppliedTo() {
+    public XPathExpression getAppliedTo() {
       return null;
     }
 
@@ -247,7 +247,7 @@ public class MigrationStepSorterTest {
     }
 
     @Override
-    public void setAppliedTo(String xpathExpression) {
+    public void setAppliedTo(String expression) {
 
     }
 

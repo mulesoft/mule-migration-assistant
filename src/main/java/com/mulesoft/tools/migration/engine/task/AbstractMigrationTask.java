@@ -6,13 +6,6 @@
  */
 package com.mulesoft.tools.migration.engine.task;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-
-import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
@@ -20,6 +13,12 @@ import com.mulesoft.tools.migration.engine.step.MigrationStepSorter;
 import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
 import com.mulesoft.tools.migration.pom.PomModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import org.jdom2.Element;
+
+import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * A task is composed by one or more steps
@@ -71,18 +70,20 @@ public abstract class AbstractMigrationTask implements MigrationTask {
     try {
       for (MigrationStep step : steps) {
         if (step instanceof ApplicationModelContribution) {
-          applicationModel.getNodes(step.getAppliedTo()).forEach(s -> {
-            try {
-              step.setElement(s);
-              step.execute();
-            } catch (Exception ex) {
-              throw new MigrationStepException("Step execution exception. " + ex.getMessage());
-            }
-          });
+          applicationModel.getNodes(step.getAppliedTo()).forEach(s -> executeStep(step, s));
         } else {
           step.execute();
         }
       }
+    } catch (Exception ex) {
+      throw new MigrationStepException("Step execution exception. " + ex.getMessage());
+    }
+  }
+
+  private void executeStep(MigrationStep step, Element s) {
+    try {
+      step.setElement(s);
+      step.execute();
     } catch (Exception ex) {
       throw new MigrationStepException("Step execution exception. " + ex.getMessage());
     }

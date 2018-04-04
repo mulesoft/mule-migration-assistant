@@ -6,17 +6,15 @@
  */
 package com.mulesoft.tools.migration.engine.step;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
-
 import org.jdom2.Element;
+import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-
-import java.util.List;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Mulesoft Inc.
@@ -25,7 +23,7 @@ public class AbstractMigrationStepTest {
 
   private AbstractMigrationStep migrationStep;
   private Element elementMock;
-  private static final String APPLIED_TO = "test-string";
+  private static final String APPLIED_TO_INVALID = "test-string";
 
   @Before
   public void setUp() throws Exception {
@@ -34,12 +32,12 @@ public class AbstractMigrationStepTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void setApplicationModelNull() {
+  public void setElementNull() {
     migrationStep.setElement(null);
   }
 
   @Test
-  public void setApplicationModel() {
+  public void setElement() {
     migrationStep.setElement(elementMock);
     assertThat("The application model is not as expected", migrationStep.getElement(), is(elementMock));
   }
@@ -50,9 +48,9 @@ public class AbstractMigrationStepTest {
   }
 
   @Test
-  public void setAppliedTo() {
-    migrationStep.setAppliedTo(APPLIED_TO);
-    assertThat("The application model is not as expected", migrationStep.getAppliedTo(), is(APPLIED_TO));
+  public void setAppliedToInvalid() {
+    migrationStep.setAppliedTo(APPLIED_TO_INVALID);
+    assertThat("The applied to is not as expected", migrationStep.getAppliedTo(), instanceOf(XPathExpression.class));
   }
 
   private static final class MigrationStepImpl extends AbstractMigrationStep {
