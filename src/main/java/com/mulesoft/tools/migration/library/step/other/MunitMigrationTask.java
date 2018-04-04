@@ -34,7 +34,6 @@ public class MunitMigrationTask extends AbstractMigrationTask {
     return new VersionBuilder().withMajor("4").withMinor("0").withRevision("0").build();
   }
 
-
   @Override
   public ProjectType getProjectType() {
     return MULE_FOUR_APPLICATION;
@@ -44,7 +43,8 @@ public class MunitMigrationTask extends AbstractMigrationTask {
   @Override
   public Set<MigrationStep> getSteps() {
     Set<MigrationStep> steps = new HashSet<>();
-
+    steps.add(new AssertTrueMigrationStep());
+    steps.add(new MockNSMigrationStep());
     return steps;
   }
 

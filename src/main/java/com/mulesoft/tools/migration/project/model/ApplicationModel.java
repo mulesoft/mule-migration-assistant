@@ -88,7 +88,8 @@ public class ApplicationModel {
   }
 
   private XPathExpression<Element> getXPathExpression(String xpath, Document doc) {
-    return XPathFactory.instance().compile(xpath, Filters.element(), null, doc.getRootElement().getAdditionalNamespaces());
+    return XPathFactory.instance().compile(xpath, Filters.element(), null,
+                                           doc.getRootElement().getAdditionalNamespaces());
   }
 
   private void setPomModel(PomModel pomModel) {

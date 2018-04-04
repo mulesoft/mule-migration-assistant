@@ -6,27 +6,22 @@
  */
 package com.mulesoft.tools.migration.engine.task;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
+import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
+import com.mulesoft.tools.migration.engine.step.MigrationStep;
+import com.mulesoft.tools.migration.engine.step.category.*;
+import com.mulesoft.tools.migration.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.structure.ProjectType;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import java.util.*;
 
-import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
-import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
-import com.mulesoft.tools.migration.engine.step.category.ExpressionContribution;
-import com.mulesoft.tools.migration.engine.step.category.NamespaceContribution;
-import com.mulesoft.tools.migration.engine.step.category.PomContribution;
-import com.mulesoft.tools.migration.engine.step.category.ProjectStructureContribution;
-import com.mulesoft.tools.migration.pom.PomModel;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.mulesoft.tools.migration.engine.step.MigrationStep;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.structure.ProjectType;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Mulesoft Inc.
@@ -104,15 +99,13 @@ public class AbstractMigrationTaskTest {
     migrationTask.execute();
 
     verify(namespaceContributionMock, times(1)).execute();
-    verify(applicationModelContributionMock, times(1)).execute();
-    verify(applicationModelContributionMock, times(1)).setApplicationModel(applicationModelMock);
+    verify(applicationModelContributionMock, times(1)).getAppliedTo();
     verify(expressionContributionMock, times(1)).execute();
     verify(projectStructureContributionMock, times(1)).execute();
     verify(pomContributionMock, times(1)).setPomModel(any(PomModel.class));
     verify(pomContributionMock, times(1)).execute();
 
     inOrder.verify(namespaceContributionMock).execute();
-    inOrder.verify(applicationModelContributionMock).execute();
     inOrder.verify(expressionContributionMock).execute();
     inOrder.verify(projectStructureContributionMock).execute();
     inOrder.verify(pomContributionMock).execute();

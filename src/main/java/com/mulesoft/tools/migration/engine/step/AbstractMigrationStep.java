@@ -9,6 +9,9 @@ package com.mulesoft.tools.migration.engine.step;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import org.jdom2.Element;
+
+import java.util.List;
 
 /**
  * Basic unit of execution
@@ -18,16 +21,28 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  */
 public abstract class AbstractMigrationStep implements MigrationStep {
 
-  private ApplicationModel applicationModel;
+  private Element element;
+  private String appliedTo;
 
   @Override
-  public ApplicationModel getApplicationModel() {
-    return applicationModel;
+  public String getAppliedTo() {
+    return appliedTo;
   }
 
   @Override
-  public void setApplicationModel(ApplicationModel applicationModel) {
-    checkArgument(applicationModel != null, "The application model must not be null.");
-    this.applicationModel = applicationModel;
+  public void setAppliedTo(String xpathExpression) {
+    checkArgument(xpathExpression != null, "The xpath expression must not be null.");
+    this.appliedTo = xpathExpression;
+  }
+
+  @Override
+  public Element getElement() {
+    return element;
+  }
+
+  @Override
+  public void setElement(Element element) {
+    checkArgument(element != null, "The element to execute step must not be null.");
+    this.element = element;
   }
 }

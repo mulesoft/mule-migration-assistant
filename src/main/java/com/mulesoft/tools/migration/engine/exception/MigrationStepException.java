@@ -14,7 +14,7 @@ import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MigrationStepException extends Exception {
+public class MigrationStepException extends RuntimeException {
 
   public MigrationStepException(String message) {
     super(message);

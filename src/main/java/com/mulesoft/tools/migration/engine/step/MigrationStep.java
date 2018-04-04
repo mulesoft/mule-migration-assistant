@@ -8,6 +8,9 @@ package com.mulesoft.tools.migration.engine.step;
 
 import com.mulesoft.tools.migration.engine.Executable;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import org.jdom2.Element;
+
+import java.util.List;
 
 /**
  * Building block of the execution engine
@@ -17,10 +20,13 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  */
 public interface MigrationStep extends Executable {
 
+  String getAppliedTo();
+
   String getDescription();
 
-  ApplicationModel getApplicationModel();
+  Element getElement();
 
-  void setApplicationModel(ApplicationModel applicationModel);
+  void setElement(Element element);
 
+  void setAppliedTo(String xpathExpression);
 }

@@ -25,28 +25,26 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  */
 public class AssertTrueMigrationStep extends AbstractMigrationStep implements ApplicationModelContribution {
 
-  private static final String XPATH_SELECTOR = "//munit:test/*[contains(local-name(),'true')]";
+  @Override
+  public String getAppliedTo() {
+    return XPATH_SELECTOR;
+  }
 
-  private ApplicationModel applicationModel;
+  private static final String XPATH_SELECTOR = "//munit:test/*[contains(local-name(),'true')]";
 
   @Override
   public String getDescription() {
     return null;
   }
 
-  public void setApplicationModel(ApplicationModel applicationModel) {
-    checkArgument(applicationModel != null, "The application model must not be null.");
-    this.applicationModel = applicationModel;
-  }
 
   public void execute() throws Exception {
     try {
 
-      applicationModel.getNodes(XPATH_SELECTOR)
-          .forEach(n -> changeNodeName("munit-tools", "assert-that")
-              .andThen(changeAttribute("condition", of("expression"), empty()))
-              .andThen(addAttribute("is", "#[equalTo(true)]"))
-              .apply(n));
+      changeNodeName("munit-tools", "assert-that")
+          .andThen(changeAttribute("condition", of("expression"), empty()))
+          .andThen(addAttribute("is", "#[MunitTools::equalTo(true)]"))
+          .apply(getElement());
 
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());
