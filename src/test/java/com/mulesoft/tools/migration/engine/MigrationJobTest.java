@@ -11,6 +11,7 @@ import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.engine.task.MigrationTask;
 import com.mulesoft.tools.migration.engine.task.Version;
+import com.mulesoft.tools.migration.library.step.other.MunitMigrationTask;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
 import org.apache.commons.io.FileUtils;
@@ -44,7 +45,6 @@ public class MigrationJobTest {
   private MigrationJob migrationJob;
   private MigrationTask migrationTask;
   private List<AbstractMigrationTask> tasks;
-  private ApplicationModel applicationModelMock;
   private Path originalProjectPath;
   private Path migratedProjectPath;
 
@@ -73,6 +73,20 @@ public class MigrationJobTest {
 
   @Test
   public void executeWithNullSteps() throws Exception {
+    migrationJob = new MigrationJob.MigrationJobBuilder()
+        .withMigrationTasks(tasks)
+        .withProject(originalProjectPath)
+        .withOutputProject(migratedProjectPath)
+        .build();
+
+    migrationJob.execute();
+  }
+
+  @Test
+  public void execute() throws Exception {
+    migrationTask = new MunitMigrationTask();
+    tasks = new ArrayList<>();
+    tasks.add((AbstractMigrationTask) migrationTask);
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withMigrationTasks(tasks)
         .withProject(originalProjectPath)
@@ -116,7 +130,6 @@ public class MigrationJobTest {
     public void setMigrationSteps(Set<MigrationStep> migrationSteps) {
       this.migrationSteps = migrationSteps;
     }
-
 
     @Override
     public Version getTo() {

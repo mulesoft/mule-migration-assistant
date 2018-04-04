@@ -6,17 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.step.other;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addAttribute;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
+import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
+import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
+
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.*;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-
-import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
-import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
-import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
 /**
  * This steps migrates the MUnit 1.x assert-true
@@ -25,28 +21,24 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  */
 public class AssertTrueMigrationStep extends AbstractMigrationStep implements ApplicationModelContribution {
 
-  private static final String XPATH_SELECTOR = "//munit:test/*[contains(local-name(),'true')]";
-
-  private ApplicationModel applicationModel;
+  public static final String XPATH_SELECTOR = "//munit:test/*[contains(local-name(),'true')]";
 
   @Override
   public String getDescription() {
     return null;
   }
 
-  public void setApplicationModel(ApplicationModel applicationModel) {
-    checkArgument(applicationModel != null, "The application model must not be null.");
-    this.applicationModel = applicationModel;
+  public AssertTrueMigrationStep() {
+    this.setAppliedTo(XPATH_SELECTOR);
   }
 
   public void execute() throws Exception {
     try {
 
-      applicationModel.getNodes(XPATH_SELECTOR)
-          .forEach(n -> changeNodeName("munit-tools", "assert-that")
-              .andThen(changeAttribute("condition", of("expression"), empty()))
-              .andThen(addAttribute("is", "#[equalTo(true)]"))
-              .apply(n));
+      changeNodeName("munit-tools", "assert-that")
+          .andThen(changeAttribute("condition", of("expression"), empty()))
+          .andThen(addAttribute("is", "#[MunitTools::equalTo(true)]"))
+          .apply(getElement());
 
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());

@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.project.model;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeApplication;
 import org.apache.commons.io.FileUtils;
+import org.jdom2.xpath.XPathFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,9 +59,11 @@ public class ApplicationModelTest {
   public void test1() throws Exception {
     ApplicationModel applicationModel = new ApplicationModelBuilder(muleApplicationProject).build();
 
+    applicationModel.removeNameSpace("mock", "http://www.mulesoft.org/schema/mule/mock",
+                                     "http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd");
     applicationModel.addNameSpace("munit-tools", "http://www.mulesoft.org/schema/mule/munit-tools");
 
-    applicationModel.getNodes(XPATH_SELECTOR)
+    applicationModel.getNodes(XPathFactory.instance().compile(XPATH_SELECTOR))
         .forEach(n -> changeNodeName("munit-tools", "assert-that")
             .andThen(changeAttribute("condition", of("expression"), empty()))
             .andThen(addAttribute("is", "#[equalTo(true)]"))

@@ -21,7 +21,6 @@ import java.util.*;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.project.structure.BasicProject.getFiles;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Represent the application to be migrated
@@ -43,14 +42,13 @@ public class ApplicationModel {
     return applicationDocuments;
   }
 
-  public List<Element> getNodes(String xpathExpression) {
-    checkArgument(isNotBlank(xpathExpression), "The Xpath Expression must not be null nor empty");
+  public List<Element> getNodes(XPathExpression xpathExpression) {
+    checkArgument(xpathExpression != null, "The Xpath Expression must not be null nor empty");
 
     List<Element> nodes = new ArrayList<>();
     for (Document doc : applicationDocuments.values()) {
-      nodes.addAll(getXPathExpression(xpathExpression, doc).evaluate(doc));
+      nodes.addAll(getElementsFromDocument(xpathExpression, doc));
     }
-
     return nodes;
   }
 
@@ -87,8 +85,10 @@ public class ApplicationModel {
     }
   }
 
-  private XPathExpression<Element> getXPathExpression(String xpath, Document doc) {
-    return XPathFactory.instance().compile(xpath, Filters.element(), null, doc.getRootElement().getAdditionalNamespaces());
+  private List<Element> getElementsFromDocument(XPathExpression xpath, Document doc) {
+    return XPathFactory.instance().compile(xpath.getExpression(), Filters.element(), null,
+                                           doc.getRootElement().getAdditionalNamespaces())
+        .evaluate(doc);
   }
 
   private void setPomModel(PomModel pomModel) {

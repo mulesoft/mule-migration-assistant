@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.engine.step.category;
 
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
 /**
  * Migration Step that works over the application model adding name spaces
@@ -16,4 +17,5 @@ import com.mulesoft.tools.migration.engine.step.MigrationStep;
  */
 public interface NamespaceContribution extends MigrationStep {
 
+  void setApplicationModel(ApplicationModel applicationModel);
 }

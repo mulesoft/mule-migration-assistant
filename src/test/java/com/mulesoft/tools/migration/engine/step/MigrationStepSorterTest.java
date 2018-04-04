@@ -6,21 +6,20 @@
  */
 package com.mulesoft.tools.migration.engine.step;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import com.mulesoft.tools.migration.engine.step.category.*;
+import com.mulesoft.tools.migration.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import org.jdom2.Element;
+import org.jdom2.xpath.XPathExpression;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.Set;
-import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
-import com.mulesoft.tools.migration.engine.step.category.ExpressionContribution;
-import com.mulesoft.tools.migration.engine.step.category.NamespaceContribution;
-import com.mulesoft.tools.migration.engine.step.category.PomContribution;
-import com.mulesoft.tools.migration.engine.step.category.ProjectStructureContribution;
-import com.mulesoft.tools.migration.pom.PomModel;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 /**
  * @author Mulesoft Inc.
@@ -90,22 +89,37 @@ public class MigrationStepSorterTest {
   private static final class NamespaceContributionStepImpl implements NamespaceContribution {
 
     @Override
+    public XPathExpression getAppliedTo() {
+      return null;
+    }
+
+    @Override
     public String getDescription() {
       return null;
     }
 
     @Override
-    public ApplicationModel getApplicationModel() {
+    public Element getElement() {
       return null;
     }
 
     @Override
-    public void setApplicationModel(ApplicationModel applicationModel) {
+    public void setElement(Element element) {
+
+    }
+
+    @Override
+    public void setAppliedTo(String expression) {
 
     }
 
     @Override
     public void execute() throws Exception {
+
+    }
+
+    @Override
+    public void setApplicationModel(ApplicationModel applicationModel) {
 
     }
   }
@@ -113,17 +127,27 @@ public class MigrationStepSorterTest {
   private static final class ApplicationModelContributionStepImpl implements ApplicationModelContribution {
 
     @Override
+    public XPathExpression getAppliedTo() {
+      return null;
+    }
+
+    @Override
     public String getDescription() {
       return null;
     }
 
     @Override
-    public ApplicationModel getApplicationModel() {
+    public Element getElement() {
       return null;
     }
 
     @Override
-    public void setApplicationModel(ApplicationModel applicationModel) {
+    public void setElement(Element element) {
+
+    }
+
+    @Override
+    public void setAppliedTo(String expression) {
 
     }
 
@@ -131,27 +155,38 @@ public class MigrationStepSorterTest {
     public void execute() throws Exception {
 
     }
+
   }
 
   private static final class ExpressionContributionStepImpl implements ExpressionContribution {
 
     @Override
+    public void execute() throws Exception {
+
+    }
+
+    @Override
+    public XPathExpression getAppliedTo() {
+      return null;
+    }
+
+    @Override
     public String getDescription() {
       return null;
     }
 
     @Override
-    public ApplicationModel getApplicationModel() {
+    public Element getElement() {
       return null;
     }
 
     @Override
-    public void setApplicationModel(ApplicationModel applicationModel) {
+    public void setElement(Element element) {
 
     }
 
     @Override
-    public void execute() throws Exception {
+    public void setAppliedTo(String expression) {
 
     }
   }
@@ -159,17 +194,27 @@ public class MigrationStepSorterTest {
   private static final class ProjectStructureContributionStepImpl implements ProjectStructureContribution {
 
     @Override
+    public XPathExpression getAppliedTo() {
+      return null;
+    }
+
+    @Override
     public String getDescription() {
       return null;
     }
 
     @Override
-    public ApplicationModel getApplicationModel() {
+    public Element getElement() {
       return null;
     }
 
     @Override
-    public void setApplicationModel(ApplicationModel applicationModel) {
+    public void setElement(Element element) {
+
+    }
+
+    @Override
+    public void setAppliedTo(String expression) {
 
     }
 
@@ -182,17 +227,27 @@ public class MigrationStepSorterTest {
   private static final class PomContributionStepImpl implements PomContribution {
 
     @Override
+    public XPathExpression getAppliedTo() {
+      return null;
+    }
+
+    @Override
     public String getDescription() {
       return null;
     }
 
     @Override
-    public ApplicationModel getApplicationModel() {
+    public Element getElement() {
       return null;
     }
 
     @Override
-    public void setApplicationModel(ApplicationModel applicationModel) {
+    public void setElement(Element element) {
+
+    }
+
+    @Override
+    public void setAppliedTo(String expression) {
 
     }
 

@@ -6,9 +6,12 @@
  */
 package com.mulesoft.tools.migration.engine.step;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
+import org.jdom2.Element;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Basic unit of execution
@@ -18,16 +21,32 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  */
 public abstract class AbstractMigrationStep implements MigrationStep {
 
-  private ApplicationModel applicationModel;
+  private Element element;
+  private XPathExpression appliedTo;
 
   @Override
-  public ApplicationModel getApplicationModel() {
-    return applicationModel;
+  public XPathExpression getAppliedTo() {
+    return appliedTo;
   }
 
   @Override
-  public void setApplicationModel(ApplicationModel applicationModel) {
-    checkArgument(applicationModel != null, "The application model must not be null.");
-    this.applicationModel = applicationModel;
+  public void setAppliedTo(String xpathExpression) {
+    checkArgument(xpathExpression != null, "The xpath expression must not be null.");
+    try {
+      this.appliedTo = XPathFactory.instance().compile(xpathExpression);
+    } catch (Exception ex) {
+      throw new MigrationStepException("The xpath expression must be valid.");
+    }
+  }
+
+  @Override
+  public Element getElement() {
+    return element;
+  }
+
+  @Override
+  public void setElement(Element element) {
+    checkArgument(element != null, "The element to execute step must not be null.");
+    this.element = element;
   }
 }

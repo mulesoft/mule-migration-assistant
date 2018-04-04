@@ -18,16 +18,20 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  */
 public class MockNSMigrationStep extends AbstractMigrationStep implements NamespaceContribution {
 
+  private ApplicationModel applicationModel;
+
   @Override
   public String getDescription() {
     return null;
   }
 
+  @Override
+  public void setApplicationModel(ApplicationModel applicationModel) {
+    this.applicationModel = applicationModel;
+  }
+
   public void execute() throws Exception {
     try {
-
-      ApplicationModel applicationModel = getApplicationModel();
-
       applicationModel.removeNameSpace("mock", "http://www.mulesoft.org/schema/mule/mock",
                                        "http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd");
       applicationModel.addNameSpace("munit-tools", "http://www.mulesoft.org/schema/mule/munit-tools");
@@ -36,5 +40,6 @@ public class MockNSMigrationStep extends AbstractMigrationStep implements Namesp
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());
     }
   }
+
 
 }
