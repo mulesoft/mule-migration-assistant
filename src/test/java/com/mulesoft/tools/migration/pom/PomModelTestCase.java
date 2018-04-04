@@ -6,19 +6,15 @@
  */
 package com.mulesoft.tools.migration.pom;
 
-import com.mulesoft.tools.migration.pom.model.PomModel;
-import com.mulesoft.tools.migration.pom.model.PomModelDependency;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -27,13 +23,10 @@ import java.util.*;
 
 import static com.mulesoft.tools.migration.pom.PomModelTestCaseUtils.buildDependency;
 import static com.mulesoft.tools.migration.pom.PomModelTestCaseUtils.getPomModelDependencies;
-import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Every.everyItem;
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.powermock.api.mockito.PowerMockito.*;
 import static org.powermock.reflect.Whitebox.getInternalState;
@@ -41,8 +34,6 @@ import static org.powermock.reflect.Whitebox.getInternalState;
 
 @RunWith(Enclosed.class)
 public class PomModelTestCase {
-
-
 
   @RunWith(PowerMockRunner.class)
   @PrepareForTest(PomModel.PomModelBuilder.class)
@@ -80,7 +71,7 @@ public class PomModelTestCase {
 
     private static final String SIMPLE_POM = "/pommodel/simple-pom/pom.xml";
     private PomModel model;
-    private PomModelDependency dependency;
+    private Dependency dependency;
 
     @Before
     public void setUp() throws URISyntaxException, IOException, XmlPullParserException {
@@ -136,30 +127,30 @@ public class PomModelTestCase {
 
     @Test
     public void getDependencies() {
-      Set<PomModelDependency> pomModelDependencies = getPomModelDependencies();
+      Set<Dependency> pomModelDependencies = getPomModelDependencies();
 
-      for (PomModelDependency dependency : model.getDependencies()) {
+      for (Dependency dependency : model.getDependencies()) {
         assertThat("Dependency should be in the expected dependencies set", pomModelDependencies.contains(dependency));
       }
 
-      Set<PomModelDependency> actualPomModelDependencies = new HashSet<>(model.getDependencies());
-      for (PomModelDependency dependency : pomModelDependencies) {
+      Set<Dependency> actualPomModelDependencies = new HashSet<>(model.getDependencies());
+      for (Dependency dependency : pomModelDependencies) {
         assertThat("Dependency should be in the actual dependencies set", actualPomModelDependencies.contains(dependency));
       }
     }
 
     @Test
     public void setDependencies() {
-      Set<PomModelDependency> pomModelDependencies = getPomModelDependencies();
+      Set<Dependency> pomModelDependencies = getPomModelDependencies();
 
-      model.setDependencies(pomModelDependencies.stream().collect(toList()));
+      model.setDependencies(new ArrayList<>(pomModelDependencies));
 
-      for (PomModelDependency dependency : model.getDependencies()) {
+      for (Dependency dependency : model.getDependencies()) {
         assertThat("Dependency should be in the expected dependencies set", pomModelDependencies.contains(dependency));
       }
 
-      Set<PomModelDependency> actualPomModelDependencies = new HashSet<>(model.getDependencies());
-      for (PomModelDependency dependency : pomModelDependencies) {
+      Set<Dependency> actualPomModelDependencies = new HashSet<>(model.getDependencies());
+      for (Dependency dependency : pomModelDependencies) {
         assertThat("Dependency should be in the actual dependencies set", actualPomModelDependencies.contains(dependency));
       }
     }
@@ -168,7 +159,7 @@ public class PomModelTestCase {
     public void addDependency() {
       dependency = buildDependency("org.dependency", "dependency", "1.0.0", null);
       PomModel model = new PomModel();
-      HashSet<PomModelDependency> dependencies = new HashSet<>(model.getDependencies());
+      HashSet<Dependency> dependencies = new HashSet<>(model.getDependencies());
 
       assertThat("Pom model should have no dependencies", dependencies.isEmpty());
       assertThat("Method should return true", model.addDependency(dependency));
@@ -180,7 +171,7 @@ public class PomModelTestCase {
     public void addDependencyTwice() {
       dependency = buildDependency("org.dependency", "dependency", "1.0.0", null);
       PomModel model = new PomModel();
-      HashSet<PomModelDependency> dependencies = new HashSet<>(model.getDependencies());
+      HashSet<Dependency> dependencies = new HashSet<>(model.getDependencies());
 
       assertThat("Pom model should have no dependencies", dependencies.isEmpty());
       assertThat("Method should return true", model.addDependency(dependency));

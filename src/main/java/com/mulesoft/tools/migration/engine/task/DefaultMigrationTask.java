@@ -9,14 +9,13 @@ package com.mulesoft.tools.migration.engine.task;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Optional;
 import java.util.Set;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.step.MigrationStepSorter;
-import com.mulesoft.tools.migration.pom.model.PomModel;
+import com.mulesoft.tools.migration.pom.PomModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
 /**

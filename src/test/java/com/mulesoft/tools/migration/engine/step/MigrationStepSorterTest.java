@@ -17,15 +17,10 @@ import com.mulesoft.tools.migration.engine.step.category.ExpressionContribution;
 import com.mulesoft.tools.migration.engine.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.engine.step.category.PomContribution;
 import com.mulesoft.tools.migration.engine.step.category.ProjectStructureContribution;
-import com.mulesoft.tools.migration.pom.model.PomModel;
+import com.mulesoft.tools.migration.pom.PomModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.DiagnosingMatcher;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.internal.matchers.InstanceOf;
 
 /**
  * @author Mulesoft Inc.

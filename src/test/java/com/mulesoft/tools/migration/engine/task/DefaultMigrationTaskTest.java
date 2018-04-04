@@ -8,19 +8,17 @@ package com.mulesoft.tools.migration.engine.task;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.InOrder.*;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
 
-import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
 import com.mulesoft.tools.migration.engine.step.category.ExpressionContribution;
 import com.mulesoft.tools.migration.engine.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.engine.step.category.PomContribution;
 import com.mulesoft.tools.migration.engine.step.category.ProjectStructureContribution;
-import com.mulesoft.tools.migration.pom.model.PomModel;
+import com.mulesoft.tools.migration.pom.PomModel;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,7 +27,6 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import org.mockito.internal.InOrderImpl;
 
 /**
  * @author Mulesoft Inc.
