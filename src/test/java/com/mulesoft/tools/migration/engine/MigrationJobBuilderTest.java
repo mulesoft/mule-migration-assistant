@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.engine;
 
-import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class MigrationJobBuilderTest {
   private static final String MIGRATED_PROJECT_NAME = "migrated-project";
 
   private MigrationJob migrationJob;
-  private List<DefaultMigrationTask> tasks;
+  private List<AbstractMigrationTask> tasks;
   private Path originalProjectPath;
   private Path migratedProjectPath;
 

@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
-import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.engine.task.Version;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
 
@@ -19,7 +19,7 @@ import com.mulesoft.tools.migration.project.structure.ProjectType;
  * todo delete
  * @author Mulesoft Inc.
  */
-public class AnotherMigrationTask extends DefaultMigrationTask {
+public class AnotherMigrationTask extends AbstractMigrationTask {
 
   @Override
   public Version getTo() {

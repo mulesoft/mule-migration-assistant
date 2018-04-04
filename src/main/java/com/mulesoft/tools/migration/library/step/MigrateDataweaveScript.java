@@ -6,12 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
-import com.mulesoft.tools.migration.library.tools.dw.DataweaveUtils;
+import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import org.jdom2.Element;
-
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * It migrates a DW script from it's original version to DataWeave 2
@@ -19,7 +15,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MigrateDataweaveScript extends DefaultMigrationStep {
+public class MigrateDataweaveScript extends AbstractMigrationStep {
 
   public MigrateDataweaveScript() {}
 

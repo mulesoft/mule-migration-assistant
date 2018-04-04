@@ -10,7 +10,7 @@ package com.mulesoft.tools.migration.engine;
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.structure.ApplicationPersister;
-import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.project.ProjectTypeFactory;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
@@ -33,7 +33,7 @@ import static com.mulesoft.tools.migration.project.model.ApplicationModel.Applic
 import static com.mulesoft.tools.migration.project.structure.ProjectType.*;
 
 /**
- * It represent a migration job which is composed by one or more {@link DefaultMigrationTask}
+ * It represent a migration job which is composed by one or more {@link AbstractMigrationTask}
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -46,9 +46,9 @@ public class MigrationJob implements Executable {
   private ReportingStrategy reportingStrategy;
   private Path project;
   private Path outputProject;
-  private List<DefaultMigrationTask> migrationTasks;
+  private List<AbstractMigrationTask> migrationTasks;
 
-  private MigrationJob(Path project, Path outputProject, List<DefaultMigrationTask> migrationTasks,
+  private MigrationJob(Path project, Path outputProject, List<AbstractMigrationTask> migrationTasks,
                        ReportingStrategy reportingStrategy) {
     this.project = project;
     this.outputProject = outputProject;
@@ -60,7 +60,7 @@ public class MigrationJob implements Executable {
 
   public void execute() throws Exception {
     ApplicationModel applicationModel = generateApplicationModel(project);
-    for (DefaultMigrationTask task : migrationTasks) {
+    for (AbstractMigrationTask task : migrationTasks) {
       task.setApplicationModel(applicationModel);
       try {
         task.execute();
@@ -115,7 +115,7 @@ public class MigrationJob implements Executable {
 
     private Path project;
     private Path outputProject;
-    private List<DefaultMigrationTask> migrationTasks;
+    private List<AbstractMigrationTask> migrationTasks;
 
     private ReportingStrategy reportingStrategy = new ConsoleReportStrategy();
 
@@ -129,7 +129,7 @@ public class MigrationJob implements Executable {
       return this;
     }
 
-    public MigrationJobBuilder withMigrationTasks(List<DefaultMigrationTask> migrationTasks) {
+    public MigrationJobBuilder withMigrationTasks(List<AbstractMigrationTask> migrationTasks) {
       this.migrationTasks = migrationTasks;
       return this;
     }

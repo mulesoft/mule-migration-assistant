@@ -6,9 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 /**
@@ -17,7 +15,7 @@ import org.jdom2.Namespace;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class DeleteChildNode /*extends DefaultMigrationStep */ {
+public class DeleteChildNode /*extends AbstractMigrationStep */ {
 
   private String node;
   private String nodeNamespace;

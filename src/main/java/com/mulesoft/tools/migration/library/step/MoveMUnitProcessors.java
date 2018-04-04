@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jdom2.Element;
@@ -20,7 +19,7 @@ import java.util.List;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MoveMUnitProcessors /*extends DefaultMigrationStep*/ {
+public class MoveMUnitProcessors /*extends AbstractMigrationStep*/ {
 
   private static String[] sections = new String[] {"munit:behavior", "munit:execution", "munit:validation"};
 

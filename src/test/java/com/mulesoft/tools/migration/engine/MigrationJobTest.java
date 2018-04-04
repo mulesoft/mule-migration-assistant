@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.engine;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
-import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.engine.task.MigrationTask;
 import com.mulesoft.tools.migration.engine.task.Version;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -43,7 +43,7 @@ public class MigrationJobTest {
 
   private MigrationJob migrationJob;
   private MigrationTask migrationTask;
-  private List<DefaultMigrationTask> tasks;
+  private List<AbstractMigrationTask> tasks;
   private ApplicationModel applicationModelMock;
   private Path originalProjectPath;
   private Path migratedProjectPath;
@@ -55,7 +55,7 @@ public class MigrationJobTest {
   public void setUp() throws Exception {
     migrationTask = new MigrationJobTest.MigrationTaskImpl();
     tasks = new ArrayList<>();
-    tasks.add((DefaultMigrationTask) migrationTask);
+    tasks.add((AbstractMigrationTask) migrationTask);
 
     buildOriginalProject();
     migratedProjectPath = temporaryFolder.newFolder(MIGRATED_PROJECT_NAME).toPath();
@@ -84,12 +84,12 @@ public class MigrationJobTest {
 
   @Test
   public void executeWithTaskThatFailsNotStopExecution() throws Exception {
-    migrationTask = mock(DefaultMigrationTask.class);
+    migrationTask = mock(AbstractMigrationTask.class);
     doThrow(MigrationTaskException.class)
         .when(migrationTask)
         .execute();
 
-    tasks.add((DefaultMigrationTask) migrationTask);
+    tasks.add((AbstractMigrationTask) migrationTask);
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withMigrationTasks(tasks)
         .withProject(originalProjectPath)
@@ -99,7 +99,7 @@ public class MigrationJobTest {
     verify(migrationTask, times(1)).execute();
   }
 
-  private static final class MigrationTaskImpl extends DefaultMigrationTask {
+  private static final class MigrationTaskImpl extends AbstractMigrationTask {
 
     private Set<MigrationStep> migrationSteps;
 

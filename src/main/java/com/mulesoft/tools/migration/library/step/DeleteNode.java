@@ -6,9 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import org.jdom2.Element;
 
 /**
  * Removes a node
@@ -17,7 +15,7 @@ import org.jdom2.Element;
  * @since 1.0.0
  */
 // TODO can we make this the same as {@link DeleteChildNode}
-public class DeleteNode /*extends DefaultMigrationStep */ {
+public class DeleteNode /*extends AbstractMigrationStep */ {
 
   public DeleteNode() {}
 

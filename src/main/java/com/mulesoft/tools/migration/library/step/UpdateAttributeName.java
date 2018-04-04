@@ -6,10 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import org.jdom2.Attribute;
-import org.jdom2.Element;
 
 /**
  * Update the name of an attribute
@@ -17,7 +14,7 @@ import org.jdom2.Element;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class UpdateAttributeName /*extends DefaultMigrationStep */ {
+public class UpdateAttributeName /*extends AbstractMigrationStep */ {
 
   private String attributeName;
   private String newName;

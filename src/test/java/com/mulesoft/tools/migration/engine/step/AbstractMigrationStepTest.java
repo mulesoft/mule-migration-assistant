@@ -18,9 +18,9 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 /**
  * @author Mulesoft Inc.
  */
-public class DefaultMigrationStepTest {
+public class AbstractMigrationStepTest {
 
-  private DefaultMigrationStep migrationStep;
+  private AbstractMigrationStep migrationStep;
   private ApplicationModel applicationModelMock;
 
   @Before
@@ -40,7 +40,7 @@ public class DefaultMigrationStepTest {
     assertThat("The application model is not as expected", migrationStep.getApplicationModel(), is(applicationModelMock));
   }
 
-  private static final class MigrationStepImpl extends DefaultMigrationStep {
+  private static final class MigrationStepImpl extends AbstractMigrationStep {
 
     @Override
     public String getDescription() {

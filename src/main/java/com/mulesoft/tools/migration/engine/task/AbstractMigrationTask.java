@@ -24,7 +24,7 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public abstract class DefaultMigrationTask implements MigrationTask {
+public abstract class AbstractMigrationTask implements MigrationTask {
 
   private ApplicationModel applicationModel;
 

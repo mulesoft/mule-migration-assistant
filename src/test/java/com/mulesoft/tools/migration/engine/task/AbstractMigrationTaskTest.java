@@ -31,7 +31,7 @@ import org.mockito.Mockito;
 /**
  * @author Mulesoft Inc.
  */
-public class DefaultMigrationTaskTest {
+public class AbstractMigrationTaskTest {
 
   private MigrationTask migrationTask;
   private ApplicationModel applicationModelMock;
@@ -134,7 +134,7 @@ public class DefaultMigrationTaskTest {
     migrationTask.execute();
   }
 
-  private static final class MigrationTaskImpl extends DefaultMigrationTask {
+  private static final class MigrationTaskImpl extends AbstractMigrationTask {
 
     private Set<MigrationStep> migrationSteps;
 

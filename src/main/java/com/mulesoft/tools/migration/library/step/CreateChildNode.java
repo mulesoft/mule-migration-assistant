@@ -6,10 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.apache.commons.lang3.StringUtils;
-import org.jdom2.Element;
 
 /**
  * Creates a child node
@@ -17,7 +15,7 @@ import org.jdom2.Element;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class CreateChildNode /*extends DefaultMigrationStep */ {
+public class CreateChildNode /*extends AbstractMigrationStep */ {
 
   private String name;
 

@@ -7,7 +7,7 @@
 package com.mulesoft.tools.migration.library.step.other;
 
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
-import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.engine.task.Version;
 import com.mulesoft.tools.migration.engine.task.Version.VersionBuilder;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
@@ -22,7 +22,7 @@ import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_FO
  * 
  * @author Mulesoft Inc.
  */
-public class MunitMigrationTask extends DefaultMigrationTask {
+public class MunitMigrationTask extends AbstractMigrationTask {
 
   @Override
   public Version getFrom() {

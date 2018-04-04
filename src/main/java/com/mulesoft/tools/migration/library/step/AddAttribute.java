@@ -16,7 +16,7 @@ import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class AddAttribute /* extends DefaultMigrationStep */ {
+public class AddAttribute /* extends AbstractMigrationStep */ {
 
   private String attributeName;
   private String attributeValue;

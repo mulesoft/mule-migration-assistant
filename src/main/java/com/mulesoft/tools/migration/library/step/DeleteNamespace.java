@@ -6,15 +6,11 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
-import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 
 /**
@@ -23,7 +19,7 @@ import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class DeleteNamespace /*extends DefaultMigrationStep */ {
+public class DeleteNamespace /*extends AbstractMigrationStep */ {
 
   private String namespacePrefix;
   private String namespaceUri;

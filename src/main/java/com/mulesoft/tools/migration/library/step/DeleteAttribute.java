@@ -6,9 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
-import org.jdom2.Element;
-
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 
 /**
@@ -17,7 +14,7 @@ import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class DeleteAttribute /*extends DefaultMigrationStep */ {
+public class DeleteAttribute /*extends AbstractMigrationStep */ {
 
   private String attributeName;
 

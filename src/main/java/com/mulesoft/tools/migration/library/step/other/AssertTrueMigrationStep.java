@@ -14,7 +14,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
+import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
@@ -23,7 +23,7 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  *
  * @author Mulesoft Inc.
  */
-public class AssertTrueMigrationStep extends DefaultMigrationStep implements ApplicationModelContribution {
+public class AssertTrueMigrationStep extends AbstractMigrationStep implements ApplicationModelContribution {
 
   private static final String XPATH_SELECTOR = "//munit:test/*[contains(local-name(),'true')]";
 

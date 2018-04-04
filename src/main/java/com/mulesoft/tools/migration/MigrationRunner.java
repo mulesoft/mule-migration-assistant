@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration;
 
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
-import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
+import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
@@ -18,7 +18,7 @@ import org.apache.commons.cli.*;
 import java.nio.file.Paths;
 
 /**
- * Base entry point to run {@link DefaultMigrationTask}s
+ * Base entry point to run {@link AbstractMigrationTask}s
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0

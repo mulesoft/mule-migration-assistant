@@ -16,7 +16,7 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public abstract class DefaultMigrationStep implements MigrationStep {
+public abstract class AbstractMigrationStep implements MigrationStep {
 
   private ApplicationModel applicationModel;
 

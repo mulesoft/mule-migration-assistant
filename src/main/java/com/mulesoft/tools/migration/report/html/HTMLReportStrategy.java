@@ -8,14 +8,14 @@ package com.mulesoft.tools.migration.report.html;
 
 import java.util.ArrayList;
 
+import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
 import com.mulesoft.tools.migration.report.ReportCategory;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.html.model.ExecutionData;
 import com.mulesoft.tools.migration.report.html.model.FileExecutionStatus;
 import com.mulesoft.tools.migration.report.html.model.JobExecutionStatus;
 import com.mulesoft.tools.migration.report.html.model.TaskExecutionStatus;
-import com.mulesoft.tools.migration.engine.task.DefaultMigrationTask;
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
+import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 
 /**
  * It knows how to report data which will be printed in HTML format
@@ -28,8 +28,8 @@ public class HTMLReportStrategy implements ReportingStrategy {
   private ArrayList<ExecutionData> collectedData = new ArrayList<>();
 
   @Override
-  public void log(String message, ReportCategory reportCategory, String filePath, DefaultMigrationTask task,
-                  DefaultMigrationStep step) {
+  public void log(String message, ReportCategory reportCategory, String filePath, AbstractMigrationTask task,
+                  AbstractMigrationStep step) {
     ExecutionData data = new ExecutionData(message, reportCategory, filePath, task, step);
     collectedData.add(data);
   }

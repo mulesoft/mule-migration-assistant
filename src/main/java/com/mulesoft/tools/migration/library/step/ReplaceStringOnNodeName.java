@@ -6,9 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import org.jdom2.Element;
 
 /**
  * Replace string on node name
@@ -16,7 +14,7 @@ import org.jdom2.Element;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class ReplaceStringOnNodeName /*extends DefaultMigrationStep */ {
+public class ReplaceStringOnNodeName /*extends AbstractMigrationStep */ {
 
   private String stringToReplace;
   private String newValue;

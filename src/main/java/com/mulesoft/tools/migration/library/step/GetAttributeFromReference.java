@@ -6,11 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.findChildElement;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -21,7 +17,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class GetAttributeFromReference /*extends DefaultMigrationStep */ {
+public class GetAttributeFromReference /*extends AbstractMigrationStep */ {
 
 
   private String sourceReferenceAttribute;

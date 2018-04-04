@@ -6,15 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
-import java.util.*;
-
-import static com.mulesoft.tools.migration.library.tools.mel.MELUtils.getMELExpressionFromMap;
 
 /**
  * Transform an attribute in a mel child node
@@ -22,7 +14,7 @@ import static com.mulesoft.tools.migration.library.tools.mel.MELUtils.getMELExpr
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class CreateMELNodeFromAttributes /*extends DefaultMigrationStep */ {
+public class CreateMELNodeFromAttributes /*extends AbstractMigrationStep */ {
 
   private String originalNode;
 

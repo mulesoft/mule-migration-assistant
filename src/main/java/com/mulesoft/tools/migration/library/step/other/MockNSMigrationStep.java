@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step.other;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
+import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
 import com.mulesoft.tools.migration.engine.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -16,7 +16,7 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  *
  * @author Mulesoft Inc.
  */
-public class MockNSMigrationStep extends DefaultMigrationStep implements NamespaceContribution {
+public class MockNSMigrationStep extends AbstractMigrationStep implements NamespaceContribution {
 
   @Override
   public String getDescription() {

@@ -6,10 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import org.jdom2.Attribute;
-import org.jdom2.Element;
 
 /**
  * Moves an attribute to a child node
@@ -18,7 +15,7 @@ import org.jdom2.Element;
  * @since 1.0.0
  */
 // TODO can we make this a particular case fo MoveAttributeSToChildNode
-public class MoveAttributeToChildNode /*extends DefaultMigrationStep */ {
+public class MoveAttributeToChildNode /*extends AbstractMigrationStep */ {
 
   private String attribute;
   private String childNode;

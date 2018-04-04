@@ -6,19 +6,14 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.library.tools.mel.MELUtils.getMELExpressionFromValue;
 
 /**
  * Transform and attribute to MEL
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MoveAttributeToMELContent /*extends DefaultMigrationStep */ {
+public class MoveAttributeToMELContent /*extends AbstractMigrationStep */ {
 
   private String attributeName;
 

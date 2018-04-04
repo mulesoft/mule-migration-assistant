@@ -6,10 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import com.mulesoft.tools.migration.library.message.MuleMessageUtils;
-import org.jdom2.Element;
 
 /**
  * Ut know how to update the content of a message
@@ -17,7 +14,7 @@ import org.jdom2.Element;
  * @since 1.0.0
  */
 // TODO change this to update event, also although generic this should almost always be called from a task component
-public class UpdateMuleMessageContent /*extends DefaultMigrationStep */ {
+public class UpdateMuleMessageContent /*extends AbstractMigrationStep */ {
 
   public UpdateMuleMessageContent() {}
 

@@ -6,20 +6,15 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.DefaultMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 import org.jdom2.Attribute;
-import org.jdom2.Element;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Negate attribute value
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class NegateAttributeValue /*extends DefaultMigrationStep */ {
+public class NegateAttributeValue /*extends AbstractMigrationStep */ {
 
   private String attributeName;
 
