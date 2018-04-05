@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.pom;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.util.List;
 import java.util.Objects;
@@ -169,6 +170,10 @@ public class Plugin {
   @Override
   public int hashCode() {
     return Objects.hash(plugin);
+  }
+
+  public Xpp3Dom getConfiguration() {
+    return (Xpp3Dom) plugin.getConfiguration();
   }
 
   /**

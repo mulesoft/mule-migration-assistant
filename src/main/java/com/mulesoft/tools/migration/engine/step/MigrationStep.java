@@ -6,25 +6,15 @@
  */
 package com.mulesoft.tools.migration.engine.step;
 
-import com.mulesoft.tools.migration.engine.Executable;
-import org.jdom2.Element;
-import org.jdom2.xpath.XPathExpression;
+import com.mulesoft.tools.migration.engine.StepExecutable;
 
 /**
  * Building block of the execution engine
- *
+ * @param <T>
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public interface MigrationStep extends Executable {
-
-  XPathExpression getAppliedTo();
+public interface MigrationStep<T> extends StepExecutable<T> {
 
   String getDescription();
-
-  Element getElement();
-
-  void setElement(Element element);
-
-  void setAppliedTo(String xpathExpression);
 }

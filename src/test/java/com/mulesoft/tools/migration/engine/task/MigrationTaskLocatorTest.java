@@ -27,14 +27,14 @@ public class MigrationTaskLocatorTest {
   private ProjectType projectType;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     from = new VersionBuilder().withMajor("3").withMinor("8").withRevision("0").build();
     to = new VersionBuilder().withMajor("4").withMinor("0").withRevision("0").build();
     projectType = MULE_FOUR_APPLICATION;
   }
 
   @Test
-  public void locate() throws Exception {
+  public void locate() {
     MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(from, to, projectType);
     List<MigrationTask> migrationTaskList = migrationTaskLocator.locate();
 
@@ -47,11 +47,11 @@ public class MigrationTaskLocatorTest {
   }
 
   @Test
-  public void locateFromAnyToAny() throws Exception {
+  public void locateFromAnyToAny() {
     MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(ANY_VERSION, ANY_VERSION, projectType);
     List<MigrationTask> migrationTaskList = migrationTaskLocator.locate();
 
-    assertThat("The number of migration task is wrong", migrationTaskList.size(), is(1));
+    assertThat("The number of migration task is wrong", migrationTaskList.size(), is(2));
     MigrationTask migrationTask = migrationTaskList.get(0);
     assertThat("The migration task type is wrong", migrationTask, instanceOf(MunitMigrationTask.class));
     assertThat("The migration task from is wrong", migrationTask.getFrom(), is(from));

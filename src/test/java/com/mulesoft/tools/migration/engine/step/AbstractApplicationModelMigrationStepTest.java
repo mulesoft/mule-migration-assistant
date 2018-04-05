@@ -19,9 +19,9 @@ import static org.mockito.Mockito.mock;
 /**
  * @author Mulesoft Inc.
  */
-public class AbstractMigrationStepTest {
+public class AbstractApplicationModelMigrationStepTest {
 
-  private AbstractMigrationStep migrationStep;
+  private AbstractApplicationModelMigrationStep migrationStep;
   private Element elementMock;
   private static final String APPLIED_TO_INVALID = "test-string";
 
@@ -29,17 +29,6 @@ public class AbstractMigrationStepTest {
   public void setUp() throws Exception {
     migrationStep = new MigrationStepImpl();
     elementMock = mock(Element.class);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void setElementNull() {
-    migrationStep.setElement(null);
-  }
-
-  @Test
-  public void setElement() {
-    migrationStep.setElement(elementMock);
-    assertThat("The application model is not as expected", migrationStep.getElement(), is(elementMock));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -53,7 +42,7 @@ public class AbstractMigrationStepTest {
     assertThat("The applied to is not as expected", migrationStep.getAppliedTo(), instanceOf(XPathExpression.class));
   }
 
-  private static final class MigrationStepImpl extends AbstractMigrationStep {
+  private static final class MigrationStepImpl extends AbstractApplicationModelMigrationStep {
 
     @Override
     public String getDescription() {
@@ -61,7 +50,7 @@ public class AbstractMigrationStepTest {
     }
 
     @Override
-    public void execute() throws Exception {
+    public void execute(Element object) throws RuntimeException {
 
     }
   }

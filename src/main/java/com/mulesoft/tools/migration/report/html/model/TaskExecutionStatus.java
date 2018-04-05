@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.report.html.model;
 
 import java.util.ArrayList;
 
-import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
+import com.mulesoft.tools.migration.engine.step.MigrationStep;
 
 /**
  * Stores data of a executed task
@@ -43,7 +43,7 @@ public class TaskExecutionStatus {
     this.taskStatus = taskStatus;
   }
 
-  public void addStepApplied(AbstractMigrationStep step, String status) {
+  public void addStepApplied(MigrationStep step, String status) {
     StepExecutionStatus stepStatus = new StepExecutionStatus(step.getDescription(), status);
     stepsApplied.add(stepStatus);
   }

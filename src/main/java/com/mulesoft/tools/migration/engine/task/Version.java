@@ -19,7 +19,7 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
  */
 public class Version {
 
-  private static final String DEFAULT = "*";
+  public static final String WILDCARD = "*";
 
   private String major;
   private String minor;
@@ -37,9 +37,9 @@ public class Version {
       return TRUE;
     }
 
-    if ((major.equals(DEFAULT) || major.equals(version.getMajor())) &&
-        (minor.equals(DEFAULT) || minor.equals(version.getMinor())) &&
-        (revision.equals(DEFAULT) || revision.equals(version.getRevision()))) {
+    if ((major.equals(WILDCARD) || major.equals(version.getMajor())) &&
+        (minor.equals(WILDCARD) || minor.equals(version.getMinor())) &&
+        (revision.equals(WILDCARD) || revision.equals(version.getRevision()))) {
       return TRUE;
     }
 
@@ -95,9 +95,9 @@ public class Version {
 
     public static Version ANY_VERSION = new VersionBuilder().build();
 
-    private String major = DEFAULT;
-    private String minor = DEFAULT;
-    private String revision = DEFAULT;
+    private String major = WILDCARD;
+    private String minor = WILDCARD;
+    private String revision = WILDCARD;
 
     public VersionBuilder withMajor(String major) {
       this.major = major;
@@ -116,11 +116,11 @@ public class Version {
 
     public Version build() {
       checkArgument(isNotBlank(major), "The major value must not be null nor empty");
-      checkArgument(DEFAULT.equals(major) || isNumeric(major), "The major value must be * or a number");
+      checkArgument(WILDCARD.equals(major) || isNumeric(major), "The major value must be * or a number");
       checkArgument(isNotBlank(minor), "The minor value must not be null nor empty");
-      checkArgument(DEFAULT.equals(minor) || isNumeric(minor), "The major value must be * or a number");
+      checkArgument(WILDCARD.equals(minor) || isNumeric(minor), "The major value must be * or a number");
       checkArgument(isNotBlank(revision), "The revision value must not be null nor empty");
-      checkArgument(DEFAULT.equals(revision) || isNumeric(revision), "The major value must be * or a number");
+      checkArgument(WILDCARD.equals(revision) || isNumeric(revision), "The major value must be * or a number");
       return new Version(major, minor, revision);
     }
   }

@@ -37,7 +37,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-/**MuleFourApplication
+/**
+ * MuleFourApplication
  * It gets the project type based on the project path
  *
  * @author Mulesoft Inc.

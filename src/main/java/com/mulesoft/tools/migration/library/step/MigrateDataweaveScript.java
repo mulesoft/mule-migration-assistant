@@ -6,8 +6,9 @@
  */
 package com.mulesoft.tools.migration.library.step;
 
-import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
+import com.mulesoft.tools.migration.engine.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
+import org.jdom2.Element;
 
 /**
  * It migrates a DW script from it's original version to DataWeave 2
@@ -15,11 +16,12 @@ import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MigrateDataweaveScript extends AbstractMigrationStep {
+public class MigrateDataweaveScript extends AbstractApplicationModelMigrationStep {
 
   public MigrateDataweaveScript() {}
 
-  public void execute() throws Exception {
+  @Override
+  public void execute(Element element) throws RuntimeException {
     try {
       // for (Element node : getNodes()) {
       //

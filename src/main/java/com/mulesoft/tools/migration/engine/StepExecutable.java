@@ -4,12 +4,16 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps;
+package com.mulesoft.tools.migration.engine;
 
 /**
- * Initial Step
+ * An interface to handle the step execution
+ * @param <T>
  * @author Mulesoft Inc.
- * @since 2.0.0
+ * @since 1.0.0
  */
-public class InitialMuleMigrationStep {
+public interface StepExecutable<T> {
+
+  void execute(T object) throws RuntimeException;
+
 }

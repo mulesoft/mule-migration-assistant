@@ -15,7 +15,6 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public interface NamespaceContribution extends MigrationStep {
+public interface NamespaceContribution extends MigrationStep<ApplicationModel> {
 
-  void setApplicationModel(ApplicationModel applicationModel);
 }
