@@ -4,12 +4,14 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.step.other;
+package com.mulesoft.tools.migration.library.munit.tasks;
 
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.engine.task.Version;
 import com.mulesoft.tools.migration.engine.task.Version.VersionBuilder;
+import com.mulesoft.tools.migration.library.munit.steps.AssertTrueMigrationStep;
+import com.mulesoft.tools.migration.library.munit.steps.MockNSMigrationStep;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
 
 import java.util.HashSet;

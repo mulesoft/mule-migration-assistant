@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.step.other;
+package com.mulesoft.tools.migration.library.munit.steps;
 
 import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
 import com.mulesoft.tools.migration.engine.step.category.NamespaceContribution;

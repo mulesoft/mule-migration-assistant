@@ -7,7 +7,7 @@
 package com.mulesoft.tools.migration.engine.task;
 
 import com.mulesoft.tools.migration.engine.task.Version.VersionBuilder;
-import com.mulesoft.tools.migration.library.step.other.MunitMigrationTask;
+import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
 import org.junit.Before;
 import org.junit.Test;
