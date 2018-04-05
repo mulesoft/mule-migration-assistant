@@ -45,13 +45,14 @@ public abstract class AbstractMigrationTask implements MigrationTask {
 
         stepSorter.getNameSpaceContributionSteps().forEach(s -> s.execute(applicationModel));
 
-        stepSorter.getApplicationModelContributionSteps().stream().forEach(s -> applicationModel.getNodes(s.getAppliedTo()).forEach(s::execute));
+        stepSorter.getApplicationModelContributionSteps().stream()
+            .forEach(s -> applicationModel.getNodes(s.getAppliedTo()).forEach(s::execute));
 
         stepSorter.getExpressionContributionSteps().forEach(s -> s.execute(new Object()));
+
         stepSorter.getProjectStructureContributionSteps().forEach(s -> s.execute(new Object()));
 
         stepSorter.getPomContributionSteps().forEach(s -> s.execute(applicationModel.getPomModel().orElse(new PomModel())));
-
       }
 
     } catch (Exception e) {
