@@ -21,6 +21,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
+
 public abstract class AbstractApplicationModelMigrationStep implements ApplicationModelContribution {
 
   private XPathExpression appliedTo;
