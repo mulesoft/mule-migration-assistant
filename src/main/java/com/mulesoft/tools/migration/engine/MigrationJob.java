@@ -7,34 +7,43 @@
 package com.mulesoft.tools.migration.engine;
 
 
+import static com.google.common.base.Preconditions.checkState;
+import static com.mulesoft.tools.migration.project.structure.ProjectType.BASIC;
+import static com.mulesoft.tools.migration.project.structure.ProjectType.JAVA;
+import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_THREE_APPLICATION;
+import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_THREE_DOMAIN;
+import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_THREE_MAVEN_APPLICATION;
+import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_THREE_MAVEN_DOMAIN;
+
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.structure.ApplicationPersister;
 import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.project.ProjectTypeFactory;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
 import com.mulesoft.tools.migration.project.structure.mule.four.MuleFourApplication;
 import com.mulesoft.tools.migration.project.structure.mule.four.MuleFourDomain;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeApplication;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeDomain;
+import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeMavenApplication;
+import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeMavenDomain;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkState;
-import static com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
-import static com.mulesoft.tools.migration.project.structure.ProjectType.*;
-
 /**
  * It represent a migration job which is composed by one or more {@link AbstractMigrationTask}
- * 
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -58,6 +67,7 @@ public class MigrationJob implements Executable {
     this.reportingStrategy = reportingStrategy;
   }
 
+  @Override
   public void execute() throws Exception {
     ApplicationModel applicationModel = generateApplicationModel(project);
     for (AbstractMigrationTask task : migrationTasks) {
@@ -65,11 +75,12 @@ public class MigrationJob implements Executable {
       try {
         task.execute();
         persistApplicationModel(applicationModel);
-        applicationModel = generateApplicationModel(outputProject);
+        // TODO support domains migration
+        applicationModel = generateApplicationModel(outputProject, MULE_FOUR_APPLICATION);
       } catch (MigrationTaskException ex) {
         logger.error("Failed to apply task, rolling back and continuing with the next one.");
       } catch (Exception e) {
-        throw new MigrationJobException("Failed to continue executing migration: " + e.getMessage());
+        throw new MigrationJobException("Failed to continue executing migration: " + e.getMessage(), e);
       }
     }
     generateReport();
@@ -86,16 +97,23 @@ public class MigrationJob implements Executable {
     if (!type.equals(BASIC) && !type.equals(JAVA)) {
       if (type.equals(MULE_THREE_APPLICATION)) {
         muleProject = new MuleThreeApplication(project);
-      } else if (type.equals(MULE_FOUR_APPLICATION)) {
-        muleProject = new MuleFourApplication(project);
+      } else if (type.equals(MULE_THREE_MAVEN_APPLICATION)) {
+        muleProject = new MuleThreeMavenApplication(project);
       } else if (type.equals(MULE_THREE_DOMAIN)) {
         muleProject = new MuleThreeDomain(project);
-      } else if (type.equals(MULE_FOUR_DOMAIN)) {
-        muleProject = new MuleFourDomain(project);
+      } else if (type.equals(MULE_THREE_MAVEN_DOMAIN)) {
+        muleProject = new MuleThreeMavenDomain(project);
       }
     }
-    ApplicationModel appModel = new ApplicationModelBuilder(muleProject).build();
-    return appModel;
+    return new ApplicationModelBuilder(muleProject).build();
+  }
+
+  private ApplicationModel generateApplicationModel(Path project, ProjectType type) throws Exception {
+    if (type.equals(MULE_FOUR_APPLICATION)) {
+      return new ApplicationModelBuilder(new MuleFourApplication(project)).build();
+    } else {
+      return new ApplicationModelBuilder(new MuleFourDomain(project)).build();
+    }
   }
 
   private void generateReport() {
