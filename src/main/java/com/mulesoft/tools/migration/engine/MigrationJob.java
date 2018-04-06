@@ -78,7 +78,7 @@ public class MigrationJob implements Executable {
         // TODO support domains migration
         applicationModel = generateApplicationModel(outputProject, MULE_FOUR_APPLICATION);
       } catch (MigrationTaskException ex) {
-        logger.error("Failed to apply task, rolling back and continuing with the next one.");
+        logger.error("Failed to apply task, rolling back and continuing with the next one.", ex);
       } catch (Exception e) {
         throw new MigrationJobException("Failed to continue executing migration: " + e.getMessage(), e);
       }

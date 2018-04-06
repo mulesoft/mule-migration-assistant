@@ -10,7 +10,7 @@ import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 
 /**
  * Signals an issue in a {@link AbstractMigrationTask}
- * 
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -18,5 +18,9 @@ public class MigrationTaskException extends Exception {
 
   public MigrationTaskException(String message) {
     super(message);
+  }
+
+  public MigrationTaskException(String message, Exception e) {
+    super(message, e);
   }
 }
