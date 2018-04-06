@@ -6,9 +6,9 @@
  */
 package com.mulesoft.tools.migration.project.structure.mule.three;
 
-import java.nio.file.Path;
-import com.mulesoft.tools.migration.project.structure.JavaProject;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
+
+import java.nio.file.Path;
 
 /**
  * Represents a mule three domain project structure
@@ -17,7 +17,7 @@ import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
  */
 public class MuleThreeDomain extends MuleProject {
 
-  public static final String srcMainConfigurationPath = "src/main/domain";
+  public static final String srcMainConfigurationPath = "";
 
   public MuleThreeDomain(Path baseFolder) {
     super(baseFolder);

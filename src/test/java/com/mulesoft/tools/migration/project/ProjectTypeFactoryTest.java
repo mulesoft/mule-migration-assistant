@@ -6,10 +6,16 @@
  */
 package com.mulesoft.tools.migration.project;
 
+import static com.mulesoft.tools.migration.helper.MavenTestHelper.emptyPom;
+import static com.mulesoft.tools.migration.helper.MuleConfigTestHelper.emptyMuleConfig;
+import static com.mulesoft.tools.migration.helper.MuleConfigTestHelper.emptyMuleDomainConfig;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import com.mulesoft.tools.migration.project.structure.ProjectType;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,19 +58,29 @@ public class ProjectTypeFactoryTest {
 
   @Test
   public void getProjectTypeMuleThree() throws Exception {
-    createFolder("src/main/app");
+    FileUtils.write(new File(projectPath.toFile(), "mule.xml"), emptyMuleConfig(), UTF_8);
     assertThat("The expected project type is not the same",
                projectTypeFactory.getProjectType(projectPath),
                is(ProjectType.MULE_THREE_APPLICATION));
   }
 
   @Test
+  public void getProjectTypeMuleThreeMavenized() throws Exception {
+    createFolder("src/main/app");
+    FileUtils.write(new File(projectPath.toFile(), "pom.xml"), emptyPom(), UTF_8);
+    assertThat("The expected project type is not the same",
+               projectTypeFactory.getProjectType(projectPath),
+               is(ProjectType.MULE_THREE_MAVEN_APPLICATION));
+  }
+
+  @Test
   public void getProjectTypeMuleThreeWithJavaFolder() throws Exception {
     createFolder("src/main/app");
     createFolder("src/main/java");
+    FileUtils.write(new File(projectPath.toFile(), "pom.xml"), emptyPom(), UTF_8);
     assertThat("The expected project type is not the same",
                projectTypeFactory.getProjectType(projectPath),
-               is(ProjectType.MULE_THREE_APPLICATION));
+               is(ProjectType.MULE_THREE_MAVEN_APPLICATION));
   }
 
   @Test
@@ -77,10 +93,19 @@ public class ProjectTypeFactoryTest {
 
   @Test
   public void getProjectTypeDomain() throws Exception {
-    createFolder("src/main/domain");
+    FileUtils.write(new File(projectPath.toFile(), "domain.xml"), emptyMuleDomainConfig(), UTF_8);
     assertThat("The expected project type is not the same",
                projectTypeFactory.getProjectType(projectPath),
                is(ProjectType.MULE_THREE_DOMAIN));
+  }
+
+  @Test
+  public void getProjectTypeDomainMavenized() throws Exception {
+    createFolder("src/main/domain");
+    FileUtils.write(new File(projectPath.toFile(), "pom.xml"), emptyPom(), UTF_8);
+    assertThat("The expected project type is not the same",
+               projectTypeFactory.getProjectType(projectPath),
+               is(ProjectType.MULE_THREE_MAVEN_DOMAIN));
   }
 
   public void createFolder(String path) {

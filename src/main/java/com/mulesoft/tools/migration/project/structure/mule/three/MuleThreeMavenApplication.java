@@ -6,21 +6,19 @@
  */
 package com.mulesoft.tools.migration.project.structure.mule.three;
 
-import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
-
 import java.nio.file.Path;
 
 /**
- * Represents a mule three application project structure
+ * Represents a mule three application mavenized project structure
  *
  * @author Mulesoft Inc.
  */
-public class MuleThreeApplication extends MuleProject {
+public class MuleThreeMavenApplication extends MuleThreeApplication {
 
-  public static final String srcMainConfigurationPath = "";
-  public static final String srcTestsConfigurationPath = "munit";
+  public static final String srcMainConfigurationPath = "src/main/app";
+  public static final String srcTestsConfigurationPath = "src/test/munit";
 
-  public MuleThreeApplication(Path baseFolder) {
+  public MuleThreeMavenApplication(Path baseFolder) {
     super(baseFolder);
   }
 

@@ -6,6 +6,12 @@
  */
 package com.mulesoft.tools.migration.engine;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
@@ -13,6 +19,7 @@ import com.mulesoft.tools.migration.engine.task.MigrationTask;
 import com.mulesoft.tools.migration.engine.task.Version;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,8 +34,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import static org.mockito.Mockito.*;
 
 /**
  * @author Mulesoft Inc.
@@ -68,6 +73,34 @@ public class MigrationJobTest {
 
     URL sample = this.getClass().getClassLoader().getResource(MUNIT_SECTIONS_SAMPLE_PATH.toString());
     FileUtils.copyURLToFile(sample, new File(app, MUNIT_SECTIONS_SAMPLE_PATH.getFileName().toString()));
+    FileUtils.write(new File(originalProjectPath.toFile(), "pom.xml"), "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+        "        xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
+        "  <modelVersion>4.0.0</modelVersion>\n" +
+        "  <groupId>groupId</groupId>\n" +
+        "  <artifactId>artifactid</artifactId>\n" +
+        "  <version>1.0-SNAPSHOT</version>\n" +
+        "  <packaging>jar</packaging>\n" +
+        "  <name>projectName</name>\n" +
+        "  \n" +
+        "  <properties>\n" +
+        "    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n" +
+        "  </properties>\n" +
+        "  \n" +
+        "  <build>\n" +
+        "    <plugins>\n" +
+        "      <plugin>\n" +
+        "        <groupId>org.apache.maven.plugins</groupId>\n" +
+        "        <artifactId>maven-compiler-plugin</artifactId>\n" +
+        "        <version>2.5.1</version>\n" +
+        "        <configuration>\n" +
+        "          <source>1.6</source>\n" +
+        "          <target>1.6</target>\n" +
+        "        </configuration>\n" +
+        "      </plugin>\n" +
+        "    </plugins>\n" +
+        "  </build>\n" +
+        "</project>", UTF_8);
   }
 
   @Test
