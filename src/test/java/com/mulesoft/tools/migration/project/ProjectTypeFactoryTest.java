@@ -59,7 +59,6 @@ public class ProjectTypeFactoryTest {
   @Test
   public void getProjectTypeMuleThree() throws Exception {
     FileUtils.write(new File(projectPath.toFile(), "mule.xml"), emptyMuleConfig(), UTF_8);
-    // createFolder("src/main/app");
     assertThat("The expected project type is not the same",
                projectTypeFactory.getProjectType(projectPath),
                is(ProjectType.MULE_THREE_APPLICATION));
