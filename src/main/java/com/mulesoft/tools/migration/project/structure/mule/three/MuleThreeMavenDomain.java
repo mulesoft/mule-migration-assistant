@@ -9,7 +9,7 @@ package com.mulesoft.tools.migration.project.structure.mule.three;
 import java.nio.file.Path;
 
 /**
- * Represents a mule three domain project structure
+ * Represents a mule three domain mavenized project structure
  *
  * @author Mulesoft Inc.
  */
