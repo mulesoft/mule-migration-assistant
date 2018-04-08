@@ -15,7 +15,6 @@ import com.mulesoft.tools.migration.pom.PomModel;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public interface PomContribution extends MigrationStep {
+public interface PomContribution extends MigrationStep<PomModel> {
 
-  void setPomModel(PomModel pomModel);
 }

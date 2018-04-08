@@ -7,6 +7,8 @@
 package com.mulesoft.tools.migration.engine.step;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
+import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
+import javafx.application.Application;
 import org.jdom2.Element;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
@@ -19,9 +21,8 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public abstract class AbstractMigrationStep implements MigrationStep {
+public abstract class AbstractApplicationModelMigrationStep implements ApplicationModelContribution {
 
-  private Element element;
   private XPathExpression appliedTo;
 
   @Override
@@ -39,14 +40,4 @@ public abstract class AbstractMigrationStep implements MigrationStep {
     }
   }
 
-  @Override
-  public Element getElement() {
-    return element;
-  }
-
-  @Override
-  public void setElement(Element element) {
-    checkArgument(element != null, "The element to execute step must not be null.");
-    this.element = element;
-  }
 }

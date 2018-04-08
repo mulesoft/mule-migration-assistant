@@ -160,7 +160,7 @@ public class MigrationJob implements Executable {
     public MigrationJob build() {
       checkState(project != null, "The project must not be null");
       checkState(outputProject != null, "The output project must not be null");
-      checkState(migrationTasks != null, "The migration task  must not be null");
+      checkState(migrationTasks != null, "The migration tasks must not be null");
 
       return new MigrationJob(project, outputProject, migrationTasks, reportingStrategy);
     }

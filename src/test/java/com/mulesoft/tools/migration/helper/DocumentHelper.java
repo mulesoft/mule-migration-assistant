@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.helper;
 
-import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
+import com.mulesoft.tools.migration.engine.step.AbstractApplicationModelMigrationStep;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
@@ -42,7 +42,8 @@ public class DocumentHelper {
     return nodes;
   }
 
-  public static void getNodesFromFile(String Xpath, AbstractMigrationStep step, String filePath) throws Exception {
+  public static void getNodesFromFile(String Xpath, AbstractApplicationModelMigrationStep step, String filePath)
+      throws Exception {
     Document document = getDocument(filePath);
     List<Element> nodes = getElementsFromDocument(document, Xpath);
     //    step.setDocument(document);

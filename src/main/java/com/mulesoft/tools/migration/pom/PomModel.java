@@ -16,7 +16,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.pom.PomModelUtils.buildMinimalMule4ApplicationPom;
@@ -237,11 +239,7 @@ public class PomModel {
    * @param plugin the plugin to be added
    */
   public void addPlugin(Plugin plugin) {
-    if (model.getBuild() == null) {
-      Build build = new Build();
-      model.setBuild(build);
-    }
-    model.getBuild().addPlugin(plugin.getInnerModel());
+    getBuild().addPlugin(plugin.getInnerModel());
   }
 
   /**
@@ -250,7 +248,7 @@ public class PomModel {
    * @return a list of plugins
    */
   public List<Plugin> getPlugins() {
-    return model.getBuild().getPlugins().stream().map(Plugin::new).collect(toList());
+    return getBuild().getPlugins().stream().map(Plugin::new).collect(toList());
   }
 
   /**
@@ -259,7 +257,38 @@ public class PomModel {
    * @param plugin the plugin to be removed.
    */
   public void removePlugin(Plugin plugin) {
-    model.getBuild().removePlugin(plugin.getInnerModel());
+    getBuild().removePlugin(plugin.getInnerModel());
+  }
+
+  /**
+   * Remove all the plugins that satisfies a predicate.
+   *
+   * @param pluginPredicate a predicate that evaluates to true if the plugin should be removed
+   * @return the list of plugins removed
+   */
+  public List<Plugin> removePlugins(Predicate<Plugin> pluginPredicate) {
+    List<Plugin> removedPlugins = getPlugins().stream().filter(pluginPredicate).collect(toList());
+    removedPlugins.forEach(this::removePlugin);
+    return removedPlugins;
+  }
+
+  /**
+   * Remove the first plugins that satisfies a predicate.
+   *
+   * @param pluginPredicate a predicate that evaluates to true if the plugin should be removed
+   * @return an optional containing the removed plugin, empty if no plugin satisifies the predicate
+   */
+  public Optional<Plugin> removePlugin(Predicate<Plugin> pluginPredicate) {
+    Optional<Plugin> removedPlugin = getPlugins().stream().filter(pluginPredicate).findFirst();
+    removedPlugin.ifPresent(this::removePlugin);
+    return removedPlugin;
+  }
+
+  private Build getBuild() {
+    if (model.getBuild() == null) {
+      model.setBuild(new Build());
+    }
+    return model.getBuild();
   }
 
   /**
@@ -303,5 +332,6 @@ public class PomModel {
 
       return model;
     }
+
   }
 }

@@ -54,4 +54,5 @@ public class MunitMigrationTask extends AbstractMigrationTask {
   public String getDescription() {
     return null;
   }
+
 }

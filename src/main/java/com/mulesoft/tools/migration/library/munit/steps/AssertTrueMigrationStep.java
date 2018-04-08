@@ -7,8 +7,8 @@
 package com.mulesoft.tools.migration.library.munit.steps;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
-import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
-import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
+import com.mulesoft.tools.migration.engine.step.AbstractApplicationModelMigrationStep;
+import org.jdom2.Element;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.*;
 import static java.util.Optional.empty;
@@ -16,10 +16,9 @@ import static java.util.Optional.of;
 
 /**
  * This steps migrates the MUnit 1.x assert-true
- *
  * @author Mulesoft Inc.
  */
-public class AssertTrueMigrationStep extends AbstractMigrationStep implements ApplicationModelContribution {
+public class AssertTrueMigrationStep extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR = "//munit:test/*[contains(local-name(),'true')]";
 
@@ -32,17 +31,16 @@ public class AssertTrueMigrationStep extends AbstractMigrationStep implements Ap
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
-  public void execute() throws Exception {
+  @Override
+  public void execute(Element element) throws RuntimeException {
     try {
-
       changeNodeName("munit-tools", "assert-that")
           .andThen(changeAttribute("condition", of("expression"), empty()))
           .andThen(addAttribute("is", "#[MunitTools::equalTo(true)]"))
-          .apply(getElement());
+          .apply(element);
 
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());
     }
   }
-
 }

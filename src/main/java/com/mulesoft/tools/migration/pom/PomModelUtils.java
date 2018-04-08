@@ -15,6 +15,7 @@ package com.mulesoft.tools.migration.pom;
 public class PomModelUtils {
 
   public static final String MULE_APPLICATION_4_PACKAGING_TYPE = "mule-application";
+  public static final String MULE_APPLICATION_3_PACKAGING_TYPE = "mule";
   public static final String DEFAULT_MODEL_VERSION = "4.0.0";
   public static final String MULE_MAVEN_PLUGIN_ARTIFACT_ID = "mule-maven-plugin";
   public static final String MULE_MAVEN_PLUGIN_GROUP_ID = "org.mule.tools.maven";
@@ -28,13 +29,17 @@ public class PomModelUtils {
     model.setPackaging(MULE_APPLICATION_4_PACKAGING_TYPE);
     model.setModelVersion(DEFAULT_MODEL_VERSION);
 
-    Plugin muleMavenPlugin = new Plugin.PluginBuilder()
-        .withArtifactId(MULE_MAVEN_PLUGIN_ARTIFACT_ID)
-        .withGroupId(MULE_MAVEN_PLUGIN_GROUP_ID)
-        .withVersion(MULE_MAVEN_PLUGIN_VERSION).build();
+    Plugin muleMavenPlugin = buildMule4MuleMavenPluginConfiguration();
 
     model.addPlugin(muleMavenPlugin);
 
     return model;
+  }
+
+  public static Plugin buildMule4MuleMavenPluginConfiguration() {
+    return new Plugin.PluginBuilder()
+        .withArtifactId(MULE_MAVEN_PLUGIN_ARTIFACT_ID)
+        .withGroupId(MULE_MAVEN_PLUGIN_GROUP_ID)
+        .withVersion(MULE_MAVEN_PLUGIN_VERSION).build();
   }
 }

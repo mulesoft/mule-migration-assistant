@@ -7,6 +7,8 @@
 package com.mulesoft.tools.migration.engine.step.category;
 
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
+import org.jdom2.Element;
+import org.jdom2.xpath.XPathExpression;
 
 /**
  * Migration Step that works over the application model
@@ -14,6 +16,9 @@ import com.mulesoft.tools.migration.engine.step.MigrationStep;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public interface ApplicationModelContribution extends MigrationStep {
+public interface ApplicationModelContribution extends MigrationStep<Element> {
 
+  XPathExpression getAppliedTo();
+
+  void setAppliedTo(String xpathExpression);
 }

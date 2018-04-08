@@ -11,6 +11,7 @@ import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.step.MigrationStepSorter;
 import com.mulesoft.tools.migration.engine.step.category.ApplicationModelContribution;
+import com.mulesoft.tools.migration.engine.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.pom.PomModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import org.jdom2.Element;
@@ -49,43 +50,19 @@ public abstract class AbstractMigrationTask implements MigrationTask {
       if (getSteps() != null) {
         MigrationStepSorter stepSorter = new MigrationStepSorter(getSteps());
 
-        stepSorter.getNameSpaceContributionSteps().forEach(s -> s.setApplicationModel(applicationModel));
-        executeSteps(stepSorter.getNameSpaceContributionSteps());
+        stepSorter.getNameSpaceContributionSteps().forEach(s -> s.execute(applicationModel));
 
-        executeSteps(stepSorter.getApplicationModelContributionSteps());
+        stepSorter.getApplicationModelContributionSteps().stream()
+            .forEach(s -> applicationModel.getNodes(s.getAppliedTo()).forEach(s::execute));
+        stepSorter.getExpressionContributionSteps().forEach(s -> s.execute(new Object()));
+        stepSorter.getProjectStructureContributionSteps().forEach(s -> s.execute(new Object()));
 
-        executeSteps(stepSorter.getExpressionContributionSteps());
-        executeSteps(stepSorter.getProjectStructureContributionSteps());
+        stepSorter.getPomContributionSteps().forEach(s -> s.execute(applicationModel.getPomModel().orElse(new PomModel())));
 
-        stepSorter.getPomContributionSteps().forEach(s -> s.setPomModel(applicationModel.getPomModel().orElse(new PomModel())));
-        executeSteps(stepSorter.getPomContributionSteps());
       }
 
     } catch (Exception e) {
       throw new MigrationTaskException("Task execution exception. " + e.getMessage());
-    }
-  }
-
-  private <T extends MigrationStep> void executeSteps(Set<T> steps) throws MigrationStepException {
-    try {
-      for (MigrationStep step : steps) {
-        if (step instanceof ApplicationModelContribution) {
-          applicationModel.getNodes(step.getAppliedTo()).forEach(s -> executeStep(step, s));
-        } else {
-          step.execute();
-        }
-      }
-    } catch (Exception ex) {
-      throw new MigrationStepException("Step execution exception. " + ex.getMessage());
-    }
-  }
-
-  private void executeStep(MigrationStep step, Element s) {
-    try {
-      step.setElement(s);
-      step.execute();
-    } catch (Exception ex) {
-      throw new MigrationStepException("Step execution exception. " + ex.getMessage());
     }
   }
 

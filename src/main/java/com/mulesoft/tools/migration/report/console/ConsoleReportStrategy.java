@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.report.console;
 
-import com.mulesoft.tools.migration.engine.step.AbstractMigrationStep;
+import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.report.ReportCategory;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
@@ -21,7 +21,7 @@ public class ConsoleReportStrategy implements ReportingStrategy {
 
   @Override
   public void log(String message, ReportCategory reportCategory, String filePath, AbstractMigrationTask task,
-                  AbstractMigrationStep step) {
+                  MigrationStep step) {
     System.out.println(reportCategory.getDescription() + " : " + message);
   }
 }
