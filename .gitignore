@@ -14,3 +14,5 @@
 */*/.DS_Store
 testout.xml
 /lib
+/logs/
+/servers/

@@ -35,6 +35,7 @@ public abstract class AbstractMigrationTask implements MigrationTask {
     this.applicationModel = applicationModel;
   }
 
+  @Override
   public void execute() throws Exception {
     // TODO depending on the project type this may not be true
     checkState(applicationModel != null, "An application model must be provided.");
@@ -56,7 +57,7 @@ public abstract class AbstractMigrationTask implements MigrationTask {
       }
 
     } catch (Exception e) {
-      throw new MigrationTaskException("Task execution exception. " + e.getMessage());
+      throw new MigrationTaskException("Task execution exception. " + e.getMessage(), e);
     }
   }
 

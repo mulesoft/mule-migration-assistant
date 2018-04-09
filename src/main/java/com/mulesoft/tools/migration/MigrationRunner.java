@@ -6,20 +6,29 @@
  */
 package com.mulesoft.tools.migration;
 
+import static java.util.Collections.singletonList;
+
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
+import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
-import org.apache.commons.cli.*;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 import java.nio.file.Paths;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
- * 
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -52,6 +61,7 @@ public class MigrationRunner {
         .withProject(Paths.get(projectBasePath))
         .withOutputProject(Paths.get(destinationProjectBasePath))
         // .withMigrationTasks(new ConfigurationParser(Paths.get(migrationConfigurationPath)).parse())
+        .withMigrationTasks(singletonList(new PreprocessMuleApplication()))
         .withReportingStrategy(reportingStrategy);
 
     return builder.build();
@@ -59,7 +69,7 @@ public class MigrationRunner {
 
   /**
    * Initialises the console options with Apache Command Line
-   * 
+   *
    * @param args
    */
   private void initializeOptions(String[] args) {
