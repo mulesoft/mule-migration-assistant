@@ -11,6 +11,7 @@ import com.mulesoft.tools.migration.project.ProjectTypeFactory;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.structure.BasicProject;
 import com.mulesoft.tools.migration.project.structure.MavenProject;
+import com.mulesoft.tools.migration.project.structure.ProjectType;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
 import com.mulesoft.tools.migration.project.structure.mule.four.MuleFourDomain;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeApplication;
@@ -24,6 +25,7 @@ import org.jdom2.output.XMLOutputter;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Normalizer;
 import java.util.Map;
 
 import static com.mulesoft.tools.migration.project.ProjectMatcher.getProjectDestination;
@@ -42,10 +44,16 @@ public class ApplicationPersister {
   private ApplicationModel appModel;
   private Path outputAppPath;
   private BasicProject projectOutput;
+  private ProjectType projectType;
 
-  public ApplicationPersister(ApplicationModel appModel, Path outputAppPath) {
+  public ApplicationPersister(ApplicationModel appModel, Path outputAppPath) throws Exception {
     this.setAppModel(appModel);
     this.setOutputAppPath(outputAppPath);
+    this.setProjectType(projectFactory.getProjectType(appModel.getProjectBasePath()));
+  }
+
+  private void setProjectType(ProjectType projectType) {
+    this.projectType = projectType;
   }
 
   private void setAppModel(ApplicationModel appModel) {
@@ -57,7 +65,7 @@ public class ApplicationPersister {
   }
 
   public void persist() throws Exception {
-    projectOutput = getProjectDestination(outputAppPath, projectFactory.getProjectType(appModel.getProjectBasePath()));
+    projectOutput = getProjectDestination(outputAppPath, projectType);
     if (baseFolderIsEmpty(outputAppPath)) {
       copyBaseProjectStructure();
     }

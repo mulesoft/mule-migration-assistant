@@ -14,6 +14,7 @@ import com.mulesoft.tools.migration.engine.StepExecutable;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
+
 public interface MigrationStep<T> extends StepExecutable<T> {
 
   String getDescription();

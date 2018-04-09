@@ -23,5 +23,4 @@ public class MavenProject extends JavaProject {
     return baseFolder.resolve("pom.xml");
   }
 
-
 }

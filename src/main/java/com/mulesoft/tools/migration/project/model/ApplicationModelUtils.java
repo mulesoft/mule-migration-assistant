@@ -6,8 +6,10 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -63,6 +65,19 @@ public class ApplicationModelUtils {
       if (attribute != null) {
         e.removeAttribute(name);
         // TODO missing reporting
+      }
+      return e;
+    };
+    return f;
+  }
+
+  public static Function<Element, Element> moveContentToChild(String childNodeName) {
+    Function<Element, Element> f = e -> {
+      if (e != null) {
+        List<Element> childElements =
+            e.getChildren().stream().filter(s -> !s.getName().equals(childNodeName)).collect(Collectors.toList());
+        childElements.forEach(n -> n.detach());
+        e.getChild(childNodeName, e.getNamespace()).addContent(childElements);
       }
       return e;
     };

@@ -17,7 +17,7 @@ import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
  */
 public class MuleFourDomain extends MuleProject {
 
-  public static final String srcMainConfigurationPath = "src/main/domain";
+  public static final String srcMainConfigurationPath = "src/main/mule";
 
   public MuleFourDomain(Path baseFolder) {
     super(baseFolder);

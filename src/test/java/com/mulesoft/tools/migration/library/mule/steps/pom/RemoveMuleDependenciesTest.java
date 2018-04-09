@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps;
+package com.mulesoft.tools.migration.library.mule.steps.pom;
 
 import com.mulesoft.tools.migration.pom.Dependency;
 import com.mulesoft.tools.migration.pom.PomModel;
@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class RemoveMuleDependenciesTest {
 

@@ -17,8 +17,8 @@ import java.nio.file.Path;
  */
 public class MuleThreeApplication extends MuleProject {
 
-  public static final String srcMainConfigurationPath = "";
-  public static final String srcTestsConfigurationPath = "munit";
+  public static final String srcMainConfigurationPath = "src/main/app";
+  public static final String srcTestsConfigurationPath = "src/test/munit";
 
   public MuleThreeApplication(Path baseFolder) {
     super(baseFolder);

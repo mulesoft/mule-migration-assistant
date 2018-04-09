@@ -52,14 +52,26 @@ public class ApplicationModel {
     return nodes;
   }
 
-  public void addNameSpace(String prefix, String uri) {
+  public void addNameSpace(String prefix, String uri, String schemaLocation) {
+    Namespace namespace = Namespace.getNamespace(prefix, uri);
     for (Document doc : applicationDocuments.values()) {
-      addNameSpace(prefix, uri, doc);
+      addNameSpace(namespace, schemaLocation, doc);
     }
   }
 
-  public void addNameSpace(String prefix, String uri, Document doc) {
-    doc.getRootElement().addNamespaceDeclaration(Namespace.getNamespace(prefix, uri));
+  public void addNameSpace(Namespace namespace, String schemaLocation, Document document) {
+    Element rootElement = document.getRootElement();
+    rootElement.addNamespaceDeclaration(namespace);
+
+    Attribute schemaLocationAttribute = rootElement.getAttribute("schemaLocation", rootElement.getNamespace("xsi"));
+    if (!schemaLocationAttribute.getValue().contains(namespace.getURI())
+        && !schemaLocationAttribute.getValue().contains(schemaLocation)) {
+
+      StringBuilder value = new StringBuilder(schemaLocationAttribute.getValue());
+      value.append(" " + namespace.getURI());
+      value.append(" " + schemaLocation);
+      schemaLocationAttribute.setValue(value.toString());
+    }
   }
 
   public void removeNameSpace(String prefix, String uri, String schemaLocation) {
@@ -79,8 +91,8 @@ public class ApplicationModel {
         && schemaLocationAttribute.getValue().contains(schemaLocation)) {
 
       String value = schemaLocationAttribute.getValue();
-      value.replace(namespace.getURI(), EMPTY);
-      value.replace(schemaLocation, EMPTY);
+      value = value.replace(schemaLocation, EMPTY);
+      value = value.replace(namespace.getURI(), EMPTY);
       schemaLocationAttribute.setValue(value);
     }
   }

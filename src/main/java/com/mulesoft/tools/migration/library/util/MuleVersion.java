@@ -8,8 +8,6 @@ package com.mulesoft.tools.migration.library.util;
 
 import com.mulesoft.tools.migration.engine.task.Version;
 
-import static com.mulesoft.tools.migration.engine.task.Version.WILDCARD;
-
 /**
  * Versions for Mule Projects
  * @author Mulesoft Inc.

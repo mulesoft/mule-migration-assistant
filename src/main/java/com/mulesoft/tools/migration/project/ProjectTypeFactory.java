@@ -67,11 +67,13 @@ public class ProjectTypeFactory {
         exists(projectPath.resolve("pom.xml"))) {
       return MULE_THREE_MAVEN_DOMAIN;
     } else if (exists(projectPath.resolve(MuleThreeApplication.srcMainConfigurationPath))
-        && listFiles(projectPath.toFile(), new String[] {"xml"}, false).stream().filter(f -> rootElement(f, "mule"))
+        && listFiles(projectPath.resolve(MuleThreeApplication.srcMainConfigurationPath).toFile(), new String[] {"xml"}, false)
+            .stream().filter(f -> rootElement(f, "mule"))
             .count() > 0) {
       return MULE_THREE_APPLICATION;
     } else if (exists(projectPath.resolve(MuleThreeDomain.srcMainConfigurationPath))
-        && listFiles(projectPath.toFile(), new String[] {"xml"}, false).stream().filter(f -> rootElement(f, "mule-domain"))
+        && listFiles(projectPath.resolve(MuleThreeDomain.srcMainConfigurationPath).toFile(), new String[] {"xml"}, false).stream()
+            .filter(f -> rootElement(f, "mule-domain"))
             .count() > 0) {
       return MULE_THREE_DOMAIN;
     } else if (exists(projectPath.resolve(MuleFourApplication.srcMainConfigurationPath))) {
@@ -84,6 +86,7 @@ public class ProjectTypeFactory {
       return BASIC;
     }
   }
+
 
   private boolean rootElement(File configFile, String expectedRootTag) {
     Document doc;

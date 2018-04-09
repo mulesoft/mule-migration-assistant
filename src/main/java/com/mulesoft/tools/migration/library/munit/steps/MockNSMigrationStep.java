@@ -27,7 +27,8 @@ public class MockNSMigrationStep implements NamespaceContribution {
     try {
       applicationModel.removeNameSpace("mock", "http://www.mulesoft.org/schema/mule/mock",
                                        "http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd");
-      applicationModel.addNameSpace("munit-tools", "http://www.mulesoft.org/schema/mule/munit-tools");
+      applicationModel.addNameSpace("munit-tools", "http://www.mulesoft.org/schema/mule/munit-tools",
+                                    "http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd");
 
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());

@@ -37,14 +37,14 @@ public class MigrationTaskLocator {
     this.projectType = projectType;
   }
 
-  public List<MigrationTask> locate() {
-    List<MigrationTask> migrationTasks = getMigrationTasks();
+  public List<AbstractMigrationTask> locate() {
+    List<AbstractMigrationTask> migrationTasks = getMigrationTasks();
 
     return migrationTasks.stream().filter(mt -> shouldNotFilterTask(mt)).collect(Collectors.toList());
   }
 
-  protected List<MigrationTask> getMigrationTasks() {
-    ServiceLoader<MigrationTask> load = ServiceLoader.load(MigrationTask.class);
+  protected List<AbstractMigrationTask> getMigrationTasks() {
+    ServiceLoader<AbstractMigrationTask> load = ServiceLoader.load(AbstractMigrationTask.class);
     return Lists.newArrayList(load);
   }
 

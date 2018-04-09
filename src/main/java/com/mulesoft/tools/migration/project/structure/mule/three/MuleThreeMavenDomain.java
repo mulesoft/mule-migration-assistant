@@ -15,8 +15,6 @@ import java.nio.file.Path;
  */
 public class MuleThreeMavenDomain extends MuleThreeDomain {
 
-  public static final String srcMainConfigurationPath = "src/main/domain";
-
   public MuleThreeMavenDomain(Path baseFolder) {
     super(baseFolder);
   }
