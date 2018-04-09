@@ -61,7 +61,8 @@ public class ApplicationModelTest {
 
     applicationModel.removeNameSpace("mock", "http://www.mulesoft.org/schema/mule/mock",
                                      "http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd");
-    applicationModel.addNameSpace("munit-tools", "http://www.mulesoft.org/schema/mule/munit-tools");
+    applicationModel.addNameSpace("munit-tools", "http://www.mulesoft.org/schema/mule/munit-tools",
+                                  "http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd");
 
     applicationModel.getNodes(XPathFactory.instance().compile(XPATH_SELECTOR))
         .forEach(n -> changeNodeName("munit-tools", "assert-that")

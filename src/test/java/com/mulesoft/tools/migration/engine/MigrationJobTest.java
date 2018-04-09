@@ -6,20 +6,14 @@
  */
 package com.mulesoft.tools.migration.engine;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.engine.task.MigrationTask;
+import com.mulesoft.tools.migration.engine.task.MigrationTaskLocator;
 import com.mulesoft.tools.migration.engine.task.Version;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,6 +29,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
+import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_FOUR_APPLICATION;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.mockito.Mockito.*;
+
 /**
  * @author Mulesoft Inc.
  */
@@ -45,6 +45,9 @@ public class MigrationJobTest {
   private static final String MUNIT_SECTIONS_SAMPLE_XML = "munit-sections-sample.xml";
   private static final Path MUNIT_EXAMPLES_PATH = Paths.get("munit/examples");
   private static final Path MUNIT_SECTIONS_SAMPLE_PATH = MUNIT_EXAMPLES_PATH.resolve(MUNIT_SECTIONS_SAMPLE_XML);
+  private static final String MULE_SAMPLE_XML = "mule-sample.xml";
+  private static final Path MULE_EXAMPLES_PATH = Paths.get("mule/examples/core");
+  private static final Path MULE_SAMPLE_PATH = MULE_EXAMPLES_PATH.resolve(MULE_SAMPLE_XML);
 
   private MigrationJob migrationJob;
   private MigrationTask migrationTask;
@@ -68,11 +71,18 @@ public class MigrationJobTest {
   private void buildOriginalProject() throws IOException {
     originalProjectPath = temporaryFolder.newFolder(ORIGINAL_PROJECT_NAME).toPath();
 
-    File app = originalProjectPath.resolve("src").resolve("main").resolve("app").toFile();
+    File app = originalProjectPath.resolve("src").resolve("test").resolve("munit").toFile();
     app.mkdirs();
 
     URL sample = this.getClass().getClassLoader().getResource(MUNIT_SECTIONS_SAMPLE_PATH.toString());
     FileUtils.copyURLToFile(sample, new File(app, MUNIT_SECTIONS_SAMPLE_PATH.getFileName().toString()));
+
+    app = originalProjectPath.resolve("src").resolve("main").resolve("app").toFile();
+    app.mkdirs();
+
+    sample = this.getClass().getClassLoader().getResource(MULE_SAMPLE_PATH.toString());
+    FileUtils.copyURLToFile(sample, new File(app, MULE_SAMPLE_PATH.getFileName().toString()));
+
     FileUtils.write(new File(originalProjectPath.toFile(), "pom.xml"), "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
         "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
         "        xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
@@ -116,9 +126,24 @@ public class MigrationJobTest {
 
   @Test
   public void execute() throws Exception {
-    migrationTask = new MunitMigrationTask();
     tasks = new ArrayList<>();
+    migrationTask = new MunitMigrationTask();
     tasks.add((AbstractMigrationTask) migrationTask);
+
+    migrationJob = new MigrationJob.MigrationJobBuilder()
+        .withMigrationTasks(tasks)
+        .withProject(originalProjectPath)
+        .withOutputProject(migratedProjectPath)
+        .build();
+
+    migrationJob.execute();
+  }
+
+  @Test
+  public void executeWithTaskLocator() throws Exception {
+    MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(MULE_3_VERSION, MULE_4_VERSION, MULE_FOUR_APPLICATION);
+    tasks = migrationTaskLocator.locate();
+
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withMigrationTasks(tasks)
         .withProject(originalProjectPath)

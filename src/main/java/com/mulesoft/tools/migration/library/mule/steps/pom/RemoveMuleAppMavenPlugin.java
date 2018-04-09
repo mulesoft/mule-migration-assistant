@@ -4,30 +4,29 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps;
+package com.mulesoft.tools.migration.library.mule.steps.pom;
 
 import com.mulesoft.tools.migration.engine.step.category.PomContribution;
-import com.mulesoft.tools.migration.pom.Dependency;
 import com.mulesoft.tools.migration.pom.PomModel;
-
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * Preprocess Mule Application Pom Migration Step
+ * Removes the Mule App Maven Plugin from pom
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class PreprocessPom implements PomContribution {
+public class RemoveMuleAppMavenPlugin implements PomContribution {
+
+  private String MULE_APP_MAVEN_PLUGIN_ARTIFACT_ID = "mule-app-maven-plugin";
 
   @Override
   public String getDescription() {
-    return "Remove mule dependencies from pom";
+    return "Remove mule-app-maven-plugin";
   }
 
   @Override
-  public void execute(PomModel pomModel) {
-    List<Dependency> dependencies = pomModel.getDependencies();
-    dependencies.removeIf(d -> d.getGroupId().startsWith("org.mule") || d.getGroupId().startsWith("com.mulesoft"));
-    pomModel.setDependencies(dependencies);
+  public void execute(PomModel pomModel) throws RuntimeException {
+    pomModel.removePlugin(p -> StringUtils.equals(p.getArtifactId(), MULE_APP_MAVEN_PLUGIN_ARTIFACT_ID));
   }
 }

@@ -9,8 +9,7 @@ package com.mulesoft.tools.migration.library.mule.tasks;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.engine.task.Version;
-import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleDependencies;
-import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateMuleMavenPlugin;
+import com.mulesoft.tools.migration.library.mule.steps.core.*;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
 
 import java.util.Set;
@@ -21,20 +20,16 @@ import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSI
 import static com.mulesoft.tools.migration.project.structure.ProjectType.MULE_FOUR_APPLICATION;
 
 /**
- * Preprocess Mule Application Migration Task
+ * Migration definition for Mule Core components
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class PreprocessMuleApplication extends AbstractMigrationTask {
+public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
 
   @Override
   public String getDescription() {
-    return "Preprocess the application";
-  }
-
-  @Override
-  public Set<MigrationStep> getSteps() {
-    return newHashSet(new RemoveMuleDependencies(), new UpdateMuleMavenPlugin(), new RemoveMuleDependencies());
+    return "Migrate Mule Core Components";
   }
 
   @Override
@@ -52,4 +47,11 @@ public class PreprocessMuleApplication extends AbstractMigrationTask {
     return MULE_FOUR_APPLICATION;
   }
 
+  @Override
+  public Set<MigrationStep> getSteps() {
+    return newHashSet(new CatchExceptionStrategy(), new RemoveObjectToStringTransformer(),
+                      new RollbackExceptionStrategy(), new ChoiceExceptionStrategy(),
+                      new SetAttachment(), new SetProperty(), new TransactionalScope(),
+                      new ExceptionStrategyRef());
+  }
 }

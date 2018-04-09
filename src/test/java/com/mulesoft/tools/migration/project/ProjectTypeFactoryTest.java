@@ -58,7 +58,8 @@ public class ProjectTypeFactoryTest {
 
   @Test
   public void getProjectTypeMuleThree() throws Exception {
-    FileUtils.write(new File(projectPath.toFile(), "mule.xml"), emptyMuleConfig(), UTF_8);
+    createFolder("src/main/app");
+    FileUtils.write(new File(projectPath.resolve("src/main/app").toFile(), "mule.xml"), emptyMuleConfig(), UTF_8);
     assertThat("The expected project type is not the same",
                projectTypeFactory.getProjectType(projectPath),
                is(ProjectType.MULE_THREE_APPLICATION));
@@ -93,7 +94,8 @@ public class ProjectTypeFactoryTest {
 
   @Test
   public void getProjectTypeDomain() throws Exception {
-    FileUtils.write(new File(projectPath.toFile(), "domain.xml"), emptyMuleDomainConfig(), UTF_8);
+    createFolder("src/main/domain");
+    FileUtils.write(new File(projectPath.resolve("src/main/domain").toFile(), "domain.xml"), emptyMuleDomainConfig(), UTF_8);
     assertThat("The expected project type is not the same",
                projectTypeFactory.getProjectType(projectPath),
                is(ProjectType.MULE_THREE_DOMAIN));

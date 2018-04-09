@@ -36,7 +36,7 @@ public class MigrationTaskLocatorTest {
   @Test
   public void locate() {
     MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(from, to, projectType);
-    List<MigrationTask> migrationTaskList = migrationTaskLocator.locate();
+    List<AbstractMigrationTask> migrationTaskList = migrationTaskLocator.locate();
 
     assertThat("The number of migration task is wrong", migrationTaskList.size(), is(1));
     MigrationTask migrationTask = migrationTaskList.get(0);
@@ -49,9 +49,9 @@ public class MigrationTaskLocatorTest {
   @Test
   public void locateFromAnyToAny() {
     MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(ANY_VERSION, ANY_VERSION, projectType);
-    List<MigrationTask> migrationTaskList = migrationTaskLocator.locate();
+    List<AbstractMigrationTask> migrationTaskList = migrationTaskLocator.locate();
 
-    assertThat("The number of migration task is wrong", migrationTaskList.size(), is(2));
+    assertThat("The number of migration task is wrong", migrationTaskList.size(), is(3));
     MigrationTask migrationTask = migrationTaskList.get(0);
     assertThat("The migration task type is wrong", migrationTask, instanceOf(MunitMigrationTask.class));
     assertThat("The migration task from is wrong", migrationTask.getFrom(), is(from));

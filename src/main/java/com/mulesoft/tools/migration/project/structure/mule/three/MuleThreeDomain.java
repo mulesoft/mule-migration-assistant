@@ -17,7 +17,7 @@ import java.nio.file.Path;
  */
 public class MuleThreeDomain extends MuleProject {
 
-  public static final String srcMainConfigurationPath = "";
+  public static final String srcMainConfigurationPath = "src/main/domain";
 
   public MuleThreeDomain(Path baseFolder) {
     super(baseFolder);

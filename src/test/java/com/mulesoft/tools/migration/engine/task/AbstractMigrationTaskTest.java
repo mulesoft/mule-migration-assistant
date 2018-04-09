@@ -99,17 +99,16 @@ public class AbstractMigrationTaskTest {
     ((MigrationTaskImpl) migrationTask).setMigrationSteps(new HashSet<>(steps));
 
     migrationTask.execute();
-    //    TODO Update test so we can get the object that is using inside the execute
-    //    verify(namespaceContributionMock, times(1)).execute(applicationModelMock);
-    //    verify(applicationModelContributionMock, times(1)).getAppliedTo();
-    //    verify(expressionContributionMock, times(1)).execute(new Object());
-    //    verify(projectStructureContributionMock, times(1)).execute(new Object());
-    //    verify(pomContributionMock, times(1)).execute(pomModelMock);
-    //
-    //    inOrder.verify(namespaceContributionMock).execute(applicationModelMock);
-    //    inOrder.verify(expressionContributionMock).execute(new Object());
-    //    inOrder.verify(projectStructureContributionMock).execute(new Object());
-    //    inOrder.verify(pomContributionMock).execute(pomModelMock);
+    verify(namespaceContributionMock, times(1)).execute(any(ApplicationModel.class));
+    verify(applicationModelContributionMock, times(1)).getAppliedTo();
+    verify(expressionContributionMock, times(1)).execute(any(Object.class));
+    verify(projectStructureContributionMock, times(1)).execute(any(Object.class));
+    verify(pomContributionMock, times(1)).execute(any(PomModel.class));
+
+    inOrder.verify(namespaceContributionMock).execute(any(ApplicationModel.class));
+    inOrder.verify(expressionContributionMock).execute(any(Object.class));
+    inOrder.verify(projectStructureContributionMock).execute(any(Object.class));
+    inOrder.verify(pomContributionMock).execute(any(PomModel.class));
 
   }
 

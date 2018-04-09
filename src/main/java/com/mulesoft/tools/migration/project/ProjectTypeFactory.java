@@ -61,17 +61,19 @@ public class ProjectTypeFactory {
 
   public ProjectType getProjectType(Path projectPath) throws Exception {
     if (exists(projectPath.resolve(MuleThreeMavenApplication.srcMainConfigurationPath)) &&
-            exists(projectPath.resolve("pom.xml"))) {
+        exists(projectPath.resolve("pom.xml"))) {
       return MULE_THREE_MAVEN_APPLICATION;
     } else if (exists(projectPath.resolve(MuleThreeMavenDomain.srcMainConfigurationPath)) &&
-            exists(projectPath.resolve("pom.xml"))) {
+        exists(projectPath.resolve("pom.xml"))) {
       return MULE_THREE_MAVEN_DOMAIN;
     } else if (exists(projectPath.resolve(MuleThreeApplication.srcMainConfigurationPath))
-            && listFiles(projectPath.toFile(), new String[] {"xml"}, false).stream().filter(f -> rootElement(f, "mule"))
+        && listFiles(projectPath.resolve(MuleThreeApplication.srcMainConfigurationPath).toFile(), new String[] {"xml"}, false)
+            .stream().filter(f -> rootElement(f, "mule"))
             .count() > 0) {
       return MULE_THREE_APPLICATION;
     } else if (exists(projectPath.resolve(MuleThreeDomain.srcMainConfigurationPath))
-            && listFiles(projectPath.toFile(), new String[] {"xml"}, false).stream().filter(f -> rootElement(f, "mule-domain"))
+        && listFiles(projectPath.resolve(MuleThreeDomain.srcMainConfigurationPath).toFile(), new String[] {"xml"}, false).stream()
+            .filter(f -> rootElement(f, "mule-domain"))
             .count() > 0) {
       return MULE_THREE_DOMAIN;
     } else if (exists(projectPath.resolve(MuleFourApplication.srcMainConfigurationPath))) {
