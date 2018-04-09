@@ -6,8 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.pom;
 
-import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleAppMavenPlugin;
-import com.mulesoft.tools.migration.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;

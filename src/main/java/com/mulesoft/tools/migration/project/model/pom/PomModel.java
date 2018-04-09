@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.pom;
+package com.mulesoft.tools.migration.project.model.pom;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
@@ -21,7 +21,7 @@ import java.util.Properties;
 import java.util.function.Predicate;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.pom.PomModelUtils.buildMinimalMule4ApplicationPom;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.buildMinimalMule4ApplicationPom;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -289,6 +289,14 @@ public class PomModel {
       model.setBuild(new Build());
     }
     return model.getBuild();
+  }
+
+  public void addRepository(Repository repository) {
+    model.addRepository(repository.getInnerModel());
+  }
+
+  public void addPluginRepository(Repository repository) {
+    model.addPluginRepository(repository.getInnerModel());
   }
 
   /**

@@ -9,15 +9,15 @@ package com.mulesoft.tools.migration.engine.task;
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
 import com.mulesoft.tools.migration.engine.step.category.*;
-import com.mulesoft.tools.migration.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import scala.collection.mutable.ArrayBuilder;
 
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -102,12 +102,12 @@ public class AbstractMigrationTaskTest {
     verify(namespaceContributionMock, times(1)).execute(any(ApplicationModel.class));
     verify(applicationModelContributionMock, times(1)).getAppliedTo();
     verify(expressionContributionMock, times(1)).execute(any(Object.class));
-    verify(projectStructureContributionMock, times(1)).execute(any(Object.class));
+    verify(projectStructureContributionMock, times(1)).execute(any(Path.class));
     verify(pomContributionMock, times(1)).execute(any(PomModel.class));
 
     inOrder.verify(namespaceContributionMock).execute(any(ApplicationModel.class));
     inOrder.verify(expressionContributionMock).execute(any(Object.class));
-    inOrder.verify(projectStructureContributionMock).execute(any(Object.class));
+    inOrder.verify(projectStructureContributionMock).execute(any(Path.class));
     inOrder.verify(pomContributionMock).execute(any(PomModel.class));
 
   }

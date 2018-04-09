@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.project.structure.mule.four;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
 
 import java.nio.file.Path;
@@ -19,6 +20,7 @@ public class MuleFourApplication extends MuleProject {
 
   public static final String srcMainConfigurationPath = "src/main/mule";
   public static final String srcTestConfigurationPath = "src/test/munit";
+  private static final String MULE_ARTIFACT_JSON = "mule-artifact.json";
 
   public MuleFourApplication(Path baseFolder) {
     super(baseFolder);
@@ -32,5 +34,9 @@ public class MuleFourApplication extends MuleProject {
   @Override
   public Path srcTestConfiguration() {
     return baseFolder.resolve(srcTestConfigurationPath);
+  }
+
+  public Path muleArtifactJson() {
+    return baseFolder.resolve(MULE_ARTIFACT_JSON);
   }
 }

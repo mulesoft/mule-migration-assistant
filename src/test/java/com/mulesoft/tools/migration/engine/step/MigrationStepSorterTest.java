@@ -7,13 +7,13 @@
 package com.mulesoft.tools.migration.engine.step;
 
 import com.mulesoft.tools.migration.engine.step.category.*;
-import com.mulesoft.tools.migration.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import org.jdom2.Element;
-import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -133,7 +133,7 @@ public class MigrationStepSorterTest {
     }
 
     @Override
-    public void execute(Object object) throws RuntimeException {
+    public void execute(Path object) throws RuntimeException {
 
     }
   }

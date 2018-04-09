@@ -7,7 +7,7 @@
 package com.mulesoft.tools.migration.engine.step.category;
 
 import com.mulesoft.tools.migration.engine.step.MigrationStep;
-import com.mulesoft.tools.migration.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 
 /**
  * Migration Step that contributes to the pom model

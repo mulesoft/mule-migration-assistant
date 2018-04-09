@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+
 /**
  * A visitor of files
  *
@@ -28,13 +30,11 @@ public class CopyFileVisitor implements FileVisitor<Path> {
   private final File fromFolder;
   private final File targetFolder;
 
-  private List<Path> exclusions = Collections.emptyList();
+  private final List<Path> exclusions;
 
-  public CopyFileVisitor(File fromFolder, File targetFolder)
-      throws IOException {
+  public CopyFileVisitor(File fromFolder, File targetFolder) {
     this.fromFolder = fromFolder;
     this.targetFolder = targetFolder;
-
     this.exclusions = new ArrayList<>();
     this.exclusions.add(Paths.get(MuleThreeApplication.srcMainConfigurationPath));
     this.exclusions.add(Paths.get(MuleThreeApplication.srcTestsConfigurationPath));
@@ -64,12 +64,12 @@ public class CopyFileVisitor implements FileVisitor<Path> {
   }
 
   @Override
-  public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+  public FileVisitResult visitFileFailed(Path file, IOException exc) {
     return FileVisitResult.CONTINUE;
   }
 
   @Override
-  public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+  public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
     return FileVisitResult.CONTINUE;
   }
 }

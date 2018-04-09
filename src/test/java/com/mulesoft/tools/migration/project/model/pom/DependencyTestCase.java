@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.pom;
+package com.mulesoft.tools.migration.project.model.pom;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -13,9 +13,9 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
-import static com.mulesoft.tools.migration.pom.PomModelTestCaseUtils.ARTIFACT_ID;
-import static com.mulesoft.tools.migration.pom.PomModelTestCaseUtils.GROUP_ID;
-import static com.mulesoft.tools.migration.pom.PomModelTestCaseUtils.VERSION;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.ARTIFACT_ID;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.GROUP_ID;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.VERSION;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @RunWith(Enclosed.class)

@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.pom;
+package com.mulesoft.tools.migration.project.model.pom;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.pom.Plugin.PluginBuilder.areAllExecutionIdsUnique;
+import static com.mulesoft.tools.migration.project.model.pom.Plugin.PluginBuilder.areAllExecutionIdsUnique;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
