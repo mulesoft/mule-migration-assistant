@@ -24,8 +24,35 @@ import org.jdom2.xpath.XPathFactory;
 
 public abstract class AbstractApplicationModelMigrationStep implements ApplicationModelContribution {
 
-  private static ExpressionMigrator EXPRESSION_MIGRATOR = expr -> {
-    return expr.replace("#[", "#[mel:");
+  private static ExpressionMigrator EXPRESSION_MIGRATOR = new ExpressionMigrator() {
+
+    @Override
+    public String unwrap(String originalExpression) {
+      if (isWrapped(originalExpression)) {
+        return originalExpression.substring(2, originalExpression.length() - 1);
+      } else {
+        return originalExpression;
+      }
+    }
+
+    @Override
+    public String wrap(String originalExpression) {
+      if (isWrapped(originalExpression)) {
+        return originalExpression;
+      } else {
+        return "#[" + originalExpression + "]";
+      }
+    }
+
+    public boolean isWrapped(String originalExpression) {
+      return originalExpression.startsWith("#[") && originalExpression.endsWith("]");
+    };
+
+    @Override
+    public String migrateExpression(String originalExpression) {
+      // TODO
+      return originalExpression.replace("#[", "#[mel:");
+    }
   };
 
   private XPathExpression appliedTo;

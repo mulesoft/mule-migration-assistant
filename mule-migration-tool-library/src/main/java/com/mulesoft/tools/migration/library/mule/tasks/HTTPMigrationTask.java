@@ -6,18 +6,22 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
-import com.mulesoft.tools.migration.library.mule.steps.http.*;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorHeaders;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListenerConfig;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequestConfig;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.Version;
 
 import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
-import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
 /**
  * Migration definition for HTTP component
@@ -49,6 +53,7 @@ public class HTTPMigrationTask extends AbstractMigrationTask {
 
   @Override
   public Set<MigrationStep> getSteps() {
-    return newHashSet(new HttpConnectorListenerConfig(), new HttpConnectorPomContribution(), new HttpConnectorRequestConfig());
+    return newHashSet(new HttpConnectorPomContribution(), new HttpConnectorListenerConfig(), new HttpConnectorRequestConfig(),
+                      new HttpConnectorListener(), new HttpConnectorHeaders());
   }
 }

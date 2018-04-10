@@ -1,18 +1,28 @@
-.mule
+
+# Maven
+target/
+
+
+# Eclipse files
+.classpath
+.project
+.settings
+/workspace/
+
+# IntelliJ Idea files
 *.iml
-*.iws
 *.ipr
+*.iws
+*.idea
+
+# Mac
+.DS_Store
+
+# Test remnants
+
+.mule
 *.releaseBackup
 .clover
-/target
-*/target/**
-.project
-.classpath
-.idea
-.settings
-*.DS_Store
-*/*/.DS_Store
 testout.xml
-/lib
-/logs/
-/servers/
+logs/
+servers/

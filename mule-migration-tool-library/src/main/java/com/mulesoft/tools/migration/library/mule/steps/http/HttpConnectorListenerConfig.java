@@ -24,8 +24,7 @@ public class HttpConnectorListenerConfig extends AbstractApplicationModelMigrati
   private static final String HTTP_NAMESPACE = "http://www.mulesoft.org/schema/mule/http";
   private static final String TLS_NAMESPACE = "http://www.mulesoft.org/schema/mule/tls";
 
-  public static final String XPATH_SELECTOR = "/*/*[namespace-uri()='" + HTTP_NAMESPACE + "'"
-      + " and local-name()='listener-config']";
+  public static final String XPATH_SELECTOR = "/mule:mule/http:listener-config";
 
   @Override
   public String getDescription() {

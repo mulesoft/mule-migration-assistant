@@ -29,11 +29,11 @@ public class HttpConnectorRequestConfig extends AbstractApplicationModelMigratio
   private static final String SOCKETS_NAMESPACE = "http://www.mulesoft.org/schema/mule/sockets";
 
   public static final String XPATH_SELECTOR = ""
-      + "/*/*[namespace-uri()='" + HTTP_NAMESPACE + "' and ("
+      + "/mule:mule/http:*["
       + " local-name()='request-config' or"
       + " local-name()='proxy' or"
       + " local-name()='ntlm-proxy'"
-      + ")]";
+      + "]";
 
   @Override
   public String getDescription() {
