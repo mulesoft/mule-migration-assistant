@@ -7,7 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.pom;
 
 import com.mulesoft.tools.migration.engine.step.category.PomContribution;
-import com.mulesoft.tools.migration.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import org.apache.commons.lang3.StringUtils;
 
 /**

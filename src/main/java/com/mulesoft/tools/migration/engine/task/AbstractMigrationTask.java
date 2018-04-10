@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.engine.task;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.engine.step.MigrationStepSorter;
-import com.mulesoft.tools.migration.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -46,12 +46,13 @@ public abstract class AbstractMigrationTask implements MigrationTask {
 
         stepSorter.getNameSpaceContributionSteps().forEach(s -> s.execute(applicationModel));
 
-        stepSorter.getApplicationModelContributionSteps().stream()
+        stepSorter.getApplicationModelContributionSteps()
             .forEach(s -> applicationModel.getNodes(s.getAppliedTo()).forEach(s::execute));
+
 
         stepSorter.getExpressionContributionSteps().forEach(s -> s.execute(new Object()));
 
-        stepSorter.getProjectStructureContributionSteps().forEach(s -> s.execute(new Object()));
+        stepSorter.getProjectStructureContributionSteps().forEach(s -> s.execute(applicationModel.getProjectBasePath()));
 
         stepSorter.getPomContributionSteps().forEach(s -> s.execute(applicationModel.getPomModel().orElse(new PomModel())));
       }

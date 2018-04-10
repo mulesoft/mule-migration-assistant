@@ -6,16 +6,16 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.pom;
 
-import static com.mulesoft.tools.migration.pom.PomModelUtils.MULE_APPLICATION_3_PACKAGING_TYPE;
-import static com.mulesoft.tools.migration.pom.PomModelUtils.MULE_APPLICATION_4_PACKAGING_TYPE;
-import static com.mulesoft.tools.migration.pom.PomModelUtils.MULE_MAVEN_PLUGIN_ARTIFACT_ID;
-import static com.mulesoft.tools.migration.pom.PomModelUtils.MULE_MAVEN_PLUGIN_VERSION;
-import static com.mulesoft.tools.migration.pom.PomModelUtils.buildMule4MuleMavenPluginConfiguration;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_APPLICATION_3_PACKAGING_TYPE;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_APPLICATION_4_PACKAGING_TYPE;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_ARTIFACT_ID;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_VERSION;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.buildMule4MuleMavenPluginConfiguration;
 import static java.util.stream.IntStream.range;
 
 import com.mulesoft.tools.migration.engine.step.category.PomContribution;
-import com.mulesoft.tools.migration.pom.Plugin;
-import com.mulesoft.tools.migration.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.pom.Plugin;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;

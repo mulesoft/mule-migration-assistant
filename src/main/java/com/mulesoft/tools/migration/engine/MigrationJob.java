@@ -70,6 +70,8 @@ public class MigrationJob implements Executable {
   @Override
   public void execute() throws Exception {
     ApplicationModel applicationModel = generateApplicationModel(project);
+    persistApplicationModel(applicationModel);
+    applicationModel = generateApplicationModel(outputProject, MULE_FOUR_APPLICATION);
     for (AbstractMigrationTask task : migrationTasks) {
       task.setApplicationModel(applicationModel);
       try {

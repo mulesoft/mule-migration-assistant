@@ -51,6 +51,8 @@
 
         <maven.model.version>3.5.0</maven.model.version>
 
+        <mule.api.version>1.1.1</mule.api.version>
+
         <!-- Properties -->
         <lib-dir>${basedir}/lib</lib-dir>
         <skipVerifications>false</skipVerifications>
@@ -453,6 +455,12 @@
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-model</artifactId>
             <version>${maven.model.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-api</artifactId>
+            <version>${mule.api.version}</version>
         </dependency>
     </dependencies>
 

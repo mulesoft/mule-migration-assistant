@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.engine.structure;
 import com.mulesoft.tools.migration.engine.structure.util.CopyFileVisitor;
 import com.mulesoft.tools.migration.project.ProjectTypeFactory;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.structure.BasicProject;
 import com.mulesoft.tools.migration.project.structure.MavenProject;
 import com.mulesoft.tools.migration.project.structure.ProjectType;
@@ -17,7 +18,6 @@ import com.mulesoft.tools.migration.project.structure.mule.four.MuleFourApplicat
 import com.mulesoft.tools.migration.project.structure.mule.four.MuleFourDomain;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeApplication;
 import com.mulesoft.tools.migration.project.structure.mule.three.MuleThreeDomain;
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -26,8 +26,8 @@ import org.jdom2.output.XMLOutputter;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.Normalizer;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.mulesoft.tools.migration.project.ProjectMatcher.getProjectDestination;
 import static java.nio.file.Files.exists;
@@ -73,7 +73,7 @@ public class ApplicationPersister {
     if (projectOutput instanceof MuleProject) {
       createSourcesFolders();
       persistConfigFiles();
-      createMuleArtifactJsonFile();
+      persistMuleArtifactJson();
       persistPom();
     }
   }
@@ -81,34 +81,39 @@ public class ApplicationPersister {
   private void persistConfigFiles() throws Exception {
     for (Map.Entry<Path, Document> entry : appModel.getApplicationDocuments().entrySet()) {
       Path originalFilePath = entry.getKey();
-      Document document = entry.getValue();
-      String targetFilePath;
+      String targetFilePath = getTargetFilePath(originalFilePath);
 
-      if (originalFilePath.toString().contains(MuleThreeApplication.srcMainConfigurationPath)
-          || originalFilePath.toString().contains(MuleFourApplication.srcMainConfigurationPath)) {
-        targetFilePath = outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
-            .resolve(originalFilePath.getFileName()).toString();
-      } else if (originalFilePath.toString().contains(MuleThreeDomain.srcMainConfigurationPath)
-          || originalFilePath.toString().contains(MuleFourDomain.srcMainConfigurationPath)) {
-        targetFilePath = outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
-            .resolve(originalFilePath.getFileName()).toString();
-      } else {
-        targetFilePath = outputAppPath.resolve(((MuleProject) projectOutput).srcTestConfiguration())
-            .resolve(originalFilePath.getFileName()).toString();
-      }
+      Document document = entry.getValue();
+
       XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
       xmlOutputter.output(document, new FileOutputStream(targetFilePath));
     }
   }
 
-  private void createMuleArtifactJsonFile() throws IOException {
-    //TODO - Improve this, we need to define a project model and contribute this json file as a migration task
-    String jsonContent = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("mule-artifact-sample.json"));
-    File outputFile = new File(outputAppPath.resolve("mule-artifact.json").toString());
-    FileWriter fileWriter = new FileWriter(outputFile);
-    fileWriter.write(jsonContent);
-    fileWriter.flush();
-    fileWriter.close();
+  private String getTargetFilePath(Path originalFilePath) {
+    if (originalFilePath.toString().contains(MuleThreeApplication.srcMainConfigurationPath)
+        || originalFilePath.toString().contains(MuleFourApplication.srcMainConfigurationPath)) {
+      return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
+          .resolve(originalFilePath.getFileName()).toString();
+    } else if (originalFilePath.toString().contains(MuleThreeDomain.srcMainConfigurationPath)
+        || originalFilePath.toString().contains(MuleFourDomain.srcMainConfigurationPath)) {
+      return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
+          .resolve(originalFilePath.getFileName()).toString();
+    } else {
+      return outputAppPath.resolve(((MuleProject) projectOutput).srcTestConfiguration())
+          .resolve(originalFilePath.getFileName()).toString();
+    }
+  }
+
+  private void persistMuleArtifactJson() throws IOException {
+    Optional<MuleArtifactJsonModel> muleArtifactJsonModel = appModel.getMuleArtifactJsonModel();
+    if (muleArtifactJsonModel.isPresent() && projectOutput instanceof MuleFourApplication) {
+      String jsonContent = appModel.getMuleArtifactJsonModel().get().toString();
+      File outputFile = ((MuleFourApplication) projectOutput).muleArtifactJson().toFile();
+      try (FileWriter fileWriter = new FileWriter(outputFile)) {
+        fileWriter.write(jsonContent);
+      }
+    }
   }
 
   private void copyBaseProjectStructure() throws IOException {
@@ -144,5 +149,6 @@ public class ApplicationPersister {
       mavenWriter.write(writer, appModel.getPomModel().get().getMavenModelCopy());
     }
   }
+
 
 }

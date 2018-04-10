@@ -6,8 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.pom;
 
-import com.mulesoft.tools.migration.pom.Plugin;
-import com.mulesoft.tools.migration.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.pom.Plugin;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -21,8 +21,8 @@ import java.nio.file.Paths;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static com.mulesoft.tools.migration.pom.PomModelUtils.MULE_MAVEN_PLUGIN_ARTIFACT_ID;
-import static com.mulesoft.tools.migration.pom.PomModelUtils.MULE_MAVEN_PLUGIN_VERSION;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_ARTIFACT_ID;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_VERSION;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;

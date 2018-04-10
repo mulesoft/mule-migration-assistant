@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.pom;
+package com.mulesoft.tools.migration.project.model.pom;
 
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -21,8 +21,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static com.mulesoft.tools.migration.pom.PomModelTestCaseUtils.buildDependency;
-import static com.mulesoft.tools.migration.pom.PomModelTestCaseUtils.getPomModelDependencies;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.buildDependency;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.getPomModelDependencies;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Every.everyItem;

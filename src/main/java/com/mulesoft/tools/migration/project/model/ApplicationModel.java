@@ -6,8 +6,9 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
-import com.mulesoft.tools.migration.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.structure.mule.MuleProject;
+import com.mulesoft.tools.migration.project.structure.mule.four.MuleFourApplication;
 import org.jdom2.*;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
@@ -18,13 +19,15 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.project.structure.BasicProject.getFiles;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Represent the application to be migrated
- * 
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -33,6 +36,7 @@ public class ApplicationModel {
   private Map<Path, Document> applicationDocuments;
   private PomModel pomModel;
   private Path projectBasePath;
+  private MuleArtifactJsonModel muleArtifactJsonModel;
 
   protected ApplicationModel(Map<Path, Document> applicationDocuments) {
     this.applicationDocuments = applicationDocuments;
@@ -119,6 +123,15 @@ public class ApplicationModel {
     return this.projectBasePath;
   }
 
+  private void setMuleArtifactJsonModel(MuleArtifactJsonModel muleArtifactJsonModel) {
+    this.muleArtifactJsonModel = muleArtifactJsonModel;
+  }
+
+  public Optional<MuleArtifactJsonModel> getMuleArtifactJsonModel() {
+    return Optional.ofNullable(muleArtifactJsonModel);
+  }
+
+
   /**
    * It represent the builder to obtain a {@link ApplicationModel}
    *
@@ -151,6 +164,11 @@ public class ApplicationModel {
         }
       }
       ApplicationModel applicationModel = new ApplicationModel(applicationDocuments);
+      if (project instanceof MuleFourApplication) {
+        MuleArtifactJsonModel muleArtifactJsonModel = new MuleArtifactJsonModel.MuleApplicationJsonModelBuilder()
+            .withMuleArtifactJson(((MuleFourApplication) project).muleArtifactJson()).build();
+        applicationModel.setMuleArtifactJsonModel(muleArtifactJsonModel);
+      }
       PomModel pomModel = new PomModel.PomModelBuilder().withPom(project.pom()).build();
       applicationModel.setPomModel(pomModel);
       applicationModel.setProjectBasePath(project.getBaseFolder());
