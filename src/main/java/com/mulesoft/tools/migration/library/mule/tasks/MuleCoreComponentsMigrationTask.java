@@ -52,6 +52,6 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
     return newHashSet(new CatchExceptionStrategy(), new RemoveObjectToStringTransformer(),
                       new RollbackExceptionStrategy(), new ChoiceExceptionStrategy(),
                       new SetAttachment(), new SetProperty(), new TransactionalScope(),
-                      new ExceptionStrategyRef());
+                      new ExceptionStrategyRef(), new ForEachScope(), new RemoveJsonTransformerNamespace());
   }
 }

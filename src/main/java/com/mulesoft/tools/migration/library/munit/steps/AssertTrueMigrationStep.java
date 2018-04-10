@@ -20,7 +20,7 @@ import static java.util.Optional.of;
  */
 public class AssertTrueMigrationStep extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//munit:test/*[contains(local-name(),'true')]";
+  public static final String XPATH_SELECTOR = "//*[local-name()='assert-true']";
 
   @Override
   public String getDescription() {
