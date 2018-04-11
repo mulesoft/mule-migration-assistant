@@ -7,7 +7,7 @@
 package com.mulesoft.tools.migration.step.category;
 
 /**
- * An interface to handle the step execution
+ * An interface to handle the migration of expressions
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
