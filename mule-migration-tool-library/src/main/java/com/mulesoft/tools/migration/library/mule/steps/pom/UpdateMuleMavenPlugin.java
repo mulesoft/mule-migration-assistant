@@ -6,18 +6,24 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.pom;
 
-import com.mulesoft.tools.migration.step.category.PomContribution;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_APPLICATION_3_PACKAGING_TYPE;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_APPLICATION_4_PACKAGING_TYPE;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_ARTIFACT_ID;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_VERSION;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.buildMule4MuleMavenPluginConfiguration;
+import static java.util.stream.IntStream.range;
+
 import com.mulesoft.tools.migration.project.model.pom.Plugin;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.category.PomContribution;
+
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.util.HashSet;
 import java.util.OptionalInt;
 import java.util.Set;
-
-import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.*;
-import static java.util.stream.IntStream.range;
 
 /**
  * Update Mule Maven Plugin in pom
@@ -36,7 +42,7 @@ public class UpdateMuleMavenPlugin implements PomContribution {
   }
 
   @Override
-  public void execute(PomModel pomModel) throws RuntimeException {
+  public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
     String packagingType = pomModel.getPackaging();
     if (StringUtils.equals(packagingType, MULE_APPLICATION_3_PACKAGING_TYPE)) {
       pomModel.setPackaging(MULE_APPLICATION_4_PACKAGING_TYPE);

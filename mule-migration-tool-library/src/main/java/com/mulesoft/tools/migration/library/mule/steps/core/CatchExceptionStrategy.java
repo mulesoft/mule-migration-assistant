@@ -6,11 +6,15 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addChildNode;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.moveContentToChild;
+
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import org.jdom2.Element;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.*;
+import org.jdom2.Element;
 
 /**
  * Migration steps for catch exception strategy component
@@ -32,7 +36,7 @@ public class CatchExceptionStrategy extends AbstractApplicationModelMigrationSte
   }
 
   @Override
-  public void execute(Element element) throws RuntimeException {
+  public void execute(Element element, MigrationReport report) throws RuntimeException {
     try {
       changeNodeName("", "error-handler")
           .andThen(addChildNode("", "on-error-continue"))

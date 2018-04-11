@@ -6,23 +6,39 @@
  */
 package com.mulesoft.tools.migration.task;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.project.ProjectType;
-import com.mulesoft.tools.migration.step.MigrationStep;
-import com.mulesoft.tools.migration.step.category.*;
-import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.MigrationStep;
+import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
+import com.mulesoft.tools.migration.step.category.ExpressionContribution;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.category.NamespaceContribution;
+import com.mulesoft.tools.migration.step.category.PomContribution;
+import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import java.nio.file.Path;
-import java.util.*;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Mulesoft Inc.
@@ -52,7 +68,7 @@ public class AbstractMigrationTaskTest {
 
   @Test(expected = IllegalStateException.class)
   public void executeWithNullApplicationModel() throws Exception {
-    migrationTask.execute();
+    migrationTask.execute(mock(MigrationReport.class));
   }
 
   @Test
@@ -60,7 +76,7 @@ public class AbstractMigrationTaskTest {
     migrationTask.setApplicationModel(applicationModelMock);
     ((MigrationTaskImpl) migrationTask).setMigrationSteps(null);
 
-    migrationTask.execute();
+    migrationTask.execute(mock(MigrationReport.class));
   }
 
   @Test
@@ -72,9 +88,9 @@ public class AbstractMigrationTaskTest {
     migrationTask.setApplicationModel(applicationModelMock);
     ((MigrationTaskImpl) migrationTask).setMigrationSteps(steps);
 
-    migrationTask.execute();
+    migrationTask.execute(mock(MigrationReport.class));
 
-    verify(stepMock, times(0)).execute(applicationModelMock);
+    verify(stepMock, times(0)).execute(eq(applicationModelMock), any(MigrationReport.class));
   }
 
   @Test
@@ -98,17 +114,17 @@ public class AbstractMigrationTaskTest {
     migrationTask.setApplicationModel(applicationModelMock);
     ((MigrationTaskImpl) migrationTask).setMigrationSteps(new HashSet<>(steps));
 
-    migrationTask.execute();
-    verify(namespaceContributionMock, times(1)).execute(any(ApplicationModel.class));
+    migrationTask.execute(mock(MigrationReport.class));
+    verify(namespaceContributionMock, times(1)).execute(any(ApplicationModel.class), any(MigrationReport.class));
     verify(applicationModelContributionMock, times(1)).getAppliedTo();
-    verify(expressionContributionMock, times(1)).execute(any(Object.class));
-    verify(projectStructureContributionMock, times(1)).execute(any(Path.class));
-    verify(pomContributionMock, times(1)).execute(any(PomModel.class));
+    verify(expressionContributionMock, times(1)).execute(any(Object.class), any(MigrationReport.class));
+    verify(projectStructureContributionMock, times(1)).execute(any(Path.class), any(MigrationReport.class));
+    verify(pomContributionMock, times(1)).execute(any(PomModel.class), any(MigrationReport.class));
 
-    inOrder.verify(namespaceContributionMock).execute(any(ApplicationModel.class));
-    inOrder.verify(expressionContributionMock).execute(any(Object.class));
-    inOrder.verify(projectStructureContributionMock).execute(any(Path.class));
-    inOrder.verify(pomContributionMock).execute(any(PomModel.class));
+    inOrder.verify(namespaceContributionMock).execute(any(ApplicationModel.class), any(MigrationReport.class));
+    inOrder.verify(expressionContributionMock).execute(any(Object.class), any(MigrationReport.class));
+    inOrder.verify(projectStructureContributionMock).execute(any(Path.class), any(MigrationReport.class));
+    inOrder.verify(pomContributionMock).execute(any(PomModel.class), any(MigrationReport.class));
 
   }
 
@@ -117,14 +133,14 @@ public class AbstractMigrationTaskTest {
     NamespaceContribution namespaceContribution = mock(NamespaceContribution.class);
     doThrow(NullPointerException.class)
         .when(namespaceContribution)
-        .execute(applicationModelMock);
+        .execute(eq(applicationModelMock), any(MigrationReport.class));
     Set<MigrationStep> steps = new HashSet<>();
     steps.add(namespaceContribution);
 
     migrationTask.setApplicationModel(applicationModelMock);
     ((MigrationTaskImpl) migrationTask).setMigrationSteps(steps);
 
-    migrationTask.execute();
+    migrationTask.execute(mock(MigrationReport.class));
   }
 
   private static final class MigrationTaskImpl extends AbstractMigrationTask {

@@ -8,7 +8,9 @@ package com.mulesoft.tools.migration.library.munit.steps;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
+
 import org.jdom2.Document;
 import org.jdom2.Namespace;
 
@@ -33,7 +35,7 @@ public class MUnitNamespaces implements NamespaceContribution {
   }
 
   @Override
-  public void execute(ApplicationModel applicationModel) throws RuntimeException {
+  public void execute(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
     try {
       applicationModel.removeNameSpace(MUNIT_MOCK_NAME, MUNIT_MOCK_URI, MUNIT_MOCK_SCHEMA);
 

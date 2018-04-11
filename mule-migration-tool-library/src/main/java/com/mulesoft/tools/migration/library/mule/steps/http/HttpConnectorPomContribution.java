@@ -6,9 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import com.mulesoft.tools.migration.step.category.PomContribution;
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.category.PomContribution;
 
 /**
  * Adds the HTTP Connector dependency
@@ -23,7 +24,7 @@ public class HttpConnectorPomContribution implements PomContribution {
   }
 
   @Override
-  public void execute(PomModel object) throws RuntimeException {
+  public void execute(PomModel object, MigrationReport report) throws RuntimeException {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-http-connector")

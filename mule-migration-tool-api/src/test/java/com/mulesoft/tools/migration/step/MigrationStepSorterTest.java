@@ -6,10 +6,20 @@
  */
 package com.mulesoft.tools.migration.step;
 
-import com.mulesoft.tools.migration.step.category.*;
-import com.mulesoft.tools.migration.task.MigrationStepSorter;
-import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
+import com.mulesoft.tools.migration.step.category.ExpressionContribution;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.category.NamespaceContribution;
+import com.mulesoft.tools.migration.step.category.PomContribution;
+import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
+import com.mulesoft.tools.migration.task.MigrationStepSorter;
+
 import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,10 +27,6 @@ import org.junit.Test;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 /**
  * @author Mulesoft Inc.
@@ -96,7 +102,7 @@ public class MigrationStepSorterTest {
     }
 
     @Override
-    public void execute(ApplicationModel object) throws RuntimeException {
+    public void execute(ApplicationModel object, MigrationReport report) throws RuntimeException {
 
     }
   }
@@ -104,7 +110,7 @@ public class MigrationStepSorterTest {
   private static final class ApplicationModelContributionStepImpl extends AbstractApplicationModelMigrationStep {
 
     @Override
-    public void execute(Element object) throws RuntimeException {
+    public void execute(Element object, MigrationReport report) throws RuntimeException {
 
     }
 
@@ -122,7 +128,7 @@ public class MigrationStepSorterTest {
     }
 
     @Override
-    public void execute(Object object) throws RuntimeException {
+    public void execute(Object object, MigrationReport report) throws RuntimeException {
 
     }
   }
@@ -135,7 +141,7 @@ public class MigrationStepSorterTest {
     }
 
     @Override
-    public void execute(Path object) throws RuntimeException {
+    public void execute(Path object, MigrationReport report) throws RuntimeException {
 
     }
   }
@@ -148,7 +154,7 @@ public class MigrationStepSorterTest {
     }
 
     @Override
-    public void execute(PomModel object) throws RuntimeException {
+    public void execute(PomModel object, MigrationReport report) throws RuntimeException {
 
     }
   }

@@ -7,12 +7,14 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 /**
  * Migrates the configuration of the TCP/UDP Transport
- * 
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -34,15 +36,12 @@ public class SocketsConfig extends AbstractApplicationModelMigrationStep {
   }
 
   @Override
-  public void execute(Element object) throws RuntimeException {
+  public void execute(Element object, MigrationReport report) throws RuntimeException {
     final Namespace socketsNamespace = Namespace.getNamespace("sockets", SOCKETS_NAMESPACE);
     object.setNamespace(socketsNamespace);
 
     if ("client-socket-properties".equals(object.getName())) {
       object.setNamespace(socketsNamespace);
-
-      //        c.getDocument().getRootElement().setAttribute("http://www.w3.org/2001/XMLSchema-instance", 
-      //                                                      "xsi:schemaLocation", SOCKETS_NAMESPACE + " http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd");
     }
   }
 

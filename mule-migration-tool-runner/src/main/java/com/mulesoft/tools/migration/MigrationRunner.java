@@ -12,12 +12,13 @@ import static java.util.Collections.singletonList;
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import com.mulesoft.tools.migration.project.ProjectType;
-import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
 import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
+import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
+import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import com.mulesoft.tools.migration.task.Version;
 import org.apache.commons.cli.CommandLine;
@@ -59,7 +60,7 @@ public class MigrationRunner {
     migrationRunner.initializeOptions(args);
 
     MigrationJob job = migrationRunner.buildMigrationJob();
-    job.execute();
+    job.execute(new DefaultMigrationReport());
   }
 
   private MigrationJob buildMigrationJob() {

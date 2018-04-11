@@ -6,13 +6,16 @@
  */
 package com.mulesoft.tools.migration.library.munit.steps;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.*;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+
+import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Element;
 
 /**
  * This steps migrates the MUnit 1.x mock
@@ -35,7 +38,7 @@ public class Mock extends AbstractApplicationModelMigrationStep {
   }
 
   @Override
-  public void execute(Element element) throws RuntimeException {
+  public void execute(Element element, MigrationReport report) throws RuntimeException {
     try {
       changeNodeName("munit-tools", "mock-when")
           .andThen(changeAttribute("messageProcessor", of("processor"), empty()))

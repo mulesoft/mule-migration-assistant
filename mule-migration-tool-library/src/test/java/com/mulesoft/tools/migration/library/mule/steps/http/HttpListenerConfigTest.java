@@ -10,9 +10,12 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -62,7 +65,7 @@ public class HttpListenerConfigTest {
   @Ignore
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    httpListenerConfig.execute(null);
+    httpListenerConfig.execute(null, mock(MigrationReport.class));
   }
 
   @Test
@@ -70,7 +73,7 @@ public class HttpListenerConfigTest {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, httpListenerConfig.getAppliedTo().getExpression())
-        .forEach(node -> httpListenerConfig.execute(node));
+        .forEach(node -> httpListenerConfig.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

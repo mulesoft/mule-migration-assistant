@@ -6,14 +6,16 @@
  */
 package com.mulesoft.tools.migration.step;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.mockito.Mockito.mock;
+
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Element;
 import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.mockito.Mockito.mock;
 
 /**
  * @author Mulesoft Inc.
@@ -49,7 +51,7 @@ public class AbstractApplicationModelMigrationStepTest {
     }
 
     @Override
-    public void execute(Element object) throws RuntimeException {
+    public void execute(Element object, MigrationReport report) throws RuntimeException {
 
     }
   }

@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration;
 
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 /**
  * An interface to handle the task execution
  *
@@ -14,5 +16,5 @@ package com.mulesoft.tools.migration;
  */
 public interface Executable {
 
-  void execute() throws Exception;
+  void execute(MigrationReport report) throws Exception;
 }

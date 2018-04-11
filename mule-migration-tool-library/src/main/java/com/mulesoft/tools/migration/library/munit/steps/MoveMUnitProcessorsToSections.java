@@ -8,6 +8,8 @@ package com.mulesoft.tools.migration.library.munit.steps;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.jdom2.Element;
 
@@ -33,7 +35,7 @@ public class MoveMUnitProcessorsToSections extends AbstractApplicationModelMigra
   }
 
   @Override
-  public void execute(Element element) throws RuntimeException {
+  public void execute(Element element, MigrationReport report) throws RuntimeException {
     try {
       List<Element> childNodes = element.getChildren();
       createBehaviorSection(childNodes, element);

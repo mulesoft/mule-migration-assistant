@@ -17,17 +17,18 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICA
 import com.mulesoft.tools.migration.Executable;
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.project.structure.ApplicationPersister;
-import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.engine.project.structure.mule.MuleProject;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourDomain;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
-import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
 import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import com.mulesoft.tools.migration.task.Version;
 import org.slf4j.Logger;
@@ -63,14 +64,14 @@ public class MigrationJob implements Executable {
   }
 
   @Override
-  public void execute() throws Exception {
+  public void execute(MigrationReport report) throws Exception {
     ApplicationModel applicationModel = generateApplicationModel(project);
     persistApplicationModel(applicationModel);
     applicationModel = generateApplicationModel(outputProject, MULE_FOUR_APPLICATION);
     for (AbstractMigrationTask task : migrationTasks) {
       task.setApplicationModel(applicationModel);
       try {
-        task.execute();
+        task.execute(report);
         persistApplicationModel(applicationModel);
         // TODO support domains migration
         applicationModel = generateApplicationModel(outputProject, MULE_FOUR_APPLICATION);

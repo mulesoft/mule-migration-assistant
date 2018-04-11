@@ -6,18 +6,20 @@
  */
 package com.mulesoft.tools.migration.library.munit.steps;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.Plugin;
 import com.mulesoft.tools.migration.project.model.pom.PluginExecution;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Adds the HTTP Connector dependency
@@ -36,7 +38,7 @@ public class MUnitPomContribution implements PomContribution {
   }
 
   @Override
-  public void execute(PomModel pomModel) throws RuntimeException {
+  public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
     pomModel.addDependency(new DependencyBuilder()
         .withGroupId("com.mulesoft.munit")
         .withArtifactId("munit-runner")

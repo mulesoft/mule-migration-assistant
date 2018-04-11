@@ -6,8 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.pom;
 
-import com.mulesoft.tools.migration.step.category.PomContribution;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.category.PomContribution;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -26,7 +28,7 @@ public class RemoveMuleAppMavenPlugin implements PomContribution {
   }
 
   @Override
-  public void execute(PomModel pomModel) throws RuntimeException {
+  public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
     pomModel.removePlugin(p -> StringUtils.equals(p.getArtifactId(), MULE_APP_MAVEN_PLUGIN_ARTIFACT_ID));
   }
 }

@@ -6,14 +6,16 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import org.jdom2.Element;
-
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+
+import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Element;
 
 /**
  * Migrate Set Property to the Set Variable
@@ -35,7 +37,7 @@ public class SetProperty extends AbstractApplicationModelMigrationStep {
   }
 
   @Override
-  public void execute(Element element) throws RuntimeException {
+  public void execute(Element element, MigrationReport report) throws RuntimeException {
     try {
       changeNodeName("", "set-variable")
           .andThen(changeAttribute("propertyName", of("variableName"), empty()))
