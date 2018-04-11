@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+  <munit:config name="munit" doc:name="MUnit configuration" />
+  <munit:test name="MockXMLPayload-WithProperties" description="MyNewDescription3">
+    <munit:set payload="#[lalala]" doc:name="Set Message" mimeType="text/xml" />
+    <mock:when messageProcessor=".*:.*" doc:name="Mock">
+      <mock:with-attributes>
+        <mock:with-attribute name="doc:name" whereValue="#['Set Payload']" />
+      </mock:with-attributes>
+      <mock:then-return payload="#['Test case XML']" mimeType="application/xml">
+        <mock:invocation-properties>
+          <mock:invocation-property key="prop1" value="#[123]" />
+        </mock:invocation-properties>
+      </mock:then-return>
+    </mock:when>
+    <flow-ref name="setXMLMimeType" doc:name="setXMLMimeType" />
+    <logger message="Content Type:  #[message.dataType.mimeType]" level="INFO" doc:name="Logger" />
+    <munit:assert-true condition="#[message.dataType.mimeType == 'application/xml']" doc:name="Assert True" />
+  </munit:test>
+</mule>

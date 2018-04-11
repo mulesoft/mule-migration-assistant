@@ -1,0 +1,327 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//db:derby-config",
+      "taskDescriptor" : "Update Database Derby Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Move 'connectionTimeout' attribute to new 'connection-properties' child node",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributeToNewChildNode",
+          "parameters" : {
+            "attribute" : "connectionTimeout",
+            "childNode" : "connection-properties"
+          }
+        },
+        {
+          "stepDescriptor" : "Create 'derby-connection' child node",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNode",
+          "parameters" : {
+            "name" : "derby-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to 'derby-connection' child node: user;password;connectionTimeout;useXaTransactions;parameterTable",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "user;password;connectionTimeout;useXaTransactions;parameterTable",
+            "childNode" : "derby-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move 'pooling-profile' node to 'derby-connection' child node",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "pooling-profile",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "derby-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move 'connection-properties' node to 'derby-connection' child node",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "connection-properties",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "derby-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move 'reconnect' node to 'derby-connection' child node",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "reconnect",
+            "sourceNodeNamespace" : "core",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/core",
+            "targetNode" : "derby-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename 'derby-config' name config to 'config'",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "derby-config",
+            "newValue" : "config"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//db:mysql-config",
+      "taskDescriptor" : "Update DB MYSQL Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Move connectionTimeout to connection-properties node",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributeToNewChildNode",
+          "parameters" : {
+            "attribute" : "connectionTimeout",
+            "childNode" : "connection-properties"
+          }
+        },
+        {
+          "stepDescriptor" : "Create child node",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNode",
+          "parameters" : {
+            "name" : "my-sql-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to child node",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "host;port;user;password;database;connectionTimeout;useXaTransactions;transactionIsolation;parameterTable;driverClassName",
+            "childNode" : "my-sql-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move pooling profile node to child node",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "pooling-profile",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "my-sql-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move connection-properties node to child node my-sql-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "connection-properties",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "my-sql-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move reconnect node to child node my-sql-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "reconnect",
+            "sourceNodeNamespace" : "core",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/core",
+            "targetNode" : "my-sql-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename db config",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "mysql-config",
+            "newValue" : "config"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//db:oracle-config",
+      "taskDescriptor" : "Update DB Oracle Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Move connectionTimeout to connection-properties node",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributeToNewChildNode",
+          "parameters" : {
+            "attribute" : "connectionTimeout",
+            "childNode" : "connection-properties"
+          }
+        },
+        {
+          "stepDescriptor" : "Create child node oracle-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNode",
+          "parameters" : {
+            "name" : "oracle-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to child node oracle-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "host;port;instance;user;password;;connectionTimeout;useXaTransactions;transactionIsolation;parameterTable;driverClassName",
+            "childNode" : "oracle-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move pooling profile node to child node oracle-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "pooling-profile",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "oracle-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move connection-properties node to child node oracle-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "connection-properties",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "oracle-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move reconnect node to child node oracle-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "reconnect",
+            "sourceNodeNamespace" : "core",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/core",
+            "targetNode" : "oracle-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename db config",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "oracle-config",
+            "newValue" : "config"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//db:generic-config",
+      "taskDescriptor" : "Update DB Generic Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Move connectionTimeout to connection-properties node",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributeToNewChildNode",
+          "parameters" : {
+            "attribute" : "connectionTimeout",
+            "childNode" : "connection-properties"
+          }
+        },
+        {
+          "stepDescriptor" : "Create child node generic-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNode",
+          "parameters" : {
+            "name" : "generic-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to child node generic-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "url;connectionTimeout;useXaTransactions;transactionIsolation;parameterTable;driverClassName",
+            "childNode" : "generic-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move pooling profile node to child node generic-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "pooling-profile",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "generic-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move connection properties node to child node generic-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "connection-properties",
+            "sourceNodeNamespace" : "db",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db",
+            "targetNode" : "generic-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Move reconnect node to child node generic-connection",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "reconnect",
+            "sourceNodeNamespace" : "core",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/core",
+            "targetNode" : "generic-connection",
+            "targetNodeNamespace" : "db",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/db"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename db config",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "generic-config",
+            "newValue" : "config"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//db:connection-properties",
+      "taskDescriptor" : "Create or update <db:property> for connectionTimeout attribute",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Move connectionTimeout to connection-properties",
+          "type": "com.mulesoft.tools.migration.library.step.MoveAttributeToNewRepeatableChildNode",
+          "parameters" : {
+            "attribute" : "connectionTimeout",
+            "childNode" : "property",
+            "newAttributeMappingName" : "key",
+            "newAttributeMappingValue" : "value"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//db:property",
+      "taskDescriptor" : "Rename connection properties items",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Rename property to connection-property",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "property",
+            "newValue" : "connection-property"
+          }
+        }
+      ]
+    }
+  ]
+}

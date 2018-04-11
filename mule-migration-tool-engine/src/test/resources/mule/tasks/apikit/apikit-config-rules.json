@@ -1,0 +1,18 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//apikit:mapping-exception-strategy",
+      "taskDescriptor" : "Update Mapping Exceptions Connector Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Delete node apikit:mapping-exception-strategy",
+          "type" : "com.mulesoft.tools.migration.library.step.DeleteNode",
+          "parameters" : {
+
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+
+  <jms:connector name="JMS" username="us" password="pass" validateConnections="true" jndiProviderUrl="prov" clientId="cl" maxRedelivery="2" numberOfConsumers="5" durable="true" persistentDelivery="true" doc:name="JMS">
+    <reconnect frequency="2001" count="3"/>
+  </jms:connector>
+
+
+  <flow name="jms-use-caseFlow">
+    <jms:inbound-endpoint queue="q1" connector-ref="JMS" doc:name="JMS">
+      <jms:transaction action="NONE"/>
+    </jms:inbound-endpoint>
+    <jms:outbound-endpoint doc:name="JMS" connector-ref="JMS" exchange-pattern="request-response" queue="q2"/>
+  </flow>
+</mule>

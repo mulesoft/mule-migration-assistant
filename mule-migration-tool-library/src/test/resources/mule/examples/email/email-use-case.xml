@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:imap="http://www.mulesoft.org/schema/mule/imap" xmlns:pop3="http://www.mulesoft.org/schema/mule/pop3" xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/imap http://www.mulesoft.org/schema/mule/imap/current/mule-imap.xsd http://www.mulesoft.org/schema/mule/pop3 http://www.mulesoft.org/schema/mule/pop3/current/mule-pop3.xsd http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd">
+  <smtp:connector name="SMTP" bccAddresses="bcc" ccAddresses="cc" contentType="application/java" fromAddress="frm" validateConnections="true" doc:name="SMTP" />
+  <imap:connector name="IMAP" backupFolder="bck" moveToFolder="mv" validateConnections="false" backupEnabled="true" deleteReadMessages="false" doc:name="IMAP" />
+  <pop3:connector name="POP3" backupFolder="bck" moveToFolder="mv" validateConnections="true" doc:name="POP3" />
+  <flow name="email-use-caseFlow">
+    <smtp:outbound-endpoint host="10.1.1.1" port="23" user="usr" password="pass" connector-ref="SMTP" to="to" from="from" subject="sub" cc="cc" bcc="bcc" replyTo="rep" responseTimeout="10000" doc:name="SMTP" />
+  </flow>
+  <flow name="email-use-caseFlow1">
+    <imap:inbound-endpoint host="localhost" port="1433" responseTimeout="10000" doc:name="IMAP" connector-ref="IMAP" password="pass" user="usr" />
+  </flow>
+  <flow name="email-use-caseFlow2">
+    <pop3:inbound-endpoint host="localhost" responseTimeout="10000" doc:name="POP3" connector-ref="POP3" password="pass" port="1105" user="usr" />
+  </flow>
+</mule>
