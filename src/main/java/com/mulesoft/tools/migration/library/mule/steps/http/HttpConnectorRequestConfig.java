@@ -6,10 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import com.mulesoft.tools.migration.engine.step.AbstractApplicationModelMigrationStep;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import com.mulesoft.tools.migration.engine.step.AbstractApplicationModelMigrationStep;
 
 /**
  * Migrates the request configuration of the HTTP Connector
@@ -76,9 +76,6 @@ public class HttpConnectorRequestConfig extends AbstractApplicationModelMigratio
         c.getParentElement().removeContent(c);
         clientSocketPropsContainer.addContent(c);
         requestConnection.addContent(clientSocketPropsContainer);
-
-        //        c.getDocument().getRootElement().setAttribute("http://www.w3.org/2001/XMLSchema-instance", 
-        //                                                      "xsi:schemaLocation", SOCKETS_NAMESPACE + " http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd");
       }
 
     });

@@ -47,6 +47,7 @@
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>1.10.19</mockito.version>
+        <xmlunit.version>2.5.1</xmlunit.version>
         <powermock.module.junit4>1.7.3</powermock.module.junit4>
 
         <maven.model.version>3.5.0</maven.model.version>
@@ -395,7 +396,7 @@
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-matchers</artifactId>
-            <version>2.5.1</version>
+            <version>${xmlunit.version}</version>
             <scope>test</scope>
         </dependency>
 

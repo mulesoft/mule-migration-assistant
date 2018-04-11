@@ -12,8 +12,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -26,7 +25,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.mulesoft.tools.migration.engine.exception.MigrationStepException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RunWith(Parameterized.class)
 public class HttpListenerConfigTest {
@@ -36,12 +36,12 @@ public class HttpListenerConfigTest {
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "http-listener-01",
-        "http-listener-02",
-        "http-listener-03",
-        "http-listener-04",
-        "http-listener-05",
-        "http-listener-06"
+        "http-listener-config-01",
+        "http-listener-config-02",
+        "http-listener-config-03",
+        "http-listener-config-04",
+        "http-listener-config-05",
+        "http-listener-config-06"
     };
   }
 
