@@ -6,7 +6,7 @@
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-  <http:request-config name="requesterConfig" basePath="test" sendBodyMode="NEVER" followRedirects="#[redirect]" enableCookies="false">
+  <http:request-config name="requesterConfig" basePath="test" sendBodyMode="NEVER" followRedirects="#[mel:redirect]" enableCookies="false">
     <http:request-connection host="localhost" port="${port}" usePersistentConnections="true" maxConnections="${maxConnections}" connectionIdleTimeout="${idleTimeout}" streamResponse="true" responseBufferSize="${bufferSize}" />
   </http:request-config>
   

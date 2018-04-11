@@ -6,12 +6,14 @@
  */
 package com.mulesoft.tools.migration.step;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
+import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
+
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Basic unit of execution
@@ -21,6 +23,10 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 
 public abstract class AbstractApplicationModelMigrationStep implements ApplicationModelContribution {
+
+  private static ExpressionMigrator EXPRESSION_MIGRATOR = expr -> {
+    return expr.replace("#[", "#[mel:");
+  };
 
   private XPathExpression appliedTo;
 
@@ -37,6 +43,10 @@ public abstract class AbstractApplicationModelMigrationStep implements Applicati
     } catch (Exception ex) {
       throw new MigrationStepException("The xpath expression must be valid.");
     }
+  }
+
+  protected final ExpressionMigrator getExpressionMigrator() {
+    return EXPRESSION_MIGRATOR;
   }
 
 }
