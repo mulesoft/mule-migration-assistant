@@ -8,6 +8,8 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 
@@ -33,7 +35,7 @@ public class ForEachScope extends AbstractApplicationModelMigrationStep {
   }
 
   @Override
-  public void execute(Element element) throws RuntimeException {
+  public void execute(Element element, MigrationReport report) throws RuntimeException {
     try {
       Element transformerToRemove = getTransformerToRemove(element);
       if (transformerToRemove != null) {

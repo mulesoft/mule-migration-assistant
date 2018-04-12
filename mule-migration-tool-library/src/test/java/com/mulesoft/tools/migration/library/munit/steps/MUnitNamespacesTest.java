@@ -6,15 +6,17 @@
  */
 package com.mulesoft.tools.migration.library.munit.steps;
 
+import static org.mockito.Mockito.mock;
+
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static org.mockito.Mockito.mock;
 
 public class MUnitNamespacesTest {
 
@@ -31,13 +33,13 @@ public class MUnitNamespacesTest {
 
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    mUnitNamespaces.execute(null);
+    mUnitNamespaces.execute(null, mock(MigrationReport.class));
   }
 
   @Test
   public void execute() throws Exception {
 
-    mUnitNamespaces.execute(mock(ApplicationModel.class));
+    mUnitNamespaces.execute(mock(ApplicationModel.class), mock(MigrationReport.class));
 
     //        assertThat("The node didn't change", node.getName(), is("assert-that"));
   }

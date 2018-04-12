@@ -7,6 +7,8 @@
 package com.mulesoft.tools.migration.job;
 
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
+import com.mulesoft.tools.migration.report.DefaultMigrationReport;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -66,7 +68,7 @@ public class MigrationJobMunitTest {
 
     Path configurationPath = Paths.get(this.getClass().getClassLoader().getResource(MUNIT_TASKS_PATH.toString()).getPath());
     // migrationJobBuilder.withMigrationTasks(new ConfigurationParser(configurationPath).parse());
-    migrationJobBuilder.build().execute();
+    migrationJobBuilder.build().execute(new DefaultMigrationReport());
   }
 
 

@@ -6,8 +6,16 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.pom;
 
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,11 +25,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Predicate;
-
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 public class RemoveMuleDependenciesTest {
 
@@ -46,7 +49,7 @@ public class RemoveMuleDependenciesTest {
     assertThat("There should be 6 mule dependencies in the pom",
                model.getDependencies().stream().filter(isMuleDependency).collect(toList()).size(), equalTo(6));
     assertThat("Number of dependencies in pom should be 10", model.getDependencies().size(), equalTo(10));
-    removeMuleDependencies.execute(model);
+    removeMuleDependencies.execute(model, mock(MigrationReport.class));
     assertThat("Number of dependencies in pom should be 4", model.getDependencies().size(), equalTo(4));
     assertThat("There should be no mule dependencies in the pom", model.getDependencies().stream().anyMatch(isMuleDependency),
                is(false));
@@ -59,7 +62,7 @@ public class RemoveMuleDependenciesTest {
     assertThat("There should be no mule dependencies in the pom", model.getDependencies().stream().anyMatch(isMuleDependency),
                is(false));
     assertThat("Number of dependencies in pom should be 4", model.getDependencies().size(), equalTo(4));
-    removeMuleDependencies.execute(model);
+    removeMuleDependencies.execute(model, mock(MigrationReport.class));
     assertThat("Number of dependencies in pom should be 4", model.getDependencies().size(), equalTo(4));
     assertThat("There should be no mule dependencies in the pom", model.getDependencies().stream().anyMatch(isMuleDependency),
                is(false));
@@ -72,7 +75,7 @@ public class RemoveMuleDependenciesTest {
     assertThat("There should be no mule dependencies in the pom", model.getDependencies().stream().anyMatch(isMuleDependency),
                is(false));
     assertThat("There should be no dependencies in the pom", model.getDependencies().isEmpty(), is(true));
-    removeMuleDependencies.execute(model);
+    removeMuleDependencies.execute(model, mock(MigrationReport.class));
     assertThat("There should be no dependencies in the pom", model.getDependencies().isEmpty(), is(true));
   }
 }

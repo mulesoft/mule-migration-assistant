@@ -6,7 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -42,7 +45,7 @@ public class HttpConnectorRequestConfig extends AbstractApplicationModelMigratio
   }
 
   @Override
-  public void execute(Element object) throws RuntimeException {
+  public void execute(Element object, MigrationReport report) throws RuntimeException {
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);
 
@@ -75,7 +78,7 @@ public class HttpConnectorRequestConfig extends AbstractApplicationModelMigratio
 
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
-        execute(c);
+        execute(c, report);
       } else if (TLS_NAMESPACE.equals(c.getNamespaceURI()) && "context".equals(c.getName())) {
         final Element requestConnection = c.getParentElement().getChild("request-connection", httpNamespace);
         c.getParentElement().removeContent(c);
@@ -118,8 +121,9 @@ public class HttpConnectorRequestConfig extends AbstractApplicationModelMigratio
     }
 
     if ("raml-api-configuration".equals(object.getName())) {
-      // TODO the raml file should be in exchange, and this requester replaced by a rest-connect connector
-      // TODO WARN
+      report.report(WARN, object, object.getParentElement(),
+                    "For consuming an API described by a RAML file, Rest-Connect is a more appropriate tool than using the HTTP Connector directly.",
+                    "https://docs.mulesoft.com/anypoint-exchange/to-deploy-using-rest-connect");
       object.getParentElement().removeContent(object);
     }
   }

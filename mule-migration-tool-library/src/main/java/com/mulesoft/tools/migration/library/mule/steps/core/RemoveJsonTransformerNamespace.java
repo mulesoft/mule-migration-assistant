@@ -6,9 +6,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.category.NamespaceContribution;
+
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
@@ -31,7 +33,7 @@ public class RemoveJsonTransformerNamespace implements NamespaceContribution {
   }
 
   @Override
-  public void execute(ApplicationModel applicationModel) throws RuntimeException {
+  public void execute(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
     try {
       XPathExpression xPathExpression = XPathFactory.instance().compile(JSON_TRANSFORMER_XPRESSION);
       if (applicationModel.getNodes(xPathExpression).isEmpty()) {

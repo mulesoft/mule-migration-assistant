@@ -10,9 +10,12 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -69,7 +72,7 @@ public class HttpRequesterConfigTest {
   @Ignore
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    httpRequesterConfig.execute(null);
+    httpRequesterConfig.execute(null, mock(MigrationReport.class));
   }
 
   @Test
@@ -77,9 +80,9 @@ public class HttpRequesterConfigTest {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, httpRequesterConfig.getAppliedTo().getExpression())
-        .forEach(node -> httpRequesterConfig.execute(node));
+        .forEach(node -> httpRequesterConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, socketsConfig.getAppliedTo().getExpression())
-        .forEach(node -> socketsConfig.execute(node));
+        .forEach(node -> socketsConfig.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

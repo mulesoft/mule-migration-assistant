@@ -6,7 +6,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -33,7 +37,7 @@ public class HttpConnectorListenerConfig extends AbstractApplicationModelMigrati
   }
 
   @Override
-  public void execute(Element object) throws RuntimeException {
+  public void execute(Element object, MigrationReport report) throws RuntimeException {
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);
 
@@ -47,7 +51,10 @@ public class HttpConnectorListenerConfig extends AbstractApplicationModelMigrati
       copyAttributeIfPresent(object, listenerConnection, "tlsContext-ref", "tlsContext");
 
       if (object.getAttribute("parseRequest") != null && !"false".equals(object.getAttributeValue("parseRequest"))) {
-        // TODO WARN
+        report.report(WARN, object, object,
+                      "'parseRequest' is not needed in Mule 4, since the InputStream of the multipart payload is provided at it is read.",
+                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-mime-types",
+                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/dataweave-formats#format_form_data");
       }
       object.addContent(listenerConnection);
     }
@@ -55,7 +62,7 @@ public class HttpConnectorListenerConfig extends AbstractApplicationModelMigrati
 
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
-        execute(c);
+        execute(c, report);
       } else if (TLS_NAMESPACE.equals(c.getNamespaceURI()) && "context".equals(c.getName())) {
         final Element listenerConnection = c.getParentElement().getChild("listener-connection", httpNamespace);
         c.getParentElement().removeContent(c);
@@ -64,8 +71,9 @@ public class HttpConnectorListenerConfig extends AbstractApplicationModelMigrati
     });
 
     if ("worker-threading-profile".equals(object.getName())) {
-      // TODO Change into maxConcurrency/backpressure config?
-      // TODO WARN
+      report.report(WARN, object, object.getParentElement(),
+                    "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.",
+                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
       object.getParentElement().removeContent(object);
     }
   }

@@ -6,8 +6,27 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.pom;
 
+import static com.google.common.collect.Sets.newHashSet;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_ARTIFACT_ID;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_VERSION;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.mulesoft.tools.migration.project.model.pom.Plugin;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -19,18 +38,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
-import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_ARTIFACT_ID;
-import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_VERSION;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
 
 public class UpdateMuleMavenPluginTest {
 
@@ -61,7 +68,7 @@ public class UpdateMuleMavenPluginTest {
   public void execute() throws IOException, XmlPullParserException, URISyntaxException {
     Path pomPath = Paths.get(getClass().getResource(POM_WITH_MULE_MAVEN_PLUGIN).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
-    updateMuleMavenPlugin.execute(model);
+    updateMuleMavenPlugin.execute(model, mock(MigrationReport.class));
 
     Plugin muleMavenPlugin =
         model.getPlugins().stream().filter(p -> p.getArtifactId().equals(MULE_MAVEN_PLUGIN_ARTIFACT_ID)).findFirst().get();

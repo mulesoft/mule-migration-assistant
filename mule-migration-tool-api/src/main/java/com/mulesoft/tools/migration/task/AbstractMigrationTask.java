@@ -6,12 +6,13 @@
  */
 package com.mulesoft.tools.migration.task;
 
-import com.mulesoft.tools.migration.exception.MigrationTaskException;
-import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+
+import com.mulesoft.tools.migration.exception.MigrationTaskException;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * A task is composed by one or more steps
@@ -35,7 +36,7 @@ public abstract class AbstractMigrationTask implements MigrationTask {
   }
 
   @Override
-  public void execute() throws Exception {
+  public void execute(MigrationReport report) throws Exception {
     // TODO depending on the project type this may not be true
     checkState(applicationModel != null, "An application model must be provided.");
 
@@ -43,17 +44,18 @@ public abstract class AbstractMigrationTask implements MigrationTask {
       if (getSteps() != null) {
         MigrationStepSorter stepSorter = new MigrationStepSorter(getSteps());
 
-        stepSorter.getNameSpaceContributionSteps().forEach(s -> s.execute(applicationModel));
+        stepSorter.getNameSpaceContributionSteps().forEach(s -> s.execute(applicationModel, report));
 
         stepSorter.getApplicationModelContributionSteps()
-            .forEach(s -> applicationModel.getNodes(s.getAppliedTo()).forEach(s::execute));
+            .forEach(s -> applicationModel.getNodes(s.getAppliedTo()).forEach(n -> s.execute(n, report)));
 
 
-        stepSorter.getExpressionContributionSteps().forEach(s -> s.execute(new Object()));
+        stepSorter.getExpressionContributionSteps().forEach(s -> s.execute(new Object(), report));
 
-        stepSorter.getProjectStructureContributionSteps().forEach(s -> s.execute(applicationModel.getProjectBasePath()));
+        stepSorter.getProjectStructureContributionSteps().forEach(s -> s.execute(applicationModel.getProjectBasePath(), report));
 
-        stepSorter.getPomContributionSteps().forEach(s -> s.execute(applicationModel.getPomModel().orElse(new PomModel())));
+        stepSorter.getPomContributionSteps()
+            .forEach(s -> s.execute(applicationModel.getPomModel().orElse(new PomModel()), report));
       }
 
     } catch (Exception e) {

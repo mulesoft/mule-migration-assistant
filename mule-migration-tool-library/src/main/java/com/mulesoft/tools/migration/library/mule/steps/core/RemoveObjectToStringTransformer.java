@@ -8,6 +8,8 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Element;
 
 /**
@@ -30,7 +32,7 @@ public class RemoveObjectToStringTransformer extends AbstractApplicationModelMig
   }
 
   @Override
-  public void execute(Element element) throws RuntimeException {
+  public void execute(Element element, MigrationReport report) throws RuntimeException {
     try {
       element.detach();
     } catch (Exception ex) {

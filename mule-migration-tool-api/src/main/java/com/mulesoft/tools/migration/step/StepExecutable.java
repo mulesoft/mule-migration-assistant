@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.step;
 
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 /**
  * An interface to handle the step execution
  * @param <T>
@@ -14,6 +16,6 @@ package com.mulesoft.tools.migration.step;
  */
 public interface StepExecutable<T> {
 
-  void execute(T object) throws RuntimeException;
+  void execute(T object, MigrationReport report) throws RuntimeException;
 
 }

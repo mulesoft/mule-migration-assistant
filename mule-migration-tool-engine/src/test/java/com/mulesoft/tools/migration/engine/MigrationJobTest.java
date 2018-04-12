@@ -6,22 +6,30 @@
  */
 package com.mulesoft.tools.migration.engine;
 
-import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
-import com.mulesoft.tools.migration.step.MigrationStep;
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
-import com.mulesoft.tools.migration.project.ProjectType;
-import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.MigrationTask;
-import com.mulesoft.tools.migration.task.Version;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
+import com.mulesoft.tools.migration.report.DefaultMigrationReport;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import com.mulesoft.tools.migration.task.Version;
+
 import org.apache.commons.io.FileUtils;
-import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import java.io.File;
@@ -31,16 +39,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Mulesoft Inc.
@@ -128,11 +126,11 @@ public class MigrationJobTest {
     AbstractMigrationTask migrationTask = mock(AbstractMigrationTask.class);
     doThrow(MigrationTaskException.class)
         .when(migrationTask)
-        .execute();
+        .execute(any(MigrationReport.class));
     migrationTasks.add(migrationTask);
     Whitebox.setInternalState(migrationJob, "migrationTasks", migrationTasks);
-    migrationJob.execute();
-    verify(migrationTask, times(1)).execute();
+    migrationJob.execute(new DefaultMigrationReport());
+    verify(migrationTask, times(1)).execute(any(MigrationReport.class));
   }
 
   @Test
@@ -144,7 +142,7 @@ public class MigrationJobTest {
         .withOuputVersion(new Version.VersionBuilder().withMajor("5").build())
         .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
-    migrationJob.execute();
+    migrationJob.execute(new DefaultMigrationReport());
   }
 
   @Test
@@ -157,7 +155,7 @@ public class MigrationJobTest {
         .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
 
-    migrationJob.execute();
+    migrationJob.execute(new DefaultMigrationReport());
   }
 
   @Test
@@ -173,7 +171,7 @@ public class MigrationJobTest {
     MunitMigrationTask migrationTask = new MunitMigrationTask();
     migrationTasks.add(migrationTask);
     Whitebox.setInternalState(migrationJob, "migrationTasks", migrationTasks);
-    migrationJob.execute();
+    migrationJob.execute(new DefaultMigrationReport());
 
     assertThat("The application model generated is wrong.", migrationTask.getApplicationModel().getApplicationDocuments().size(),
                is(2));

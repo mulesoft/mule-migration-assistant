@@ -6,12 +6,14 @@
  */
 package com.mulesoft.tools.migration.library.munit.steps;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import org.jdom2.Element;
-
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+
+import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Element;
 
 /**
  * This steps migrates the MUnit 1.x assert-not-null-payload
@@ -31,7 +33,7 @@ public class AssertNotNullPayload extends AbstractApplicationModelMigrationStep 
   }
 
   @Override
-  public void execute(Element element) throws RuntimeException {
+  public void execute(Element element, MigrationReport report) throws RuntimeException {
     try {
       changeNodeName("munit-tools", "assert-that")
           .andThen(addAttribute("expression", "#[payload]"))
