@@ -1,0 +1,99 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//http:listener-config",
+      "taskDescriptor" : "Update HTTP Listener Configuration",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create child node 'listener-connection'",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNode",
+          "parameters" : {
+            "name" : "listener-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename 'tlsContext-ref' attribute to 'tlsContext'",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateAttributeName",
+          "parameters" : {
+            "attributeName" : "tlsContext-ref",
+            "newName" : "tlsContext"
+          }
+        },
+        {
+          "stepDescriptor" : "Move attributes to child node 'listener-connection',  host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;tlsContext",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveAttributesToChildNode",
+          "parameters" : {
+            "attributes" : "host;protocol;port;basePath;usePersistentConnections;connectionIdleTimeout;tlsContext",
+            "childNode" : "listener-connection"
+          }
+        },
+        {
+          "stepDescriptor" : "Move 'tls' node to child node 'listener-connection'",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "context",
+            "sourceNodeNamespace" : "tls",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/tls",
+            "targetNode" : "listener-connection",
+            "targetNodeNamespace" : "http",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//http:response-builder",
+      "taskDescriptor" : "Update HTTP Listener Response Builder ",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create 'headers' node with MEL content from 'header' nodes",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateMELNodeFromAttributes",
+          "parameters" : {
+            "originalNode" : "header",
+            "newNodeName" : "headers",
+            "newNodeNamespace" : "http",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
+            "attributeKeyName" : "headerName",
+            "attributeValueName" : "value"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename 'response-builder' to 'response'",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "response-builder",
+            "newValue" : "response"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//http:error-response-builder",
+      "taskDescriptor" : "Update HTTP Listener Error Response Builder ",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create 'headers' node with MEL content from 'header' nodes",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateMELNodeFromAttributes",
+          "parameters" : {
+            "originalNode" : "header",
+            "newNodeName" : "headers",
+            "newNodeNamespace" : "http",
+            "newNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/http",
+            "attributeKeyName" : "headerName",
+            "attributeValueName" : "value"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename 'error-response-builder' to 'error-response'",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "error-response-builder",
+            "newValue" : "error-response"
+          }
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tcp="http://www.mulesoft.org/schema/mule/tcp"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/tcp http://www.mulesoft.org/schema/mule/tcp/current/mule-tcp.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"  protocol="HTTPS" usePersistentConnections="false"  >
+        <tls:context>
+            <tls:trust-store path="a" password="123a" type="jks" algorithm="12"/>
+        </tls:context>
+        <http:worker-threading-profile maxThreadsActive="1" maxThreadsIdle="1" threadTTL="1" poolExhaustedAction="WAIT" threadWaitTimeout="12" maxBufferSize="12"/>
+    </http:listener-config>
+
+    <http:request-config name="HTTP_Request_Configuration" host="localhost" port="8081" doc:name="HTTP Request Configuration"   responseTimeout="1233" protocol="HTTPS" usePersistentConnections="false" >
+        <tcp:client-socket-properties connectionTimeout="30000" keepAlive="true" receiveBufferSize="12" sendBufferSize="12"/>
+        <tls:context>
+            <tls:trust-store path="das" password="das" type="jks" algorithm="asd" insecure="true"/>
+            <tls:key-store type="jks" path="asd" alias="asd" keyPassword="asd" password="asd" algorithm="asd"/>
+        </tls:context>
+        <http:proxy host="asdsa" port="12" username="dsa" password="asd"/>
+        <http:ntlm-proxy host="localhost" port="9091" username="david" password="12345"/>
+        <http:basic-authentication username="12" password="12"/>
+        <http:ntlm-authentication />
+        <http:digest-authentication />
+    </http:request-config>
+
+    <tls:context name="TLS_Context" doc:name="TLS Context">
+        <tls:trust-store path="asd" password="asd" type="jks" algorithm="das"/>
+        <tls:key-store type="jks" path="dsa" alias="asd" keyPassword="das" password="asd" algorithm="asd"/>
+    </tls:context>
+
+    <http:listener-config name="HTTP_Listener_Configuration1" host="0.0.0.0" port="8081" tlsContext-ref="TLS_Context" doc:name="HTTP Listener Configuration" protocol="HTTPS"/>
+
+    <flow name="use-case-1Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/" doc:name="HTTP" allowedMethods="GET" responseStreamingMode="ALWAYS" >
+            <http:response-builder statusCode="222" reasonPhrase="sddas">
+                <http:header headerName="a" value="1"/>
+                <http:header headerName="b" value="2"/>
+            </http:response-builder>
+            <http:error-response-builder statusCode="401" reasonPhrase="dsfsdsa">
+                <http:header headerName="sdsad" value="12"/>
+                <http:header headerName="dasdsas" value="144"/>
+            </http:error-response-builder>
+        </http:listener>
+        <http:static-resource-handler resourceBase="/sq" defaultFile="1" doc:name="HTTP Static Resource Handler"/>
+        <http:request config-ref="HTTP_Request_Configuration" path="/test" method="GET" doc:name="HTTP" source="#[mySource]" target="#[myTarget]">
+            <http:request-builder>
+                <http:query-param paramName="dasd" value="12"/>
+                <http:query-param paramName="dasd99" value="12"/>
+                <http:query-params expression="#[exp]"/>
+                <http:uri-param paramName="da" value="12"/>
+                <http:uri-params expression="#[exp]"/>
+                <http:header headerName="1dsad" value="12"/>
+                <http:header headerName="dasd4" value="dd"/>
+                <http:headers expression="#[exp]"/>
+            </http:request-builder>
+            <http:success-status-code-validator values="123"/>
+        </http:request>
+    </flow>
+
+</mule>

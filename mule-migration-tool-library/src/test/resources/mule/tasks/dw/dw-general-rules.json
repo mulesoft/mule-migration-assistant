@@ -1,0 +1,94 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//dw:set-payload",
+      "taskDescriptor" : "Migrate Dataweave script",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Migrate dataweave script",
+          "type" : "com.mulesoft.tools.migration.library.step.MigrateDataweaveScript",
+          "parameters" : {
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//dw:*",
+      "taskDescriptor" : "Update Dataweave Namespace",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Delete Dataweave namespace 'dw'",
+          "type" : "com.mulesoft.tools.migration.library.step.DeleteNamespace",
+          "parameters" : {
+            "namespace" : "dw",
+            "namespaceUri" : "http://www.mulesoft.org/schema/mule/ee/dw",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd"
+          }
+        },
+        {
+          "stepDescriptor" : "Update Dataweave namespace to 'ee'",
+          "type" : "com.mulesoft.tools.migration.library.step.SetNodeNamespace",
+          "parameters" : {
+            "newNamespace" : "ee",
+            "newNamespaceUri" : "http://www.mulesoft.org/schema/mule/ee/core",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+          }
+        }
+
+      ]
+    },
+    {
+      "xpathSelector" : "//ee:*",
+      "taskDescriptor" : "Update Dataweave Components",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Rename dataweave 'transform-message' node",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "transform-message",
+            "newValue" : "transform"
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector" : "//ee:set-payload",
+      "taskDescriptor" : "Update Mule Message",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Update mule message structure",
+          "type" : "com.mulesoft.tools.migration.library.step.UpdateMuleMessageContent",
+          "parameters" : {
+          }
+        }
+      ]
+    },
+    {
+      "xpathSelector": "//ee:transform",
+      "taskDescriptor" : "Update transform children",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Create child node 'message'",
+          "type" : "com.mulesoft.tools.migration.library.step.CreateChildNode",
+          "parameters" : {
+            "name" : "message"
+          }
+        },
+        {
+          "stepDescriptor" : "Move dataweave 'set-payload' node to 'message' child node",
+          "type" : "com.mulesoft.tools.migration.library.step.MoveNodeToChildNode",
+          "parameters" : {
+            "sourceNode" : "set-payload",
+            "sourceNodeNamespace" : "ee",
+            "sourceNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/ee/core",
+            "targetNode" : "message",
+            "targetNodeNamespace" : "ee",
+            "targetNodeNamespaceUri" : "http://www.mulesoft.org/schema/mule/ee/core"
+          }
+        }
+      ]
+    }
+  ]
+}
+

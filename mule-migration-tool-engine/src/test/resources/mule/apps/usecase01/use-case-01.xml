@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd   http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd   http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd  http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd ">
+  <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener Configuration">
+    <http:listener-connection host="0.0.0.0" port="8083" />
+  </http:listener-config>
+  <wsc:config name="Web_Service_Consumer" doc:name="Web Service Consumer">
+    <wsc:connection service="CurrencyConvertor" port="CurrencyConvertorSoap" wsdlLocation="http://www.webservicex.net/CurrencyConvertor.asmx?WSDL" address="http://www.webservicex.net/CurrencyConvertor.asmx" />
+  </wsc:config>
+  <http:request-config name="HTTP_Request_Configuration" doc:name="HTTP Request Configuration">
+    <http:request-connection host="api.cheapweather.com" protocol="HTTPS" port="443">
+      <tls:context>
+        <tls:trust-store path="weather.jks" password="weather" type="jks" />
+      </tls:context>
+    </http:request-connection>
+  </http:request-config>
+  <flow name="wsc-use-caseFlow">
+    <http:listener config-ref="HTTP_Listener_Configuration" path="/currency-conversion-rate" doc:name="HTTP" />
+    <ee:transform doc:name="Build Request Message">
+      <ee:message>
+        <ee:set-payload>%dw 2.0
+output application/xml  
+ns ns0 http://www.webserviceX.NET/
+---
+{
+  ns0#ConversionRate: {
+    ns0#FromCurrency: attributes."queryParams".from,
+    ns0#ToCurrency: attributes."queryParams".to
+  }
+}</ee:set-payload>
+      </ee:message>
+    </ee:transform>
+    <wsc:consume config-ref="Web_Service_Consumer" operation="ConversionRate" doc:name="Call Currency Conversion Rate WS" />
+  </flow>
+  <flow name="wsc-use-caseFlow1">
+    <http:listener config-ref="HTTP_Listener_Configuration" path="/weather" doc:name="HTTP" />
+    <http:request config-ref="HTTP_Request_Configuration" path="/v1/zip/{zipCode}" method="GET" doc:name="Call HTTP Weather API">
+      <http:headers>#[mel:['token':'23f5ec34-f412-4bb5-8b9b-731b8aa4b97c']]</http:headers>
+      <http:uri-params>#[mel:['zipCode':attributes.'queryParams'.zipCode]]</http:uri-params>
+    </http:request>
+    <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+    <ee:transform doc:name="Build Response Message">
+      <ee:message>
+        <ee:set-payload>%dw 2.0
+output application/json  
+---
+{
+  forecast: payload.forecast map {
+    time: $.time,
+    genTime: $."gen-time",
+    relativeHumidity: {
+      unit: $."relative-humidity".unit,
+      value: $."relative-humidity".value
+    },
+    apparentTemp: {
+      unit: $."apparent-temp".unit,
+      value: $."apparent-temp".value
+    },
+    skyCover: {
+      unit: $."sky-cover".unit,
+      value: $."sky-cover".value
+    },
+    temperature: {
+      unit: $.temperature.unit,
+      value: $.temperature.value
+    },
+    dewpoint: {
+      unit: $.dewpoint.unit,
+      value: $.dewpoint.value
+    },
+    windDir: {
+      unit: $."wind-dir".unit,
+      value: $."wind-dir".value
+    },
+    windGust: {
+      unit: $."wind-gust".unit,
+      value: $."wind-gust".value
+    },
+    windSpeed: {
+      unit: $."wind-speed".unit,
+      value: $."wind-speed".value
+    },
+    weather: {
+      unit: $.weather.unit,
+      value: $.weather.value
+    }
+  }
+}</ee:set-payload>
+      </ee:message>
+    </ee:transform>
+  </flow>
+</mule>

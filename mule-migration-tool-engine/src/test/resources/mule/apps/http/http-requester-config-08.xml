@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:sockets="http://www.mulesoft.org/schema/mule/sockets"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd">
+
+  <sockets:client-socket-properties name="requesterSocketProperties" sendBufferSize="${sendBufferSize}" />
+
+  <http:request-config name="requesterConfig">
+    <http:request-connection host="localhost" port="${port}" clientSocketProperties="requesterSocketProperties" />
+  </http:request-config>
+  
+</mule>

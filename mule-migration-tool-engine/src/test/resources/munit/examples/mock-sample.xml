@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:mock="http://www.mulesoft.org/schema/mule/mock" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xs ">
+  <munit:test name="annotatedComponent-Test-Flow" description="Test">
+    <mock:when messageProcessor=".*:.*">
+      <mock:with-attributes>
+        <mock:with-attribute name="doc:name" whereValue="#['Set Payload']" />
+      </mock:with-attributes>
+      <mock:then-return payload="#['test']" encoding="UTF-8" mimeType="application/json">
+        <mock:invocation-properties>
+          <mock:invocation-property key="test" value="value1" encoding="ISO-8859-7" />
+        </mock:invocation-properties>
+        <mock:inbound-properties>
+          <mock:inbound-property key="test2" value="value2" mimeType="text/plain" />
+        </mock:inbound-properties>
+        <mock:outbound-properties>
+          <mock:outbound-property key="test3" value="value3" encoding="BIG5" mimeType="text/json" />
+        </mock:outbound-properties>
+      </mock:then-return>
+    </mock:when>
+  </munit:test>
+</mule>

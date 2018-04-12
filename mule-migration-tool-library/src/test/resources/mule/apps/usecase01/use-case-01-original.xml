@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:ws="http://www.mulesoft.org/schema/mule/ws" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8083" doc:name="HTTP Listener Configuration"/>
+
+    <ws:consumer-config name="Web_Service_Consumer" service="CurrencyConvertor" port="CurrencyConvertorSoap" serviceAddress="http://www.webservicex.net/CurrencyConvertor.asmx" wsdlLocation="http://www.webservicex.net/CurrencyConvertor.asmx?WSDL" doc:name="Web Service Consumer"/>
+
+    <http:request-config name="HTTP_Request_Configuration" protocol="HTTPS" host="api.cheapweather.com" port="443" doc:name="HTTP Request Configuration">
+        <tls:context>
+            <tls:trust-store path="weather.jks" password="weather" type="jks"/>
+        </tls:context>
+    </http:request-config>
+
+    <flow name="wsc-use-caseFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/currency-conversion-rate" doc:name="HTTP"/>
+        <dw:transform-message doc:name="Build Request Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/xml
+%namespacePrefix ns0 http://www.webserviceX.NET/
+---
+{
+	ns0#ConversionRate: {
+		ns0#FromCurrency: inboundProperties."http.query.params".'from',
+		ns0#ToCurrency: inboundProperties."http.query.params".'to'
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <ws:consumer config-ref="Web_Service_Consumer" operation="ConversionRate" doc:name="Call Currency Conversion Rate WS"/>
+    </flow>
+
+    <flow name="wsc-use-caseFlow1">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/weather" doc:name="HTTP"/>
+
+        <http:request config-ref="HTTP_Request_Configuration" path="/v1/zip/{zipCode}" method="GET" doc:name="Call HTTP Weather API">
+            <http:request-builder>
+                <http:uri-param paramName="zipCode" value="#[message.inboundProperties.'http.query.params'.zipCode]"/>
+                <http:header headerName="token" value="23f5ec34-f412-4bb5-8b9b-731b8aa4b97c"/>
+
+            </http:request-builder>
+        </http:request>
+
+        <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+
+        <dw:transform-message doc:name="Build Response Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+  "forecast": payload.forecast map  {
+	  "time": $.time,
+	  "genTime": $.'gen-time',
+	  "relativeHumidity": {
+	    "unit": $.'relative-humidity'.unit,
+	    "value": $.'relative-humidity'.value
+	  },
+	  "apparentTemp": {
+	    "unit": $.'apparent-temp'.unit,
+	    "value": $.'apparent-temp'.value
+	  },
+	  "skyCover": {
+	    "unit": $.'sky-cover'.unit,
+	    "value": $.'sky-cover'.value
+	  },
+	  "temperature": {
+	    "unit": $.temperature.unit,
+	    "value": $.temperature.value
+	  },
+	  "dewpoint": {
+	    "unit": $.dewpoint.unit,
+	    "value": $.dewpoint.value
+	  },
+	  "windDir": {
+	    "unit": $.'wind-dir'.unit,
+	    "value": $.'wind-dir'.value
+	  },
+	  "windGust": {
+	    "unit": $.'wind-gust'.unit,
+	    "value": $.'wind-gust'.value
+	  },
+	  "windSpeed": {
+	    "unit": $.'wind-speed'.unit,
+	    "value": $.'wind-speed'.value
+	  },
+	  "weather": {
+	    "unit": $.weather.unit,
+	    "value": $.weather.value
+	  }
+  }
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+</mule>

@@ -1,0 +1,29 @@
+{
+  "tasks":
+  [
+    {
+      "xpathSelector" : "//tcp:client-socket-properties",
+      "taskDescriptor" : "Update Client Socket Namespace",
+      "stepsDefinition" : [
+        {
+          "stepDescriptor" : "Update client socket namespace",
+          "type" : "com.mulesoft.tools.migration.library.step.SetNodeNamespace",
+          "parameters" : {
+            "newNamespace" : "sockets",
+            "newNamespaceUri" : "http://www.mulesoft.org/schema/mule/sockets",
+            "schemaLocationUrl":"http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd"
+          }
+        },
+        {
+          "stepDescriptor" : "Rename client socket properties",
+          "type" : "com.mulesoft.tools.migration.library.step.ReplaceStringOnNodeName",
+          "parameters" : {
+            "stringToReplace" : "client-socket-properties",
+            "newValue" : "tcp-client-socket-properties"
+          }
+        }
+      ]
+    }
+  ]
+}
+
