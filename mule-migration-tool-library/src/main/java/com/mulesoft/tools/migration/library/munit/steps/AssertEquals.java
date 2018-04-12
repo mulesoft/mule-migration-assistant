@@ -15,19 +15,19 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 /**
- * This steps migrates the MUnit 1.x assert-true
+ * This steps migrates the MUnit 1.x assert-payload-equals
  * @author Mulesoft Inc.
  */
-public class AssertTrueMigrationStep extends AbstractApplicationModelMigrationStep {
+public class AssertEquals extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='assert-true']";
+  public static final String XPATH_SELECTOR = "//*[local-name()='assert-on-equals']";
 
   @Override
   public String getDescription() {
-    return null;
+    return "Update Assert Equals to new MUnit Assertion component";
   }
 
-  public AssertTrueMigrationStep() {
+  public AssertEquals() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
@@ -35,12 +35,16 @@ public class AssertTrueMigrationStep extends AbstractApplicationModelMigrationSt
   public void execute(Element element) throws RuntimeException {
     try {
       changeNodeName("munit-tools", "assert-that")
-          .andThen(changeAttribute("condition", of("expression"), empty()))
-          .andThen(addAttribute("is", "#[MunitTools::equalTo(true)]"))
+          .andThen(changeAttribute("expectedValue", of("expression"), empty()))
+          .andThen(changeAttribute("actualValue", of("is"), empty()))
+          .apply(element);
+
+      updateMUnitAssertionEqualsExpression("actualValue")
           .apply(element);
 
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());
     }
   }
+
 }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:mock="http://www.mulesoft.org/schema/mule/mock"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
+    <munit:config name="munit" doc:name="MUnit configuration"/>
+    <munit:test name="testMock" description="MUnit Test">
+        <mock:when doc:name="Mock" messageProcessor=".*:.*">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['test']"/>
+            </mock:with-attributes>
+            <mock:then-return payload="#[payload]"/>
+        </mock:when>
+    </munit:test>
+    <munit:test name="testAssertEquals" description="MUnit Test">
+        <munit:assert-on-equals expectedValue="#[payload]" actualValue="#[3]" doc:name="Assert Equals"/>
+    </munit:test>
+    <munit:test name="testAssertFalse" description="MUnit Test">
+        <munit:assert-false condition="#[payload == 2]" doc:name="Assert False"/>
+    </munit:test>
+    <munit:test name="testAssertNotEquals" description="MUnit Test">
+        <munit:assert-not-same expectedValue="#[payload]" actualValue="#[2]" doc:name="Assert Not Equals"/>
+    </munit:test>
+    <munit:test name="testAssertNotNull" description="MUnit Test">
+        <munit:assert-not-null doc:name="Assert Not Null Payload"/>
+    </munit:test>
+    <munit:test name="testAssertNull" description="MUnit Test">
+        <munit:assert-null doc:name="Assert Null Payload"/>
+    </munit:test>
+    <munit:test name="testAssertTrue" description="MUnit Test">
+        <munit:assert-true condition="#[payload == 2]" doc:name="Assert True"/>
+    </munit:test>
+    <munit:test name="testAssertPayload" description="MUnit Test">
+        <munit:assert-payload-equals expectedValue="#[2]" doc:name="Assert Payload"/>
+    </munit:test>
+</mule>

@@ -135,6 +135,42 @@ public class ApplicationModelUtils {
 
   }
 
+  public static Function<Element, Element> updateMUnitAssertionEqualsExpression(String attributeName) {
+    Function<Element, Element> f = e -> {
+      Attribute attribute = e.getAttribute(attributeName);
+      if (attribute != null) {
+        String attributeValue = attribute.getValue();
+        if (attributeValue.contains("#[")) {
+          attributeValue.replace("#[", "#[MUnitTools::equalTo(");
+          attributeValue.replace("[", ")]");
+        } else {
+          attributeValue = "#[MUnitTools::equalTo(" + attributeValue + ")]";
+        }
+        attribute.setValue(attributeValue);
+      }
+      return e;
+    };
+    return f;
+  }
+
+  public static Function<Element, Element> updateMUnitAssertionNotEqualsExpression(String attributeName) {
+    Function<Element, Element> f = e -> {
+      Attribute attribute = e.getAttribute(attributeName);
+      if (attribute != null) {
+        String attributeValue = attribute.getValue();
+        if (attributeValue.contains("#[")) {
+          attributeValue.replace("#[", "#[MunitTools::not(MUnitTools::equalTo(");
+          attributeValue.replace("[", ")]");
+        } else {
+          attributeValue = "#[MunitTools::not(MUnitTools::equalTo(" + attributeValue + ")]";
+        }
+        attribute.setValue(attributeValue);
+      }
+      return e;
+    };
+    return f;
+  }
+
   // ******************************************************************************************************************
 
 

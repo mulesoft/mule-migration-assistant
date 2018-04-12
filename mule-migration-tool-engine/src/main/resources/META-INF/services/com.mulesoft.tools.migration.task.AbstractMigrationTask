@@ -2,5 +2,4 @@
 com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask
 com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask
 com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication
-com.mulesoft.tools.migration.library.step.other.AnotherMigrationTask
 
