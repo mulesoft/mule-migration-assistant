@@ -1,5 +1,7 @@
 #TODO fix this
-com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask
-com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask
 com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication
+com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask
+com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask
+com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask
+com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask
 

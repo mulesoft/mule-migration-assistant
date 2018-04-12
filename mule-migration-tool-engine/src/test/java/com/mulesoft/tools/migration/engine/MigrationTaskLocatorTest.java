@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.engine;
 
+import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationTask;
@@ -54,8 +55,8 @@ public class MigrationTaskLocatorTest {
     MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(ANY_VERSION, ANY_VERSION, projectType);
     List<AbstractMigrationTask> migrationTaskList = migrationTaskLocator.locate();
 
-    assertThat("The number of migration task is wrong", migrationTaskList.size(), is(3));
-    MigrationTask migrationTask = migrationTaskList.get(0);
+    assertThat("The number of migration task is wrong", migrationTaskList.size(), is(5));
+    MigrationTask migrationTask = migrationTaskList.get(4);
     assertThat("The migration task type is wrong", migrationTask, instanceOf(MunitMigrationTask.class));
     assertThat("The migration task from is wrong", migrationTask.getFrom(), is(from));
     assertThat("The migration task to is wrong", migrationTask.getTo(), is(to));
