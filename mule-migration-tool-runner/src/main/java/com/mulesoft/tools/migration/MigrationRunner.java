@@ -6,10 +6,12 @@
  */
 package com.mulesoft.tools.migration;
 
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static java.util.Collections.singletonList;
 
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
+import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
 import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
@@ -17,6 +19,7 @@ import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 
+import com.mulesoft.tools.migration.task.Version;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -41,6 +44,9 @@ public class MigrationRunner {
   private final static String PROJECT_BASE_PATH = "projectBasePath";
   private final static String DESTINATION_PROJECT_BASE_PATH = "destinationProjectBasePath";
   private final static String MIGRATION_CONFIGURATION_PATH = "migrationConfigurationPath";
+  public static final Version MULE_3_VERSION = new Version.VersionBuilder().withMajor("3").build();
+  public static final Version MULE_4_VERSION = new Version.VersionBuilder().withMajor("4").build();
+  public static final ProjectType OUTPUT_PROJECT_TYPE = MULE_FOUR_APPLICATION;
 
   private String projectBasePath;
   private String destinationProjectBasePath;
@@ -60,10 +66,10 @@ public class MigrationRunner {
     MigrationJobBuilder builder = new MigrationJobBuilder()
         .withProject(Paths.get(projectBasePath))
         .withOutputProject(Paths.get(destinationProjectBasePath))
-        // .withMigrationTasks(new ConfigurationParser(Paths.get(migrationConfigurationPath)).parse())
-        .withMigrationTasks(singletonList(new PreprocessMuleApplication()))
-        .withReportingStrategy(reportingStrategy);
-
+        .withReportingStrategy(reportingStrategy)
+        .withInputVersion(MULE_3_VERSION)
+        .withOuputVersion(MULE_4_VERSION)
+        .withOutputProjectType(OUTPUT_PROJECT_TYPE);
     return builder.build();
   }
 
