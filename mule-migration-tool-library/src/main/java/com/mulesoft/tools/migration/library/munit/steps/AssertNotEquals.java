@@ -39,7 +39,7 @@ public class AssertNotEquals extends AbstractApplicationModelMigrationStep {
           .andThen(changeAttribute("actualValue", of("is"), empty()))
           .apply(element);
 
-      updateMUnitAssertionNotEqualsExpression("actualValue")
+      updateMUnitAssertionNotEqualsExpression("is")
           .apply(element);
 
     } catch (Exception e) {

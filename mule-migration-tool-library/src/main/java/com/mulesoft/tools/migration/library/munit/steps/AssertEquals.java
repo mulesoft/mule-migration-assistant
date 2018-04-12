@@ -39,7 +39,7 @@ public class AssertEquals extends AbstractApplicationModelMigrationStep {
           .andThen(changeAttribute("actualValue", of("is"), empty()))
           .apply(element);
 
-      updateMUnitAssertionEqualsExpression("actualValue")
+      updateMUnitAssertionEqualsExpression("is")
           .apply(element);
 
     } catch (Exception e) {

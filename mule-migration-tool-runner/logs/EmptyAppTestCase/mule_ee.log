@@ -10,7 +10,7 @@ Valid license key --> Evaluation = true, Expiration Date = Sat May 12 00:00:00 A
 
 Starting the Mule Container...
 WrapperManager: Initializing...
-INFO  2018-04-12 10:40:13,668 [WrapperListener_start_runner] org.mule.runtime.module.launcher.MuleContainer: 
+INFO  2018-04-12 12:01:34,371 [WrapperListener_start_runner] org.mule.runtime.module.launcher.MuleContainer: 
 **********************************************************************
 * Mule Runtime and Integration Platform                              *
 * Version: 4.1.2-SNAPSHOT Build: 9388b0de                            *
@@ -18,7 +18,7 @@ INFO  2018-04-12 10:40:13,668 [WrapperListener_start_runner] org.mule.runtime.mo
 * For more information go to                                         *
 * https://www.mulesoft.com/platform/soa/mule-esb-enterprise          *
 *                                                                    *
-* Server started: 4/12/18 10:40 AM                                   *
+* Server started: 4/12/18 12:01 PM                                   *
 * JDK: 1.8.0_151 (mixed mode)                                        *
 * JDK properties:                                                    *
 *  - java.vendor = Oracle Corporation                                *
@@ -48,8 +48,8 @@ INFO  2018-04-12 10:40:13,668 [WrapperListener_start_runner] org.mule.runtime.mo
 * ool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1 *
 * .2-SNAPSHOT                                                        *
 **********************************************************************
-INFO  2018-04-12 10:40:17,201 [WrapperListener_start_runner] org.mule.service.scheduler.internal.config.ContainerThreadPoolsConfig: Loading thread pools configuration from /Users/julianpascual/mulesoft/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/conf/scheduler-pools.conf
-INFO  2018-04-12 10:40:17,613 [WrapperListener_start_runner] org.mule.runtime.module.service.internal.manager.MuleServiceManager: 
+INFO  2018-04-12 12:01:37,935 [WrapperListener_start_runner] org.mule.service.scheduler.internal.config.ContainerThreadPoolsConfig: Loading thread pools configuration from /Users/julianpascual/mulesoft/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/conf/scheduler-pools.conf
+INFO  2018-04-12 12:01:38,343 [WrapperListener_start_runner] org.mule.runtime.module.service.internal.manager.MuleServiceManager: 
 **********************************************************************
 * Started DefaultSchedulerService                                    *
 *                                                                    *
@@ -65,59 +65,59 @@ INFO  2018-04-12 10:40:17,613 [WrapperListener_start_runner] org.mule.runtime.mo
 *                                                                    *
 * These can be modified by editing 'conf/scheduler-pools.conf'       *
 **********************************************************************
-INFO  2018-04-12 10:40:17,915 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Initializing core extensions
-INFO  2018-04-12 10:40:17,964 [WrapperListener_start_runner] com.mulesoft.mule.runtime.module.cluster.internal.config.ClusterTicketFileLoader: /Users/julianpascual/mulesoft/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/.mule/mule-cluster.properties (No such file or directory)
-WARN  2018-04-12 10:40:17,964 [WrapperListener_start_runner] com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension: No cluster ID was specified -- High Availability will be disabled:
-INFO  2018-04-12 10:40:17,966 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@58644b4b' initialized
-INFO  2018-04-12 10:40:17,980 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@628d8d8e' initialized
-INFO  2018-04-12 10:40:18,000 [WrapperListener_start_runner] com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension: Starting API policies Extension in STANDALONE mode
-INFO  2018-04-12 10:40:18,108 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@3f77780c' initialized
-INFO  2018-04-12 10:40:18,123 [WrapperListener_start_runner] com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension: Starting Analytics Collector Extension
-INFO  2018-04-12 10:40:18,697 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@79dfd722' initialized
-INFO  2018-04-12 10:40:18,697 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Starting core extensions
-INFO  2018-04-12 10:40:18,697 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@58644b4b' started
-INFO  2018-04-12 10:40:18,697 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@628d8d8e' started
-INFO  2018-04-12 10:40:18,715 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@3f77780c' started
-INFO  2018-04-12 10:40:18,715 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@79dfd722' started
-INFO  2018-04-12 10:40:18,795 [WrapperListener_start_runner] org.mule.runtime.module.deployment.internal.DefaultArchiveDeployer: ================== New Exploded Artifact: default
-INFO  2018-04-12 10:40:20,942 [WrapperListener_start_runner] org.mule.runtime.module.deployment.impl.internal.domain.DefaultMuleDomain: 
+INFO  2018-04-12 12:01:38,603 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Initializing core extensions
+INFO  2018-04-12 12:01:38,641 [WrapperListener_start_runner] com.mulesoft.mule.runtime.module.cluster.internal.config.ClusterTicketFileLoader: /Users/julianpascual/mulesoft/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/.mule/mule-cluster.properties (No such file or directory)
+WARN  2018-04-12 12:01:38,642 [WrapperListener_start_runner] com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension: No cluster ID was specified -- High Availability will be disabled:
+INFO  2018-04-12 12:01:38,643 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@45c1cdd3' initialized
+INFO  2018-04-12 12:01:38,658 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@59b6a2c9' initialized
+INFO  2018-04-12 12:01:38,679 [WrapperListener_start_runner] com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension: Starting API policies Extension in STANDALONE mode
+INFO  2018-04-12 12:01:38,766 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@746d3e53' initialized
+INFO  2018-04-12 12:01:38,783 [WrapperListener_start_runner] com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension: Starting Analytics Collector Extension
+INFO  2018-04-12 12:01:39,383 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@548a1ae6' initialized
+INFO  2018-04-12 12:01:39,383 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Starting core extensions
+INFO  2018-04-12 12:01:39,383 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@45c1cdd3' started
+INFO  2018-04-12 12:01:39,384 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@59b6a2c9' started
+INFO  2018-04-12 12:01:39,384 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@746d3e53' started
+INFO  2018-04-12 12:01:39,384 [WrapperListener_start_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@548a1ae6' started
+INFO  2018-04-12 12:01:39,457 [WrapperListener_start_runner] org.mule.runtime.module.deployment.internal.DefaultArchiveDeployer: ================== New Exploded Artifact: default
+INFO  2018-04-12 12:01:41,634 [WrapperListener_start_runner] org.mule.runtime.module.deployment.impl.internal.domain.DefaultMuleDomain: 
 **********************************************************************
 * Started domain 'default'                                           *
 **********************************************************************
-INFO  2018-04-12 10:40:20,944 [WrapperListener_start_runner] org.mule.runtime.module.deployment.internal.DeploymentDirectoryWatcher: 
+INFO  2018-04-12 12:01:41,638 [WrapperListener_start_runner] org.mule.runtime.module.deployment.internal.DeploymentDirectoryWatcher: 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 + Mule is up and kicking (every 5000ms)                    +
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-INFO  2018-04-12 10:40:20,946 [WrapperListener_start_runner] org.mule.runtime.module.deployment.internal.StartupSummaryDeploymentListener: 
+INFO  2018-04-12 12:01:41,639 [WrapperListener_start_runner] org.mule.runtime.module.deployment.internal.StartupSummaryDeploymentListener: 
 **********************************************************************
 *              - - + DOMAIN + - -               * - - + STATUS + - - *
 **********************************************************************
 * default                                       * DEPLOYED           *
 **********************************************************************
 
-INFO  2018-04-12 10:40:25,952 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.deployment.internal.ArtifactArchiveInstaller: Exploding a Mule artifact archive: /Users/julianpascual/mulesoft/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/apps/migrated-project-1.0.0-mule-application.jar
-INFO  2018-04-12 10:40:26,416 [Mule.app.deployer.monitor.1.thread.1] com.mulesoft.mule.runtime.gw.policies.lifecyle.GateKeeper: GateKeeper started in FLEXIBLE mode
-WARN  2018-04-12 10:40:26,417 [Mule.app.deployer.monitor.1.thread.1] com.mulesoft.mule.runtime.gw.client.provider.ApiPlatformClientProvider: Client ID or Client Secret were not provided. API Platform client is DISABLED.
-INFO  2018-04-12 10:40:26,432 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+INFO  2018-04-12 12:01:46,641 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.deployment.internal.ArtifactArchiveInstaller: Exploding a Mule artifact archive: /Users/julianpascual/mulesoft/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/apps/migrated-project-1.0.0-mule-application.jar
+INFO  2018-04-12 12:01:47,088 [Mule.app.deployer.monitor.1.thread.1] com.mulesoft.mule.runtime.gw.policies.lifecyle.GateKeeper: GateKeeper started in FLEXIBLE mode
+WARN  2018-04-12 12:01:47,088 [Mule.app.deployer.monitor.1.thread.1] com.mulesoft.mule.runtime.gw.client.provider.ApiPlatformClientProvider: Client ID or Client Secret were not provided. API Platform client is DISABLED.
+INFO  2018-04-12 12:01:47,107 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
 **********************************************************************
 * Started app 'migrated-project-1.0.0-mule-application'              *
 **********************************************************************
 TERM trapped.  Shutting down.
-INFO  2018-04-12 10:40:26,794 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.MuleContainer: Mule container shutting down due to normal shutdown request
-INFO  2018-04-12 10:40:26,976 [WrapperListener_stop_runner] org.mule.runtime.module.deployment.impl.internal.domain.DefaultMuleDomain: 
+INFO  2018-04-12 12:01:47,367 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.MuleContainer: Mule container shutting down due to normal shutdown request
+INFO  2018-04-12 12:01:47,508 [WrapperListener_stop_runner] org.mule.runtime.module.deployment.impl.internal.domain.DefaultMuleDomain: 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 + Disposing domain 'default'                               +
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-INFO  2018-04-12 10:40:26,987 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Stopping core extensions
-INFO  2018-04-12 10:40:26,987 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@79dfd722' stopped
-INFO  2018-04-12 10:40:26,994 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@3f77780c' stopped
-INFO  2018-04-12 10:40:26,994 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@628d8d8e' stopped
-INFO  2018-04-12 10:40:26,994 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@58644b4b' stopped
-INFO  2018-04-12 10:40:26,994 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Disposing core extensions
-INFO  2018-04-12 10:40:27,072 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@79dfd722' disposed
-INFO  2018-04-12 10:40:27,072 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@3f77780c' disposed
-INFO  2018-04-12 10:40:27,072 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@58644b4b' disposed
-INFO  2018-04-12 10:40:27,072 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@628d8d8e' disposed
-INFO  2018-04-12 10:40:27,144 [WrapperListener_stop_runner] org.mule.service.scheduler.internal.DefaultSchedulerService: Stopping DefaultSchedulerService...
-INFO  2018-04-12 10:40:27,663 [WrapperListener_stop_runner] org.mule.service.scheduler.internal.DefaultSchedulerService: Stopped org.mule.service.scheduler.internal.DefaultSchedulerService$2@d46bb28
+INFO  2018-04-12 12:01:47,521 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Stopping core extensions
+INFO  2018-04-12 12:01:47,521 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@548a1ae6' stopped
+INFO  2018-04-12 12:01:47,540 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@746d3e53' stopped
+INFO  2018-04-12 12:01:47,540 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@59b6a2c9' stopped
+INFO  2018-04-12 12:01:47,540 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@45c1cdd3' stopped
+INFO  2018-04-12 12:01:47,540 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Disposing core extensions
+INFO  2018-04-12 12:01:47,617 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@548a1ae6' disposed
+INFO  2018-04-12 12:01:47,617 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@746d3e53' disposed
+INFO  2018-04-12 12:01:47,617 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@45c1cdd3' disposed
+INFO  2018-04-12 12:01:47,617 [WrapperListener_stop_runner] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@59b6a2c9' disposed
+INFO  2018-04-12 12:01:47,696 [WrapperListener_stop_runner] org.mule.service.scheduler.internal.DefaultSchedulerService: Stopping DefaultSchedulerService...
+INFO  2018-04-12 12:01:47,884 [WrapperListener_stop_runner] org.mule.service.scheduler.internal.DefaultSchedulerService: Stopped org.mule.service.scheduler.internal.DefaultSchedulerService$2@1fcdb46b
 <-- Wrapper Stopped

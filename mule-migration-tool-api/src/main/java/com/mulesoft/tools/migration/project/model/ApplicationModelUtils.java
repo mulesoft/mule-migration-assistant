@@ -139,10 +139,12 @@ public class ApplicationModelUtils {
     Function<Element, Element> f = e -> {
       Attribute attribute = e.getAttribute(attributeName);
       if (attribute != null) {
-        String attributeValue = attribute.getValue();
-        if (attributeValue.contains("#[")) {
-          attributeValue.replace("#[", "#[MUnitTools::equalTo(");
-          attributeValue.replace("[", ")]");
+        String attributeValue = attribute.getValue().trim();
+        if (attributeValue.startsWith("#[")) {
+          StringBuffer sb = new StringBuffer(attributeValue);
+          sb.replace(0, sb.indexOf("[") + 1, "#[MUnitTools::equalTo(");
+          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, ")]");
+          attributeValue = sb.toString();
         } else {
           attributeValue = "#[MUnitTools::equalTo(" + attributeValue + ")]";
         }
@@ -157,12 +159,14 @@ public class ApplicationModelUtils {
     Function<Element, Element> f = e -> {
       Attribute attribute = e.getAttribute(attributeName);
       if (attribute != null) {
-        String attributeValue = attribute.getValue();
-        if (attributeValue.contains("#[")) {
-          attributeValue.replace("#[", "#[MunitTools::not(MUnitTools::equalTo(");
-          attributeValue.replace("[", ")]");
+        String attributeValue = attribute.getValue().trim();
+        if (attributeValue.startsWith("#[")) {
+          StringBuffer sb = new StringBuffer(attributeValue);
+          sb.replace(0, sb.indexOf("[") + 1, "#[MunitTools::not(MUnitTools::equalTo(");
+          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, "))]");
+          attributeValue = sb.toString();
         } else {
-          attributeValue = "#[MunitTools::not(MUnitTools::equalTo(" + attributeValue + ")]";
+          attributeValue = "#[MunitTools::not(MUnitTools::equalTo(" + attributeValue + "))]";
         }
         attribute.setValue(attributeValue);
       }
@@ -172,7 +176,6 @@ public class ApplicationModelUtils {
   }
 
   // ******************************************************************************************************************
-
 
 
   @Deprecated

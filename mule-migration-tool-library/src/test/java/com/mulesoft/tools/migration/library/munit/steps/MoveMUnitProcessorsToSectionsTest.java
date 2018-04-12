@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.is;
 
 public class MoveMUnitProcessorsToSectionsTest {
 
-  private static final String MUNIT_SAMPLE_XML = "munit-processors.xml";
+  private static final String MUNIT_SAMPLE_XML = "munit-move-processors.xml";
   private static final Path MUNIT_EXAMPLES_PATH = Paths.get("munit/examples");
   private static final Path MUNIT_SAMPLE_PATH = MUNIT_EXAMPLES_PATH.resolve(MUNIT_SAMPLE_XML);
 
@@ -45,6 +45,9 @@ public class MoveMUnitProcessorsToSectionsTest {
     node = getElementsFromDocument(doc, moveMUnitProcessorsToSections.getAppliedTo().getExpression()).get(0);
     moveMUnitProcessorsToSections.execute(node);
 
+    assertThat("The munit test not contains sections.", node.getChildren().size(), is(3));
     assertThat("The munit test not contains sections.", node.getChildren().get(0).getName(), is("behavior"));
+    assertThat("The munit test not contains sections.", node.getChildren().get(1).getName(), is("execution"));
+    assertThat("The munit test not contains sections.", node.getChildren().get(2).getName(), is("validation"));
   }
 }

@@ -36,15 +36,15 @@ public class MoveMUnitProcessorsToSections extends AbstractApplicationModelMigra
   public void execute(Element element) throws RuntimeException {
     try {
       List<Element> childNodes = element.getChildren();
-      CreateBehaviorSection(childNodes, element);
-      CreateExecutionSection(childNodes, element);
-      CreateValidationSection(childNodes, element);
+      createBehaviorSection(childNodes, element);
+      createExecutionSection(childNodes, element);
+      createValidationSection(childNodes, element);
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());
     }
   }
 
-  public void CreateBehaviorSection(List<Element> nodes, Element parent) {
+  public void createBehaviorSection(List<Element> nodes, Element parent) {
     int pos = 0;
     List<Element> behaviorNodes = new ArrayList<>();
     while (nodes.size() > pos &&
@@ -54,10 +54,10 @@ public class MoveMUnitProcessorsToSections extends AbstractApplicationModelMigra
       behaviorNodes.add(nodes.get(pos));
       pos++;
     }
-    CreateChildWithElements("behavior", behaviorNodes, parent);
+    createChildWithElements("behavior", behaviorNodes, parent);
   }
 
-  public void CreateExecutionSection(List<Element> nodes, Element parent) {
+  public void createExecutionSection(List<Element> nodes, Element parent) {
     int pos = 0;
     List<Element> behaviorNodes = new ArrayList<>();
     while (nodes.size() > pos &&
@@ -66,10 +66,10 @@ public class MoveMUnitProcessorsToSections extends AbstractApplicationModelMigra
       behaviorNodes.add(nodes.get(pos));
       pos++;
     }
-    CreateChildWithElements("execution", behaviorNodes, parent);
+    createChildWithElements("execution", behaviorNodes, parent);
   }
 
-  public void CreateValidationSection(List<Element> nodes, Element parent) {
+  public void createValidationSection(List<Element> nodes, Element parent) {
     int pos = 0;
     List<Element> behaviorNodes = new ArrayList<>();
     while (nodes.size() > pos &&
@@ -77,10 +77,10 @@ public class MoveMUnitProcessorsToSections extends AbstractApplicationModelMigra
       behaviorNodes.add(nodes.get(pos));
       pos++;
     }
-    CreateChildWithElements("validation", behaviorNodes, parent);
+    createChildWithElements("validation", behaviorNodes, parent);
   }
 
-  private void CreateChildWithElements(String childName, List<Element> elements, Element parent) {
+  private void createChildWithElements(String childName, List<Element> elements, Element parent) {
     if (elements.size() > 0) {
       elements.forEach(parent::removeContent);
       Element section = new Element(childName);
