@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.engine;
+package com.mulesoft.tools.migration.step;
 
 /**
  * An interface to handle the step execution

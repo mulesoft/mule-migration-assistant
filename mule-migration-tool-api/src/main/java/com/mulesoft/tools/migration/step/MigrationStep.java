@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.step;
 
-import com.mulesoft.tools.migration.engine.StepExecutable;
-
 /**
  * Building block of the execution engine
  * @param <T>

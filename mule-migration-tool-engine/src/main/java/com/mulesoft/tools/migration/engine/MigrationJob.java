@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.get
 import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
+import com.mulesoft.tools.migration.Executable;
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.project.structure.ApplicationPersister;
 import com.mulesoft.tools.migration.project.ProjectType;
@@ -38,7 +39,7 @@ import java.util.List;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MigrationJob implements com.mulesoft.tools.migration.engine.Executable {
+public class MigrationJob implements Executable {
 
   private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
