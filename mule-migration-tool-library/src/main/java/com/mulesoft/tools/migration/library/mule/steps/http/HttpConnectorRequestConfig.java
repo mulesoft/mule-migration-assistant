@@ -7,12 +7,14 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 /**
  * Migrates the request configuration of the HTTP Connector
- * 
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -47,18 +49,28 @@ public class HttpConnectorRequestConfig extends AbstractApplicationModelMigratio
     if ("request-config".equals(object.getName())) {
       final Element requestConnection = new Element("request-connection", httpNamespace);
       copyAttributeIfPresent(object, requestConnection, "protocol");
-      copyAttributeIfPresent(object, requestConnection, "host");
-      copyAttributeIfPresent(object, requestConnection, "port");
+      copyAttributeIfPresent(object, requestConnection, "host", "host", true);
+      copyAttributeIfPresent(object, requestConnection, "port", "port", true);
       copyAttributeIfPresent(object, requestConnection, "usePersistentConnections");
       copyAttributeIfPresent(object, requestConnection, "maxConnections");
       copyAttributeIfPresent(object, requestConnection, "connectionIdleTimeout");
       copyAttributeIfPresent(object, requestConnection, "streamResponse");
       copyAttributeIfPresent(object, requestConnection, "responseBufferSize");
-      copyAttributeIfPresent(object, requestConnection, "tlsContext-ref", "tlsContext");
-      copyAttributeIfPresent(object, requestConnection, "clientSocketProperties-ref", "clientSocketProperties");
-      copyAttributeIfPresent(object, requestConnection, "proxy-ref", "proxyConfig");
+      copyAttributeIfPresent(object, requestConnection, "tlsContext-ref", "tlsContext", false);
+      copyAttributeIfPresent(object, requestConnection, "clientSocketProperties-ref", "clientSocketProperties", false);
+      copyAttributeIfPresent(object, requestConnection, "proxy-ref", "proxyConfig", false);
 
       object.addContent(requestConnection);
+
+      for (Attribute attribute : object.getAttributes()) {
+        if ("basePath".equals(attribute.getName())
+            || "followRedirects".equals(attribute.getName())
+            || "sendBodyMode".equals(attribute.getName())
+            || "requestStreamingMode".equals(attribute.getName())
+            || "responseTimeout".equals(attribute.getName())) {
+          attribute.setValue(getExpressionMigrator().migrateExpression(attribute.getValue()));
+        }
+      }
     }
 
     object.getChildren().forEach(c -> {
@@ -88,9 +100,14 @@ public class HttpConnectorRequestConfig extends AbstractApplicationModelMigratio
       object.getParentElement().removeContent(object);
       authentication.addContent(object);
       requestConnection.addContent(authentication);
+
+      for (Attribute attribute : object.getAttributes()) {
+        attribute.setValue(getExpressionMigrator().migrateExpression(attribute.getValue()));
+      }
     }
 
-    if (("proxy".equals(object.getName()) || "ntlm-proxy".equals(object.getName()))
+    if (("proxy".equals(object.getName())
+        || "ntlm-proxy".equals(object.getName()))
         && "request-config".equals(object.getParentElement().getName())) {
       final Element proxyConfig = new Element("proxy-config", httpNamespace);
       final Element requestConnection = object.getParentElement().getChild("request-connection", httpNamespace);
@@ -108,13 +125,15 @@ public class HttpConnectorRequestConfig extends AbstractApplicationModelMigratio
   }
 
   protected void copyAttributeIfPresent(final Element source, final Element target, final String attributeName) {
-    copyAttributeIfPresent(source, target, attributeName, attributeName);
+    copyAttributeIfPresent(source, target, attributeName, attributeName, false);
   }
 
   protected void copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
-                                        final String targetAttributeName) {
+                                        final String targetAttributeName, boolean expression) {
     if (source.getAttribute(sourceAttributeName) != null) {
-      target.setAttribute(targetAttributeName, source.getAttributeValue(sourceAttributeName));
+      target.setAttribute(targetAttributeName,
+                          expression ? getExpressionMigrator().migrateExpression(source.getAttributeValue(sourceAttributeName))
+                              : source.getAttributeValue(sourceAttributeName));
       source.removeAttribute(sourceAttributeName);
     }
   }
