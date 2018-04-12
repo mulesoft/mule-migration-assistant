@@ -15,6 +15,9 @@ import org.junit.rules.TemporaryFolder;
 import java.nio.file.Path;
 import java.util.List;
 
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -26,7 +29,6 @@ public class MigrationJobBuilderTest {
   private static final String MIGRATED_PROJECT_NAME = "migrated-project";
 
   private MigrationJob migrationJob;
-  private List<AbstractMigrationTask> tasks;
   private Path originalProjectPath;
   private Path migratedProjectPath;
 
@@ -35,7 +37,6 @@ public class MigrationJobBuilderTest {
 
   @Before
   public void setUp() throws Exception {
-    tasks = mock(List.class);
     originalProjectPath = temporaryFolder.newFolder(ORIGINAL_PROJECT_NAME).toPath();
     migratedProjectPath = temporaryFolder.newFolder(MIGRATED_PROJECT_NAME).toPath();
   }
@@ -53,17 +54,31 @@ public class MigrationJobBuilderTest {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void setMigrationTasksNull() {
+  public void setOutputProjectTypeNull() {
     migrationJob = new MigrationJob.MigrationJobBuilder()
-        .withMigrationTasks(null).build();
+        .withOutputProjectType(null).build();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void setOutputVersionNull() {
+    migrationJob = new MigrationJob.MigrationJobBuilder()
+        .withOuputVersion(null).build();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void setInputVersionNull() {
+    migrationJob = new MigrationJob.MigrationJobBuilder()
+        .withInputVersion(null).build();
   }
 
   @Test
   public void buildMigrationJob() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
-        .withMigrationTasks(tasks)
         .withProject(originalProjectPath)
         .withOutputProject(migratedProjectPath)
+        .withInputVersion(MULE_3_VERSION)
+        .withOuputVersion(MULE_4_VERSION)
+        .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
   }
 }

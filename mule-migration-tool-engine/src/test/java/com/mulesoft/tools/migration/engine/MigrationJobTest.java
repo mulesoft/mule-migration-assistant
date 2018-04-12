@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.engine;
 
+import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.project.ProjectType;
@@ -14,10 +15,14 @@ import com.mulesoft.tools.migration.task.MigrationTask;
 import com.mulesoft.tools.migration.task.Version;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import org.apache.commons.io.FileUtils;
+import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +37,9 @@ import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSI
 import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
 /**
@@ -48,9 +56,8 @@ public class MigrationJobTest {
   private static final Path MULE_EXAMPLES_PATH = Paths.get("mule/examples/core");
   private static final Path MULE_SAMPLE_PATH = MULE_EXAMPLES_PATH.resolve(MULE_SAMPLE_XML);
 
+  private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
   private MigrationJob migrationJob;
-  private MigrationTask migrationTask;
-  private List<AbstractMigrationTask> tasks;
   private Path originalProjectPath;
   private Path migratedProjectPath;
 
@@ -59,10 +66,6 @@ public class MigrationJobTest {
 
   @Before
   public void setUp() throws Exception {
-    migrationTask = new MigrationJobTest.MigrationTaskImpl();
-    tasks = new ArrayList<>();
-    tasks.add((AbstractMigrationTask) migrationTask);
-
     buildOriginalProject();
     migratedProjectPath = temporaryFolder.newFolder(MIGRATED_PROJECT_NAME).toPath();
   }
@@ -113,93 +116,67 @@ public class MigrationJobTest {
   }
 
   @Test
-  public void executeWithNullSteps() throws Exception {
+  public void executeWithTaskThatFailsNotStopExecution() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
-        .withMigrationTasks(tasks)
         .withProject(originalProjectPath)
         .withOutputProject(migratedProjectPath)
+        .withInputVersion(MULE_3_VERSION)
+        .withOuputVersion(MULE_4_VERSION)
+        .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
 
+    AbstractMigrationTask migrationTask = mock(AbstractMigrationTask.class);
+    doThrow(MigrationTaskException.class)
+        .when(migrationTask)
+        .execute();
+    migrationTasks.add(migrationTask);
+    Whitebox.setInternalState(migrationJob, "migrationTasks", migrationTasks);
+    migrationJob.execute();
+    verify(migrationTask, times(1)).execute();
+  }
+
+  @Test
+  public void executeWithEmptyTaskList() throws Exception {
+    migrationJob = new MigrationJob.MigrationJobBuilder()
+        .withProject(originalProjectPath)
+        .withOutputProject(migratedProjectPath)
+        .withInputVersion(new Version.VersionBuilder().withMajor("1").build())
+        .withOuputVersion(new Version.VersionBuilder().withMajor("5").build())
+        .withOutputProjectType(MULE_FOUR_APPLICATION)
+        .build();
     migrationJob.execute();
   }
 
   @Test
   public void execute() throws Exception {
-    tasks = new ArrayList<>();
-    migrationTask = new MunitMigrationTask();
-    tasks.add((AbstractMigrationTask) migrationTask);
-
     migrationJob = new MigrationJob.MigrationJobBuilder()
-        .withMigrationTasks(tasks)
         .withProject(originalProjectPath)
         .withOutputProject(migratedProjectPath)
+        .withInputVersion(MULE_3_VERSION)
+        .withOuputVersion(MULE_4_VERSION)
+        .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
 
     migrationJob.execute();
   }
 
   @Test
-  public void executeWithTaskLocator() throws Exception {
-    MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(MULE_3_VERSION, MULE_4_VERSION, MULE_FOUR_APPLICATION);
-    tasks = migrationTaskLocator.locate();
-
+  public void executeCheckApplicationModel() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
-        .withMigrationTasks(tasks)
         .withProject(originalProjectPath)
         .withOutputProject(migratedProjectPath)
+        .withInputVersion(MULE_3_VERSION)
+        .withOuputVersion(MULE_4_VERSION)
+        .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
 
+    MunitMigrationTask migrationTask = new MunitMigrationTask();
+    migrationTasks.add(migrationTask);
+    Whitebox.setInternalState(migrationJob, "migrationTasks", migrationTasks);
     migrationJob.execute();
-  }
 
-  @Test
-  public void executeWithTaskThatFailsNotStopExecution() throws Exception {
-    migrationTask = mock(AbstractMigrationTask.class);
-    doThrow(MigrationTaskException.class)
-        .when(migrationTask)
-        .execute();
+    assertThat("The application model generated is wrong.", migrationTask.getApplicationModel().getApplicationDocuments().size(),
+               is(2));
 
-    tasks.add((AbstractMigrationTask) migrationTask);
-    migrationJob = new MigrationJob.MigrationJobBuilder()
-        .withMigrationTasks(tasks)
-        .withProject(originalProjectPath)
-        .withOutputProject(migratedProjectPath)
-        .build();
-    migrationJob.execute();
-    verify(migrationTask, times(1)).execute();
-  }
-
-  private static final class MigrationTaskImpl extends AbstractMigrationTask {
-
-    private Set<MigrationStep> migrationSteps;
-
-    @Override
-    public String getDescription() {
-      return null;
-    }
-
-    @Override
-    public Set<MigrationStep> getSteps() {
-      return this.migrationSteps;
-    }
-
-    public void setMigrationSteps(Set<MigrationStep> migrationSteps) {
-      this.migrationSteps = migrationSteps;
-    }
-
-    @Override
-    public Version getTo() {
-      return null;
-    }
-
-    @Override
-    public Version getFrom() {
-      return null;
-    }
-
-    @Override
-    public ProjectType getProjectType() {
-      return null;
-    }
   }
 }

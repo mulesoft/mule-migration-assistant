@@ -10,6 +10,8 @@ package com.mulesoft.tools.migration.engine;
 import static com.google.common.base.Preconditions.checkState;
 import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
 import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
 import com.mulesoft.tools.migration.Executable;
@@ -27,10 +29,12 @@ import com.mulesoft.tools.migration.report.ReportingStrategy;
 import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 
+import com.mulesoft.tools.migration.task.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -91,7 +95,7 @@ public class MigrationJob implements Executable {
         .withPom(muleProject.pom())
         .withProjectBasePath(muleProject.getBaseFolder());
     if (muleProject.srcTestConfiguration().toFile().exists()) {
-      builder.withConfigurationFiles(getFiles(muleProject.srcTestConfiguration()));
+      builder.withTestConfigurationFiles(getFiles(muleProject.srcTestConfiguration()));
     }
     return builder.build();
   }
@@ -132,7 +136,10 @@ public class MigrationJob implements Executable {
 
     private Path project;
     private Path outputProject;
-    private List<AbstractMigrationTask> migrationTasks;
+    private ProjectType outputProjectType;
+    private Version inputVersion;
+    private Version outputVersion;
+    private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
 
     private ReportingStrategy reportingStrategy = new ConsoleReportStrategy();
 
@@ -146,20 +153,35 @@ public class MigrationJob implements Executable {
       return this;
     }
 
-    public MigrationJobBuilder withMigrationTasks(List<AbstractMigrationTask> migrationTasks) {
-      this.migrationTasks = migrationTasks;
+    public MigrationJobBuilder withReportingStrategy(ReportingStrategy reportingStrategy) {
+      this.reportingStrategy = reportingStrategy;
       return this;
     }
 
-    public MigrationJobBuilder withReportingStrategy(ReportingStrategy reportingStrategy) {
-      this.reportingStrategy = reportingStrategy;
+    public MigrationJobBuilder withOutputProjectType(ProjectType projectType) {
+      this.outputProjectType = projectType;
+      return this;
+    }
+
+    public MigrationJobBuilder withInputVersion(Version inputVersion) {
+      this.inputVersion = inputVersion;
+      return this;
+    }
+
+    public MigrationJobBuilder withOuputVersion(Version outputVersion) {
+      this.outputVersion = outputVersion;
       return this;
     }
 
     public MigrationJob build() {
       checkState(project != null, "The project must not be null");
       checkState(outputProject != null, "The output project must not be null");
-      checkState(migrationTasks != null, "The migration tasks must not be null");
+      checkState(outputProjectType != null, "The output project type must not be null");
+      checkState(inputVersion != null, "The input version must not be null");
+      checkState(outputVersion != null, "The output version must not be null");
+
+      MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion, outputProjectType);
+      migrationTasks = migrationTaskLocator.locate();
 
       return new MigrationJob(project, outputProject, migrationTasks, reportingStrategy);
     }
