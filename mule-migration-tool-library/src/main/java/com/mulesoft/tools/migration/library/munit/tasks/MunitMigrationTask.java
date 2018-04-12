@@ -11,16 +11,15 @@ import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.Version;
 import com.mulesoft.tools.migration.task.Version.VersionBuilder;
-import com.mulesoft.tools.migration.library.munit.steps.AssertTrueMigrationStep;
-import com.mulesoft.tools.migration.library.munit.steps.MockNSMigrationStep;
+import com.mulesoft.tools.migration.library.munit.steps.*;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
- * JUST A CONCEPT todo delete
+ * Migration Task for MUnit components
  * 
  * @author Mulesoft Inc.
  */
@@ -44,10 +43,9 @@ public class MunitMigrationTask extends AbstractMigrationTask {
 
   @Override
   public Set<MigrationStep> getSteps() {
-    Set<MigrationStep> steps = new HashSet<>();
-    steps.add(new AssertTrueMigrationStep());
-    steps.add(new MockNSMigrationStep());
-    return steps;
+    return newHashSet(new AssertEquals(), new AssertNotEquals(), new AssertNotNullPayload(), new AssertNullPayload(),
+                      new AssertPayload(), new AssertTrue(), new AssertFalse(), new Mock(), new MUnitNamespaces(),
+                      new MoveMUnitProcessorsToSections(), new MUnitPomContribution());
   }
 
   @Override

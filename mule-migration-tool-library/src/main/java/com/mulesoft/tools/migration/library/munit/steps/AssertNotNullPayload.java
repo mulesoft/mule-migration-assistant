@@ -10,24 +10,23 @@ import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import org.jdom2.Element;
 
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.*;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addAttribute;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 
 /**
- * This steps migrates the MUnit 1.x assert-true
+ * This steps migrates the MUnit 1.x assert-not-null-payload
  * @author Mulesoft Inc.
  */
-public class AssertTrueMigrationStep extends AbstractApplicationModelMigrationStep {
+public class AssertNotNullPayload extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='assert-true']";
+  public static final String XPATH_SELECTOR = "//*[local-name()='assert-not-null']";
 
   @Override
   public String getDescription() {
-    return null;
+    return "Update Assert Not Null Payload to new MUnit Assertion component";
   }
 
-  public AssertTrueMigrationStep() {
+  public AssertNotNullPayload() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
@@ -35,12 +34,13 @@ public class AssertTrueMigrationStep extends AbstractApplicationModelMigrationSt
   public void execute(Element element) throws RuntimeException {
     try {
       changeNodeName("munit-tools", "assert-that")
-          .andThen(changeAttribute("condition", of("expression"), empty()))
-          .andThen(addAttribute("is", "#[MunitTools::equalTo(true)]"))
+          .andThen(addAttribute("expression", "#[payload]"))
+          .andThen(addAttribute("is", "#[MunitTools::notNullValue()]"))
           .apply(element);
 
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());
     }
   }
+
 }

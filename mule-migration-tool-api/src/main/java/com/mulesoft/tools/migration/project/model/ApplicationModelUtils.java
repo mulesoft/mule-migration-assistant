@@ -135,8 +135,47 @@ public class ApplicationModelUtils {
 
   }
 
-  // ******************************************************************************************************************
+  public static Function<Element, Element> updateMUnitAssertionEqualsExpression(String attributeName) {
+    Function<Element, Element> f = e -> {
+      Attribute attribute = e.getAttribute(attributeName);
+      if (attribute != null) {
+        String attributeValue = attribute.getValue().trim();
+        if (attributeValue.startsWith("#[")) {
+          StringBuffer sb = new StringBuffer(attributeValue);
+          sb.replace(0, sb.indexOf("[") + 1, "#[MUnitTools::equalTo(");
+          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, ")]");
+          attributeValue = sb.toString();
+        } else {
+          attributeValue = "#[MUnitTools::equalTo(" + attributeValue + ")]";
+        }
+        attribute.setValue(attributeValue);
+      }
+      return e;
+    };
+    return f;
+  }
 
+  public static Function<Element, Element> updateMUnitAssertionNotEqualsExpression(String attributeName) {
+    Function<Element, Element> f = e -> {
+      Attribute attribute = e.getAttribute(attributeName);
+      if (attribute != null) {
+        String attributeValue = attribute.getValue().trim();
+        if (attributeValue.startsWith("#[")) {
+          StringBuffer sb = new StringBuffer(attributeValue);
+          sb.replace(0, sb.indexOf("[") + 1, "#[MunitTools::not(MUnitTools::equalTo(");
+          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, "))]");
+          attributeValue = sb.toString();
+        } else {
+          attributeValue = "#[MunitTools::not(MUnitTools::equalTo(" + attributeValue + "))]";
+        }
+        attribute.setValue(attributeValue);
+      }
+      return e;
+    };
+    return f;
+  }
+
+  // ******************************************************************************************************************
 
 
   @Deprecated

@@ -1,48 +1,48 @@
-INFO  2018-04-11 18:03:10,772 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+INFO  2018-04-12 12:01:46,692 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 + New app 'migrated-project-1.0.0-mule-application'        +
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-INFO  2018-04-11 18:03:10,772 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+INFO  2018-04-12 12:01:46,692 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 + Initializing app                                         +
 + 'migrated-project-1.0.0-mule-application'                +
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-INFO  2018-04-11 18:03:10,780 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.extension.internal.manager.DefaultExtensionManager: Registering extension ee (version: 4.1.2-SNAPSHOT vendor: MuleSoft, Inc. )
-INFO  2018-04-11 18:03:10,784 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.extension.internal.manager.DefaultExtensionManager: Registering extension mule (version: 4.1.2-SNAPSHOT vendor: MuleSoft, Inc. )
-INFO  2018-04-11 18:03:10,963 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Initialising RegistryBroker
-INFO  2018-04-11 18:03:10,963 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.config.internal.MuleArtifactContext: Refreshing org.mule.runtime.config.internal.MuleArtifactContext: migrated-project-1.0.0-mule-application (APP)
-INFO  2018-04-11 18:03:10,977 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.config.internal.processor.MuleInjectorProcessor: JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
-INFO  2018-04-11 18:03:10,977 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.config.internal.ObjectProviderAwareBeanFactory: Overriding bean definition for bean '_muleConfiguration': replacing [Generic bean: class [org.mule.runtime.core.api.config.DefaultMuleConfiguration]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null] with [Generic bean: class [org.mule.runtime.config.internal.MuleConfigurationConfigurator]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null]
-INFO  2018-04-11 18:03:11,108 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.util.journal.TransactionJournal: Using files for tx logs /Users/william.pinho/IdeaProjects/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/./.mule/migrated-project-1.0.0-mule-application/queue-tx-log/tx1.log and /Users/william.pinho/IdeaProjects/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/./.mule/migrated-project-1.0.0-mule-application/queue-tx-log/tx2.log
-INFO  2018-04-11 18:03:11,109 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.util.journal.TransactionJournal: Using files for tx logs /Users/william.pinho/IdeaProjects/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/./.mule/migrated-project-1.0.0-mule-application/queue-xa-tx-log/tx1.log and /Users/william.pinho/IdeaProjects/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/./.mule/migrated-project-1.0.0-mule-application/queue-xa-tx-log/tx2.log
-INFO  2018-04-11 18:03:11,158 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.exception.DefaultSystemExceptionStrategy: Initialising exception listener: org.mule.runtime.core.internal.exception.DefaultSystemExceptionStrategy@24439af9
-INFO  2018-04-11 18:03:11,160 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+INFO  2018-04-12 12:01:46,699 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.extension.internal.manager.DefaultExtensionManager: Registering extension ee (version: 4.1.2-SNAPSHOT vendor: MuleSoft, Inc. )
+INFO  2018-04-12 12:01:46,704 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.extension.internal.manager.DefaultExtensionManager: Registering extension mule (version: 4.1.2-SNAPSHOT vendor: MuleSoft, Inc. )
+INFO  2018-04-12 12:01:46,903 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Initialising RegistryBroker
+INFO  2018-04-12 12:01:46,904 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.config.internal.MuleArtifactContext: Refreshing org.mule.runtime.config.internal.MuleArtifactContext: migrated-project-1.0.0-mule-application (APP)
+INFO  2018-04-12 12:01:46,917 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.config.internal.processor.MuleInjectorProcessor: JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+INFO  2018-04-12 12:01:46,917 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.config.internal.ObjectProviderAwareBeanFactory: Overriding bean definition for bean '_muleConfiguration': replacing [Generic bean: class [org.mule.runtime.core.api.config.DefaultMuleConfiguration]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null] with [Generic bean: class [org.mule.runtime.config.internal.MuleConfigurationConfigurator]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null]
+INFO  2018-04-12 12:01:47,038 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.util.journal.TransactionJournal: Using files for tx logs /Users/julianpascual/mulesoft/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/./.mule/migrated-project-1.0.0-mule-application/queue-tx-log/tx1.log and /Users/julianpascual/mulesoft/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/./.mule/migrated-project-1.0.0-mule-application/queue-tx-log/tx2.log
+INFO  2018-04-12 12:01:47,038 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.util.journal.TransactionJournal: Using files for tx logs /Users/julianpascual/mulesoft/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/./.mule/migrated-project-1.0.0-mule-application/queue-xa-tx-log/tx1.log and /Users/julianpascual/mulesoft/mule-migration-tool/mule-migration-tool-runner/servers/EmptyAppTestCase/mule-enterprise-standalone-4.1.2-SNAPSHOT/./.mule/migrated-project-1.0.0-mule-application/queue-xa-tx-log/tx2.log
+INFO  2018-04-12 12:01:47,092 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.exception.DefaultSystemExceptionStrategy: Initialising exception listener: org.mule.runtime.core.internal.exception.DefaultSystemExceptionStrategy@48cc791f
+INFO  2018-04-12 12:01:47,095 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 + Starting app 'migrated-project-1.0.0-mule-application'   +
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-INFO  2018-04-11 18:03:11,161 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Starting ResourceManager
-INFO  2018-04-11 18:03:11,161 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Started ResourceManager
-INFO  2018-04-11 18:03:11,168 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.context.DefaultMuleContext: 
+INFO  2018-04-12 12:01:47,097 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Starting ResourceManager
+INFO  2018-04-12 12:01:47,097 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Started ResourceManager
+INFO  2018-04-12 12:01:47,106 [Mule.app.deployer.monitor.1.thread.1] org.mule.runtime.core.internal.context.DefaultMuleContext: 
 **********************************************************************
 * Application: migrated-project-1.0.0-mule-application               *
 * OS encoding: UTF-8, Mule encoding: UTF-8                           *
 *                                                                    *
 **********************************************************************
-INFO  2018-04-11 18:03:11,532 [WrapperListener_stop_runner] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+INFO  2018-04-12 12:01:47,369 [WrapperListener_stop_runner] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 + Stopping app 'migrated-project-1.0.0-mule-application'   +
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-INFO  2018-04-11 18:03:11,534 [WrapperListener_stop_runner] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Stopping ResourceManager
-INFO  2018-04-11 18:03:11,534 [WrapperListener_stop_runner] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Stopped ResourceManager
-INFO  2018-04-11 18:03:11,643 [WrapperListener_stop_runner] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+INFO  2018-04-12 12:01:47,372 [WrapperListener_stop_runner] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Stopping ResourceManager
+INFO  2018-04-12 12:01:47,372 [WrapperListener_stop_runner] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Stopped ResourceManager
+INFO  2018-04-12 12:01:47,430 [WrapperListener_stop_runner] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 + Disposing app 'migrated-project-1.0.0-mule-application'  +
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-INFO  2018-04-11 18:03:11,644 [WrapperListener_stop_runner] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Disposing RegistryBroker
-INFO  2018-04-11 18:03:11,687 [WrapperListener_stop_runner] org.mule.runtime.config.internal.MuleArtifactContext: Closing org.mule.runtime.config.internal.MuleArtifactContext: migrated-project-1.0.0-mule-application (APP)
-INFO  2018-04-11 18:03:11,693 [WrapperListener_stop_runner] org.mule.runtime.core.internal.context.DefaultMuleContext: 
+INFO  2018-04-12 12:01:47,431 [WrapperListener_stop_runner] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Disposing RegistryBroker
+INFO  2018-04-12 12:01:47,486 [WrapperListener_stop_runner] org.mule.runtime.config.internal.MuleArtifactContext: Closing org.mule.runtime.config.internal.MuleArtifactContext: migrated-project-1.0.0-mule-application (APP)
+INFO  2018-04-12 12:01:47,494 [WrapperListener_stop_runner] org.mule.runtime.core.internal.context.DefaultMuleContext: 
 **********************************************************************
 * Application "migrated-project-1.0.0-mule-application" shut down    *
-* normally on: 4/11/18 6:03 PM                                       *
-* Up for: 0 days, 0 hours, 0 mins, 0.533 sec                         *
+* normally on: 4/12/18 12:01 PM                                      *
+* Up for: 0 days, 0 hours, 0 mins, 0.398 sec                         *
 **********************************************************************
