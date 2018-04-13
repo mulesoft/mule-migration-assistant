@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+    <http:listener-config name="listenerConfig">
+        <http:listener-connection host="localhost" port="${port}" />
+    </http:listener-config>
+    
+    <flow name="testFlow">
+        <http:listener config-ref="listenerConfig" path="${path}">
+            <http:response>
+                <http:headers>
+                    #[{'User-Agent' : 'Mule 3.6.0', 'Date' : server.dateTime, 'User-Agent2' : 'Mule 3.8.0', 'User-Agent3' : 'Mule 3.7.0'}]
+                </http:headers>
+            </http:response>
+        </http:listener>
+        <logger/>
+    </flow>
+</mule>
