@@ -46,11 +46,12 @@ public class HttpConnectorHeaders extends AbstractApplicationModelMigrationStep 
     if ("headers".equals(object.getName())) {
       String headersExpr = object.getAttributeValue("expression");
 
-      setMule4HeadersTagText(object.getParentElement(), httpNamespace,
+      setMule4HeadersTagText(object.getParentElement(), httpNamespace, report,
                              () -> getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(headersExpr)),
-                             expr -> StringUtils.substring(getExpressionMigrator().unwrap(expr), 0, -1) + ", "
-                                 + StringUtils.substring(getExpressionMigrator().unwrap(getExpressionMigrator()
-                                     .migrateExpression(getExpressionMigrator().wrap(headersExpr))), 1));
+                             expr -> getExpressionMigrator()
+                                 .wrap(getExpressionMigrator().unwrap(expr) + " ++ "
+                                     + getExpressionMigrator().unwrap(getExpressionMigrator()
+                                         .migrateExpression(getExpressionMigrator().wrap(headersExpr)))));
 
       object.getParent().removeContent(object);
       object.setText(getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(headersExpr)));
@@ -64,31 +65,35 @@ public class HttpConnectorHeaders extends AbstractApplicationModelMigrationStep 
               ? getExpressionMigrator().unwrap(headerValue)
               : ("'" + headerValue + "'"));
 
-      setMule4HeadersTagText(object.getParentElement(), httpNamespace,
+      setMule4HeadersTagText(object.getParentElement(), httpNamespace, report,
                              () -> getExpressionMigrator().wrap("{" + dwHeaderMapElement + "}"),
-                             expr -> StringUtils.substring(getExpressionMigrator().unwrap(expr), 0, -1) + ", "
-                                 + dwHeaderMapElement + "}");
+                             expr -> getExpressionMigrator()
+                                 .wrap(getExpressionMigrator().unwrap(expr) + " ++ {" + dwHeaderMapElement + "}"));
 
       object.getParent().removeContent(object);
     }
   }
 
-  private void setMule4HeadersTagText(Element parentTag, Namespace httpNamespace, Supplier<String> headersExprCreate,
+  private void setMule4HeadersTagText(Element parentTag, Namespace httpNamespace, MigrationReport report,
+                                      Supplier<String> headersExprCreate,
                                       Function<String, String> headersExprAppend) {
-    final Element mule4HeadersTag = lookupMule4HeadersTag(parentTag, httpNamespace);
+    final Element mule4HeadersTag = lookupMule4HeadersTag(parentTag, httpNamespace, report);
     mule4HeadersTag.setText(getExpressionMigrator().wrap(StringUtils.isEmpty(mule4HeadersTag.getText())
         ? headersExprCreate.get()
         : headersExprAppend.apply(mule4HeadersTag.getText())));
 
   }
 
-  private Element lookupMule4HeadersTag(Element parentTag, Namespace httpNamespace) {
+  private Element lookupMule4HeadersTag(Element parentTag, Namespace httpNamespace, MigrationReport report) {
     final List<Element> children = parentTag.getChildren("headers", httpNamespace);
 
     return children.stream().filter(c -> StringUtils.isNotEmpty(c.getTextTrim())).findAny()
         .orElseGet(() -> {
           final Element headers = new Element("headers", httpNamespace);
 
+          report.report(MigrationReport.Level.INFO, headers, parentTag,
+                        "Build the map with the headerrs with a single DW expression",
+                        "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
           parentTag.addContent(headers);
 
           return headers;

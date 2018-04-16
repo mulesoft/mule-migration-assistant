@@ -17,6 +17,11 @@
                     #[{'user-agent': 'Mule 3.8.0', 'user-agent': 'Mule 3.9.0'}]
                 </http:headers>
             </http:response>
+            <http:error-response>
+                <http:headers>
+                    #[mel:vars.compatibility_outboundProperties]
+                </http:headers>
+            </http:error-response>
         </http:listener>
         <logger/>
     </flow>

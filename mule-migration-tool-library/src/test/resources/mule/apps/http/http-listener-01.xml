@@ -11,7 +11,18 @@
     </http:listener-config>
     
     <flow name="testFlow">
-        <http:listener config-ref="listenerConfig" path="${path}"/>
+        <http:listener config-ref="listenerConfig" path="${path}">
+            <http:response>
+                <http:headers>
+                    #[mel:vars.compatibility_outboundProperties]
+                </http:headers>
+            </http:response>
+            <http:error-response>
+                <http:headers>
+                    #[mel:vars.compatibility_outboundProperties]
+                </http:headers>
+            </http:error-response>
+        </http:listener>
         <logger/>
     </flow>
 </mule>

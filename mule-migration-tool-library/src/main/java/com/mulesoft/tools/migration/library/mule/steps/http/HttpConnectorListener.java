@@ -60,20 +60,41 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
 
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
-        execute(c, report);
+        executeChild(c, report, httpNamespace);
+      }
+    });
+
+    if (object.getChild("response", httpNamespace) == null) {
+      object.addContent(new Element("response", httpNamespace).addContent(compatibilityHeaders(httpNamespace)));
+    }
+    if (object.getChild("error-response", httpNamespace) == null) {
+      object.addContent(new Element("error-response", httpNamespace).addContent(compatibilityHeaders(httpNamespace)));
+    }
+  }
+
+  public void executeChild(Element object, MigrationReport report, Namespace httpNamespace) throws RuntimeException {
+    object.getChildren().forEach(c -> {
+      if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
+        executeChild(c, report, httpNamespace);
       }
     });
 
     if ("response-builder".equals(object.getName())) {
       handleReferencedResponseBuilder(object, httpNamespace);
+      object.addContent(compatibilityHeaders(httpNamespace));
 
       object.setName("response");
     }
     if ("error-response-builder".equals(object.getName())) {
       handleReferencedResponseBuilder(object, httpNamespace);
+      object.addContent(compatibilityHeaders(httpNamespace));
 
       object.setName("error-response");
     }
+  }
+
+  private Element compatibilityHeaders(Namespace httpNamespace) {
+    return new Element("headers", httpNamespace).setAttribute("expression", "vars.compatibility_outboundProperties");
   }
 
   private void handleReferencedResponseBuilder(Element object, final Namespace httpNamespace) {

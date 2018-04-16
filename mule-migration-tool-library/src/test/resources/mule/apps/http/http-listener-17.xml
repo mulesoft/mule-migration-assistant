@@ -14,9 +14,14 @@
         <http:listener config-ref="listenerConfig" path="${path}">
             <http:response>
                 <http:headers>
-                    #[{'User-Agent' : 'Mule 3.6.0', 'Date' : server.dateTime}]
+                    #[{'User-Agent' : 'Mule 3.6.0'} ++ {'Date' : server.dateTime} ++ mel:vars.compatibility_outboundProperties]
                 </http:headers>
             </http:response>
+            <http:error-response>
+                <http:headers>
+                    #[mel:vars.compatibility_outboundProperties]
+                </http:headers>
+            </http:error-response>
         </http:listener>
         <logger/>
     </flow>
