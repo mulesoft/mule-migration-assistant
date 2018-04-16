@@ -15,12 +15,17 @@
             <http:response>
 <!-- TODO MEL 2 DW: map expressions             -->
 <!--                 <http:headers> -->
-<!--                     #[{'User-Agent' : 'Mule 3.6.0','Date' : server.dateTime}] -->
+<!--                     #[{'User-Agent' : 'Mule 3.6.0','Date' : server.dateTime} ++ vars.compatibility_outboundProperties] -->
 <!--                 </http:headers> -->
                 <http:headers>
-                    #[mel:['User-Agent': 'Mule 3.6.0','Date': server.dateTime]]
+                    #[mel:['User-Agent': 'Mule 3.6.0','Date': server.dateTime] ++ mel:vars.compatibility_outboundProperties]
                 </http:headers>
             </http:response>
+            <http:error-response>
+                <http:headers>
+                    #[mel:vars.compatibility_outboundProperties]
+                </http:headers>
+            </http:error-response>
         </http:listener>
         <logger/>
     </flow>

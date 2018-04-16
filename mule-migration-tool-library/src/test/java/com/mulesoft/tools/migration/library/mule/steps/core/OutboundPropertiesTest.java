@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps.http;
+package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
@@ -31,73 +31,61 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RunWith(Parameterized.class)
-public class HttpListenerTest {
+public class OutboundPropertiesTest {
 
-  private static final Path HTTP_LISTENER_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/http");
+  private static final Path CORE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/core");
 
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "http-listener-01",
-        // TODO Attachments/multipart support
-        // "http-listener-02",
-        // "http-listener-03",
-        "http-listener-04",
-        "http-listener-05",
-        "http-listener-09",
-        "http-listener-10",
-        "http-listener-11",
-        // TODO Multiheader support
-        // "http-listener-12",
-        // TODO MEL 2 DW
-        "http-listener-13",
-        "http-listener-14",
-        // TODO Multiheader support
-        // "http-listener-15",
-        "http-listener-16",
-        "http-listener-17",
-        "http-listener-18",
-        // TODO MEL 2 DW: map expressions
-        "http-listener-19",
-        "http-listener-20"
+        "outbound-properties-01",
+        "outbound-properties-02",
+        // TODO Migrate spring beans
+        // "outbound-properties-03",
+        "outbound-properties-04",
+        "outbound-properties-05"
     };
   }
 
   private final Path configPath;
   private final Path targetPath;
 
-  public HttpListenerTest(String filePrefix) {
-    configPath = HTTP_LISTENER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
-    targetPath = HTTP_LISTENER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
+  public OutboundPropertiesTest(String filePrefix) {
+    configPath = CORE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
+    targetPath = CORE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
   }
 
-  private HttpConnectorListenerConfig httpListenerConfig;
-  private HttpConnectorListener httpListener;
-  private HttpConnectorHeaders httpHeaders;
+  private SetProperty setProperty;
+  private CopyProperties copyProperties;
+  private MessagePropertiesTransformer mpt;
+  private Flow flow;
 
   @Before
   public void setUp() throws Exception {
-    httpListenerConfig = new HttpConnectorListenerConfig();
-    httpListener = new HttpConnectorListener();
-    httpHeaders = new HttpConnectorHeaders();
+    setProperty = new SetProperty();
+    copyProperties = new CopyProperties();
+    mpt = new MessagePropertiesTransformer();
+    flow = new Flow();
   }
 
   @Ignore
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    httpListenerConfig.execute(null, mock(MigrationReport.class));
+    setProperty.execute(null, mock(MigrationReport.class));
   }
 
   @Test
   public void execute() throws Exception {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
-    getElementsFromDocument(doc, httpListenerConfig.getAppliedTo().getExpression())
-        .forEach(node -> httpListenerConfig.execute(node, mock(MigrationReport.class)));
-    getElementsFromDocument(doc, httpListener.getAppliedTo().getExpression())
-        .forEach(node -> httpListener.execute(node, mock(MigrationReport.class)));
-    getElementsFromDocument(doc, httpHeaders.getAppliedTo().getExpression())
-        .forEach(node -> httpHeaders.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, setProperty.getAppliedTo().getExpression())
+        .forEach(node -> setProperty.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, copyProperties.getAppliedTo().getExpression())
+        .forEach(node -> copyProperties.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, mpt.getAppliedTo().getExpression())
+        .forEach(node -> mpt.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, flow.getAppliedTo().getExpression())
+        .forEach(node -> flow.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

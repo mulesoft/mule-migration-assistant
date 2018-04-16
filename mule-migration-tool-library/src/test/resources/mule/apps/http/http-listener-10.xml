@@ -12,21 +12,21 @@
     
     <flow name="testFlow">
         <http:listener config-ref="listenerConfig" path="${path}">
-            <http:error-response statusCode="200" reasonPhrase="OK">
-<!-- TODO MEL 2 DW: map expressions             -->
-<!--                 <http:headers> -->
-<!--                     #[{'Date': server.dateTime} ++ {'user-agent': 'Mule 3.8.0'}] -->
-<!--                 </http:headers> -->
-                <http:headers>
-                    #[{'Date' : server.dateTime} ++ mel:['user-agent': 'Mule 3.8.0'] ++ mel:vars.compatibility_outboundProperties]
-                </http:headers>
-            </http:error-response>
-            <http:response>
+            <http:response reasonPhrase="everything works!">
                 <http:headers>
                     #[mel:vars.compatibility_outboundProperties]
                 </http:headers>
             </http:response>
+            <http:error-response>
+                <http:headers>
+                    #[mel:vars.compatibility_outboundProperties]
+                </http:headers>
+            </http:error-response>
         </http:listener>
-        <logger/>
+        <set-property propertyName="http.status" value="202" />
+        <set-property propertyName="http.reason" value="override value" />
+<!--         <compatibility:set-property propertyName="http.status" value="202" /> -->
+<!--         <compatibility:set-property propertyName="http.reason" value="override value" /> -->
+<!--         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/> -->
     </flow>
 </mule>

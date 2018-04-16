@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <flow name="testFlow">
+        <compatibility:remove-property propertyName="h1" />
+        <compatibility:set-property propertyName="h2" value="vvv" />
+        <compatibility:set-property propertyName="h4" value="#[mel:message.outboundProperties['h3']]" />
+        <compatibility:remove-property propertyName="h3" />
+        <logger/>
+        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+    </flow>
+</mule>

@@ -15,31 +15,37 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 /**
- * Migrate Set Property to the compatibility plugin
+ * Adds compatibility stuff to the flow
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class SetProperty extends AbstractApplicationModelMigrationStep {
+public class Flow extends AbstractApplicationModelMigrationStep {
 
-  private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
+  private static final String CORE_NAMESPACE = "http://www.mulesoft.org/schema/mule/core";
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='set-property']";
+  public static final String XPATH_SELECTOR = "//*[local-name()='flow']";
 
   @Override
   public String getDescription() {
-    return "Update Set Property namespace to compatibility.";
+    return "Copy outbound properties to a variable so they are available in DW expressions in the listener.";
   }
 
-  public SetProperty() {
+  public Flow() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
+    Element setVariable = new Element("set-variable", Namespace.getNamespace(CORE_NAMESPACE));
+    setVariable.setAttribute("variableName", "compatibility_outboundProperties");
+    setVariable.setAttribute("value", "#[mel:message.outboundProperties]");
+    element.addContent(setVariable);
+
     report.report(WARN, element, element,
                   "Instead of setting outbound properties in the flow, its values must be set explicitely in the operation/listener.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
-    element.setNamespace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
   }
+
+
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="testFlow">
+        <set-property propertyName="http.status" value="202" />
+        <set-property propertyName="http.reason" value="override value" />
+    </flow>
+</mule>
