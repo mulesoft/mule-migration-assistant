@@ -6,17 +6,9 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
-
-import org.jdom2.Attribute;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.Namespace;
+import org.jdom2.*;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
@@ -24,14 +16,11 @@ import org.jdom2.xpath.XPathFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAdditionalNamespaces;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Represent the application to be migrated
@@ -110,11 +99,7 @@ public class ApplicationModel {
   }
 
   private List<Element> getElementsFromDocument(XPathExpression xpath, Document doc) {
-    List<Namespace> namespaces = new ArrayList<>();
-    namespaces.add(Namespace.getNamespace("mule", doc.getRootElement().getNamespace().getURI()));
-    namespaces.addAll(doc.getRootElement().getAdditionalNamespaces());
-
-    return XPathFactory.instance().compile(xpath.getExpression(), Filters.element(), null, namespaces)
+    return XPathFactory.instance().compile(xpath.getExpression(), Filters.element(), null, getAdditionalNamespaces())
         .evaluate(doc);
   }
 
