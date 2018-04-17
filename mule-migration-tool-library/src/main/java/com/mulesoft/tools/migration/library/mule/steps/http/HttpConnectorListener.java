@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.INFO;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static java.util.Collections.emptyList;
 
@@ -57,6 +58,14 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
                     "https://docs.mulesoft.com/mule-user-guide/v/4.1/dataweave-formats#format_form_data");
     }
     object.removeAttribute("parseRequest");
+
+    int index = object.getParent().indexOf(object);
+    Element a2ip = new Element("attributes-to-inbound-properties",
+                               Namespace.getNamespace("compatibility", "http://www.mulesoft.org/schema/mule/compatibility"));
+    object.getParent().addContent(index + 1, a2ip);
+    report.report(INFO, a2ip, a2ip,
+                  "Expressions that query inboundProperties from the message should instead query the attributes of the message. Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as copy-properties)",
+                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes");
 
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {

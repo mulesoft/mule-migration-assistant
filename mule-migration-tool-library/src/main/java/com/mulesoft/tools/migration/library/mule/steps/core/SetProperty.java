@@ -38,7 +38,7 @@ public class SetProperty extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     report.report(WARN, element, element,
-                  "Instead of setting outbound properties in the flow, its values must be set explicitely in the operation/listener.",
+                  "Instead of setting outbound properties in the flow, its values must be set explicitly in the operation/listener.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
     element.setNamespace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
   }
