@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:schedulers="http://www.mulesoft.org/schema/mule/schedulers"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/schedulers http://www.mulesoft.org/schema/mule/schedulers/current/mule-schedulers.xsd">
+    <flow name="pollFlow">
+        <poll doc:name="Poll">
+            <fixed-frequency-scheduler frequency="10000"/>
+            <logger level="INFO" doc:name="Logger"/>
+            <set-payload value="#[2]"/>
+        </poll>
+    </flow>
+
+    <flow name="pollFlowWithProcessorChain">
+        <poll doc:name="Poll">
+            <fixed-frequency-scheduler frequency="10000"/>
+            <processor-chain>
+                <logger level="INFO" doc:name="Logger"/>
+                <logger message="log again" />
+                <set-payload value="#[2]"/>
+            </processor-chain>
+        </poll>
+    </flow>
+
+    <flow name="pollFlowWithCronScheduler">
+        <poll doc:name="Poll">
+            <schedulers:cron-scheduler expression="1 1 1 1,7 * ?" timeZone="GMT"/>
+            <logger level="INFO" doc:name="Logger"/>
+        </poll>
+    </flow>
+
+    <flow name="pollFlowAllFields">
+        <poll doc:name="Poll">
+            <fixed-frequency-scheduler frequency="1000" startDelay="2" timeUnit="MINUTES"/>
+            <logger level="INFO" doc:name="Logger"/>
+            <set-payload value="#[2]"/>
+        </poll>
+    </flow>
+
+    <flow name="pollAndFlowRef">
+        <poll doc:name="Poll">
+            <fixed-frequency-scheduler frequency="1000" startDelay="2" timeUnit="MINUTES"/>
+            <logger level="INFO" doc:name="Logger"/>
+            <set-payload value="#[2]"/>
+        </poll>
+        <flow-ref name="doProcess" />
+    </flow>
+</mule>
