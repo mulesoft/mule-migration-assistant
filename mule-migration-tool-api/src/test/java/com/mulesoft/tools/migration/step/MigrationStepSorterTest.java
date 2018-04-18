@@ -25,8 +25,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Mulesoft Inc.
@@ -47,7 +47,7 @@ public class MigrationStepSorterTest {
 
   @Test
   public void getNamespaceContributionSteps() {
-    Set<com.mulesoft.tools.migration.step.category.NamespaceContribution> steps =
+    List<com.mulesoft.tools.migration.step.category.NamespaceContribution> steps =
         migrationStepSorter.getNameSpaceContributionSteps();
     assertThat("The step set size is wrong", steps.size(), is(1));
     assertThat("The step type is wrong", steps.iterator().next(), instanceOf(NamespaceContribution.class));
@@ -55,34 +55,34 @@ public class MigrationStepSorterTest {
 
   @Test
   public void getApplicationModelContributionSteps() {
-    Set<ApplicationModelContribution> steps = migrationStepSorter.getApplicationModelContributionSteps();
+    List<ApplicationModelContribution> steps = migrationStepSorter.getApplicationModelContributionSteps();
     assertThat("The step set size is wrong", steps.size(), is(1));
     assertThat("The step type is wrong", steps.iterator().next(), instanceOf(ApplicationModelContribution.class));
   }
 
   @Test
   public void getExpressionContributionSteps() {
-    Set<ExpressionContribution> steps = migrationStepSorter.getExpressionContributionSteps();
+    List<ExpressionContribution> steps = migrationStepSorter.getExpressionContributionSteps();
     assertThat("The step set size is wrong", steps.size(), is(1));
     assertThat("The step type is wrong", steps.iterator().next(), instanceOf(ExpressionContribution.class));
   }
 
   @Test
   public void getProjectStructureContributionSteps() {
-    Set<ProjectStructureContribution> steps = migrationStepSorter.getProjectStructureContributionSteps();
+    List<ProjectStructureContribution> steps = migrationStepSorter.getProjectStructureContributionSteps();
     assertThat("The step set size is wrong", steps.size(), is(1));
     assertThat("The step type is wrong", steps.iterator().next(), instanceOf(ProjectStructureContribution.class));
   }
 
   @Test
   public void getPomContributionSteps() {
-    Set<PomContribution> steps = migrationStepSorter.getPomContributionSteps();
+    List<PomContribution> steps = migrationStepSorter.getPomContributionSteps();
     assertThat("The step set size is wrong", steps.size(), is(1));
     assertThat("The step type is wrong", steps.iterator().next(), instanceOf(PomContribution.class));
   }
 
-  private Set<MigrationStep> buildStepSet() {
-    Set<MigrationStep> migrationSteps = new HashSet<>();
+  private List<MigrationStep> buildStepSet() {
+    List<MigrationStep> migrationSteps = new ArrayList<>();
 
     migrationSteps.add(new NamespaceContributionStepImpl());
     migrationSteps.add(new ApplicationModelContributionStepImpl());

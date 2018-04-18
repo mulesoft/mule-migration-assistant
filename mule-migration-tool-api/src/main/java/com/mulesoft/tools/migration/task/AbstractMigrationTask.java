@@ -12,7 +12,11 @@ import static com.google.common.base.Preconditions.checkState;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.MigrationStep;
+import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import java.util.List;
 
 /**
  * A task is composed by one or more steps
@@ -40,9 +44,13 @@ public abstract class AbstractMigrationTask implements MigrationTask {
     // TODO depending on the project type this may not be true
     checkState(applicationModel != null, "An application model must be provided.");
 
+    List<MigrationStep> steps = getSteps();
     try {
-      if (getSteps() != null) {
-        MigrationStepSorter stepSorter = new MigrationStepSorter(getSteps());
+      if (steps != null) {
+        steps.stream().filter(s -> s instanceof ApplicationModelContribution)
+            .forEach(s -> ((ApplicationModelContribution) s).setApplicationModel(applicationModel));
+
+        MigrationStepSorter stepSorter = new MigrationStepSorter(steps);
 
         stepSorter.getNameSpaceContributionSteps().forEach(s -> s.execute(applicationModel, report));
 

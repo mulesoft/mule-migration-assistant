@@ -35,10 +35,8 @@ import org.mockito.Mockito;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * @author Mulesoft Inc.
@@ -82,7 +80,7 @@ public class AbstractMigrationTaskTest {
   @Test
   public void executeWithPlainMigrationStep() throws Exception {
     MigrationStep stepMock = mock(MigrationStep.class);
-    Set<MigrationStep> steps = new HashSet<>();
+    List<MigrationStep> steps = new ArrayList<>();
     steps.add(stepMock);
 
     migrationTask.setApplicationModel(applicationModelMock);
@@ -112,7 +110,7 @@ public class AbstractMigrationTaskTest {
     InOrder inOrder = Mockito.inOrder(steps.toArray());
 
     migrationTask.setApplicationModel(applicationModelMock);
-    ((MigrationTaskImpl) migrationTask).setMigrationSteps(new HashSet<>(steps));
+    ((MigrationTaskImpl) migrationTask).setMigrationSteps(new ArrayList<>(steps));
 
     migrationTask.execute(mock(MigrationReport.class));
     verify(namespaceContributionMock, times(1)).execute(any(ApplicationModel.class), any(MigrationReport.class));
@@ -134,7 +132,7 @@ public class AbstractMigrationTaskTest {
     doThrow(NullPointerException.class)
         .when(namespaceContribution)
         .execute(eq(applicationModelMock), any(MigrationReport.class));
-    Set<MigrationStep> steps = new HashSet<>();
+    List<MigrationStep> steps = new ArrayList<>();
     steps.add(namespaceContribution);
 
     migrationTask.setApplicationModel(applicationModelMock);
@@ -145,7 +143,7 @@ public class AbstractMigrationTaskTest {
 
   private static final class MigrationTaskImpl extends AbstractMigrationTask {
 
-    private Set<MigrationStep> migrationSteps;
+    private List<MigrationStep> migrationSteps;
 
     @Override
     public String getDescription() {
@@ -153,11 +151,11 @@ public class AbstractMigrationTaskTest {
     }
 
     @Override
-    public Set<MigrationStep> getSteps() {
+    public List<MigrationStep> getSteps() {
       return this.migrationSteps;
     }
 
-    public void setMigrationSteps(Set<MigrationStep> migrationSteps) {
+    public void setMigrationSteps(List<MigrationStep> migrationSteps) {
       this.migrationSteps = migrationSteps;
     }
 

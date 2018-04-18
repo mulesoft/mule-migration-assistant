@@ -21,7 +21,7 @@
             </http:response>
             <http:error-response>
                 <http:headers>
-                    #[mel:vars.compatibility_outboundProperties]
+                    #[mel:flowVars.compatibility_outboundProperties]
                 </http:headers>
             </http:error-response>
         </http:listener>

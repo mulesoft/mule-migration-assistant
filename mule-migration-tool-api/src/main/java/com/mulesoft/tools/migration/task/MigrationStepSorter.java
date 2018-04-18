@@ -7,10 +7,7 @@
 package com.mulesoft.tools.migration.task;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.stream.Collectors.toSet;
-
-import java.util.HashSet;
-import java.util.Set;
+import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
@@ -18,6 +15,9 @@ import com.mulesoft.tools.migration.step.category.ExpressionContribution;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * It knows how to classify a set of steps
@@ -27,46 +27,46 @@ import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
  */
 public class MigrationStepSorter {
 
-  private Set<MigrationStep> steps;
+  private List<MigrationStep> steps;
 
-  public MigrationStepSorter(Set<MigrationStep> steps) {
+  public MigrationStepSorter(List<MigrationStep> steps) {
     checkArgument(steps != null, "The step list must not be null");
-    this.steps = new HashSet<>(steps);
+    this.steps = new ArrayList<>(steps);
   }
 
-  public Set<NamespaceContribution> getNameSpaceContributionSteps() {
+  public List<NamespaceContribution> getNameSpaceContributionSteps() {
     return steps.stream()
         .filter(s -> s instanceof NamespaceContribution)
         .map(s -> (NamespaceContribution) s)
-        .collect(toSet());
+        .collect(toList());
   }
 
-  public Set<ApplicationModelContribution> getApplicationModelContributionSteps() {
+  public List<ApplicationModelContribution> getApplicationModelContributionSteps() {
     return steps.stream()
         .filter(s -> s instanceof ApplicationModelContribution)
         .map(s -> (ApplicationModelContribution) s)
-        .collect(toSet());
+        .collect(toList());
   }
 
-  public Set<ExpressionContribution> getExpressionContributionSteps() {
+  public List<ExpressionContribution> getExpressionContributionSteps() {
     return steps.stream()
         .filter(s -> s instanceof ExpressionContribution)
         .map(s -> (ExpressionContribution) s)
-        .collect(toSet());
+        .collect(toList());
   }
 
-  public Set<ProjectStructureContribution> getProjectStructureContributionSteps() {
+  public List<ProjectStructureContribution> getProjectStructureContributionSteps() {
     return steps.stream()
         .filter(s -> s instanceof ProjectStructureContribution)
         .map(s -> (ProjectStructureContribution) s)
-        .collect(toSet());
+        .collect(toList());
   }
 
-  public Set<PomContribution> getPomContributionSteps() {
+  public List<PomContribution> getPomContributionSteps() {
     return steps.stream()
         .filter(s -> s instanceof PomContribution)
         .map(s -> (PomContribution) s)
-        .collect(toSet());
+        .collect(toList());
   }
 
 

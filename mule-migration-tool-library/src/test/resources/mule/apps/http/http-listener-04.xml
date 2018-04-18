@@ -16,12 +16,12 @@
         <http:listener config-ref="listenerConfig" path="${path}" allowedMethods="POST" responseStreamingMode="ALWAYS">
             <http:response>
                 <http:headers>
-                    #[mel:vars.compatibility_outboundProperties]
+                    #[mel:flowVars.compatibility_outboundProperties]
                 </http:headers>
             </http:response>
             <http:error-response>
                 <http:headers>
-                    #[mel:vars.compatibility_outboundProperties]
+                    #[mel:flowVars.compatibility_outboundProperties]
                 </http:headers>
             </http:error-response>
         </http:listener>

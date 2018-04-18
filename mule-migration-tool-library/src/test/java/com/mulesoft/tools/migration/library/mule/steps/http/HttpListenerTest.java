@@ -11,9 +11,11 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFrom
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.io.IOUtils;
@@ -22,7 +24,9 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -32,6 +36,9 @@ import java.nio.file.Paths;
 
 @RunWith(Parameterized.class)
 public class HttpListenerTest {
+
+  @Rule
+  public TemporaryFolder temp = new TemporaryFolder();
 
   private static final Path HTTP_LISTENER_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/http");
 
@@ -75,10 +82,17 @@ public class HttpListenerTest {
   private HttpConnectorListener httpListener;
   private HttpConnectorHeaders httpHeaders;
 
+  private ApplicationModel appModel;
+
   @Before
   public void setUp() throws Exception {
     httpListenerConfig = new HttpConnectorListenerConfig();
+
     httpListener = new HttpConnectorListener();
+    appModel = mock(ApplicationModel.class);
+    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+    httpListener.setApplicationModel(appModel);
+
     httpHeaders = new HttpConnectorHeaders();
   }
 

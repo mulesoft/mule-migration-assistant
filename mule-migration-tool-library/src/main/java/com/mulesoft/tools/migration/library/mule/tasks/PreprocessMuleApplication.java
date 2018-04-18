@@ -6,19 +6,19 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
-import com.mulesoft.tools.migration.step.MigrationStep;
-import com.mulesoft.tools.migration.project.ProjectType;
-import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.Version;
-import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleDependencies;
-import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateMuleMavenPlugin;
-
-import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+
+import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleDependencies;
+import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateMuleMavenPlugin;
+import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.step.MigrationStep;
+import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import com.mulesoft.tools.migration.task.Version;
+
+import java.util.List;
 
 /**
  * Preprocess Mule Application Migration Task
@@ -33,8 +33,8 @@ public class PreprocessMuleApplication extends AbstractMigrationTask {
   }
 
   @Override
-  public Set<MigrationStep> getSteps() {
-    return newHashSet(new RemoveMuleDependencies(), new UpdateMuleMavenPlugin(), new RemoveMuleDependencies());
+  public List<MigrationStep> getSteps() {
+    return newArrayList(new RemoveMuleDependencies(), new UpdateMuleMavenPlugin(), new RemoveMuleDependencies());
   }
 
   @Override

@@ -16,12 +16,12 @@
         <http:listener config-ref="listenerConfig" path="${path}">
             <http:response statusCode="202">
                 <http:headers>
-                    #[mel:vars.compatibility_outboundProperties]
+                    #[mel:flowVars.compatibility_outboundProperties]
                 </http:headers>
             </http:response>
             <http:error-response statusCode="505">
                 <http:headers>
-                    #[mel:vars.compatibility_outboundProperties]
+                    #[mel:flowVars.compatibility_outboundProperties]
                 </http:headers>
             </http:error-response>
         </http:listener>

@@ -6,11 +6,11 @@
  */
 package com.mulesoft.tools.migration.task;
 
-import java.util.Set;
-
 import com.mulesoft.tools.migration.Executable;
-import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.MigrationStep;
+
+import java.util.List;
 
 /**
  * It is a container of {@link MigrationStep} that can be categorized
@@ -22,7 +22,7 @@ public interface MigrationTask extends Executable, Categorizable {
 
   String getDescription();
 
-  Set<MigrationStep> getSteps();
+  List<MigrationStep> getSteps();
 
   ApplicationModel getApplicationModel();
 

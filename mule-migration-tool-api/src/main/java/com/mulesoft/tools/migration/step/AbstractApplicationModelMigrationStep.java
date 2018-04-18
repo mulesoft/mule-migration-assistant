@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.step;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
 import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 
@@ -44,6 +45,7 @@ public abstract class AbstractApplicationModelMigrationStep implements Applicati
       }
     }
 
+    @Override
     public boolean isWrapped(String originalExpression) {
       return originalExpression.startsWith("#[") && originalExpression.endsWith("]");
     };
@@ -56,6 +58,8 @@ public abstract class AbstractApplicationModelMigrationStep implements Applicati
   };
 
   private XPathExpression appliedTo;
+
+  private ApplicationModel applicationModel;
 
   @Override
   public XPathExpression getAppliedTo() {
@@ -70,6 +74,16 @@ public abstract class AbstractApplicationModelMigrationStep implements Applicati
     } catch (Exception ex) {
       throw new MigrationStepException("The xpath expression must be valid.");
     }
+  }
+
+  @Override
+  public ApplicationModel getApplicationModel() {
+    return applicationModel;
+  }
+
+  @Override
+  public void setApplicationModel(ApplicationModel applicationModel) {
+    this.applicationModel = applicationModel;
   }
 
   protected final ExpressionMigrator getExpressionMigrator() {

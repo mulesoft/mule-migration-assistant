@@ -6,21 +6,31 @@
  */
 package com.mulesoft.tools.migration.library.munit.tasks;
 
-import com.mulesoft.tools.migration.step.MigrationStep;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+
+import com.mulesoft.tools.migration.library.munit.steps.AssertEquals;
+import com.mulesoft.tools.migration.library.munit.steps.AssertFalse;
+import com.mulesoft.tools.migration.library.munit.steps.AssertNotEquals;
+import com.mulesoft.tools.migration.library.munit.steps.AssertNotNullPayload;
+import com.mulesoft.tools.migration.library.munit.steps.AssertNullPayload;
+import com.mulesoft.tools.migration.library.munit.steps.AssertPayload;
+import com.mulesoft.tools.migration.library.munit.steps.AssertTrue;
+import com.mulesoft.tools.migration.library.munit.steps.MUnitNamespaces;
+import com.mulesoft.tools.migration.library.munit.steps.MUnitPomContribution;
+import com.mulesoft.tools.migration.library.munit.steps.Mock;
+import com.mulesoft.tools.migration.library.munit.steps.MoveMUnitProcessorsToSections;
 import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.Version;
 import com.mulesoft.tools.migration.task.Version.VersionBuilder;
-import com.mulesoft.tools.migration.library.munit.steps.*;
 
-import java.util.Set;
-
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static com.google.common.collect.Sets.newHashSet;
+import java.util.List;
 
 /**
  * Migration Task for MUnit components
- * 
+ *
  * @author Mulesoft Inc.
  */
 public class MunitMigrationTask extends AbstractMigrationTask {
@@ -42,10 +52,10 @@ public class MunitMigrationTask extends AbstractMigrationTask {
 
 
   @Override
-  public Set<MigrationStep> getSteps() {
-    return newHashSet(new AssertEquals(), new AssertNotEquals(), new AssertNotNullPayload(), new AssertNullPayload(),
-                      new AssertPayload(), new AssertTrue(), new AssertFalse(), new Mock(), new MUnitNamespaces(),
-                      new MoveMUnitProcessorsToSections(), new MUnitPomContribution());
+  public List<MigrationStep> getSteps() {
+    return newArrayList(new AssertEquals(), new AssertNotEquals(), new AssertNotNullPayload(), new AssertNullPayload(),
+                        new AssertPayload(), new AssertTrue(), new AssertFalse(), new Mock(), new MUnitNamespaces(),
+                        new MoveMUnitProcessorsToSections(), new MUnitPomContribution());
   }
 
   @Override

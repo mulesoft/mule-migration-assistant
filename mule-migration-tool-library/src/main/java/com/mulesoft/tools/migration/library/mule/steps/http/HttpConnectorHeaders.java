@@ -92,7 +92,7 @@ public class HttpConnectorHeaders extends AbstractApplicationModelMigrationStep 
           final Element headers = new Element("headers", httpNamespace);
 
           report.report(MigrationReport.Level.INFO, headers, parentTag,
-                        "Build the map with the headerrs with a single DW expression",
+                        "Build the map with the headers with a single DW expression",
                         "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
           parentTag.addContent(headers);
 
