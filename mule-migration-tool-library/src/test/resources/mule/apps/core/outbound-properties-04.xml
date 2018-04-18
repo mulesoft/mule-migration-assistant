@@ -12,6 +12,5 @@
         <compatibility:set-property propertyName="h4" value="#[mel:message.outboundProperties['h3']]" />
         <compatibility:remove-property propertyName="h3" />
         <logger/>
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
     </flow>
 </mule>

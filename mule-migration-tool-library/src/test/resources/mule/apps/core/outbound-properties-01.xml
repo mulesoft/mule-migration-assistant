@@ -9,6 +9,5 @@
     <flow name="testFlow">
         <compatibility:set-property propertyName="http.status" value="202" />
         <compatibility:set-property propertyName="http.reason" value="override value" />
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
     </flow>
 </mule>

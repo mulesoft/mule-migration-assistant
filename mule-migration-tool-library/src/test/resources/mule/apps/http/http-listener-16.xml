@@ -27,5 +27,6 @@
         </http:listener>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
+        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
     </flow>
 </mule>

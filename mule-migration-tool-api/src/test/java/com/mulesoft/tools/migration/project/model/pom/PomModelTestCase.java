@@ -49,9 +49,9 @@ public class PomModelTestCase {
       when(pomPathMock.toFile().exists()).thenReturn(true);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void buildWithNullPath() throws IOException, XmlPullParserException {
-      builder.withPom(null).build();
+      assertThat(builder.withPom(null).build(), not(nullValue()));
     }
 
     @Test

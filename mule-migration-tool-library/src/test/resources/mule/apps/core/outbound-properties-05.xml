@@ -8,6 +8,5 @@
 
     <flow name="testFlow">
         <compatibility:copy-properties propertyName="*"/>
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
     </flow>
 </mule>

@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -91,8 +93,8 @@ public class HttpConnectorHeaders extends AbstractApplicationModelMigrationStep 
         .orElseGet(() -> {
           final Element headers = new Element("headers", httpNamespace);
 
-          report.report(MigrationReport.Level.INFO, headers, parentTag,
-                        "Build the map with the headers with a single DW expression",
+          report.report(WARN, headers, parentTag,
+                        "Build the headers map with a single DW expression",
                         "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
           parentTag.addContent(headers);
 
