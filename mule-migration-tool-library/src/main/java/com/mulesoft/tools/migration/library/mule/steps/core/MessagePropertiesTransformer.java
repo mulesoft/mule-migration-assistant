@@ -42,7 +42,7 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     report.report(WARN, element, element,
-                  "Instead of setting properties in the flow, its values must be set explicitely in the operation/listener.",
+                  "Instead of setting properties in the flow, its values must be set explicitly in the operation/listener.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
     Namespace compatibilityNamespace = Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE);
     element.setNamespace(compatibilityNamespace);

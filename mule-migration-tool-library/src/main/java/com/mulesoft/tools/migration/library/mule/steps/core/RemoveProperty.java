@@ -15,37 +15,31 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 /**
- * Adds compatibility stuff to the flow
+ * Migrate Remove Property to the compatibility plugin
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class Flow extends AbstractApplicationModelMigrationStep {
+public class RemoveProperty extends AbstractApplicationModelMigrationStep {
 
-  private static final String CORE_NAMESPACE = "http://www.mulesoft.org/schema/mule/core";
+  private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='flow']";
+  public static final String XPATH_SELECTOR = "//*[local-name()='remove-property']";
 
   @Override
   public String getDescription() {
-    return "Copy outbound properties to a variable so they are available in DW expressions in the listener.";
+    return "Update Remove Property namespace to compatibility.";
   }
 
-  public Flow() {
+  public RemoveProperty() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    Element setVariable = new Element("set-variable", Namespace.getNamespace(CORE_NAMESPACE));
-    setVariable.setAttribute("variableName", "compatibility_outboundProperties");
-    setVariable.setAttribute("value", "#[mel:message.outboundProperties]");
-    element.addContent(setVariable);
-
-    report.report(WARN, setVariable, setVariable,
-                  "Instead of setting outbound properties in the flow, its values must be set explicitly in the operation/listener.",
+    report.report(WARN, element, element,
+                  "Instead of removing properties in the flow, just don't use them in the listener/operation.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
+    element.setNamespace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
   }
-
-
 }

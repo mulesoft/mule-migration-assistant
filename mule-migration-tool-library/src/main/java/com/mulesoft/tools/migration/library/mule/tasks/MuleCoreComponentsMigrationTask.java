@@ -11,7 +11,22 @@ import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSI
 import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
-import com.mulesoft.tools.migration.library.mule.steps.core.*;
+import com.mulesoft.tools.migration.library.mule.steps.core.CatchExceptionStrategy;
+import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExceptionStrategy;
+import com.mulesoft.tools.migration.library.mule.steps.core.CopyProperties;
+import com.mulesoft.tools.migration.library.mule.steps.core.ExceptionStrategyRef;
+import com.mulesoft.tools.migration.library.mule.steps.core.Flow;
+import com.mulesoft.tools.migration.library.mule.steps.core.ForEachScope;
+import com.mulesoft.tools.migration.library.mule.steps.core.MessagePropertiesTransformer;
+import com.mulesoft.tools.migration.library.mule.steps.core.Poll;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveJsonTransformerNamespace;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveObjectToStringTransformer;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveProperty;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSchedulersNamespace;
+import com.mulesoft.tools.migration.library.mule.steps.core.RollbackExceptionStrategy;
+import com.mulesoft.tools.migration.library.mule.steps.core.SetAttachment;
+import com.mulesoft.tools.migration.library.mule.steps.core.SetProperty;
+import com.mulesoft.tools.migration.library.mule.steps.core.TransactionalScope;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -50,11 +65,23 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
   @Override
   public Set<MigrationStep> getSteps() {
     // TODO add the compatibility plugin
-    return newHashSet(/* new CompatibilityPomContribution(), */ new CatchExceptionStrategy(),
+    return newHashSet(/* new CompatibilityPomContribution(), */
+                      new CatchExceptionStrategy(),
                       new RemoveObjectToStringTransformer(),
-                      new RollbackExceptionStrategy(), new ChoiceExceptionStrategy(),
-                      new SetAttachment(), new SetProperty(), new CopyProperties(), new TransactionalScope(),
-                      new ExceptionStrategyRef(), new ForEachScope(), new RemoveJsonTransformerNamespace(),
-                      new MessagePropertiesTransformer(), new Flow(), new Poll(), new RemoveSchedulersNamespace());
+                      new RemoveObjectToStringTransformer(),
+                      new RollbackExceptionStrategy(),
+                      new ChoiceExceptionStrategy(),
+                      new SetAttachment(),
+                      new SetProperty(),
+                      new CopyProperties(),
+                      new RemoveProperty(),
+                      new TransactionalScope(),
+                      new ExceptionStrategyRef(),
+                      new ForEachScope(),
+                      new RemoveJsonTransformerNamespace(),
+                      new MessagePropertiesTransformer(),
+                      new Flow(),
+                      new Poll(),
+                      new RemoveSchedulersNamespace());
   }
 }

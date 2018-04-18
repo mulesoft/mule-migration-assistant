@@ -27,13 +27,15 @@ public class DefaultMigrationReport implements MigrationReport {
     int i = 0;
 
     elementToComment.addContent(i++, new Comment(level.name() + ": " + message));
-    elementToComment.addContent(i++, new Comment("    For more infromation refer to:"));
+    elementToComment.addContent(i++, new Comment("    For more information refer to:"));
 
     for (String link : documentationLinks) {
       elementToComment.addContent(i++, new Comment("        * " + link));
     }
 
-    elementToComment.addContent(i++, new Comment(outp.outputString(element)));
+    if (element != elementToComment) {
+      elementToComment.addContent(i++, new Comment(outp.outputString(element)));
+    }
   }
 
 }
