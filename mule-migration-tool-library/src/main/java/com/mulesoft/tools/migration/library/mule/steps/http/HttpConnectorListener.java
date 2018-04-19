@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.INFO;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static java.util.Collections.emptyList;
@@ -22,8 +23,11 @@ import org.jdom2.xpath.XPathFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Migrates the listener source of the HTTP Connector
@@ -63,6 +67,27 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
     Element a2ip = new Element("attributes-to-inbound-properties",
                                Namespace.getNamespace("compatibility", "http://www.mulesoft.org/schema/mule/compatibility"));
     object.getParent().addContent(index + 1, a2ip);
+
+    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
+    expressionsPerProperty.put("http.listener.path", "message.attributes.listenerPath");
+    expressionsPerProperty.put("http.relative.path", "message.attributes.relativePath");
+    expressionsPerProperty.put("http.version", "message.attributes.version");
+    expressionsPerProperty.put("http.scheme", "message.attributes.scheme");
+    expressionsPerProperty.put("http.method", "message.attributes.method");
+    expressionsPerProperty.put("http.request.uri", "message.attributes.requestUri");
+    expressionsPerProperty.put("http.query.string", "message.attributes.queryString");
+    expressionsPerProperty.put("http.remote.address", "message.attributes.remoteAddress");
+    expressionsPerProperty.put("http.client.cert", "message.attributes.clientCertificate");
+    expressionsPerProperty.put("http.query.params", "message.attributes.queryParams");
+    expressionsPerProperty.put("http.uri.params", "message.attributes.uriParams");
+    expressionsPerProperty.put("http.request.path", "message.attributes.requestPath");
+    expressionsPerProperty.put("http.headers", "message.attributes.headers");
+
+    try {
+      addAttributesMapping(getApplicationModel(), "org.mule.extension.http.api.HttpRequestAttributes", expressionsPerProperty);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
     report.report(INFO, a2ip, a2ip,
                   "Expressions that query inboundProperties from the message should instead query the attributes of the message. Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as copy-properties)",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes");
@@ -103,7 +128,7 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
   }
 
   private Element compatibilityHeaders(Namespace httpNamespace) {
-    return new Element("headers", httpNamespace).setAttribute("expression", "vars.compatibility_outboundProperties");
+    return new Element("headers", httpNamespace).setAttribute("expression", "flowVars.compatibility_outboundProperties");
   }
 
   private void handleReferencedResponseBuilder(Element object, final Namespace httpNamespace) {

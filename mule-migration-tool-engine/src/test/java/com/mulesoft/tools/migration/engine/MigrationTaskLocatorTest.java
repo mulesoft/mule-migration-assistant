@@ -6,23 +6,23 @@
  */
 package com.mulesoft.tools.migration.engine;
 
-import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
-import com.mulesoft.tools.migration.project.ProjectType;
-import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.MigrationTask;
-import com.mulesoft.tools.migration.task.Version;
-import com.mulesoft.tools.migration.task.Version.VersionBuilder;
-import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static com.mulesoft.tools.migration.task.Version.VersionBuilder.ANY_VERSION;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+
+import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
+import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import com.mulesoft.tools.migration.task.MigrationTask;
+import com.mulesoft.tools.migration.task.Version;
+import com.mulesoft.tools.migration.task.Version.VersionBuilder;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
 
 public class MigrationTaskLocatorTest {
 
@@ -55,7 +55,7 @@ public class MigrationTaskLocatorTest {
     MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(ANY_VERSION, ANY_VERSION, projectType);
     List<AbstractMigrationTask> migrationTaskList = migrationTaskLocator.locate();
 
-    assertThat("The number of migration task is wrong", migrationTaskList.size(), is(5));
+    assertThat("The number of migration task is wrong", migrationTaskList.size(), is(6));
     MigrationTask migrationTask = migrationTaskList.get(4);
     assertThat("The migration task type is wrong", migrationTask, instanceOf(MunitMigrationTask.class));
     assertThat("The migration task from is wrong", migrationTask.getFrom(), is(from));

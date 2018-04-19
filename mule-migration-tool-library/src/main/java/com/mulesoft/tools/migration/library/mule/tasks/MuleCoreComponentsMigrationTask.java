@@ -6,13 +6,14 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.CatchExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExceptionStrategy;
+import com.mulesoft.tools.migration.library.mule.steps.core.CompatibilityPomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyProperties;
 import com.mulesoft.tools.migration.library.mule.steps.core.ExceptionStrategyRef;
 import com.mulesoft.tools.migration.library.mule.steps.core.Flow;
@@ -32,7 +33,7 @@ import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.Version;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Migration definition for Mule Core components
@@ -63,25 +64,24 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
   }
 
   @Override
-  public Set<MigrationStep> getSteps() {
-    // TODO add the compatibility plugin
-    return newHashSet(/* new CompatibilityPomContribution(), */
-                      new CatchExceptionStrategy(),
-                      new RemoveObjectToStringTransformer(),
-                      new RemoveObjectToStringTransformer(),
-                      new RollbackExceptionStrategy(),
-                      new ChoiceExceptionStrategy(),
-                      new SetAttachment(),
-                      new SetProperty(),
-                      new CopyProperties(),
-                      new RemoveProperty(),
-                      new TransactionalScope(),
-                      new ExceptionStrategyRef(),
-                      new ForEachScope(),
-                      new RemoveJsonTransformerNamespace(),
-                      new MessagePropertiesTransformer(),
-                      new Flow(),
-                      new Poll(),
-                      new RemoveSchedulersNamespace());
+  public List<MigrationStep> getSteps() {
+    return newArrayList(new CompatibilityPomContribution(),
+                        new CatchExceptionStrategy(),
+                        new RemoveObjectToStringTransformer(),
+                        new RemoveObjectToStringTransformer(),
+                        new RollbackExceptionStrategy(),
+                        new ChoiceExceptionStrategy(),
+                        new SetAttachment(),
+                        new SetProperty(),
+                        new CopyProperties(),
+                        new RemoveProperty(),
+                        new TransactionalScope(),
+                        new ExceptionStrategyRef(),
+                        new ForEachScope(),
+                        new RemoveJsonTransformerNamespace(),
+                        new MessagePropertiesTransformer(),
+                        new Flow(),
+                        new Poll(),
+                        new RemoveSchedulersNamespace());
   }
 }

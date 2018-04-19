@@ -20,12 +20,12 @@
 <!--                     #[{'User-Agent' : 'Mule 3.6.0','Date' : server.dateTime} ++ vars.compatibility_outboundProperties] -->
 <!--                 </http:headers> -->
                 <http:headers>
-                    #[mel:['User-Agent': 'Mule 3.6.0','Date': server.dateTime] ++ mel:vars.compatibility_outboundProperties]
+                    #[mel:['User-Agent': 'Mule 3.6.0','Date': server.dateTime] ++ mel:flowVars.compatibility_outboundProperties]
                 </http:headers>
             </http:response>
             <http:error-response>
                 <http:headers>
-                    #[mel:vars.compatibility_outboundProperties]
+                    #[mel:flowVars.compatibility_outboundProperties]
                 </http:headers>
             </http:error-response>
         </http:listener>

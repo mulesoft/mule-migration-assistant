@@ -11,11 +11,7 @@ import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSI
 import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
-import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorHeaders;
-import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener;
-import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListenerConfig;
-import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorPomContribution;
-import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequestConfig;
+import com.mulesoft.tools.migration.library.mule.steps.core.AttributesToInboundPropertiesScriptGenerator;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -24,16 +20,21 @@ import com.mulesoft.tools.migration.task.Version;
 import java.util.List;
 
 /**
- * Migration definition for HTTP component
+ * Postprocess Mule Application Migration Task
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class HTTPMigrationTask extends AbstractMigrationTask {
+public class PostprocessMuleApplication extends AbstractMigrationTask {
 
   @Override
   public String getDescription() {
-    return "Migrate HTTP Component";
+    return "Postprocess the application";
+  }
+
+  @Override
+  public List<MigrationStep> getSteps() {
+    return newArrayList(new AttributesToInboundPropertiesScriptGenerator());
   }
 
   @Override
@@ -51,9 +52,4 @@ public class HTTPMigrationTask extends AbstractMigrationTask {
     return MULE_FOUR_APPLICATION;
   }
 
-  @Override
-  public List<MigrationStep> getSteps() {
-    return newArrayList(new HttpConnectorPomContribution(), new HttpConnectorListenerConfig(), new HttpConnectorRequestConfig(),
-                        new HttpConnectorListener(), new HttpConnectorHeaders());
-  }
 }

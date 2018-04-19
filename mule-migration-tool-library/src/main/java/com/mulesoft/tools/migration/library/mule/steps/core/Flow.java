@@ -23,6 +23,7 @@ import org.jdom2.Namespace;
 public class Flow extends AbstractApplicationModelMigrationStep {
 
   private static final String CORE_NAMESPACE = "http://www.mulesoft.org/schema/mule/core";
+  private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
 
   public static final String XPATH_SELECTOR = "//*[local-name()='flow']";
 
@@ -37,6 +38,10 @@ public class Flow extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
+    getApplicationModel().addNameSpace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE),
+                                       "http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd",
+                                       element.getDocument());
+
     Element setVariable = new Element("set-variable", Namespace.getNamespace(CORE_NAMESPACE));
     setVariable.setAttribute("variableName", "compatibility_outboundProperties");
     setVariable.setAttribute("value", "#[mel:message.outboundProperties]");

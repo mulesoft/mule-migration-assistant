@@ -6,13 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.step.other;
 
-import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.Version;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * JUST A CONCEPT
@@ -38,8 +38,8 @@ public class AnotherMigrationTask extends AbstractMigrationTask {
 
 
   @Override
-  public Set<MigrationStep> getSteps() {
-    Set<MigrationStep> steps = new HashSet<>();
+  public List<MigrationStep> getSteps() {
+    List<MigrationStep> steps = new ArrayList<>();
 
     return steps;
   }
