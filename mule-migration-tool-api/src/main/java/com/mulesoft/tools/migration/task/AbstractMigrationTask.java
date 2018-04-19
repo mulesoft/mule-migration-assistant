@@ -13,7 +13,6 @@ import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.MigrationStep;
-import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import java.util.List;
@@ -47,16 +46,15 @@ public abstract class AbstractMigrationTask implements MigrationTask {
     List<MigrationStep> steps = getSteps();
     try {
       if (steps != null) {
-        steps.stream().filter(s -> s instanceof ApplicationModelContribution)
-            .forEach(s -> ((ApplicationModelContribution) s).setApplicationModel(applicationModel));
-
         MigrationStepSorter stepSorter = new MigrationStepSorter(steps);
 
         stepSorter.getNameSpaceContributionSteps().forEach(s -> s.execute(applicationModel, report));
 
         stepSorter.getApplicationModelContributionSteps()
-            .forEach(s -> applicationModel.getNodes(s.getAppliedTo()).forEach(n -> s.execute(n, report)));
-
+            .forEach(s -> {
+              s.setApplicationModel(applicationModel);
+              applicationModel.getNodes(s.getAppliedTo()).forEach(n -> s.execute(n, report));
+            });
 
         stepSorter.getExpressionContributionSteps().forEach(s -> s.execute(new Object(), report));
 
