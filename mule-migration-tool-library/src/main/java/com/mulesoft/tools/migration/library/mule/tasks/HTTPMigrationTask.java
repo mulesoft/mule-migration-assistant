@@ -15,7 +15,10 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorHeaders
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListenerConfig;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorQueryParams;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequestConfig;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorUriParams;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -54,6 +57,7 @@ public class HTTPMigrationTask extends AbstractMigrationTask {
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new HttpConnectorPomContribution(), new HttpConnectorListenerConfig(), new HttpConnectorRequestConfig(),
-                        new HttpConnectorListener(), new HttpConnectorHeaders());
+                        new HttpConnectorListener(), new HttpConnectorRequester(),
+                        new HttpConnectorHeaders(), new HttpConnectorQueryParams(), new HttpConnectorUriParams());
   }
 }

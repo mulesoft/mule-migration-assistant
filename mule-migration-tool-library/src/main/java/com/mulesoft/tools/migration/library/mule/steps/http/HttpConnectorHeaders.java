@@ -45,10 +45,12 @@ public class HttpConnectorHeaders extends AbstractApplicationModelMigrationStep 
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);
 
+    int idx = object.getParent().indexOf(object);
+
     if ("headers".equals(object.getName())) {
       String headersExpr = object.getAttributeValue("expression");
 
-      setMule4HeadersTagText(object.getParentElement(), httpNamespace, report,
+      setMule4HeadersTagText(idx, object.getParentElement(), httpNamespace, report,
                              () -> getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(headersExpr)),
                              expr -> getExpressionMigrator()
                                  .wrap(getExpressionMigrator().unwrap(expr) + " ++ "
@@ -64,10 +66,10 @@ public class HttpConnectorHeaders extends AbstractApplicationModelMigrationStep 
 
       String dwHeaderMapElement = "'" + headerName + "' : "
           + (getExpressionMigrator().isWrapped(headerValue)
-              ? getExpressionMigrator().unwrap(headerValue)
+              ? getExpressionMigrator().unwrap(getExpressionMigrator().migrateExpression(headerValue))
               : ("'" + headerValue + "'"));
 
-      setMule4HeadersTagText(object.getParentElement(), httpNamespace, report,
+      setMule4HeadersTagText(idx, object.getParentElement(), httpNamespace, report,
                              () -> getExpressionMigrator().wrap("{" + dwHeaderMapElement + "}"),
                              expr -> getExpressionMigrator()
                                  .wrap(getExpressionMigrator().unwrap(expr) + " ++ {" + dwHeaderMapElement + "}"));
@@ -76,17 +78,17 @@ public class HttpConnectorHeaders extends AbstractApplicationModelMigrationStep 
     }
   }
 
-  private void setMule4HeadersTagText(Element parentTag, Namespace httpNamespace, MigrationReport report,
+  private void setMule4HeadersTagText(int idx, Element parentTag, Namespace httpNamespace, MigrationReport report,
                                       Supplier<String> headersExprCreate,
                                       Function<String, String> headersExprAppend) {
-    final Element mule4HeadersTag = lookupMule4HeadersTag(parentTag, httpNamespace, report);
+    final Element mule4HeadersTag = lookupMule4HeadersTag(idx, parentTag, httpNamespace, report);
     mule4HeadersTag.setText(getExpressionMigrator().wrap(StringUtils.isEmpty(mule4HeadersTag.getText())
         ? headersExprCreate.get()
         : headersExprAppend.apply(mule4HeadersTag.getText())));
 
   }
 
-  private Element lookupMule4HeadersTag(Element parentTag, Namespace httpNamespace, MigrationReport report) {
+  private Element lookupMule4HeadersTag(int idx, Element parentTag, Namespace httpNamespace, MigrationReport report) {
     final List<Element> children = parentTag.getChildren("headers", httpNamespace);
 
     return children.stream().filter(c -> StringUtils.isNotEmpty(c.getTextTrim())).findAny()
@@ -96,22 +98,9 @@ public class HttpConnectorHeaders extends AbstractApplicationModelMigrationStep 
           report.report(WARN, headers, parentTag,
                         "Build the headers map with a single DW expression",
                         "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
-          parentTag.addContent(headers);
+          parentTag.addContent(idx, headers);
 
           return headers;
         });
   }
-
-  protected void copyAttributeIfPresent(final Element source, final Element target, final String attributeName) {
-    copyAttributeIfPresent(source, target, attributeName, attributeName);
-  }
-
-  protected void copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
-                                        final String targetAttributeName) {
-    if (source.getAttribute(sourceAttributeName) != null) {
-      target.setAttribute(targetAttributeName, source.getAttributeValue(sourceAttributeName));
-      source.removeAttribute(sourceAttributeName);
-    }
-  }
-
 }

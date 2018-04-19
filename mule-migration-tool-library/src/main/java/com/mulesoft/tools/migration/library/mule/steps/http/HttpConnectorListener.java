@@ -158,7 +158,8 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
 
   private void handleReferencedResponseBuilder(Element object, final Namespace httpNamespace) {
     Element builderRef = object.getChild("builder", httpNamespace);
-    if (builderRef != null) {
+    int idx = 0;
+    while (builderRef != null) {
 
       object.removeContent(builderRef);
 
@@ -170,10 +171,14 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
       builder.setContent(emptyList());
       builder.getParent().removeContent(builder);
 
-      object.addContent(0, builderContent);
+      object.addContent(idx, builderContent);
+      idx += builderContent.size();
+
+      builderRef = object.getChild("builder", httpNamespace);
     }
   }
 
+  // TODO Move
   public static List<Element> getElementsFromDocument(Document doc, String xPathExpression) {
     List<Namespace> namespaces = new ArrayList<>();
     namespaces.add(Namespace.getNamespace("mule", doc.getRootElement().getNamespace().getURI()));
@@ -183,17 +188,4 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
     List<Element> nodes = xpath.evaluate(doc);
     return nodes;
   }
-
-  protected void copyAttributeIfPresent(final Element source, final Element target, final String attributeName) {
-    copyAttributeIfPresent(source, target, attributeName, attributeName);
-  }
-
-  protected void copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
-                                        final String targetAttributeName) {
-    if (source.getAttribute(sourceAttributeName) != null) {
-      target.setAttribute(targetAttributeName, source.getAttributeValue(sourceAttributeName));
-      source.removeAttribute(sourceAttributeName);
-    }
-  }
-
 }
