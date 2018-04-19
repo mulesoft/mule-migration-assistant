@@ -26,7 +26,7 @@ public class DefaultMigrationReport implements MigrationReport {
   public void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks) {
     int i = 0;
 
-    elementToComment.addContent(i++, new Comment(level.name() + ": " + message));
+    elementToComment.addContent(i++, new Comment("Migration " + level.name() + ": " + message));
     elementToComment.addContent(i++, new Comment("    For more information refer to:"));
 
     for (String link : documentationLinks) {

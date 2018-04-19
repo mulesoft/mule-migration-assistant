@@ -6,30 +6,36 @@
  */
 package com.mulesoft.tools.migration.integration;
 
+import org.mule.tck.junit4.rule.DynamicPort;
+
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class EmptyAppTestCase extends EndToEndTestCase {
+public class HttpMigrationTestCase extends EndToEndTestCase {
+
+  @Rule
+  public final DynamicPort httpPort = new DynamicPort("httpPort");
 
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "empty",
-        "emptyMvn"
+        // "http1",
+        "http1Mvn"
     };
   }
 
   private final String appToMigrate;
 
-  public EmptyAppTestCase(String appToMigrate) {
+  public HttpMigrationTestCase(String appToMigrate) {
     this.appToMigrate = appToMigrate;
   }
 
   @Test
   public void test() throws Exception {
-    simpleCase(appToMigrate);
+    simpleCase(appToMigrate, "-M-DhttpPort=" + httpPort.getValue());
   }
 }

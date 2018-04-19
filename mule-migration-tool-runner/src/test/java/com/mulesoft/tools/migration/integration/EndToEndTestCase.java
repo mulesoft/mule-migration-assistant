@@ -6,6 +6,9 @@
  */
 package com.mulesoft.tools.migration.integration;
 
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.System.getProperty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.mule.runtime.deployment.model.api.application.ApplicationDescriptor.MULE_APPLICATION_CLASSIFIER;
 import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArtifact;
 
@@ -25,10 +28,12 @@ import java.io.File;
  */
 public abstract class EndToEndTestCase extends AbstractEeAppControl {
 
+  private static final String DELETE_ON_EXIT = getProperty("mule.test.deleteOnExit");
+
   @Rule
   public TemporaryFolder migrationResult = new TemporaryFolder();
 
-  public void simpleCase(String appName) throws Exception {
+  public void simpleCase(String appName, String... muleArgs) throws Exception {
     String projectBasePath =
         new File(EndToEndTestCase.class.getClassLoader().getResource("e2e/" + appName).toURI()).getAbsolutePath();
 
@@ -42,14 +47,26 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
         "-migrationConfigurationPath", ""
     });
 
-    // TODO generated GAV should be consistent with source app
     BundleDescriptor migratedAppDescriptor = new BundleDescriptor.Builder().setGroupId("org.mule.migrated")
-        .setArtifactId("migrated-project").setVersion("1.0.0").setClassifier(MULE_APPLICATION_CLASSIFIER).build();
+        .setArtifactId(appName).setVersion("1.0.0-SNAPSHOT").setClassifier(MULE_APPLICATION_CLASSIFIER).build();
 
     File migratedAppArtifact = installMavenArtifact(migrationResultFolder.getAbsolutePath(), migratedAppDescriptor);
 
-    getMule().start();
-    getMule().deploy(migratedAppArtifact.getAbsolutePath());
-    assertAppIsDeployed(migratedAppDescriptor.getArtifactFileName());
+    try {
+      getMule().start(muleArgs);
+      assertAppNotDeployed(migratedAppDescriptor.getArtifactFileName());
+      getMule().deploy(migratedAppArtifact.getAbsolutePath());
+      assertAppIsDeployed(migratedAppDescriptor.getArtifactFileName());
+    } finally {
+      getMule().stop();
+      if (isEmpty(DELETE_ON_EXIT) || parseBoolean(DELETE_ON_EXIT)) {
+        getMule().undeployAll();
+      }
+    }
+  }
+
+  @Override
+  public int getTestTimeoutSecs() {
+    return super.getTestTimeoutSecs() * 2;
   }
 }

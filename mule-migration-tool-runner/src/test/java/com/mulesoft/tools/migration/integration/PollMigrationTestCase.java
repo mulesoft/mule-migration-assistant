@@ -12,19 +12,19 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class EmptyAppTestCase extends EndToEndTestCase {
+public class PollMigrationTestCase extends EndToEndTestCase {
 
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "empty",
-        "emptyMvn"
+        // "http1",
+        "poll1Mvn"
     };
   }
 
   private final String appToMigrate;
 
-  public EmptyAppTestCase(String appToMigrate) {
+  public PollMigrationTestCase(String appToMigrate) {
     this.appToMigrate = appToMigrate;
   }
 

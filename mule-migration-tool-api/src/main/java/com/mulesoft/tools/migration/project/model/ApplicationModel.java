@@ -203,7 +203,12 @@ public class ApplicationModel {
             .withMuleArtifactJson(muleArtifactJson).build();
         applicationModel.setMuleArtifactJsonModel(muleArtifactJsonModel);
       }
-      PomModel pomModel = new PomModel.PomModelBuilder().withPom(pom).build();
+      PomModel pomModel;
+      if (pom != null && pom.toFile().exists()) {
+        pomModel = new PomModel.PomModelBuilder().withPom(pom).build();
+      } else {
+        pomModel = new PomModel.PomModelBuilder().withArtifactId(projectBasePath.getFileName().toString()).build();
+      }
       applicationModel.setPomModel(pomModel);
       applicationModel.setProjectBasePath(projectBasePath);
 

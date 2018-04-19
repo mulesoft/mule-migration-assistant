@@ -20,7 +20,18 @@ public interface MigrationReport {
    * Represents the severity of a report entry.
    */
   public enum Level {
-    INFO, WARN, ERROR
+    /**
+     * Represents a migration step that has to be done manually by the app developer. The application may not start-up or work as
+     * expected until this item is assessed.
+     */
+    ERROR,
+
+    /**
+     * Represents a migration step that has to be done manually by the app developer, but the application would work as intended
+     * even if this item is not assessed.
+     */
+    WARN
+
   }
 
   /**

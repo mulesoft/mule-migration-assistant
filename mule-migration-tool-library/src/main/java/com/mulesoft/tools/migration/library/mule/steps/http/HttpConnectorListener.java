@@ -7,8 +7,8 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.INFO;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -37,7 +37,9 @@ import java.util.Map;
  */
 public class HttpConnectorListener extends AbstractApplicationModelMigrationStep {
 
+  private static final String CORE_NAMESPACE = "http://www.mulesoft.org/schema/mule/core";
   private static final String HTTP_NAMESPACE = "http://www.mulesoft.org/schema/mule/http";
+  private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
 
   public static final String XPATH_SELECTOR = "/mule:mule/mule:flow/http:listener";
 
@@ -63,9 +65,43 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
     }
     object.removeAttribute("parseRequest");
 
+    addAttributesToInboundProperties(object, report);
+
+    addOutboundPropertiesToVariable(object, report);
+
+    object.getChildren().forEach(c -> {
+      if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
+        executeChild(c, report, httpNamespace);
+      }
+    });
+
+    if (object.getChild("response", httpNamespace) == null) {
+      object.addContent(new Element("response", httpNamespace).addContent(compatibilityHeaders(httpNamespace)));
+    }
+    if (object.getChild("error-response", httpNamespace) == null) {
+      object.addContent(new Element("error-response", httpNamespace).addContent(compatibilityHeaders(httpNamespace)));
+    }
+  }
+
+  private void addOutboundPropertiesToVariable(Element object, MigrationReport report) {
+    Element setVariable = new Element("set-variable", Namespace.getNamespace(CORE_NAMESPACE));
+    setVariable.setAttribute("variableName", "compatibility_outboundProperties");
+    setVariable.setAttribute("value", "#[mel:message.outboundProperties]");
+    object.getParent().addContent(setVariable);
+
+    report.report(WARN, setVariable, setVariable,
+                  "Instead of setting outbound properties in the flow, its values must be set explicitly in the operation/listener.",
+                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
+  }
+
+  private void addAttributesToInboundProperties(Element object, MigrationReport report) {
+    getApplicationModel().addNameSpace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE),
+                                       "http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd",
+                                       object.getDocument());
+
     int index = object.getParent().indexOf(object);
     Element a2ip = new Element("attributes-to-inbound-properties",
-                               Namespace.getNamespace("compatibility", "http://www.mulesoft.org/schema/mule/compatibility"));
+                               Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
     object.getParent().addContent(index + 1, a2ip);
 
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
@@ -88,22 +124,11 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    report.report(INFO, a2ip, a2ip,
-                  "Expressions that query inboundProperties from the message should instead query the attributes of the message. Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as copy-properties)",
+    report.report(WARN, a2ip, a2ip,
+                  "Expressions that query inboundProperties from the message should instead query the attributes of the message."
+                      + lineSeparator()
+                      + "Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as copy-properties)",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes");
-
-    object.getChildren().forEach(c -> {
-      if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
-        executeChild(c, report, httpNamespace);
-      }
-    });
-
-    if (object.getChild("response", httpNamespace) == null) {
-      object.addContent(new Element("response", httpNamespace).addContent(compatibilityHeaders(httpNamespace)));
-    }
-    if (object.getChild("error-response", httpNamespace) == null) {
-      object.addContent(new Element("error-response", httpNamespace).addContent(compatibilityHeaders(httpNamespace)));
-    }
   }
 
   public void executeChild(Element object, MigrationReport report, Namespace httpNamespace) throws RuntimeException {

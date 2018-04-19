@@ -11,7 +11,6 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFrom
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
@@ -65,7 +64,6 @@ public class OutboundPropertiesTest {
   private SetProperty setProperty;
   private CopyProperties copyProperties;
   private MessagePropertiesTransformer mpt;
-  private Flow flow;
   private ApplicationModel appModel;
 
   @Before
@@ -73,11 +71,6 @@ public class OutboundPropertiesTest {
     setProperty = new SetProperty();
     copyProperties = new CopyProperties();
     mpt = new MessagePropertiesTransformer();
-    flow = new Flow();
-
-    appModel = mock(ApplicationModel.class);
-    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
-    flow.setApplicationModel(appModel);
   }
 
   @Ignore
@@ -96,8 +89,6 @@ public class OutboundPropertiesTest {
         .forEach(node -> copyProperties.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, mpt.getAppliedTo().getExpression())
         .forEach(node -> mpt.execute(node, mock(MigrationReport.class)));
-    getElementsFromDocument(doc, flow.getAppliedTo().getExpression())
-        .forEach(node -> flow.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
