@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSI
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.AttributesToInboundPropertiesScriptGenerator;
+import com.mulesoft.tools.migration.library.mule.steps.core.CleanNamespaces;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -33,11 +34,6 @@ public class PostprocessMuleApplication extends AbstractMigrationTask {
   }
 
   @Override
-  public List<MigrationStep> getSteps() {
-    return newArrayList(new AttributesToInboundPropertiesScriptGenerator());
-  }
-
-  @Override
   public Version getTo() {
     return MULE_4_VERSION;
   }
@@ -50,6 +46,12 @@ public class PostprocessMuleApplication extends AbstractMigrationTask {
   @Override
   public ProjectType getProjectType() {
     return MULE_FOUR_APPLICATION;
+  }
+
+  @Override
+  public List<MigrationStep> getSteps() {
+    return newArrayList(new AttributesToInboundPropertiesScriptGenerator(),
+                        new CleanNamespaces());
   }
 
 }

@@ -64,6 +64,13 @@ public class ApplicationModel {
     return nodes;
   }
 
+  public static List<Element> getElementsWithNamespace(Document document, Namespace n) {
+    String xPathExpression = "//*[namespace-uri()='" + n.getURI() + "']";
+    XPathExpression<Element> xpath = XPathFactory.instance().compile(xPathExpression, Filters.element(), null,
+                                                                     getAdditionalNamespaces());
+    return xpath.evaluate(document);
+  }
+
   public void addNameSpace(String prefix, String uri, String schemaLocation) {
     Namespace namespace = Namespace.getNamespace(prefix, uri);
     for (Document doc : applicationDocuments.values()) {
