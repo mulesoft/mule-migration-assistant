@@ -8,23 +8,18 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-import static java.lang.System.lineSeparator;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getElementsFromDocument;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
 import static java.util.Collections.emptyList;
 
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
 
 import com.google.common.collect.ImmutableList;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +30,7 @@ import java.util.Map;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class HttpConnectorListener extends AbstractApplicationModelMigrationStep {
-
-  private static final String CORE_NAMESPACE = "http://www.mulesoft.org/schema/mule/core";
-  private static final String HTTP_NAMESPACE = "http://www.mulesoft.org/schema/mule/http";
-  private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
+public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
 
   public static final String XPATH_SELECTOR = "/mule:mule/mule:flow/http:listener";
 
@@ -67,8 +58,6 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
 
     addAttributesToInboundProperties(object, report);
 
-    addOutboundPropertiesToVariable(object, report);
-
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
         executeChild(c, report, httpNamespace);
@@ -83,26 +72,8 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
     }
   }
 
-  private void addOutboundPropertiesToVariable(Element object, MigrationReport report) {
-    Element setVariable = new Element("set-variable", Namespace.getNamespace(CORE_NAMESPACE));
-    setVariable.setAttribute("variableName", "compatibility_outboundProperties");
-    setVariable.setAttribute("value", "#[mel:message.outboundProperties]");
-    object.getParent().addContent(setVariable);
-
-    report.report(WARN, setVariable, setVariable,
-                  "Instead of setting outbound properties in the flow, its values must be set explicitly in the operation/listener.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
-  }
-
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
-    getApplicationModel().addNameSpace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE),
-                                       "http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd",
-                                       object.getDocument());
-
-    int index = object.getParent().indexOf(object);
-    Element a2ip = new Element("attributes-to-inbound-properties",
-                               Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
-    object.getParent().addContent(index + 1, a2ip);
+    migrateSourceStructure(getApplicationModel(), object, report);
 
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("http.listener.path", "message.attributes.listenerPath");
@@ -124,11 +95,6 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    report.report(WARN, a2ip, a2ip,
-                  "Expressions that query inboundProperties from the message should instead query the attributes of the message."
-                      + lineSeparator()
-                      + "Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as copy-properties)",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes");
   }
 
   public void executeChild(Element object, MigrationReport report, Namespace httpNamespace) throws RuntimeException {
@@ -153,7 +119,8 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
   }
 
   private Element compatibilityHeaders(Namespace httpNamespace) {
-    return new Element("headers", httpNamespace).setAttribute("expression", "flowVars.compatibility_outboundProperties");
+    return new Element("headers", httpNamespace)
+        .setText("#[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\\..*|Connection|Transfer-Encoding/i))]");
   }
 
   private void handleReferencedResponseBuilder(Element object, final Namespace httpNamespace) {
@@ -163,8 +130,9 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
 
       object.removeContent(builderRef);
 
-      String xPathQuery = "/mule:mule/http:response-builder[@name='" + builderRef.getAttributeValue("ref") + "']";
-      Element builder = getElementsFromDocument(object.getDocument(), xPathQuery).get(0);
+      Element builder =
+          getElementsFromDocument(object.getDocument(),
+                                  "/mule:mule/http:response-builder[@name='" + builderRef.getAttributeValue("ref") + "']").get(0);
 
       handleReferencedResponseBuilder(builder, httpNamespace);
       List<Element> builderContent = ImmutableList.copyOf(builder.getChildren()).asList();
@@ -176,16 +144,5 @@ public class HttpConnectorListener extends AbstractApplicationModelMigrationStep
 
       builderRef = object.getChild("builder", httpNamespace);
     }
-  }
-
-  // TODO Move
-  public static List<Element> getElementsFromDocument(Document doc, String xPathExpression) {
-    List<Namespace> namespaces = new ArrayList<>();
-    namespaces.add(Namespace.getNamespace("mule", doc.getRootElement().getNamespace().getURI()));
-    namespaces.addAll(doc.getRootElement().getAdditionalNamespaces());
-
-    XPathExpression<Element> xpath = XPathFactory.instance().compile(xPathExpression, Filters.element(), null, namespaces);
-    List<Element> nodes = xpath.evaluate(doc);
-    return nodes;
   }
 }

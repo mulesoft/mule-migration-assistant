@@ -16,12 +16,12 @@
         <http:listener config-ref="listenerConfig" path="${path}">
             <http:error-response>
                 <http:headers>
-                    #[mel:flowVars.compatibility_outboundProperties]
+                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i))]
                 </http:headers>
             </http:error-response>
             <http:response>
                 <http:headers>
-                    #[mel:flowVars.compatibility_outboundProperties]
+                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i))]
                 </http:headers>
             </http:response>
         </http:listener>

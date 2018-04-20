@@ -16,7 +16,7 @@
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
         <http:request config-ref="requestConfig" path="testPath">
             <http:headers>
-                #[{'testHeader1' : 'headerValue1'} ++ {'testHeader2' : 'headerValue2'} ++ mel:flowVars.compatibility_outboundProperties]
+                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i)) ++ {'testHeader1' : 'headerValue1'} ++ {'testHeader2' : 'headerValue2'}]
             </http:headers>
             <http:query-params>
                 #[{'queryParam1' : 'testValue1'} ++ {'queryParam2' : 'testValue2'} ++ {'queryParam2' : 'newTestValue2'} ++ {'queryParam3' : 'testValue3'}]
@@ -29,7 +29,7 @@
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[{'testName1' : 'testValue1'} ++ mel:headers ++ {'testName1' : 'testValue2'} ++ mel:flowVars.compatibility_outboundProperties]
+                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i)) ++ {'testName1' : 'testValue1'} ++ mel:headers ++ {'testName1' : 'testValue2'}]
             </http:headers>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>

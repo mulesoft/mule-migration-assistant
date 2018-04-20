@@ -20,12 +20,12 @@
 <!--                     #[{'user-agent': 'Mule 3.8.0'} ++ {'Date': server.dateTime}] -->
 <!--                 </http:headers> -->
                 <http:headers>
-                    #[mel:['user-agent': 'Mule 3.8.0'] ++ {'Date' : mel:server.dateTime} ++ mel:flowVars.compatibility_outboundProperties]
+                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i)) ++ mel:['user-agent': 'Mule 3.8.0'] ++ {'Date' : mel:server.dateTime}]
                 </http:headers>
             </http:error-response>
             <http:response>
                 <http:headers>
-                    #[mel:flowVars.compatibility_outboundProperties]
+                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i))]
                 </http:headers>
             </http:response>
         </http:listener>

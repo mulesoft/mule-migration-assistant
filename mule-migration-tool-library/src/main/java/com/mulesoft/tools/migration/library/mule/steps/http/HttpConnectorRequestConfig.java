@@ -8,7 +8,6 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
@@ -21,12 +20,9 @@ import org.jdom2.Namespace;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class HttpConnectorRequestConfig extends AbstractApplicationModelMigrationStep {
+public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationStep {
 
-  private static final String HTTP_NAMESPACE = "http://www.mulesoft.org/schema/mule/http";
-  private static final String TLS_NAMESPACE = "http://www.mulesoft.org/schema/mule/tls";
   private static final String TCP_NAMESPACE = "http://www.mulesoft.org/schema/mule/tcp";
-  private static final String SOCKETS_NAMESPACE = "http://www.mulesoft.org/schema/mule/sockets";
 
   public static final String XPATH_SELECTOR = ""
       + "/mule:mule/http:*["
