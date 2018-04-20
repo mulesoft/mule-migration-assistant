@@ -12,12 +12,7 @@ import static org.hamcrest.Matchers.is;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
-import com.mulesoft.tools.migration.step.category.ExpressionContribution;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.category.NamespaceContribution;
-import com.mulesoft.tools.migration.step.category.PomContribution;
-import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
+import com.mulesoft.tools.migration.step.category.*;
 import com.mulesoft.tools.migration.task.MigrationStepSorter;
 
 import org.jdom2.Element;
@@ -118,6 +113,7 @@ public class MigrationStepSorterTest {
     public String getDescription() {
       return null;
     }
+
   }
 
   private static final class ExpressionContributionStepImpl implements ExpressionContribution {

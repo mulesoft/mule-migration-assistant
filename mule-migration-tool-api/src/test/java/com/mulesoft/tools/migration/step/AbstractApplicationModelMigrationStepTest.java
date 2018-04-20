@@ -10,6 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Mockito.mock;
 
+import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -54,5 +55,6 @@ public class AbstractApplicationModelMigrationStepTest {
     public void execute(Element object, MigrationReport report) throws RuntimeException {
 
     }
+
   }
 }

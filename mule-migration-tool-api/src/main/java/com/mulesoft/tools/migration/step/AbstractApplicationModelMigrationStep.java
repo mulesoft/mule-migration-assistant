@@ -51,7 +51,7 @@ public abstract class AbstractApplicationModelMigrationStep implements Applicati
     };
 
     @Override
-    public String migrateExpression(String originalExpression) {
+    public String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly) {
       // TODO
       return originalExpression.replace("#[", "#[mel:");
     }
@@ -86,7 +86,7 @@ public abstract class AbstractApplicationModelMigrationStep implements Applicati
     this.applicationModel = applicationModel;
   }
 
-  protected final ExpressionMigrator getExpressionMigrator() {
+  public final ExpressionMigrator getExpressionMigrator() {
     return EXPRESSION_MIGRATOR;
   }
 

@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -41,6 +42,7 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
+
     report.report(WARN, element, element,
                   "Instead of setting properties in the flow, its values must be set explicitly in the operation/listener.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
@@ -71,7 +73,8 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
               .setValue(getExpressionMigrator()
                   .wrap("mel:message.outboundProperties['" + child.getAttributeValue("key") + "'] != null "
                       + "? message.outboundProperties['" + child.getAttributeValue("key") + "'] "
-                      + ": " + (value.startsWith("#[") ? getExpressionMigrator().unwrap(value) : "'" + value + "'")));
+                      + ": "
+                      + (getExpressionMigrator().isWrapped(value) ? getExpressionMigrator().unwrap(value) : "'" + value + "'")));
         }
 
         child.setName("set-property");

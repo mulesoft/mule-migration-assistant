@@ -65,6 +65,7 @@
 
         <mule.api.version>1.1.1</mule.api.version>
         <mule.module.artifact.version>4.1.2-SNAPSHOT</mule.module.artifact.version>
+        <mel.dw.migrator.version>1.0.0-SNAPSHOT</mel.dw.migrator.version>
 
         <!-- Properties -->
         <lib-dir>${basedir}/lib</lib-dir>
@@ -281,15 +282,15 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>${maven.site.plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.0</version>
-            </plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven.site.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
                 <!--TODO this we need to make it run-->
                 <!--<plugin>-->
                 <!--<groupId>org.apache.maven.plugins</groupId>-->
@@ -483,6 +484,12 @@
                 <artifactId>mule-module-artifact</artifactId>
                 <version>${mule.module.artifact.version}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mulesoft.tools</groupId>
+                <artifactId>mel-dw-migrator</artifactId>
+                <version>${mel.dw.migrator.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
