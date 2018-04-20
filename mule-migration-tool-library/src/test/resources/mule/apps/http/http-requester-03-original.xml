@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+    <http:request-config name="requesterConfig" host="localhost" port="${port}" />
+
+    <flow name="attachmentFromBytes">
+        <set-attachment attachmentName="someJson" value="#['{ \'I am a JSON attachment!\' }'.getBytes('UTF-8')]" contentType="#['text/json']"/>
+        <http:request config-ref="requesterConfig" path="reqWithAttachment" method="POST"/>
+    </flow>
+
+    <flow name="attachmentFromStream">
+        <set-attachment attachmentName="someJson" value="#[new java.io.ByteArrayInputStream('{ \'I am a JSON attachment!\' }'.getBytes('UTF-8'))]" contentType="#['text/json']"/>
+        <http:request config-ref="requesterConfig" path="reqWithAttachment" method="POST"/>
+    </flow>
+</mule>

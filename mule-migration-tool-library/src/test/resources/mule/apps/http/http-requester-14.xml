@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+  <http:request-config name="config">
+    <http:request-connection host="localhost" port="${httpPort}" />
+  </http:request-config>
+
+    <flow name="uriParamList">
+        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <http:request config-ref="config" path="testPath/{testParam1}/{testParam2}">
+            <http:headers>
+                #[mel:flowVars.compatibility_outboundProperties]
+            </http:headers>
+            <http:uri-params>
+                #[{'testParam1' : 'testValue1'} ++ {mel:paramName : mel:paramValue}]
+            </http:uri-params>
+        </http:request>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+
+    <flow name="uriParamMap">
+        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <http:request config-ref="config" path="testPath/{testParam1}/{testParam2}">
+            <http:headers>
+                #[mel:flowVars.compatibility_outboundProperties]
+            </http:headers>
+            <http:uri-params>
+                #[mel:params]
+            </http:uri-params>
+        </http:request>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+
+    <flow name="uriParamOverride">
+        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <http:request config-ref="config" path="testPath/{testParam1}/{testParam2}">
+            <http:headers>
+                #[mel:flowVars.compatibility_outboundProperties]
+            </http:headers>
+            <http:uri-params>
+                #[{'testParam1' : 'testValue1'} ++ mel:params]
+            </http:uri-params>
+        </http:request>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+
+    <flow name="uriParamNull">
+        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <http:request config-ref="config" path="testPath/{testParam1}/{testParam2}">
+            <http:headers>
+                #[mel:flowVars.compatibility_outboundProperties]
+            </http:headers>
+            <http:uri-params>
+                #[{'testParam1' : 'testValue1'} ++ {'testParam2' : mel:payload}]
+            </http:uri-params>
+        </http:request>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+
+</mule>
