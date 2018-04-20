@@ -6,18 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Migrates the listener source of the HTTP Connector
@@ -25,9 +17,7 @@ import java.util.function.Supplier;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class HttpConnectorQueryParams extends AbstractApplicationModelMigrationStep {
-
-  private static final String HTTP_NAMESPACE = "http://www.mulesoft.org/schema/mule/http";
+public class HttpConnectorQueryParams extends AbstractHttpConnectorMigrationStep {
 
   public static final String XPATH_SELECTOR = "//http:*[local-name()='query-param' or local-name()='query-params']";
 
@@ -50,12 +40,12 @@ public class HttpConnectorQueryParams extends AbstractApplicationModelMigrationS
     if ("query-params".equals(object.getName())) {
       String paramsExpr = object.getAttributeValue("expression");
 
-      setMule4ParamsTagText(idx, object.getParentElement(), httpNamespace, report,
-                            () -> getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(paramsExpr)),
-                            expr -> getExpressionMigrator()
-                                .wrap(getExpressionMigrator().unwrap(expr) + " ++ "
-                                    + getExpressionMigrator().unwrap(getExpressionMigrator()
-                                        .migrateExpression(getExpressionMigrator().wrap(paramsExpr)))));
+      setMule4MapBuilderTagText(idx, "query-params", object.getParentElement(), httpNamespace, report,
+                                () -> getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(paramsExpr)),
+                                expr -> getExpressionMigrator()
+                                    .wrap(getExpressionMigrator().unwrap(expr) + " ++ "
+                                        + getExpressionMigrator().unwrap(getExpressionMigrator()
+                                            .migrateExpression(getExpressionMigrator().wrap(paramsExpr)))));
 
       object.getParent().removeContent(object);
       object.setText(getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(paramsExpr)));
@@ -71,38 +61,13 @@ public class HttpConnectorQueryParams extends AbstractApplicationModelMigrationS
               ? getExpressionMigrator().unwrap(getExpressionMigrator().migrateExpression(paramValue))
               : ("'" + paramValue + "'"));
 
-      setMule4ParamsTagText(idx, object.getParentElement(), httpNamespace, report,
-                            () -> getExpressionMigrator().wrap("{" + dwParamMapElement + "}"),
-                            expr -> getExpressionMigrator()
-                                .wrap(getExpressionMigrator().unwrap(expr) + " ++ {" + dwParamMapElement + "}"));
+      setMule4MapBuilderTagText(idx, "query-params", object.getParentElement(), httpNamespace, report,
+                                () -> getExpressionMigrator().wrap("{" + dwParamMapElement + "}"),
+                                expr -> getExpressionMigrator()
+                                    .wrap(getExpressionMigrator().unwrap(expr) + " ++ {" + dwParamMapElement + "}"));
 
       object.getParent().removeContent(object);
     }
   }
 
-  private void setMule4ParamsTagText(int idx, Element parentTag, Namespace httpNamespace, MigrationReport report,
-                                     Supplier<String> paramsExprCreate,
-                                     Function<String, String> paramsExprAppend) {
-    final Element mule4QueryParamsTag = lookupMule4QueryParamsTag(idx, parentTag, httpNamespace, report);
-    mule4QueryParamsTag.setText(getExpressionMigrator().wrap(StringUtils.isEmpty(mule4QueryParamsTag.getText())
-        ? paramsExprCreate.get()
-        : paramsExprAppend.apply(mule4QueryParamsTag.getText())));
-
-  }
-
-  private Element lookupMule4QueryParamsTag(int idx, Element parentTag, Namespace httpNamespace, MigrationReport report) {
-    final List<Element> children = parentTag.getChildren("query-params", httpNamespace);
-
-    return children.stream().filter(c -> StringUtils.isNotEmpty(c.getTextTrim())).findAny()
-        .orElseGet(() -> {
-          final Element queryParams = new Element("query-params", httpNamespace);
-
-          report.report(WARN, queryParams, parentTag,
-                        "Build the query-params map with a single DW expression",
-                        "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
-          parentTag.addContent(idx, queryParams);
-
-          return queryParams;
-        });
-  }
 }

@@ -16,7 +16,7 @@
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
         <http:request config-ref="requestConfig" path="status">
             <http:headers>
-                #[mel:flowVars.compatibility_outboundProperties]
+                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
             <http:query-params>
                 #[{'code' : mel:code}]

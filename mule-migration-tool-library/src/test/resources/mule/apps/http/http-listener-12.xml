@@ -16,12 +16,12 @@
         <http:listener config-ref="listenerConfig" path="${path}">
             <http:response>
                 <http:headers>
-                    #[{'user-agent': 'Mule 3.8.0', 'user-agent': 'Mule 3.9.0'}]
+                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i)) ++ {'user-agent': 'Mule 3.8.0', 'user-agent': 'Mule 3.9.0'}]
                 </http:headers>
             </http:response>
             <http:error-response>
                 <http:headers>
-                    #[mel:flowVars.compatibility_outboundProperties]
+                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i))]
                 </http:headers>
             </http:error-response>
         </http:listener>

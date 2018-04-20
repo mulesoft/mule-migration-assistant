@@ -8,27 +8,22 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-import static java.lang.System.lineSeparator;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getElementsFromDocument;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Content;
-import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +34,7 @@ import java.util.Map;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class HttpConnectorRequester extends AbstractApplicationModelMigrationStep {
-
-  private static final String CORE_NAMESPACE = "http://www.mulesoft.org/schema/mule/core";
-  private static final String HTTP_NAMESPACE = "http://www.mulesoft.org/schema/mule/http";
-  private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
+public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
 
   public static final String XPATH_SELECTOR = "/mule:mule//http:request";
 
@@ -74,29 +65,22 @@ public class HttpConnectorRequester extends AbstractApplicationModelMigrationSte
       object.removeAttribute("host");
     }
 
-    if (object.getAttribute("path") != null) {
-      object.setAttribute("path", getExpressionMigrator().migrateExpression(object.getAttributeValue("path")));
-    }
-    if (object.getAttribute("method") != null) {
-      object.setAttribute("method", getExpressionMigrator().migrateExpression(object.getAttributeValue("method")));
-    }
-    if (object.getAttribute("followRedirects") != null) {
-      object.setAttribute("followRedirects",
-                          getExpressionMigrator().migrateExpression(object.getAttributeValue("followRedirects")));
-    }
-    if (object.getAttribute("target") != null) {
-      object.setAttribute("target", getExpressionMigrator().migrateExpression(object.getAttributeValue("target")));
-    }
+    migrateExpression(object.getAttribute("path"), getExpressionMigrator());
+    migrateExpression(object.getAttribute("method"), getExpressionMigrator());
+    migrateExpression(object.getAttribute("followRedirects"), getExpressionMigrator());
+    migrateExpression(object.getAttribute("target"), getExpressionMigrator());
 
     addAttributesToInboundProperties(object, report);
-
-    addOutboundPropertiesToVariable(object, report);
 
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
         executeChild(c, report, httpNamespace);
       }
     });
+
+    if (object.getChild("request-builder", httpNamespace) == null) {
+      object.addContent(new Element("request-builder", httpNamespace).addContent(compatibilityHeaders(httpNamespace)));
+    }
 
     if (object.getAttribute("source") != null) {
       if (!"#[payload]".equals(object.getAttributeValue("source"))) {
@@ -155,14 +139,7 @@ public class HttpConnectorRequester extends AbstractApplicationModelMigrationSte
   }
 
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
-    getApplicationModel().addNameSpace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE),
-                                       "http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd",
-                                       object.getDocument());
-
-    int index = object.getParent().indexOf(object);
-    Element a2ip = new Element("attributes-to-inbound-properties",
-                               Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
-    object.getParent().addContent(index + 1, a2ip);
+    migrateOperationStructure(getApplicationModel(), object, report);
 
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("http.status", "message.attributes.statusCode");
@@ -170,30 +147,11 @@ public class HttpConnectorRequester extends AbstractApplicationModelMigrationSte
     expressionsPerProperty.put("http.headers", "message.attributes.headers");
 
     try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.http.api.HttpRequestAttributes", expressionsPerProperty);
+      addAttributesMapping(getApplicationModel(), "org.mule.extension.http.api.HttpResponseAttributes", expressionsPerProperty);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    report.report(WARN, a2ip, a2ip,
-                  "Expressions that query inboundProperties from the message should instead query the attributes of the message."
-                      + lineSeparator()
-                      + "Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as copy-properties)",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes");
   }
-
-  private void addOutboundPropertiesToVariable(Element object, MigrationReport report) {
-    int index = object.getParent().indexOf(object);
-
-    Element setVariable = new Element("set-variable", Namespace.getNamespace(CORE_NAMESPACE));
-    setVariable.setAttribute("variableName", "compatibility_outboundProperties");
-    setVariable.setAttribute("value", "#[mel:message.outboundProperties]");
-    object.getParent().addContent(index, setVariable);
-
-    report.report(WARN, setVariable, setVariable,
-                  "Instead of setting outbound properties in the flow, its values must be set explicitly in the operation/listener.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
-  }
-
 
   public void executeChild(Element object, MigrationReport report, Namespace httpNamespace) throws RuntimeException {
     object.getChildren().forEach(c -> {
@@ -209,7 +167,8 @@ public class HttpConnectorRequester extends AbstractApplicationModelMigrationSte
   }
 
   private Element compatibilityHeaders(Namespace httpNamespace) {
-    return new Element("headers", httpNamespace).setAttribute("expression", "flowVars.compatibility_outboundProperties");
+    return new Element("headers", httpNamespace)
+        .setText("#[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\\..*|Connection|Host|Transfer-Encoding/i))]");
   }
 
   private void handleReferencedRequestBuilder(Element object, final Namespace httpNamespace) {
@@ -219,8 +178,9 @@ public class HttpConnectorRequester extends AbstractApplicationModelMigrationSte
 
       object.removeContent(builderRef);
 
-      String xPathQuery = "/mule:mule/http:request-builder[@name='" + builderRef.getAttributeValue("ref") + "']";
-      Element builder = getElementsFromDocument(object.getDocument(), xPathQuery).get(0);
+      Element builder =
+          getElementsFromDocument(object.getDocument(),
+                                  "/mule:mule/http:request-builder[@name='" + builderRef.getAttributeValue("ref") + "']").get(0);
 
       handleReferencedRequestBuilder(builder, httpNamespace);
       List<Element> builderContent = ImmutableList.copyOf(builder.getChildren()).asList();
@@ -232,16 +192,5 @@ public class HttpConnectorRequester extends AbstractApplicationModelMigrationSte
 
       builderRef = object.getChild("builder", httpNamespace);
     }
-  }
-
-  // TODO Move
-  public static List<Element> getElementsFromDocument(Document doc, String xPathExpression) {
-    List<Namespace> namespaces = new ArrayList<>();
-    namespaces.add(Namespace.getNamespace("mule", doc.getRootElement().getNamespace().getURI()));
-    namespaces.addAll(doc.getRootElement().getAdditionalNamespaces());
-
-    XPathExpression<Element> xpath = XPathFactory.instance().compile(xPathExpression, Filters.element(), null, namespaces);
-    List<Element> nodes = xpath.evaluate(doc);
-    return nodes;
   }
 }

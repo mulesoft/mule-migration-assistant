@@ -16,7 +16,7 @@
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
         <http:request config-ref="config" path="testPath" method="POST">
             <http:headers>
-                #[mel:flowVars.compatibility_outboundProperties]
+                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
             <http:query-params>
                 #[{'testName1' : 'testValue1'} ++ {mel:paramName : mel:paramValue}]
@@ -29,7 +29,7 @@
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[mel:flowVars.compatibility_outboundProperties]
+                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
             <http:query-params>
                 #[mel:params]
@@ -42,7 +42,7 @@
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[mel:flowVars.compatibility_outboundProperties]
+                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
             <http:query-params>
                 #[{'testName1' : 'testValue1'} ++ mel:params]
@@ -55,7 +55,7 @@
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
         <http:request config-ref="config" path="/multipleQueryParamFromListener" method="GET">
             <http:headers>
-                #[mel:flowVars.compatibility_outboundProperties]
+                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
             <http:query-params>
                 #[mel:message.inboundProperties['http.query.params']]
@@ -68,7 +68,7 @@
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[mel:flowVars.compatibility_outboundProperties]
+                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
             <http:query-params>
                 #[mel:{'testName1':null, 'testName2': [null]}]
