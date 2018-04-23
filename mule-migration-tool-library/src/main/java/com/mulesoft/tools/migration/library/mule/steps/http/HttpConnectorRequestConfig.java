@@ -67,7 +67,7 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
             || "sendBodyMode".equals(attribute.getName())
             || "requestStreamingMode".equals(attribute.getName())
             || "responseTimeout".equals(attribute.getName())) {
-          attribute.setValue(getExpressionMigrator().migrateExpression(attribute.getValue()));
+          attribute.setValue(getExpressionMigrator().migrateExpression(attribute.getValue(), true));
         }
       }
     }
@@ -101,7 +101,7 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
       requestConnection.addContent(authentication);
 
       for (Attribute attribute : object.getAttributes()) {
-        attribute.setValue(getExpressionMigrator().migrateExpression(attribute.getValue()));
+        attribute.setValue(getExpressionMigrator().migrateExpression(attribute.getValue(), true));
       }
     }
 
@@ -132,7 +132,8 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
                                         final String targetAttributeName, boolean expression) {
     if (source.getAttribute(sourceAttributeName) != null) {
       target.setAttribute(targetAttributeName,
-                          expression ? getExpressionMigrator().migrateExpression(source.getAttributeValue(sourceAttributeName))
+                          expression
+                              ? getExpressionMigrator().migrateExpression(source.getAttributeValue(sourceAttributeName), true)
                               : source.getAttributeValue(sourceAttributeName));
       source.removeAttribute(sourceAttributeName);
     }

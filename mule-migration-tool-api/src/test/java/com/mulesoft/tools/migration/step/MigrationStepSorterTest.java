@@ -118,6 +118,7 @@ public class MigrationStepSorterTest {
     public String getDescription() {
       return null;
     }
+
   }
 
   private static final class ExpressionContributionStepImpl implements ExpressionContribution {

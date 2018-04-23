@@ -19,12 +19,13 @@ public interface ExpressionMigrator {
    *
    * @return an expression that works in Mule 4
    */
-  String migrateExpression(String originalExpression);
+  String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly);
 
   /**
    * Removes the '#[' prefix and ']' suffix from an expression.
    * <p>
    * If the expression is not wrapped, it is returned unchanged,
+   *
    * @return
    */
   String unwrap(String originalExpression);
@@ -33,12 +34,14 @@ public interface ExpressionMigrator {
    * Adds the  '#[' prefix and ']' suffix to an expression
    * <p>
    * If the expression is already wrapped, it is returned unchanged,
+   *
    * @return
    */
   String wrap(String originalExpression);
 
   /**
    * Checks if the expression has the  '#[' prefix and ']' suffix
+   *
    * @return
    */
   boolean isWrapped(String originalExpression);
