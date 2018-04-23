@@ -216,6 +216,15 @@ public class PomModel {
   }
 
   /**
+   * Removes a property from the pom model properties.
+   *
+   * @param propertyName the property to be removed from the properties
+   */
+  public void removeProperty(String propertyName) {
+    model.getProperties().remove(propertyName);
+  }
+
+  /**
    * Sets the pom model version.
    *
    * @param modelVersion the pom model version
