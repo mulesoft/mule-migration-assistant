@@ -13,10 +13,10 @@
   </http:request-config>
 
     <flow name="queryParamList">
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath" method="POST">
             <http:headers>
-                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
+                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
                 #[{'testName1' : 'testValue1'} ++ {paramName : paramValue}]
@@ -26,10 +26,10 @@
     </flow>
 
     <flow name="queryParamMap">
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
+                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
                 #[params]
@@ -39,10 +39,10 @@
     </flow>
 
     <flow name="multipleQueryParam">
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
+                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
                 #[{'testName1' : 'testValue1'} ++ params]
@@ -52,10 +52,10 @@
     </flow>
 
     <flow name="multipleQueryParamFromListener">
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="/multipleQueryParamFromListener" method="GET">
             <http:headers>
-                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
+                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
                 #[vars.compatibility_inboundProperties["http.query.params"]]
@@ -65,10 +65,10 @@
     </flow>
 
     <flow name="queryParamNulls">
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
+                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
                 #[{ "testName1": null, "testName2": [ null ] }]

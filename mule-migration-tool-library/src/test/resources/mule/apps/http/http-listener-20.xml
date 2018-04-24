@@ -16,17 +16,17 @@
         <http:listener config-ref="listenerConfig" path="${path}">
             <http:error-response statusCode="200" reasonPhrase="OK">
                 <http:headers>
-                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i)) ++ { "user-agent": "Mule 3.8.0" } ++ {'Date' : server.dateTime}]
+                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars) ++ { "user-agent": "Mule 3.8.0" } ++ {'Date' : server.dateTime}]
                 </http:headers>
             </http:error-response>
             <http:response>
                 <http:headers>
-                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i))]
+                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
                 </http:headers>
             </http:response>
         </http:listener>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <compatibility:outbound-properties-to-var/>
     </flow>
 </mule>

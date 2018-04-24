@@ -79,7 +79,7 @@ public final class XmlDslUtils {
 
     int index = object.getParent().indexOf(object);
     object.getParent().addContent(index + 1, buildAttributesToInboundProperties(report));
-    object.getParent().addContent(buildSetVariableWithOutboundProperties(report));
+    object.getParent().addContent(buildOutboundPropertiesToVar(report));
   }
 
   /**
@@ -89,7 +89,7 @@ public final class XmlDslUtils {
     appModel.addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, object.getDocument());
 
     int index = object.getParent().indexOf(object);
-    object.getParent().addContent(index, buildSetVariableWithOutboundProperties(report));
+    object.getParent().addContent(index, buildOutboundPropertiesToVar(report));
     object.getParent().addContent(index + 2, buildAttributesToInboundProperties(report));
   }
 
@@ -104,15 +104,13 @@ public final class XmlDslUtils {
     return a2ip;
   }
 
-  private static Element buildSetVariableWithOutboundProperties(MigrationReport report) {
-    Element setVariable = new Element("set-variable", CORE_NAMESPACE);
-    setVariable.setAttribute("variableName", "compatibility_outboundProperties");
-    setVariable.setAttribute("value", "#[mel:message.outboundProperties]");
+  private static Element buildOutboundPropertiesToVar(MigrationReport report) {
+    Element op2v = new Element("outbound-properties-to-var", COMPATIBILITY_NAMESPACE);
 
-    report.report(WARN, setVariable, setVariable,
+    report.report(WARN, op2v, op2v,
                   "Instead of setting outbound properties in the flow, its values must be set explicitly in the operation/listener.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
 
-    return setVariable;
+    return op2v;
   }
 }
