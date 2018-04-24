@@ -8,7 +8,7 @@
 
     <http:listener-config name="httpConf" host="localhost" port="${httpPort}"/>
 
-    <http:request-config name="requesterConfig" host="https://httpbin.org" port="443"/>
+    <http:request-config name="requesterConfig" protocol="HTTPS" host="httpbin.org" port="443"/>
 
     <flow name="listenerContentType" >
         <http:listener config-ref="httpConf" path="testInput"/>

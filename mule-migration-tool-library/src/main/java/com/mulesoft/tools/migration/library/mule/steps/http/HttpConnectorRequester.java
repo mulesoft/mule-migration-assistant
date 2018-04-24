@@ -6,11 +6,14 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getElementsFromDocument;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
+import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -168,8 +171,25 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
   }
 
   private Element compatibilityHeaders(Namespace httpNamespace) {
+    try {
+      library(getMigrationScriptFolder(getApplicationModel().getProjectBasePath()), "HttpRequesterHeaders.dwl",
+              "" +
+                  "/**" + lineSeparator() +
+                  " * Emulates the request headers building logic of the Mule 3.x HTTP Connector." + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun httpRequesterHeaders(vars: {}) = do {" + lineSeparator() +
+                  "    var matcher_regex = /(?i)http\\..*|Connection|Host|Transfer-Encoding/" + lineSeparator() +
+                  "    ---" + lineSeparator() +
+                  "    vars.compatibility_outboundProperties filterObject" + lineSeparator() +
+                  "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
+                  "}" + lineSeparator() +
+                  lineSeparator());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
     return new Element("headers", httpNamespace)
-        .setText("#[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\\..*|Connection|Host|Transfer-Encoding/i))]");
+        .setText("#[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]");
   }
 
   private void handleReferencedRequestBuilder(Element object, final Namespace httpNamespace) {

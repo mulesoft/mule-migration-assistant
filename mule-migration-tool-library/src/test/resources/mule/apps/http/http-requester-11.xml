@@ -13,10 +13,10 @@
   </http:request-config>
 
     <flow name="requestFlowLocalhost">
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <compatibility:outbound-properties-to-var/>
         <http:request config-ref="requestConfig" path="/" method="POST">
             <http:headers>
-                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
+                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>
             <http:response-validator>
                 <http:success-status-code-validator values="200,201,404" />

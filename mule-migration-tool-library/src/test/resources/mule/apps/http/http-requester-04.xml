@@ -13,10 +13,10 @@
   </http:request-config>
 
     <flow name="testFlow">
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <compatibility:outbound-properties-to-var/>
         <http:request config-ref="requestConfig" path="testPath">
             <http:headers>
-                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i)) ++ {'testHeader1' : 'headerValue1'} ++ {'testHeader2' : 'headerValue2'}]
+                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars) ++ {'testHeader1' : 'headerValue1'} ++ {'testHeader2' : 'headerValue2'}]
             </http:headers>
             <http:query-params>
                 #[{'queryParam1' : 'testValue1'} ++ {'queryParam2' : 'testValue2'} ++ {'queryParam2' : 'newTestValue2'} ++ {'queryParam3' : 'testValue3'}]
@@ -26,10 +26,10 @@
     </flow>
 
     <flow name="headerOverride">
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i)) ++ {'testName1' : 'testValue1'} ++ headers ++ {'testName1' : 'testValue2'}]
+                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars) ++ {'testName1' : 'testValue1'} ++ headers ++ {'testName1' : 'testValue2'}]
             </http:headers>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>

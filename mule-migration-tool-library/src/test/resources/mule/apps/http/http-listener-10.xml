@@ -16,12 +16,12 @@
         <http:listener config-ref="listenerConfig" path="${path}">
             <http:response reasonPhrase="everything works!">
                 <http:headers>
-                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i))]
+                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
                 </http:headers>
             </http:response>
             <http:error-response>
                 <http:headers>
-                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i))]
+                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
                 </http:headers>
             </http:error-response>
         </http:listener>
@@ -30,6 +30,6 @@
         <set-property propertyName="http.reason" value="override value" />
 <!--         <compatibility:set-property propertyName="http.status" value="202" /> -->
 <!--         <compatibility:set-property propertyName="http.reason" value="override value" /> -->
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
+        <compatibility:outbound-properties-to-var/>
     </flow>
 </mule>

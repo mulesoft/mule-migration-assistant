@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsArrayContaining.hasItemInArray;
 import static org.hamcrest.collection.IsArrayWithSize.arrayWithSize;
@@ -69,10 +70,10 @@ public class HttpListenerAttributesMappingTest {
 
     File migrationFolder = new File(appModel.getProjectBasePath().toFile(), "src/main/resources/migration");
 
-    assertThat(migrationFolder.listFiles(), arrayWithSize(1));
-    assertThat(migrationFolder.list(), hasItemInArray("attributes2inboundProperties.dw"));
+    assertThat(migrationFolder.listFiles(), arrayWithSize(greaterThanOrEqualTo(1)));
+    assertThat(migrationFolder.list(), hasItemInArray("attributes2inboundProperties.dwl"));
 
-    assertThat(IOUtils.toString(new File(migrationFolder, "attributes2inboundProperties.dw").toURI(), UTF_8), is(""
+    assertThat(IOUtils.toString(new File(migrationFolder, "attributes2inboundProperties.dwl").toURI(), UTF_8), is(""
         + "%dw 2.0" + lineSeparator() +
         "output application/java" + lineSeparator() +
         " ---" + lineSeparator() +

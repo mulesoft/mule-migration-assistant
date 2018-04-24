@@ -23,7 +23,7 @@ public class HttpMigrationTestCase extends EndToEndTestCase {
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        // "http1",
+        "http1",
         "http1Mvn",
         "http2Mvn",
         "http3Mvn"

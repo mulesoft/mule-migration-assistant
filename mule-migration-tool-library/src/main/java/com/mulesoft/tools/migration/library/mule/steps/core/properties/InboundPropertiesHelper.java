@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.properties;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.scriptWithHeader;
 import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -14,10 +16,12 @@ import static org.apache.commons.io.FileUtils.forceDelete;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
@@ -31,6 +35,8 @@ import java.util.Map.Entry;
  */
 public class InboundPropertiesHelper {
 
+  private static final String TMP_INBOUND_PROP_DW_FRAGMENT_SUFFIX = ".dwl_tmp";
+
   public static void addAttributesMapping(ApplicationModel appModel, String attributesClassName,
                                           Map<String, String> expressionsPerProperty)
       throws IOException {
@@ -38,7 +44,8 @@ public class InboundPropertiesHelper {
     File migrationScriptFolder = getMigrationScriptFolder(appModel.getProjectBasePath());
     migrationScriptFolder.mkdirs();
 
-    try (FileWriter writer = new FileWriter(new File(migrationScriptFolder, attributesClassName + ".dw"))) {
+    try (FileWriter writer =
+        new FileWriter(new File(migrationScriptFolder, attributesClassName + TMP_INBOUND_PROP_DW_FRAGMENT_SUFFIX))) {
       writer.write("{" + lineSeparator());
 
       boolean firstLine = true;
@@ -66,10 +73,12 @@ public class InboundPropertiesHelper {
     }
 
     StringBuilder attributes2inboundProperties = new StringBuilder();
-    File[] listFiles = migrationScriptFolder.listFiles();
+    File[] listFiles =
+        migrationScriptFolder.listFiles((FilenameFilter) new SuffixFileFilter(TMP_INBOUND_PROP_DW_FRAGMENT_SUFFIX));
     for (File file : listFiles) {
       attributes2inboundProperties
-          .append(format("if (message.attributes.^class == '%s')", StringUtils.substring(file.getName(), 0, -3))
+          .append(format("if (message.attributes.^class == '%s')",
+                         StringUtils.substring(file.getName(), 0, -1 * TMP_INBOUND_PROP_DW_FRAGMENT_SUFFIX.length()))
               + lineSeparator());
 
       attributes2inboundProperties.append(IOUtils.toString(file.toURI(), UTF_8));
@@ -80,16 +89,7 @@ public class InboundPropertiesHelper {
     }
     attributes2inboundProperties.append("{}" + lineSeparator());
 
-    try (FileWriter writer = new FileWriter(new File(migrationScriptFolder, "attributes2inboundProperties.dw"))) {
-      writer.write("%dw 2.0" + lineSeparator());
-      writer.write("output application/java" + lineSeparator());
-      writer.write(" ---" + lineSeparator());
-
-      writer.write(attributes2inboundProperties.toString());
-    }
-  }
-
-  private static File getMigrationScriptFolder(Path basePath) {
-    return new File(basePath.toFile(), "src/main/resources/migration");
+    scriptWithHeader(migrationScriptFolder, "attributes2inboundProperties.dwl", "application/java",
+                     attributes2inboundProperties.toString());
   }
 }
