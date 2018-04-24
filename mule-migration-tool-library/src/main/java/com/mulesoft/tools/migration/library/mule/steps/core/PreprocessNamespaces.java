@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModel.getElementsWithNamespace;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAdditionalNamespaces;
 
 /**
@@ -43,8 +43,9 @@ public class PreprocessNamespaces implements NamespaceContribution {
         document.getRootElement().getAdditionalNamespaces().stream().filter(n -> getElementsWithNamespace(document, n).size() > 0
             && !getAdditionalNamespaces().contains(n)).collect(Collectors.toList());
 
-    unsupportedNamespaces.forEach(n -> report.report(WARN, document.getRootElement(), document.getRootElement(),
-                                                     "Didn't find migration rules for the following component: " + n.getPrefix(),
-                                                     "https://docs.mulesoft.com/mule-user-guide/"));
+    //TODO MMT-129 Once there is documentation of the migration tool, need to add url for this error
+    unsupportedNamespaces.forEach(n -> report.report(ERROR, document.getRootElement(), document.getRootElement(),
+                                                     "Didn't find migration rules for the following component: "
+                                                         + n.getPrefix()));
   }
 }
