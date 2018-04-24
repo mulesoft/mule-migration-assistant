@@ -20,7 +20,7 @@
 <!--                     #[{'User-Agent' : 'Mule 3.6.0','Date' : server.dateTime} ++ vars.compatibility_outboundProperties] -->
 <!--                 </http:headers> -->
                 <http:headers>
-                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i)) ++ mel:['User-Agent': 'Mule 3.6.0','Date': server.dateTime]]
+                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i)) ++ { "User-Agent": "Mule 3.6.0", "Date": server.dateTime }]
                 </http:headers>
             </http:response>
             <http:error-response>

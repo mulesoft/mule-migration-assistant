@@ -25,7 +25,7 @@
     <flow name="customSourceFlow">
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
         <http:request config-ref="config" path="test" method="POST">
-            <http:body>#[mel:customSource]</http:body>
+            <http:body>#[customSource]</http:body>
             <http:headers>
                 #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
@@ -34,20 +34,21 @@
     </flow>
     <flow name="payloadTargetFlow">
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
-        <http:request config-ref="config" path="test" method="POST" target="#[mel:payload]">
+        <http:request config-ref="config" path="test" method="POST" target="#[payload]">
             <http:headers>
                 #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
-    <flow name="customTargetFlow">
-        <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
-        <http:request config-ref="config" path="test" method="POST" target="#[mel:header:OUTBOUND:customTarget]">
-            <http:headers>
-                #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
-            </http:headers>
-        </http:request>
-        <compatibility:attributes-to-inbound-properties/>
-    </flow>
+    <!-- TODO MMT-128 -->
+    <!--<flow name="customTargetFlow">-->
+        <!--<set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>-->
+        <!--<http:request config-ref="config" path="test" method="POST" target="#[mel:header:OUTBOUND:customTarget]">-->
+            <!--<http:headers>-->
+                <!--#[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]-->
+            <!--</http:headers>-->
+        <!--</http:request>-->
+        <!--<compatibility:attributes-to-inbound-properties/>-->
+    <!--</flow>-->
 </mule>

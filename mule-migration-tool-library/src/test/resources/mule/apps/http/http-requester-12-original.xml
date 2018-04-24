@@ -19,8 +19,8 @@
     <flow name="payloadTargetFlow">
         <http:request config-ref="config" path="test" method="POST" target="#[payload]" />
     </flow>
-
-    <flow name="customTargetFlow">
-        <http:request config-ref="config" path="test" method="POST" target="#[header:OUTBOUND:customTarget]" />
-    </flow>
+    <!-- TODO MMT-128 -->
+    <!--<flow name="customTargetFlow">-->
+        <!--<http:request config-ref="config" path="test" method="POST" target="#[header:OUTBOUND:customTarget]" />-->
+    <!--</flow>-->
 </mule>

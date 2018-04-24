@@ -11,6 +11,8 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
+import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -25,11 +27,12 @@ import java.util.List;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MessagePropertiesTransformer extends AbstractApplicationModelMigrationStep {
+public class MessagePropertiesTransformer extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
   private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
 
   public static final String XPATH_SELECTOR = "//*[local-name()='message-properties-transformer']";
+  private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
@@ -106,4 +109,13 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
     element.getParent().removeContent(element);
   }
 
+  @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
+
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return expressionMigrator;
+  }
 }

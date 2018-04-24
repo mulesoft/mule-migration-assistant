@@ -15,12 +15,8 @@
     <flow name="testFlow">
         <http:listener config-ref="listenerConfig" path="${path}">
             <http:error-response statusCode="200" reasonPhrase="OK">
-<!-- TODO MEL 2 DW: map expressions             -->
-<!--                 <http:headers> -->
-<!--                     #[{'user-agent': 'Mule 3.8.0'} ++ {'Date': server.dateTime}] -->
-<!--                 </http:headers> -->
                 <http:headers>
-                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i)) ++ mel:['user-agent': 'Mule 3.8.0'] ++ {'Date' : mel:server.dateTime}]
+                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i)) ++ { "user-agent": "Mule 3.8.0" } ++ {'Date' : server.dateTime}]
                 </http:headers>
             </http:error-response>
             <http:response>

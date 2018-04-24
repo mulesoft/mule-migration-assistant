@@ -14,7 +14,7 @@
 
     <flow name="followRedirectsExpression">
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
-        <http:request config-ref="noFollowRedirects" path="testPath" followRedirects="#[mel:redirect]">
+        <http:request config-ref="noFollowRedirects" path="testPath" followRedirects="#[redirect]">
             <http:headers>
                 #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>

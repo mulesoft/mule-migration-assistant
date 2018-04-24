@@ -27,6 +27,4 @@ public interface ApplicationModelContribution extends MigrationStep<Element> {
   ApplicationModel getApplicationModel();
 
   void setApplicationModel(ApplicationModel appModel);
-
-  ExpressionMigrator getExpressionMigrator();
 }

@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -92,8 +93,11 @@ public class HttpListenerTest {
     appModel = mock(ApplicationModel.class);
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     httpListener.setApplicationModel(appModel);
+    httpListener.setExpressionMigrator(new MelToDwExpressionMigrator());
 
     httpHeaders = new HttpConnectorHeaders();
+    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator());
+
   }
 
   @Ignore

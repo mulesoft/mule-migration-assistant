@@ -23,6 +23,7 @@ import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
 import com.mulesoft.tools.migration.step.category.ExpressionContribution;
+import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.step.category.PomContribution;
@@ -43,14 +44,18 @@ import java.util.Optional;
  */
 public class AbstractMigrationTaskTest {
 
-  private MigrationTask migrationTask;
+  private AbstractMigrationTask migrationTask;
   private ApplicationModel applicationModelMock;
+  private ExpressionMigrator expressionMigratorMock;
 
   @Before
   public void setUp() throws Exception {
     migrationTask = new MigrationTaskImpl();
     applicationModelMock = mock(ApplicationModel.class);
+    expressionMigratorMock = mock(ExpressionMigrator.class);
     when(applicationModelMock.getPomModel()).thenReturn(Optional.empty());
+    migrationTask.setExpressionMigrator(expressionMigratorMock);
+
   }
 
   @Test(expected = IllegalArgumentException.class)

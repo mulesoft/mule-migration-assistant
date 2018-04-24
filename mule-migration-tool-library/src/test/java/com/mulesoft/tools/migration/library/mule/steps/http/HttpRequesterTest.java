@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -82,15 +83,19 @@ public class HttpRequesterTest {
   @Before
   public void setUp() throws Exception {
     httpRequesterConfig = new HttpConnectorRequestConfig();
-
+    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator());
     httpRequester = new HttpConnectorRequester();
+    httpRequester.setExpressionMigrator(new MelToDwExpressionMigrator());
     appModel = mock(ApplicationModel.class);
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     httpRequester.setApplicationModel(appModel);
 
     httpHeaders = new HttpConnectorHeaders();
+    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator());
     httpUriParams = new HttpConnectorUriParams();
+    httpUriParams.setExpressionMigrator(new MelToDwExpressionMigrator());
     httpQueryParams = new HttpConnectorQueryParams();
+    httpQueryParams.setExpressionMigrator(new MelToDwExpressionMigrator());
   }
 
   @Ignore

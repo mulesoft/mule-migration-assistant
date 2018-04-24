@@ -14,7 +14,7 @@
 
     <flow name="sendBodyAuto">
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
-        <http:request config-ref="config" method="#[mel:method]" path="requestPath" sendBodyMode="AUTO" >
+        <http:request config-ref="config" method="#[method]" path="requestPath" sendBodyMode="AUTO" >
             <http:headers>
                 #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
