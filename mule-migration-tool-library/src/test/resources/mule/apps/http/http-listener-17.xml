@@ -16,7 +16,7 @@
         <http:listener config-ref="listenerConfig" path="${path}">
             <http:response>
                 <http:headers>
-                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i)) ++ {'User-Agent' : 'Mule 3.6.0'} ++ {'Date' : mel:server.dateTime}]
+                    #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Transfer-Encoding/i)) ++ {'User-Agent' : 'Mule 3.6.0'} ++ {'Date' : server.dateTime}]
                 </http:headers>
             </http:response>
             <http:error-response>

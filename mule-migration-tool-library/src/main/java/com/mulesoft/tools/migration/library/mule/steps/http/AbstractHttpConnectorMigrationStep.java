@@ -9,6 +9,8 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
+import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,10 +27,12 @@ import java.util.function.Supplier;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplicationModelMigrationStep {
+public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplicationModelMigrationStep
+    implements ExpressionMigratorAware {
 
   protected static final String HTTP_NAMESPACE = "http://www.mulesoft.org/schema/mule/http";
   protected static final String TLS_NAMESPACE = "http://www.mulesoft.org/schema/mule/tls";
+  private ExpressionMigrator expressionMigrator;
 
   protected void setMule4MapBuilderTagText(int idx, String tagName, Element parentTag, Namespace httpNamespace,
                                            MigrationReport report, Supplier<String> paramsExprCreate,
@@ -57,4 +61,13 @@ public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplica
         });
   }
 
+  @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
+
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return expressionMigrator;
+  }
 }

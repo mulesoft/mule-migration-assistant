@@ -14,6 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -71,6 +72,7 @@ public class OutboundPropertiesTest {
     setProperty = new SetProperty();
     copyProperties = new CopyProperties();
     mpt = new MessagePropertiesTransformer();
+    mpt.setExpressionMigrator(new MelToDwExpressionMigrator());
   }
 
   @Ignore

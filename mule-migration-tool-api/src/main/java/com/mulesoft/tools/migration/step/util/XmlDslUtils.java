@@ -51,8 +51,8 @@ public final class XmlDslUtils {
    * @param exprMigrator the migrator for the expressions
    */
   public static void migrateExpression(Attribute attr, ExpressionMigrator exprMigrator) {
-    if (attr != null) {
-      attr.setValue(exprMigrator.migrateExpression(attr.getValue(), true));
+    if (attr != null && exprMigrator.isWrapped(attr.getValue())) {
+      attr.setValue(exprMigrator.wrap(exprMigrator.migrateExpression(attr.getValue(), true)));
     }
   }
 

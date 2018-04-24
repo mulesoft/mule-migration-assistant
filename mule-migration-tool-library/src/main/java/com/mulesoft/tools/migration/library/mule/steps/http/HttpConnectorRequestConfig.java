@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -101,7 +102,7 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
       requestConnection.addContent(authentication);
 
       for (Attribute attribute : object.getAttributes()) {
-        attribute.setValue(getExpressionMigrator().migrateExpression(attribute.getValue(), true));
+        XmlDslUtils.migrateExpression(attribute, getExpressionMigrator());
       }
     }
 
@@ -131,10 +132,11 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
   protected void copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
                                         final String targetAttributeName, boolean expression) {
     if (source.getAttribute(sourceAttributeName) != null) {
+      String sourceAttributeValue = source.getAttributeValue(sourceAttributeName);
       target.setAttribute(targetAttributeName,
-                          expression
-                              ? getExpressionMigrator().migrateExpression(source.getAttributeValue(sourceAttributeName), true)
-                              : source.getAttributeValue(sourceAttributeName));
+                          expression && getExpressionMigrator().isWrapped(sourceAttributeValue)
+                              ? getExpressionMigrator().migrateExpression(sourceAttributeValue, true)
+                              : sourceAttributeValue);
       source.removeAttribute(sourceAttributeName);
     }
   }

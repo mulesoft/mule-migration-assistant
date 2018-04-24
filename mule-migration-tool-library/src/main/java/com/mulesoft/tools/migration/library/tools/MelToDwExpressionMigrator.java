@@ -27,8 +27,13 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
 
   @Override
   public String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly) {
-    String migratedExpression = Migrator.migrate(unwrap(originalExpression));
-    migratedExpression = migratedExpression.replaceAll("flowVars", "vars");
+    if (!isWrapped(originalExpression)) {
+      return originalExpression;
+    }
+    String unwrappedExpression = unwrap(originalExpression);
+    String migratedExpression = Migrator.migrate(unwrappedExpression);
+    migratedExpression = migratedExpression.replaceAll("flowVars", "vars").replaceAll("message.inboundProperties",
+                                                                                      "vars.compatibility_inboundProperties");
     return dataWeaveBodyOnly ? migratedExpression.replaceFirst("---", "").trim() : migratedExpression;
   }
 

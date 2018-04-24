@@ -19,7 +19,7 @@
                 #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
             <http:query-params>
-                #[{'testName1' : 'testValue1'} ++ {mel:paramName : mel:paramValue}]
+                #[{'testName1' : 'testValue1'} ++ {paramName : paramValue}]
             </http:query-params>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
@@ -32,7 +32,7 @@
                 #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
             <http:query-params>
-                #[mel:params]
+                #[params]
             </http:query-params>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
@@ -45,7 +45,7 @@
                 #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
             <http:query-params>
-                #[{'testName1' : 'testValue1'} ++ mel:params]
+                #[{'testName1' : 'testValue1'} ++ params]
             </http:query-params>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
@@ -58,7 +58,7 @@
                 #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
             <http:query-params>
-                #[mel:message.inboundProperties['http.query.params']]
+                #[vars.compatibility_inboundProperties["http.query.params"]]
             </http:query-params>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
@@ -71,7 +71,7 @@
                 #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>
             <http:query-params>
-                #[mel:{'testName1':null, 'testName2': [null]}]
+                #[{ "testName1": null, "testName2": [ null ] }]
             </http:query-params>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>

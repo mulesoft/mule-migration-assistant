@@ -14,6 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.io.IOUtils;
@@ -66,6 +67,7 @@ public class HttpRequesterConfigTest {
   @Before
   public void setUp() throws Exception {
     httpRequesterConfig = new HttpConnectorRequestConfig();
+    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator());
     socketsConfig = new SocketsConfig();
   }
 

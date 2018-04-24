@@ -21,6 +21,7 @@ import com.mulesoft.tools.migration.engine.project.structure.mule.MuleProject;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourDomain;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
@@ -70,6 +71,7 @@ public class MigrationJob implements Executable {
     applicationModel = generateApplicationModel(outputProject, MULE_FOUR_APPLICATION);
     for (AbstractMigrationTask task : migrationTasks) {
       task.setApplicationModel(applicationModel);
+      task.setExpressionMigrator(new MelToDwExpressionMigrator());
       try {
         task.execute(report);
         persistApplicationModel(applicationModel);

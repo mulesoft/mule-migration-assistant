@@ -14,7 +14,7 @@
 
     <flow name="requestFlow">
         <set-variable variableName="compatibility_outboundProperties" value="#[mel:message.outboundProperties]"/>
-        <http:request config-ref="requestConfig" method="GET" path="#[mel:requestPath]">
+        <http:request config-ref="requestConfig" method="GET" path="#[requestPath]">
             <http:headers>
                 #[vars.compatibility_outboundProperties filterObject ((value,key) -> not ((key as String) matches /http\..*|Connection|Host|Transfer-Encoding/i))]
             </http:headers>

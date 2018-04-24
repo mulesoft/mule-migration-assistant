@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkState;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -24,9 +25,10 @@ import java.util.List;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public abstract class AbstractMigrationTask implements MigrationTask {
+public abstract class AbstractMigrationTask implements MigrationTask, ExpressionMigratorAware {
 
   private ApplicationModel applicationModel;
+  private ExpressionMigrator expressionMigrator;
 
   @Override
   public ApplicationModel getApplicationModel() {
@@ -43,10 +45,11 @@ public abstract class AbstractMigrationTask implements MigrationTask {
   public void execute(MigrationReport report) throws Exception {
     // TODO depending on the project type this may not be true
     checkState(applicationModel != null, "An application model must be provided.");
-
     List<MigrationStep> steps = getSteps();
     try {
       if (steps != null) {
+        steps.stream().filter(s -> s instanceof ExpressionMigratorAware)
+            .forEach(s -> ((ExpressionMigratorAware) s).setExpressionMigrator(getExpressionMigrator()));
         MigrationStepSorter stepSorter = new MigrationStepSorter(steps);
 
         stepSorter.getNameSpaceContributionSteps().forEach(s -> s.execute(applicationModel, report));
@@ -68,6 +71,16 @@ public abstract class AbstractMigrationTask implements MigrationTask {
     } catch (Exception e) {
       throw new MigrationTaskException("Task execution exception. " + e.getMessage(), e);
     }
+  }
+
+  @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
+
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return expressionMigrator;
   }
 
 }
