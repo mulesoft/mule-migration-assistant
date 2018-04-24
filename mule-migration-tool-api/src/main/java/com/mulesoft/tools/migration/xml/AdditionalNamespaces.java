@@ -16,8 +16,6 @@ public enum AdditionalNamespaces {
 
   HTTP("http", "http://www.mulesoft.org/schema/mule/http"),
 
-  MUNIT("munit", "http://www.mulesoft.org/schema/mule/munit"),
-
   TLS("tls", "http://www.mulesoft.org/schema/mule/tls"),
 
   COMPATIBILITY("compatibility", "http://www.mulesoft.org/schema/mule/compatibility"),
@@ -26,9 +24,13 @@ public enum AdditionalNamespaces {
 
   SOCKETS("sockets", "http://www.mulesoft.org/schema/mule/sockets"),
 
-  CORE("mule", "http://www.mulesoft.org/schema/mule/core"),
+  MULE("mule", "http://www.mulesoft.org/schema/mule/core"),
 
   JSON("json", "http://www.mulesoft.org/schema/mule/json"),
+
+  MUNIT("munit", "http://www.mulesoft.org/schema/mule/munit"),
+
+  MUNIT_TOOLS("munit-tools", "http://www.mulesoft.org/schema/mule/munit-tools"),
 
   MOCK("mock", "http://www.mulesoft.org/schema/mule/mock");
 
