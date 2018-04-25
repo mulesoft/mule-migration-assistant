@@ -126,6 +126,17 @@ public class PomModelTestCase {
     }
 
     @Test
+    public void removeProperty() {
+      PomModel model = new PomModel();
+      String key = "key";
+      String value = "value";
+      model.addProperty(key, value);
+      assertThat("Property should exist in pom model", model.getProperties().getProperty(key), equalTo(value));
+      model.removeProperty(key);
+      assertThat("Property should not exist in pom model", model.getProperties().getProperty(key), nullValue());
+    }
+
+    @Test
     public void getDependencies() {
       Set<Dependency> pomModelDependencies = getPomModelDependencies();
 

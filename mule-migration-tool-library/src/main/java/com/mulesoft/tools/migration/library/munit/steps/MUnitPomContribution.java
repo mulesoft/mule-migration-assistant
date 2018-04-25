@@ -6,20 +6,19 @@
  */
 package com.mulesoft.tools.migration.library.munit.steps;
 
-import static com.google.common.collect.Lists.newArrayList;
-
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.Plugin;
 import com.mulesoft.tools.migration.project.model.pom.PluginExecution;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Adds the HTTP Connector dependency
@@ -30,6 +29,8 @@ public class MUnitPomContribution implements PomContribution {
 
   private static final String MUNIT_MAVEN_PLUGIN_GROUP_ID = "com.mulesoft.munit.tools";
   private static final String MUNIT_MAVEN_PLUGIN_ARTIFACT_ID = "munit-maven-plugin";
+  private static final String MUNIT_SUPPORT_PROPERTY = "mule.munit.support.version";
+  private static final String MUNIT_PROPERTY = "munit.version";
   private static final String MUNIT_MAVEN_PLUGIN_VERSION = "2.1.1";
 
   @Override
@@ -62,7 +63,9 @@ public class MUnitPomContribution implements PomContribution {
       pomModel.addPlugin(buildMunitPlugin());
     }
 
-
+    pomModel.removeProperty(MUNIT_SUPPORT_PROPERTY);
+    pomModel.removeProperty(MUNIT_PROPERTY);
+    pomModel.addProperty(MUNIT_PROPERTY, MUNIT_MAVEN_PLUGIN_VERSION);
   }
 
   private List<Plugin> getMUnitPlugin(PomModel pomModel) {

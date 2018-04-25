@@ -12,6 +12,8 @@ import org.mule.runtime.api.deployment.persistence.MuleApplicationModelJsonSeria
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils.buildMinimalMule4ArtifactJson;
@@ -44,9 +46,15 @@ public class MuleArtifactJsonModel {
 
     private final MuleApplicationModelJsonSerializer serializer = new MuleApplicationModelJsonSerializer();
     private Path muleArtifactJsonPath;
+    private Collection<Path> configs;
 
     public MuleApplicationJsonModelBuilder withMuleArtifactJson(Path muleArtifactJsonPath) {
       this.muleArtifactJsonPath = muleArtifactJsonPath;
+      return this;
+    }
+
+    public MuleApplicationJsonModelBuilder withConfigs(Collection<Path> configs) {
+      this.configs = configs;
       return this;
     }
 
@@ -60,7 +68,7 @@ public class MuleArtifactJsonModel {
       checkArgument(muleArtifactJsonPath != null, "mule-artifact.json path should not be null");
       if (!muleArtifactJsonPath.toAbsolutePath().toFile().exists()
           && muleArtifactJsonPath.toAbsolutePath().getParent().toFile().exists()) {
-        return buildMinimalMule4ArtifactJson(muleArtifactJsonPath.getParent().toFile().getName());
+        return buildMinimalMule4ArtifactJson(muleArtifactJsonPath.getParent().toFile().getName(), configs);
       }
       MuleApplicationModel model = getModel(muleArtifactJsonPath);
       return new MuleArtifactJsonModel(model);

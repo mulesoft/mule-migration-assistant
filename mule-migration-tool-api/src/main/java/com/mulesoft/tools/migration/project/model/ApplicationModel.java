@@ -207,7 +207,9 @@ public class ApplicationModel {
       ApplicationModel applicationModel = new ApplicationModel(applicationDocuments);
       if (muleArtifactJson != null) {
         MuleArtifactJsonModel muleArtifactJsonModel = new MuleArtifactJsonModel.MuleApplicationJsonModelBuilder()
-            .withMuleArtifactJson(muleArtifactJson).build();
+            .withMuleArtifactJson(muleArtifactJson)
+            .withConfigs(configurationFiles)
+            .build();
         applicationModel.setMuleArtifactJsonModel(muleArtifactJsonModel);
       }
       PomModel pomModel;
