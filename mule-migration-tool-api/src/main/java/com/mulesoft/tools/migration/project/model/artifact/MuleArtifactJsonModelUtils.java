@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.project.model.artifact;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.mule.runtime.api.deployment.meta.MuleApplicationModel;
 import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptor;
 import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptorBuilder;
@@ -27,8 +26,8 @@ import static org.mule.runtime.api.deployment.meta.Product.MULE_EE;
  */
 public class MuleArtifactJsonModelUtils {
 
-  private static final String MIN_MULE_VERSION = "4.1.1";
   private static final String EXPORTED_RESOURCES = "exportedResources";
+  private static final String MIN_MULE_VERSION = "4.1.1";
   private static final String MULE_ID = "mule";
 
   /**
@@ -46,7 +45,7 @@ public class MuleArtifactJsonModelUtils {
     builder.setMinMuleVersion(MIN_MULE_VERSION);
     builder.setRequiredProduct(MULE_EE);
 
-    if (!CollectionUtils.isEmpty(configs)) {
+    if (configs != null && !configs.isEmpty()) {
       Set<String> configsNames = new HashSet<>();
       configs.forEach(c -> configsNames.add(c.getFileName().toString()));
       builder.setConfigs(configsNames);

@@ -50,7 +50,6 @@
         <guava.version>19.0</guava.version>
         <jaxen.version>1.1.6</jaxen.version>
         <jdom2.version>2.0.5</jdom2.version>
-        <commons.collection.version>4.1</commons.collection.version>
         <commons.io.version>2.5</commons.io.version>
         <commons.cli.version>1.3.1</commons.cli.version>
         <migrant.version>1.2.0-SNAPSHOT</migrant.version>
@@ -354,11 +353,6 @@
                 <version>${gson.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-collections4</artifactId>
-                <version>${commons.collection.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
