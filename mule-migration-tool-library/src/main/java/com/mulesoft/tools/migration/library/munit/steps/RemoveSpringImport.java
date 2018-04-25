@@ -36,7 +36,7 @@ public class RemoveSpringImport extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    //TODO - Once spring migration is supported, need to update this to only remove mule config files
+    //TODO MMT-99 Once spring migration is supported, need to update this to only remove mule config files
     if (isMUnitFile(element.getDocument())) {
       removeSpringNamespace(element.getDocument());
       element.detach();
