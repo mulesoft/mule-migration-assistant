@@ -1,0 +1,7 @@
+|MapNode
+|--KeyValuePairNode
+|----StringNode(name)
+|----StringNode(Augusto Leao)
+|--KeyValuePairNode
+|----StringNode(otherName)
+|----StringNode(Leandro)

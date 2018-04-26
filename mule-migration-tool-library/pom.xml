@@ -57,8 +57,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.mulesoft.tools</groupId>
-            <artifactId>mel-dw-migrator</artifactId>
+            <groupId>${groupId}</groupId>
+            <artifactId>mule-migration-tool-expression</artifactId>
+            <version>${version}</version>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
