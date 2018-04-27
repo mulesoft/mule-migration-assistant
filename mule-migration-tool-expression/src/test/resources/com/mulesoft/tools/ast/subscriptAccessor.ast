@@ -1,0 +1,10 @@
+|BinaryOperatorNode(4)
+|--ListNode
+|----NumberNode(1)
+|----NumberNode(2)
+|----NumberNode(3)
+|--BinaryOperatorNode(4)
+|----BinaryOperatorNode(2)
+|------IdentifierNode(payload)
+|------IdentifierNode(foo)
+|----NumberNode(1)

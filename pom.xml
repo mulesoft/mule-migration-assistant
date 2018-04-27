@@ -17,6 +17,7 @@
         <module>mule-migration-tool-library</module>
         <module>mule-migration-tool-runner</module>
         <module>mule-migration-tool-tests</module>
+        <module>mule-migration-tool-expression</module>
     </modules>
 
     <properties>
@@ -82,6 +83,21 @@
 
         <!-- Tests -->
         <settingsFile>${java.io.tmpdir}/effective-settings.xml</settingsFile>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+        <build.helper.maven.plugin.version>1.10</build.helper.maven.plugin.version>
+        <scala.maven.plugin.version>3.2.2</scala.maven.plugin.version>
+        <scalatest.maven.plugin.version>2.0.0</scalatest.maven.plugin.version>
+        <maven.surefire.plugin.version>2.7</maven.surefire.plugin.version>
+
+        <java.version>1.8</java.version>
+        <scala.version>2.12.5</scala.version>
+        <parboiled.version>2.1.4</parboiled.version>
+        <scalatest.version>3.0.1</scalatest.version>
+        <parser.version>2.1.3-SNAPSHOT</parser.version>
 
     </properties>
 
@@ -488,9 +504,28 @@
             </dependency>
 
             <dependency>
-                <groupId>com.mulesoft.tools</groupId>
-                <artifactId>mel-dw-migrator</artifactId>
-                <version>${mel.dw.migrator.version}</version>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.parboiled</groupId>
+                <artifactId>parboiled_2.12</artifactId>
+                <version>${parboiled.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest_2.12</artifactId>
+                <version>${scalatest.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.weave</groupId>
+                <artifactId>parser</artifactId>
+                <version>${parser.version}</version>
+                <scope>compile</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

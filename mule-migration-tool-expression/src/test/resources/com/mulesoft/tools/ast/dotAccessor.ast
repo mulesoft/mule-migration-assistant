@@ -1,0 +1,5 @@
+|BinaryOperatorNode(2)
+|--BinaryOperatorNode(2)
+|----IdentifierNode(payload)
+|----IdentifierNode(loco)
+|--IdentifierNode(coco)
