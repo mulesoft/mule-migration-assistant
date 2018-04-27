@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSI
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.PreprocessNamespaces;
+import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleAppMavenPlugin;
 import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleDependencies;
 import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateMuleMavenPlugin;
 import com.mulesoft.tools.migration.project.ProjectType;
@@ -52,6 +53,7 @@ public class PreprocessMuleApplication extends AbstractMigrationTask {
   public List<MigrationStep> getSteps() {
     return newArrayList(new RemoveMuleDependencies(),
                         new UpdateMuleMavenPlugin(),
+                        new RemoveMuleAppMavenPlugin(),
                         new RemoveMuleDependencies(),
                         new PreprocessNamespaces());
   }
