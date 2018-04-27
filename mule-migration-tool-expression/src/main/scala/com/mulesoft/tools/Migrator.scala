@@ -11,7 +11,7 @@ object Migrator {
 
   def toDataweaveAst(expressionNode: mel.MelExpressionNode): dw.AstNode = {
     expressionNode match {
-      case mel.StringNode(literal) => dw.structure.StringNode(literal).annotate(QuotedStringAnnotation('"'))
+      case mel.StringNode(literal) => dw.structure.StringNode(literal).annotate(QuotedStringAnnotation('''))
       case mel.NumberNode(literal) => dw.structure.NumberNode(literal)
       case mel.BooleanNode(literal) => dw.structure.BooleanNode(literal.toString)
       case mel.IdentifierNode(literal) => dw.variables.NameIdentifier(literal)

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:file="http://www.mulesoft.org/schema/mule/file"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+               http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <file:config name="fileConnector">
+        <file:connection/>
+    </file:config>
+
+    <file:config name="fileConnector2">
+        <file:connection/>
+    </file:config>
+
+    <flow name="TestIn">
+        <file:listener config-ref="fileConnector" recursive="false" renameTo="#['bcd']">
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000"/>
+            </scheduling-strategy>
+        </file:listener>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger/>
+        <compatibility:outbound-properties-to-var/>
+    </flow>
+
+    <flow name="TestOut">
+        <compatibility:outbound-properties-to-var/>
+        <file:write config-ref="fileConnector" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: '${workingDirectory}/writeToDirectory', address: null, outputPattern: null, outputPatternConfig: 'cde'})]"/>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+    
+    <flow name="TestOut2">
+        <compatibility:outbound-properties-to-var/>
+        <file:write config-ref="fileConnector2" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: null, address: null, outputPattern: null, outputPatternConfig: 'cde'})]"/>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+    
+</mule>

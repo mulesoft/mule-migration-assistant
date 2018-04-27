@@ -26,7 +26,9 @@ public class DataWeaveHelper {
    * @return the folder where the migrator should generate any scripts required by the migrated application.
    */
   public static File getMigrationScriptFolder(Path basePath) {
-    return new File(basePath.toFile(), "src/main/resources/migration");
+    File migrationScripts = new File(basePath.toFile(), "src/main/resources/migration");
+    migrationScripts.mkdirs();
+    return migrationScripts;
   }
 
   public static void scriptWithHeader(File migrationScriptFolder, String scriptName, String outputType, String body)

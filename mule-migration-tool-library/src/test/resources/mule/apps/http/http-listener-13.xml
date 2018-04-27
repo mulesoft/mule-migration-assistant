@@ -16,7 +16,7 @@
         <http:listener config-ref="listenerConfig" path="${path}">
             <http:response>
                 <http:headers>
-                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars) ++ { "User-Agent": "Mule 3.6.0", "Date": server.dateTime }]
+                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars) ++ { "User-Agent": 'Mule 3.6.0', "Date": server.dateTime }]
                 </http:headers>
             </http:response>
             <http:error-response>
