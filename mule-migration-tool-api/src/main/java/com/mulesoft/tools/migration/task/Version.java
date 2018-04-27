@@ -87,6 +87,11 @@ public class Version {
     return result;
   }
 
+  @Override
+  public String toString() {
+    return getMajor() + "." + getMinor() + "." + getRevision();
+  }
+
 
   /**
    * Builder for {@link Version}

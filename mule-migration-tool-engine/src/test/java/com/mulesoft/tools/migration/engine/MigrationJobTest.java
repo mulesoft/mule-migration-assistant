@@ -138,8 +138,16 @@ public class MigrationJobTest {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withProject(originalProjectPath)
         .withOutputProject(migratedProjectPath)
-        .withInputVersion(new Version.VersionBuilder().withMajor("1").build())
-        .withOuputVersion(new Version.VersionBuilder().withMajor("5").build())
+        .withInputVersion(new Version.VersionBuilder()
+            .withMajor("3")
+            .withMinor("7")
+            .withRevision("0")
+            .build())
+        .withOuputVersion(new Version.VersionBuilder()
+            .withMajor("4")
+            .withMinor("3")
+            .withRevision("0")
+            .build())
         .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
     migrationJob.execute(new DefaultMigrationReport());

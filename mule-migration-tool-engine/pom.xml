@@ -13,6 +13,8 @@
     <properties>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
+
+        <semver.version>2.0.3</semver.version>
     </properties>
     <build>
         <plugins>
@@ -93,6 +95,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>mule-migration-tool-library</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>semver4j</artifactId>
+            <version>${semver.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -23,7 +23,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.*;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addAttribute;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
@@ -34,8 +36,7 @@ public class ApplicationModelTest {
 
   private static final String ORIGINAL_PROJECT_NAME = "original-project";
   private static final String MIGRATED_PROJECT_NAME = "migrated-project";
-
-
+  private static final String MULE_VERSION = "4.1.1";
   private static final String MUNIT_SECTIONS_SAMPLE_XML = "munit-sections-sample.xml";
   private static final Path MUNIT_EXAMPLES_PATH = Paths.get("munit/examples");
   private static final Path MUNIT_SECTIONS_SAMPLE_PATH = MUNIT_EXAMPLES_PATH.resolve(MUNIT_SECTIONS_SAMPLE_XML);
@@ -60,6 +61,7 @@ public class ApplicationModelTest {
     ApplicationModel applicationModel = new ApplicationModelBuilder()
         .withProjectBasePath(originalProjectPath)
         .withConfigurationFiles(getFiles(originalProjectPath.resolve("src").resolve("main").resolve("app")))
+        .withMuleVersion(MULE_VERSION)
         .withPom(originalProjectPath.resolve("pom.xml")).build();
 
     applicationModel.removeNameSpace("mock", "http://www.mulesoft.org/schema/mule/mock",

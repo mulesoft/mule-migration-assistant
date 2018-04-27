@@ -27,7 +27,6 @@ import static org.mule.runtime.api.deployment.meta.Product.MULE_EE;
 public class MuleArtifactJsonModelUtils {
 
   private static final String EXPORTED_RESOURCES = "exportedResources";
-  private static final String MIN_MULE_VERSION = "4.1.1";
   private static final String MULE_ID = "mule";
 
   /**
@@ -36,13 +35,13 @@ public class MuleArtifactJsonModelUtils {
    * @param name the name to be set in the mule artifact model
    * @return a mule artifact json model with the minimum required information
    */
-  public static MuleArtifactJsonModel buildMinimalMule4ArtifactJson(String name, Collection<Path> configs) {
+  public static MuleArtifactJsonModel buildMinimalMule4ArtifactJson(String name, Collection<Path> configs, String muleVersion) {
     MuleApplicationModel.MuleApplicationModelBuilder builder = new MuleApplicationModel.MuleApplicationModelBuilder();
 
     builder.setName(name);
     builder.setSecureProperties(newArrayList());
     builder.setRedeploymentEnabled(true);
-    builder.setMinMuleVersion(MIN_MULE_VERSION);
+    builder.setMinMuleVersion(muleVersion);
     builder.setRequiredProduct(MULE_EE);
 
     if (configs != null && !configs.isEmpty()) {

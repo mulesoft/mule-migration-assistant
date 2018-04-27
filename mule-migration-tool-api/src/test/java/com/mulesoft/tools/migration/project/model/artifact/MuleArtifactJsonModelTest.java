@@ -20,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class MuleArtifactJsonModelTest {
 
   private static final String MULE_ARTIFACT_FILE = "mule-artifact.json";
+  private static final String MULE_VERSION = "4.1.1";
   private MuleArtifactJsonModel muleArtifactJsonModel;
 
   @Rule
@@ -38,7 +39,9 @@ public class MuleArtifactJsonModelTest {
 
   @Test
   public void buildWithNonExistentMuleArtifact() throws IOException {
-    muleArtifactJsonModel = builder.withMuleArtifactJson(temporaryFolder.getRoot().toPath().resolve(MULE_ARTIFACT_FILE)).build();
+    muleArtifactJsonModel = builder.withMuleArtifactJson(temporaryFolder.getRoot().toPath().resolve(MULE_ARTIFACT_FILE))
+        .withMuleVersion(MULE_VERSION)
+        .build();
     assertThat("Name in mule-artifact.json is not the expected", muleArtifactJsonModel.toString(),
                containsString("\"name\": \"" + temporaryFolder.getRoot().getName() + "\""));
   }
