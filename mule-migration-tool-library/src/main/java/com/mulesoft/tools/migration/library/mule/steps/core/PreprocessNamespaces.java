@@ -43,9 +43,8 @@ public class PreprocessNamespaces implements NamespaceContribution {
         document.getRootElement().getAdditionalNamespaces().stream().filter(n -> getElementsWithNamespace(document, n).size() > 0
             && !getAdditionalNamespaces().contains(n)).collect(Collectors.toList());
 
-    //TODO MMT-129 Once there is documentation of the migration tool, need to add url for this error
     unsupportedNamespaces.forEach(n -> report.report(ERROR, document.getRootElement(), document.getRootElement(),
-                                                     "Didn't find migration rules for the following component: "
-                                                         + n.getPrefix()));
+                                                     "Didn't find migration rules for the following component: " + n.getPrefix(),
+                                                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors"));
   }
 }
