@@ -7,13 +7,6 @@
 package com.mulesoft.tools.migration.engine;
 
 
-import static com.google.common.base.Preconditions.checkState;
-import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
-import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
-import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-
 import com.mulesoft.tools.migration.Executable;
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.project.structure.ApplicationPersister;
@@ -30,7 +23,6 @@ import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
 import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-
 import com.mulesoft.tools.migration.task.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +30,11 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkState;
+import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
+import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
 /**
  * It represent a migration job which is composed by one or more {@link AbstractMigrationTask}
@@ -53,14 +50,14 @@ public class MigrationJob implements Executable {
   private Path project;
   private Path outputProject;
   private List<AbstractMigrationTask> migrationTasks;
+  private String muleVersion;
 
-  private MigrationJob(Path project, Path outputProject, List<AbstractMigrationTask> migrationTasks,
+  private MigrationJob(Path project, Path outputProject, List<AbstractMigrationTask> migrationTasks, String muleVersion,
                        ReportingStrategy reportingStrategy) {
-    this.project = project;
-    this.outputProject = outputProject;
-
     this.migrationTasks = migrationTasks;
-
+    this.muleVersion = muleVersion;
+    this.outputProject = outputProject;
+    this.project = project;
     this.reportingStrategy = reportingStrategy;
   }
 
@@ -95,6 +92,7 @@ public class MigrationJob implements Executable {
     MuleProject muleProject = getMuleProject(project);
     ApplicationModelBuilder builder = new ApplicationModelBuilder()
         .withConfigurationFiles(getFiles(muleProject.srcMainConfiguration()))
+        .withMuleVersion(muleVersion)
         .withPom(muleProject.pom())
         .withProjectBasePath(muleProject.getBaseFolder());
     if (muleProject.srcTestConfiguration().toFile().exists()) {
@@ -110,12 +108,14 @@ public class MigrationJob implements Executable {
           .withConfigurationFiles(getFiles(application.srcMainConfiguration()))
           .withTestConfigurationFiles(getFiles(application.srcTestConfiguration()))
           .withMuleArtifactJson(application.muleArtifactJson())
+          .withMuleVersion(muleVersion)
           .withProjectBasePath(application.getBaseFolder())
           .withPom(application.pom()).build();
     } else {
       MuleFourDomain domain = new MuleFourDomain(project);
       return new ApplicationModelBuilder()
           .withConfigurationFiles(getFiles(domain.srcMainConfiguration()))
+          .withMuleVersion(muleVersion)
           .withTestConfigurationFiles(getFiles(domain.srcTestConfiguration()))
           .withProjectBasePath(domain.getBaseFolder())
           .withPom(domain.pom()).build();
@@ -186,7 +186,7 @@ public class MigrationJob implements Executable {
       MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion, outputProjectType);
       migrationTasks = migrationTaskLocator.locate();
 
-      return new MigrationJob(project, outputProject, migrationTasks, reportingStrategy);
+      return new MigrationJob(project, outputProject, migrationTasks, outputVersion.toString(), reportingStrategy);
     }
   }
 

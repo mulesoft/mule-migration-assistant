@@ -9,12 +9,19 @@ package com.mulesoft.tools.migration.library.util;
 import com.mulesoft.tools.migration.task.Version;
 
 /**
- * Versions for Mule Projects
+ * Versions for test Mule Projects
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
 public class MuleVersion {
 
-  public static final Version MULE_3_VERSION = new Version.VersionBuilder().withMajor("3").build();
-  public static final Version MULE_4_VERSION = new Version.VersionBuilder().withMajor("4").build();
+  public static final Version MULE_3_VERSION = new Version.VersionBuilder()
+      .withMajor("3")
+      .build();
+
+  public static final Version MULE_4_VERSION = new Version.VersionBuilder()
+      .withMajor("4")
+      .withMinor("1")
+      .withRevision("1")
+      .build();
 }

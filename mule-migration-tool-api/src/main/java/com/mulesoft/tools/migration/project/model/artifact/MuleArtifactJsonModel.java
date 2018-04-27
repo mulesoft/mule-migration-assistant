@@ -47,6 +47,7 @@ public class MuleArtifactJsonModel {
     private final MuleApplicationModelJsonSerializer serializer = new MuleApplicationModelJsonSerializer();
     private Path muleArtifactJsonPath;
     private Collection<Path> configs;
+    private String muleVersion;
 
     public MuleApplicationJsonModelBuilder withMuleArtifactJson(Path muleArtifactJsonPath) {
       this.muleArtifactJsonPath = muleArtifactJsonPath;
@@ -55,6 +56,11 @@ public class MuleArtifactJsonModel {
 
     public MuleApplicationJsonModelBuilder withConfigs(Collection<Path> configs) {
       this.configs = configs;
+      return this;
+    }
+
+    public MuleApplicationJsonModelBuilder withMuleVersion(String muleVersion) {
+      this.muleVersion = muleVersion;
       return this;
     }
 
@@ -68,7 +74,7 @@ public class MuleArtifactJsonModel {
       checkArgument(muleArtifactJsonPath != null, "mule-artifact.json path should not be null");
       if (!muleArtifactJsonPath.toAbsolutePath().toFile().exists()
           && muleArtifactJsonPath.toAbsolutePath().getParent().toFile().exists()) {
-        return buildMinimalMule4ArtifactJson(muleArtifactJsonPath.getParent().toFile().getName(), configs);
+        return buildMinimalMule4ArtifactJson(muleArtifactJsonPath.getParent().toFile().getName(), configs, muleVersion);
       }
       MuleApplicationModel model = getModel(muleArtifactJsonPath);
       return new MuleArtifactJsonModel(model);

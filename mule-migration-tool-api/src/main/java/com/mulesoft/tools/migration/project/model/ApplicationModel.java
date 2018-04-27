@@ -159,6 +159,7 @@ public class ApplicationModel {
     private Path muleArtifactJson;
     private Path pom;
     private Path projectBasePath;
+    private String muleVersion;
 
     public ApplicationModelBuilder withConfigurationFiles(Collection<Path> configurationFiles) {
       this.configurationFiles = configurationFiles;
@@ -182,6 +183,11 @@ public class ApplicationModel {
 
     public ApplicationModelBuilder withProjectBasePath(Path projectBasePath) {
       this.projectBasePath = projectBasePath;
+      return this;
+    }
+
+    public ApplicationModelBuilder withMuleVersion(String muleVersion) {
+      this.muleVersion = muleVersion;
       return this;
     }
 
@@ -209,6 +215,7 @@ public class ApplicationModel {
         MuleArtifactJsonModel muleArtifactJsonModel = new MuleArtifactJsonModel.MuleApplicationJsonModelBuilder()
             .withMuleArtifactJson(muleArtifactJson)
             .withConfigs(configurationFiles)
+            .withMuleVersion(muleVersion)
             .build();
         applicationModel.setMuleArtifactJsonModel(muleArtifactJsonModel);
       }

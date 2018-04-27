@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration;
 
+import static com.mulesoft.tools.migration.engine.project.version.VersionUtils.buildVersion;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static java.util.Collections.singletonList;
 
@@ -44,14 +45,13 @@ public class MigrationRunner {
 
   private final static String PROJECT_BASE_PATH = "projectBasePath";
   private final static String DESTINATION_PROJECT_BASE_PATH = "destinationProjectBasePath";
-  private final static String MIGRATION_CONFIGURATION_PATH = "migrationConfigurationPath";
+  private final static String MULE_VERSION = "muleVersion";
   public static final Version MULE_3_VERSION = new Version.VersionBuilder().withMajor("3").build();
-  public static final Version MULE_4_VERSION = new Version.VersionBuilder().withMajor("4").build();
   public static final ProjectType OUTPUT_PROJECT_TYPE = MULE_FOUR_APPLICATION;
 
   private String projectBasePath;
   private String destinationProjectBasePath;
-  private String migrationConfigurationPath;
+  private Version muleVersion;
 
   private ReportingStrategy reportingStrategy;
 
@@ -69,7 +69,7 @@ public class MigrationRunner {
         .withOutputProject(Paths.get(destinationProjectBasePath))
         .withReportingStrategy(reportingStrategy)
         .withInputVersion(MULE_3_VERSION)
-        .withOuputVersion(MULE_4_VERSION)
+        .withOuputVersion(muleVersion)
         .withOutputProjectType(OUTPUT_PROJECT_TYPE);
     return builder.build();
   }
@@ -84,21 +84,14 @@ public class MigrationRunner {
     Options options = new Options();
 
     options.addOption(HELP, false, "Shows the help");
-    options.addOption(MIGRATION_CONFIGURATION_PATH, true,
-                      "Migration configuration path containing all the json files with the rules configurations");
     options.addOption(PROJECT_BASE_PATH, true, "Base directory of the project  to be migrated");
     options.addOption(DESTINATION_PROJECT_BASE_PATH, true, "Base directory of the migrated project");
+    options.addOption(MULE_VERSION, true, "Mule version where to migrate project");
     options.addOption(REPORT, false, "Reporting strategy (default: console)");
 
     try {
       CommandLineParser parser = new DefaultParser();
       CommandLine line = parser.parse(options, args);
-
-      if (line.hasOption(MIGRATION_CONFIGURATION_PATH)) {
-        this.migrationConfigurationPath = line.getOptionValue(MIGRATION_CONFIGURATION_PATH);
-      } else {
-        throw new ConsoleOptionsException("You must specify a migration configuration path");
-      }
 
       if (line.hasOption(PROJECT_BASE_PATH)) {
         this.projectBasePath = line.getOptionValue(PROJECT_BASE_PATH);
@@ -112,6 +105,11 @@ public class MigrationRunner {
         throw new ConsoleOptionsException("You must specify a destination project base path");
       }
 
+      if (line.hasOption(MULE_VERSION)) {
+        this.muleVersion = buildVersion(line.getOptionValue(MULE_VERSION));
+      } else {
+        throw new ConsoleOptionsException("You must specify a destination project base path");
+      }
 
       if (line.hasOption(REPORT)) {
         if (line.getOptionValue(REPORT).equals("html")) {

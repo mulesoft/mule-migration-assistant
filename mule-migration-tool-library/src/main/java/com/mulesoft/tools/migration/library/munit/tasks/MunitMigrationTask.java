@@ -7,6 +7,8 @@
 package com.mulesoft.tools.migration.library.munit.tasks;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
 import com.mulesoft.tools.migration.library.munit.steps.AssertEquals;
@@ -38,12 +40,12 @@ public class MunitMigrationTask extends AbstractMigrationTask {
 
   @Override
   public Version getFrom() {
-    return new VersionBuilder().withMajor("3").withMinor("8").withRevision("0").build();
+    return MULE_3_VERSION;
   }
 
   @Override
   public Version getTo() {
-    return new VersionBuilder().withMajor("4").withMinor("0").withRevision("0").build();
+    return MULE_4_VERSION;
   }
 
   @Override
