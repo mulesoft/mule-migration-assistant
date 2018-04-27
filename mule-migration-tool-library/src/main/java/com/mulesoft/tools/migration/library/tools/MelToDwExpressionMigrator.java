@@ -8,6 +8,8 @@ package com.mulesoft.tools.migration.library.tools;
 
 import com.mulesoft.tools.Migrator;
 import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import org.jdom2.Element;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,16 +24,30 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class MelToDwExpressionMigrator implements ExpressionMigrator {
 
+  private final MigrationReport report;
+
   private final Pattern EXPRESSION_WRAPPER = Pattern.compile("^\\s*#\\[(.*)]\\s*$", Pattern.DOTALL);
 
+  public MelToDwExpressionMigrator(MigrationReport report) {
+    this.report = report;
+  }
 
   @Override
-  public String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly) {
+  public String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly, Element element) {
     if (!isWrapped(originalExpression)) {
       return originalExpression;
     }
     String unwrappedExpression = unwrap(originalExpression);
-    String migratedExpression = Migrator.migrate(unwrappedExpression);
+    String migratedExpression;
+    try {
+      migratedExpression = Migrator.migrate(unwrappedExpression);
+    } catch (Exception e) {
+      report.report(MigrationReport.Level.WARN, element, element,
+                    "MEL expression could not be migrated to a DataWeave expression",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-mel",
+                    "https://blogs.mulesoft.com/dev/mule-dev/why-dataweave-main-expression-language-mule-4/");
+      return "mel:" + unwrappedExpression;
+    }
     migratedExpression = migratedExpression.replaceAll("flowVars", "vars").replaceAll("message.inboundProperties",
                                                                                       "vars.compatibility_inboundProperties");
     return dataWeaveBodyOnly ? migratedExpression.replaceFirst("---", "").trim() : migratedExpression;
@@ -62,5 +78,4 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
   private void checkExpression(String expression) {
     checkArgument(expression != null, "Expression cannot be null");
   }
-
 }

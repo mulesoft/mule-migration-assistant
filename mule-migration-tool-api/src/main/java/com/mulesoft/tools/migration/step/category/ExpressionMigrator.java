@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.step.category;
 
+import org.jdom2.Element;
+
 /**
  * An interface to handle the migration of expressions
  *
@@ -19,7 +21,7 @@ public interface ExpressionMigrator {
    *
    * @return an expression that works in Mule 4
    */
-  String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly);
+  String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly, Element element);
 
   /**
    * Removes the '#[' prefix and ']' suffix from an expression.

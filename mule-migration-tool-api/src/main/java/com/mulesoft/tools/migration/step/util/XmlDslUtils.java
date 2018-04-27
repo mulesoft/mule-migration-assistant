@@ -52,7 +52,7 @@ public final class XmlDslUtils {
    */
   public static void migrateExpression(Attribute attr, ExpressionMigrator exprMigrator) {
     if (attr != null && exprMigrator.isWrapped(attr.getValue())) {
-      attr.setValue(exprMigrator.wrap(exprMigrator.migrateExpression(attr.getValue(), true)));
+      attr.setValue(exprMigrator.wrap(exprMigrator.migrateExpression(attr.getValue(), true, attr.getParent())));
     }
   }
 

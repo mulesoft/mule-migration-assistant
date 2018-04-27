@@ -73,10 +73,12 @@ public class HttpListenerTest {
 
   private final Path configPath;
   private final Path targetPath;
+  private final MigrationReport reportMock;
 
   public HttpListenerTest(String filePrefix) {
     configPath = HTTP_LISTENER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = HTTP_LISTENER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
+    reportMock = mock(MigrationReport.class);
   }
 
   private HttpConnectorListenerConfig httpListenerConfig;
@@ -93,10 +95,10 @@ public class HttpListenerTest {
     appModel = mock(ApplicationModel.class);
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     httpListener.setApplicationModel(appModel);
-    httpListener.setExpressionMigrator(new MelToDwExpressionMigrator());
+    httpListener.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
 
     httpHeaders = new HttpConnectorHeaders();
-    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator());
+    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
 
   }
 

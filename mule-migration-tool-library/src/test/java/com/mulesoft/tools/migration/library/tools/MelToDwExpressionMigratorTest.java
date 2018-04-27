@@ -7,7 +7,9 @@
 package com.mulesoft.tools.migration.library.tools;
 
 import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,14 +19,20 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class MelToDwExpressionMigratorTest {
 
   private ExpressionMigrator expressionMigrator;
+  private MigrationReport reportMock;
 
   @Before
   public void setUp() {
-    expressionMigrator = new MelToDwExpressionMigrator();
+    reportMock = mock(MigrationReport.class);
+    expressionMigrator = new MelToDwExpressionMigrator(reportMock);
   }
 
   @Test
@@ -111,5 +119,15 @@ public class MelToDwExpressionMigratorTest {
   @Test(expected = IllegalArgumentException.class)
   public void isWrappedNull() {
     expressionMigrator.isWrapped(null);
+  }
+
+  @Test
+  public void migrateNotMigratableExpression() {
+    Element elementMock = mock(Element.class);
+    String originalExpression = "OUTBOUND::BLA";
+    String migratedExpression = expressionMigrator.migrateExpression("#[" + originalExpression + "]", false, elementMock);
+    verify(reportMock).report(eq(MigrationReport.Level.WARN), eq(elementMock), eq(elementMock), anyString(), anyString(),
+                              anyString());
+    assertThat("Migrated expression is not the expected", migratedExpression, equalTo("mel:" + originalExpression));
   }
 }

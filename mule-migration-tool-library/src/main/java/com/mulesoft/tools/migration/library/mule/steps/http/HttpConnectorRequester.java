@@ -89,7 +89,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
       if (!"#[payload]".equals(object.getAttributeValue("source"))) {
         object.addContent(new Element("body", httpNamespace)
             .setText(getExpressionMigrator()
-                .wrap(getExpressionMigrator().migrateExpression(object.getAttributeValue("source"), true))));
+                .wrap(getExpressionMigrator().migrateExpression(object.getAttributeValue("source"), true, object))));
       }
       object.removeAttribute("source");
     }

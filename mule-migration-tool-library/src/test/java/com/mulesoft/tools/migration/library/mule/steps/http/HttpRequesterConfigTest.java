@@ -67,7 +67,7 @@ public class HttpRequesterConfigTest {
   @Before
   public void setUp() throws Exception {
     httpRequesterConfig = new HttpConnectorRequestConfig();
-    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator());
+    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
     socketsConfig = new SocketsConfig();
   }
 
