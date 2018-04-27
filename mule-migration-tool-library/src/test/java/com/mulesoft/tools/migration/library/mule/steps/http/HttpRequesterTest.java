@@ -66,10 +66,12 @@ public class HttpRequesterTest {
 
   private final Path configPath;
   private final Path targetPath;
+  private final MigrationReport reportMock;
 
   public HttpRequesterTest(String filePrefix) {
     configPath = HTTP_REQUESTER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = HTTP_REQUESTER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
+    reportMock = mock(MigrationReport.class);
   }
 
   private HttpConnectorRequestConfig httpRequesterConfig;
@@ -83,19 +85,19 @@ public class HttpRequesterTest {
   @Before
   public void setUp() throws Exception {
     httpRequesterConfig = new HttpConnectorRequestConfig();
-    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator());
+    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
     httpRequester = new HttpConnectorRequester();
-    httpRequester.setExpressionMigrator(new MelToDwExpressionMigrator());
+    httpRequester.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
     appModel = mock(ApplicationModel.class);
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     httpRequester.setApplicationModel(appModel);
 
     httpHeaders = new HttpConnectorHeaders();
-    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator());
+    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
     httpUriParams = new HttpConnectorUriParams();
-    httpUriParams.setExpressionMigrator(new MelToDwExpressionMigrator());
+    httpUriParams.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
     httpQueryParams = new HttpConnectorQueryParams();
-    httpQueryParams.setExpressionMigrator(new MelToDwExpressionMigrator());
+    httpQueryParams.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
   }
 
   @Ignore

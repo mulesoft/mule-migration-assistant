@@ -72,7 +72,7 @@ public class OutboundPropertiesTest {
     setProperty = new SetProperty();
     copyProperties = new CopyProperties();
     mpt = new MessagePropertiesTransformer();
-    mpt.setExpressionMigrator(new MelToDwExpressionMigrator());
+    mpt.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
   }
 
   @Ignore

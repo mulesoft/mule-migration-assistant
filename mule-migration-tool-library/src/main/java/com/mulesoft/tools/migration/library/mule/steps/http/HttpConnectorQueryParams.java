@@ -41,24 +41,25 @@ public class HttpConnectorQueryParams extends AbstractHttpConnectorMigrationStep
       String paramsExpr = object.getAttributeValue("expression");
 
       setMule4MapBuilderTagText(idx, "query-params", object.getParentElement(), httpNamespace, report,
-                                () -> getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(paramsExpr), true),
+                                () -> getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(paramsExpr), true,
+                                                                                object),
                                 expr -> getExpressionMigrator()
                                     .wrap(getExpressionMigrator().unwrap(expr) + " ++ "
                                         + getExpressionMigrator().unwrap(getExpressionMigrator()
-                                            .migrateExpression(getExpressionMigrator().wrap(paramsExpr), true))));
+                                            .migrateExpression(getExpressionMigrator().wrap(paramsExpr), true, object))));
 
       object.getParent().removeContent(object);
-      object.setText(getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(paramsExpr), true));
+      object.setText(getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(paramsExpr), true, object));
     }
     if ("query-param".equals(object.getName())) {
       String paramName = object.getAttributeValue("paramName");
       String paramValue = object.getAttributeValue("value");
 
       String dwParamMapElement = (getExpressionMigrator().isWrapped(paramName)
-          ? getExpressionMigrator().unwrap(getExpressionMigrator().migrateExpression(paramName, true))
+          ? getExpressionMigrator().unwrap(getExpressionMigrator().migrateExpression(paramName, true, object))
           : ("'" + paramName + "'")) + " : "
           + (getExpressionMigrator().isWrapped(paramValue)
-              ? getExpressionMigrator().unwrap(getExpressionMigrator().migrateExpression(paramValue, true))
+              ? getExpressionMigrator().unwrap(getExpressionMigrator().migrateExpression(paramValue, true, object))
               : ("'" + paramValue + "'"));
 
       setMule4MapBuilderTagText(idx, "query-params", object.getParentElement(), httpNamespace, report,
