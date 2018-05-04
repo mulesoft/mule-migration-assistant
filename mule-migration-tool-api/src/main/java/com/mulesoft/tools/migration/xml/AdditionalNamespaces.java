@@ -20,6 +20,8 @@ public enum AdditionalNamespaces {
 
   COMPATIBILITY("compatibility", "http://www.mulesoft.org/schema/mule/compatibility"),
 
+  SCHEDULERS("schedulers", "http://www.mulesoft.org/schema/mule/schedulers"),
+
   TCP("tcp", "http://www.mulesoft.org/schema/mule/tcp"),
 
   SOCKETS("sockets", "http://www.mulesoft.org/schema/mule/sockets"),
