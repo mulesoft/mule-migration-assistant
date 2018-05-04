@@ -58,7 +58,7 @@
                 #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
-                #[vars.compatibility_inboundProperties["http.query.params"]]
+                #[vars.compatibility_inboundProperties['http.query.params']]
             </http:query-params>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>

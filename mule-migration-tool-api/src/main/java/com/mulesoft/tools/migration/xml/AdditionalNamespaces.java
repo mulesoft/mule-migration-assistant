@@ -24,6 +24,8 @@ public enum AdditionalNamespaces {
 
   SOCKETS("sockets", "http://www.mulesoft.org/schema/mule/sockets"),
 
+  FILE("file", "http://www.mulesoft.org/schema/mule/file"),
+
   MULE("mule", "http://www.mulesoft.org/schema/mule/core"),
 
   JSON("json", "http://www.mulesoft.org/schema/mule/json"),

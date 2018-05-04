@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:file="http://www.mulesoft.org/schema/mule/file"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+               http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <file:config name="fileConnector">
+        <file:connection>
+            <reconnection failsDeployment="true"/>
+        </file:connection>
+    </file:config>
+
+<!-- TODO MULE-14947  Correctly migrate this expression  -->
+<!--     <file:matcher name="fileConnectorMatcher" updatedUntil="#[currentDate - 60]"/> -->
+<!--     <file:matcher name="fileConnector-TestMatcher" updatedUntil="#[currentDate - 30]"/> -->
+    <file:matcher name="fileConnectorMatcher" updatedUntil="60"/>
+    <file:matcher name="fileConnector-TestMatcher" updatedUntil="30"/>
+
+    <flow name="Test">
+        <file:listener autoDelete="true" recursive="false" config-ref="fileConnector" matcher="fileConnector-TestMatcher">
+            <scheduling-strategy>
+                <fixed-frequency frequency="3000"/>
+            </scheduling-strategy>
+        </file:listener>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger/>
+        <compatibility:outbound-properties-to-var/>
+    </flow>
+    
+</mule>

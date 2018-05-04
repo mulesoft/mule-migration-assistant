@@ -72,6 +72,24 @@ public final class XmlDslUtils {
   }
 
   /**
+   * Migrate a field for which the default value was changed.
+   *
+   * @param oldDefaultValue
+   * @param newDefaultValue
+   * @param currentValue
+   * @return the value to set in the new version, or null if {@code currentValue} is already the new default.
+   */
+  public static String changeDefault(String oldDefaultValue, String newDefaultValue, String currentValue) {
+    if (currentValue == null) {
+      return oldDefaultValue;
+    } else if (newDefaultValue.equals(currentValue)) {
+      return null;
+    } else {
+      return currentValue;
+    }
+  }
+
+  /**
    * Add the required compatibility elements to the flow for a migrated source to work correctly.
    */
   public static void migrateSourceStructure(ApplicationModel appModel, Element object, MigrationReport report) {

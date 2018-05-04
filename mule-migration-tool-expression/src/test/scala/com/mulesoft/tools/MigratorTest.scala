@@ -8,7 +8,7 @@ class MigratorTest extends FlatSpec with Matchers {
   }
 
   "Migrator" should "migrate a map with identifiers" in {
-    Migrator.migrate("['user-agent': 'Mule 3.8.0']") shouldBe "---\n{\n  \"user-agent\": \"Mule 3.8.0\"\n}"
+    Migrator.migrate("['user-agent': 'Mule 3.8.0']") shouldBe "---\n{\n  \"user-agent\": 'Mule 3.8.0'\n}"
   }
 
   it should "migrate a list of lists" in {
@@ -32,6 +32,6 @@ class MigratorTest extends FlatSpec with Matchers {
   }
 
   it should "migrate a subscript expression" in {
-    Migrator.migrate("message.inboundProperties['http.query.params']") shouldBe "---\nmessage.inboundProperties[\"http.query.params\"]"
+    Migrator.migrate("message.inboundProperties['http.query.params']") shouldBe "---\nmessage.inboundProperties['http.query.params']"
   }
 }
