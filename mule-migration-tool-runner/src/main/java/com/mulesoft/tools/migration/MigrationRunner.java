@@ -61,7 +61,8 @@ public class MigrationRunner {
     DefaultMigrationReport report = new DefaultMigrationReport();
     job.execute(report);
     stopwatch.stop();
-    printMigrationSummary(job.getReportPath().resolve(REPORT_HOME).toString(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    printMigrationSummary(job.getReportPath().resolve(REPORT_HOME).toAbsolutePath().toString(),
+                          stopwatch.elapsed(TimeUnit.MILLISECONDS));
   }
 
   private MigrationJob buildMigrationJob() {
