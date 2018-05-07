@@ -15,6 +15,8 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
+import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -61,7 +63,10 @@ public class FileInboundTest {
         "file-inbound-13",
         "file-inbound-14",
         "file-inbound-15",
-        "file-inbound-16"
+        "file-inbound-16",
+        "file-inbound-17",
+        "file-inbound-18",
+        "file-inbound-19"
     };
   }
 
@@ -75,22 +80,33 @@ public class FileInboundTest {
     reportMock = mock(MigrationReport.class);
   }
 
+  private CustomFilter customFilter;
   private FileGlobalEndpoint fileGlobalEndpoint;
   private FileConfig fileConfig;
   private FileInboundEndpoint fileInboundEndpoint;
+  private FileTransformers fileTransformers;
+  private InboundEndpoint inboundEndpoint;
 
   private ApplicationModel appModel;
 
   @Before
   public void setUp() throws Exception {
+    customFilter = new CustomFilter();
     fileGlobalEndpoint = new FileGlobalEndpoint();
     fileConfig = new FileConfig();
-    fileConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
-    fileInboundEndpoint = new FileInboundEndpoint();
-    fileInboundEndpoint.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+
+    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock);
     appModel = mock(ApplicationModel.class);
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+
+    fileConfig.setExpressionMigrator(expressionMigrator);
+    fileInboundEndpoint = new FileInboundEndpoint();
+    fileInboundEndpoint.setExpressionMigrator(expressionMigrator);
     fileInboundEndpoint.setApplicationModel(appModel);
+    fileTransformers = new FileTransformers();
+    inboundEndpoint = new InboundEndpoint();
+    inboundEndpoint.setExpressionMigrator(expressionMigrator);
+    inboundEndpoint.setApplicationModel(appModel);
   }
 
   @Ignore
@@ -103,12 +119,18 @@ public class FileInboundTest {
   public void execute() throws Exception {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
+    getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
+        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, fileGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> fileGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, fileConfig.getAppliedTo().getExpression())
         .forEach(node -> fileConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, fileInboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> fileInboundEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, fileTransformers.getAppliedTo().getExpression())
+        .forEach(node -> fileTransformers.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

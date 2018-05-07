@@ -26,8 +26,10 @@ import com.mulesoft.tools.migration.library.mule.steps.core.RemoveProperty;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSchedulersNamespace;
 import com.mulesoft.tools.migration.library.mule.steps.core.RollbackExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetAttachment;
+import com.mulesoft.tools.migration.library.mule.steps.core.SetPayload;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetProperty;
 import com.mulesoft.tools.migration.library.mule.steps.core.TransactionalScope;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -71,6 +73,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new RemoveObjectToStringTransformer(),
                         new RollbackExceptionStrategy(),
                         new ChoiceExceptionStrategy(),
+                        new SetPayload(),
                         new SetAttachment(),
                         new SetProperty(),
                         new CopyProperties(),
@@ -82,6 +85,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new MessagePropertiesTransformer(),
                         new Flow(),
                         new Poll(),
-                        new RemoveSchedulersNamespace());
+                        new RemoveSchedulersNamespace(),
+                        new CustomFilter());
   }
 }

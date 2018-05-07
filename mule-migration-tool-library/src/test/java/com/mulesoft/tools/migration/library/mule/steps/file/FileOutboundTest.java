@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.mule.steps.endpoint.OutboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -49,7 +50,9 @@ public class FileOutboundTest {
         "file-outbound-01",
         "file-outbound-02",
         "file-outbound-03",
-        "file-outbound-04"
+        "file-outbound-04",
+        "file-outbound-05",
+        "file-outbound-06"
     };
   }
 
@@ -64,6 +67,7 @@ public class FileOutboundTest {
   private FileGlobalEndpoint fileGlobalEndpoint;
   private FileConfig fileConfig;
   private FileOutboundEndpoint fileOutboundEndpoint;
+  private OutboundEndpoint outboundEndpoint;
 
   private ApplicationModel appModel;
 
@@ -72,11 +76,17 @@ public class FileOutboundTest {
     fileGlobalEndpoint = new FileGlobalEndpoint();
     fileConfig = new FileConfig();
     fileConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+
     appModel = mock(ApplicationModel.class);
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(mock(MigrationReport.class));
+
     fileOutboundEndpoint = new FileOutboundEndpoint();
     fileOutboundEndpoint.setApplicationModel(appModel);
-    fileOutboundEndpoint.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    fileOutboundEndpoint.setExpressionMigrator(expressionMigrator);
+    outboundEndpoint = new OutboundEndpoint();
+    outboundEndpoint.setApplicationModel(appModel);
+    outboundEndpoint.setExpressionMigrator(expressionMigrator);
   }
 
   @Ignore
@@ -95,6 +105,8 @@ public class FileOutboundTest {
         .forEach(node -> fileConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, fileOutboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> fileOutboundEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, outboundEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> outboundEndpoint.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

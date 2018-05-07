@@ -18,7 +18,8 @@
         <file:listener config-ref="FileConnector"
                        directory="${workingDirectory}/path"
                        moveToDirectory="${workingDirectory}/temp/output-directory"
-                       recursive="false">
+                       recursive="false"
+                       applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

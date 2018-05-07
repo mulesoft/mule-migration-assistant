@@ -11,7 +11,7 @@
     <flow name="outputTest">
         <set-payload value="こ" encoding="EUC-JP"/>
         <compatibility:outbound-properties-to-var/>
-        <file:write path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: null, address: null, outputPattern: 'mule-file-test-EUC-JP', outputPatternConfig: null})]" encoding="EUC-JP"/>
+        <file:write path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: '${workingDirectory}/mule-file-test-EUC-JP', address: null, outputPattern: 'mule-file-test-EUC-JP', outputPatternConfig: null})]" encoding="EUC-JP"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
     

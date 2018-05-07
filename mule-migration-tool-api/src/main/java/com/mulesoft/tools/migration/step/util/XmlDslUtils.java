@@ -98,7 +98,15 @@ public final class XmlDslUtils {
 
     int index = object.getParent().indexOf(object);
     buildAttributesToInboundProperties(report, object.getParent(), index + 1);
-    buildOutboundPropertiesToVar(report, object.getParent(), object.getParent().getContentSize());
+
+    // TODO MMT-32 Test this
+    // TODO MMT-32 Are we migrating exception handling before or after connectors/transports?
+    Element errorHandlerElement = object.getParentElement().getChild("error-handler", CORE_NAMESPACE);
+    if (errorHandlerElement != null) {
+      buildOutboundPropertiesToVar(report, object.getParent(), object.getParentElement().indexOf(errorHandlerElement) - 1);
+    } else {
+      buildOutboundPropertiesToVar(report, object.getParent(), object.getParent().getContentSize());
+    }
   }
 
   /**

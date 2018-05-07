@@ -14,19 +14,13 @@
         </file:connection>
     </file:config>
 
-<!-- TODO MMT-141  Correctly migrate this expression  -->
-<!--     <file:matcher name="fileConnectorMatcher" updatedUntil="#[currentDate - 1]"/> -->
-    <file:matcher name="fileConnectorMatcher" updatedUntil="1"/>
+    <file:matcher name="fileConnectorMatcher" updatedUntil="500"/>
     
-    <flow name="Test">
-        <file:listener directory="./target" config-ref="fileConnector" autoDelete="true" matcher="fileConnectorMatcher" applyPostActionWhenFailed="false">
-            <scheduling-strategy>
-                <fixed-frequency frequency="1"/>
-            </scheduling-strategy>
-        </file:listener>
-        <compatibility:attributes-to-inbound-properties/>
+    <flow name="relay">
         <logger/>
         <compatibility:outbound-properties-to-var/>
+        <file:write config-ref="fileConnector" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: null, address: '${workingDirectory}/out', outputPattern: null, outputPatternConfig: 'out.txt'})]"/>
+        <compatibility:attributes-to-inbound-properties/>
     </flow>
     
 </mule>

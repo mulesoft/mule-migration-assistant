@@ -9,7 +9,9 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
 import static java.lang.System.lineSeparator;
+import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -20,6 +22,7 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Migrates the outbound endpoints of the file transport
@@ -29,8 +32,6 @@ import java.io.IOException;
  */
 public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
-
-  protected static final String FILE_NAMESPACE = "http://www.mulesoft.org/schema/mule/file";
 
   public static final String XPATH_SELECTOR = "/mule:mule//file:outbound-endpoint";
 
@@ -47,14 +48,25 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace fileNs = Namespace.getNamespace("file", FILE_NAMESPACE);
+    Namespace fileNs = Namespace.getNamespace(FILE.prefix(), FILE.uri());
 
     object.setName("write");
+
+    List<Element> transformerChildren =
+        object.getChildren().stream().filter(c -> c.getName().contains("transformer")).collect(toList());
+
+    transformerChildren.forEach(tc -> {
+      tc.getParent().removeContent(tc);
+      object.getParentElement().addContent(object.getParentElement().indexOf(object) + 1, tc);
+    });
 
     migrateOperationStructure(getApplicationModel(), object, report);
 
     object.setAttribute("path", compatibilityOutputFile("{"
-        + " writeToDirectory: " + propToDwExpr(object, "writeToDirectory") + ","
+        + " writeToDirectory: "
+        + (object.getAttribute("path") == null ? propToDwExpr(object, "writeToDirectory")
+            : "'" + object.getAttributeValue("path") + "'")
+        + ","
         + " address: "
         + (object.getAttribute("address") != null
             ? ("'" + object.getAttributeValue("address").substring("file://".length()) + "'")
@@ -86,9 +98,10 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
                   "        default pathDslParams.writeToDirectory)" + lineSeparator() +
                   "        default pathDslParams.address)" + lineSeparator() +
                   "    ++ '/' ++" + lineSeparator() +
-                  "    ((vars.compatibility_outboundProperties.outputPattern" + lineSeparator() +
+                  "    (((vars.compatibility_outboundProperties.outputPattern" + lineSeparator() +
+                  "        default pathDslParams.outputPattern)" + lineSeparator() +
                   "        default pathDslParams.outputPatternConfig)" + lineSeparator() +
-                  "        default vars.compatibility_outboundProperties.filename" + lineSeparator() +
+                  "        default vars.compatibility_inboundProperties.filename" + lineSeparator() +
                   "    as String)" + lineSeparator() +
                   "}" + lineSeparator() +
                   lineSeparator());

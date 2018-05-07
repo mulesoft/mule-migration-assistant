@@ -14,17 +14,18 @@
         </file:connection>
     </file:config>
 
-<!-- TODO MULE-14947  Correctly migrate this expression  -->
+<!-- TODO MMT-141  Correctly migrate this expression  -->
 <!--     <file:matcher name="fileConnectorMatcher" updatedUntil="#[currentDate - 1000]"/> -->
     <file:matcher name="FileConnector-TestMatcher" updatedUntil="1000"/>
 
-<!-- TODO migrate string interpolation to concatenation -->
+<!-- TODO MMT-138 migrate string interpolation to concatenation -->
     <flow name="Test">
         <file:listener directory="${FileMoveToFunctionalTestCase-inputDirectory}"
                        moveToDirectory="${FileMoveToFunctionalTestCase-moveToDirectory}"
                        renameTo="#[mel:message.inboundProperties.originalFilename]_#[message.id]"
                        recursive="false"
-                       config-ref="FileConnector" matcher="FileConnector-TestMatcher">
+                       config-ref="FileConnector" matcher="FileConnector-TestMatcher"
+                       applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>
