@@ -31,6 +31,8 @@ public class DefaultMigrationReport implements MigrationReport {
   public void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks) {
     int i = 0;
 
+    reportEntries.add(new ReportEntryModel(level, elementToComment, message, documentationLinks));
+
     elementToComment.addContent(i++, new Comment("Migration " + level.name() + ": " + message));
     elementToComment.addContent(i++, new Comment("    For more information refer to:"));
 
@@ -41,9 +43,9 @@ public class DefaultMigrationReport implements MigrationReport {
     if (element != elementToComment) {
       elementToComment.addContent(i++, new Comment(outp.outputString(element)));
     }
-    reportEntries.add(new ReportEntryModel(level, elementToComment, message, documentationLinks));
   }
 
+  @Override
   public List<ReportEntryModel> getReportEntries() {
     return this.reportEntries;
   }

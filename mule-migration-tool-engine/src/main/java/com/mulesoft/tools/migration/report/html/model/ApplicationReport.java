@@ -65,13 +65,7 @@ public class ApplicationReport {
       reportEntries.forEach(e -> {
         if (e.getLevel().equals(level)) {
           String fileName = Paths.get(e.getFilePath()).getFileName().toString();
-          if (resources.containsKey(fileName)) {
-            resources.get(fileName).add(e);
-          } else {
-            List<ReportEntryModel> entries = new ArrayList<>();
-            entries.add(e);
-            resources.put(fileName, entries);
-          }
+          resources.computeIfAbsent(fileName, k -> new ArrayList<>()).add(e);
         }
       });
       return resources;

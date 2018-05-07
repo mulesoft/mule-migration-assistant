@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.report.html.model;
 
 import org.jdom2.Element;
 import org.jdom2.located.LocatedElement;
+import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class ReportEntryModel {
 
   public ReportEntryModel(Level level, Element element, String message, String... documentationLinks) {
     this.level = level;
-    this.element = escapeXml(new XMLOutputter().outputString(element));
+    this.element = escapeXml(new XMLOutputter(Format.getPrettyFormat()).outputString(element));
     this.message = message;
     this.filePath = element.getDocument().getBaseURI();
 

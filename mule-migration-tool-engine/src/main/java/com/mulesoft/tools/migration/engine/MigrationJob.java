@@ -120,7 +120,7 @@ public class MigrationJob implements Executable {
   }
 
   private void generateReport(MigrationReport report) throws Exception {
-    HTMLReport htmlReport = new HTMLReport(((DefaultMigrationReport) report).getReportEntries(),
+    HTMLReport htmlReport = new HTMLReport(report.getReportEntries(),
                                            outputProject.resolve(HTML_REPORT_FOLDER).toFile());
     htmlReport.printReport();
   }
