@@ -17,6 +17,7 @@ import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.Parent;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
@@ -96,8 +97,8 @@ public final class XmlDslUtils {
     appModel.addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, object.getDocument());
 
     int index = object.getParent().indexOf(object);
-    object.getParent().addContent(index + 1, buildAttributesToInboundProperties(report));
-    object.getParent().addContent(buildOutboundPropertiesToVar(report));
+    buildAttributesToInboundProperties(report, object.getParent(), index + 1);
+    buildOutboundPropertiesToVar(report, object.getParent(), object.getParent().getContentSize());
   }
 
   /**
@@ -107,12 +108,13 @@ public final class XmlDslUtils {
     appModel.addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, object.getDocument());
 
     int index = object.getParent().indexOf(object);
-    object.getParent().addContent(index, buildOutboundPropertiesToVar(report));
-    object.getParent().addContent(index + 2, buildAttributesToInboundProperties(report));
+    buildOutboundPropertiesToVar(report, object.getParent(), index);
+    buildAttributesToInboundProperties(report, object.getParent(), index + 2);
   }
 
-  private static Element buildAttributesToInboundProperties(MigrationReport report) {
+  private static Element buildAttributesToInboundProperties(MigrationReport report, Parent parent, int index) {
     Element a2ip = new Element("attributes-to-inbound-properties", COMPATIBILITY_NAMESPACE);
+    parent.addContent(index, a2ip);
 
     report.report(WARN, a2ip, a2ip,
                   "Expressions that query inboundProperties from the message should instead query the attributes of the message."
@@ -122,8 +124,9 @@ public final class XmlDslUtils {
     return a2ip;
   }
 
-  private static Element buildOutboundPropertiesToVar(MigrationReport report) {
+  private static Element buildOutboundPropertiesToVar(MigrationReport report, Parent parent, int index) {
     Element op2v = new Element("outbound-properties-to-var", COMPATIBILITY_NAMESPACE);
+    parent.addContent(index, op2v);
 
     report.report(WARN, op2v, op2v,
                   "Instead of setting outbound properties in the flow, its values must be set explicitly in the operation/listener.",
