@@ -8,13 +8,15 @@ package com.mulesoft.tools.migration.step.category;
 
 import org.jdom2.Element;
 
+import java.util.List;
+
 /**
  * An interface to feed the migration report
- *
+ * @param <T>
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public interface MigrationReport {
+public interface MigrationReport<T> {
 
   /**
    * Represents the severity of a report entry.
@@ -45,4 +47,9 @@ public interface MigrationReport {
    *        migrated app.
    */
   void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks);
+
+  /**
+   * Returns the report entries.
+   */
+  List<T> getReportEntries();
 }

@@ -18,9 +18,8 @@ import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
-import com.mulesoft.tools.migration.report.ReportingStrategy;
-import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
-import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
+import com.mulesoft.tools.migration.report.DefaultMigrationReport;
+import com.mulesoft.tools.migration.report.html.HTMLReport;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.Version;
@@ -44,21 +43,19 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICA
  */
 public class MigrationJob implements Executable {
 
+  private static final String HTML_REPORT_FOLDER = "report";
   private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  private ReportingStrategy reportingStrategy;
   private Path project;
   private Path outputProject;
   private List<AbstractMigrationTask> migrationTasks;
   private String muleVersion;
 
-  private MigrationJob(Path project, Path outputProject, List<AbstractMigrationTask> migrationTasks, String muleVersion,
-                       ReportingStrategy reportingStrategy) {
+  private MigrationJob(Path project, Path outputProject, List<AbstractMigrationTask> migrationTasks, String muleVersion) {
     this.migrationTasks = migrationTasks;
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
     this.project = project;
-    this.reportingStrategy = reportingStrategy;
   }
 
   @Override
@@ -80,7 +77,7 @@ public class MigrationJob implements Executable {
         throw new MigrationJobException("Failed to continue executing migration: " + e.getMessage(), e);
       }
     }
-    generateReport();
+    generateReport(report);
   }
 
   private void persistApplicationModel(ApplicationModel applicationModel) throws Exception {
@@ -122,11 +119,10 @@ public class MigrationJob implements Executable {
     }
   }
 
-  private void generateReport() {
-    // TODO this GOES TO ANOTHER CLASS
-    if (reportingStrategy instanceof HTMLReportStrategy) {
-      ((HTMLReportStrategy) this.reportingStrategy).generateReport();
-    }
+  private void generateReport(MigrationReport report) throws Exception {
+    HTMLReport htmlReport = new HTMLReport(report.getReportEntries(),
+                                           outputProject.resolve(HTML_REPORT_FOLDER).toFile());
+    htmlReport.printReport();
   }
 
   /**
@@ -144,8 +140,6 @@ public class MigrationJob implements Executable {
     private Version outputVersion;
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
 
-    private ReportingStrategy reportingStrategy = new ConsoleReportStrategy();
-
     public MigrationJobBuilder withProject(Path project) {
       this.project = project;
       return this;
@@ -153,11 +147,6 @@ public class MigrationJob implements Executable {
 
     public MigrationJobBuilder withOutputProject(Path outputProject) {
       this.outputProject = outputProject;
-      return this;
-    }
-
-    public MigrationJobBuilder withReportingStrategy(ReportingStrategy reportingStrategy) {
-      this.reportingStrategy = reportingStrategy;
       return this;
     }
 
@@ -186,7 +175,7 @@ public class MigrationJob implements Executable {
       MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion, outputProjectType);
       migrationTasks = migrationTaskLocator.locate();
 
-      return new MigrationJob(project, outputProject, migrationTasks, outputVersion.toString(), reportingStrategy);
+      return new MigrationJob(project, outputProject, migrationTasks, outputVersion.toString());
     }
   }
 

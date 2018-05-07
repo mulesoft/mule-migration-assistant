@@ -56,15 +56,11 @@ public class MigrationTaskLocator {
       // TODO log;
       return FALSE;
     }
-
     if (projectType.equals(migrationTask.getProjectType())) {
       if (from.matches(migrationTask.getFrom()) && to.matches(migrationTask.getTo())) {
         return TRUE;
       }
     }
-
-
-
     return FALSE;
   }
 
