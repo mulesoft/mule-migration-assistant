@@ -35,7 +35,7 @@
             <h4 class="text-bold">Column: </h4>
             <h4>${entry.columnNumber}</h4>
             <br>
-            <code>${entry.element}</code>
+            <code>${entry.elementContent}</code>
             <hr>
         </div>
         </#list>
