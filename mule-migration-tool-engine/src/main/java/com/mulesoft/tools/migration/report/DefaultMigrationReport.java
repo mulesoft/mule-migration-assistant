@@ -6,11 +6,15 @@
  */
 package com.mulesoft.tools.migration.report;
 
+import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Comment;
 import org.jdom2.Element;
 import org.jdom2.output.XMLOutputter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Default implementation of a {@link MigrationReport}.
@@ -21,6 +25,7 @@ import org.jdom2.output.XMLOutputter;
 public class DefaultMigrationReport implements MigrationReport {
 
   private XMLOutputter outp = new XMLOutputter();
+  private List<ReportEntryModel> reportEntries = new ArrayList<>();
 
   @Override
   public void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks) {
@@ -36,6 +41,11 @@ public class DefaultMigrationReport implements MigrationReport {
     if (element != elementToComment) {
       elementToComment.addContent(i++, new Comment(outp.outputString(element)));
     }
+    reportEntries.add(new ReportEntryModel(level, elementToComment, message, documentationLinks));
+  }
+
+  public List<ReportEntryModel> getReportEntries() {
+    return this.reportEntries;
   }
 
 }

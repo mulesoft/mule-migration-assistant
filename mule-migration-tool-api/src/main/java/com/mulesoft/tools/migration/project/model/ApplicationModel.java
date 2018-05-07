@@ -15,6 +15,7 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
@@ -233,6 +234,7 @@ public class ApplicationModel {
 
     private Document generateDocument(Path filePath) throws JDOMException, IOException {
       SAXBuilder saxBuilder = new SAXBuilder();
+      saxBuilder.setJDOMFactory(new LocatedJDOMFactory());
       return saxBuilder.build(filePath.toFile());
     }
   }

@@ -15,6 +15,7 @@
         <licensePath>../LICENSE_HEADER.txt</licensePath>
 
         <semver.version>2.0.3</semver.version>
+        <freemarker.version>2.3.23</freemarker.version>
     </properties>
     <build>
         <plugins>
@@ -64,6 +65,12 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker.version}</version>
         </dependency>
 
         <!-- Test Dependencies -->

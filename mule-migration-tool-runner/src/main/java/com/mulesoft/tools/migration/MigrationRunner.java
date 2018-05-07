@@ -6,21 +6,13 @@
  */
 package com.mulesoft.tools.migration;
 
-import static com.mulesoft.tools.migration.engine.project.version.VersionUtils.buildVersion;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static java.util.Collections.singletonList;
-
+import com.google.common.base.Stopwatch;
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
-import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
-import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
+import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.report.DefaultMigrationReport;
-import com.mulesoft.tools.migration.report.ReportingStrategy;
-import com.mulesoft.tools.migration.report.console.ConsoleReportStrategy;
-import com.mulesoft.tools.migration.report.html.HTMLReportStrategy;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-
 import com.mulesoft.tools.migration.task.Version;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -30,6 +22,12 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+
+import static com.mulesoft.tools.migration.engine.project.version.VersionUtils.buildVersion;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
@@ -41,8 +39,6 @@ public class MigrationRunner {
 
   private final static String HELP = "help";
 
-  private final static String REPORT = "report";
-
   private final static String PROJECT_BASE_PATH = "projectBasePath";
   private final static String DESTINATION_PROJECT_BASE_PATH = "destinationProjectBasePath";
   private final static String MULE_VERSION = "muleVersion";
@@ -53,21 +49,24 @@ public class MigrationRunner {
   private String destinationProjectBasePath;
   private Version muleVersion;
 
-  private ReportingStrategy reportingStrategy;
-
   public static void main(String args[]) throws Exception {
+    Stopwatch stopwatch = Stopwatch.createStarted();
     MigrationRunner migrationRunner = new MigrationRunner();
     migrationRunner.initializeOptions(args);
 
+    log("Executing migration...");
+
     MigrationJob job = migrationRunner.buildMigrationJob();
-    job.execute(new DefaultMigrationReport());
+    DefaultMigrationReport report = new DefaultMigrationReport();
+    job.execute(report);
+    stopwatch.stop();
+    printMigrationSummary(migrationRunner.destinationProjectBasePath, stopwatch.elapsed(TimeUnit.MILLISECONDS));
   }
 
   private MigrationJob buildMigrationJob() {
     MigrationJobBuilder builder = new MigrationJobBuilder()
         .withProject(Paths.get(projectBasePath))
         .withOutputProject(Paths.get(destinationProjectBasePath))
-        .withReportingStrategy(reportingStrategy)
         .withInputVersion(MULE_3_VERSION)
         .withOuputVersion(muleVersion)
         .withOutputProjectType(OUTPUT_PROJECT_TYPE);
@@ -87,7 +86,6 @@ public class MigrationRunner {
     options.addOption(PROJECT_BASE_PATH, true, "Base directory of the project  to be migrated");
     options.addOption(DESTINATION_PROJECT_BASE_PATH, true, "Base directory of the migrated project");
     options.addOption(MULE_VERSION, true, "Mule version where to migrate project");
-    options.addOption(REPORT, false, "Reporting strategy (default: console)");
 
     try {
       CommandLineParser parser = new DefaultParser();
@@ -111,16 +109,6 @@ public class MigrationRunner {
         throw new ConsoleOptionsException("You must specify a destination project base path");
       }
 
-      if (line.hasOption(REPORT)) {
-        if (line.getOptionValue(REPORT).equals("html")) {
-          this.reportingStrategy = new HTMLReportStrategy();
-        } else {
-          this.reportingStrategy = new ConsoleReportStrategy();
-        }
-      } else {
-        this.reportingStrategy = new ConsoleReportStrategy();
-      }
-
       if (line.hasOption(HELP)) {
         printHelp(options);
       }
@@ -137,4 +125,5 @@ public class MigrationRunner {
     HelpFormatter formatter = new HelpFormatter();
     formatter.printHelp("migration-tool - Help", options);
   }
+
 }

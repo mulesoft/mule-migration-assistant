@@ -27,10 +27,12 @@ public class BasicProject {
 
   public BasicProject(Path baseFolder) {
     checkArgument(baseFolder != null, "The base folder path must not be null");
-    checkArgument(baseFolder.toFile().exists() == true, "The base folder path must exists");
-    checkArgument(baseFolder.toFile().isDirectory() == true, "The base folder path must be a folder");
 
-    this.baseFolder = baseFolder;
+    if (!baseFolder.toFile().exists()) {
+      baseFolder.toFile().mkdirs();
+    }
+
+    this.baseFolder = baseFolder.toAbsolutePath();
   }
 
   public Path getBaseFolder() {
