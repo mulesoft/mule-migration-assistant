@@ -77,15 +77,7 @@ public class ReportEntryModel {
       this.columnNumber = ((LocatedElement) elements.get(0)).getColumn();
     }
   }
-
-  private boolean areElementsEquals(Element originalElement, Element element) {
-    if (originalElement.getName().equals(element.getName())) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
+  
   public Level getLevel() {
     return level;
   }
