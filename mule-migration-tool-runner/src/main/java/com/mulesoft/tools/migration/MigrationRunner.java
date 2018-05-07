@@ -42,6 +42,7 @@ public class MigrationRunner {
   private final static String PROJECT_BASE_PATH = "projectBasePath";
   private final static String DESTINATION_PROJECT_BASE_PATH = "destinationProjectBasePath";
   private final static String MULE_VERSION = "muleVersion";
+  private final static String REPORT_HOME = "summary.html";
   public static final Version MULE_3_VERSION = new Version.VersionBuilder().withMajor("3").build();
   public static final ProjectType OUTPUT_PROJECT_TYPE = MULE_FOUR_APPLICATION;
 
@@ -60,7 +61,8 @@ public class MigrationRunner {
     DefaultMigrationReport report = new DefaultMigrationReport();
     job.execute(report);
     stopwatch.stop();
-    printMigrationSummary(migrationRunner.destinationProjectBasePath, stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    printMigrationSummary(job.getReportPath().resolve(REPORT_HOME).toAbsolutePath().toString(),
+                          stopwatch.elapsed(TimeUnit.MILLISECONDS));
   }
 
   private MigrationJob buildMigrationJob() {

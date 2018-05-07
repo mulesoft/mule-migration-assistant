@@ -18,11 +18,11 @@ public class ConsolePrinter {
     System.out.println(message);
   }
 
-  public static void printMigrationSummary(String projectPath, Long elapsedTime) {
+  public static void printMigrationSummary(String reportPath, Long elapsedTime) {
     log("===============================================================================");
     log("MIGRATION SUCCESS");
     log("===============================================================================");
     log("Total time: " + String.format("%.3f", elapsedTime.floatValue() / 1000) + " s");
-    log("Project location: " + projectPath);
+    log("Migration report: " + reportPath);
   }
 }

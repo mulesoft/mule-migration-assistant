@@ -18,7 +18,6 @@ import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
-import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.report.html.HTMLReport;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -48,6 +47,7 @@ public class MigrationJob implements Executable {
 
   private Path project;
   private Path outputProject;
+  private Path reportPath;
   private List<AbstractMigrationTask> migrationTasks;
   private String muleVersion;
 
@@ -56,6 +56,7 @@ public class MigrationJob implements Executable {
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
     this.project = project;
+    this.reportPath = outputProject.resolve(HTML_REPORT_FOLDER);
   }
 
   @Override
@@ -120,9 +121,12 @@ public class MigrationJob implements Executable {
   }
 
   private void generateReport(MigrationReport report) throws Exception {
-    HTMLReport htmlReport = new HTMLReport(report.getReportEntries(),
-                                           outputProject.resolve(HTML_REPORT_FOLDER).toFile());
+    HTMLReport htmlReport = new HTMLReport(report.getReportEntries(), reportPath.toFile());
     htmlReport.printReport();
+  }
+
+  public Path getReportPath() {
+    return this.reportPath;
   }
 
   /**
