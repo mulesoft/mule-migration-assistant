@@ -47,7 +47,9 @@ public class FileOutboundTest {
   public static Object[] params() {
     return new Object[] {
         "file-outbound-01",
-        "file-outbound-02"
+        "file-outbound-02",
+        "file-outbound-03",
+        "file-outbound-04"
     };
   }
 

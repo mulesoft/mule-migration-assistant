@@ -6,8 +6,13 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAdditionalNamespaces;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -29,10 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAdditionalNamespaces;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Represent the application to be migrated
@@ -208,7 +209,7 @@ public class ApplicationModel {
         try {
           applicationDocuments.put(afp, generateDocument(afp));
         } catch (JDOMException | IOException e) {
-          throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + afp);
+          throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + afp, e);
         }
       }
       ApplicationModel applicationModel = new ApplicationModel(applicationDocuments);

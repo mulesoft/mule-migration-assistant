@@ -49,6 +49,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
     object.setName("config");
     Element connection = new Element("connection", fileNs);
+    connection.setAttribute("workingDir", ".");
     object.addContent(connection);
 
     if (object.getAttribute("streaming") != null && !"true".equals(object.getAttributeValue("streaming"))) {

@@ -59,7 +59,9 @@ public class FileInboundTest {
         "file-inbound-11",
         "file-inbound-12",
         "file-inbound-13",
-        "file-inbound-14"
+        "file-inbound-14",
+        "file-inbound-15",
+        "file-inbound-16"
     };
   }
 

@@ -9,11 +9,11 @@
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <file:config name="fileConnector">
-        <file:connection/>
+        <file:connection workingDir="."/>
     </file:config>
 
     <file:config name="fileConnector2">
-        <file:connection/>
+        <file:connection workingDir="."/>
     </file:config>
 
     <flow name="TestIn">

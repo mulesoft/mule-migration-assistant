@@ -9,23 +9,15 @@
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <file:config name="fileConnector">
-        <file:connection workingDir="."/>
+        <file:connection workingDir=".">
+            <reconnection failsDeployment="true"/>
+        </file:connection>
     </file:config>
 
-    <flow name="TestIn">
-        <file:listener config-ref="fileConnector" recursive="false" directory="${workingDirectory}/readFromDirectory" renameTo="bcd">
-            <scheduling-strategy>
-                <fixed-frequency frequency="1000"/>
-            </scheduling-strategy>
-        </file:listener>
-        <compatibility:attributes-to-inbound-properties/>
+    <flow name="relay">
         <logger/>
         <compatibility:outbound-properties-to-var/>
-    </flow>
-
-    <flow name="TestOut">
-        <compatibility:outbound-properties-to-var/>
-        <file:write config-ref="fileConnector" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: '${workingDirectory}/writeToDirectory', address: null, outputPattern: null, outputPatternConfig: 'cde'})]" mode="APPEND"/>
+        <file:write config-ref="fileConnector" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: '${workingDirectory}/out', address: null, outputPattern: null, outputPatternConfig: 'out.txt'})]"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
     

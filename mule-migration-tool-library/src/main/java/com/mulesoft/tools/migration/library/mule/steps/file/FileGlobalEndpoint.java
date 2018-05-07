@@ -65,6 +65,9 @@ public class FileGlobalEndpoint extends AbstractApplicationModelMigrationStep
           referent.setAttribute(attribute.getName(), attribute.getValue());
         }
       }
+
+      referent.addContent(object.removeContent());
+
       referent.removeAttribute("ref");
     }
 
@@ -85,6 +88,9 @@ public class FileGlobalEndpoint extends AbstractApplicationModelMigrationStep
           referent.setAttribute(attribute.getName(), attribute.getValue());
         }
       }
+
+      referent.addContent(object.removeContent());
+
       referent.removeAttribute("ref");
     }
 

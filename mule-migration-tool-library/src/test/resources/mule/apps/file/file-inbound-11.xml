@@ -9,7 +9,7 @@
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <file:config name="FileConnector">
-        <file:connection>
+        <file:connection workingDir=".">
             <reconnection failsDeployment="true"/>
         </file:connection>
     </file:config>

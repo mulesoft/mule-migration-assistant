@@ -7,7 +7,7 @@
                http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 
     <file:config name="fileConnector">
-        <file:connection>
+        <file:connection workingDir=".">
             <reconnection failsDeployment="true"/>
         </file:connection>
     </file:config>
