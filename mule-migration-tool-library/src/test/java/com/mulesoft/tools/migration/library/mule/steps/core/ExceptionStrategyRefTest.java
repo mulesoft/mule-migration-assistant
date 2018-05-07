@@ -38,7 +38,7 @@ public class ExceptionStrategyRefTest {
     exceptionStrategyRef = new ExceptionStrategyRef();
   }
 
-  @Test(expected = MigrationStepException.class)
+  @Test
   public void executeWithNullElement() throws Exception {
     exceptionStrategyRef.execute(null, mock(MigrationReport.class));
   }

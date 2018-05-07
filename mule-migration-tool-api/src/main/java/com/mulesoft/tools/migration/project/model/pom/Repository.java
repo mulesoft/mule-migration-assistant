@@ -26,44 +26,94 @@ public class Repository {
     this.repository = repository;
   }
 
+  /**
+   * Sets the repository unique identifier.
+   *
+   * @param id
+   */
   private void setId(String id) {
     repository.setId(id);
   }
 
+  /**
+   * Retrieves the repository unique identifier.
+   *
+   * @return {@link String}
+   */
   public String getId() {
     return repository.getId();
   }
 
+  /**
+   * Sets the human readable name of the repository.
+   *
+   * @param name
+   */
   public void setName(String name) {
     repository.setName(name);
   }
 
+  /**
+   * Retrieves the human readable name of the repository.
+   *
+   * @return {@link String}
+   */
   public String getName() {
     return repository.getName();
   }
 
+  /**
+   * Sets the url of the repository in the protocol://hostname/path format.
+   *
+   * @param url
+   */
   public void setUrl(String url) {
     repository.setUrl(url);
   }
 
+  /**
+   * Retrieves the url of the repository in the protocol://hostname/path format.
+   *
+   * @return {@link String}
+   */
   public String getUrl() {
     return repository.getUrl();
   }
 
+  /**
+   * Sets the repository layout. Can be default or legacy.
+   *
+   * @param layout
+   */
   public void setLayout(String layout) {
     repository.setLayout(layout);
   }
 
+  /**
+   * Retrieves the repository layout. It should be either default or legacy.
+   *
+   * @return {@link String}
+   */
   public String getLayout() {
     return repository.getLayout();
   }
 
+  /**
+   * Sets whether to use this repository for downloading snapshot artifacts.
+   *
+   * @param enabled
+   */
   public void setSnapshotsEnabled(boolean enabled) {
     RepositoryPolicy snapshotEnabled = new RepositoryPolicy();
     snapshotEnabled.setEnabled(enabled);
     repository.setSnapshots(snapshotEnabled);
   }
 
+  /**
+   * Retrieves whether this repository is set to download snapshot artifacts.
+   *
+   * @return a boolean
+   */
   public boolean areSnapshotsEnabled() {
     return repository.getSnapshots().isEnabled();
   }

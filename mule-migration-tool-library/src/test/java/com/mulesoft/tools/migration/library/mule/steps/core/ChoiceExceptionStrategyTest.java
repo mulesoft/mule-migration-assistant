@@ -37,7 +37,7 @@ public class ChoiceExceptionStrategyTest {
     choiceExceptionStrategy = new ChoiceExceptionStrategy();
   }
 
-  @Test(expected = MigrationStepException.class)
+  @Test
   public void executeWithNullElement() throws Exception {
     choiceExceptionStrategy.execute(null, mock(MigrationReport.class));
   }

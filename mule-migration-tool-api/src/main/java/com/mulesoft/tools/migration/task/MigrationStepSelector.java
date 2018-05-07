@@ -11,7 +11,6 @@ import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
-import com.mulesoft.tools.migration.step.category.ExpressionContribution;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
@@ -20,54 +19,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * It knows how to classify a set of steps
+ * It knows how to select a subset of steps.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MigrationStepSorter {
+public class MigrationStepSelector {
 
   private List<MigrationStep> steps;
 
-  public MigrationStepSorter(List<MigrationStep> steps) {
+  public MigrationStepSelector(List<MigrationStep> steps) {
     checkArgument(steps != null, "The step list must not be null");
     this.steps = new ArrayList<>(steps);
   }
 
   public List<NamespaceContribution> getNameSpaceContributionSteps() {
-    return steps.stream()
-        .filter(s -> s instanceof NamespaceContribution)
-        .map(s -> (NamespaceContribution) s)
-        .collect(toList());
+    return (List<NamespaceContribution>) filterAndCast(NamespaceContribution.class);
+
   }
 
   public List<ApplicationModelContribution> getApplicationModelContributionSteps() {
-    return steps.stream()
-        .filter(s -> s instanceof ApplicationModelContribution)
-        .map(s -> (ApplicationModelContribution) s)
-        .collect(toList());
-  }
+    return (List<ApplicationModelContribution>) filterAndCast(ApplicationModelContribution.class);
 
-  public List<ExpressionContribution> getExpressionContributionSteps() {
-    return steps.stream()
-        .filter(s -> s instanceof ExpressionContribution)
-        .map(s -> (ExpressionContribution) s)
-        .collect(toList());
   }
 
   public List<ProjectStructureContribution> getProjectStructureContributionSteps() {
-    return steps.stream()
-        .filter(s -> s instanceof ProjectStructureContribution)
-        .map(s -> (ProjectStructureContribution) s)
-        .collect(toList());
+    return (List<ProjectStructureContribution>) filterAndCast(ProjectStructureContribution.class);
   }
 
   public List<PomContribution> getPomContributionSteps() {
-    return steps.stream()
-        .filter(s -> s instanceof PomContribution)
-        .map(s -> (PomContribution) s)
-        .collect(toList());
+    return (List<PomContribution>) filterAndCast(PomContribution.class);
   }
 
-
+  private List<? extends MigrationStep> filterAndCast(Class<? extends MigrationStep> clazz) {
+    return steps.stream()
+        .filter(clazz::isInstance)
+        .map(clazz::cast)
+        .collect(toList());
+  }
 }

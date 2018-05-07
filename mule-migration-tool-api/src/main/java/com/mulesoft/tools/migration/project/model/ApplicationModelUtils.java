@@ -17,91 +17,132 @@ import org.jdom2.Namespace;
 
 /**
  * Utilities to work with DOM
- * 
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
 public class ApplicationModelUtils {
 
+  /**
+   * Changes node name and namespace.
+   *
+   * @param nameSpace the new element namespace
+   * @param name      the new element name
+   * @return a function that accepts an element and returns it with updated namespace and name
+   */
   public static Function<Element, Element> changeNodeName(String nameSpace, String name) {
-    Function<Element, Element> f = e -> {
-      e.setNamespace(e.getDocument().getRootElement().getNamespace(nameSpace));
-      e.setName(name);
-      // TODO missing reporting ReplaceNodesName.execute()
+    return e -> {
+      if (e != null) {
+        e.setNamespace(e.getDocument().getRootElement().getNamespace(nameSpace));
+        e.setName(name);
+      }
       return e;
     };
-
-    return f;
   }
 
+  /**
+   * Adds an attribute to the element accepted by the function.
+   *
+   * @param name  the attribute name
+   * @param value the attribute value
+   * @return a function that accepts an element and returns it with the attribute
+   */
   public static Function<Element, Element> addAttribute(String name, String value) {
-    Function<Element, Element> f = e -> {
+    return e -> {
       if (e != null) {
         Attribute att = new Attribute(name, value);
         e.setAttribute(att);
-        // TODO missing reporting AddAttribute.execute
       }
       return e;
     };
-    return f;
   }
 
+  /**
+   * Updates an element attribute on the element accepted by the function. Either name or value can be updated.
+   *
+   * @param name    the name of the attribute to be updated
+   * @param newName the new attribute name (optional)
+   * @param value   the new attribute value (optional)
+   * @return a function that accepts an element and returns it updated accordingly
+   */
   public static Function<Element, Element> changeAttribute(String name, Optional<String> newName, Optional<String> value) {
-    Function<Element, Element> f = e -> {
-      Attribute attribute = e.getAttribute(name);
-      if (attribute != null) {
-        newName.ifPresent(nn -> attribute.setName(nn));
-        value.ifPresent(v -> attribute.setValue(v));
-        // TODO missing reporting UpdateAttributeName.execute
+    return e -> {
+      if (e != null) {
+        Attribute attribute = e.getAttribute(name);
+        if (attribute != null) {
+          newName.ifPresent(nn -> attribute.setName(nn));
+          value.ifPresent(v -> attribute.setValue(v));
+        }
       }
       return e;
     };
-    return f;
   }
 
+  /**
+   * Removes an attribute from the element accepted by the function.
+   *
+   * @param name the name of the attribute to be removed
+   * @return a function that accepts an element and returns it without the specified attribute, or null if the attribute is not present in the element
+   */
   public static Function<Element, Element> removeAttribute(String name) {
-    Function<Element, Element> f = e -> {
-      Attribute attribute = e.getAttribute(name);
-      if (attribute != null) {
-        e.removeAttribute(name);
-        // TODO missing reporting
+    return e -> {
+      if (e != null) {
+        Attribute attribute = e.getAttribute(name);
+        if (attribute != null) {
+          e.removeAttribute(name);
+        }
       }
       return e;
     };
-    return f;
   }
 
+  /**
+   * Moves the content that does not have the {@param childNodeName} as contents of the first children of the element accepted by the function.
+   *
+   * @param childNodeName the name of the first children that is going to receive the content
+   * @return a function that accepts an element and returns it with the new structure
+   */
   public static Function<Element, Element> moveContentToChild(String childNodeName) {
-    Function<Element, Element> f = e -> {
+    return e -> {
       if (e != null) {
         List<Element> childElements =
             e.getChildren().stream().filter(s -> !s.getName().equals(childNodeName)).collect(Collectors.toList());
-        childElements.forEach(n -> n.detach());
+        childElements.forEach(Element::detach);
         e.getChild(childNodeName, e.getNamespace()).addContent(childElements);
       }
       return e;
     };
-    return f;
   }
 
+  /**
+   * Moves to the first child with the specified name an attribute with {@param name} of the element accepted by the function.
+   *
+   * @param name          the attribute name
+   * @param childNodeName the child name
+   * @return a function that accepts an element and returns it with the attribute moved to the specified child
+   */
   public static Function<Element, Element> moveAttributeToChildNode(String name, String childNodeName) {
-    Function<Element, Element> f = e -> {
+    return e -> {
       if (e != null) {
         Attribute attribute = e.getAttribute(name);
         Element child = e.getChild(childNodeName, e.getNamespace());
         if (attribute != null && child != null) {
           e.removeAttribute(attribute);
           child.setAttribute(attribute);
-          // TODO missing reporting MoveAttributeToChildNode.execute()
         }
       }
       return e;
     };
-    return f;
   }
 
+  /**
+   * Transforms an attribute into a child.
+   *
+   * @param name the name of the attribute to be turned into a child
+   * @return a function that accepts an element and returns it with the attribute turned into a child
+   */
   public static Function<Element, Element> attributeToChildNode(String name) {
-    Function<Element, Element> f = e -> {
+    return e -> {
       if (e != null) {
         Attribute attribute = e.getAttribute(name);
         if (attribute != null) {
@@ -111,105 +152,28 @@ public class ApplicationModelUtils {
           child.setAttribute(new Attribute("value", attribute.getValue()));
 
           e.addContent(0, child);
-          // TODO missing reporting MoveAttributeToChildNode.execute()
         }
       }
       return e;
     };
-    return f;
   }
 
-  public static Function<Element, Element> addChildNode(String nameSpace, String name) {
-    Function<Element, Element> f = e -> {
-      Namespace ns = e.getDocument().getRootElement().getNamespace(nameSpace);
+  /**
+   * Adds a child node with the specified namespace and name.
+   *
+   * @param namespace the new child namespace
+   * @param name      the new child name
+   * @return a function that accepts an element and returns it with a new child set with {@param namespace} and {@param name}
+   */
+  public static Function<Element, Element> addChildNode(String namespace, String name) {
+    return e -> {
+      Namespace ns = e.getDocument().getRootElement().getNamespace(namespace);
       if (e.getChild(name, ns) == null) {
         e.addContent(new Element(name, ns));
-        // TODO missing reporting CreateChildNode.execute
-      } else {
-        // TODO missing reporting CreateChildNode.execute
       }
       return e;
     };
-
-    return f;
-
   }
 
-  public static Function<Element, Element> updateMUnitAssertionEqualsExpression(String attributeName) {
-    Function<Element, Element> f = e -> {
-      Attribute attribute = e.getAttribute(attributeName);
-      if (attribute != null) {
-        String attributeValue = attribute.getValue().trim();
-        if (attributeValue.startsWith("#[")) {
-          StringBuffer sb = new StringBuffer(attributeValue);
-          sb.replace(0, sb.indexOf("[") + 1, "#[MUnitTools::equalTo(");
-          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, ")]");
-          attributeValue = sb.toString();
-        } else {
-          attributeValue = "#[MUnitTools::equalTo(" + attributeValue + ")]";
-        }
-        attribute.setValue(attributeValue);
-      }
-      return e;
-    };
-    return f;
-  }
 
-  public static Function<Element, Element> updateMUnitAssertionNotEqualsExpression(String attributeName) {
-    Function<Element, Element> f = e -> {
-      Attribute attribute = e.getAttribute(attributeName);
-      if (attribute != null) {
-        String attributeValue = attribute.getValue().trim();
-        if (attributeValue.startsWith("#[")) {
-          StringBuffer sb = new StringBuffer(attributeValue);
-          sb.replace(0, sb.indexOf("[") + 1, "#[MunitTools::not(MUnitTools::equalTo(");
-          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, "))]");
-          attributeValue = sb.toString();
-        } else {
-          attributeValue = "#[MunitTools::not(MUnitTools::equalTo(" + attributeValue + "))]";
-        }
-        attribute.setValue(attributeValue);
-      }
-      return e;
-    };
-    return f;
-  }
-
-  // ******************************************************************************************************************
-
-
-  @Deprecated
-  public static Element findChildElement(String nodeName, String referenceValue, String targetReferenceAttribute,
-                                         Namespace namespace, Element element) {
-
-    if (element.getNamespace().equals(namespace)
-        && element.getName().equals(nodeName) &&
-        element.getAttributeValue(targetReferenceAttribute).equals(referenceValue)) {
-      return element;
-    } else {
-      for (Element childElement : element.getChildren()) {
-        Element child = findChildElement(nodeName, referenceValue, targetReferenceAttribute, namespace, childElement);
-        if (null != child) {
-          return child;
-        }
-      }
-    }
-    return null;
-  }
-
-  @Deprecated
-  public static Element findChildElement(String nodeName, Element element) {
-
-    if (element.getName().equals(nodeName)) {
-      return element;
-    } else {
-      for (Element childElement : element.getChildren()) {
-        Element child = findChildElement(nodeName, childElement);
-        if (null != child) {
-          return child;
-        }
-      }
-    }
-    return null;
-  }
 }

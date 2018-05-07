@@ -38,7 +38,7 @@ public class AssertFalseTest {
     assertFalse = new AssertFalse();
   }
 
-  @Test(expected = MigrationStepException.class)
+  @Test
   public void executeWithNullElement() throws Exception {
     assertFalse.execute(null, mock(MigrationReport.class));
   }

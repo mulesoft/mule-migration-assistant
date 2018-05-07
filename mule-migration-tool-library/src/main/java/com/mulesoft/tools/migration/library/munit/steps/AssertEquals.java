@@ -8,7 +8,6 @@ package com.mulesoft.tools.migration.library.munit.steps;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.updateMUnitAssertionEqualsExpression;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
@@ -16,10 +15,14 @@ import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
+
+import java.util.function.Function;
 
 /**
  * This steps migrates the MUnit 1.x assert-payload-equals
+ *
  * @author Mulesoft Inc.
  */
 public class AssertEquals extends AbstractApplicationModelMigrationStep {
@@ -49,6 +52,26 @@ public class AssertEquals extends AbstractApplicationModelMigrationStep {
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());
     }
+  }
+
+
+  protected Function<Element, Element> updateMUnitAssertionEqualsExpression(String attributeName) {
+    return e -> {
+      Attribute attribute = e.getAttribute(attributeName);
+      if (attribute != null) {
+        String attributeValue = attribute.getValue().trim();
+        if (attributeValue.startsWith("#[")) {
+          StringBuffer sb = new StringBuffer(attributeValue);
+          sb.replace(0, sb.indexOf("[") + 1, "#[MUnitTools::equalTo(");
+          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, ")]");
+          attributeValue = sb.toString();
+        } else {
+          attributeValue = "#[MUnitTools::equalTo(" + attributeValue + ")]";
+        }
+        attribute.setValue(attributeValue);
+      }
+      return e;
+    };
   }
 
 }

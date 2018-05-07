@@ -7,7 +7,7 @@
 package com.mulesoft.tools.migration.step;
 
 /**
- * Building block of the execution engine
+ * Building block of the execution engine.
  * @param <T>
  * @author Mulesoft Inc.
  * @since 1.0.0

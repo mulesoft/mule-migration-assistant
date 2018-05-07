@@ -11,7 +11,7 @@ import org.jdom2.Element;
 import java.util.List;
 
 /**
- * An interface to feed the migration report
+ * An interface to feed the migration report.
  * @param <T>
  * @author Mulesoft Inc.
  * @since 1.0.0

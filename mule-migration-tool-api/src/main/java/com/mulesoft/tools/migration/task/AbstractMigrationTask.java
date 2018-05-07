@@ -50,7 +50,7 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
       if (steps != null) {
         steps.stream().filter(s -> s instanceof ExpressionMigratorAware)
             .forEach(s -> ((ExpressionMigratorAware) s).setExpressionMigrator(getExpressionMigrator()));
-        MigrationStepSorter stepSorter = new MigrationStepSorter(steps);
+        MigrationStepSelector stepSorter = new MigrationStepSelector(steps);
 
         stepSorter.getNameSpaceContributionSteps().forEach(s -> s.execute(applicationModel, report));
 
@@ -59,8 +59,6 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
               s.setApplicationModel(applicationModel);
               applicationModel.getNodes(s.getAppliedTo()).forEach(n -> s.execute(n, report));
             });
-
-        stepSorter.getExpressionContributionSteps().forEach(s -> s.execute(new Object(), report));
 
         stepSorter.getProjectStructureContributionSteps().forEach(s -> s.execute(applicationModel.getProjectBasePath(), report));
 

@@ -45,7 +45,7 @@ public class PomModel {
   /**
    * Retrieves the list of dependencies in the pom model.
    *
-   * @return the list of dependencies declared in the pom model
+   * @return a {@link List<Dependency>}
    */
   public List<Dependency> getDependencies() {
     return model.getDependencies().stream().map(Dependency::new).collect(toList());
@@ -91,7 +91,7 @@ public class PomModel {
   /**
    * Retrieves the packaging type declared in the pom.
    *
-   * @return the packaging type
+   * @return a {@link String}
    */
   public String getPackaging() {
     return model.getPackaging();
@@ -100,7 +100,7 @@ public class PomModel {
   /**
    * Retrieves a deep copy of the maven model.
    *
-   * @return the model deep's copy
+   * @return a {@link Model}
    */
   public Model getMavenModelCopy() {
     return model.clone();
@@ -109,7 +109,7 @@ public class PomModel {
   /**
    * Sets the packaging type in the pom.
    *
-   * @param packaging the packaging type to be set
+   * @param packaging
    */
   public void setPackaging(String packaging) {
     model.setPackaging(packaging);
@@ -118,7 +118,7 @@ public class PomModel {
   /**
    * Retrieves the artifact id declared in the pom.
    *
-   * @return the artifact id declared in the pom
+   * @return a {@link String}
    */
   public String getArtifactId() {
     return model.getArtifactId();
@@ -127,7 +127,7 @@ public class PomModel {
   /**
    * Sets the artifact id in the pom.
    *
-   * @param artifactId the artifact id to be set
+   * @param artifactId
    */
   public void setArtifactId(String artifactId) {
     model.setArtifactId(artifactId);
@@ -136,7 +136,7 @@ public class PomModel {
   /**
    * Retrieves the group id declared in the pom.
    *
-   * @return the group id declared in the pom
+   * @return a {@link String}
    */
   public String getGroupId() {
     return model.getGroupId();
@@ -145,7 +145,7 @@ public class PomModel {
   /**
    * Sets the group id in the pom.
    *
-   * @param groupId the group id to be set
+   * @param groupId
    */
   public void setGroupId(String groupId) {
     model.setGroupId(groupId);
@@ -154,7 +154,7 @@ public class PomModel {
   /**
    * Retrieves the version declared in the pom.
    *
-   * @return the version declared in the pom
+   * @return a {@link String}
    */
   public String getVersion() {
     return model.getVersion();
@@ -163,7 +163,7 @@ public class PomModel {
   /**
    * Sets the version in the pom.
    *
-   * @param version the version to be set
+   * @param version
    */
   public void setVersion(String version) {
     model.setVersion(version);
@@ -172,7 +172,7 @@ public class PomModel {
   /**
    * Retrieves the name declared in the pom.
    *
-   * @return the name declared in the pom
+   * @return a {@link String}
    */
   public String getName() {
     return model.getName();
@@ -181,7 +181,7 @@ public class PomModel {
   /**
    * Sets the name in the pom.
    *
-   * @param name the name to be set
+   * @param name
    */
   public void setName(String name) {
     model.setName(name);
@@ -190,7 +190,7 @@ public class PomModel {
   /**
    * Retrieves the properties declared in the pom.
    *
-   * @return the properties declared in the pom
+   * @return a {@link Properties}
    */
   public Properties getProperties() {
     return model.getProperties();
@@ -199,7 +199,7 @@ public class PomModel {
   /**
    * Sets the properties in the pom.
    *
-   * @param properties the properties to be set
+   * @param properties
    */
   public void setProperties(Properties properties) {
     model.setProperties(properties);
@@ -208,8 +208,8 @@ public class PomModel {
   /**
    * Sets a key-valued pair in the properties map.
    *
-   * @param key   the property key
-   * @param value the property value
+   * @param key
+   * @param value
    */
   public void addProperty(String key, String value) {
     model.addProperty(key, value);
@@ -218,7 +218,8 @@ public class PomModel {
   /**
    * Removes a property from the pom model properties.
    *
-   * @param propertyName the property to be removed from the properties
+   * @param propertyName
+   * @throws NullPointerException if the key is <code>null</code>
    */
   public void removeProperty(String propertyName) {
     model.getProperties().remove(propertyName);
@@ -227,7 +228,7 @@ public class PomModel {
   /**
    * Sets the pom model version.
    *
-   * @param modelVersion the pom model version
+   * @param modelVersion
    */
   public void setModelVersion(String modelVersion) {
     model.setModelVersion(modelVersion);
@@ -236,7 +237,7 @@ public class PomModel {
   /**
    * Retrieves the pom model version.
    *
-   * @return the pom model version
+   * @return a {@link String}
    */
   public String getModelVersion() {
     return model.getModelVersion();
@@ -245,7 +246,7 @@ public class PomModel {
   /**
    * Adds a plugin to the build section in the pom.
    *
-   * @param plugin the plugin to be added
+   * @param plugin
    */
   public void addPlugin(Plugin plugin) {
     getBuild().addPlugin(plugin.getInnerModel());
@@ -254,7 +255,7 @@ public class PomModel {
   /**
    * Retrieves the list of plugins declared in the build section.
    *
-   * @return a list of plugins
+   * @return a {@link List<Plugin>}
    */
   public List<Plugin> getPlugins() {
     return getBuild().getPlugins().stream().map(Plugin::new).collect(toList());
@@ -263,7 +264,7 @@ public class PomModel {
   /**
    * Removes the specified plugin from the list of plugins declared in the build section.
    *
-   * @param plugin the plugin to be removed.
+   * @param plugin
    */
   public void removePlugin(Plugin plugin) {
     getBuild().removePlugin(plugin.getInnerModel());
@@ -285,7 +286,7 @@ public class PomModel {
    * Remove the first plugins that satisfies a predicate.
    *
    * @param pluginPredicate a predicate that evaluates to true if the plugin should be removed
-   * @return an optional containing the removed plugin, empty if no plugin satisifies the predicate
+   * @return an optional of the removed plugin
    */
   public Optional<Plugin> removePlugin(Predicate<Plugin> pluginPredicate) {
     Optional<Plugin> removedPlugin = getPlugins().stream().filter(pluginPredicate).findFirst();
@@ -293,6 +294,11 @@ public class PomModel {
     return removedPlugin;
   }
 
+  /**
+   * Retrieves the build section.
+   *
+   * @return a {@link Build}
+   */
   private Build getBuild() {
     if (model.getBuild() == null) {
       model.setBuild(new Build());
@@ -300,10 +306,20 @@ public class PomModel {
     return model.getBuild();
   }
 
+  /**
+   * Adds a {@link Repository} to the {@link PomModel} in the repository section.
+   *
+   * @param repository
+   */
   public void addRepository(Repository repository) {
     model.addRepository(repository.getInnerModel());
   }
 
+  /**
+   * Adds a {@link Repository} to the {@link PomModel} in the plugin repository section.
+   *
+   * @param repository
+   */
   public void addPluginRepository(Repository repository) {
     model.addPluginRepository(repository.getInnerModel());
   }

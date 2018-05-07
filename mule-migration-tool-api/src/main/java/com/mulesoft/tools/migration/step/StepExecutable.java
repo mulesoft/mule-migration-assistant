@@ -9,7 +9,7 @@ package com.mulesoft.tools.migration.step;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
- * An interface to handle the step execution
+ * An interface to handle the step execution.
  * @param <T>
  * @author Mulesoft Inc.
  * @since 1.0.0

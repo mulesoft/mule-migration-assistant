@@ -79,6 +79,5 @@ public class Mock extends AbstractApplicationModelMigrationStep {
       c.setNamespace(c.getDocument().getRootElement().getNamespace(MUNIT_TOOLS_PREFIX));
       updateChildElementsNamespace(c.getChildren());
     });
-
   }
 }

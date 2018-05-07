@@ -7,7 +7,7 @@
 package com.mulesoft.tools.migration.xml;
 
 /**
- * All supported namespaces for the migration tool
+ * All supported namespaces for the migration tool.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0

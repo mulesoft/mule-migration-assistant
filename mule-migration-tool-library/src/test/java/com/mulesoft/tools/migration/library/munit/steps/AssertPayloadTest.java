@@ -38,7 +38,7 @@ public class AssertPayloadTest {
     assertPayloadEquals = new AssertPayload();
   }
 
-  @Test(expected = MigrationStepException.class)
+  @Test
   public void executeWithNullElement() throws Exception {
     assertPayloadEquals.execute(null, mock(MigrationReport.class));
   }

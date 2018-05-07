@@ -13,18 +13,38 @@ import org.jdom2.Element;
 import org.jdom2.xpath.XPathExpression;
 
 /**
- * Migration Step that works over the application model
+ * Migration Step that works over the application model. This should be used when migrating elements from the configuration files.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
 public interface ApplicationModelContribution extends MigrationStep<Element> {
 
+  /**
+   * Returns the {@link XPathExpression} that matches all elements on which this contribution should be applied to.
+   *
+   * @return a {@link XPathExpression}
+   */
   XPathExpression getAppliedTo();
 
+  /**
+   * Sets the xpath expression that matches all elements on which this contribution should be applied to.
+   *
+   * @param xpathExpression
+   */
   void setAppliedTo(String xpathExpression);
 
+  /**
+   * Retrieves the application model that this contribution step is working over.
+   *
+   * @return a {@link ApplicationModel}
+   */
   ApplicationModel getApplicationModel();
 
+  /**
+   * Sets the application model on which this contribution step should work over.
+   *
+   * @return a {@link ApplicationModel}
+   */
   void setApplicationModel(ApplicationModel appModel);
 }

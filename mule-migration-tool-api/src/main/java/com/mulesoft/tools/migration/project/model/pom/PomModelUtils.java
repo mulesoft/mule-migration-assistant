@@ -25,6 +25,14 @@ public class PomModelUtils {
   private static final String MULESOFT_RELEASES_REPOSITORY_URL = "https://repository.mulesoft.org/releases/";
   private static final String DEFAULT_LAYOUT = "default";
 
+  /**
+   * Builds a minimal {@link PomModel} for a Mule 4 Application. This means that the packaging type is of type mule-application, the mule-maven-plugin is declared and the required repositories are also declared in there
+   *
+   * @param groupId
+   * @param artifactId
+   * @param version
+   * @return a {@link PomModel}
+   */
   public static PomModel buildMinimalMule4ApplicationPom(String groupId, String artifactId, String version) {
     PomModel model = new PomModel();
     model.setGroupId(groupId);
@@ -45,6 +53,11 @@ public class PomModelUtils {
     return model;
   }
 
+  /**
+   * Builds the minimal mule-maven-plugin configuration for Mule 4 applications
+   *
+   * @return a {@link Plugin}
+   */
   public static Plugin buildMule4MuleMavenPluginConfiguration() {
     return new Plugin.PluginBuilder()
         .withArtifactId(MULE_MAVEN_PLUGIN_ARTIFACT_ID)
@@ -52,6 +65,11 @@ public class PomModelUtils {
         .withVersion(MULE_MAVEN_PLUGIN_VERSION).build();
   }
 
+  /**
+   * Builds a {@link Repository} containing the coordinates of the Mule Releases Repository
+   *
+   * @return a {@link Repository}
+   */
   public static Repository getMuleReleasesRepository() {
     Repository repository = new Repository.RepositoryBuilder().withId(MULESOFT_RELEASES).build();
     repository.setName(MULESOFT_RELEASES_REPOSITORY_NAME);

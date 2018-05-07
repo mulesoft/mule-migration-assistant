@@ -39,7 +39,7 @@ public class SetAttachmentTest {
     setAttachment = new SetAttachment();
   }
 
-  @Test(expected = MigrationStepException.class)
+  @Test
   public void executeWithNullElement() throws Exception {
     setAttachment.execute(null, mock(MigrationReport.class));
   }

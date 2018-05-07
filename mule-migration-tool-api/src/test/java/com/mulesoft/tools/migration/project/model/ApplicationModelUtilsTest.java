@@ -4,16 +4,8 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.step.category;
+package com.mulesoft.tools.migration.project.model;
 
-import com.mulesoft.tools.migration.step.MigrationStep;
-
-/**
- * Migration Step that works over expressions
- *
- * @author Mulesoft Inc.
- * @since 1.0.0
- */
-public interface ExpressionContribution extends MigrationStep {
+public class ApplicationModelUtilsTest {
 
 }
