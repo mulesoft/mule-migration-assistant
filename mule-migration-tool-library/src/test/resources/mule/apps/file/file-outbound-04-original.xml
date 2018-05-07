@@ -6,8 +6,16 @@
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 
-    <file:config name="fileConnector">
-        <file:connection workingDir="."/>
-    </file:config>
-    
+    <file:connector name="fileConnector"
+        writeToDirectory="${workingDirectory}/out"
+        outputPattern="out.txt"/>
+
+    <file:endpoint name="put"
+        connector-ref="fileConnector" />
+
+    <flow name="relay">
+        <logger/>
+        <file:outbound-endpoint ref="put" />
+    </flow>
+
 </mule>

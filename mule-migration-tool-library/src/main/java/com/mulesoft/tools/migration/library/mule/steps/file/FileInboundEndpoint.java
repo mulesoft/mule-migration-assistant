@@ -120,6 +120,13 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.removeAttribute("moveToPattern");
     }
 
+    // TODO test
+    if (object.getAttribute("moveToDirectory") != null) {
+      if ("true".equals(object.getAttributeValue("autoDelete"))) {
+        object.removeAttribute("autoDelete");
+      }
+    }
+
     Element globFilterIn = object.getChild("filename-wildcard-filter", fileNs);
     if (globFilterIn != null) {
       if (newMatcher == null) {

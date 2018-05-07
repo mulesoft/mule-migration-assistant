@@ -8,12 +8,10 @@
                http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <file:config name="fileConnector">
-        <file:connection workingDir="."/>
-    </file:config>
+    <file:matcher name="TestMatcher" filenamePattern="*.txt"/>
 
-    <flow name="TestIn">
-        <file:listener config-ref="fileConnector" recursive="false" directory="${workingDirectory}/readFromDirectory" renameTo="bcd">
+    <flow name="Test">
+        <file:listener directory="${workingDirectory}" recursive="false" matcher="TestMatcher">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>
@@ -21,12 +19,6 @@
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
         <compatibility:outbound-properties-to-var/>
-    </flow>
-
-    <flow name="TestOut">
-        <compatibility:outbound-properties-to-var/>
-        <file:write config-ref="fileConnector" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: '${workingDirectory}/writeToDirectory', address: null, outputPattern: null, outputPatternConfig: 'cde'})]" mode="APPEND"/>
-        <compatibility:attributes-to-inbound-properties/>
     </flow>
     
 </mule>
