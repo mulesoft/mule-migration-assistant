@@ -19,6 +19,7 @@ import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
 import com.mulesoft.tools.migration.report.html.HTMLReport;
+import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.Version;
@@ -121,6 +122,14 @@ public class MigrationJob implements Executable {
   }
 
   private void generateReport(MigrationReport report) throws Exception {
+    List<ReportEntryModel> reportEntries = report.getReportEntries();
+    for (ReportEntryModel entry : reportEntries) {
+      try {
+        entry.setElementLocation();
+      } catch (Exception ex) {
+        throw new MigrationJobException("Failed to generate report.", ex.getCause());
+      }
+    }
     HTMLReport htmlReport = new HTMLReport(report.getReportEntries(), reportPath.toFile());
     htmlReport.printReport();
   }

@@ -6,15 +6,25 @@
  */
 package com.mulesoft.tools.migration.report.html.model;
 
+import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
+import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.filter.Filters;
+import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedElement;
+import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathFactory;
+import org.jdom2.xpath.XPathHelper;
 
+import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAdditionalNamespaces;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml;
 
 /**
@@ -26,9 +36,10 @@ import static org.apache.commons.lang3.StringEscapeUtils.escapeXml;
 public class ReportEntryModel {
 
   private Level level;
-  private String element;
-  private Integer lineNumber;
-  private Integer columnNumber;
+  private String elementContent;
+  private Element element;
+  private Integer lineNumber = 0;
+  private Integer columnNumber = 0;
   private String message;
   private String filePath;
   private List<String> documentationLinks = new ArrayList<>();
@@ -36,26 +47,43 @@ public class ReportEntryModel {
 
   public ReportEntryModel(Level level, Element element, String message, String... documentationLinks) {
     this.level = level;
-    this.element = escapeXml(new XMLOutputter(Format.getPrettyFormat()).outputString(element));
+    this.elementContent = escapeXml(new XMLOutputter(Format.getPrettyFormat()).outputString(element));
+    this.element = element;
     this.message = message;
     this.filePath = element.getDocument().getBaseURI();
 
     for (String link : documentationLinks) {
       this.getDocumentationLinks().add(link);
     }
+  }
 
-    if (element instanceof LocatedElement) {
-      this.lineNumber = ((LocatedElement) element).getLine();
-      this.columnNumber = ((LocatedElement) element).getColumn();
+  public void setElementLocation() throws Exception {
+    try {
+      SAXBuilder saxBuilder = new SAXBuilder();
+      saxBuilder.setJDOMFactory(new LocatedJDOMFactory());
+      Document document = saxBuilder.build(Paths.get(URI.create(filePath)).toFile());
+      setElementLocation(document);
+    } catch (Exception ex) {
+      throw new MigrationJobException("Failed to obtain new element location.", ex.getCause());
     }
   }
 
+  private void setElementLocation(Document document) {
+    String xpathExpression = XPathHelper.getAbsolutePath(element);
+    List<Element> elements = XPathFactory.instance().compile(xpathExpression, Filters.element(), null, getAdditionalNamespaces())
+        .evaluate(document);
+    if (elements.size() > 0) {
+      this.lineNumber = ((LocatedElement) elements.get(0)).getLine();
+      this.columnNumber = ((LocatedElement) elements.get(0)).getColumn();
+    }
+  }
+  
   public Level getLevel() {
     return level;
   }
 
-  public String getElement() {
-    return element;
+  public String getElementContent() {
+    return elementContent;
   }
 
   public Integer getLineNumber() {
