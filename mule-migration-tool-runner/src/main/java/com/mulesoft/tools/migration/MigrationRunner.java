@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.mulesoft.tools.migration.engine.project.version.VersionUtils.buildVersion;
 import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationError;
 import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
@@ -52,20 +53,22 @@ public class MigrationRunner {
 
   public static void main(String args[]) throws Exception {
     Stopwatch stopwatch = Stopwatch.createStarted();
-    MigrationRunner migrationRunner = new MigrationRunner();
-    migrationRunner.initializeOptions(args);
+    try {
+      MigrationRunner migrationRunner = new MigrationRunner();
+      migrationRunner.initializeOptions(args);
+      log("Executing migration...");
 
-    log("Executing migration...");
-
-    MigrationJob job = migrationRunner.buildMigrationJob();
-    DefaultMigrationReport report = new DefaultMigrationReport();
-    job.execute(report);
-    stopwatch.stop();
-    printMigrationSummary(job.getReportPath().resolve(REPORT_HOME).toAbsolutePath().toString(),
-                          stopwatch.elapsed(TimeUnit.MILLISECONDS));
+      MigrationJob job = migrationRunner.buildMigrationJob();
+      DefaultMigrationReport report = new DefaultMigrationReport();
+      job.execute(report);
+      printMigrationSummary(job.getReportPath().resolve(REPORT_HOME).toAbsolutePath().toString(),
+                            stopwatch.stop().elapsed(TimeUnit.MILLISECONDS));
+    } catch (Exception ex) {
+      printMigrationError(ex, stopwatch.stop().elapsed(TimeUnit.MILLISECONDS));
+    }
   }
 
-  private MigrationJob buildMigrationJob() {
+  private MigrationJob buildMigrationJob() throws Exception {
     MigrationJobBuilder builder = new MigrationJobBuilder()
         .withProject(Paths.get(projectBasePath))
         .withOutputProject(Paths.get(destinationProjectBasePath))

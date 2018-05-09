@@ -65,7 +65,7 @@ public class MigrationJobTest {
   @Before
   public void setUp() throws Exception {
     buildOriginalProject();
-    migratedProjectPath = temporaryFolder.newFolder(MIGRATED_PROJECT_NAME).toPath();
+    migratedProjectPath = temporaryFolder.getRoot().toPath().resolve(MIGRATED_PROJECT_NAME).toAbsolutePath();
   }
 
   private void buildOriginalProject() throws IOException {

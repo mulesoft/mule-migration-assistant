@@ -38,12 +38,12 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     String projectBasePath =
         new File(EndToEndTestCase.class.getClassLoader().getResource("e2e/" + appName).toURI()).getAbsolutePath();
 
-    File migrationResultFolder = migrationResult.newFolder(appName);
+    String outPutPath = migrationResult.getRoot().toPath().resolve(appName).toAbsolutePath().toString();
 
     // Run migration tool
     ProcessBuilder pb = new ProcessBuilder("java", "-jar", getProperty("migrator.runner"),
                                            "-projectBasePath", projectBasePath,
-                                           "-destinationProjectBasePath", migrationResultFolder.getAbsolutePath(),
+                                           "-destinationProjectBasePath", outPutPath,
                                            "-muleVersion", "4.1.1");
     pb.redirectErrorStream(true);
     Process p = pb.start();
@@ -58,7 +58,7 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     BundleDescriptor migratedAppDescriptor = new BundleDescriptor.Builder().setGroupId("org.mule.migrated")
         .setArtifactId(appName).setVersion("1.0.0-SNAPSHOT").setClassifier(MULE_APPLICATION_CLASSIFIER).build();
 
-    File migratedAppArtifact = installMavenArtifact(migrationResultFolder.getAbsolutePath(), migratedAppDescriptor);
+    File migratedAppArtifact = installMavenArtifact(outPutPath, migratedAppDescriptor);
 
     try {
       getMule().start(muleArgs);

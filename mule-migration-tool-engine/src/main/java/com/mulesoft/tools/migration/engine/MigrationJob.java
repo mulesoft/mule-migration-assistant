@@ -178,12 +178,16 @@ public class MigrationJob implements Executable {
       return this;
     }
 
-    public MigrationJob build() {
+    public MigrationJob build() throws Exception {
       checkState(project != null, "The project must not be null");
       checkState(outputProject != null, "The output project must not be null");
       checkState(outputProjectType != null, "The output project type must not be null");
       checkState(inputVersion != null, "The input version must not be null");
       checkState(outputVersion != null, "The output version must not be null");
+
+      if (outputProject.toFile().exists()) {
+        throw new MigrationJobException("Destination folder already exist.");
+      }
 
       MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion, outputProjectType);
       migrationTasks = migrationTaskLocator.locate();

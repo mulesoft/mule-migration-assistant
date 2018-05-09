@@ -30,10 +30,8 @@
             <#list entry.documentationLinks as doc>
                 <h4><a href="${doc}">${doc}</a></h4>
             </#list>
-            <h4 class="text-bold">Line: </h4>
-            <h4>${entry.lineNumber}</h4>
-            <h4 class="text-bold">Column: </h4>
-            <h4>${entry.columnNumber}</h4>
+            <h4 class="text-bold">Line: <span class="text-italic text-normal">${entry.lineNumber}</span></h4>
+            <h4 class="text-bold">Column: <span class="text-italic text-normal">${entry.columnNumber}</span></h4>
             <br>
             <code>${entry.elementContent}</code>
             <hr>
