@@ -9,7 +9,7 @@
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <flow name="Test">
-        <file:listener directory="${workingDirectory}/path" recursive="false" moveToDirectory="${workingDirectory}/temp/output-directory">
+        <file:listener directory="${workingDirectory}/path" autoDelete="true" recursive="false" moveToDirectory="${workingDirectory}/temp/output-directory" applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

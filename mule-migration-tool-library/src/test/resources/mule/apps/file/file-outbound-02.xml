@@ -19,7 +19,7 @@
     <flow name="relay">
         <logger/>
         <compatibility:outbound-properties-to-var/>
-        <file:write config-ref="fileConnector" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: null, address: null, outputPattern: null, outputPatternConfig: null})]"/>
+        <file:write config-ref="fileConnector" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: '${workingDirectory}/out', address: null, outputPattern: null, outputPatternConfig: null})]"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
     

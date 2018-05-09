@@ -14,14 +14,14 @@
         </file:connection>
     </file:config>
 
-<!-- TODO MULE-14947  Correctly migrate this expression  -->
+<!-- TODO MMT-141  Correctly migrate this expression  -->
 <!--     <file:matcher name="fileConnectorMatcher" updatedUntil="#[currentDate - 60]"/> -->
 <!--     <file:matcher name="fileConnector-TestMatcher" updatedUntil="#[currentDate - 30]"/> -->
     <file:matcher name="fileConnectorMatcher" updatedUntil="60"/>
     <file:matcher name="fileConnector-TestMatcher" updatedUntil="30"/>
 
     <flow name="Test">
-        <file:listener autoDelete="true" recursive="false" config-ref="fileConnector" matcher="fileConnector-TestMatcher">
+        <file:listener autoDelete="true" recursive="false" config-ref="fileConnector" matcher="fileConnector-TestMatcher" applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="3000"/>
             </scheduling-strategy>

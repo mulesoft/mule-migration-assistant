@@ -15,7 +15,7 @@
     </file:config>
 
     <flow name="Test">
-        <file:listener config-ref="fileConnector" recursive="false">
+        <file:listener config-ref="fileConnector" recursive="false" applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

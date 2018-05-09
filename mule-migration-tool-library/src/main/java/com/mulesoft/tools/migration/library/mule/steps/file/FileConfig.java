@@ -10,6 +10,8 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.E
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getElementsFromDocument;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
+import static java.util.stream.Collectors.joining;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -19,6 +21,9 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 /**
  * Migrates the file connector of the file transport
  *
@@ -27,8 +32,6 @@ import org.jdom2.Namespace;
  */
 public class FileConfig extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
-
-  protected static final String FILE_NAMESPACE = "http://www.mulesoft.org/schema/mule/file";
 
   public static final String XPATH_SELECTOR = "/mule:mule/file:connector";
 
@@ -45,7 +48,10 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace fileNs = Namespace.getNamespace("file", FILE_NAMESPACE);
+    Namespace fileNs = Namespace.getNamespace(FILE.prefix(), FILE.uri());
+
+    handleInputImplicitConnectorRef(object, report);
+    handleOutputImplicitConnectorRef(object, report);
 
     object.setName("config");
     Element connection = new Element("connection", fileNs);
@@ -90,7 +96,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
       connection.addContent(reconnection);
     }
 
-    Element matcher = new Element("matcher", FILE_NAMESPACE);
+    Element matcher = new Element("matcher", FILE.uri());
     matcher.setAttribute("name", object.getAttributeValue("name") + "Matcher");
     boolean matcherUsed = false;
 
@@ -105,8 +111,45 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     }
 
     handleChildElements(object, report, fileNs);
-    handleInputSpecificAttributes(object, matcherUsed);
-    handleOutputSpecificAttributes(object);
+    handleInputSpecificAttributes(object, matcherUsed, report);
+    handleOutputSpecificAttributes(object, report);
+  }
+
+  private void handleInputImplicitConnectorRef(Element object, MigrationReport report) {
+    makeImplicitConnectorRefsExplicit(object, report,
+                                      getElementsFromDocument(object.getDocument(),
+                                                              "/mule:mule/mule:flow/file:inbound-endpoint[not(@connector-ref)]"));
+    makeImplicitConnectorRefsExplicit(object, report,
+                                      getElementsFromDocument(object.getDocument(),
+                                                              "/mule:mule//mule:inbound-endpoint[not(@connector-ref) and starts-with(@address, 'file://')]"));
+  }
+
+  private void handleOutputImplicitConnectorRef(Element object, MigrationReport report) {
+    makeImplicitConnectorRefsExplicit(object, report,
+                                      getElementsFromDocument(object.getDocument(),
+                                                              "/mule:mule//file:outbound-endpoint[not(@connector-ref)]"));
+    makeImplicitConnectorRefsExplicit(object, report,
+                                      getElementsFromDocument(object.getDocument(),
+                                                              "/mule:mule//mule:outbound-endpoint[not(@connector-ref) and starts-with(@address, 'file://')]"));
+  }
+
+  private void makeImplicitConnectorRefsExplicit(Element object, MigrationReport report, List<Element> implicitConnectorRefs) {
+    List<Element> availableConfigs = getElementsFromDocument(object.getDocument(), "/mule:mule/file:config");
+    if (implicitConnectorRefs.size() > 0 && availableConfigs.size() > 1) {
+      for (Element implicitConnectorRef : implicitConnectorRefs) {
+        // This situation would have caused the app to not start in Mule 3. As it is not a migration issue per se, there's no
+        // linked docs
+        report.report(ERROR, implicitConnectorRef, implicitConnectorRef,
+                      "There are at least 2 connectors matching protocol \"file\","
+                          + " so the connector to use must be specified on the endpoint using the ''connector'' property/attribute."
+                          + " Connectors in your configuration that support \"file\" are: "
+                          + availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
+      }
+    } else {
+      for (Element implicitConnectorRef : implicitConnectorRefs) {
+        implicitConnectorRef.setAttribute("connector-ref", object.getAttributeValue("name"));
+      }
+    }
   }
 
   private void handleChildElements(Element object, MigrationReport report, Namespace fileNs) {
@@ -138,45 +181,14 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     object.removeContent(object.getChild("expression-filename-parser", fileNs));
   }
 
-  private void handleInputSpecificAttributes(Element object, boolean matcherUsed) {
-    for (Element listener : getElementsFromDocument(object.getDocument(),
-                                                    "/mule:mule/mule:flow/file:inbound-endpoint[@connector-ref='"
-                                                        + object.getAttributeValue("name") + "']")) {
-      Element schedulingStr = new Element("scheduling-strategy", CORE_NAMESPACE);
-      listener.addContent(schedulingStr);
-      Element fixedFrequency = new Element("fixed-frequency", CORE_NAMESPACE);
-      fixedFrequency.setAttribute("frequency", object.getAttributeValue("pollingFrequency", "1000"));
-      schedulingStr.addContent(fixedFrequency);
+  private void handleInputSpecificAttributes(Element object, boolean matcherUsed, MigrationReport report) {
+    Stream.concat(getElementsFromDocument(object
+        .getDocument(), "/mule:mule//file:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']").stream(),
+                  getElementsFromDocument(object
+                      .getDocument(), "/mule:mule//mule:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
+                          .stream())
+        .forEach(e -> passConnectorConfigToInboundEnpoint(object, matcherUsed, e));
 
-      if (object.getAttribute("readFromDirectory") != null) {
-        listener.setAttribute("directory", object.getAttributeValue("readFromDirectory"));
-      }
-
-      String autoDelete = changeDefault("true", "false", object.getAttributeValue("autoDelete"));
-      if (autoDelete != null) {
-        listener.setAttribute("autoDelete", autoDelete);
-      }
-
-      String recursive = changeDefault("false", "true", object.getAttributeValue("recursive"));
-      listener.setAttribute("recursive", recursive != null ? recursive : "true");
-
-      if (object.getAttribute("moveToDirectory") != null && listener.getAttribute("moveToDirectory") == null) {
-        listener.setAttribute("moveToDirectory", object.getAttributeValue("moveToDirectory"));
-      }
-
-      if (object.getAttribute("moveToPattern") != null) {
-        String moveToPattern = object.getAttributeValue("moveToPattern");
-        listener.setAttribute("renameTo",
-                              getExpressionMigrator().isWrapped(moveToPattern)
-                                  ? getExpressionMigrator()
-                                      .wrap(getExpressionMigrator().migrateExpression(moveToPattern, true, listener))
-                                  : moveToPattern);
-      }
-
-      if (matcherUsed) {
-        listener.setAttribute("matcher", object.getAttributeValue("name") + "Matcher");
-      }
-    }
     object.removeAttribute("pollingFrequency");
     object.removeAttribute("readFromDirectory");
     object.removeAttribute("moveToDirectory");
@@ -184,6 +196,57 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     object.removeAttribute("recursive");
     object.removeAttribute("moveToDirectory");
     object.removeAttribute("moveToPattern");
+  }
+
+  private void handleOutputSpecificAttributes(Element object, MigrationReport report) {
+    Stream.concat(getElementsFromDocument(object
+        .getDocument(), "/mule:mule//file:outbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']").stream(),
+                  getElementsFromDocument(object
+                      .getDocument(), "/mule:mule//mule:outbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
+                          .stream())
+        .forEach(e -> passConnectorConfigToOutboundEndpoint(object, e));
+
+    object.removeAttribute("writeToDirectory");
+    object.removeAttribute("outputPattern");
+    object.removeAttribute("outputAppend");
+  }
+
+
+  private void passConnectorConfigToInboundEnpoint(Element object, boolean matcherUsed, Element listener) {
+    Element schedulingStr = new Element("scheduling-strategy", CORE_NAMESPACE);
+    listener.addContent(schedulingStr);
+    Element fixedFrequency = new Element("fixed-frequency", CORE_NAMESPACE);
+    fixedFrequency.setAttribute("frequency", object.getAttributeValue("pollingFrequency", "1000"));
+    schedulingStr.addContent(fixedFrequency);
+
+    if (object.getAttribute("readFromDirectory") != null) {
+      listener.setAttribute("directory", object.getAttributeValue("readFromDirectory"));
+    }
+
+    String autoDelete = changeDefault("true", "false", object.getAttributeValue("autoDelete"));
+    if (autoDelete != null) {
+      listener.setAttribute("autoDelete", autoDelete);
+    }
+
+    String recursive = changeDefault("false", "true", object.getAttributeValue("recursive"));
+    listener.setAttribute("recursive", recursive != null ? recursive : "true");
+
+    if (object.getAttribute("moveToDirectory") != null && listener.getAttribute("moveToDirectory") == null) {
+      listener.setAttribute("moveToDirectory", object.getAttributeValue("moveToDirectory"));
+    }
+
+    if (object.getAttribute("moveToPattern") != null) {
+      String moveToPattern = object.getAttributeValue("moveToPattern");
+      listener.setAttribute("renameTo",
+                            getExpressionMigrator().isWrapped(moveToPattern)
+                                ? getExpressionMigrator()
+                                    .wrap(getExpressionMigrator().migrateExpression(moveToPattern, true, listener))
+                                : moveToPattern);
+    }
+
+    if (matcherUsed) {
+      listener.setAttribute("matcher", object.getAttributeValue("name") + "Matcher");
+    }
   }
 
   private String changeDefault(String oldDefaultValue, String newDefaultValue, String currentValue) {
@@ -196,24 +259,18 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     }
   }
 
-  private void handleOutputSpecificAttributes(Element object) {
-    for (Element write : getElementsFromDocument(object.getDocument(), "/mule:mule//file:outbound-endpoint[@connector-ref='"
-        + object.getAttributeValue("name") + "']")) {
-      if (object.getAttribute("writeToDirectory") != null) {
-        write.setAttribute("writeToDirectory", object.getAttributeValue("writeToDirectory"));
-      }
-
-      if (object.getAttribute("outputPattern") != null) {
-        write.setAttribute("outputPatternConfig", object.getAttributeValue("outputPattern"));
-      }
-
-      if (object.getAttribute("outputAppend") != null && !"false".equals(object.getAttributeValue("outputAppend"))) {
-        write.setAttribute("mode", "APPEND");
-      }
+  private void passConnectorConfigToOutboundEndpoint(Element object, Element write) {
+    if (object.getAttribute("writeToDirectory") != null) {
+      write.setAttribute("writeToDirectory", object.getAttributeValue("writeToDirectory"));
     }
-    object.removeAttribute("writeToDirectory");
-    object.removeAttribute("outputPattern");
-    object.removeAttribute("outputAppend");
+
+    if (object.getAttribute("outputPattern") != null) {
+      write.setAttribute("outputPatternConfig", object.getAttributeValue("outputPattern"));
+    }
+
+    if (object.getAttribute("outputAppend") != null && !"false".equals(object.getAttributeValue("outputAppend"))) {
+      write.setAttribute("mode", "APPEND");
+    }
   }
 
   @Override

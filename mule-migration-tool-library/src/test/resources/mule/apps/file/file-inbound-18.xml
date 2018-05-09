@@ -15,13 +15,13 @@
     </file:config>
 
 <!-- TODO MMT-141  Correctly migrate this expression  -->
-<!--     <file:matcher name="fileConnectorMatcher" updatedUntil="#[currentDate - 1]"/> -->
-    <file:matcher name="fileConnectorMatcher" updatedUntil="1"/>
-    
+<!--     <file:matcher name="fileConnectorMatcher" updatedUntil="#[currentDate - 60]"/> -->
+    <file:matcher name="fileConnectorMatcher" updatedUntil="60"/>
+
     <flow name="Test">
-        <file:listener directory="./target" config-ref="fileConnector" autoDelete="true" matcher="fileConnectorMatcher" applyPostActionWhenFailed="false">
+        <file:listener directory="${path}" autoDelete="true" recursive="false" config-ref="fileConnector" matcher="fileConnectorMatcher" applyPostActionWhenFailed="false">
             <scheduling-strategy>
-                <fixed-frequency frequency="1"/>
+                <fixed-frequency frequency="2000"/>
             </scheduling-strategy>
         </file:listener>
         <compatibility:attributes-to-inbound-properties/>

@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.file;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getElementsFromDocument;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -29,8 +30,6 @@ import java.util.List;
 public class FileGlobalEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  protected static final String FILE_NAMESPACE = "http://www.mulesoft.org/schema/mule/file";
-
   public static final String XPATH_SELECTOR = "/mule:mule/file:endpoint";
 
   private ExpressionMigrator expressionMigrator;
@@ -46,7 +45,7 @@ public class FileGlobalEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace fileNs = Namespace.getNamespace("file", FILE_NAMESPACE);
+    Namespace fileNs = Namespace.getNamespace(FILE.prefix(), FILE.uri());
 
     List<Element> inboundRefsToGlobal = new ArrayList<>();
     inboundRefsToGlobal.addAll(getElementsFromDocument(object.getDocument(), "/mule:mule/mule:flow/mule:inbound-endpoint[@ref='"

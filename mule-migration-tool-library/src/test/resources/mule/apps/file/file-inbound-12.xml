@@ -11,7 +11,7 @@
     <file:matcher name="TestMatcher" filenamePattern="regex:(^SemDirector_Report-\d)(.*)(tab$)"/>
 
     <flow name="Test">
-        <file:listener directory="./target" recursive="false" matcher="TestMatcher">
+        <file:listener directory="./target" autoDelete="true" recursive="false" matcher="TestMatcher" applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

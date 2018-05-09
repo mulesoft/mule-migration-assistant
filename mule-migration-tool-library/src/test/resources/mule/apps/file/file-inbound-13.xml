@@ -9,13 +9,13 @@
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <flow name="Test">
-        <file:listener directory="${workingDirectory}" recursive="false">
+        <file:listener directory="${workingDirectory}" autoDelete="true" recursive="false" applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>
         </file:listener>
-        <custom-filter class="org.mule.transport.file.FileRecursiveFileFilterTestCase$TxtFileFilter"/>
         <compatibility:attributes-to-inbound-properties/>
+        <compatibility:custom-filter class="org.mule.transport.file.FileRecursiveFileFilterTestCase$TxtFileFilter"/>
         <logger/>
         <compatibility:outbound-properties-to-var/>
     </flow>

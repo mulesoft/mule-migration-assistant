@@ -9,10 +9,13 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getElementsFromDocument;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
+import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -37,8 +40,6 @@ import java.util.Map;
 public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  protected static final String FILE_NAMESPACE = "http://www.mulesoft.org/schema/mule/file";
-
   public static final String XPATH_SELECTOR = "/mule:mule/mule:flow/file:inbound-endpoint[1]";
 
   private ExpressionMigrator expressionMigrator;
@@ -54,9 +55,17 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace fileNs = Namespace.getNamespace("file", FILE_NAMESPACE);
+    Namespace fileNs = Namespace.getNamespace(FILE.prefix(), FILE.uri());
 
     object.setName("listener");
+
+    List<Element> transformerChildren =
+        object.getChildren().stream().filter(c -> c.getName().contains("transformer")).collect(toList());
+
+    transformerChildren.forEach(tc -> {
+      tc.getParent().removeContent(tc);
+      object.getParentElement().addContent(2, tc);
+    });
 
     addAttributesToInboundProperties(object, report);
 
@@ -88,19 +97,6 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       fixedFrequency.setAttribute("frequency", "1000");
     }
     object.removeAttribute("pollingFrequency");
-
-    if (object.getChild("file-to-string-transformer", fileNs) != null) {
-      report.report(WARN, object.getChild("file-to-string-transformer", fileNs), object,
-                    "'file-to-string-transformer' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about");
-      object.removeChild("file-to-string-transformer", fileNs);
-    }
-    if (object.getChild("file-to-byte-array-transformer", fileNs) != null) {
-      report.report(WARN, object.getChild("file-to-byte-array-transformer", fileNs), object,
-                    "'file-to-byte-array-transformer' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about");
-      object.removeChild("file-to-byte-array-transformer", fileNs);
-    }
 
     Element newMatcher = null;
 
@@ -144,11 +140,11 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.removeContent(globFilterIn);
     }
 
-    Element customFilterIn = object.getChild("custom-filter", CORE_NAMESPACE);
+    Element customFilterIn = object.getChild("custom-filter", COMPATIBILITY_NAMESPACE);
     if (customFilterIn != null) {
       object.removeContent(customFilterIn);
       // The ERROR will be reported when all custom-filters are queried to be migrated
-      object.getParentElement().addContent(2, customFilterIn);
+      object.getParentElement().addContent(3, customFilterIn);
     }
 
     Element regexFilterIn = object.getChild("filename-regex-filter", fileNs);
@@ -202,6 +198,8 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.getParentElement().removeContent(regexFilter);
     }
 
+    object.setAttribute("applyPostActionWhenFailed", "false");
+
     String recursive = changeDefault("false", "true", object.getAttributeValue("recursive"));
     if (recursive != null) {
       object.setAttribute("recursive", recursive);
@@ -209,15 +207,24 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.removeAttribute("recursive");
     }
 
+    if (object.getAttribute("address") != null) {
+      object.setAttribute("directory", object.getAttributeValue("address").substring("file://".length()));
+    }
     if (object.getAttribute("path") != null) {
       object.getAttribute("path").setName("directory");
     }
     if (object.getAttribute("connector-ref") != null) {
       object.getAttribute("connector-ref").setName("config-ref");
+    } else {
+      // Set the Mule 3 defaults since those are different in Mule 4
+      object.setAttribute("autoDelete", "true");
+      object.setAttribute("recursive", "false");
     }
 
     if (object.getAttribute("encoding") != null) {
-      report.report(WARN, object, object, "'encoding' was not being used by the file transport.");
+      object.getParent().addContent(3, new Element("set-payload", CORE_NAMESPACE)
+          .setAttribute("value", "#[payload]")
+          .setAttribute("encoding", object.getAttributeValue("encoding")));
       object.removeAttribute("encoding");
     }
     if (object.getAttribute("responseTimeout") != null) {
@@ -264,13 +271,13 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("originalFilename", "message.attributes.fileName");
     expressionsPerProperty.put("originalDirectory",
-                               "(message.attributes.fileName as String) [0 to -(1 + sizeOf(message.attributes.fileName))]");
+                               "(message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))]");
     expressionsPerProperty.put("sourceFileName", "message.attributes.fileName");
     expressionsPerProperty.put("sourceDirectory",
-                               "(message.attributes.fileName as String) [0 to -(1 + sizeOf(message.attributes.fileName))]");
+                               "(message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))]");
     expressionsPerProperty.put("filename", "message.attributes.fileName");
     expressionsPerProperty.put("directory",
-                               "(message.attributes.fileName as String) [0 to -(1 + sizeOf(message.attributes.fileName))]");
+                               "(message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))]");
     expressionsPerProperty.put("fileSize", "message.attributes.size");
     expressionsPerProperty.put("timestamp", "message.attributes.lastModifiedTime");
     expressionsPerProperty.put("MULE.FORCE_SYNC", "false");

@@ -77,7 +77,7 @@ public class ReportEntryModel {
       this.columnNumber = ((LocatedElement) elements.get(0)).getColumn();
     }
   }
-  
+
   public Level getLevel() {
     return level;
   }

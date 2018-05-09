@@ -11,12 +11,8 @@ import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSI
 import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
-import com.mulesoft.tools.migration.library.mule.steps.file.FileConfig;
-import com.mulesoft.tools.migration.library.mule.steps.file.FileConnectorPomContribution;
-import com.mulesoft.tools.migration.library.mule.steps.file.FileGlobalEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.file.FileOutboundEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.file.FileTransformers;
+import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.endpoint.OutboundEndpoint;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -25,16 +21,16 @@ import com.mulesoft.tools.migration.task.Version;
 import java.util.List;
 
 /**
- * Migration definition for File Transport
+ * Migration definition for Transport Endpoints
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class FileMigrationTask extends AbstractMigrationTask {
+public class EndpointsMigrationTask extends AbstractMigrationTask {
 
   @Override
   public String getDescription() {
-    return "Migrate File Transport";
+    return "Migrate Transport Endpoints";
   }
 
   @Override
@@ -54,8 +50,6 @@ public class FileMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new FileConnectorPomContribution(),
-                        new FileGlobalEndpoint(), new FileConfig(), new FileInboundEndpoint(), new FileOutboundEndpoint(),
-                        new FileTransformers());
+    return newArrayList(new InboundEndpoint(), new OutboundEndpoint());
   }
 }
