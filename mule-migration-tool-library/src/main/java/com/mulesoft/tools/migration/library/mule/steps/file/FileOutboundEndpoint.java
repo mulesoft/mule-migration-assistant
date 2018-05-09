@@ -80,13 +80,19 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
       object.getAttribute("connector-ref").setName("config-ref");
     }
 
+    if (object.getAttribute("outputAppend") != null && !"false".equals(object.getAttributeValue("outputAppend"))) {
+      object.setAttribute("mode", "APPEND");
+    }
+
     object.removeAttribute("writeToDirectory");
     object.removeAttribute("outputPattern");
     object.removeAttribute("outputPatternConfig");
+    object.removeAttribute("outputAppend");
   }
 
   private String compatibilityOutputFile(String pathDslParams) {
     try {
+      // Replicates logic from org.mule.transport.file.FileConnector.getOutputStream(OutboundEndpoint, MuleEvent)
       library(getMigrationScriptFolder(getApplicationModel().getProjectBasePath()), "FileWriteOutputFile.dwl",
               "" +
                   "/**" + lineSeparator() +
@@ -98,11 +104,11 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
                   "        default pathDslParams.writeToDirectory)" + lineSeparator() +
                   "        default pathDslParams.address)" + lineSeparator() +
                   "    ++ '/' ++" + lineSeparator() +
-                  "    (((vars.compatibility_outboundProperties.outputPattern" + lineSeparator() +
-                  "        default pathDslParams.outputPattern)" + lineSeparator() +
+                  "    ((((pathDslParams.outputPattern" + lineSeparator() +
+                  "        default vars.compatibility_outboundProperties.outputPattern)" + lineSeparator() +
                   "        default pathDslParams.outputPatternConfig)" + lineSeparator() +
-                  "        default vars.compatibility_inboundProperties.filename" + lineSeparator() +
-                  "    as String)" + lineSeparator() +
+                  "        default vars.compatibility_inboundProperties.filename)" + lineSeparator() +
+                  "        default (uuid() ++ '.dat'))" + lineSeparator() +
                   "}" + lineSeparator() +
                   lineSeparator());
     } catch (IOException e) {

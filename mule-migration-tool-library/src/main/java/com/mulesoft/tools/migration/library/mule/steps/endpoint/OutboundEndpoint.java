@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.endpoint;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
 
 import com.mulesoft.tools.migration.library.mule.steps.file.FileOutboundEndpoint;
@@ -41,6 +42,11 @@ public class OutboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    object.getChildren("property", CORE_NAMESPACE).forEach(p -> {
+      object.setAttribute(p.getAttributeValue("key"), p.getAttributeValue("value"));
+    });
+    object.removeChildren("property", CORE_NAMESPACE);
+
     if (object.getAttribute("address") != null) {
       String address = object.getAttributeValue("address");
 
