@@ -10,7 +10,7 @@ import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 
 /**
- * Migration Step that contributes to the pom model
+ * Migration Step that contributes to the pom model. It should be used if dependencies, plugins or repositories should be added/removed to/from the pom.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0

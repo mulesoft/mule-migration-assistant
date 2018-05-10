@@ -37,7 +37,7 @@ public class TransactionalScopeTest {
     transactionalScope = new TransactionalScope();
   }
 
-  @Test(expected = MigrationStepException.class)
+  @Test
   public void executeWithNullElement() throws Exception {
     transactionalScope.execute(null, mock(MigrationReport.class));
   }

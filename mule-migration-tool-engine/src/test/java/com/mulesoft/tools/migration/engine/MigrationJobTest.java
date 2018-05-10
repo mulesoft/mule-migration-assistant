@@ -6,8 +6,8 @@
  */
 package com.mulesoft.tools.migration.engine;
 
-import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;

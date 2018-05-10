@@ -17,7 +17,7 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
 /**
- * Basic unit of execution
+ * Basic unit of execution.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0

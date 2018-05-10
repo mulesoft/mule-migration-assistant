@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class AdditionalNamespacesFactory {
 
+
   public static List<Namespace> getAdditionalNamespaces() {
     List<Namespace> namespaces = new ArrayList<>();
     Arrays.stream(AdditionalNamespaces.values()).forEach(n -> namespaces.add(Namespace.getNamespace(n.prefix(), n.uri())));

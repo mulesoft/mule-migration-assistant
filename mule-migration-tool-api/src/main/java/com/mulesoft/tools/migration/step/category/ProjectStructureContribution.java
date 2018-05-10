@@ -11,7 +11,7 @@ import com.mulesoft.tools.migration.step.MigrationStep;
 import java.nio.file.Path;
 
 /**
- * Migration Step that works over the project structure
+ * Migration Step that works over the project structure.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0

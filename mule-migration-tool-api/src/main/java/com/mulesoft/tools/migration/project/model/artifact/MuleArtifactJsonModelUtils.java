@@ -33,7 +33,7 @@ public class MuleArtifactJsonModelUtils {
    * Builds a minimal mule-artifact.json representational model with the specified name.
    *
    * @param name the name to be set in the mule artifact model
-   * @return a mule artifact json model with the minimum required information
+   * @return a {@link MuleArtifactJsonModel}
    */
   public static MuleArtifactJsonModel buildMinimalMule4ArtifactJson(String name, Collection<Path> configs, String muleVersion) {
     MuleApplicationModel.MuleApplicationModelBuilder builder = new MuleApplicationModel.MuleApplicationModelBuilder();

@@ -22,7 +22,6 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
-import com.mulesoft.tools.migration.step.category.ExpressionContribution;
 import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
@@ -100,7 +99,6 @@ public class AbstractMigrationTaskTest {
   public void execute() throws Exception {
     NamespaceContribution namespaceContributionMock = mock(NamespaceContribution.class);
     ApplicationModelContribution applicationModelContributionMock = mock(ApplicationModelContribution.class);
-    ExpressionContribution expressionContributionMock = mock(ExpressionContribution.class);
     ProjectStructureContribution projectStructureContributionMock = mock(ProjectStructureContribution.class);
     PomContribution pomContributionMock = mock(PomContribution.class);
     PomModel pomModelMock = mock(PomModel.class);
@@ -108,7 +106,6 @@ public class AbstractMigrationTaskTest {
     List<MigrationStep> steps = new ArrayList<>();
     steps.add(namespaceContributionMock);
     steps.add(applicationModelContributionMock);
-    steps.add(expressionContributionMock);
     steps.add(projectStructureContributionMock);
     steps.add(pomContributionMock);
 
@@ -120,12 +117,10 @@ public class AbstractMigrationTaskTest {
     migrationTask.execute(mock(MigrationReport.class));
     verify(namespaceContributionMock, times(1)).execute(any(ApplicationModel.class), any(MigrationReport.class));
     verify(applicationModelContributionMock, times(1)).getAppliedTo();
-    verify(expressionContributionMock, times(1)).execute(any(Object.class), any(MigrationReport.class));
     verify(projectStructureContributionMock, times(1)).execute(any(Path.class), any(MigrationReport.class));
     verify(pomContributionMock, times(1)).execute(any(PomModel.class), any(MigrationReport.class));
 
     inOrder.verify(namespaceContributionMock).execute(any(ApplicationModel.class), any(MigrationReport.class));
-    inOrder.verify(expressionContributionMock).execute(any(Object.class), any(MigrationReport.class));
     inOrder.verify(projectStructureContributionMock).execute(any(Path.class), any(MigrationReport.class));
     inOrder.verify(pomContributionMock).execute(any(PomModel.class), any(MigrationReport.class));
 

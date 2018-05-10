@@ -8,7 +8,6 @@ package com.mulesoft.tools.migration.library.munit.steps;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.updateMUnitAssertionNotEqualsExpression;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
@@ -16,7 +15,10 @@ import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
+
+import java.util.function.Function;
 
 /**
  * This steps migrates the MUnit 1.x assert-not-same
@@ -49,6 +51,25 @@ public class AssertNotEquals extends AbstractApplicationModelMigrationStep {
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());
     }
+  }
+
+  public static Function<Element, Element> updateMUnitAssertionNotEqualsExpression(String attributeName) {
+    return e -> {
+      Attribute attribute = e.getAttribute(attributeName);
+      if (attribute != null) {
+        String attributeValue = attribute.getValue().trim();
+        if (attributeValue.startsWith("#[")) {
+          StringBuffer sb = new StringBuffer(attributeValue);
+          sb.replace(0, sb.indexOf("[") + 1, "#[MunitTools::not(MUnitTools::equalTo(");
+          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, "))]");
+          attributeValue = sb.toString();
+        } else {
+          attributeValue = "#[MunitTools::not(MUnitTools::equalTo(" + attributeValue + "))]";
+        }
+        attribute.setValue(attributeValue);
+      }
+      return e;
+    };
   }
 
 }

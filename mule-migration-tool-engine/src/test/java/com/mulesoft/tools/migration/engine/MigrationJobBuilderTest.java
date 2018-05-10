@@ -6,17 +6,15 @@
  */
 package com.mulesoft.tools.migration.engine;
 
-import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.nio.file.Path;
-import java.util.List;
 
-import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.library.util.MuleVersion.MULE_4_VERSION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static org.mockito.Mockito.mock;
 

@@ -65,7 +65,7 @@ public class Dependency {
   /**
    * Retrieves the dependency artifact id.
    *
-   * @return the dependency artifact id
+   * @return a {@link String}
    */
   public String getArtifactId() {
     return dependency.getArtifactId();
@@ -74,7 +74,7 @@ public class Dependency {
   /**
    * Retrieves the dependency group id.
    *
-   * @return the dependency group id
+   * @return a {@link String}
    */
   public String getGroupId() {
     return dependency.getGroupId();
@@ -83,7 +83,7 @@ public class Dependency {
   /**
    * Retrieves the dependency version.
    *
-   * @return the dependency version
+   * @return a {@link String}
    */
   public String getVersion() {
     return dependency.getVersion();
@@ -92,7 +92,7 @@ public class Dependency {
   /**
    * Retrieves the dependency classifier.
    *
-   * @return the dependency classifier
+   * @return a {@link String}
    */
   public String getClassifier() {
     return dependency.getClassifier();
@@ -101,7 +101,7 @@ public class Dependency {
   /**
    * Retrieves the dependency type.
    *
-   * @return the dependency type
+   * @return a {@link String}
    */
   public String getType() {
     return dependency.getType() != null ? dependency.getType() : DEFAULT_TYPE;
@@ -110,7 +110,7 @@ public class Dependency {
   /**
    * Retrieves the dependency scope.
    *
-   * @return the dependency scope
+   * @return a {@link String}
    */
   public String getScope() {
     return dependency.getScope();

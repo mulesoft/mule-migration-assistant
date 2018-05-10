@@ -20,12 +20,32 @@ import java.util.List;
  */
 public interface MigrationTask extends Executable, Categorizable {
 
+  /**
+   * Retrieves the task description. It should describe briefly what the task objective.
+   *
+   * @return a {@link String}
+   */
   String getDescription();
 
+  /**
+   * Retrieves the steps that compose the task.
+   *
+   * @return a {@link List<MigrationStep>}
+   */
   List<MigrationStep> getSteps();
 
+  /**
+   * Retrieves the {@link ApplicationModel} that represents the migration current state.
+   *
+   * @return an {@link ApplicationModel}
+   */
   ApplicationModel getApplicationModel();
 
+  /**
+   * Sets the {@link ApplicationModel} on which the task is going to work over.
+   *
+   * @return an {@link ApplicationModel}
+   */
   void setApplicationModel(ApplicationModel applicationModel);
 
 }

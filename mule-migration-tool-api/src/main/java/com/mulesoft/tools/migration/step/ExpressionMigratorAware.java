@@ -10,7 +10,7 @@ import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 
 
 /**
- * Element that can has an expression migrator
+ * Element that can has an expression migrator. All steps that use an expression migrator should implement this interface.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0

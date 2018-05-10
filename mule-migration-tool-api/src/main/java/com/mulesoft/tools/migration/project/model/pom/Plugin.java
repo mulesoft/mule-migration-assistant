@@ -39,7 +39,7 @@ public class Plugin {
   /**
    * Retrieves the plugin model represented by a maven core object. Meant to be used just by the classes in the package.
    *
-   * @return the plugin inner model
+   * @return a {@link org.apache.maven.model.Plugin}
    */
   protected org.apache.maven.model.Plugin getInnerModel() {
     return plugin;
@@ -48,7 +48,7 @@ public class Plugin {
   /**
    * Retrieves the plugin artifact id.
    *
-   * @return the plugin artifact id
+   * @return a {@link String}
    */
   public String getArtifactId() {
     return plugin.getArtifactId();
@@ -61,7 +61,7 @@ public class Plugin {
   /**
    * Retrieves the plugin group id.
    *
-   * @return the plugin group id
+   * @return a {@link String}
    */
   public String getGroupId() {
     return plugin.getGroupId();
@@ -77,16 +77,16 @@ public class Plugin {
   }
 
   /**
-   * Retrieves the plugin version.
+   * Retrieves the plugin version or valid range of versions.
    *
-   * @return the plugin version
+   * @return a {@link String}
    */
   public String getVersion() {
     return plugin.getVersion();
   }
 
   /**
-   * Sets the plugin version.
+   * Sets the plugin version or valid range of versions.
    *
    * @param version
    */
@@ -97,7 +97,7 @@ public class Plugin {
   /**
    * Retrieves the plugin dependencies.
    *
-   * @return the plugin dependencies
+   * @return a {@link List<Plugin>}
    */
   public List<Dependency> getDependencies() {
     return plugin.getDependencies().stream().map(Dependency::new).collect(toList());
@@ -115,7 +115,7 @@ public class Plugin {
   /**
    * Retrieves the plugin executions.
    *
-   * @return the plugin executions
+   * @return a {@link List<PluginExecution>}
    */
   public List<PluginExecution> getExecutions() {
     return plugin.getExecutions().stream().map(PluginExecution::new).collect(toList());
@@ -138,7 +138,7 @@ public class Plugin {
   /**
    * Retrieves the plugin extensions field. Even though it is represented by a string, it represents either true or false.
    *
-   * @return the plugin extensions value
+   * @return a {@link String}
    */
   public String getExtensions() {
     return plugin.getExtensions();
