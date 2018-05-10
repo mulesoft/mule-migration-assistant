@@ -12,10 +12,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 
 /**
- * Class documentation such as "Adds the HTTP Connector dependency"
- *
- * @author Mulesoft Inc.
- * @since 1.0.0
+ * Class documentation such as "Migrates X component"
  */
 public class ${mainTaskClassName}ApplicationModelContribution extends AbstractApplicationModelMigrationStep {
 

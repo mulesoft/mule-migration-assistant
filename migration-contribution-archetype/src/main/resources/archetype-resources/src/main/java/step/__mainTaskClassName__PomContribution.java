@@ -11,10 +11,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 
 /**
- * Class documentation such as "Adds the HTTP Connector dependency"
- *
- * @author Mulesoft Inc.
- * @since 1.0.0
+ * Class documentation such as "Adds X dependency"
  */
 public class ${mainTaskClassName}PomContribution implements PomContribution {
 

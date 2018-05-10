@@ -20,10 +20,7 @@ import ${groupId}.step.${mainTaskClassName}PomContribution;
 import ${groupId}.step.${mainTaskClassName}ApplicationModelContribution;
 
 /**
- * Class documentation such as "Migration definition for HTTP component"
- *
- * @author Mulesoft Inc.
- * @since 1.0.0
+ * Class documentation such as "Migration definition for X component"
  */
 public class ${mainTaskClassName} extends AbstractMigrationTask {
 
