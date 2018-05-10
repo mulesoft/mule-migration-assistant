@@ -25,4 +25,12 @@ public class ConsolePrinter {
     log("Total time: " + String.format("%.3f", elapsedTime.floatValue() / 1000) + " s");
     log("Migration report: " + reportPath);
   }
+
+  public static void printMigrationError(Exception exception, Long elapsedTime) {
+    log("===============================================================================");
+    log("MIGRATION FAILED");
+    log("===============================================================================");
+    log("Total time: " + String.format("%.3f", elapsedTime.floatValue() / 1000) + " s");
+    log("Exception: " + exception.getMessage());
+  }
 }

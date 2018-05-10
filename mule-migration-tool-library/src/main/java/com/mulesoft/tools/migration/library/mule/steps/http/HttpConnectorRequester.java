@@ -58,7 +58,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
 
     if (object.getAttribute("port") != null) {
       report.report(ERROR, object, object,
-                    "'port' cannot be overriden at the HTTP request operation. You may use an expression in the config to make it dynamic."
+                    "'port' cannot be overridden at the HTTP request operation. You may use an expression in the config to make it dynamic."
                         + System.lineSeparator() +
                         format("Original value was '%s=\"%s\"'", "port", object.getAttributeValue("port")),
                     "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request");
@@ -66,7 +66,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     }
     if (object.getAttribute("host") != null) {
       report.report(ERROR, object, object,
-                    "'host' cannot be overriden at the HTTP request operation. You may use an expression in the config to make it dynamic."
+                    "'host' cannot be overridden at the HTTP request operation. You may use an expression in the config to make it dynamic."
                         + System.lineSeparator() +
                         format("Original value was '%s=\"%s\"'", "host", object.getAttributeValue("host")),
                     "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request");

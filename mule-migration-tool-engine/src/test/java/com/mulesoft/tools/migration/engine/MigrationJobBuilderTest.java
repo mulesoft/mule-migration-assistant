@@ -38,35 +38,35 @@ public class MigrationJobBuilderTest {
   @Before
   public void setUp() throws Exception {
     originalProjectPath = temporaryFolder.newFolder(ORIGINAL_PROJECT_NAME).toPath();
-    migratedProjectPath = temporaryFolder.newFolder(MIGRATED_PROJECT_NAME).toPath();
+    migratedProjectPath = temporaryFolder.getRoot().toPath().resolve(MIGRATED_PROJECT_NAME).toAbsolutePath();
   }
 
   @Test(expected = IllegalStateException.class)
-  public void setProjectNull() {
+  public void setProjectNull() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withProject(null).build();
   }
 
   @Test(expected = IllegalStateException.class)
-  public void setOutputProjectNull() {
+  public void setOutputProjectNull() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withOutputProject(null).build();
   }
 
   @Test(expected = IllegalStateException.class)
-  public void setOutputProjectTypeNull() {
+  public void setOutputProjectTypeNull() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withOutputProjectType(null).build();
   }
 
   @Test(expected = IllegalStateException.class)
-  public void setOutputVersionNull() {
+  public void setOutputVersionNull() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withOuputVersion(null).build();
   }
 
   @Test(expected = IllegalStateException.class)
-  public void setInputVersionNull() {
+  public void setInputVersionNull() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withInputVersion(null).build();
   }

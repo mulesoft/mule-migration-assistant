@@ -6,6 +6,11 @@
  */
 package com.mulesoft.tools.migration.engine.project.structure;
 
+import static com.mulesoft.tools.migration.engine.project.ProjectMatcher.getProjectDestination;
+import static java.lang.System.lineSeparator;
+import static java.nio.file.Files.exists;
+import static org.jdom2.output.Format.getPrettyFormat;
+
 import com.mulesoft.tools.migration.engine.project.ProjectTypeFactory;
 import com.mulesoft.tools.migration.engine.project.structure.mule.MuleProject;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourApplication;
@@ -13,22 +18,28 @@ import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourD
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeDomain;
 import com.mulesoft.tools.migration.engine.project.structure.util.CopyFileVisitor;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
+
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.jdom2.Document;
-import org.jdom2.output.Format;
+import org.jdom2.Text;
+import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
-
-import static com.mulesoft.tools.migration.engine.project.ProjectMatcher.getProjectDestination;
-import static java.nio.file.Files.exists;
 
 /**
  * Will save all the changes applied on the application after each task execution
@@ -83,8 +94,28 @@ public class ApplicationPersister {
 
       Document document = entry.getValue();
 
-      XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
-      xmlOutputter.output(document, new FileOutputStream(targetFilePath));
+      // XMLOutputter xmlOutputter = new XMLOutputter();
+      XMLOutputter xmlOutputter = new XMLOutputter(getPrettyFormat().setIndent("    "));
+      ByteArrayOutputStream preFromattedOutput = new ByteArrayOutputStream();
+      xmlOutputter.output(document, preFromattedOutput);
+
+      SAXBuilder saxBuilder = new SAXBuilder();
+      Document finalDocument = saxBuilder.build(new ByteArrayInputStream(preFromattedOutput.toByteArray()));
+
+      // Add empty lines between top level elements, as requested by our beloved PM <3
+      new LinkedList<>(finalDocument.getRootElement().getChildren()).descendingIterator().forEachRemaining(c -> {
+        finalDocument.getRootElement().addContent(finalDocument.getRootElement().indexOf(c) + 1,
+                                                  new Text(lineSeparator()));
+
+        if ("flow".equals(c.getName())) {
+          new LinkedList<>(c.getChildren()).descendingIterator().forEachRemaining(fc -> {
+            c.addContent(c.indexOf(fc) + 1, new Text(lineSeparator()));
+          });
+        }
+      });
+      finalDocument.getRootElement().addContent(0, new Text(lineSeparator()));
+
+      new XMLOutputter().output(finalDocument, new FileOutputStream(targetFilePath));
     }
   }
 
