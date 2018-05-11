@@ -19,6 +19,7 @@
         <module>mule-migration-tool-tests</module>
         <module>mule-migration-tool-expression</module>
         <module>migration-contribution-archetype</module>
+        <module>mule-migration-tool-contribution</module>
     </modules>
 
     <properties>

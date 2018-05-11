@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.task.Version.VersionBuilder.ANY_VERSI
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 
 import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
@@ -57,7 +58,7 @@ public class MigrationTaskLocatorTest {
     MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(ANY_VERSION, ANY_VERSION, projectType);
     List<AbstractMigrationTask> migrationTaskList = migrationTaskLocator.locate();
 
-    assertThat("The number of migration task is wrong", migrationTaskList.size(), is(8));
+    assertThat("The number of migration task is wrong", migrationTaskList.size(), greaterThanOrEqualTo(8));
     MigrationTask migrationTask = migrationTaskList.get(6);
     assertThat("The migration task type is wrong", migrationTask, instanceOf(MunitMigrationTask.class));
     assertThat("The migration task from is wrong", migrationTask.getFrom(), is(from));
