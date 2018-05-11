@@ -7,14 +7,25 @@
 package com.mulesoft.tools.migration.engine;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.PostprocessMuleApplication;
+import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
+import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
+import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationTask;
@@ -22,6 +33,7 @@ import com.mulesoft.tools.migration.task.Version;
 
 /**
  * The goal of this class is to locate migration tasks
+ *
  * @author Mulesoft Inc.
  */
 public class MigrationTaskLocator {
@@ -41,14 +53,16 @@ public class MigrationTaskLocator {
   }
 
   public List<AbstractMigrationTask> locate() {
-    List<AbstractMigrationTask> migrationTasks = getMigrationTasks();
-
+    List<AbstractMigrationTask> migrationTasks = newArrayList(new PreprocessMuleApplication());
+    migrationTasks.addAll(getCoreMigrationTasks());
+    migrationTasks.addAll(getMigrationTasks());
+    migrationTasks.add(new PostprocessMuleApplication());
     return migrationTasks.stream().filter(mt -> shouldNotFilterTask(mt)).collect(Collectors.toList());
   }
 
   protected List<AbstractMigrationTask> getMigrationTasks() {
     ServiceLoader<AbstractMigrationTask> load = ServiceLoader.load(AbstractMigrationTask.class);
-    return Lists.newArrayList(load);
+    return newArrayList(load);
   }
 
   private Boolean shouldNotFilterTask(MigrationTask migrationTask) {
@@ -69,6 +83,19 @@ public class MigrationTaskLocator {
       return TRUE;
     }
     return FALSE;
+  }
+
+  public List<AbstractMigrationTask> getCoreMigrationTasks() {
+    List<AbstractMigrationTask> coreMigrationTasks = new ArrayList<>();
+
+    coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
+    coreMigrationTasks.add(new HTTPMigrationTask());
+    coreMigrationTasks.add(new SocketsMigrationTask());
+    coreMigrationTasks.add(new FileMigrationTask());
+    coreMigrationTasks.add(new EndpointsMigrationTask());
+    coreMigrationTasks.add(new MunitMigrationTask());
+
+    return coreMigrationTasks;
   }
 }
 

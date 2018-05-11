@@ -1,60 +1,95 @@
 # Mule Migration Tool
-This tool's goal is to migrate projects. 
+[![Build Status](https://munit.ci.cloudbees.com/job/MMT-1.x/badge/icon)](https://munit.ci.cloudbees.com/job/MMT-1.x)
 
-Initially is intended to help with the Mule 3.x - Mule 4.x migration effort.
+This tool goal is to migrate projects in general.
 
-## Approach
-The tool works at xml level, making DOM operations/manipulation based on a set of configurable tasks and steps described in json files.
+Currently, it is being developed towards supporting the Mule 3.x &#8594; Mule 4.x migration.
 
-## Build and Package
-Execute: `mvn clean package`
+## Overview
 
-## Run
-`java -jar migration-tool-1.0.0-SNAPSHOT.jar [options]`
+In order to understand the tool, let's start with a couple of informal definitions:
 
-Option | Description | Mandatory | Default
------------- | ------------ | ------------ | ------------
--files | List of mule xml's file paths separated by ';' | Yes if not using -filesDir | -
--filesDir | Root directory to search mule xml's files to migrate | Yes, if not using -files | -
--migrationConfigFile | Migration config file (json) containing all the rules and steps | Yes if not using -migrationConfigDir | -
--migrationConfigDir | Root directory to search the tasks and steps json files | Yes if not using -migrationConfigFile | -
--report | Reporting strategy, options: console | No | console
--backup | Flag to determine if you want a backup of your original files, options: true, false | No | true
+- Task &#8594; a set of steps;
+- Step &#8594; an operation that change/remove/update a resource or content that can be present in a project.
 
-## Example
-`java -jar migration-tool-1.0.0-SNAPSHOT.jar -filesDir myApps/usecase01 -migrationConfigDir rules/mule/tasks -report console -backup true`
+In simple terms, the tool executes a sequence of tasks over a project and outputs a migrated project and a report about the migration.
 
-![Output Example](/img/output_example.png)
+## Getting Started
 
-## List of Tasks
-The tasks are located in `src/test/resources/mule/tasks` and `src/test/resources/munit/tasks`
+These are the instructions to have the project up and running.
 
-NOTE: The order of the tasks matters!
+### Minimum requirements
 
-Id | Component | Description
------------- | ------------ | ------------
-1 | HTTP | Includes all the changes for HTTP Listener, HTTP Request and HTTP Static Handler
-2 | Web Service Consumer | Includes all the changes for the WSC Consumer and WSS
-3 | Dataweave | Includes all the changes for the Dataweave Transformer + the migration of dw 1.0 scripts to 2.0
-4 | Database | Includes all the changes for the Database Module: Derby, MySQL, Oracle and Generic Configs
-5 | Message Structure | Mule Message Structure: payload, attributes, variables
+- Java 8
+- Maven 3.3.9
 
-## Test Files
-Individual component-related tests located in: `src/test/resources/mule/examples`
+### Build
 
-Use Cases / Apps tests located in: `src/test/resources/mule/apps`
+Go to the project root and type
 
-## Limitations
-Id | Key | Description | Doable
------------- | ------------ | ------------ | ------------
-1 | Folder Structure | The new mule4 folder structure migration is not included | yes
-2 | pom.xml | Dependencies, plugins, and all the pom.xml content migration is not included | yes
-3 | external log | External log strategy not included | yes, add a new strategy
-4 | Transports | Migration of transports not included: file, ftp, tcp, smtp, etc | no, use compatibility module
-5 | Domains | Migration of xml files depending on a domain configuration or in a separate file configuration is not supported | yes
-6 | APIKit | APIKit migration not included | yes, just add more rules
-7 | Connectors | Connectors (Object Store, SFDC, Workday, etc) not included | yes, just add more rules
-8 | Error handling | Error handling new structure not included | yes, just add more rules
+```
+$ mvn clean package
+```
 
-## Final Note
-Enjoy and provide feedback / contribute :)
+### Run
+
+Go to the runner module target directory:
+
+```
+$ cd mule-migration-tool-runner/target
+```
+
+Run the tool:
+
+```
+$ java -jar mule-migration-tool-runner-*CURRENT VERSION*.jar [options]
+```
+
+// TODO list options
+
+### Contributing
+
+There are two ways of contributing
+
+- [Contributing directly to the migration tool engine](#contributing-to-the-engine);
+- [Creating new migration tasks](#contributing-with-tasks) that are going to be run by the engine.
+
+#### Contributing to the engine
+
+We welcome pull requests related to the engine. :smile:
+
+However, please be aware that migration task contributions are going to be added to this project just as dependencies :grimacing:
+
+#### Contributing with tasks
+
+The migration tool locates the tasks using SPI. In order to contribute with your own task, follow the steps below:
+
+- Create your new task contribution project:
+
+```
+mvn archetype:generate \
+  -DarchetypeGroupId=com.mulesoft.tools \
+  -DarchetypeArtifactId=migration-contribution-archetype \
+  -DarchetypeVersion=<CURRENT VERSION> \
+  -DartifactId=<YOUR MIGRATION ARTIFACT ID> \
+  -DmainTaskClassName=<TASK CLASS NAME>
+```
+
+* The generate project should be composed of:
+    - A pom file;
+    - Some steps to start working over;
+    - A task class that declares the steps above.
+
+ :exclamation: The generated POM file declares a dependency to the mule-migration-tool-api. This is the only dependency from the migration tool that should be required to create your contribution.
+
+
+* Create/modify the steps that are going to compose the task. A step must be:
+    - An _AbstractApplicationModelMigrationStep_: works at the configuration file level;
+    - A _PomContribution_: works over the project pom;
+    - A _ProjectStructureContribution_: works over the project resources.
+
+ * When your contribution is ready to be added to the main engine, please deploy the generated jar to https://repository.mulesoft.org/nexus/content/repositories/releases/
+ * Go to the mule-migration-tool-contribution module and add your task class canonical name to META-INF/services/com.mulesoft.tools.migration.task.AbstractMigrationTask and your project dependency to the POM file.
+ * Create a pull request.
+
+ That's it. Thanks!
