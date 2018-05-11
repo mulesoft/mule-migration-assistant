@@ -11,7 +11,7 @@ import com.mulesoft.tools.migration.step.MigrationStep;
 
 /**
  * Signals an issue in a {@link MigrationStep}
- * 
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -19,6 +19,10 @@ public class MigrationStepException extends RuntimeException {
 
   public MigrationStepException(String message) {
     super(message);
+  }
+
+  public MigrationStepException(String message, Throwable cause) {
+    super(message, cause);
   }
 
 }

@@ -30,6 +30,8 @@ public enum AdditionalNamespaces {
 
   MULE("mule", "http://www.mulesoft.org/schema/mule/core"),
 
+  SPRING_BEANS("spring-beans", "http://www.springframework.org/schema/beans"),
+
   JSON("json", "http://www.mulesoft.org/schema/mule/json"),
 
   MUNIT("munit", "http://www.mulesoft.org/schema/mule/munit"),
