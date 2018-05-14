@@ -36,7 +36,9 @@ public enum AdditionalNamespaces {
 
   MUNIT_TOOLS("munit-tools", "http://www.mulesoft.org/schema/mule/munit-tools"),
 
-  MOCK("mock", "http://www.mulesoft.org/schema/mule/mock");
+  MOCK("mock", "http://www.mulesoft.org/schema/mule/mock"),
+
+  SCRIPTING("scripting", "http://www.mulesoft.org/schema/mule/scripting");
 
   private String prefix;
   private String uri;

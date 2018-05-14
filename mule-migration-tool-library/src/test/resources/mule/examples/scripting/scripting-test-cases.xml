@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+    <flow name="groovyScriptFlow">
+        <scripting:component doc:name="Groovy">
+            <scripting:script engine="Groovy">
+                <property key="sarasa" value="pepe"/>
+                <property key="sarasa2" value="pep4e"/>
+                <property key="sarasa4" value="pep1e"/>
+            </scripting:script>
+        </scripting:component>
+    </flow>
+    <flow name="jsScriptFlow">
+        <scripting:component doc:name="JavaScript">
+            <scripting:script engine="JavaScript" file="pepe.java"></scripting:script>
+        </scripting:component>
+    </flow>
+    <flow name="jsScriptFlow">
+        <scripting:component doc:name="JavaScript">
+            <scripting:script engine="JavaScript"><![CDATA[ss]]></scripting:script>
+        </scripting:component>
+    </flow>
+    <flow name="groovyScriptFlow">
+        <scripting:component doc:name="Groovy">
+            <scripting:script engine="Groovy"><![CDATA[fasf]]></scripting:script>
+        </scripting:component>
+    </flow>
+    <flow name="rubyScriptFlow">
+        <scripting:component doc:name="Ruby">
+            <scripting:script engine="jruby"><![CDATA[ss]]></scripting:script>
+        </scripting:component>
+    </flow>
+    <flow name="pythonScriptFlow">
+        <scripting:component doc:name="Python">
+            <scripting:script engine="jython"><![CDATA[ss]]></scripting:script>
+        </scripting:component>
+    </flow>
+</mule>

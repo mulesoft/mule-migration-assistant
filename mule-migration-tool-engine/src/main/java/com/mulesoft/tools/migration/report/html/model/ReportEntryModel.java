@@ -9,15 +9,21 @@ package com.mulesoft.tools.migration.report.html.model;
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedElement;
 import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.jdom2.output.support.AbstractXMLOutputProcessor;
+import org.jdom2.output.support.FormatStack;
+import org.jdom2.output.support.XMLOutputProcessor;
 import org.jdom2.xpath.XPathFactory;
 import org.jdom2.xpath.XPathHelper;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -47,7 +53,7 @@ public class ReportEntryModel {
 
   public ReportEntryModel(Level level, Element element, String message, String... documentationLinks) {
     this.level = level;
-    this.elementContent = escapeXml(new XMLOutputter(Format.getPrettyFormat()).outputString(element));
+    this.elementContent = escapeXml(domElementToString(element));
     this.element = element;
     this.message = message;
     this.filePath = element.getDocument().getBaseURI();
@@ -77,6 +83,26 @@ public class ReportEntryModel {
       this.columnNumber = ((LocatedElement) elements.get(0)).getColumn();
     }
   }
+
+  private String domElementToString(Element element) {
+    Format format = Format.getPrettyFormat();
+    format.setTextMode(Format.TextMode.NORMALIZE);
+    format.setEncoding("UTF-8");
+
+    XMLOutputter xmlOut = new XMLOutputter(noNamespaces);
+    xmlOut.setFormat(format);
+    return xmlOut.outputString(element);
+  }
+
+  private static final XMLOutputProcessor noNamespaces = new AbstractXMLOutputProcessor() {
+
+    @Override
+    protected void printNamespace(final Writer out, final FormatStack formatStack,
+                                  final Namespace ns)
+        throws IOException {
+      // do nothing with printing Namespaces....
+    }
+  };
 
   public Level getLevel() {
     return level;
