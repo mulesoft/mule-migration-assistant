@@ -39,9 +39,16 @@ public class DocumentHelper {
   }
 
   public static List<Element> getElementsFromDocument(Document doc, String xPathExpression) {
+    return getElementsFromDocument(doc, xPathExpression, "mule");
+  }
+
+  public static List<Element> getElementsFromDocument(Document doc, String xPathExpression, String defaultNamespacePrefix) {
     List<Namespace> namespaces = new ArrayList<>();
-    namespaces.add(Namespace.getNamespace("mule", doc.getRootElement().getNamespace().getURI()));
     namespaces.addAll(doc.getRootElement().getAdditionalNamespaces());
+
+    if (namespaces.stream().noneMatch(n -> defaultNamespacePrefix.equals(n.getPrefix()))) {
+      namespaces.add(Namespace.getNamespace(defaultNamespacePrefix, doc.getRootElement().getNamespace().getURI()));
+    }
 
     XPathExpression<Element> xpath = XPathFactory.instance().compile(xPathExpression, Filters.element(), null, namespaces);
     List<Element> nodes = xpath.evaluate(doc);

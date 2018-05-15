@@ -52,6 +52,11 @@ public class ApplicationModel {
     this.applicationDocuments = applicationDocuments;
   }
 
+  /**
+   * The key of the map is relative to the source of the target project.
+   * 
+   * @return
+   */
   public Map<Path, Document> getApplicationDocuments() {
     return applicationDocuments;
   }
@@ -326,7 +331,7 @@ public class ApplicationModel {
       Map<Path, Document> applicationDocuments = new HashMap<>();
       for (Path afp : applicationFilePaths) {
         try {
-          applicationDocuments.put(afp, generateDocument(afp));
+          applicationDocuments.put(projectBasePath.relativize(afp), generateDocument(afp));
         } catch (JDOMException | IOException e) {
           throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + afp, e);
         }

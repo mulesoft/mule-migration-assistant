@@ -11,23 +11,25 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
+import java.util.ArrayList;
+
 /**
- * Migrates the spring beans form the mule config to its own file.
+ * Migrates the spring configuration containing a mule config to its own file.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class SpringBeans extends AbstractSpringMigratorStep {
+public class SpringConfigInMuleConfig extends AbstractSpringMigratorStep {
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri()='http://www.springframework.org/schema/beans' and local-name()!='beans']";
+      "/mule:mule/*[namespace-uri()='http://www.springframework.org/schema/beans' and local-name()='beans']";
 
   @Override
   public String getDescription() {
-    return "Migrates the spring beans form the mule config to its own file.";
+    return "Migrates the spring beans configuration form the mule config to its own file.";
   }
 
-  public SpringBeans() {
+  public SpringConfigInMuleConfig() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
@@ -35,17 +37,12 @@ public class SpringBeans extends AbstractSpringMigratorStep {
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     Document springDocument = resolveSpringDocument(object.getDocument());
 
-    object.detach();
-    springDocument.getRootElement().addContent(object);
+    for (Element element : new ArrayList<>(object.getChildren())) {
+      element.detach();
+      springDocument.getRootElement().addContent(element);
+    }
+
+    object.getParent().removeContent(object);
   }
-
-  // spring:property nested in mule objects (certain elements only) change to mule:property
-  // spring:beans root, mule top level
-  // mule or domain root, spring:bean top level
-  // mule or domain root, spring:beans top level
-  // spring:bean or spring:property nested in cxf
-  // spring-security?
-  // spring-placeholders?
-
 
 }

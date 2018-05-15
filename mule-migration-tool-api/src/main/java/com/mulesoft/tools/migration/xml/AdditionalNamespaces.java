@@ -30,7 +30,10 @@ public enum AdditionalNamespaces {
 
   MULE("mule", "http://www.mulesoft.org/schema/mule/core"),
 
-  SPRING_BEANS("spring-beans", "http://www.springframework.org/schema/beans"),
+  SPRING_BEANS("spring", "http://www.springframework.org/schema/beans"),
+
+  // TODO MMT-145 disambiguate spring namespaces
+  SPRING("spring-module", "http://www.mulesoft.org/schema/mule/spring"),
 
   JSON("json", "http://www.mulesoft.org/schema/mule/json"),
 

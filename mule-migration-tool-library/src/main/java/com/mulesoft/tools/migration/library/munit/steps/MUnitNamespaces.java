@@ -43,12 +43,12 @@ public class MUnitNamespaces implements NamespaceContribution {
       applicationModel.getApplicationDocuments().values().stream().filter(d -> isMUnitFile(d))
           .forEach(e -> applicationModel.addNameSpace(namespace, MUNIT_TOOLS_SCHEMA, e));
     } catch (Exception e) {
-      throw new MigrationStepException("Fail to apply step. " + e.getMessage());
+      throw new MigrationStepException("Fail to apply step. " + e.getMessage(), e);
     }
   }
 
   public boolean isMUnitFile(Document document) {
-    if (document.getBaseURI().contains(MUNIT_PATH)) {
+    if (document.getBaseURI() != null && document.getBaseURI().contains(MUNIT_PATH)) {
       return true;
     } else {
       return false;

@@ -94,7 +94,6 @@ public class ApplicationPersister {
 
       Document document = entry.getValue();
 
-      // XMLOutputter xmlOutputter = new XMLOutputter();
       XMLOutputter xmlOutputter = new XMLOutputter(getPrettyFormat().setIndent("    "));
       ByteArrayOutputStream preFromattedOutput = new ByteArrayOutputStream();
       xmlOutputter.output(document, preFromattedOutput);
@@ -115,6 +114,7 @@ public class ApplicationPersister {
       });
       finalDocument.getRootElement().addContent(0, new Text(lineSeparator()));
 
+      new File(targetFilePath).getParentFile().mkdirs();
       new XMLOutputter().output(finalDocument, new FileOutputStream(targetFilePath));
     }
   }
@@ -128,6 +128,8 @@ public class ApplicationPersister {
         || originalFilePath.toString().contains(MuleFourDomain.srcMainConfigurationPath)) {
       return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
           .resolve(originalFilePath.getFileName()).toString();
+    } else if (originalFilePath.toString().contains(MuleFourApplication.srcMainResourcesPath)) {
+      return outputAppPath.resolve(originalFilePath).toString();
     } else {
       return outputAppPath.resolve(((MuleProject) projectOutput).srcTestConfiguration())
           .resolve(originalFilePath.getFileName()).toString();

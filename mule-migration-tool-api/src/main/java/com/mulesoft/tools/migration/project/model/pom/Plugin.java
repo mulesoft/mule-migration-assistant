@@ -6,17 +6,17 @@
  */
 package com.mulesoft.tools.migration.project.model.pom;
 
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-
-import java.util.List;
-import java.util.Objects;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.project.model.pom.Plugin.PluginBuilder.areAllExecutionIdsUnique;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a plugin in the pom model.
@@ -173,7 +173,12 @@ public class Plugin {
   }
 
   public Xpp3Dom getConfiguration() {
-    return (Xpp3Dom) plugin.getConfiguration();
+    Xpp3Dom configuration = (Xpp3Dom) plugin.getConfiguration();
+    if (configuration == null) {
+      configuration = new Xpp3Dom("configuration");
+      plugin.setConfiguration(configuration);
+    }
+    return configuration;
   }
 
   /**
