@@ -26,7 +26,6 @@ import static org.mule.runtime.api.deployment.meta.Product.MULE_EE;
  */
 public class MuleArtifactJsonModelUtils {
 
-  private static final String EXPORTED_RESOURCES = "exportedResources";
   private static final String MULE_ID = "mule";
 
   /**
@@ -53,7 +52,7 @@ public class MuleArtifactJsonModelUtils {
     }
 
     MuleArtifactLoaderDescriptor descriptor =
-        new MuleArtifactLoaderDescriptorBuilder().setId(MULE_ID).addProperty(EXPORTED_RESOURCES, newArrayList()).build();
+        new MuleArtifactLoaderDescriptorBuilder().setId(MULE_ID).build();
     builder.withClassLoaderModelDescriptorLoader(descriptor);
 
     MuleArtifactLoaderDescriptor loaderDescriptor =
