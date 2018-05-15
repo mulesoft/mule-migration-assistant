@@ -70,9 +70,9 @@ public class ScriptingModuleMigration extends AbstractApplicationModelMigrationS
   }
 
   private String updateEngineValue(String engine) {
-    if (engine.equals("jruby")) {
+    if (engine.equalsIgnoreCase("jruby")) {
       return "ruby";
-    } else if (engine.equals("JavaScript")) {
+    } else if (engine.equalsIgnoreCase("javascript")) {
       return "nashorn";
     } else {
       return engine;
