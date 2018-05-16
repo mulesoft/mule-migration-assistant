@@ -12,22 +12,22 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 
 /**
- * Migrates the spring beans form the mule config to its own file.
+ * Migrates the spring context elements form the mule config to its own file.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class SpringBeans extends AbstractSpringMigratorStep {
+public class SpringContext extends AbstractSpringMigratorStep {
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri()='http://www.springframework.org/schema/beans' and local-name()!='beans']";
+      "/mule:mule/*[namespace-uri()='http://www.springframework.org/schema/context' and local-name() != 'property-placeholder']";
 
   @Override
   public String getDescription() {
-    return "Migrates the spring beans form the mule config to its own file.";
+    return "Migrates the spring context elements form the mule config to its own file.";
   }
 
-  public SpringBeans() {
+  public SpringContext() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
@@ -38,9 +38,4 @@ public class SpringBeans extends AbstractSpringMigratorStep {
     object.detach();
     springDocument.getRootElement().addContent(object);
   }
-
-  // spring:bean or spring:property nested in cxf
-  // spring-security?
-
-
 }

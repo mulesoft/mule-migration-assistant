@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFrom
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
@@ -43,7 +44,11 @@ public class SpringTest {
         "spring-02",
         "spring-03",
         "spring-04",
-        "spring-05"
+        "spring-05",
+        "spring-06",
+        "spring-07",
+        "spring-08",
+        "spring-09"
     };
   }
 
@@ -57,15 +62,19 @@ public class SpringTest {
     targetSpringPath = SPRING_EXAMPLES_PATH.resolve(filePrefix + "-original-beans.xml");
   }
 
+  private SpringPropertiesPlaceholder springPropertiesPlaceholder;
   private SpringConfigContainingMuleConfig springConfigContainingMuleConfig;
   private SpringConfigInMuleConfig springConfigInMuleConfig;
   private SpringBeans springBeans;
+  private SpringContext springContext;
 
   @Before
   public void setUp() throws Exception {
+    springPropertiesPlaceholder = new SpringPropertiesPlaceholder();
     springConfigContainingMuleConfig = new SpringConfigContainingMuleConfig();
     springConfigInMuleConfig = new SpringConfigInMuleConfig();
     springBeans = new SpringBeans();
+    springContext = new SpringContext();
   }
 
   @Test
@@ -77,18 +86,24 @@ public class SpringTest {
             .withConfigurationFiles(asList(resolvedConfigPath))
             .build();
 
-    Document doc = appModel.getApplicationDocuments().get(resolvedConfigPath);
+    Document doc = appModel.getApplicationDocuments().get(configPath.getFileName());
 
+    springPropertiesPlaceholder.setApplicationModel(appModel);
     springConfigContainingMuleConfig.setApplicationModel(appModel);
     springConfigInMuleConfig.setApplicationModel(appModel);
     springBeans.setApplicationModel(appModel);
+    springContext.setApplicationModel(appModel);
 
+    getElementsFromDocument(doc, springPropertiesPlaceholder.getAppliedTo().getExpression())
+        .forEach(node -> springPropertiesPlaceholder.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, springConfigContainingMuleConfig.getAppliedTo().getExpression(), "spring")
         .forEach(node -> springConfigContainingMuleConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, springConfigInMuleConfig.getAppliedTo().getExpression())
         .forEach(node -> springConfigInMuleConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, springBeans.getAppliedTo().getExpression())
         .forEach(node -> springBeans.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, springContext.getAppliedTo().getExpression())
+        .forEach(node -> springContext.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter muleOutputter = new XMLOutputter(Format.getPrettyFormat());
     String muleXmlString = muleOutputter.outputString(doc);
@@ -100,13 +115,19 @@ public class SpringTest {
 
     Document springDoc = appModel.getApplicationDocuments()
         .get(Paths.get("src/main/resources/spring", targetSpringPath.getFileName().toString()));
-    XMLOutputter springOutputter = new XMLOutputter(Format.getPrettyFormat());
-    String springXmlString = springOutputter.outputString(springDoc);
 
-    assertThat(springXmlString,
-               isSimilarTo(IOUtils.toString(this.getClass().getClassLoader().getResource(targetSpringPath.toString()).toURI(),
-                                            UTF_8))
-                                                .ignoreComments().normalizeWhitespace());
+    if (this.getClass().getClassLoader().getResource(targetSpringPath.toString()) != null) {
+
+      XMLOutputter springOutputter = new XMLOutputter(Format.getPrettyFormat());
+      String springXmlString = springOutputter.outputString(springDoc);
+
+      assertThat(springXmlString,
+                 isSimilarTo(IOUtils.toString(this.getClass().getClassLoader().getResource(targetSpringPath.toString()).toURI(),
+                                              UTF_8))
+                                                  .ignoreComments().normalizeWhitespace());
+    } else {
+      assertThat(springDoc, nullValue());
+    }
   }
 
 }

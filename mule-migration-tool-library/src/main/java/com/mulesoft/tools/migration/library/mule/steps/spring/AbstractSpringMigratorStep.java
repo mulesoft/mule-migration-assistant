@@ -88,6 +88,10 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
   }
 
   private Path resolveSpringBeansPath(Entry<Path, Document> entry) {
-    return entry.getKey().getParent().resolve(entry.getKey().getFileName().toString().replace(".xml", "-beans.xml"));
+    if (entry.getKey().getParent() != null) {
+      return entry.getKey().getParent().resolve(entry.getKey().getFileName().toString().replace(".xml", "-beans.xml"));
+    } else {
+      return Paths.get(entry.getKey().getFileName().toString().replace(".xml", "-beans.xml"));
+    }
   }
 }

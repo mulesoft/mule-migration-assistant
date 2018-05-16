@@ -59,7 +59,7 @@ public class MigrationTaskLocatorTest {
     List<AbstractMigrationTask> migrationTaskList = migrationTaskLocator.locate();
 
     assertThat("The number of migration task is wrong", migrationTaskList.size(), greaterThanOrEqualTo(8));
-    MigrationTask migrationTask = migrationTaskList.get(8);
+    MigrationTask migrationTask = migrationTaskList.get(9);
 
     assertThat("The migration task type is wrong", migrationTask, instanceOf(MunitMigrationTask.class));
     assertThat("The migration task from is wrong", migrationTask.getFrom(), is(from));

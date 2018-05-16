@@ -11,12 +11,7 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICA
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
-import com.mulesoft.tools.migration.library.mule.steps.spring.ExportSpringBeanPackages;
-import com.mulesoft.tools.migration.library.mule.steps.spring.SpringBeans;
-import com.mulesoft.tools.migration.library.mule.steps.spring.SpringConfigContainingMuleConfig;
-import com.mulesoft.tools.migration.library.mule.steps.spring.SpringConfigInMuleConfig;
-import com.mulesoft.tools.migration.library.mule.steps.spring.SpringContext;
-import com.mulesoft.tools.migration.library.mule.steps.spring.SpringPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.spring.SpringPropertiesPlaceholder;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -25,16 +20,16 @@ import com.mulesoft.tools.migration.task.Version;
 import java.util.List;
 
 /**
- * Migrate Spring bean definitions
+ * Migrate Spring properties placeholders definitions
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class SpringMigrationTask extends AbstractMigrationTask {
+public class PropertiesMigrationTask extends AbstractMigrationTask {
 
   @Override
   public String getDescription() {
-    return "Migrate Spring bean definitions";
+    return "Migrate Spring properties placeholders definitions";
   }
 
   @Override
@@ -54,11 +49,6 @@ public class SpringMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new SpringPomContribution(),
-                        new SpringConfigInMuleConfig(),
-                        new SpringConfigContainingMuleConfig(),
-                        new SpringBeans(),
-                        new SpringContext(),
-                        new ExportSpringBeanPackages());
+    return newArrayList(new SpringPropertiesPlaceholder());
   }
 }
