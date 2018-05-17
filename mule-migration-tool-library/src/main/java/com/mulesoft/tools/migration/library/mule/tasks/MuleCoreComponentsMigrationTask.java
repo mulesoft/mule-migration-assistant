@@ -13,10 +13,12 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICA
 
 import com.mulesoft.tools.migration.library.mule.steps.core.CatchExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExceptionStrategy;
+import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExpressions;
 import com.mulesoft.tools.migration.library.mule.steps.core.CompatibilityPomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyProperties;
 import com.mulesoft.tools.migration.library.mule.steps.core.ExceptionStrategyRef;
 import com.mulesoft.tools.migration.library.mule.steps.core.Flow;
+import com.mulesoft.tools.migration.library.mule.steps.core.ForEachExpressions;
 import com.mulesoft.tools.migration.library.mule.steps.core.ForEachScope;
 import com.mulesoft.tools.migration.library.mule.steps.core.MessagePropertiesTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.core.Poll;
@@ -86,6 +88,8 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new Flow(),
                         new Poll(),
                         new RemoveSchedulersNamespace(),
-                        new CustomFilter());
+                        new CustomFilter(),
+                        new ChoiceExpressions(),
+                        new ForEachExpressions());
   }
 }

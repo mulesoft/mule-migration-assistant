@@ -142,4 +142,11 @@ public final class XmlDslUtils {
 
     return op2v;
   }
+
+  /**
+   * Add the required compatibility namespace declaration on document.
+   */
+  public static void addCompatibilityNamespace(ApplicationModel appModel, Document document) {
+    appModel.addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, document);
+  }
 }
