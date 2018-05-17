@@ -35,14 +35,17 @@ public class SpringConfigInMuleConfig extends AbstractSpringMigratorStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Document springDocument = resolveSpringDocument(object.getDocument());
+    Document muleDocument = object.getDocument();
+    Document springDocument = resolveSpringDocument(muleDocument);
 
     for (Element element : new ArrayList<>(object.getChildren())) {
       element.detach();
       springDocument.getRootElement().addContent(element);
+      moveNamespacesDeclarations(muleDocument, element, springDocument);
     }
 
     object.getParent().removeContent(object);
+
   }
 
 }

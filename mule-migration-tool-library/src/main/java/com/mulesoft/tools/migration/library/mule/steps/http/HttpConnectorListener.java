@@ -68,10 +68,12 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     });
 
     if (object.getChild("response", httpNamespace) == null) {
-      object.addContent(new Element("response", httpNamespace).addContent(compatibilityHeaders(httpNamespace)));
+      Element response = new Element("response", httpNamespace);
+      object.addContent(0, response.addContent(compatibilityHeaders(httpNamespace)));
     }
     if (object.getChild("error-response", httpNamespace) == null) {
-      object.addContent(new Element("error-response", httpNamespace).addContent(compatibilityHeaders(httpNamespace)));
+      Element errorResponse = new Element("error-response", httpNamespace);
+      object.addContent(errorResponse.addContent(compatibilityHeaders(httpNamespace)));
     }
   }
 

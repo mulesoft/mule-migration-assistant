@@ -33,10 +33,13 @@ public class SpringBeans extends AbstractSpringMigratorStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Document springDocument = resolveSpringDocument(object.getDocument());
+    Document muleDocuemnt = object.getDocument();
+    Document springDocument = resolveSpringDocument(muleDocuemnt);
 
     object.detach();
     springDocument.getRootElement().addContent(object);
+
+    moveNamespacesDeclarations(muleDocuemnt, object, springDocument);
   }
 
   // spring:bean or spring:property nested in cxf

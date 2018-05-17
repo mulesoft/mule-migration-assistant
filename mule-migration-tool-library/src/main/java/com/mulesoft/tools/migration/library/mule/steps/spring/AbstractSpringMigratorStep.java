@@ -7,11 +7,14 @@
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
 import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.SPRING;
+import static java.util.Arrays.stream;
 import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -21,7 +24,11 @@ import org.jdom2.input.SAXBuilder;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Common stuff for migrators of Spring elements
@@ -31,6 +38,7 @@ import java.util.Map.Entry;
  */
 abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrationStep {
 
+  private static final String SPRING_FOLDER = "src/main/resources/spring/";
   protected static final Namespace SPRING_NAMESPACE = getNamespace(SPRING.prefix(), SPRING.uri());
 
   protected Document resolveSpringDocument(Document currentDoc) {
@@ -43,9 +51,9 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
         beansPath = resolveSpringBeansPath(entry);
 
         if (getApplicationModel().getApplicationDocuments()
-            .containsKey(Paths.get("src/main/resources/spring/" + beansPath.getFileName().toString()))) {
+            .containsKey(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()))) {
           return getApplicationModel().getApplicationDocuments()
-              .get(Paths.get("src/main/resources/spring/" + beansPath.getFileName().toString()));
+              .get(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()));
         }
       }
     }
@@ -73,8 +81,43 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
     }
 
     getApplicationModel().getApplicationDocuments()
-        .put(Paths.get("src/main/resources/spring/" + beansPath.getFileName().toString()), springDocument);
+        .put(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()), springDocument);
+
     return springDocument;
+  }
+
+  protected void moveNamespacesDeclarations(Document muleDocument, Element movedElement, Document springDocument) {
+    Set<Namespace> declaredNamespaces = doGetNamespacesDeclarationsRecursively(movedElement);
+
+    Attribute schemaLocationAttribute =
+        muleDocument.getRootElement().getAttribute("schemaLocation", muleDocument.getRootElement().getNamespace("xsi"));
+
+    if (schemaLocationAttribute != null) {
+      Map<String, String> locations = new HashMap<>();
+      String[] splitLocations = stream(schemaLocationAttribute.getValue().split("\\s")).filter(s -> !StringUtils.isEmpty(s))
+          .toArray(String[]::new);
+
+      for (int i = 0; i < splitLocations.length; i += 2) {
+        locations.put(splitLocations[i], splitLocations[i + 1]);
+      }
+
+      for (Namespace namespace : declaredNamespaces) {
+        if (!StringUtils.isEmpty(namespace.getURI())) {
+          getApplicationModel().addNameSpace(namespace, locations.get(namespace.getURI()), springDocument.getDocument());
+        }
+      }
+    }
+  }
+
+  private Set<Namespace> doGetNamespacesDeclarationsRecursively(Element movedElement) {
+    Set<Namespace> declaredNamespaces = new TreeSet<>((o1, o2) -> o1.getURI().compareTo(o2.getURI()));
+
+    declaredNamespaces.addAll(movedElement.getNamespacesIntroduced());
+
+    for (Element child : movedElement.getChildren()) {
+      declaredNamespaces.addAll(doGetNamespacesDeclarationsRecursively(child));
+    }
+    return declaredNamespaces;
   }
 
   protected void addSpringModuleConfig(Element rootElement, String beansPath) {

@@ -32,7 +32,8 @@ public class SpringConfigContainingMuleConfig extends AbstractSpringMigratorStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Document springDocument = resolveSpringDocument(object.getDocument());
+    Document muleDocuemnt = object.getDocument();
+    Document springDocument = resolveSpringDocument(muleDocuemnt);
 
     Document muleDoc = object.getDocument();
     Element springRoot = object.getDocument().detachRootElement();
@@ -41,6 +42,8 @@ public class SpringConfigContainingMuleConfig extends AbstractSpringMigratorStep
     springDocument.setRootElement(springRoot);
     muleDoc.setRootElement(object);
     object.addContent(1, springDocument.getRootElement().getChild("config", SPRING_NAMESPACE).detach());
+
+    moveNamespacesDeclarations(muleDocuemnt, springDocument.getRootElement(), springDocument);
   }
 
 }

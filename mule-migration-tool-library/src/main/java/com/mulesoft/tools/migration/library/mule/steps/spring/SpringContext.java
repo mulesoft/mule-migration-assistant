@@ -33,9 +33,11 @@ public class SpringContext extends AbstractSpringMigratorStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Document springDocument = resolveSpringDocument(object.getDocument());
+    Document muleDocument = object.getDocument();
+    Document springDocument = resolveSpringDocument(muleDocument);
 
     object.detach();
     springDocument.getRootElement().addContent(object);
+    moveNamespacesDeclarations(muleDocument, object, springDocument);
   }
 }

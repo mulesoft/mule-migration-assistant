@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.project.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAdditionalNamespaces;
+import static java.lang.System.lineSeparator;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
@@ -54,7 +55,7 @@ public class ApplicationModel {
 
   /**
    * The key of the map is relative to the source of the target project.
-   * 
+   *
    * @return
    */
   public Map<Path, Document> getApplicationDocuments() {
@@ -117,11 +118,11 @@ public class ApplicationModel {
     rootElement.addNamespaceDeclaration(namespace);
 
     Attribute schemaLocationAttribute = rootElement.getAttribute("schemaLocation", rootElement.getNamespace("xsi"));
-    if (!schemaLocationAttribute.getValue().contains(namespace.getURI())
+    if (!schemaLocationAttribute.getValue().contains(namespace.getURI() + " ")
         && !schemaLocationAttribute.getValue().contains(schemaLocation)) {
 
       StringBuilder value = new StringBuilder(schemaLocationAttribute.getValue());
-      value.append(" " + namespace.getURI());
+      value.append(lineSeparator() + " " + namespace.getURI());
       value.append(" " + schemaLocation);
       schemaLocationAttribute.setValue(value.toString());
     }
