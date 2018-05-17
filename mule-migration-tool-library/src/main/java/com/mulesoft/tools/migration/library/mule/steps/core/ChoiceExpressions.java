@@ -25,7 +25,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilit
  */
 public class ChoiceExpressions extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  private static final String XPATH_SELECTOR = "//*[local-name()='choice']";
+  private static final String XPATH_SELECTOR = "//mule:choice";
   private static final String WHEN_NODE_NAME = "when";
   private static final String EXPRESSION_ATTRIBUTE = "expression";
   private ExpressionMigrator expressionMigrator;
@@ -49,10 +49,11 @@ public class ChoiceExpressions extends AbstractApplicationModelMigrationStep imp
     Attribute expression = element.getAttribute(EXPRESSION_ATTRIBUTE);
     if (expression != null) {
       String migratedExpression = expressionMigrator.migrateExpression(expression.getValue(), true, element);
-      if (migratedExpression.contains("mel:")) {
+      migratedExpression = expressionMigrator.wrap(migratedExpression);
+      if (migratedExpression.startsWith("#[mel:")) {
         addCompatibilityNamespace(getApplicationModel(), element.getDocument());
       }
-      expression.setValue(expressionMigrator.wrap(migratedExpression));
+      expression.setValue(migratedExpression);
     }
   }
 

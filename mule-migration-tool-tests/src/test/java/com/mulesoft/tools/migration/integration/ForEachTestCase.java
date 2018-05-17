@@ -7,26 +7,28 @@
 package com.mulesoft.tools.migration.integration;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-public class ForEachTestCase  extends EndToEndTestCase {
+@RunWith(Parameterized.class)
+public class ForEachTestCase extends EndToEndTestCase {
 
-    @Parameterized.Parameters(name = "{0}")
-    public static Object[] params() {
-        return new Object[] {
-                "forEach1",
-                "forEach2"
-        };
-    }
+  @Parameterized.Parameters(name = "{0}")
+  public static Object[] params() {
+    return new Object[] {
+        "forEach1",
+        "forEach2"
+    };
+  }
 
-    private final String appToMigrate;
+  private final String appToMigrate;
 
-    public ForEachTestCase(String appToMigrate) {
-        this.appToMigrate = appToMigrate;
-    }
+  public ForEachTestCase(String appToMigrate) {
+    this.appToMigrate = appToMigrate;
+  }
 
-    @Test
-    public void test() throws Exception {
-        simpleCase(appToMigrate);
-    }
+  @Test
+  public void test() throws Exception {
+    simpleCase(appToMigrate);
+  }
 }

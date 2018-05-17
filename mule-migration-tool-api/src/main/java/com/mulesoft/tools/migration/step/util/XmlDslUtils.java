@@ -113,7 +113,7 @@ public final class XmlDslUtils {
    * Add the required compatibility elements to the flow for a migrated operation to work correctly.
    */
   public static void migrateOperationStructure(ApplicationModel appModel, Element object, MigrationReport report) {
-    appModel.addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, object.getDocument());
+    addCompatibilityNamespace(appModel, object.getDocument());
 
     int index = object.getParent().indexOf(object);
     buildOutboundPropertiesToVar(report, object.getParent(), index);

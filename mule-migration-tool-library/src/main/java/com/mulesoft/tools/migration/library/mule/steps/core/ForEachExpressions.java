@@ -23,7 +23,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilit
  */
 public class ForEachExpressions extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  private static final String XPATH_SELECTOR = "//*[local-name()='foreach']";
+  private static final String XPATH_SELECTOR = "//mule:foreach";
   private static final String EXPRESSION_ATTRIBUTE = "collection";
   private ExpressionMigrator expressionMigrator;
 
@@ -41,10 +41,11 @@ public class ForEachExpressions extends AbstractApplicationModelMigrationStep im
     Attribute expression = element.getAttribute(EXPRESSION_ATTRIBUTE);
     if (expression != null) {
       String migratedExpression = expressionMigrator.migrateExpression(expression.getValue(), true, element);
-      if (migratedExpression.contains("mel:")) {
+      migratedExpression = expressionMigrator.wrap(migratedExpression);
+      if (migratedExpression.startsWith("#[mel:")) {
         addCompatibilityNamespace(getApplicationModel(), element.getDocument());
       }
-      expression.setValue(expressionMigrator.wrap(migratedExpression));
+      expression.setValue(migratedExpression);
     }
   }
 
