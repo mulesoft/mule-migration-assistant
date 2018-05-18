@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.integration;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.System.getProperty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.junit.Assert.fail;
 import static org.mule.runtime.deployment.model.api.application.ApplicationDescriptor.MULE_APPLICATION_CLASSIFIER;
 import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArtifact;
 
@@ -30,6 +31,8 @@ import java.io.InputStreamReader;
 public abstract class EndToEndTestCase extends AbstractEeAppControl {
 
   private static final String DELETE_ON_EXIT = getProperty("mule.test.deleteOnExit");
+
+  private static final String ONLY_MIGRATE = getProperty("mule.test.migratorOnly");
 
   @Rule
   public TemporaryFolder migrationResult = new TemporaryFolder();
@@ -53,6 +56,14 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
       while ((line = reader.readLine()) != null) {
         System.out.println("Migrator: " + line);
       }
+    }
+
+    if (p.waitFor() != 0) {
+      fail("Migration failed");
+    }
+
+    if (ONLY_MIGRATE != null) {
+      return;
     }
 
     BundleDescriptor migratedAppDescriptor = new BundleDescriptor.Builder().setGroupId("org.mule.migrated")

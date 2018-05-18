@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.munit.steps;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -48,6 +49,6 @@ public class RemoveSpringImport extends AbstractApplicationModelMigrationStep {
   }
 
   public boolean isMUnitFile(Document document) {
-    return document.getBaseURI().contains(MUNIT_PATH);
+    return document.getBaseURI() != null && document.getBaseURI().contains(MUNIT_PATH);
   }
 }

@@ -6,6 +6,9 @@
  */
 package com.mulesoft.tools.migration.project.model.pom;
 
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.buildMinimalMule4ApplicationPom;
+import static java.util.stream.Collectors.toList;
+
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -15,14 +18,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.buildMinimalMule4ApplicationPom;
-import static java.util.stream.Collectors.toList;
 
 /**
  * The pom model.
@@ -83,8 +83,12 @@ public class PomModel {
    */
   public boolean removeDependency(Dependency dependency) {
     int originalNumDependencies = model.getDependencies().size();
-    List dependencies = model.getDependencies().stream().filter(dep -> dep.equals(dependency)).collect(toList());
-    model.setDependencies(dependencies);
+    List dependencies = model.getDependencies().stream()
+        .filter(dep -> dep.getGroupId().equals(dependency.getGroupId()) && dep.getArtifactId().equals(dep.getArtifactId()))
+        .collect(toList());
+    List<org.apache.maven.model.Dependency> newDeps = new ArrayList<>(model.getDependencies());
+    newDeps.removeAll(dependencies);
+    model.setDependencies(newDeps);
     return model.getDependencies().size() == originalNumDependencies - 1;
   }
 

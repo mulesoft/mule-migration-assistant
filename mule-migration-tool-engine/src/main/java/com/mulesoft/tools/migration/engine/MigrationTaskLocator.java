@@ -11,26 +11,27 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.stream.Collectors;
-
-import com.google.common.collect.Lists;
 import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.PostprocessMuleApplication;
 import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
+import com.mulesoft.tools.migration.library.mule.tasks.PropertiesMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.ScriptingMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.SecurePropertiesMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.SpringMigrationTask;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationTask;
 import com.mulesoft.tools.migration.task.Version;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 /**
  * The goal of this class is to locate migration tasks
@@ -89,6 +90,8 @@ public class MigrationTaskLocator {
   public List<AbstractMigrationTask> getCoreMigrationTasks() {
     List<AbstractMigrationTask> coreMigrationTasks = new ArrayList<>();
 
+    coreMigrationTasks.add(new SecurePropertiesMigrationTask());
+    coreMigrationTasks.add(new PropertiesMigrationTask());
     coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
     coreMigrationTasks.add(new HTTPMigrationTask());
     coreMigrationTasks.add(new SocketsMigrationTask());
@@ -96,6 +99,8 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new EndpointsMigrationTask());
     coreMigrationTasks.add(new ScriptingMigrationTask());
     coreMigrationTasks.add(new MunitMigrationTask());
+    // Spring has to run after MUnit, since MUnit in Mule 3 has some custom spring components that are removed by the migrator
+    coreMigrationTasks.add(new SpringMigrationTask());
 
     return coreMigrationTasks;
   }

@@ -6,17 +6,21 @@
  */
 package com.mulesoft.tools.migration.project.model.artifact;
 
-import org.apache.commons.io.FileUtils;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils.buildMinimalMule4ArtifactJson;
+
 import org.mule.runtime.api.deployment.meta.MuleApplicationModel;
+import org.mule.runtime.api.deployment.meta.MuleApplicationModel.MuleApplicationModelBuilder;
+import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptorBuilder;
 import org.mule.runtime.api.deployment.persistence.MuleApplicationModelJsonSerializer;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils.buildMinimalMule4ArtifactJson;
+import java.util.TreeSet;
 
 /**
  * The mule-artifact.json representational model.
@@ -27,13 +31,34 @@ import static com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJs
 public class MuleArtifactJsonModel {
 
   private MuleApplicationModel model;
+  private Set<String> exportedPackages = new TreeSet<>();
 
   protected MuleArtifactJsonModel(MuleApplicationModel muleApplicationModel) {
     this.model = muleApplicationModel;
   }
 
+  @Override
   public String toString() {
+    if (!exportedPackages.isEmpty()) {
+      MuleArtifactLoaderDescriptorBuilder builder =
+          new MuleArtifactLoaderDescriptorBuilder().setId(model.getClassLoaderModelLoaderDescriptor().getId());
+      model.getClassLoaderModelLoaderDescriptor().getAttributes().forEach((k, v) -> {
+        builder.addProperty(k, v);
+      });
+
+      MuleApplicationModelBuilder modelBuilder = new MuleApplicationModelBuilder();
+      modelBuilder.setName(model.getName());
+      modelBuilder.setRequiredProduct(model.getRequiredProduct());
+      modelBuilder.setMinMuleVersion(model.getMinMuleVersion());
+      modelBuilder.withBundleDescriptorLoader(model.getBundleDescriptorLoader());
+      modelBuilder.withClassLoaderModelDescriptorLoader(builder.addProperty("exportedPackages", exportedPackages).build());
+      modelBuilder.setConfigs(model.getConfigs());
+      modelBuilder.setRedeploymentEnabled(model.isRedeploymentEnabled());
+      modelBuilder.setSecureProperties(model.getSecureProperties());
+      model = modelBuilder.build();
+    }
     return new MuleApplicationModelJsonSerializer().serialize(model);
+
   }
 
   /**
@@ -88,4 +113,12 @@ public class MuleArtifactJsonModel {
 
   }
 
+  /**
+   * Adds a package to be exported by the app.
+   *
+   * @param packageName the name of the package to be exported by the application so it's accessible from the runtime and plugins.
+   */
+  public void addExportedPackage(String packageName) {
+    exportedPackages.add(packageName);
+  }
 }

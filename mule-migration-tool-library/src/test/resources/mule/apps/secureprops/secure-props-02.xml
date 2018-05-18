@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    
+    <secure-properties:config key="${prod.key}" file="test.${env}.properties" name="Secure_Property_Placeholder">
+        <secure-properties:encrypt algorithm="Blowfish" mode="CBC"/>
+    </secure-properties:config>
+    
+    <flow name="test">
+        <logger message="${my.property}"/>
+    </flow>
+
+</mule>

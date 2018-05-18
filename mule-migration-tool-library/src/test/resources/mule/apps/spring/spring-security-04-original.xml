@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd">
+
+    <flow name="authorizeAll">
+        <mule-ss:authorization-filter requiredAuthorities="ROLE_CONTRIBUTOR"/>
+        <mule-ss:authorization-filter requiredAuthorities="ROLE_ADMIN"/>
+    </flow>
+
+</mule>

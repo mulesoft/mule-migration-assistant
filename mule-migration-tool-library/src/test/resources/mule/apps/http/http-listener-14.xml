@@ -14,16 +14,16 @@
     
     <flow name="testFlow">
         <http:listener config-ref="listenerConfig" path="${path}">
-            <http:error-response>
-                <http:headers>
-                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
-                </http:headers>
-            </http:error-response>
             <http:response>
                 <http:headers>
                     #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
                 </http:headers>
             </http:response>
+            <http:error-response>
+                <http:headers>
+                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
+                </http:headers>
+            </http:error-response>
         </http:listener>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
