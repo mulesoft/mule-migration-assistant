@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"	
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <flow name="foreach2Flow">
+        <set-variable variableName="testVar" value="#[[1,2,3,4]]" doc:name="Variable"/>
+        <foreach collection="#[flowVars.testVar]" doc:name="For Each">
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        </foreach>
+    </flow>
+</mule>
