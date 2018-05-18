@@ -11,35 +11,28 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 
 /**
- * Migrates the spring-security namespace definition.
+ * Migrates the authorization-filter element.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class SpringSecurity extends AbstractSpringMigratorStep {
+public class AuthorizationFilter extends AbstractSpringMigratorStep {
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri()='http://www.mulesoft.org/schema/mule/spring-security' and (local-name()='security-manager' or local-name()='authorization-filter')]";
+      "//*[namespace-uri()='http://www.mulesoft.org/schema/mule/spring-security' and local-name()='authorization-filter']";
 
   @Override
   public String getDescription() {
-    return "Migrates the spring-security namespace definition.";
+    return "Migrates the authorization-filter element.";
   }
 
-  public SpringSecurity() {
+  public AuthorizationFilter() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setNamespace(SPRING_MODULE_NAMESPACE);
-    for (Element provider : object.getChildren("delegate-security-provider", SPRING_SECURITY_NAMESPACE)) {
-      provider.setNamespace(SPRING_MODULE_NAMESPACE);
-      for (Element property : provider
-          .getChildren("security-property", SPRING_SECURITY_NAMESPACE)) {
-        property.setNamespace(SPRING_MODULE_NAMESPACE);
-      }
-    }
 
   }
 

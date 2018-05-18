@@ -58,12 +58,14 @@ public class SpringSecurityTest {
   }
 
   private SpringConfigInMuleConfig springConfigInMuleConfig;
-  private SpringSecurity securityManager;
+  private SecurityManager securityManager;
+  private AuthorizationFilter authorizationFilter;
 
   @Before
   public void setUp() throws Exception {
     springConfigInMuleConfig = new SpringConfigInMuleConfig();
-    securityManager = new SpringSecurity();
+    securityManager = new SecurityManager();
+    authorizationFilter = new AuthorizationFilter();
   }
 
   @Test
@@ -85,6 +87,8 @@ public class SpringSecurityTest {
         .forEach(node -> springConfigInMuleConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, securityManager.getAppliedTo().getExpression())
         .forEach(node -> securityManager.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, authorizationFilter.getAppliedTo().getExpression())
+        .forEach(node -> authorizationFilter.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter muleOutputter = new XMLOutputter(Format.getPrettyFormat());
     String muleXmlString = muleOutputter.outputString(doc);
