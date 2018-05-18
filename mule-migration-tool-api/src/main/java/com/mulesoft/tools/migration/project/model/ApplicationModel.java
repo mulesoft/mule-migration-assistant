@@ -55,8 +55,6 @@ public class ApplicationModel {
 
   /**
    * The key of the map is relative to the source of the target project.
-   *
-   * @return
    */
   public Map<Path, Document> getApplicationDocuments() {
     return applicationDocuments;

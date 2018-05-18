@@ -40,7 +40,6 @@ public class SecurityManager extends AbstractSpringMigratorStep {
         property.setNamespace(SPRING_MODULE_NAMESPACE);
       }
     }
-
   }
 
 }

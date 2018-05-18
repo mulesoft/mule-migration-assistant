@@ -42,6 +42,4 @@ public class SpringBeans extends AbstractSpringMigratorStep {
     moveNamespacesDeclarations(muleDocuemnt, object, springDocument);
   }
 
-  // spring:bean or spring:property nested in cxf
-
 }

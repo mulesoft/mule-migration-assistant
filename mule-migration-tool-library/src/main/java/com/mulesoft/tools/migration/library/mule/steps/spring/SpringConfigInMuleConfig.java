@@ -45,7 +45,6 @@ public class SpringConfigInMuleConfig extends AbstractSpringMigratorStep {
     }
 
     object.getParent().removeContent(object);
-
   }
 
 }
