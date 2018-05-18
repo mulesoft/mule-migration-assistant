@@ -23,7 +23,9 @@ import org.jdom2.Element;
  */
 public class SpringContributions extends AbstractSpringMigratorStep {
 
-  private static final String ADDITIONAL_SPRING_NAMESPACES = System.getProperty("mule.migration.additionalSpringNamespaces");
+  public static final String ADDITIONAL_SPRING_NAMESPACES_PROP = "mule.migration.additionalSpringNamespaces";
+
+  private static final String ADDITIONAL_SPRING_NAMESPACES = System.getProperty(ADDITIONAL_SPRING_NAMESPACES_PROP);
 
   public static final String XPATH_SELECTOR =
       "/mule:mule/*[starts-with(namespace-uri(), 'http://www.springframework.org/schema') %s]";
