@@ -22,7 +22,7 @@
     <flow name="Test">
         <file:listener directory="${FileMoveToFunctionalTestCase-inputDirectory}"
                        moveToDirectory="${FileMoveToFunctionalTestCase-moveToDirectory}"
-                       renameTo="#[mel:message.inboundProperties.originalFilename]_#[message.id]"
+                       renameTo="#[&quot;$(vars.compatibility_inboundProperties.originalFilename)_$(message.id)&quot;]"
                        recursive="false"
                        config-ref="FileConnector" matcher="FileConnector-TestMatcher"
                        applyPostActionWhenFailed="false">

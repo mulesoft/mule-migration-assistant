@@ -116,6 +116,27 @@ public class MelToDwExpressionMigratorTest {
     }
   }
 
+  @Test
+  public void migrateMelInterpolation() {
+    String script = "#[message.inboundProperties.originalFilename]_#[message.id]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("\"$(vars.compatibility_inboundProperties.originalFilename)_$(message.id)\""));
+  }
+
+  @Test
+  public void migrateMelInterpolationWithMelPrefix() {
+    String script = "#[mel:message.inboundProperties.originalFilename]_#[message.id]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("\"$(vars.compatibility_inboundProperties.originalFilename)_$(message.id)\""));
+  }
+
+  @Test
+  public void migrateMelEmptyList() {
+    String script = "#[[]]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("[]"));
+  }
+
   @Test(expected = IllegalArgumentException.class)
   public void isWrappedNull() {
     expressionMigrator.isWrapped(null);
