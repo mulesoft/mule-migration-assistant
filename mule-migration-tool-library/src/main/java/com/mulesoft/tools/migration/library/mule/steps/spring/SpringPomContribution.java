@@ -6,12 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.addSharedLibs;
+
+import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
-
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Adds the Spring Module dependency
@@ -21,6 +22,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  */
 public class SpringPomContribution implements PomContribution {
 
+  private static final String SPRING_MODULE_VERSION = "1.1.1";
   private static final String SPRING_VERSION = "4.3.17.RELEASE";
   private static final String SPRING_SECURITY_VERSION = "4.2.6.RELEASE";
 
@@ -34,79 +36,53 @@ public class SpringPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-spring-module")
-        .withVersion("1.1.1")
+        .withVersion(SPRING_MODULE_VERSION)
         .withClassifier("mule-plugin")
         .build());
 
-    object.addDependency(new DependencyBuilder()
+    Dependency springCore = new DependencyBuilder()
         .withGroupId("org.springframework")
         .withArtifactId("spring-core")
         .withVersion(SPRING_VERSION)
-        .build());
+        .build();
+    object.addDependency(springCore);
 
-    object.addDependency(new DependencyBuilder()
+    Dependency springBeans = new DependencyBuilder()
         .withGroupId("org.springframework")
         .withArtifactId("spring-beans")
         .withVersion(SPRING_VERSION)
-        .build());
+        .build();
+    object.addDependency(springBeans);
 
-    object.addDependency(new DependencyBuilder()
+    Dependency springContext = new DependencyBuilder()
         .withGroupId("org.springframework")
         .withArtifactId("spring-context")
         .withVersion(SPRING_VERSION)
-        .build());
+        .build();
+    object.addDependency(springContext);
 
-    object.addDependency(new DependencyBuilder()
+    Dependency springAop = new DependencyBuilder()
         .withGroupId("org.springframework")
         .withArtifactId("spring-aop")
         .withVersion(SPRING_VERSION)
-        .build());
+        .build();
+    object.addDependency(springAop);
 
-    object.addDependency(new DependencyBuilder()
+    Dependency springSecurityCore = new DependencyBuilder()
         .withGroupId("org.springframework.security")
         .withArtifactId("spring-security-core")
         .withVersion(SPRING_SECURITY_VERSION)
-        .build());
+        .build();
+    object.addDependency(springSecurityCore);
 
-    object.addDependency(new DependencyBuilder()
+    Dependency springSecurityConfig = new DependencyBuilder()
         .withGroupId("org.springframework.security")
         .withArtifactId("spring-security-config")
         .withVersion(SPRING_SECURITY_VERSION)
-        .build());
+        .build();
+    object.addDependency(springSecurityConfig);
 
-    // add spring as shared libs
-    object.getPlugins().stream()
-        .filter(plugin -> "org.mule.tools.maven".equals(plugin.getGroupId())
-            && "mule-maven-plugin".equals(plugin.getArtifactId()))
-        .findFirst().map(p -> {
-          Xpp3Dom configuration = p.getConfiguration();
-          Xpp3Dom sharedLibraries = configuration.getChild("sharedLibraries");
-          if (sharedLibraries == null) {
-            sharedLibraries = new Xpp3Dom("sharedLibraries");
-            p.getConfiguration().addChild(sharedLibraries);
-          }
-
-          return sharedLibraries;
-        }).ifPresent(sharedLibraries -> {
-          addSharedLib(sharedLibraries, "org.springframework", "spring-core");
-          addSharedLib(sharedLibraries, "org.springframework", "spring-beans");
-          addSharedLib(sharedLibraries, "org.springframework", "spring-context");
-          addSharedLib(sharedLibraries, "org.springframework", "spring-aop");
-          addSharedLib(sharedLibraries, "org.springframework.security", "spring-security-core");
-          addSharedLib(sharedLibraries, "org.springframework.security", "spring-security-config");
-        });
-
-  }
-
-  private void addSharedLib(Xpp3Dom sharedLibraries, String groupId, String artifactId) {
-    Xpp3Dom sharedLib = new Xpp3Dom("sharedLibrary");
-    Xpp3Dom groupIdNode = new Xpp3Dom("groupId");
-    groupIdNode.setValue(groupId);
-    sharedLib.addChild(groupIdNode);
-    Xpp3Dom artifactIdNode = new Xpp3Dom("artifactId");
-    sharedLib.addChild(artifactIdNode);
-    artifactIdNode.setValue(artifactId);
-    sharedLibraries.addChild(sharedLib);
+    addSharedLibs(object, springCore, springBeans, springContext, springAop, springSecurityCore, springSecurityConfig);
   }
 
 }

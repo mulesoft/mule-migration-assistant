@@ -48,7 +48,8 @@ public class SpringTest {
         "spring-06",
         "spring-07",
         "spring-08",
-        "spring-09"
+        "spring-09",
+        "spring-10"
     };
   }
 
@@ -67,6 +68,7 @@ public class SpringTest {
   private SpringConfigInMuleConfig springConfigInMuleConfig;
   private SpringBeans springBeans;
   private SpringContext springContext;
+  private SpringContributions springContributions;
 
   @Before
   public void setUp() throws Exception {
@@ -75,6 +77,7 @@ public class SpringTest {
     springConfigInMuleConfig = new SpringConfigInMuleConfig();
     springBeans = new SpringBeans();
     springContext = new SpringContext();
+    springContributions = new SpringContributions();
   }
 
   @Test
@@ -93,6 +96,7 @@ public class SpringTest {
     springConfigInMuleConfig.setApplicationModel(appModel);
     springBeans.setApplicationModel(appModel);
     springContext.setApplicationModel(appModel);
+    springContributions.setApplicationModel(appModel);
 
     getElementsFromDocument(doc, springPropertiesPlaceholder.getAppliedTo().getExpression())
         .forEach(node -> springPropertiesPlaceholder.execute(node, mock(MigrationReport.class)));
@@ -104,6 +108,8 @@ public class SpringTest {
         .forEach(node -> springBeans.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, springContext.getAppliedTo().getExpression())
         .forEach(node -> springContext.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, springContributions.getAppliedTo().getExpression())
+        .forEach(node -> springContributions.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter muleOutputter = new XMLOutputter(Format.getPrettyFormat());
     String muleXmlString = muleOutputter.outputString(doc);

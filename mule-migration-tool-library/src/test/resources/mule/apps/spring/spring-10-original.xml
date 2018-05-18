@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring-beans="http://www.springframework.org/schema/beans"
+       xmlns:aop = "http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-current.xsd
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    
+    <aop:config>
+       <aop:aspect id="myAspect" ref="aBean">
+          <aop:pointcut id="businessService" expression="execution(*com.xyz.myapp.service.*.*(..))"/>
+          <aop:before pointcut-ref="businessService" method="doRequiredTask"/>
+       </aop:aspect>
+    </aop:config>
+    <spring-beans:bean id="aBean" class="org.mule.spring.MyBean"/>
+    
+    <flow name="test">
+        <logger message="${my.property}"/>
+    </flow>
+
+</mule>

@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps.springsecurity;
+package com.mulesoft.tools.migration.library.mule.steps.spring;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -14,7 +14,6 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
-import com.mulesoft.tools.migration.library.mule.steps.spring.SpringConfigInMuleConfig;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -35,7 +34,7 @@ import java.nio.file.Paths;
 @RunWith(Parameterized.class)
 public class SpringSecurityTest {
 
-  private static final Path SPRING_SECURITY_EXAMPLES_PATH = Paths.get("mule/apps/springsecurity");
+  private static final Path SPRING_SECURITY_EXAMPLES_PATH = Paths.get("mule/apps/spring");
 
 
   @Parameters(name = "{0}")
@@ -43,7 +42,8 @@ public class SpringSecurityTest {
     return new Object[] {
         "spring-security-01",
         "spring-security-02",
-        "spring-security-03"
+        "spring-security-03",
+        "spring-security-04"
     };
   }
 
@@ -58,12 +58,12 @@ public class SpringSecurityTest {
   }
 
   private SpringConfigInMuleConfig springConfigInMuleConfig;
-  private SecurityManager securityManager;
+  private SpringSecurity securityManager;
 
   @Before
   public void setUp() throws Exception {
     springConfigInMuleConfig = new SpringConfigInMuleConfig();
-    securityManager = new SecurityManager();
+    securityManager = new SpringSecurity();
   }
 
   @Test

@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.project.model.pom;
 
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+
 /**
  * Some helper functions to manage the pom model.
  *
@@ -76,5 +78,32 @@ public class PomModelUtils {
     repository.setUrl(MULESOFT_RELEASES_REPOSITORY_URL);
     repository.setLayout(DEFAULT_LAYOUT);
     return repository;
+  }
+
+  public static void addSharedLibs(PomModel model, Dependency... dependencies) {
+    model.getPlugins().stream()
+        .filter(plugin -> "org.mule.tools.maven".equals(plugin.getGroupId())
+            && "mule-maven-plugin".equals(plugin.getArtifactId()))
+        .findFirst().map(p -> {
+          Xpp3Dom configuration = p.getConfiguration();
+          Xpp3Dom sharedLibraries = configuration.getChild("sharedLibraries");
+          if (sharedLibraries == null) {
+            sharedLibraries = new Xpp3Dom("sharedLibraries");
+            p.getConfiguration().addChild(sharedLibraries);
+          }
+
+          return sharedLibraries;
+        }).ifPresent(sharedLibraries -> {
+          for (Dependency dependency : dependencies) {
+            Xpp3Dom sharedLib = new Xpp3Dom("sharedLibrary");
+            Xpp3Dom groupIdNode = new Xpp3Dom("groupId");
+            groupIdNode.setValue(dependency.getGroupId());
+            sharedLib.addChild(groupIdNode);
+            Xpp3Dom artifactIdNode = new Xpp3Dom("artifactId");
+            sharedLib.addChild(artifactIdNode);
+            artifactIdNode.setValue(dependency.getArtifactId());
+            sharedLibraries.addChild(sharedLib);
+          }
+        });
   }
 }

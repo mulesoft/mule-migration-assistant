@@ -16,8 +16,9 @@ import com.mulesoft.tools.migration.library.mule.steps.spring.SpringBeans;
 import com.mulesoft.tools.migration.library.mule.steps.spring.SpringConfigContainingMuleConfig;
 import com.mulesoft.tools.migration.library.mule.steps.spring.SpringConfigInMuleConfig;
 import com.mulesoft.tools.migration.library.mule.steps.spring.SpringContext;
+import com.mulesoft.tools.migration.library.mule.steps.spring.SpringContributions;
 import com.mulesoft.tools.migration.library.mule.steps.spring.SpringPomContribution;
-import com.mulesoft.tools.migration.library.mule.steps.springsecurity.SecurityManager;
+import com.mulesoft.tools.migration.library.mule.steps.spring.SpringSecurity;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -60,9 +61,8 @@ public class SpringMigrationTask extends AbstractMigrationTask {
                         new SpringConfigContainingMuleConfig(),
                         new SpringBeans(),
                         new SpringContext(),
-                        // BEGIN Spring Security
-                        new SecurityManager(),
-                        // END Spring Security
+                        new SpringSecurity(),
+                        new SpringContributions(),
                         new ExportSpringBeanPackages());
   }
 }

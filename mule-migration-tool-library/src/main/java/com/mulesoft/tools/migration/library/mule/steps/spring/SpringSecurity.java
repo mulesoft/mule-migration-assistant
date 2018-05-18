@@ -4,29 +4,29 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps.springsecurity;
+package com.mulesoft.tools.migration.library.mule.steps.spring;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 
 /**
- * Migrates the security-manager definition.
+ * Migrates the spring-security namespace definition.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class SecurityManager extends AbstractSpringSecurityMigratorStep {
+public class SpringSecurity extends AbstractSpringMigratorStep {
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri()='http://www.mulesoft.org/schema/mule/spring-security' and local-name()='security-manager']";
+      "/mule:mule/*[namespace-uri()='http://www.mulesoft.org/schema/mule/spring-security' and (local-name()='security-manager' or local-name()='authorization-filter')]";
 
   @Override
   public String getDescription() {
-    return "Migrates the security-manager definition.";
+    return "Migrates the spring-security namespace definition.";
   }
 
-  public SecurityManager() {
+  public SpringSecurity() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 

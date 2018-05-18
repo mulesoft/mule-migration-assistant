@@ -39,7 +39,12 @@ import java.util.TreeSet;
 abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrationStep {
 
   private static final String SPRING_FOLDER = "src/main/resources/spring/";
+
   protected static final Namespace SPRING_NAMESPACE = getNamespace(SPRING.prefix(), SPRING.uri());
+  protected static final Namespace SPRING_SECURITY_NAMESPACE =
+      Namespace.getNamespace("http://www.mulesoft.org/schema/mule/spring-security");
+  protected static final Namespace SPRING_MODULE_NAMESPACE =
+      Namespace.getNamespace("spring-module", "http://www.mulesoft.org/schema/mule/spring");
 
   protected Document resolveSpringDocument(Document currentDoc) {
     Path beansPath = null;

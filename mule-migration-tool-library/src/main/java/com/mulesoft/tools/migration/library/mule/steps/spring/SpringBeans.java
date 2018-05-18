@@ -43,7 +43,5 @@ public class SpringBeans extends AbstractSpringMigratorStep {
   }
 
   // spring:bean or spring:property nested in cxf
-  // spring-security?
-
 
 }
