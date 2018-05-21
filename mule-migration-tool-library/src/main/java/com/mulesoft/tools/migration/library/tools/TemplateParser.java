@@ -59,7 +59,7 @@ public final class TemplateParser {
     boolean openSingleQuotes = false;
     boolean openDoubleQuotes = false;
 
-    StringBuilder result = new StringBuilder("\"");
+    StringBuilder result = new StringBuilder("'");
     int currentPosition = 0;
     while (currentPosition < template.length()) {
       char c = template.charAt(currentPosition);
@@ -96,7 +96,7 @@ public final class TemplateParser {
       currentPosition++;
     }
 
-    return result.append("\"").toString();
+    return result.append("'").toString();
   }
 
   private int closingBracesPosition(String template, int startingPosition) {
