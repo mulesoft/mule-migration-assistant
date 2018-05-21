@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
+
+    <db:oracle-config name="dbConfig" host="172.16.20.66" port="1521" instance="XE" user="pocholo"
+                      password="password"/>
+</mule>

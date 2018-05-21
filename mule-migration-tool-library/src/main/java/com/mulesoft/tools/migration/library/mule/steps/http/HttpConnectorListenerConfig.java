@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -70,18 +71,6 @@ public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationS
                     "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.",
                     "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
       object.getParentElement().removeContent(object);
-    }
-  }
-
-  protected void copyAttributeIfPresent(final Element source, final Element target, final String attributeName) {
-    copyAttributeIfPresent(source, target, attributeName, attributeName);
-  }
-
-  protected void copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
-                                        final String targetAttributeName) {
-    if (source.getAttribute(sourceAttributeName) != null) {
-      target.setAttribute(targetAttributeName, source.getAttributeValue(sourceAttributeName));
-      source.removeAttribute(sourceAttributeName);
     }
   }
 

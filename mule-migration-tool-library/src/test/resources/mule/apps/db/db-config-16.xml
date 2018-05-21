@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <db:config name="dbConfig">
+        <db:generic-connection url="jdbc:oracle:thin:@172.16.20.66:1521:xe" driverClassName="oracle.jdbc.driver.OracleDriver" user="pocholo" password="password">
+            <db:column-types>
+                <db:column-type typeName="CONTACT_DETAILS" id="2002" className="org.mule.module.db.integration.model.ContactDetails"/>
+                <db:column-type typeName="CONTACT_DETAILS_ARRAY" id="2003"/>
+                <db:column-type typeName="ZIPARRAY" id="2003"/>
+            </db:column-types>
+            <reconnection failsDeployment="true"/>
+        </db:generic-connection>
+    </db:config>
+
+</mule>

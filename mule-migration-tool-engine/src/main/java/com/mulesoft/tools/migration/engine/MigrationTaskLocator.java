@@ -11,6 +11,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
+import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask;
@@ -95,6 +96,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
     coreMigrationTasks.add(new HTTPMigrationTask());
     coreMigrationTasks.add(new SocketsMigrationTask());
+    coreMigrationTasks.add(new DbMigrationTask());
     coreMigrationTasks.add(new FileMigrationTask());
     coreMigrationTasks.add(new EndpointsMigrationTask());
     coreMigrationTasks.add(new ScriptingMigrationTask());

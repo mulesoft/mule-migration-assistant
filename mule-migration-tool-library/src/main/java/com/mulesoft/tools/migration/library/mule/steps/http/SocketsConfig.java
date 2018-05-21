@@ -45,15 +45,4 @@ public class SocketsConfig extends AbstractApplicationModelMigrationStep {
     }
   }
 
-  protected void copyAttributeIfPresent(final Element source, final Element target, final String attributeName) {
-    copyAttributeIfPresent(source, target, attributeName, attributeName);
-  }
-
-  protected void copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
-                                        final String targetAttributeName) {
-    if (source.getAttribute(sourceAttributeName) != null) {
-      target.setAttribute(targetAttributeName, source.getAttributeValue(sourceAttributeName));
-      source.removeAttribute(sourceAttributeName);
-    }
-  }
 }

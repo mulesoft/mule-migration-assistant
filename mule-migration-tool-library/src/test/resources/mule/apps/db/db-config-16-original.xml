@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
+
+    <db:oracle-config name="dbConfig" url="jdbc:oracle:thin:@172.16.20.66:1521:xe" user="pocholo" password="password">
+        <db:data-types>
+            <db:data-type name="CONTACT_DETAILS" id="2002" className="org.mule.module.db.integration.model.ContactDetails"/>
+            <db:data-type name="CONTACT_DETAILS_ARRAY" id="2003"/>
+            <db:data-type name="ZIPARRAY" id="2003"/>
+        </db:data-types>
+    </db:oracle-config>
+
+</mule>
