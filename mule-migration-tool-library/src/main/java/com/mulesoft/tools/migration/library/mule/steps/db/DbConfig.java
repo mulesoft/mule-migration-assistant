@@ -21,6 +21,7 @@ import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +54,12 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
     final Namespace dbNamespace = Namespace.getNamespace("db", DB_NAMESPACE);
 
     if ("template-query".equals(object.getName())) {
+      object.getChildren("template", dbNamespace).forEach(t -> {
+        t.setName("template-query-ref");
+        t.getAttribute("ref").setName("name");
+      });
+
+
       // DSL syntax for template-query hasn't changed
       return;
     }
@@ -153,7 +160,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
                   "Add a suitable jdbc driver dependency for this connection",
                   "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
 
-    for (Element element : object.getChildren()) {
+    for (Element element : new ArrayList<>(object.getChildren())) {
       element.detach();
       connection.addContent(element);
     }

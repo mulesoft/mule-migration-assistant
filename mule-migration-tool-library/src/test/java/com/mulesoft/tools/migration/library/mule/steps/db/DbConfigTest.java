@@ -61,7 +61,8 @@ public class DbConfigTest {
         "db-config-16",
         "db-config-17",
         "db-config-18",
-        "db-config-19"
+        "db-config-19",
+        "db-config-20"
     };
   }
 
