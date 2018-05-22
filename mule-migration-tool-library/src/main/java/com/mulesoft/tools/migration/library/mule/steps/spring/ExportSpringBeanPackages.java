@@ -6,6 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.addSharedLibs;
+
+import com.mulesoft.tools.migration.project.model.pom.Dependency;
+import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -35,7 +39,20 @@ public class ExportSpringBeanPackages extends AbstractSpringMigratorStep {
     if (object.getAttribute("class") != null) {
       String className = object.getAttributeValue("class");
       String packageName = className.substring(0, className.lastIndexOf("."));
-      getApplicationModel().getMuleArtifactJsonModel().ifPresent(m -> m.addExportedPackage(packageName));
+
+      // If we can identify the dependency containing a class used in spring, add it as shared library, otherwise export the
+      // package
+      if (packageName.startsWith("org.enhydra.jdbc")) {
+        Dependency xaPool = new DependencyBuilder()
+            .withGroupId("com.experlog")
+            .withArtifactId("xapool")
+            .withVersion("1.5.0")
+            .build();
+        getApplicationModel().getPomModel().get().addDependency(xaPool);
+        addSharedLibs(getApplicationModel().getPomModel().get(), xaPool);
+      } else {
+        getApplicationModel().getMuleArtifactJsonModel().ifPresent(m -> m.addExportedPackage(packageName));
+      }
     }
   }
 

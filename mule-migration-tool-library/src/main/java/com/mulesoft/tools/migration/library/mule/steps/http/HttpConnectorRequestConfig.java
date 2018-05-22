@@ -9,8 +9,8 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;

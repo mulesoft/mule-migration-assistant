@@ -149,4 +149,35 @@ public final class XmlDslUtils {
   public static void addCompatibilityNamespace(ApplicationModel appModel, Document document) {
     appModel.addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, document);
   }
+
+  /**
+   *
+   * @param source the element to remove the attribute from
+   * @param target the element to add the element to
+   * @param attributeName the name of the attribute to move from source to target
+   * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
+   */
+  public static boolean copyAttributeIfPresent(final Element source, final Element target, final String attributeName) {
+    return copyAttributeIfPresent(source, target, attributeName, attributeName);
+  }
+
+  /**
+   *
+   * @param source the element to remove the attribute from
+   * @param target the element to add the element to
+   * @param sourceAttributeName the name of the attribute to remove from source
+   * @param targetAttributeName the name of the attribute to add to target
+   * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
+   */
+  public static boolean copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
+                                               final String targetAttributeName) {
+    if (source.getAttribute(sourceAttributeName) != null) {
+      target.setAttribute(targetAttributeName, source.getAttributeValue(sourceAttributeName));
+      source.removeAttribute(sourceAttributeName);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 }
