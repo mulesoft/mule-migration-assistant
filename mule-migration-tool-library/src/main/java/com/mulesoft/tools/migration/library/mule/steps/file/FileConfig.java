@@ -238,10 +238,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("moveToPattern") != null) {
       String moveToPattern = object.getAttributeValue("moveToPattern");
       listener.setAttribute("renameTo",
-                            getExpressionMigrator().isWrapped(moveToPattern)
-                                ? getExpressionMigrator()
-                                    .wrap(getExpressionMigrator().migrateExpression(moveToPattern, true, listener))
-                                : moveToPattern);
+                            getExpressionMigrator().migrateExpression(moveToPattern, true, listener));
     }
 
     if (matcherUsed) {

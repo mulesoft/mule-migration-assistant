@@ -14,6 +14,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Document;
@@ -37,6 +38,7 @@ public class SetPropertyTest {
   @Before
   public void setUp() throws Exception {
     setProperty = new SetProperty();
+    setProperty.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
   }
 
   @Ignore

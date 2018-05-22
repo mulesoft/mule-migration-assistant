@@ -109,10 +109,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("moveToPattern") != null) {
       String moveToPattern = object.getAttributeValue("moveToPattern");
       object.setAttribute("renameTo",
-                          getExpressionMigrator().isWrapped(moveToPattern)
-                              ? getExpressionMigrator()
-                                  .wrap(getExpressionMigrator().migrateExpression(moveToPattern, true, object))
-                              : moveToPattern);
+                          getExpressionMigrator().migrateExpression(moveToPattern, true, object));
       object.removeAttribute("moveToPattern");
     }
 
