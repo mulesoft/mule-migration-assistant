@@ -120,21 +120,28 @@ public class MelToDwExpressionMigratorTest {
   public void migrateMelInterpolation() {
     String script = "#[message.inboundProperties.originalFilename]_#[message.id]";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("'$(vars.compatibility_inboundProperties.originalFilename)_$(message.id)'"));
+    assertThat(result, is("#['$(vars.compatibility_inboundProperties.originalFilename)_$(message.id)']"));
   }
 
   @Test
   public void migrateMelInterpolationWithMelPrefix() {
     String script = "#[mel:message.inboundProperties.originalFilename]_#[message.id]";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("'$(vars.compatibility_inboundProperties.originalFilename)_$(message.id)'"));
+    assertThat(result, is("#['$(vars.compatibility_inboundProperties.originalFilename)_$(message.id)']"));
   }
 
   @Test
   public void migrateMelEmptyList() {
     String script = "#[[]]";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("[]"));
+    assertThat(result, is("#[[]]"));
+  }
+
+  @Test
+  public void migrateLiteral() {
+    String script = "static_value";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is(script));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -149,6 +156,6 @@ public class MelToDwExpressionMigratorTest {
     String migratedExpression = expressionMigrator.migrateExpression("#[" + originalExpression + "]", false, elementMock);
     verify(reportMock).report(eq(MigrationReport.Level.WARN), eq(elementMock), eq(elementMock), anyString(), anyString(),
                               anyString());
-    assertThat("Migrated expression is not the expected", migratedExpression, equalTo("mel:" + originalExpression));
+    assertThat("Migrated expression is not the expected", migratedExpression, equalTo("#[mel:" + originalExpression + "]"));
   }
 }

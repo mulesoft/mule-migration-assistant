@@ -34,9 +34,12 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
 
   @Override
   public String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly, Element element) {
+    if (!isWrapped(originalExpression) && !originalExpression.contains("#[")) {
+      return originalExpression;
+    }
     String unwrapped = unwrap(originalExpression);
     if (!unwrapped.contains("#[")) {
-      return translateSingleExpression(unwrapped, dataWeaveBodyOnly, element);
+      return wrap(translateSingleExpression(unwrapped, dataWeaveBodyOnly, element));
     }
     // Probably an interpolation
     TemplateParser muleStyleParser = TemplateParser.createMuleStyleParser();

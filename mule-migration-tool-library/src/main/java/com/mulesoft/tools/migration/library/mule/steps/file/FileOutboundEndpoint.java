@@ -73,7 +73,7 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
             : "null")
         + ","
         + " outputPattern: " + propToDwExpr(object, "outputPattern") + ","
-        + " outputPatternConfig: " + propToDwExpr(object, "outputPatternConfig")
+        + " outputPatternConfig: " + getExpressionMigrator().unwrap(propToDwExpr(object, "outputPatternConfig"))
         + "}"));
 
     if (object.getAttribute("connector-ref") != null) {
