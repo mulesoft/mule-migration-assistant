@@ -12,7 +12,6 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getElementsFromDocument;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
 import static java.util.stream.Collectors.toList;
@@ -25,6 +24,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.xpath.XPathFactory;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -242,9 +242,8 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     Element newMatcher;
     newMatcher = new Element("matcher", fileNs);
 
-    List<Element> referencedMatcher =
-        getElementsFromDocument(object.getDocument(),
-                                "/mule:mule/file:matcher[@name='" + object.getAttributeValue("matcher") + "']");
+    List<Element> referencedMatcher = getApplicationModel().getNodes(XPathFactory.instance()
+        .compile("/mule:mule/file:matcher[@name='" + object.getAttributeValue("matcher") + "']"));
     if (!referencedMatcher.isEmpty()) {
       for (Attribute attribute : referencedMatcher.get(0).getAttributes()) {
         newMatcher.setAttribute(attribute.getName(), attribute.getValue());

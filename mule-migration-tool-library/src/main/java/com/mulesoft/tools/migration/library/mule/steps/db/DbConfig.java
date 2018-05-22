@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.stream.Collectors.toList;
+import static org.jdom2.Content.CType.Element;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -18,8 +19,10 @@ import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
+import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.xpath.XPathFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,13 +57,26 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
     final Namespace dbNamespace = Namespace.getNamespace("db", DB_NAMESPACE);
 
     if ("template-query".equals(object.getName())) {
-      object.getChildren("template", dbNamespace).forEach(t -> {
-        t.setName("template-query-ref");
-        t.getAttribute("ref").setName("name");
-      });
+      List<Element> templateRefs = getApplicationModel().getNodes(XPathFactory.instance()
+          .compile("//*[namespace-uri() = '" + DB_NAMESPACE + "' and local-name() = 'template-query-ref' and @name = '"
+              + object.getAttributeValue("name") + "']"));
 
+      for (Element templateRef : new ArrayList<>(templateRefs)) {
+        List<Content> migratedChildren = object.cloneContent();
+        for (Content migratedChild : migratedChildren) {
+          if (Element == migratedChild.getCType() && "in-param".equals(((Element) migratedChild).getName())) {
+            Element migratedChildElement = (Element) migratedChild;
+            if (migratedChildElement.getAttribute("defaultValue") != null) {
+              migratedChildElement.getAttribute("defaultValue").setName("value");
+            }
+          }
+        }
+        templateRef.getParent().addContent(templateRef.getParent().indexOf(templateRef), migratedChildren);
+        templateRef.detach();
+      }
 
-      // DSL syntax for template-query hasn't changed
+      object.detach();
+
       return;
     }
 

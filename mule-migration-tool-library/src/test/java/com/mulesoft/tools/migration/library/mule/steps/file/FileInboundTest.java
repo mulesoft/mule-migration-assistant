@@ -25,6 +25,7 @@ import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -33,6 +34,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,19 +89,27 @@ public class FileInboundTest {
   private FileTransformers fileTransformers;
   private InboundEndpoint inboundEndpoint;
 
+  private Document doc;
   private ApplicationModel appModel;
 
   @Before
   public void setUp() throws Exception {
+    doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
+
     customFilter = new CustomFilter();
-    fileGlobalEndpoint = new FileGlobalEndpoint();
-    fileConfig = new FileConfig();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock);
     appModel = mock(ApplicationModel.class);
+    when(appModel.getNodes(Mockito.any(XPathExpression.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc,
+                                                          ((XPathExpression) (invocation.getArguments()[0])).getExpression()));
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
+    fileGlobalEndpoint = new FileGlobalEndpoint();
+    fileGlobalEndpoint.setApplicationModel(appModel);
+    fileConfig = new FileConfig();
     fileConfig.setExpressionMigrator(expressionMigrator);
+    fileConfig.setApplicationModel(appModel);
     fileInboundEndpoint = new FileInboundEndpoint();
     fileInboundEndpoint.setExpressionMigrator(expressionMigrator);
     fileInboundEndpoint.setApplicationModel(appModel);
@@ -117,8 +127,6 @@ public class FileInboundTest {
 
   @Test
   public void execute() throws Exception {
-    Document doc =
-        getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
         .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, fileGlobalEndpoint.getAppliedTo().getExpression())

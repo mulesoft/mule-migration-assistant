@@ -13,4 +13,10 @@
 
         <db:in-param name="id" defaultValue="1" type="CUSTOM_TYPE1"/>
     </db:template-query>
+
+    <flow name="flow">
+        <db:select config-ref="dbConfig">
+            <db:template-query-ref name="parameterizedQuery"/>
+        </db:select>
+    </flow>
 </mule>
