@@ -97,18 +97,20 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_data_source_db");
 
       connection = new Element("data-source-connection", dbNamespace);
+      object.addContent(connection);
       copyAttributeIfPresent(object, connection, "dataSource-ref", "dataSourceRef");
 
       List<Attribute> otherAttributes =
           object.getAttributes().stream().filter(att -> !"name".equals(att.getName())).collect(toList());
       if (!otherAttributes.isEmpty()) {
-        report.report(WARN, object, connection,
+        report.report(WARN, connection, connection,
                       "The attributes " + otherAttributes.toString()
                           + " overlap with properties of the referenced DataSource and were removed",
                       "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_data_source_db");
       }
     } else if (object.getAttribute("url") != null) {
       connection = new Element("generic-connection", dbNamespace);
+      object.addContent(connection);
 
       copyAttributeIfPresent(object, connection, "user");
       copyAttributeIfPresent(object, connection, "password");
@@ -121,12 +123,25 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
           connection.setAttribute("driverClassName", "org.apache.derby.jdbc.EmbeddedDriver");
         } else if ("mysql-config".equals(object.getName())) {
           connection.setAttribute("driverClassName", "com.mysql.jdbc.Driver");
+
+          report.report(ERROR, connection, connection,
+                        "Add a suitable jdbc driver dependency for this connection",
+                        "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
         } else if ("oracle-config".equals(object.getName())) {
           connection.setAttribute("driverClassName", "oracle.jdbc.driver.OracleDriver");
+
+          report.report(ERROR, connection, connection,
+                        "Add a suitable jdbc driver dependency for this connection",
+                        "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
+        } else {
+          report.report(ERROR, connection, connection,
+                        "Add a suitable jdbc driver dependency for this connection",
+                        "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
+
         }
       }
 
-      report.report(WARN, object, connection,
+      report.report(WARN, connection, connection,
                     "The config in Mule 3 is specific for an engine, but it contained an 'url' attribute. It will be made generic in order to keep the url.",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_generic_db");
 
@@ -148,12 +163,14 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
       }
     } else if ("derby-config".equals(object.getName())) {
       connection = new Element("derby-connection", dbNamespace);
+      object.addContent(connection);
       copyAttributeIfPresent(object, connection, "user");
       copyAttributeIfPresent(object, connection, "password");
       copyAttributeIfPresent(object, connection, "useXaTransactions");
       copyAttributeIfPresent(object, connection, "transactionIsolation");
     } else if ("mysql-config".equals(object.getName())) {
       connection = new Element("my-sql-connection", dbNamespace);
+      object.addContent(connection);
       copyAttributeIfPresent(object, connection, "database");
       copyAttributeIfPresent(object, connection, "host");
       copyAttributeIfPresent(object, connection, "port");
@@ -161,8 +178,13 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
       copyAttributeIfPresent(object, connection, "password");
       copyAttributeIfPresent(object, connection, "useXaTransactions");
       copyAttributeIfPresent(object, connection, "transactionIsolation");
+
+      report.report(ERROR, connection, connection,
+                    "Add a suitable jdbc driver dependency for this connection",
+                    "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
     } else if ("oracle-config".equals(object.getName())) {
       connection = new Element("oracle-connection", dbNamespace);
+      object.addContent(connection);
       copyAttributeIfPresent(object, connection, "host");
       copyAttributeIfPresent(object, connection, "port");
       copyAttributeIfPresent(object, connection, "instance");
@@ -170,15 +192,17 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
       copyAttributeIfPresent(object, connection, "password");
       copyAttributeIfPresent(object, connection, "useXaTransactions");
       copyAttributeIfPresent(object, connection, "transactionIsolation");
+
+      report.report(ERROR, connection, connection,
+                    "Add a suitable jdbc driver dependency for this connection",
+                    "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
     }
 
-    report.report(ERROR, connection, connection,
-                  "Add a suitable jdbc driver dependency for this connection",
-                  "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
-
     for (Element element : new ArrayList<>(object.getChildren())) {
-      element.detach();
-      connection.addContent(element);
+      if (element != connection) {
+        element.detach();
+        connection.addContent(element);
+      }
     }
 
     Element reconnect = connection.getChild("reconnect", CORE_NAMESPACE);
@@ -193,8 +217,6 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
     connection.addContent(new Element("reconnection", CORE_NAMESPACE).setAttribute("failsDeployment", "true"));
 
     object.setName("config");
-    object.addContent(connection);
-
   }
 
   @Override

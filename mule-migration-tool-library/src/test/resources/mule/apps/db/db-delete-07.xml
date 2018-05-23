@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+               http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <flow name="flow">
+        <set-variable variableName="names" value="#[['Venus', 'Mars']]"/>
+
+        <compatibility:outbound-properties-to-var/>
+        <db:bulk-delete config-ref="dbConfig">
+            <db:sql>#['DELETE FROM PLANET WHERE name = $(payload)']</db:sql>
+        </db:bulk-delete>
+    </flow>
+
+</mule>

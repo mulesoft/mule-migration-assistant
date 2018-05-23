@@ -13,8 +13,12 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 import com.mulesoft.tools.migration.library.mule.steps.db.DbConfig;
 import com.mulesoft.tools.migration.library.mule.steps.db.DbConnectorPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.db.DbDdlExecute;
+import com.mulesoft.tools.migration.library.mule.steps.db.DbDelete;
+import com.mulesoft.tools.migration.library.mule.steps.db.DbExecute;
 import com.mulesoft.tools.migration.library.mule.steps.db.DbInsert;
 import com.mulesoft.tools.migration.library.mule.steps.db.DbSelect;
+import com.mulesoft.tools.migration.library.mule.steps.db.DbStoredProcedure;
 import com.mulesoft.tools.migration.library.mule.steps.db.DbUpdate;
 import com.mulesoft.tools.migration.library.mule.steps.db.JbossTxManager;
 import com.mulesoft.tools.migration.project.ProjectType;
@@ -59,6 +63,10 @@ public class DbMigrationTask extends AbstractMigrationTask {
                         new DbSelect(),
                         new DbInsert(),
                         new DbUpdate(),
+                        new DbDelete(),
+                        new DbExecute(),
+                        new DbStoredProcedure(),
+                        new DbDdlExecute(),
                         new JbossTxManager());
   }
 }

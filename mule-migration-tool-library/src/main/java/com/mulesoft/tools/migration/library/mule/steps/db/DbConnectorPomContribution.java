@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.addSharedLibs;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -32,5 +34,12 @@ public class DbConnectorPomContribution implements PomContribution {
         .withVersion("1.3.2")
         .withClassifier("mule-plugin")
         .build());
+
+    // Due to licensing issues, we may only know the actual GAV of the derby driver.
+    object.getDependencies().stream().filter(dep -> {
+      return "org.apache.derby".equals(dep.getGroupId());
+    }).forEach(dep -> {
+      addSharedLibs(object, dep);
+    });
   }
 }

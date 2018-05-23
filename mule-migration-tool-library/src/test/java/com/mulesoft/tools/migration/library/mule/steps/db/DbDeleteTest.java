@@ -37,7 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RunWith(Parameterized.class)
-public class DbInsertTest {
+public class DbDeleteTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
@@ -47,36 +47,34 @@ public class DbInsertTest {
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "db-insert-01",
-        "db-insert-02",
-        "db-insert-03",
-        "db-insert-04",
-        "db-insert-05",
-        "db-insert-06",
-        "db-insert-07",
-        "db-insert-08",
-        "db-insert-09",
-        "db-insert-10",
-        "db-insert-11",
-        // TODO MMT-151
-        // "db-insert-12",
-        // "db-insert-13",
-        "db-insert-14",
-        "db-insert-15",
-        "db-insert-16"
+        "db-delete-01",
+        "db-delete-02",
+        // TODO MMT-128
+        // "db-delete-03",
+        "db-delete-04",
+        "db-delete-05",
+        "db-delete-06",
+        "db-delete-07",
+        // TODO MMT-128
+        // "db-delete-08",
+        "db-delete-09",
+        "db-delete-10",
+        "db-delete-11",
+        // TODO MMT-128
+        // "db-delete-12"
     };
   }
 
   private final Path configPath;
   private final Path targetPath;
 
-  public DbInsertTest(String filePrefix) {
+  public DbDeleteTest(String filePrefix) {
     configPath = DB_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = DB_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
   }
 
   private TransactionalScope txScope;
-  private DbInsert dbInsert;
+  private DbDelete dbDelete;
 
   private Document doc;
   private ApplicationModel appModel;
@@ -86,23 +84,23 @@ public class DbInsertTest {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
 
     txScope = new TransactionalScope();
-    dbInsert = new DbInsert();
+    dbDelete = new DbDelete();
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(Mockito.any(XPathExpression.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc,
                                                           ((XPathExpression) (invocation.getArguments()[0])).getExpression()));
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
-    dbInsert.setApplicationModel(appModel);
-    dbInsert.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    dbDelete.setApplicationModel(appModel);
+    dbDelete.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
   }
 
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, txScope.getAppliedTo().getExpression())
         .forEach(node -> txScope.execute(node, mock(MigrationReport.class)));
-    getElementsFromDocument(doc, dbInsert.getAppliedTo().getExpression())
-        .forEach(node -> dbInsert.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, dbDelete.getAppliedTo().getExpression())
+        .forEach(node -> dbDelete.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
