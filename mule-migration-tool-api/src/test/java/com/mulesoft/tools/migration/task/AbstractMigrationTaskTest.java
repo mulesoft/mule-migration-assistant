@@ -6,12 +6,15 @@
  */
 package com.mulesoft.tools.migration.task;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
+import org.jdom2.Element;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -101,7 +105,6 @@ public class AbstractMigrationTaskTest {
     ApplicationModelContribution applicationModelContributionMock = mock(ApplicationModelContribution.class);
     ProjectStructureContribution projectStructureContributionMock = mock(ProjectStructureContribution.class);
     PomContribution pomContributionMock = mock(PomContribution.class);
-    PomModel pomModelMock = mock(PomModel.class);
 
     List<MigrationStep> steps = new ArrayList<>();
     steps.add(namespaceContributionMock);
@@ -141,6 +144,58 @@ public class AbstractMigrationTaskTest {
     migrationTask.execute(mock(MigrationReport.class));
   }
 
+  @Test
+  public void shouldExecuteAllStepsAppModelContributionAndElementPresent() {
+    doReturn(newArrayList(mock(Element.class))).when(applicationModelMock).getNodes(any());
+
+    MigrationStepSelector selectorMock = mock(MigrationStepSelector.class);
+    doReturn(newArrayList(mock(ApplicationModelContribution.class))).when(selectorMock).getApplicationModelContributionSteps();
+
+    AbstractMigrationTask taskSpy = spy(AbstractMigrationTask.class);
+    taskSpy.setApplicationModel(applicationModelMock);
+
+    assertThat("It should return true", taskSpy.shouldExecuteAllSteps(selectorMock));
+  }
+
+  @Test
+  public void shouldExecuteAllStepsAppModelContributionAndElementNotPresent() {
+    doReturn(newArrayList()).when(applicationModelMock).getNodes(any());
+
+    MigrationStepSelector selectorMock = mock(MigrationStepSelector.class);
+    doReturn(newArrayList(mock(ApplicationModelContribution.class))).when(selectorMock).getApplicationModelContributionSteps();
+
+    AbstractMigrationTask taskSpy = spy(AbstractMigrationTask.class);
+    taskSpy.setApplicationModel(applicationModelMock);
+
+    assertThat("It should return false", !taskSpy.shouldExecuteAllSteps(selectorMock));
+  }
+
+  @Test
+  public void shouldExecuteAllStepsNoAppModelContributionAndElementPresent() {
+    doReturn(newArrayList(mock(Element.class))).when(applicationModelMock).getNodes(any());
+
+    MigrationStepSelector selectorMock = mock(MigrationStepSelector.class);
+    doReturn(newArrayList()).when(selectorMock).getApplicationModelContributionSteps();
+
+    AbstractMigrationTask taskSpy = spy(AbstractMigrationTask.class);
+    taskSpy.setApplicationModel(applicationModelMock);
+
+    assertThat("It should return true", taskSpy.shouldExecuteAllSteps(selectorMock));
+  }
+
+  @Test
+  public void shouldExecuteAllStepsNoAppModelContributionAndNoElementPresent() {
+    doReturn(newArrayList()).when(applicationModelMock).getNodes(any());
+
+    MigrationStepSelector selectorMock = mock(MigrationStepSelector.class);
+    doReturn(newArrayList()).when(selectorMock).getApplicationModelContributionSteps();
+
+    AbstractMigrationTask taskSpy = spy(AbstractMigrationTask.class);
+    taskSpy.setApplicationModel(applicationModelMock);
+
+    assertThat("It should return true", taskSpy.shouldExecuteAllSteps(selectorMock));
+  }
+
   private static final class MigrationTaskImpl extends AbstractMigrationTask {
 
     private List<MigrationStep> migrationSteps;
@@ -173,6 +228,11 @@ public class AbstractMigrationTaskTest {
     @Override
     public ProjectType getProjectType() {
       return null;
+    }
+
+    @Override
+    protected boolean shouldExecuteAllSteps(MigrationStepSelector stepSelector) {
+      return true;
     }
   }
 
