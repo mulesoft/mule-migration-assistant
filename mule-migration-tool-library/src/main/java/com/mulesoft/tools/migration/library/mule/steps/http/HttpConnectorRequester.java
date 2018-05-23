@@ -10,7 +10,6 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getElementsFromDocument;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.lang.String.format;
@@ -23,6 +22,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.xpath.XPathFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -204,9 +204,8 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
 
       object.removeContent(builderRef);
 
-      Element builder =
-          getElementsFromDocument(object.getDocument(),
-                                  "/mule:mule/http:request-builder[@name='" + builderRef.getAttributeValue("ref") + "']").get(0);
+      Element builder = getApplicationModel().getNodes(XPathFactory.instance()
+          .compile("/mule:mule/http:request-builder[@name='" + builderRef.getAttributeValue("ref") + "']")).get(0);
 
       handleReferencedRequestBuilder(builder, httpNamespace);
       List<Element> builderContent = ImmutableList.copyOf(builder.getChildren()).asList();

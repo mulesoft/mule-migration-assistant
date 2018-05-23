@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -31,6 +32,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,16 +74,24 @@ public class FileConfigTest {
   private FileInboundEndpoint fileInboundEndpoint;
   private FileOutboundEndpoint fileOutboundEndpoint;
 
+  private Document doc;
   private ApplicationModel appModel;
 
   @Before
   public void setUp() throws Exception {
+    doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
+
+    appModel = mock(ApplicationModel.class);
+    when(appModel.getNodes(Mockito.any(XPathExpression.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc,
+                                                          ((XPathExpression) (invocation.getArguments()[0])).getExpression()));
+    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+
     fileGlobalEndpoint = new FileGlobalEndpoint();
     fileConfig = new FileConfig();
     fileConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    fileConfig.setApplicationModel(appModel);
     fileInboundEndpoint = new FileInboundEndpoint();
-    appModel = mock(ApplicationModel.class);
-    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     fileInboundEndpoint.setApplicationModel(appModel);
     fileOutboundEndpoint = new FileOutboundEndpoint();
     fileOutboundEndpoint.setApplicationModel(appModel);
@@ -96,8 +106,6 @@ public class FileConfigTest {
 
   @Test
   public void execute() throws Exception {
-    Document doc =
-        getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, fileGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> fileGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, fileConfig.getAppliedTo().getExpression())

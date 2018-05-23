@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.file;
 
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getElementsFromDocument;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -17,6 +16,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.xpath.XPathFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,12 +48,15 @@ public class FileGlobalEndpoint extends AbstractApplicationModelMigrationStep
     Namespace fileNs = Namespace.getNamespace(FILE.prefix(), FILE.uri());
 
     List<Element> inboundRefsToGlobal = new ArrayList<>();
-    inboundRefsToGlobal.addAll(getElementsFromDocument(object.getDocument(), "/mule:mule/mule:flow/mule:inbound-endpoint[@ref='"
-        + object.getAttributeValue("name") + "']"));
-    inboundRefsToGlobal.addAll(getElementsFromDocument(object.getDocument(), "/mule:mule/mule:flow/file:inbound-endpoint[@ref='"
-        + object.getAttributeValue("name") + "']"));
-    inboundRefsToGlobal.addAll(getElementsFromDocument(object.getDocument(), "/mule:mule/mule:flow/file:endpoint[@ref='"
-        + object.getAttributeValue("name") + "']"));
+    inboundRefsToGlobal
+        .addAll(getApplicationModel().getNodes(XPathFactory.instance().compile("/mule:mule/mule:flow/mule:inbound-endpoint[@ref='"
+            + object.getAttributeValue("name") + "']")));
+    inboundRefsToGlobal
+        .addAll(getApplicationModel().getNodes(XPathFactory.instance().compile("/mule:mule/mule:flow/file:inbound-endpoint[@ref='"
+            + object.getAttributeValue("name") + "']")));
+    inboundRefsToGlobal
+        .addAll(getApplicationModel().getNodes(XPathFactory.instance().compile("/mule:mule/mule:flow/file:endpoint[@ref='"
+            + object.getAttributeValue("name") + "']")));
 
     for (Element referent : inboundRefsToGlobal) {
       referent.setNamespace(fileNs);
@@ -71,12 +74,15 @@ public class FileGlobalEndpoint extends AbstractApplicationModelMigrationStep
     }
 
     List<Element> outboundRefsToGlobal = new ArrayList<>();
-    outboundRefsToGlobal.addAll(getElementsFromDocument(object.getDocument(), "/mule:mule/mule:flow/mule:outbound-endpoint[@ref='"
-        + object.getAttributeValue("name") + "']"));
-    outboundRefsToGlobal.addAll(getElementsFromDocument(object.getDocument(), "/mule:mule/mule:flow/file:outbound-endpoint[@ref='"
-        + object.getAttributeValue("name") + "']"));
-    outboundRefsToGlobal.addAll(getElementsFromDocument(object.getDocument(), "/mule:mule/mule:flow/file:endpoint[@ref='"
-        + object.getAttributeValue("name") + "']"));
+    outboundRefsToGlobal.addAll(getApplicationModel()
+        .getNodes(XPathFactory.instance().compile("/mule:mule/mule:flow/mule:outbound-endpoint[@ref='"
+            + object.getAttributeValue("name") + "']")));
+    outboundRefsToGlobal.addAll(getApplicationModel()
+        .getNodes(XPathFactory.instance().compile("/mule:mule/mule:flow/file:outbound-endpoint[@ref='"
+            + object.getAttributeValue("name") + "']")));
+    outboundRefsToGlobal
+        .addAll(getApplicationModel().getNodes(XPathFactory.instance().compile("/mule:mule/mule:flow/file:endpoint[@ref='"
+            + object.getAttributeValue("name") + "']")));
 
     for (Element referent : outboundRefsToGlobal) {
       referent.setNamespace(fileNs);

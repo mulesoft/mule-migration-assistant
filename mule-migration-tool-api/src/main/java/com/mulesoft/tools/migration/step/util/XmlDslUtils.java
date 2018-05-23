@@ -18,12 +18,6 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.Parent;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Provides reusable methods for common migration scenarios.
@@ -55,21 +49,6 @@ public final class XmlDslUtils {
     if (attr != null && exprMigrator.isWrapped(attr.getValue())) {
       attr.setValue(exprMigrator.wrap(exprMigrator.migrateExpression(attr.getValue(), true, attr.getParent())));
     }
-  }
-
-  /**
-   *
-   * @param doc
-   * @param xPathExpression
-   * @return
-   */
-  public static List<Element> getElementsFromDocument(Document doc, String xPathExpression) {
-    List<Namespace> namespaces = new ArrayList<>();
-    namespaces.add(Namespace.getNamespace("mule", CORE_NS_URI));
-    namespaces.addAll(doc.getRootElement().getAdditionalNamespaces());
-
-    XPathExpression<Element> xpath = XPathFactory.instance().compile(xPathExpression, Filters.element(), null, namespaces);
-    return xpath.evaluate(doc);
   }
 
   /**
@@ -113,11 +92,21 @@ public final class XmlDslUtils {
    * Add the required compatibility elements to the flow for a migrated operation to work correctly.
    */
   public static void migrateOperationStructure(ApplicationModel appModel, Element object, MigrationReport report) {
+    migrateOperationStructure(appModel, object, report, true);
+  }
+
+  /**
+   * Add the required compatibility elements to the flow for a migrated operation to work correctly.
+   */
+  public static void migrateOperationStructure(ApplicationModel appModel, Element object, MigrationReport report,
+                                               boolean outputsAttributes) {
     addCompatibilityNamespace(appModel, object.getDocument());
 
     int index = object.getParent().indexOf(object);
     buildOutboundPropertiesToVar(report, object.getParent(), index);
-    buildAttributesToInboundProperties(report, object.getParent(), index + 2);
+    if (outputsAttributes) {
+      buildAttributesToInboundProperties(report, object.getParent(), index + 2);
+    }
   }
 
   private static Element buildAttributesToInboundProperties(MigrationReport report, Parent parent, int index) {

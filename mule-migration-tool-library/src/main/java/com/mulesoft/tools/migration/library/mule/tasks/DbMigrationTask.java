@@ -13,6 +13,9 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 import com.mulesoft.tools.migration.library.mule.steps.db.DbConfig;
 import com.mulesoft.tools.migration.library.mule.steps.db.DbConnectorPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.db.DbInsert;
+import com.mulesoft.tools.migration.library.mule.steps.db.DbSelect;
+import com.mulesoft.tools.migration.library.mule.steps.db.DbUpdate;
 import com.mulesoft.tools.migration.library.mule.steps.db.JbossTxManager;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
@@ -53,6 +56,9 @@ public class DbMigrationTask extends AbstractMigrationTask {
   public List<MigrationStep> getSteps() {
     return newArrayList(new DbConnectorPomContribution(),
                         new DbConfig(),
+                        new DbSelect(),
+                        new DbInsert(),
+                        new DbUpdate(),
                         new JbossTxManager());
   }
 }

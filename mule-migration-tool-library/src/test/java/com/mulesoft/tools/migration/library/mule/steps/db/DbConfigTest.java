@@ -21,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,6 +29,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -77,12 +79,18 @@ public class DbConfigTest {
   private DbConfig dbConfig;
   private JbossTxManager jbossTxManager;
 
+  private Document doc;
   private ApplicationModel appModel;
 
   @Before
   public void setUp() throws Exception {
+    doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
+
     dbConfig = new DbConfig();
     appModel = mock(ApplicationModel.class);
+    when(appModel.getNodes(Mockito.any(XPathExpression.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc,
+                                                          ((XPathExpression) (invocation.getArguments()[0])).getExpression()));
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     dbConfig.setApplicationModel(appModel);
@@ -92,8 +100,6 @@ public class DbConfigTest {
 
   @Test
   public void execute() throws Exception {
-    Document doc =
-        getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, dbConfig.getAppliedTo().getExpression())
         .forEach(node -> dbConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, jbossTxManager.getAppliedTo().getExpression())

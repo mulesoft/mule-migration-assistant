@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
@@ -49,16 +50,16 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
     if ("request-config".equals(object.getName())) {
       final Element requestConnection = new Element("request-connection", httpNamespace);
       copyAttributeIfPresent(object, requestConnection, "protocol");
-      copyAttributeIfPresent(object, requestConnection, "host", "host", true);
-      copyAttributeIfPresent(object, requestConnection, "port", "port", true);
+      copyExpressionAttributeIfPresent(object, requestConnection, "host", "host", true);
+      copyExpressionAttributeIfPresent(object, requestConnection, "port", "port", true);
       copyAttributeIfPresent(object, requestConnection, "usePersistentConnections");
       copyAttributeIfPresent(object, requestConnection, "maxConnections");
       copyAttributeIfPresent(object, requestConnection, "connectionIdleTimeout");
       copyAttributeIfPresent(object, requestConnection, "streamResponse");
       copyAttributeIfPresent(object, requestConnection, "responseBufferSize");
-      copyAttributeIfPresent(object, requestConnection, "tlsContext-ref", "tlsContext", false);
-      copyAttributeIfPresent(object, requestConnection, "clientSocketProperties-ref", "clientSocketProperties", false);
-      copyAttributeIfPresent(object, requestConnection, "proxy-ref", "proxyConfig", false);
+      copyAttributeIfPresent(object, requestConnection, "tlsContext-ref", "tlsContext");
+      copyAttributeIfPresent(object, requestConnection, "clientSocketProperties-ref", "clientSocketProperties");
+      copyAttributeIfPresent(object, requestConnection, "proxy-ref", "proxyConfig");
 
       object.addContent(requestConnection);
 
@@ -125,12 +126,8 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
     }
   }
 
-  protected void copyAttributeIfPresent(final Element source, final Element target, final String attributeName) {
-    copyAttributeIfPresent(source, target, attributeName, attributeName, false);
-  }
-
-  protected void copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
-                                        final String targetAttributeName, boolean expression) {
+  protected void copyExpressionAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
+                                                  final String targetAttributeName, boolean expression) {
     if (source.getAttribute(sourceAttributeName) != null) {
       String sourceAttributeValue = source.getAttributeValue(sourceAttributeName);
       target.setAttribute(targetAttributeName,
