@@ -7,7 +7,9 @@
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
 import static java.lang.String.format;
+import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -18,7 +20,10 @@ import org.jdom2.Namespace;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collector;
 
 /**
@@ -33,7 +38,22 @@ public abstract class AbstractDbOperationMigrator extends AbstractApplicationMod
   protected static final String DB_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/db";
   protected final static Namespace DB_NAMESPACE = Namespace.getNamespace("db", DB_NAMESPACE_URI);
 
+  private static final Pattern DB_3X_MEL_CONTRIB_PATTERN =
+      compile("(?:dbCreateArray|dbCreateStruct)\\(['\\\"]([^'\\\"]*)['\\\"]\\s*,\\s*['\\\"]([^'\\\"]*)['\\\"]\\s*,\\s*(.*)\\)");
+
   private ExpressionMigrator expressionMigrator;
+
+  protected void migrateInputParamTypes(Element object) {
+    List<Element> paramTypes = object.getChildren("in-param", DB_NAMESPACE).stream()
+        .filter(ip -> ip.getAttribute("type") != null)
+        .map(ip -> new Element("parameter-type", DB_NAMESPACE)
+            .setAttribute("key", ip.getAttributeValue("name"))
+            .setAttribute("type", ip.getAttributeValue("type")))
+        .collect(toList());
+    if (!paramTypes.isEmpty()) {
+      object.addContent(new Element("parameter-types", DB_NAMESPACE).addContent(paramTypes));
+    }
+  }
 
   protected void migrateInputParams(Element object) {
     doMigrateInputParams(object, joining(", ", "#[{", "}]"), "#[{}]", "input-parameters");
@@ -53,7 +73,38 @@ public abstract class AbstractDbOperationMigrator extends AbstractApplicationMod
           if ("NULL".equals(ip.getAttributeValue("value"))) {
             inputParamsMap.put(ip.getAttributeValue("name"), "null");
           } else {
-            String valueExpr = getExpressionMigrator().migrateExpression(ip.getAttributeValue("value"), true, ip);
+            String originalValueExpr = ip.getAttributeValue("value");
+
+            // The logic provided by this MEL function is already included in the connector in Mule 4
+            Matcher matcher = DB_3X_MEL_CONTRIB_PATTERN.matcher(originalValueExpr);
+            while (matcher.find()) {
+              // these 2 params are redundant respect to the config
+              String configName = matcher.group(1);
+              String type = matcher.group(2);
+
+              String value = matcher.group(3);
+
+              int openParenthesis = 0;
+              for (int i = 0; i < value.length(); ++i) {
+                if ('(' == value.charAt(i)) {
+                  openParenthesis++;
+                }
+                if (')' == value.charAt(i)) {
+                  openParenthesis--;
+                }
+
+                if (openParenthesis < 0) {
+                  originalValueExpr = matcher.replaceFirst(value.substring(0, i - 1));
+                  break;
+                }
+              }
+              if (openParenthesis >= 0) {
+                originalValueExpr = matcher.replaceFirst(value);
+              }
+              matcher = DB_3X_MEL_CONTRIB_PATTERN.matcher(originalValueExpr);
+            }
+
+            String valueExpr = getExpressionMigrator().migrateExpression(originalValueExpr, true, ip);
             inputParamsMap.put(ip.getAttributeValue("name"),
                                getExpressionMigrator().isWrapped(valueExpr) ? getExpressionMigrator().unwrap(valueExpr)
                                    : "'" + valueExpr + "'");
