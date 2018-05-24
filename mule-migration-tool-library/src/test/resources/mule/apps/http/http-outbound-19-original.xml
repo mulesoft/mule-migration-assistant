@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:https="http://www.mulesoft.org/schema/mule/https"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
+
+    <flow name="flow">
+        <https:outbound-endpoint address="https://1.2.3.4:9003" exchange-pattern="request-response" responseTimeout="50000"/>
+    </flow>
+
+</mule>

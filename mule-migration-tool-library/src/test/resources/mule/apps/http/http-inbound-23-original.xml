@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
+
+    <http:endpoint name="response" address="http://localhost:${port2}" exchange-pattern="request-response"/>
+
+    <append-string-transformer name="appendResponse" message=" response"/>
+    
+    <flow name="flow">
+        <inbound-endpoint ref="response">
+            <response>
+                <transformer ref="appendResponse"/>
+            </response>
+        </inbound-endpoint>
+
+        <logger/>
+    </flow>
+
+</mule>
