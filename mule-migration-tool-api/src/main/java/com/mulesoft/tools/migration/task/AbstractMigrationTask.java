@@ -46,29 +46,42 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
     // TODO depending on the project type this may not be true
     checkState(applicationModel != null, "An application model must be provided.");
     List<MigrationStep> steps = getSteps();
+
     try {
       if (steps != null) {
-        steps.stream().filter(s -> s instanceof ExpressionMigratorAware)
-            .forEach(s -> ((ExpressionMigratorAware) s).setExpressionMigrator(getExpressionMigrator()));
-        MigrationStepSelector stepSorter = new MigrationStepSelector(steps);
+        MigrationStepSelector stepSelector = new MigrationStepSelector(steps);
+        if (shouldExecuteAllSteps(stepSelector)) {
 
-        stepSorter.getNameSpaceContributionSteps().forEach(s -> s.execute(applicationModel, report));
+          steps.stream().filter(s -> s instanceof ExpressionMigratorAware)
+              .forEach(s -> ((ExpressionMigratorAware) s).setExpressionMigrator(getExpressionMigrator()));
 
-        stepSorter.getApplicationModelContributionSteps()
-            .forEach(s -> {
-              s.setApplicationModel(applicationModel);
-              applicationModel.getNodes(s.getAppliedTo()).forEach(n -> s.execute(n, report));
-            });
+          stepSelector.getNameSpaceContributionSteps().forEach(s -> s.execute(applicationModel, report));
 
-        stepSorter.getProjectStructureContributionSteps().forEach(s -> s.execute(applicationModel.getProjectBasePath(), report));
+          stepSelector.getApplicationModelContributionSteps()
+              .forEach(s -> {
+                s.setApplicationModel(applicationModel);
+                applicationModel.getNodes(s.getAppliedTo()).forEach(n -> s.execute(n, report));
+              });
 
-        stepSorter.getPomContributionSteps()
-            .forEach(s -> s.execute(applicationModel.getPomModel().orElse(new PomModel()), report));
+
+          stepSelector.getProjectStructureContributionSteps()
+              .forEach(s -> s.execute(applicationModel.getProjectBasePath(), report));
+
+          stepSelector.getPomContributionSteps()
+              .forEach(s -> s.execute(applicationModel.getPomModel().orElse(new PomModel()), report));
+        }
       }
 
     } catch (Exception e) {
       throw new MigrationTaskException("Task execution exception. " + e.getMessage(), e);
     }
+  }
+
+  protected boolean shouldExecuteAllSteps(MigrationStepSelector stepSelector) {
+    boolean doesNothaveApplicationModelContributions = stepSelector.getApplicationModelContributionSteps().isEmpty();
+    boolean isApplicable = stepSelector.getApplicationModelContributionSteps().stream()
+        .anyMatch(s -> !applicationModel.getNodes(s.getAppliedTo()).isEmpty());
+    return isApplicable || doesNothaveApplicationModelContributions;
   }
 
   @Override
