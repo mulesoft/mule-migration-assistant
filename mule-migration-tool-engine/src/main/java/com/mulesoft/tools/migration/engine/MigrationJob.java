@@ -90,7 +90,7 @@ public class MigrationJob implements Executable {
   private ApplicationModel generateApplicationModel(Path project) throws Exception {
     MuleProject muleProject = getMuleProject(project);
     ApplicationModelBuilder builder = new ApplicationModelBuilder()
-        .withConfigurationFiles(getFiles(muleProject.srcMainConfiguration()))
+        .withConfigurationFiles(getFiles(muleProject.srcMainConfiguration(), "xml"))
         .withMuleVersion(muleVersion)
         .withPom(muleProject.pom())
         .withProjectBasePath(muleProject.getBaseFolder());
@@ -104,7 +104,7 @@ public class MigrationJob implements Executable {
     if (type.equals(MULE_FOUR_APPLICATION)) {
       MuleFourApplication application = new MuleFourApplication(project);
       return new ApplicationModelBuilder()
-          .withConfigurationFiles(getFiles(application.srcMainConfiguration()))
+          .withConfigurationFiles(getFiles(application.srcMainConfiguration(), "xml"))
           .withTestConfigurationFiles(getFiles(application.srcTestConfiguration()))
           .withMuleArtifactJson(application.muleArtifactJson())
           .withMuleVersion(muleVersion)
