@@ -11,7 +11,7 @@
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
         <db:select config-ref="dbConfig">
-            <db:sql>#['select * from PLANET order by ID WHERE name = $(payload)']</db:sql>
+            <db:sql>#["select * from PLANET order by ID WHERE name = $(payload)"]</db:sql>
         </db:select>
     </flow>
 

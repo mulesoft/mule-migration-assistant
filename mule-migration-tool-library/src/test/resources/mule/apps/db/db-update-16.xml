@@ -11,7 +11,7 @@
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
         <db:update config-ref="dbConfig">
-            <db:sql>#['update PLANET set NAME=$(payload) where NAME=\'Mars\'']</db:sql>
+            <db:sql>#["update PLANET set NAME=$(payload) where NAME='Mars'"]</db:sql>
         </db:update>
     </flow>
 

@@ -48,8 +48,7 @@ public class DbExecuteTest {
   public static Object[] params() {
     return new Object[] {
         "db-execute-01",
-        // TODO MMT-151
-        // "db-execute-02",
+        "db-execute-02",
         // TODO MMT-128
         // "db-execute-03",
         "db-execute-04",

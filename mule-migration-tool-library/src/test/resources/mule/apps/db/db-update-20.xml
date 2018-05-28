@@ -11,7 +11,7 @@
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
         <db:update config-ref="dbConfig" queryTimeout="1">
-            <db:sql>#['update PLANET set NAME='Mercury' where DELAY($(payload)) = 1']</db:sql>
+            <db:sql>#["update PLANET set NAME='Mercury' where DELAY($(payload)) = 1"]</db:sql>
         </db:update>
     </flow>
 

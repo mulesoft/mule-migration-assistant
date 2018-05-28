@@ -13,7 +13,7 @@
 
         <compatibility:outbound-properties-to-var/>
         <db:select config-ref="dbConfig">
-            <db:sql>#['select * from $(vars.tableName) order by ID']</db:sql>
+            <db:sql>#["select * from $(vars.tableName) order by ID"]</db:sql>
         </db:select>
     </flow>
 

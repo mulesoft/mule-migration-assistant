@@ -10,9 +10,10 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <db:insert>
-            <db:sql>#['INSERT INTO PLANET(POSITION, NAME) VALUES (777, '$(payload)')']</db:sql>
-        </db:insert>
+        <db:bulk-insert config-ref="dbConfig" xmlns:db="http://www.mulesoft.org/schema/mule/db">
+            <db:sql>#["INSERT INTO PLANET(POSITION, NAME) VALUES (777, '$(payload)')"]</db:sql>
+        </db:bulk-insert>
+
     </flow>
 
 </mule>

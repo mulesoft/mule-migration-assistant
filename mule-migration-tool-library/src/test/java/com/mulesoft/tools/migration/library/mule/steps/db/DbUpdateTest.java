@@ -49,22 +49,18 @@ public class DbUpdateTest {
     return new Object[] {
         "db-update-01",
         "db-update-02",
-        // TODO MMT-151
-        // "db-update-03",
+        "db-update-03",
         "db-update-04",
         "db-update-05",
         "db-update-06",
         "db-update-07",
-        // TODO MMT-151
-        // "db-update-08",
+        "db-update-08",
         "db-update-09",
-        // TODO MMT-151
-        // "db-update-10",
+        "db-update-10",
         // TODO MMT-128
         // "db-update-11",
-        // TODO MMT-151
-        // "db-update-12",
-        // "db-update-13",
+        "db-update-12",
+        "db-update-13",
         "db-update-14",
         "db-update-15",
         "db-update-16",
@@ -72,8 +68,7 @@ public class DbUpdateTest {
         "db-update-18",
         // TODO MMT-128
         // "db-update-19",
-        // TODO MMT-151
-        // "db-update-20",
+        "db-update-20",
     };
   }
 

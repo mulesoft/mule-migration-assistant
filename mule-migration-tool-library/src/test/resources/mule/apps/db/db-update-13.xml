@@ -14,7 +14,7 @@
 
         <compatibility:outbound-properties-to-var/>
         <db:update config-ref="dbConfig">
-            <db:sql>#['update PLANET set NAME='$(data)' where POSITION=$(type)']</db:sql>
+            <db:sql>#["update PLANET set NAME='$(vars.data)' where POSITION=$(vars.type)"]</db:sql>
         </db:update>
     </flow>
 
