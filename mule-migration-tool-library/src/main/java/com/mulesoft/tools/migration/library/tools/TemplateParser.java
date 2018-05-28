@@ -88,7 +88,7 @@ public final class TemplateParser {
         result.append("$(").append(value).append(")");
         currentPosition = closing;
       } else if (c != START_EXPRESSION && c != '\\') {
-        result.append(c);
+        result.append(c == '\'' ? "\\\'" : c);
       }
 
       lastStartedExpression = c == START_EXPRESSION;
