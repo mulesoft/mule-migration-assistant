@@ -13,7 +13,7 @@
 
         <compatibility:outbound-properties-to-var/>
         <db:update config-ref="dbConfig">
-            <db:sql>#['update Planet set name = $(payload) where name = \'Mars\'']</db:sql>
+            <db:sql>#["update Planet set name = $(payload) where name = 'Mars'"]</db:sql>
         </db:update>
     </flow>
 

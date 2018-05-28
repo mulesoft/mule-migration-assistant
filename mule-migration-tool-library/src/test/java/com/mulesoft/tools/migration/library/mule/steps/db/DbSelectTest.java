@@ -48,11 +48,9 @@ public class DbSelectTest {
   public static Object[] params() {
     return new Object[] {
         "db-select-01",
-        // TODO MMT-149 MMT-148
-        // "db-select-02",
+        "db-select-02",
         "db-select-03",
-        // TODO MMT-148
-        // "db-select-04",
+        "db-select-04",
         "db-select-05",
         "db-select-06",
         "db-select-07",

@@ -11,7 +11,7 @@
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
         <db:bulk-update config-ref="dbConfig">
-            <db:sql>#['update Planet set position = $(payload.position) where name = $(payload.name) ']</db:sql>
+            <db:sql>#["update Planet set position = $(payload.position) where name = $(payload.name) "]</db:sql>
         </db:bulk-update>
     </flow>
 

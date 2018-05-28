@@ -13,7 +13,7 @@
 
         <compatibility:outbound-properties-to-var/>
         <db:delete config-ref="dbConfig">
-            <db:sql>#['DELETE FROM PLANET WHERE name = $(payload)']</db:sql>
+            <db:sql>#["DELETE FROM PLANET WHERE name = $(payload)"]</db:sql>
         </db:delete>
     </flow>
 

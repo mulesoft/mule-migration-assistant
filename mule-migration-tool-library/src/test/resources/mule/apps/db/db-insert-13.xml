@@ -11,7 +11,7 @@
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
         <db:insert config-ref="dbConfig">
-            <db:sql>#['INSERT INTO PLANET(POSITION, NAME) VALUES (777, '$(payload)')']</db:sql>
+            <db:sql>#["INSERT INTO PLANET(POSITION, NAME) VALUES (777, '$(payload)')"]</db:sql>
         </db:insert>
     </flow>
 

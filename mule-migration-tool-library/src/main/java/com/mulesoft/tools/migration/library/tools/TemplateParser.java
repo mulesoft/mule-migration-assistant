@@ -28,7 +28,6 @@ public final class TemplateParser {
   private static final char OPEN_EXPRESSION = '[';
   private static final char CLOSE_EXPRESSION = ']';
 
-  private static final Map<String, PatternInfo> patterns = new HashMap<>();
   public static final String MEL_PREFIX = "mel:";
 
   /**
@@ -56,10 +55,9 @@ public final class TemplateParser {
 
     boolean lastIsBackSlash = false;
     boolean lastStartedExpression = false;
-    boolean openSingleQuotes = false;
     boolean openDoubleQuotes = false;
 
-    StringBuilder result = new StringBuilder("#['");
+    StringBuilder result = new StringBuilder("#[\"");
     int currentPosition = 0;
     while (currentPosition < template.length()) {
       char c = template.charAt(currentPosition);
@@ -72,13 +70,10 @@ public final class TemplateParser {
         result.append("\\");
       }
 
-      if (!lastIsBackSlash && c == '\'') {
-        openSingleQuotes = !openDoubleQuotes;
-      }
       if (!lastIsBackSlash && c == '"') {
         openDoubleQuotes = !openDoubleQuotes;
       }
-      if (c == OPEN_EXPRESSION && lastStartedExpression && !(openDoubleQuotes || openSingleQuotes)) {
+      if (c == OPEN_EXPRESSION && lastStartedExpression && !(openDoubleQuotes)) {
         int closing = closingBracesPosition(template, currentPosition);
         String enclosingTemplate = template.substring(currentPosition + 1, closing);
         if (enclosingTemplate.startsWith(MEL_PREFIX)) {
@@ -88,7 +83,7 @@ public final class TemplateParser {
         result.append("$(").append(value).append(")");
         currentPosition = closing;
       } else if (c != START_EXPRESSION && c != '\\') {
-        result.append(c == '\'' ? "\\\'" : c);
+        result.append(c);
       }
 
       lastStartedExpression = c == START_EXPRESSION;
@@ -96,7 +91,7 @@ public final class TemplateParser {
       currentPosition++;
     }
 
-    return result.append("']").toString();
+    return result.append("\"]").toString();
   }
 
   private int closingBracesPosition(String template, int startingPosition) {

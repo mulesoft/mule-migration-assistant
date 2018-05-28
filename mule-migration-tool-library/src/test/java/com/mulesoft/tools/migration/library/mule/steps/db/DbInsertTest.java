@@ -58,9 +58,8 @@ public class DbInsertTest {
         "db-insert-09",
         "db-insert-10",
         "db-insert-11",
-        // TODO MMT-151
-        // "db-insert-12",
-        // "db-insert-13",
+        "db-insert-12",
+        "db-insert-13",
         "db-insert-14",
         "db-insert-15",
         "db-insert-16"

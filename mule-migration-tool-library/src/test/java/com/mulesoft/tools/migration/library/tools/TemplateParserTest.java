@@ -26,6 +26,14 @@ public class TemplateParserTest {
   public void translateContainingSimpleQuotes() {
     String template = "Hello #[greeting] 'World'";
     String result = parser.translate(template, IDENTITY_TRANSLATOR);
-    assertThat("Translated template is not the expected", result, equalTo("#['Hello $(greeting) \\\'World\\\'']"));
+    assertThat("Translated template is not the expected", result, equalTo("#[\"Hello $(greeting) 'World'\"]"));
+  }
+
+  @Test
+  public void translateQuotedInterpolatedString() {
+    String template = "INSERT INTO PLANET(POSITION, NAME) VALUES (777, '#[payload]')";
+    String result = parser.translate(template, IDENTITY_TRANSLATOR);
+    assertThat("Translated template is not the expected", result,
+               equalTo("#[\"INSERT INTO PLANET(POSITION, NAME) VALUES (777, '$(payload)')\"]"));
   }
 }
