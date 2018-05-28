@@ -1,5 +1,5 @@
 |BinaryOperatorNode(2)
 |--BinaryOperatorNode(2)
-|----IdentifierNode(payload)
+|----VariableReferenceNode(payload)
 |----IdentifierNode(loco)
 |--IdentifierNode(coco)

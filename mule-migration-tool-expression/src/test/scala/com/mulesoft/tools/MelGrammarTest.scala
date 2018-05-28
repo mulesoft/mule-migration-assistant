@@ -38,19 +38,19 @@ class MelGrammarTest extends FlatSpec with Matchers {
   }
 
   it should "parse $ as an identifier" in {
-    MelParserHelper.parse("$") shouldBe IdentifierNode("$")
+    MelParserHelper.parse("$") shouldBe VariableReferenceNode("$")
   }
 
   it should "parse _ as an identifier" in {
-    MelParserHelper.parse("_") shouldBe IdentifierNode("_")
+    MelParserHelper.parse("_") shouldBe VariableReferenceNode("_")
   }
 
   it should "parse alphabet letters as identifier" in {
-    (('a' to 'z') ++ ('A' to 'Z')).foreach(c => MelParserHelper.parse(c.toString) shouldBe IdentifierNode(c.toString))
+    (('a' to 'z') ++ ('A' to 'Z')).foreach(c => MelParserHelper.parse(c.toString) shouldBe VariableReferenceNode(c.toString))
   }
 
   it should "parse these elements as identifiers" in {
-    List("_aaa", "_aaa#", "_a###", "_a11", "a123").foreach(id => MelParserHelper.parse(id) shouldBe IdentifierNode(id))
+    List("_aaa", "_aaa#", "_a###", "_a11", "a123").foreach(id => MelParserHelper.parse(id) shouldBe VariableReferenceNode(id))
   }
 
   it should "should fail when parsing these inputs" in {
@@ -70,10 +70,10 @@ class MelGrammarTest extends FlatSpec with Matchers {
   }
 
   it should "parse an expression with dot syntax" in {
-    MelParserHelper.parse("a.b. c") shouldBe BinaryOperatorNode(BinaryOperatorNode(IdentifierNode("a"),IdentifierNode("b"),2),IdentifierNode("c"),2)
+    MelParserHelper.parse("a.b. c") shouldBe BinaryOperatorNode(BinaryOperatorNode(VariableReferenceNode("a"),IdentifierNode("b"),2),IdentifierNode("c"),2)
   }
 
   it should "parse an expression with subscript selector" in {
-    MelParserHelper.parse("a[3]") shouldBe BinaryOperatorNode(IdentifierNode("a"),NumberNode("3"),4)
+    MelParserHelper.parse("a[3]") shouldBe BinaryOperatorNode(VariableReferenceNode("a"),NumberNode("3"),4)
   }
 }

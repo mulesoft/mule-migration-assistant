@@ -14,7 +14,7 @@
 
     <flow name="sendBodyAuto">
         <compatibility:outbound-properties-to-var/>
-        <http:request config-ref="config" method="#[method]" path="requestPath" sendBodyMode="AUTO" >
+        <http:request config-ref="config" method="#[vars.method]" path="requestPath" sendBodyMode="AUTO" >
             <http:headers>
                 #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>

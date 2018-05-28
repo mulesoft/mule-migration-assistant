@@ -10,7 +10,7 @@
 
     <flow name="Test">
         <file:listener directory="${workingDirectory}/path" autoDelete="true" recursive="false" applyPostActionWhenFailed="false">
-            <redelivery-policy idExpression="#[attributes.name]"/>
+            <redelivery-policy idExpression="#[vars.attributes.name]"/>
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

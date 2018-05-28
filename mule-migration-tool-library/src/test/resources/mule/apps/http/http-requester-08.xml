@@ -14,7 +14,7 @@
 
     <flow name="requestFlow">
         <compatibility:outbound-properties-to-var/>
-        <http:request config-ref="requestConfig" method="GET" path="#[requestPath]">
+        <http:request config-ref="requestConfig" method="GET" path="#[vars.requestPath]">
             <http:headers>
                 #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>

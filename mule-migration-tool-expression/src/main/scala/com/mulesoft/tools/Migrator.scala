@@ -9,12 +9,15 @@ import org.mule.weave.v2.parser.{ast => dw}
 
 object Migrator {
 
+  def bindingContextVariable: List[String] = List("message", "exception", "payload", "message.payload", "flowVars", "sessionVars", "null");
+
   def toDataweaveAst(expressionNode: mel.MelExpressionNode): dw.AstNode = {
     expressionNode match {
       case mel.StringNode(literal) => dw.structure.StringNode(literal).annotate(QuotedStringAnnotation('''))
       case mel.NumberNode(literal) => dw.structure.NumberNode(literal)
       case mel.BooleanNode(literal) => dw.structure.BooleanNode(literal.toString)
       case mel.IdentifierNode(literal) => dw.variables.NameIdentifier(literal)
+      case mel.VariableReferenceNode(literal) => dw.variables.NameIdentifier(resolveName(literal))
       case mel.BinaryOperatorNode(left, right, operatorType) => {
         operatorType match {
           case mel.OperatorType.minus => dw.operators.BinaryOpNode(SubtractionOpId, toDataweaveAst(left), toDataweaveAst(right))
@@ -44,5 +47,12 @@ object Migrator {
     val bodyNode = toDataweaveAst(expressionNode)
     val documentNode = dw.structure.DocumentNode(HeaderNode(Seq()), bodyNode)
     CodeGenerator.generate(documentNode)
+  }
+
+  def resolveName(literal: String): String = {
+    if(bindingContextVariable.exists(name => literal.equals(name)))
+      literal
+    else
+      "vars." + literal
   }
 }

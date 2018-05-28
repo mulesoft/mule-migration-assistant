@@ -11,6 +11,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   private val createNumberNode = (value: String) => NumberNode(value)
   private val createBooleanNode = (value: Boolean) => BooleanNode(value)
   private val createIdentifierNode = (value: String) => IdentifierNode(value)
+  private val createVariableReferenceNode = (value: String) => VariableReferenceNode(value)
   private val createBinaryOp = (left: MelExpressionNode, operatorType: Int, right: MelExpressionNode) => BinaryOperatorNode(left, right, operatorType)
   private val createKeyValuePairNode = (key: StringNode, value: MelExpressionNode) => KeyValuePairNode(key, value)
   private val createMapNode = (elements: Seq[KeyValuePairNode]) => MapNode(elements)
@@ -94,16 +95,24 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
     ws ~ ((str("true") ~ push(true)) | (str("false") ~ push(false))) ~> createBooleanNode
   }
 
-  def identifierNode: Rule1[IdentifierNode] = rule {
-    clearSB() ~ ((CharPredicate.Alpha | ch('$') | ch('_')) ~ appendSB()) ~ zeroOrMore((CharPredicate.AlphaNum | ch('$') | ch('_')) ~ appendSB()) ~ zeroOrMore(ch('#') ~ appendSB()) ~ push(sb.toString) ~> createIdentifierNode
+  def legalIdentifierName: Rule0 = rule {
+    ((CharPredicate.Alpha | ch('$') | ch('_')) ~ appendSB()) ~ zeroOrMore((CharPredicate.AlphaNum | ch('$') | ch('_')) ~ appendSB()) ~ zeroOrMore(ch('#') ~ appendSB())
   }
 
-  def simpleExpressions:Rule1[MelExpressionNode] = rule {
+  def identifierNode: Rule1[IdentifierNode] = rule {
+    clearSB() ~ legalIdentifierName ~ push(sb.toString) ~> createIdentifierNode
+  }
+
+  def varReference: Rule1[VariableReferenceNode] = rule {
+    clearSB() ~ legalIdentifierName ~ push(sb.toString) ~> createVariableReferenceNode
+  }
+
+  def simpleExpressions: Rule1[MelExpressionNode] = rule {
     booleanNode | numberNode | values
   }
 
   def values = rule {
-    (stringNode | stringNodeSimple | list | map | identifierNode) ~ zeroOrMore(dot) ~ zeroOrMore(subscript)
+    (stringNode | stringNodeSimple | list | map | varReference) ~ zeroOrMore(dot) ~ zeroOrMore(subscript)
   }
 
   def dot = rule {

@@ -5,6 +5,6 @@
 |----NumberNode(3)
 |--BinaryOperatorNode(4)
 |----BinaryOperatorNode(2)
-|------IdentifierNode(payload)
+|------VariableReferenceNode(payload)
 |------IdentifierNode(foo)
 |----NumberNode(1)
