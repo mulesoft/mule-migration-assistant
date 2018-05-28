@@ -9,7 +9,7 @@ import org.mule.weave.v2.parser.{ast => dw}
 
 object Migrator {
 
-  def bindingContextVariable: List[String] = List("message", "exception", "payload", "message.payload", "flowVars", "sessionVars", "null");
+  def bindingContextVariable: List[String] = List("message", "exception", "payload", "flowVars", "sessionVars", "null");
 
   def toDataweaveAst(expressionNode: mel.MelExpressionNode): dw.AstNode = {
     expressionNode match {
