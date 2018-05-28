@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.core.dw;
 
 import static java.lang.System.lineSeparator;
+import static org.mule.weave.v2.V2LangMigrant.migrateToV2;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -51,5 +52,13 @@ public class DataWeaveHelper {
       writer.write(body);
     }
 
+  }
+
+  /**
+   * @param dwScript dw 1.0 script.
+   * @return the dw 2.0 script migrated.
+   */
+  public static String migrateDWToV2(String dwScript) {
+    return migrateToV2(dwScript);
   }
 }
