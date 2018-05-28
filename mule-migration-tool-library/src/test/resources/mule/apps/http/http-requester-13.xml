@@ -19,7 +19,7 @@
                 #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
-                #[{'code' : code}]
+                #[{'code' : vars.code}]
             </http:query-params>
             <http:response-validator>
                 <http:failure-status-code-validator values="201" />

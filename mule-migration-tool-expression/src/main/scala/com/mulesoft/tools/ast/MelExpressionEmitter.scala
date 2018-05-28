@@ -8,6 +8,7 @@ object MelExpressionEmitter {
         case StringNode(literal) => "StringNode(" + literal + ")"
         case BooleanNode(literal) => "BooleanNode(" + literal + ")"
         case IdentifierNode(literal) => "IdentifierNode(" + literal + ")"
+        case VariableReferenceNode(literal) => "VariableReferenceNode(" + literal + ")"
         case NumberNode(literal) => "NumberNode(" + literal + ")"
         case BinaryOperatorNode(_, _, operatorType) => {
           "BinaryOperatorNode(" + operatorType + ")"

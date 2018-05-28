@@ -19,7 +19,7 @@
                 #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
-                #[{'testName1' : 'testValue1'} ++ {paramName : paramValue}]
+                #[{'testName1' : 'testValue1'} ++ {vars.paramName : vars.paramValue}]
             </http:query-params>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
@@ -32,7 +32,7 @@
                 #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
-                #[params]
+                #[vars.params]
             </http:query-params>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
@@ -45,7 +45,7 @@
                 #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
-                #[{'testName1' : 'testValue1'} ++ params]
+                #[{'testName1' : 'testValue1'} ++ vars.params]
             </http:query-params>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>

@@ -14,7 +14,7 @@
 
     <flow name="followRedirectsExpression">
         <compatibility:outbound-properties-to-var/>
-        <http:request config-ref="noFollowRedirects" path="testPath" followRedirects="#[redirect]">
+        <http:request config-ref="noFollowRedirects" path="testPath" followRedirects="#[vars.redirect]">
             <http:headers>
                 #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
             </http:headers>

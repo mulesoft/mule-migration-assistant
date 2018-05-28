@@ -34,4 +34,8 @@ class MigratorTest extends FlatSpec with Matchers {
   it should "migrate a subscript expression" in {
     Migrator.migrate("message.inboundProperties['http.query.params']") shouldBe "---\nmessage.inboundProperties['http.query.params']"
   }
+
+  it should "migrate a subscript expression without binding context" in {
+    Migrator.migrate("lala.pepe") shouldBe "---\nvars.lala.pepe"
+  }
 }

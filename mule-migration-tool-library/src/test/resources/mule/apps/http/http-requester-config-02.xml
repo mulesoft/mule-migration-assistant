@@ -9,7 +9,7 @@
   <http:request-config name="requesterConfigBasic">
     <http:request-connection host="localhost" port="${port1}">
       <http:authentication>
-        <http:basic-authentication username="#[user]" password="#[password]" preemptive="#[preemptive]" />
+        <http:basic-authentication username="#[vars.user]" password="#[vars.password]" preemptive="#[vars.preemptive]" />
       </http:authentication>
     </http:request-connection>
   </http:request-config>
@@ -17,7 +17,7 @@
   <http:request-config name="requesterConfigDigest">
     <http:request-connection host="localhost" port="${port2}">
       <http:authentication>
-        <http:digest-authentication username="#[user]" password="#[password]" />
+        <http:digest-authentication username="#[vars.user]" password="#[vars.password]" />
       </http:authentication>
     </http:request-connection>
   </http:request-config>
