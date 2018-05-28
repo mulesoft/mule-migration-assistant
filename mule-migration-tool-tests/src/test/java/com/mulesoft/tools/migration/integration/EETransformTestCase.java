@@ -13,21 +13,23 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class EETransformTestCase extends EndToEndTestCase {
 
-    @Parameterized.Parameters(name = "{0}")
-    public static Object[] params() {
-        return new Object[] {
-                "ee-transform1"
-        };
-    }
+  @Parameterized.Parameters(name = "{0}")
+  public static Object[] params() {
+    return new Object[] {
+        "ee-transform1",
+        "ee-transform2",
+        "ee-transform3"
+    };
+  }
 
-    private final String appToMigrate;
+  private final String appToMigrate;
 
-    public EETransformTestCase(String appToMigrate) {
-        this.appToMigrate = appToMigrate;
-    }
+  public EETransformTestCase(String appToMigrate) {
+    this.appToMigrate = appToMigrate;
+  }
 
-    @Test
-    public void test() throws Exception {
-        simpleCase(appToMigrate);
-    }
+  @Test
+  public void test() throws Exception {
+    simpleCase(appToMigrate);
+  }
 }
