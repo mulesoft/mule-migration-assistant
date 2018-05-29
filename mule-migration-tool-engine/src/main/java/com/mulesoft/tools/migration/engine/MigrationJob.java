@@ -95,7 +95,7 @@ public class MigrationJob implements Executable {
         .withPom(muleProject.pom())
         .withProjectBasePath(muleProject.getBaseFolder());
     if (muleProject.srcTestConfiguration().toFile().exists()) {
-      builder.withTestConfigurationFiles(getFiles(muleProject.srcTestConfiguration()));
+      builder.withTestConfigurationFiles(getFiles(muleProject.srcTestConfiguration(), "xml"));
     }
     return builder.build();
   }
@@ -105,7 +105,7 @@ public class MigrationJob implements Executable {
       MuleFourApplication application = new MuleFourApplication(project);
       return new ApplicationModelBuilder()
           .withConfigurationFiles(getFiles(application.srcMainConfiguration(), "xml"))
-          .withTestConfigurationFiles(getFiles(application.srcTestConfiguration()))
+          .withTestConfigurationFiles(getFiles(application.srcTestConfiguration(), "xml"))
           .withMuleArtifactJson(application.muleArtifactJson())
           .withMuleVersion(muleVersion)
           .withProjectBasePath(application.getBaseFolder())
@@ -113,9 +113,8 @@ public class MigrationJob implements Executable {
     } else {
       MuleFourDomain domain = new MuleFourDomain(project);
       return new ApplicationModelBuilder()
-          .withConfigurationFiles(getFiles(domain.srcMainConfiguration()))
+          .withConfigurationFiles(getFiles(domain.srcMainConfiguration(), "xml"))
           .withMuleVersion(muleVersion)
-          .withTestConfigurationFiles(getFiles(domain.srcTestConfiguration()))
           .withProjectBasePath(domain.getBaseFolder())
           .withPom(domain.pom()).build();
     }
