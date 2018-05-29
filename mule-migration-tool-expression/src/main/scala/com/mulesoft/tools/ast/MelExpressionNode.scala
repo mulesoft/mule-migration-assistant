@@ -14,6 +14,10 @@ case class IdentifierNode(literal: String) extends MelExpressionNode
 
 case class VariableReferenceNode(literal: String) extends MelExpressionNode
 
+case class EnclosedExpression(expression: MelExpressionNode) extends MelExpressionNode {
+  override def children: Seq[MelExpressionNode] = Seq(expression)
+}
+
 case class BinaryOperatorNode(left: MelExpressionNode, right: MelExpressionNode, operatorType: Int) extends MelExpressionNode {
   override def children: Seq[MelExpressionNode] = Seq(left, right)
 }

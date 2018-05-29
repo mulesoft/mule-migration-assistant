@@ -3,7 +3,7 @@ package com.mulesoft.tools
 import com.mulesoft.tools.{ast => mel}
 import org.mule.weave.v2.codegen.CodeGenerator
 import org.mule.weave.v2.grammar._
-import org.mule.weave.v2.parser.annotation.QuotedStringAnnotation
+import org.mule.weave.v2.parser.annotation.{EnclosedMarkAnnotation, QuotedStringAnnotation}
 import org.mule.weave.v2.parser.ast.header.HeaderNode
 import org.mule.weave.v2.parser.{ast => dw}
 
@@ -38,6 +38,9 @@ object Migrator {
       }
       case mel.ListNode(elements) => {
         dw.structure.ArrayNode(elements.map(toDataweaveAst))
+      }
+      case mel.EnclosedExpression(expression) => {
+        toDataweaveAst(expression).annotate(EnclosedMarkAnnotation())
       }
     }
   }

@@ -6,7 +6,7 @@ import org.parboiled2.Parser.DeliveryScheme.Either
 
 class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
 
-
+  private val createEnclosedExpression = (expression: MelExpressionNode) => EnclosedExpression(expression)
   private val createStringNode = (value: String) => StringNode(value)
   private val createNumberNode = (value: String) => NumberNode(value)
   private val createBooleanNode = (value: Boolean) => BooleanNode(value)
@@ -50,12 +50,20 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
     ws ~ (stringNode | stringNodeSimple) ~ ws ~ ch(':') ~ ws ~ simpleExpressions ~ ws ~> createKeyValuePairNode
   }
 
+  def root: Rule1[MelExpressionNode] = rule {
+    ws ~  expression ~ ws ~ EOI
+  }
+
+  def enclosedExpression: Rule1[MelExpressionNode] = rule {
+    ws ~ "(" ~ ws ~ expression ~ ws ~ ")" ~> createEnclosedExpression
+  }
+
   def expression: Rule1[MelExpressionNode] = rule {
-    sum ~ ws ~ EOI
+    sum ~ ws
   }
 
   def sum = rule {
-    simpleExpressions ~ optional((plusToken ~ push(OperatorType.plus) | minusToken ~ push(OperatorType.minus)) ~ expression ~> createBinaryOp)
+    simpleExpressions ~ optional((plusToken ~ push(OperatorType.plus) | minusToken ~ push(OperatorType.minus)) ~ root ~> createBinaryOp)
   }
 
 
@@ -112,7 +120,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def values = rule {
-    (stringNode | stringNodeSimple | list | map | varReference) ~ zeroOrMore(dot) ~ zeroOrMore(subscript)
+    (stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(dot) ~ zeroOrMore(subscript)
   }
 
   def dot = rule {

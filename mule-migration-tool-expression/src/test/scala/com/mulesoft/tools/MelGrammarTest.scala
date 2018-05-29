@@ -76,4 +76,8 @@ class MelGrammarTest extends FlatSpec with Matchers {
   it should "parse an expression with subscript selector" in {
     MelParserHelper.parse("a[3]") shouldBe BinaryOperatorNode(VariableReferenceNode("a"),NumberNode("3"),4)
   }
+
+  it should "parse an enclosed expression" in {
+    MelParserHelper.parse("(payload)") shouldBe EnclosedExpression(VariableReferenceNode("payload"))
+  }
 }
