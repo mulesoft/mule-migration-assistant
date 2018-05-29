@@ -90,12 +90,12 @@ public class MigrationJob implements Executable {
   private ApplicationModel generateApplicationModel(Path project) throws Exception {
     MuleProject muleProject = getMuleProject(project);
     ApplicationModelBuilder builder = new ApplicationModelBuilder()
-        .withConfigurationFiles(getFiles(muleProject.srcMainConfiguration()))
+        .withConfigurationFiles(getFiles(muleProject.srcMainConfiguration(), "xml"))
         .withMuleVersion(muleVersion)
         .withPom(muleProject.pom())
         .withProjectBasePath(muleProject.getBaseFolder());
     if (muleProject.srcTestConfiguration().toFile().exists()) {
-      builder.withTestConfigurationFiles(getFiles(muleProject.srcTestConfiguration()));
+      builder.withTestConfigurationFiles(getFiles(muleProject.srcTestConfiguration(), "xml"));
     }
     return builder.build();
   }
@@ -104,8 +104,8 @@ public class MigrationJob implements Executable {
     if (type.equals(MULE_FOUR_APPLICATION)) {
       MuleFourApplication application = new MuleFourApplication(project);
       return new ApplicationModelBuilder()
-          .withConfigurationFiles(getFiles(application.srcMainConfiguration()))
-          .withTestConfigurationFiles(getFiles(application.srcTestConfiguration()))
+          .withConfigurationFiles(getFiles(application.srcMainConfiguration(), "xml"))
+          .withTestConfigurationFiles(getFiles(application.srcTestConfiguration(), "xml"))
           .withMuleArtifactJson(application.muleArtifactJson())
           .withMuleVersion(muleVersion)
           .withProjectBasePath(application.getBaseFolder())
@@ -113,9 +113,8 @@ public class MigrationJob implements Executable {
     } else {
       MuleFourDomain domain = new MuleFourDomain(project);
       return new ApplicationModelBuilder()
-          .withConfigurationFiles(getFiles(domain.srcMainConfiguration()))
+          .withConfigurationFiles(getFiles(domain.srcMainConfiguration(), "xml"))
           .withMuleVersion(muleVersion)
-          .withTestConfigurationFiles(getFiles(domain.srcTestConfiguration()))
           .withProjectBasePath(domain.getBaseFolder())
           .withPom(domain.pom()).build();
     }
