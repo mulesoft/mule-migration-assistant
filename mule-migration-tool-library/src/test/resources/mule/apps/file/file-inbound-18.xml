@@ -25,7 +25,9 @@
             </scheduling-strategy>
         </file:listener>
         <compatibility:attributes-to-inbound-properties/>
-        <logger/>
+        <async>
+            <logger/>
+        </async>
         <compatibility:outbound-properties-to-var/>
     </flow>
     

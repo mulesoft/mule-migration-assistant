@@ -10,11 +10,10 @@
 
 
     <flow name="flow">
-        <http:listener config-ref="httpConfig" path="/nested">
-            <http:response-builder>
-                <http:header headerName="testHeader" value="testValue" />
-            </http:response-builder>
-        </http:listener>
+        <http:inbound-endpoint config-ref="httpConfig" path="/nested"/>
+        <http:response-builder>
+            <http:header headerName="testHeader" value="testValue" />
+        </http:response-builder>
 
         <logger/>
     </flow>

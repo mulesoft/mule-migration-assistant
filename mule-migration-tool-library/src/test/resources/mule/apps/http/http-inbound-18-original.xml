@@ -13,11 +13,11 @@
     </http:response-builder>
 
     <flow name="flow">
-        <http:listener config-ref="httpConfig" path="/globalError">
-            <http:error-response-builder statusCode="200">
-                <http:builder ref="globalResponseBuilder" />
-            </http:error-response-builder>
-        </http:listener>
+        <http:inbound-endpoint config-ref="httpConfig" path="/globalError">
+        </http:inbound-endpoint>
+        <http:error-response-builder status="200">
+            <http:builder ref="globalResponseBuilder" />
+        </http:error-response-builder>
 
         <logger/>
     </flow>

@@ -13,11 +13,10 @@
     </http:response-builder>
 
     <flow name="flow">
-        <http:listener config-ref="httpConfig" path="/global">
-            <http:response-builder>
-                <http:builder ref="globalResponseBuilder" />
-            </http:response-builder>
-        </http:listener>
+        <http:inbound-endpoint config-ref="httpConfig" path="/global"/>
+        <http:response-builder>
+            <http:builder ref="globalResponseBuilder" />
+        </http:response-builder>
 
         <logger/>
     </flow>

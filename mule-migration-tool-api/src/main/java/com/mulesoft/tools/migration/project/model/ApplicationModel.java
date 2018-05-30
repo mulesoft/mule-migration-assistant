@@ -8,7 +8,9 @@ package com.mulesoft.tools.migration.project.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAdditionalNamespaces;
+import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
+import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
@@ -58,6 +60,30 @@ public class ApplicationModel {
    */
   public Map<Path, Document> getApplicationDocuments() {
     return applicationDocuments;
+  }
+
+  /**
+   * Returns all the nodes in the application documents that match the xpath expression
+   *
+   * @param xpathExpression the xpath expression that defines which nodes should be retrieved
+   * @return all the nodes that match the xpath expression
+   */
+  public List<Element> getNodes(String xpathExpression) {
+    return getNodes(XPathFactory.instance().compile(xpathExpression));
+  }
+
+  /**
+   * Returns a single node in the application documents that match the xpath expression
+   *
+   * @param xpathExpression the xpath expression that defines which nodes should be retrieved
+   * @return all the nodes that match the xpath expression
+   */
+  public Element getNode(String xpathExpression) {
+    List<Element> nodes = getNodes(XPathFactory.instance().compile(xpathExpression));
+    if (nodes.isEmpty() || nodes.size() > 1) {
+      throw new IllegalStateException(format("Found %s nodes for xpat expression '%d'", nodes.size(), xpathExpression));
+    }
+    return nodes.get(0);
   }
 
   /**
@@ -172,8 +198,17 @@ public class ApplicationModel {
    * @throws IllegalArgumentException if the XPath query cannot be compiled
    */
   private List<Element> getElementsFromDocument(XPathExpression xpath, Document document) {
-    return XPathFactory.instance().compile(xpath.getExpression(), Filters.element(), null, getAdditionalNamespaces())
-        .evaluate(document);
+    XPathExpression<Element> compiledXPath =
+        XPathFactory.instance().compile(xpath.getExpression(), Filters.element(), null, getAdditionalNamespaces());
+    try {
+      return compiledXPath.evaluate(document);
+    } catch (IllegalArgumentException e) {
+      if (e.getMessage().matches("Namespace with prefix '\\w+' has not been declared.")) {
+        return emptyList();
+      } else {
+        throw e;
+      }
+    }
   }
 
   /**

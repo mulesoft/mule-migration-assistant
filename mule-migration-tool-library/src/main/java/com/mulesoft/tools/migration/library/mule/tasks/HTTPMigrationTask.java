@@ -7,10 +7,12 @@
 package com.mulesoft.tools.migration.library.mule.tasks;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
+import com.mulesoft.tools.migration.library.mule.steps.file.FileTransformers;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpConfig;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorHeaders;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListenerConfig;
@@ -19,6 +21,15 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorQueryPa
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequestConfig;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorUriParams;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpPollingConnector;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpStaticResource;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpsGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpsInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpsPollingConnector;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -56,8 +67,26 @@ public class HTTPMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new HttpConnectorPomContribution(), new HttpConnectorListenerConfig(), new HttpConnectorRequestConfig(),
-                        new HttpConnectorListener(), new HttpConnectorRequester(),
-                        new HttpConnectorHeaders(), new HttpConnectorQueryParams(), new HttpConnectorUriParams());
+    return newArrayList(new HttpConnectorPomContribution(),
+                        // Transport, deprecated in Mule 3.6
+                        new HttpPollingConnector(),
+                        new HttpsPollingConnector(),
+                        new HttpGlobalEndpoint(),
+                        new HttpsGlobalEndpoint(),
+                        new HttpInboundEndpoint(),
+                        new HttpsInboundEndpoint(),
+                        new HttpOutboundEndpoint(),
+                        new HttpsOutboundEndpoint(),
+                        new HttpConfig(),
+                        new FileTransformers(),
+                        // Connector, introduced in Mule 3.6
+                        new HttpConnectorListenerConfig(),
+                        new HttpConnectorRequestConfig(),
+                        new HttpConnectorListener(),
+                        new HttpConnectorRequester(),
+                        new HttpConnectorHeaders(),
+                        new HttpConnectorQueryParams(),
+                        new HttpConnectorUriParams(),
+                        new HttpStaticResource());
   }
 }

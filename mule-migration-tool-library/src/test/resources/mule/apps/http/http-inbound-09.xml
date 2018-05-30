@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <http:listener-config name="serverEndpoint1Config">
+        <http:listener-connection host="localhost" port="${port1}"/>
+    </http:listener-config>
+
+    <flow name="flow">
+        <http:listener config-ref="serverEndpoint1Config" path="test1"/>
+        <compatibility:attributes-to-inbound-properties/>
+        <!-- This transformer would be migrated by another task -->
+        <expression-transformer>
+            <return-argument evaluator="header" expression="INBOUND:foo"/>
+            <return-argument evaluator="header" expression="INBOUND:far"/>
+        </expression-transformer>
+        <logger/>
+        <compatibility:outbound-properties-to-var/>
+    </flow>
+</mule>

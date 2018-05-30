@@ -7,6 +7,8 @@
 package com.mulesoft.tools.migration.step.util;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
 import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -27,12 +29,8 @@ import org.jdom2.Parent;
  */
 public final class XmlDslUtils {
 
-  private static final String COMPATIBILITY_NS_URI = "http://www.mulesoft.org/schema/mule/compatibility";
-  private static final String COMPATIBILITY_NS_SCHEMA_LOC =
-      "http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd";
   private static final String CORE_NS_URI = "http://www.mulesoft.org/schema/mule/core";
 
-  public static final Namespace COMPATIBILITY_NAMESPACE = Namespace.getNamespace("compatibility", COMPATIBILITY_NS_URI);
   public static final Namespace CORE_NAMESPACE = Namespace.getNamespace(CORE_NS_URI);
 
   private XmlDslUtils() {
@@ -73,18 +71,28 @@ public final class XmlDslUtils {
    * Add the required compatibility elements to the flow for a migrated source to work correctly.
    */
   public static void migrateSourceStructure(ApplicationModel appModel, Element object, MigrationReport report) {
+    migrateSourceStructure(appModel, object, report, true);
+  }
+
+  /**
+   * Add the required compatibility elements to the flow for a migrated source to work correctly.
+   */
+  public static void migrateSourceStructure(ApplicationModel appModel, Element object, MigrationReport report,
+                                            boolean expectsOutboundProperties) {
     appModel.addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, object.getDocument());
 
     int index = object.getParent().indexOf(object);
     buildAttributesToInboundProperties(report, object.getParent(), index + 1);
 
-    // TODO MMT-32 Test this
-    // TODO MMT-32 Are we migrating exception handling before or after connectors/transports?
-    Element errorHandlerElement = object.getParentElement().getChild("error-handler", CORE_NAMESPACE);
-    if (errorHandlerElement != null) {
-      buildOutboundPropertiesToVar(report, object.getParent(), object.getParentElement().indexOf(errorHandlerElement) - 1);
-    } else {
-      buildOutboundPropertiesToVar(report, object.getParent(), object.getParent().getContentSize());
+    if (expectsOutboundProperties) {
+      // TODO MMT-32 Test this
+      // TODO MMT-32 Are we migrating exception handling before or after connectors/transports?
+      Element errorHandlerElement = object.getParentElement().getChild("error-handler", CORE_NAMESPACE);
+      if (errorHandlerElement != null) {
+        buildOutboundPropertiesToVar(report, object.getParent(), object.getParentElement().indexOf(errorHandlerElement) - 1);
+      } else {
+        buildOutboundPropertiesToVar(report, object.getParent(), object.getParent().getContentSize());
+      }
     }
   }
 

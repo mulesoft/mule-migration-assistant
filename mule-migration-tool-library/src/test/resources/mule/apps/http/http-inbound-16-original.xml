@@ -10,11 +10,10 @@
 
 
     <flow name="flow">
-        <http:listener config-ref="httpConfig" path="/nestedError">
-            <http:error-response-builder statusCode="200">
-                <http:header headerName="testHeader" value="testValue" />
-            </http:error-response-builder>
-        </http:listener>
+        <http:inbound-endpoint config-ref="httpConfig" path="/nestedError"/>
+        <http:error-response-builder statusCode="200">
+            <http:header headerName="testHeader" value="testValue" />
+        </http:error-response-builder>
 
         <logger/>
     </flow>

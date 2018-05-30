@@ -22,7 +22,6 @@ import org.jdom2.Attribute;
 import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.jdom2.xpath.XPathFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,9 +56,8 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
     final Namespace dbNamespace = Namespace.getNamespace("db", DB_NAMESPACE);
 
     if ("template-query".equals(object.getName())) {
-      List<Element> templateRefs = getApplicationModel().getNodes(XPathFactory.instance()
-          .compile("//*[namespace-uri() = '" + DB_NAMESPACE + "' and local-name() = 'template-query-ref' and @name = '"
-              + object.getAttributeValue("name") + "']"));
+      List<Element> templateRefs = getApplicationModel().getNodes("//*[namespace-uri() = '" + DB_NAMESPACE
+          + "' and local-name() = 'template-query-ref' and @name = '" + object.getAttributeValue("name") + "']");
 
       for (Element templateRef : new ArrayList<>(templateRefs)) {
         List<Content> migratedChildren = object.cloneContent();

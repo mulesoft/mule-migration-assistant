@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <http:listener-config name="serverEndpointConfig">
+        <http:listener-connection host="localhost" port="${port1}"/>
+    </http:listener-config>
+
+    <flow name="flow">
+        <http:listener config-ref="serverEndpointConfig" path="/">
+            <http:response>
+                <http:headers>
+                    #[{'Content-Type' : 'application/x-download'}]
+                </http:headers>
+            </http:response>
+        </http:listener>
+        <compatibility:attributes-to-inbound-properties/>
+        <set-variable variableName="Content-Disposition" value="attachment; filename=foo.zip"/>
+        <set-variable variableName="Content-Type" value="application/x-download"/>
+        <logger/>
+        <compatibility:outbound-properties-to-var/>
+    </flow>
+</mule>

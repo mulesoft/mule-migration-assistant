@@ -10,6 +10,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -31,11 +32,12 @@ import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
 
+import org.jdom2.Element;
+import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import org.jdom2.Element;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -146,7 +148,7 @@ public class AbstractMigrationTaskTest {
 
   @Test
   public void shouldExecuteAllStepsAppModelContributionAndElementPresent() {
-    doReturn(newArrayList(mock(Element.class))).when(applicationModelMock).getNodes(any());
+    doReturn(newArrayList(mock(Element.class))).when(applicationModelMock).getNodes(any(XPathExpression.class));
 
     MigrationStepSelector selectorMock = mock(MigrationStepSelector.class);
     doReturn(newArrayList(mock(ApplicationModelContribution.class))).when(selectorMock).getApplicationModelContributionSteps();
@@ -159,7 +161,7 @@ public class AbstractMigrationTaskTest {
 
   @Test
   public void shouldExecuteAllStepsAppModelContributionAndElementNotPresent() {
-    doReturn(newArrayList()).when(applicationModelMock).getNodes(any());
+    doReturn(newArrayList()).when(applicationModelMock).getNodes(anyString());
 
     MigrationStepSelector selectorMock = mock(MigrationStepSelector.class);
     doReturn(newArrayList(mock(ApplicationModelContribution.class))).when(selectorMock).getApplicationModelContributionSteps();
@@ -172,7 +174,7 @@ public class AbstractMigrationTaskTest {
 
   @Test
   public void shouldExecuteAllStepsNoAppModelContributionAndElementPresent() {
-    doReturn(newArrayList(mock(Element.class))).when(applicationModelMock).getNodes(any());
+    doReturn(newArrayList(mock(Element.class))).when(applicationModelMock).getNodes(anyString());
 
     MigrationStepSelector selectorMock = mock(MigrationStepSelector.class);
     doReturn(newArrayList()).when(selectorMock).getApplicationModelContributionSteps();
@@ -185,7 +187,7 @@ public class AbstractMigrationTaskTest {
 
   @Test
   public void shouldExecuteAllStepsNoAppModelContributionAndNoElementPresent() {
-    doReturn(newArrayList()).when(applicationModelMock).getNodes(any());
+    doReturn(newArrayList()).when(applicationModelMock).getNodes(anyString());
 
     MigrationStepSelector selectorMock = mock(MigrationStepSelector.class);
     doReturn(newArrayList()).when(selectorMock).getApplicationModelContributionSteps();

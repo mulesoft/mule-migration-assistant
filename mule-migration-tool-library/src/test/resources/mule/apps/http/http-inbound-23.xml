@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <http:listener-config name="responseConfig">
+        <http:listener-connection host="localhost" port="${port2}"/>
+    </http:listener-config>
+
+    <append-string-transformer name="appendResponse" message=" response"/>
+
+    <flow name="flow">
+        <http:listener config-ref="responseConfig" path="/"/>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger/>
+        <transformer ref="appendResponse"/>
+        <compatibility:outbound-properties-to-var/>
+    </flow>
+</mule>

@@ -11,9 +11,6 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
-
 /**
  * Remove Json to Object Namespace
  *
@@ -35,8 +32,7 @@ public class RemoveJsonTransformerNamespace implements NamespaceContribution {
   @Override
   public void execute(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
     try {
-      XPathExpression xPathExpression = XPathFactory.instance().compile(JSON_TRANSFORMER_XPRESSION);
-      if (applicationModel.getNodes(xPathExpression).isEmpty()) {
+      if (applicationModel.getNodes(JSON_TRANSFORMER_XPRESSION).isEmpty()) {
         applicationModel.removeNameSpace(JSON_TRANSFORMER_NAME, JSON_TRANSFORMER_URI, JSON_TRANSFORMER_SCHEMA);
       }
     } catch (Exception e) {

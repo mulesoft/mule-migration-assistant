@@ -7,8 +7,7 @@
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
     <flow name="flow">
-        <http:inbound-endpoint name="httpEndpoint" host="localhost" port="${port1}"
-                               contentType="text/xml">
+        <http:inbound-endpoint name="httpEndpoint" host="localhost" port="${port1}">
             <http:body-to-parameter-map-transformer/>
         </http:inbound-endpoint>
 

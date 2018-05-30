@@ -18,7 +18,6 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.jdom2.xpath.XPathFactory;
 
 import com.google.common.collect.ImmutableList;
 
@@ -152,8 +151,8 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
 
       object.removeContent(builderRef);
 
-      Element builder = getApplicationModel().getNodes(XPathFactory.instance()
-          .compile("/mule:mule/http:response-builder[@name='" + builderRef.getAttributeValue("ref") + "']")).get(0);
+      Element builder =
+          getApplicationModel().getNode("/mule:mule/http:response-builder[@name='" + builderRef.getAttributeValue("ref") + "']");
 
       handleReferencedResponseBuilder(builder, httpNamespace);
       List<Element> builderContent = ImmutableList.copyOf(builder.getChildren()).asList();
