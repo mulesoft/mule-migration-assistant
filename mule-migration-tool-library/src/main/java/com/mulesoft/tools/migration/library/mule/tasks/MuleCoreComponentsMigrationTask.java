@@ -33,6 +33,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.SetPayload;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetProperty;
 import com.mulesoft.tools.migration.library.mule.steps.core.TransactionalScope;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
+import com.mulesoft.tools.migration.library.mule.steps.ee.EETransform;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -91,6 +92,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new RemoveSchedulersNamespace(),
                         new CustomFilter(),
                         new ChoiceExpressions(),
-                        new ForEachExpressions());
+                        new ForEachExpressions(),
+                        new EETransform());
   }
 }

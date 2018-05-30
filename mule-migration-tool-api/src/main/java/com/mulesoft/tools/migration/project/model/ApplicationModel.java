@@ -147,7 +147,7 @@ public class ApplicationModel {
    * @param schemaLocation
    * @param document
    */
-  protected void removeNameSpace(Namespace namespace, String schemaLocation, Document document) {
+  public void removeNameSpace(Namespace namespace, String schemaLocation, Document document) {
     Element rootElement = document.getRootElement();
     rootElement.removeNamespaceDeclaration(namespace);
 

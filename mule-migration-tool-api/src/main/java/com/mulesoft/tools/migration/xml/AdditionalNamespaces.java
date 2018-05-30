@@ -44,7 +44,9 @@ public enum AdditionalNamespaces {
 
   MOCK("mock", "http://www.mulesoft.org/schema/mule/mock"),
 
-  SCRIPTING("scripting", "http://www.mulesoft.org/schema/mule/scripting");
+  SCRIPTING("scripting", "http://www.mulesoft.org/schema/mule/scripting"),
+
+  DW("dw", "http://www.mulesoft.org/schema/mule/ee/dw");
 
   private String prefix;
   private String uri;

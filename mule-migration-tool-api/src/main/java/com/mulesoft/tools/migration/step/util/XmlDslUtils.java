@@ -169,4 +169,14 @@ public final class XmlDslUtils {
     }
   }
 
+  /**
+   *
+   * Add new element after some existing element.
+   * @param newElement
+   * @param element
+   */
+  public static void addElementAfter(Element newElement, Element element) {
+    Integer parentIndex = element.getParentElement().indexOf(element);
+    element.getParentElement().addContent(parentIndex + 1, newElement);
+  }
 }
