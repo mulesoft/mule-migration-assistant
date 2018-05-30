@@ -10,7 +10,10 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 
@@ -28,6 +31,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Migrates the outbound endpoint of the HTTP Transport
@@ -37,6 +41,8 @@ import java.util.Map;
  */
 public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
+
+  protected static final String SOCKETS_NAMESPACE = "http://www.mulesoft.org/schema/mule/sockets";
 
   public static final String XPATH_SELECTOR = "/mule:mule//http:outbound-endpoint";
 
@@ -53,14 +59,114 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
+    final Namespace socketsNamespace = Namespace.getNamespace("sockets", SOCKETS_NAMESPACE);
+    object.setNamespace(httpNamespace);
+    object.setName("request");
+
+    String flowName = object.getParentElement().getAttributeValue("name");
+    String configName = (object.getAttribute("name") != null
+        ? object.getAttributeValue("name")
+        : (object.getAttribute("ref") != null
+            ? object.getAttributeValue("ref")
+            : flowName))
+        + "Config";
+
+    final Element requestConfig = new Element("request-config", httpNamespace).setAttribute("name", configName);
+    final Element requestConnection = new Element("request-connection", httpNamespace);
+
+    requestConfig.addContent(requestConnection);
+    object.getDocument().getRootElement().addContent(0, requestConfig);
+
+    processAddress(object, report).ifPresent(address -> {
+      requestConnection.setAttribute("host", getExpressionMigrator().migrateExpression(address.getHost(), true, object));
+      requestConnection.setAttribute("port", getExpressionMigrator().migrateExpression(address.getPort(), true, object));
+      if (address.getPath() != null) {
+        object.setAttribute("path", getExpressionMigrator().migrateExpression(address.getPath(), true, object));
+      }
+    });
+    copyAttributeIfPresent(object, requestConnection, "host");
+    migrateExpression(requestConnection.getAttribute("host"), expressionMigrator);
+    copyAttributeIfPresent(object, requestConnection, "port");
+    migrateExpression(requestConnection.getAttribute("port"), expressionMigrator);
+    copyAttributeIfPresent(object, requestConnection, "keep-alive", "usePersistentConnections");
+
+    if (object.getAttribute("path") == null) {
+      object.setAttribute("path", "/");
+    }
+
+    object.setAttribute("config-ref", configName);
+
+    if (object.getAttribute("connector-ref") != null) {
+      Element connector = getConnector(object.getAttributeValue("connector-ref"));
+
+      handleConnector(connector, requestConnection, report, httpNamespace, socketsNamespace);
+
+      object.removeAttribute("connector-ref");
+    } else {
+      getDefaultConnector().ifPresent(connector -> {
+        handleConnector(connector, requestConnection, report, httpNamespace, socketsNamespace);
+      });
+    }
+
+    if (object.getAttribute("keepAlive") != null) {
+      getSocketProperties(requestConnection, httpNamespace, socketsNamespace)
+          .setAttribute("keepAlive", object.getAttributeValue("keepAlive"));
+      object.removeAttribute("keepAlive");
+    }
+
+    if (object.getAttribute("contentType") != null) {
+      object.addContent(new Element("header", httpNamespace)
+          .setAttribute("headerName", "Content-Type")
+          .setAttribute("value", object.getAttributeValue("contentType")));
+      object.removeAttribute("contentType");
+    }
+
+    if (object.getAttribute("exceptionOnMessageError") != null
+        && "false".equals(object.getAttributeValue("exceptionOnMessageError"))) {
+
+      object.addContent(new Element("response-validator", httpNamespace)
+          .addContent(new Element("success-status-code-validator", httpNamespace).setAttribute("values", "0..599")));
+
+      object.removeAttribute("exceptionOnMessageError");
+    }
+    addAttributesToInboundProperties(object, report);
 
     if (object.getAttribute("name") != null) {
       object.removeAttribute("name");
     }
   }
 
+  protected Element getConnector(String connectorName) {
+    return getApplicationModel().getNode("/mule:mule/http:connector[@name = '" + connectorName + "']");
+  }
+
+  protected Optional<Element> getDefaultConnector() {
+    List<Element> nodes = getApplicationModel().getNodes("/mule:mule/http:connector");
+    return nodes.stream().findFirst();
+  }
+
+  private void handleConnector(Element connector, Element reqConnection, MigrationReport report,
+                               Namespace httpNamespace, Namespace socketsNamespace) {
+    if (connector.getAttribute("connectionTimeout") != null) {
+      getSocketProperties(reqConnection, httpNamespace, socketsNamespace)
+          .setAttribute("connectionTimeout", connector.getAttributeValue("connectionTimeout"));
+    }
+    if (connector.getAttribute("clientSoTimeout") != null) {
+      getSocketProperties(reqConnection, httpNamespace, socketsNamespace)
+          .setAttribute("clientTimeout", connector.getAttributeValue("clientSoTimeout"));
+    }
+  }
+
+  private Element getSocketProperties(Element reqConnection, Namespace httpNamespace, Namespace socketsNamespace) {
+    Element socketProps = new Element("tcp-client-socket-properties", socketsNamespace);
+    reqConnection.addContent(new Element("client-socket-properties", httpNamespace)
+        .addContent(socketProps));
+    return socketProps;
+  }
+
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
-    migrateOperationStructure(getApplicationModel(), object, report);
+    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
 
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("http.status", "message.attributes.statusCode");

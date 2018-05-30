@@ -30,7 +30,8 @@ public class HttpMigrationTestCase extends EndToEndTestCase {
         "httpTransport1",
         "httpTransport2",
         "httpTransport3",
-        "httpTransport4"
+        "httpTransport4",
+        "httpTransport5"
     };
   }
 

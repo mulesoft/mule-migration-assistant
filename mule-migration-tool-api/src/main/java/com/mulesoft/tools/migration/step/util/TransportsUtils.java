@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.step.util;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -148,11 +149,43 @@ public final class TransportsUtils {
 
   }
 
+  /**
+   * Add the required compatibility elements to the flow for a migrated outbound endpoint to work correctly.
+   */
+  public static void migrateOutboundEndpointStructure(ApplicationModel appModel, Element outboundEndpoint, MigrationReport report,
+                                                      boolean outputsAttributes) {
+    if (outboundEndpoint.getAttributeValue("exchange-pattern") != null
+        && "one-way".equals(outboundEndpoint.getAttributeValue("exchange-pattern"))) {
+      Element asyncWrapper = new Element("async", CORE_NAMESPACE);
+
+      Element flow = outboundEndpoint.getParentElement();
+      List<Element> allChildren = flow.getChildren();
+      for (Element processor : new ArrayList<>(allChildren.subList(allChildren.indexOf(outboundEndpoint), allChildren.size()))) {
+        asyncWrapper.addContent(processor.detach());
+      }
+      flow.addContent(asyncWrapper);
+    }
+    outboundEndpoint.removeAttribute("exchange-pattern");
+
+    extractOutboundChildren(outboundEndpoint, appModel);
+
+    migrateOperationStructure(appModel, outboundEndpoint, report, outputsAttributes);
+  }
+
   public static void extractInboundChildren(Element inbound, ApplicationModel appModel) {
+    inbound.getParentElement().addContent(2, fetchContent(inbound));
+    inbound.getParentElement().addContent(fetchResponseContent(inbound, appModel));
+  }
+
+  public static void extractOutboundChildren(Element outbound, ApplicationModel appModel) {
+    outbound.getParentElement().addContent(0, fetchContent(outbound));
+    outbound.getParentElement().addContent(fetchResponseContent(outbound, appModel));
+  }
+
+  private static List<Content> fetchContent(Element outbound) {
     List<Content> content = new ArrayList<>();
-    List<Content> responseContent = new ArrayList<>();
-    if (inbound.getChild("properties", CORE_NAMESPACE) != null) {
-      for (Element element : inbound.getChild("properties", CORE_NAMESPACE).getChildren()) {
+    if (outbound.getChild("properties", CORE_NAMESPACE) != null) {
+      for (Element element : outbound.getChild("properties", CORE_NAMESPACE).getChildren()) {
         if ("entry".equals(element.getName())
             && "http://www.springframework.org/schema/beans".equals(element.getNamespace().getURI())) {
           content.add(new Element("set-variable", CORE_NAMESPACE)
@@ -160,22 +193,26 @@ public final class TransportsUtils {
               .setAttribute("value", element.getAttributeValue("value")));
         }
       }
-      inbound.getChild("properties", CORE_NAMESPACE).detach();
+      outbound.getChild("properties", CORE_NAMESPACE).detach();
     }
 
-    inbound.getChildren().stream().filter(c -> c.getName().contains("transformer") || c.getName().contains("filter"))
+    outbound.getChildren().stream().filter(c -> c.getName().contains("transformer") || c.getName().contains("filter"))
         .collect(toList()).forEach(tc -> {
           tc.getParent().removeContent(tc);
           content.add(tc);
         });
+    return content;
+  }
 
-    if (inbound.getChild("response", CORE_NAMESPACE) != null) {
-      responseContent.addAll(inbound.getChild("response", CORE_NAMESPACE).cloneContent());
-      inbound.getChild("response", CORE_NAMESPACE).detach();
+  private static List<Content> fetchResponseContent(Element outbound, ApplicationModel appModel) {
+    List<Content> responseContent = new ArrayList<>();
+    if (outbound.getChild("response", CORE_NAMESPACE) != null) {
+      responseContent.addAll(outbound.getChild("response", CORE_NAMESPACE).cloneContent());
+      outbound.getChild("response", CORE_NAMESPACE).detach();
     }
 
-    if (inbound.getAttribute("responseTransformer-refs") != null) {
-      String[] transformerNames = inbound.getAttributeValue("responseTransformer-refs").split(",");
+    if (outbound.getAttribute("responseTransformer-refs") != null) {
+      String[] transformerNames = outbound.getAttributeValue("responseTransformer-refs").split(",");
 
       for (String transformerName : transformerNames) {
         Element transformer = appModel.getNode("/mule:mule/*[@name = '" + transformerName + "']");
@@ -187,10 +224,8 @@ public final class TransportsUtils {
           responseContent.add(new Element("transformer", CORE_NAMESPACE).setAttribute("ref", transformerName));
         }
       }
-      inbound.removeAttribute("responseTransformer-refs");
+      outbound.removeAttribute("responseTransformer-refs");
     }
-
-    inbound.getParentElement().addContent(2, content);
-    inbound.getParentElement().addContent(responseContent);
+    return responseContent;
   }
 }

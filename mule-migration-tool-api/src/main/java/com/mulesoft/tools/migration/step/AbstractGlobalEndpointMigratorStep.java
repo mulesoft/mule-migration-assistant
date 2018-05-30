@@ -49,6 +49,7 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
 
       referent.addContent(object.removeContent());
 
+      referent.setAttribute("name", referent.getAttributeValue("ref"));
       referent.removeAttribute("ref");
     }
 
@@ -74,6 +75,7 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
 
       referent.addContent(object.removeContent());
 
+      referent.setAttribute("name", referent.getAttributeValue("ref"));
       referent.removeAttribute("ref");
     }
 

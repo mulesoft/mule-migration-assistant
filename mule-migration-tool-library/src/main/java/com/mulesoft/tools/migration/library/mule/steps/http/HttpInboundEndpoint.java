@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Migrates the inbound endpoint of the HTTP Transport
@@ -89,15 +90,13 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("connector-ref") != null) {
       Element connector = getConnector(object.getAttributeValue("connector-ref"));
 
-      if (connector.getAttribute("serverSoTimeout") != null
-          || connector.getAttribute("reuseAddress") != null) {
-        // TODO MULE-14960
-        report.report(ERROR, connector, connector, "The server socket properties have to be configured at the runtime level.");
-        connector.removeAttribute("serverSoTimeout");
-        connector.removeAttribute("reuseAddress");
-      }
+      handleConnector(connector, report);
 
       object.removeAttribute("connector-ref");
+    } else {
+      getDefaultConnector().ifPresent(connector -> {
+        handleConnector(connector, report);
+      });
     }
 
     if (object.getAttribute("method") != null) {
@@ -140,10 +139,23 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     }
   }
 
+  private void handleConnector(Element connector, MigrationReport report) {
+    if (connector.getAttribute("serverSoTimeout") != null
+        || connector.getAttribute("reuseAddress") != null) {
+      // TODO MULE-14960
+      report.report(ERROR, connector, connector, "The server socket properties have to be configured at the runtime level.");
+      connector.removeAttribute("serverSoTimeout");
+      connector.removeAttribute("reuseAddress");
+    }
+  }
+
   protected Element getConnector(String connectorName) {
-    Element connector =
-        getApplicationModel().getNode("/mule:mule/http:connector[@name = '" + connectorName + "']");
-    return connector;
+    return getApplicationModel().getNode("/mule:mule/http:connector[@name = '" + connectorName + "']");
+  }
+
+  protected Optional<Element> getDefaultConnector() {
+    List<Element> nodes = getApplicationModel().getNodes("/mule:mule/http:connector");
+    return nodes.stream().findFirst();
   }
 
   private void handleResponseBuilder(Element listenerSource, Element listenerResponse, Element responseBuilder,

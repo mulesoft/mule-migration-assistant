@@ -24,7 +24,6 @@ import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -35,7 +34,6 @@ import org.junit.runners.Parameterized.Parameters;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Ignore
 @RunWith(Parameterized.class)
 public class HttpOutboundTest {
 
@@ -50,20 +48,24 @@ public class HttpOutboundTest {
         "http-outbound-01",
         "http-outbound-02",
         "http-outbound-03",
-        "http-outbound-04",
-        "http-outbound-05",
+        // TODO MMT-128
+        // "http-outbound-04",
+        // "http-outbound-05",
         "http-outbound-06",
         "http-outbound-07",
         "http-outbound-08",
         "http-outbound-09",
         "http-outbound-10",
         "http-outbound-11",
-        "http-outbound-12",
-        "http-outbound-13",
-        "http-outbound-14",
-        "http-outbound-15",
-        "http-outbound-16",
-        "http-outbound-17",
+        // TODO MMT-128
+        // "http-outbound-12",
+        // TODO MMT-154 Migrate spring beans
+        // "http-outbound-13",
+        // TODO rest-service-component
+        // "http-outbound-14",
+        // "http-outbound-15",
+        // "http-outbound-16",
+        // "http-outbound-17",
         "http-outbound-18",
         "http-outbound-19",
         "http-outbound-20"
@@ -85,6 +87,7 @@ public class HttpOutboundTest {
   private HttpOutboundEndpoint httpOutbound;
   private HttpsOutboundEndpoint httpsOutbound;
   private HttpConfig httpConfig;
+  private HttpConnectorHeaders httpHeaders;
 
   private Document doc;
   private ApplicationModel appModel;
@@ -96,7 +99,11 @@ public class HttpOutboundTest {
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
+    when(appModel.getNode(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+
+    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock);
 
     httpGlobalEndpoint = new HttpGlobalEndpoint();
     httpGlobalEndpoint.setApplicationModel(appModel);
@@ -113,6 +120,9 @@ public class HttpOutboundTest {
 
     httpConfig = new HttpConfig();
     httpConfig.setApplicationModel(appModel);
+
+    httpHeaders = new HttpConnectorHeaders();
+    httpHeaders.setExpressionMigrator(expressionMigrator);
   }
 
   @Test
@@ -127,6 +137,8 @@ public class HttpOutboundTest {
         .forEach(node -> httpsOutbound.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, httpConfig.getAppliedTo().getExpression())
         .forEach(node -> httpConfig.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, httpHeaders.getAppliedTo().getExpression())
+        .forEach(node -> httpHeaders.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

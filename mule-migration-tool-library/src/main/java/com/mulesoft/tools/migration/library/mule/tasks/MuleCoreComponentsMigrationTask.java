@@ -32,6 +32,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.SetAttachment;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetPayload;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetProperty;
 import com.mulesoft.tools.migration.library.mule.steps.core.TransactionalScope;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.CompositeFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.ee.EETransform;
 import com.mulesoft.tools.migration.project.ProjectType;
@@ -90,6 +91,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new Flow(),
                         new Poll(),
                         new RemoveSchedulersNamespace(),
+                        new CompositeFilter(),
                         new CustomFilter(),
                         new ChoiceExpressions(),
                         new ForEachExpressions(),

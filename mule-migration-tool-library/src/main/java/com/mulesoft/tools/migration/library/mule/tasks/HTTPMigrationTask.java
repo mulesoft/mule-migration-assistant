@@ -11,7 +11,6 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICA
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
-import com.mulesoft.tools.migration.library.mule.steps.file.FileTransformers;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConfig;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorHeaders;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener;
@@ -26,6 +25,7 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpPollingConnector;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpStaticResource;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpTransformers;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint;
@@ -68,6 +68,11 @@ public class HTTPMigrationTask extends AbstractMigrationTask {
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new HttpConnectorPomContribution(),
+                        // Connector, introduced in Mule 3.6
+                        new HttpConnectorListenerConfig(),
+                        new HttpConnectorRequestConfig(),
+                        new HttpConnectorListener(),
+                        new HttpConnectorRequester(),
                         // Transport, deprecated in Mule 3.6
                         new HttpPollingConnector(),
                         new HttpsPollingConnector(),
@@ -78,12 +83,8 @@ public class HTTPMigrationTask extends AbstractMigrationTask {
                         new HttpOutboundEndpoint(),
                         new HttpsOutboundEndpoint(),
                         new HttpConfig(),
-                        new FileTransformers(),
-                        // Connector, introduced in Mule 3.6
-                        new HttpConnectorListenerConfig(),
-                        new HttpConnectorRequestConfig(),
-                        new HttpConnectorListener(),
-                        new HttpConnectorRequester(),
+                        new HttpTransformers(),
+                        // The rest
                         new HttpConnectorHeaders(),
                         new HttpConnectorQueryParams(),
                         new HttpConnectorUriParams(),
