@@ -81,7 +81,7 @@ public class ApplicationModel {
   public Element getNode(String xpathExpression) {
     List<Element> nodes = getNodes(XPathFactory.instance().compile(xpathExpression));
     if (nodes.isEmpty() || nodes.size() > 1) {
-      throw new IllegalStateException(format("Found %s nodes for xpat expression '%d'", nodes.size(), xpathExpression));
+      throw new IllegalStateException(format("Found %d nodes for xpath expression '%s'", nodes.size(), xpathExpression));
     }
     return nodes.get(0);
   }

@@ -13,9 +13,9 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <http:endpoint name="clientEndpoint" host="localhost" port="8080" exchange-pattern="request-response"/>
-    <http:endpoint name="serverEndpoint" host="localhost" port="$8080" exchange-pattern="request-response"/>
+    <http:endpoint name="serverEndpoint" host="localhost" port="8080" exchange-pattern="request-response"/>
 
-    <http:endpoint name="clientEndpoint2" host="localhost" port="$8081" contentType="application/xml"
+    <http:endpoint name="clientEndpoint2" host="localhost" port="8081" contentType="application/xml"
         exchange-pattern="one-way">
         <set-property propertyName="Content-Disposition" value="attachment; filename=foo.zip"/>
         <set-property propertyName="X-Test" value="foo"/>

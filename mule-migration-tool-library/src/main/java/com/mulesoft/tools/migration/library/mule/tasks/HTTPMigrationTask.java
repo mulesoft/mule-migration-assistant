@@ -11,7 +11,6 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICA
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
-import com.mulesoft.tools.migration.library.mule.steps.http.HttpConfig;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorHeaders;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListenerConfig;
@@ -82,7 +81,6 @@ public class HTTPMigrationTask extends AbstractMigrationTask {
                         new HttpsInboundEndpoint(),
                         new HttpOutboundEndpoint(),
                         new HttpsOutboundEndpoint(),
-                        new HttpConfig(),
                         new HttpTransformers(),
                         // The rest
                         new HttpConnectorHeaders(),
