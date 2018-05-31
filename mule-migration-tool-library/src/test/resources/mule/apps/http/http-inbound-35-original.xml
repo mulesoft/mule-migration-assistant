@@ -8,6 +8,15 @@
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
 
-    <http:polling-connector name="polling" checkEtag="false" pollingFrequency="3456" discardEmptyContent="false"/>
-   
+
+    <flow name="flow1">
+        <http:inbound-endpoint address="http://localhost:8080" path="/nested1"/>
+        <logger/>
+    </flow>
+
+    <flow name="flow2">
+        <http:inbound-endpoint address="http://localhost:8080" path="/nested2"/>
+        <logger/>
+    </flow>
+
 </mule>

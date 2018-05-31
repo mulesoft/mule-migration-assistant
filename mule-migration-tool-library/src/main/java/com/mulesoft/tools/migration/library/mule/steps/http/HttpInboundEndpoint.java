@@ -6,14 +6,22 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.addAttributesToInboundProperties;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.compatibilityHeaders;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.handleReferencedResponseBuilder;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
-import static java.util.Collections.emptyList;
+import static java.lang.System.lineSeparator;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
@@ -23,13 +31,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import com.google.common.collect.ImmutableList;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -65,27 +69,26 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
         ? object.getAttributeValue("name")
         : (object.getAttribute("ref") != null
             ? object.getAttributeValue("ref")
-            : flowName))
-        + "Config";
-
-    final Element listenerConfig = new Element("listener-config", httpNamespace).setAttribute("name", configName);
-    final Element listenerConnection = new Element("listener-connection", httpNamespace);
-
-    listenerConfig.addContent(listenerConnection);
-    object.getDocument().getRootElement().addContent(0, listenerConfig);
+            : flowName)).replaceAll("\\\\", "_")
+        + "ListenerConfig";
 
     processAddress(object, report).ifPresent(address -> {
-      listenerConnection.setAttribute("host", address.getHost());
-      listenerConnection.setAttribute("port", address.getPort());
+      extractListenerConfig(object, httpNamespace, configName, address.getHost(), address.getPort());
+
       if (address.getPath() != null) {
-        object.setAttribute("path", address.getPath());
+        if (address.getPath().endsWith("*")) {
+          object.setAttribute("path", address.getPath());
+        } else {
+          object.setAttribute("path", address.getPath().endsWith("/") ? address.getPath() + "*" : address.getPath() + "/*");
+        }
       }
     });
-    copyAttributeIfPresent(object, listenerConnection, "host");
-    copyAttributeIfPresent(object, listenerConnection, "port");
-    copyAttributeIfPresent(object, listenerConnection, "keep-alive", "usePersistentConnections");
-
-    object.setAttribute("config-ref", configName);
+    if (object.getAttribute("host") != null && object.getAttribute("port") != null) {
+      extractListenerConfig(object, httpNamespace, configName, object.getAttributeValue("host"),
+                            object.getAttributeValue("port"));
+      object.removeAttribute("host");
+      object.removeAttribute("port");
+    }
 
     if (object.getAttribute("connector-ref") != null) {
       Element connector = getConnector(object.getAttributeValue("connector-ref"));
@@ -104,38 +107,167 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     }
 
     if (object.getAttribute("path") == null) {
-      object.setAttribute("path", "/");
+      object.setAttribute("path", "/*");
+    } else {
+      String path = object.getAttributeValue("path");
+      if (!path.endsWith("*")) {
+        object.setAttribute("path", path.endsWith("/") ? path + "*" : path + "/*");
+      }
     }
 
     getApplicationModel()
         .getNodes("/mule:mule/mule:flow[@name='" + flowName + "']/http:response-builder")
         .forEach(rb -> {
-          handleReferencedResponseBuilder(rb, httpNamespace);
-          handleResponseBuilder(object, getResponse(object, httpNamespace), rb, httpNamespace);
+          handleReferencedResponseBuilder(rb, getApplicationModel(), httpNamespace);
+          Element response = getResponse(object, httpNamespace);
+          handleResponseBuilder(object, response, rb, httpNamespace);
+
+          copyAttributeIfPresent(rb, response, "statusCode");
+          copyAttributeIfPresent(rb, response, "reasonPhrase");
+
+          if (response.getAttribute("statusCode") == null) {
+            response.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status'] default 200]");
+            report.report(WARN, response, response, "Avoid using an outbound property to determine the status code.");
+          }
+
+          // if (rb.getAttribute("disablePropertiesAsHeaders") == null
+          // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
+          response.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
+          // }
         });
 
     getApplicationModel()
         .getNodes("/mule:mule/mule:flow[@name='" + flowName + "']/http:error-response-builder")
         .forEach(rb -> {
-          handleReferencedResponseBuilder(rb, httpNamespace);
-          handleResponseBuilder(object, getErrorResponse(object, httpNamespace), rb, httpNamespace);
+          handleReferencedResponseBuilder(rb, getApplicationModel(), httpNamespace);
+          Element errorResponse = getErrorResponse(object, httpNamespace);
+          handleResponseBuilder(object, errorResponse, rb, httpNamespace);
+          copyAttributeIfPresent(rb, errorResponse, "statusCode");
+          copyAttributeIfPresent(rb, errorResponse, "reasonPhrase");
+
+          if (errorResponse.getAttribute("statusCode") == null) {
+            errorResponse.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status']]");
+            report.report(WARN, errorResponse, errorResponse, "Avoid using an outbound property to determine the status code.");
+          }
+
+          // if (rb.getAttribute("disablePropertiesAsHeaders") == null
+          // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
+          errorResponse.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
+          // }
         });
 
     if (object.getAttribute("contentType") != null) {
-      getResponse(object, httpNamespace)
-          .addContent(new Element("header", httpNamespace)
-              .setAttribute("headerName", "Content-Type")
-              .setAttribute("value", object.getAttributeValue("contentType")));
+      Element response = getResponse(object, httpNamespace);
+      response.addContent(new Element("header", httpNamespace)
+          .setAttribute("headerName", "Content-Type")
+          .setAttribute("value", object.getAttributeValue("contentType")));
+      response.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status'] default 200]");
+      report.report(WARN, response, response, "Avoid using an outbound property to determine the status code.");
+      // if (rb.getAttribute("disablePropertiesAsHeaders") == null
+      // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
+      response.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
       object.removeAttribute("contentType");
     }
 
-    addAttributesToInboundProperties(object, report);
+    Element response = object.getChild("response", httpNamespace);
+    if (response == null) {
+      response = getResponse(object, httpNamespace);
+      response.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status'] default 200]");
+      report.report(WARN, response, response, "Avoid using an outbound property to determine the status code.");
+      // if (rb.getAttribute("disablePropertiesAsHeaders") == null
+      // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
+      response.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
+      // }
+    }
+    Element errorResponse = object.getChild("error-response", httpNamespace);
+    if (errorResponse == null) {
+      errorResponse = getErrorResponse(object, httpNamespace);
+      errorResponse.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status']]");
+      report.report(WARN, errorResponse, errorResponse, "Avoid using an outbound property to determine the status code.");
+      // if (rb.getAttribute("disablePropertiesAsHeaders") == null
+      // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
+      errorResponse.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
+      // }
+    }
+
+    migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
+    addAttributesToInboundProperties(object, getApplicationModel(), report);
+
+    // Replicates logic from org.mule.transport.http.HttpMuleMessageFactory#extractPayloadFromHttpRequest
+    Element checkPayload = new Element("choice", CORE_NAMESPACE)
+        .addContent(new Element("when", CORE_NAMESPACE)
+            .setAttribute("expression", "#[(message.attributes.headers['Content-Length'] as Number default 0) == 0]")
+            .addContent(new Element("set-payload", CORE_NAMESPACE).setAttribute("value", "#[message.attributes.requestUri]")));
+
+    addElementAfter(checkPayload, object);
+    report.report(WARN, checkPayload, checkPayload, "This replicates logic from the http transport. Remove if not needed.");
 
     if (object.getAttribute("name") != null) {
       object.removeAttribute("name");
     }
     if (object.getAttribute("ref") != null) {
       object.removeAttribute("ref");
+    }
+  }
+
+  public static Element connectionHeaders(ApplicationModel appModel, Namespace httpNamespace) {
+
+    // // Replicates logic from org.mule.transport.http.HttpMuleMessageFactory.rewriteConnectionAndKeepAliveHeaders(Map<String,
+    // Object>)
+    // expressionsPerProperty.put("Connection", "message.attributes.headers");
+    // expressionsPerProperty.put("Keep-Alive", "message.attributes.headers");
+
+    try {
+      library(getMigrationScriptFolder(appModel.getProjectBasePath()), "HttpInboundConnectionAndKeepAliveHeaders.dwl",
+              "" +
+                  "/**" + lineSeparator() +
+                  " * Emulates the Connection and Keep-Alive inbound headers logic of the Mule 3.x HTTP Connector."
+                  + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun httpInboundConnectionAndKeepAliveHeaders(version, headers: {}) = do {" + lineSeparator() +
+                  // " var matcher_regex = /(?i)http\\..*|Connection|Transfer-Encoding/" + lineSeparator() +
+                  // " ---" + lineSeparator() +
+                  "    vars.compatibility_outboundProperties default {} filterObject" + lineSeparator() +
+                  "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
+                  "}" + lineSeparator() +
+                  lineSeparator());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    return new Element("headers", httpNamespace)
+        .setText("#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]");
+  }
+
+  private void extractListenerConfig(Element object, final Namespace httpNamespace, String configName, String host, String port) {
+    List<Element> existingListener = getApplicationModel()
+        .getNodes("/mule:mule/http:listener-config/http:listener-connection[@host = '" + host + "' and @port = '" + port
+            + "']");
+    if (!existingListener.isEmpty()) {
+      existingListener.get(0);
+      object.setAttribute("config-ref", existingListener.get(0).getParentElement().getAttributeValue("name"));
+    } else {
+      final Element listenerConfig = new Element("listener-config", httpNamespace).setAttribute("name", configName);
+      final Element listenerConnection = new Element("listener-connection", httpNamespace);
+
+      listenerConnection.setAttribute("host", host);
+      listenerConnection.setAttribute("port", port);
+      listenerConfig.addContent(listenerConnection);
+
+      if (object.getAttribute("keepAlive") != null || object.getAttribute("keep-alive") != null) {
+        copyAttributeIfPresent(object, listenerConnection, "keep-alive", "usePersistentConnections");
+        copyAttributeIfPresent(object, listenerConnection, "keepAlive", "usePersistentConnections");
+      } else {
+        if (object.getAttribute("connector-ref") != null) {
+          Element connector = getConnector(object.getAttributeValue("connector-ref"));
+          if (connector.getAttribute("keepAlive") != null) {
+            copyAttributeIfPresent(connector, listenerConnection, "keepAlive", "usePersistentConnections");
+          }
+        }
+      }
+
+      object.getDocument().getRootElement().addContent(0, listenerConfig);
+      object.setAttribute("config-ref", configName);
     }
   }
 
@@ -262,58 +394,12 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     responseBuilder.detach();
   }
 
-  private void addAttributesToInboundProperties(Element object, MigrationReport report) {
-    migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
-
-    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    expressionsPerProperty.put("http.listener.path", "message.attributes.listenerPath");
-    expressionsPerProperty.put("http.relative.path", "message.attributes.relativePath");
-    expressionsPerProperty.put("http.version", "message.attributes.version");
-    expressionsPerProperty.put("http.scheme", "message.attributes.scheme");
-    expressionsPerProperty.put("http.method", "message.attributes.method");
-    expressionsPerProperty.put("http.request.uri", "message.attributes.requestUri");
-    expressionsPerProperty.put("http.query.string", "message.attributes.queryString");
-    expressionsPerProperty.put("http.remote.address", "message.attributes.remoteAddress");
-    expressionsPerProperty.put("http.client.cert", "message.attributes.clientCertificate");
-    expressionsPerProperty.put("http.query.params", "message.attributes.queryParams");
-    expressionsPerProperty.put("http.uri.params", "message.attributes.uriParams");
-    expressionsPerProperty.put("http.request.path", "message.attributes.requestPath");
-    expressionsPerProperty.put("http.headers", "message.attributes.headers");
-
-    try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.http.api.HttpRequestAttributes", expressionsPerProperty);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private void handleReferencedResponseBuilder(Element object, final Namespace httpNamespace) {
-    Element builderRef = object.getChild("builder", httpNamespace);
-    int idx = 0;
-    while (builderRef != null) {
-
-      object.removeContent(builderRef);
-
-      Element builder =
-          getApplicationModel().getNode("/mule:mule/http:response-builder[@name='" + builderRef.getAttributeValue("ref") + "']");
-
-      handleReferencedResponseBuilder(builder, httpNamespace);
-      List<Element> builderContent = ImmutableList.copyOf(builder.getChildren()).asList();
-      builder.setContent(emptyList());
-      builder.getParent().removeContent(builder);
-
-      object.addContent(idx, builderContent);
-      idx += builderContent.size();
-
-      builderRef = object.getChild("builder", httpNamespace);
-    }
-  }
-
   private Element getResponse(Element endpoint, Namespace httpNamespace) {
     Element response = endpoint.getChild("response", httpNamespace);
     if (response == null) {
       response = new Element("response", httpNamespace);
-      endpoint.addContent(response);
+
+      endpoint.addContent(0, response);
     }
     return response;
   }

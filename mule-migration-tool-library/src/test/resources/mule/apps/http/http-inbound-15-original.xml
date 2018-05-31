@@ -10,7 +10,7 @@
 
 
     <flow name="flow">
-        <http:inbound-endpoint config-ref="httpConfig" path="/nested"/>
+        <http:inbound-endpoint host="localhost" port="8080" path="/nested"/>
         <http:response-builder>
             <http:header headerName="testHeader" value="testValue" />
         </http:response-builder>

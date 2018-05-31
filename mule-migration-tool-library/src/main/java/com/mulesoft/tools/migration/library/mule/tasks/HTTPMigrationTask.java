@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICA
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpBasicSecurity;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorHeaders;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListenerConfig;
@@ -29,6 +30,7 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpsGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsPollingConnector;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpsStaticResource;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -86,6 +88,8 @@ public class HTTPMigrationTask extends AbstractMigrationTask {
                         new HttpConnectorHeaders(),
                         new HttpConnectorQueryParams(),
                         new HttpConnectorUriParams(),
-                        new HttpStaticResource());
+                        new HttpBasicSecurity(),
+                        new HttpStaticResource(),
+                        new HttpsStaticResource());
   }
 }

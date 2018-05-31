@@ -10,7 +10,7 @@
                http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <http:request-config name="flowConfig">
+    <http:request-config name="flowRequestConfig" enableCookies="true">
         <http:request-connection host="localhost" port="${port1}"/>
     </http:request-config>
 
@@ -81,7 +81,11 @@
                 
             </message-properties-transformer> 
             <compatibility:outbound-properties-to-var/>
-            <http:request config-ref="flowConfig" path="/" method="POST"/>
+            <http:request config-ref="flowRequestConfig" path="/" method="POST">
+                <http:headers>
+                    #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                </http:headers>
+            </http:request>
             <compatibility:attributes-to-inbound-properties/>
         </async>
     </flow>

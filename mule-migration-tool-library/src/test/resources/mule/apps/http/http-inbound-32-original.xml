@@ -8,14 +8,15 @@
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
 
-    <configuration>
-        <http:config useTransportForUris="true"/>
-    </configuration>
-    
-    <http:connector name="HttpConnectorKeepAlive" keepAlive="true">
-        <spring:property name="keepAliveTimeout" value="60000"/>
-    </http:connector>
-    
-    <http:connector name="HttpConnectorNoKeepAlive" keepAlive="false"/>
-    
+
+    <flow name="flow1">
+        <http:inbound-endpoint host="localhost" port="8080" path="/nested1"/>
+        <logger/>
+    </flow>
+
+    <flow name="flow2">
+        <http:inbound-endpoint host="localhost" port="8080" path="/nested2"/>
+        <logger/>
+    </flow>
+
 </mule>

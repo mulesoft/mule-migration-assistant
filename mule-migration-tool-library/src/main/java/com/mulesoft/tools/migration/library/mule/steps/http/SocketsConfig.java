@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -21,7 +23,8 @@ import org.jdom2.Namespace;
 public class SocketsConfig extends AbstractApplicationModelMigrationStep {
 
   private static final String TCP_NAMESPACE = "http://www.mulesoft.org/schema/mule/tcp";
-  private static final String SOCKETS_NAMESPACE = "http://www.mulesoft.org/schema/mule/sockets";
+  public static final String SOCKETS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/sockets";
+  public static final Namespace SOCKETS_NAMESPACE = Namespace.getNamespace("sockets", SOCKETS_NAMESPACE_URI);
 
   public static final String XPATH_SELECTOR = ""
       + "//*[namespace-uri()='" + TCP_NAMESPACE + "']";
@@ -37,12 +40,22 @@ public class SocketsConfig extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    final Namespace socketsNamespace = Namespace.getNamespace("sockets", SOCKETS_NAMESPACE);
-    object.setNamespace(socketsNamespace);
+    object.setNamespace(SOCKETS_NAMESPACE);
 
     if ("client-socket-properties".equals(object.getName())) {
-      object.setNamespace(socketsNamespace);
+      object.setNamespace(SOCKETS_NAMESPACE);
     }
   }
 
+  public static void addSocketsModule(ApplicationModel applicationModel) {
+    applicationModel.getPomModel().ifPresent(pom -> pom.addDependency(new DependencyBuilder()
+        .withGroupId("org.mule.connectors")
+        .withArtifactId("mule-sockets-connector")
+        .withVersion("1.1.1")
+        .withClassifier("mule-plugin")
+        .build()));
+
+    applicationModel.addNameSpace("sockets", "http://www.mulesoft.org/schema/mule/sockets",
+                                  "http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd");
+  }
 }

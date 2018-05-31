@@ -18,7 +18,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="flowConfig" path="/test" method="POST" responseTimeout="600000">
             <http:headers>
-                #[{'Content-Type' : 'text/xml'}]
+                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars) ++ {'Content-Type' : 'text/xml'}]
             </http:headers>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>

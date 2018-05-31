@@ -14,12 +14,12 @@
     
     <flow name="testFlowEmptyResponseBuilder">
         <http:listener config-ref="listenerConfig" path="${path}">
-            <http:response>
+            <http:response statusCode="#[vars.compatibility_outboundProperties['http.status'] default 200]">
                 <http:headers>
                     #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
                 </http:headers>
             </http:response>
-            <http:error-response>
+            <http:error-response statusCode="#[vars.compatibility_outboundProperties['http.status']]">
                 <http:headers>
                     #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
                 </http:headers>

@@ -8,7 +8,7 @@
                http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <http:listener-config name="bothConfig">
+    <http:listener-config name="bothListenerConfig">
         <http:listener-connection host="localhost" port="${port3}"/>
     </http:listener-config>
 
@@ -17,7 +17,20 @@
     <append-string-transformer name="appendResponse" message=" response"/>
 
     <flow name="flow">
-        <http:listener config-ref="bothConfig" path="/"/>
+        <http:listener config-ref="bothListenerConfig" path="/*">
+          <http:response statusCode="#[vars.compatibility_outboundProperties['http.status'] default 200]">
+            <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]</http:headers>
+          </http:response>
+          <http:error-response statusCode="#[vars.compatibility_outboundProperties['http.status']]">
+            <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]</http:headers>
+          </http:error-response>
+        </http:listener>
+
+        <choice>
+          <when expression="#[(message.attributes.headers['Content-Length'] as Number default 0) == 0]">
+            <set-payload value="#[message.attributes.requestUri]"/>
+          </when>
+        </choice>
         <compatibility:attributes-to-inbound-properties/>
         <object-to-string-transformer/>
         <transformer ref="appendString"/>

@@ -127,26 +127,9 @@ public final class TransportsUtils {
    */
   public static void migrateInboundEndpointStructure(ApplicationModel appModel, Element inboundEndpoint, MigrationReport report,
                                                      boolean expectsOutboundProperties) {
-    if (inboundEndpoint.getAttributeValue("exchange-pattern") != null
-        && "one-way".equals(inboundEndpoint.getAttributeValue("exchange-pattern"))) {
-      Element asyncWrapper = new Element("async", CORE_NAMESPACE);
-
-      for (Element processor : new ArrayList<>(inboundEndpoint.getParentElement().getChildren())) {
-        if (processor == inboundEndpoint) {
-          // skip the source
-          continue;
-        }
-
-        asyncWrapper.addContent(processor.detach());
-      }
-      inboundEndpoint.getParent().addContent(asyncWrapper);
-    }
     inboundEndpoint.removeAttribute("exchange-pattern");
-
     extractInboundChildren(inboundEndpoint, appModel);
-
     migrateSourceStructure(appModel, inboundEndpoint, report, expectsOutboundProperties);
-
   }
 
   /**
@@ -161,14 +144,18 @@ public final class TransportsUtils {
       Element flow = outboundEndpoint.getParentElement();
       List<Element> allChildren = flow.getChildren();
       for (Element processor : new ArrayList<>(allChildren.subList(allChildren.indexOf(outboundEndpoint), allChildren.size()))) {
-        asyncWrapper.addContent(processor.detach());
+        if (!"error-handler".equals(processor.getName())) {
+          asyncWrapper.addContent(processor.detach());
+        }
       }
-      flow.addContent(asyncWrapper);
+      if (flow.getChild("error-handler", CORE_NAMESPACE) != null) {
+        flow.addContent(flow.indexOf(flow.getChild("error-handler", CORE_NAMESPACE)), asyncWrapper);
+      } else {
+        flow.addContent(asyncWrapper);
+      }
     }
     outboundEndpoint.removeAttribute("exchange-pattern");
-
     extractOutboundChildren(outboundEndpoint, appModel);
-
     migrateOperationStructure(appModel, outboundEndpoint, report, outputsAttributes);
   }
 
@@ -196,7 +183,8 @@ public final class TransportsUtils {
       outbound.getChild("properties", CORE_NAMESPACE).detach();
     }
 
-    outbound.getChildren().stream().filter(c -> c.getName().contains("transformer") || c.getName().contains("filter"))
+    outbound.getChildren().stream()
+        .filter(c -> c.getName().contains("transformer") || c.getName().contains("filter") || "set-property".equals(c.getName()))
         .collect(toList()).forEach(tc -> {
           tc.getParent().removeContent(tc);
           content.add(tc);

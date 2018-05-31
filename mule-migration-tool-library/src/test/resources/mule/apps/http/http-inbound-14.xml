@@ -10,18 +10,23 @@
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd
                http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
 
-    <http:listener-config name="flowConfig">
+    <http:listener-config name="flowListenerConfig">
         <http:listener-connection host="localhost" port="${port1}"/>
     </http:listener-config>
 
     <flow name="flow">
-        <http:listener config-ref="flowConfig" path="/resources/allExpressions">
+        <http:listener config-ref="flowListenerConfig" path="/resources/allExpressions/*">
             <http:response statusCode="#[header:inbound:status]">
                 <http:headers>
                     #[{'Location' : 'http://localhost:9090'} ++ {'Expires' : 'Thu, 01 Dec 2014 16:00:00 GMT'} ++ {'Cache-Control' : 'max-age=$(vars.compatibility_inboundProperties['cacheControl'])'} ++ {'Set-Cookie' : '$(vars.compatibility_inboundProperties['cookie1'])=$(vars.compatibility_inboundProperties['value1']); Domain=$(vars.compatibility_inboundProperties['domain']); Path=$(vars.compatibility_inboundProperties['path']); Expires=$(vars.compatibility_inboundProperties['expires']); Secure(?)'} ++ {'Set-Cookie' : '$(vars.compatibility_inboundProperties['cookie2'])=$(vars.compatibility_inboundProperties['value2']); Max-Age=$(vars.compatibility_inboundProperties['maxAge'])'} ++ {'header1' : 'value1'} ++ {'header2' : 'value2'} ++ {'Content-Type' : 'text/html'}]
                 </http:headers>
             </http:response>
         </http:listener>
+        <choice>
+          <when expression="#[(message.attributes.headers['Content-Length'] as Number default 0) == 0]">
+            <set-payload value="#[message.attributes.requestUri]"/>
+          </when>
+        </choice>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
         <compatibility:outbound-properties-to-var/>

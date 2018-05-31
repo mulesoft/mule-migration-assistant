@@ -14,12 +14,12 @@
     
     <flow name="testFlow">
         <http:listener config-ref="listenerConfig" path="${path}">
-            <http:response>
+            <http:response statusCode="#[vars.compatibility_outboundProperties['http.status'] default 200]">
                 <http:headers>
                     #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars) ++ {'user-agent': 'Mule 3.8.0', 'user-agent': 'Mule 3.9.0'}]
                 </http:headers>
             </http:response>
-            <http:error-response>
+            <http:error-response statusCode="#[vars.compatibility_outboundProperties['http.status']]">
                 <http:headers>
                     #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
                 </http:headers>

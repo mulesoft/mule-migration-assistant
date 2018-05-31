@@ -9,12 +9,14 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
+import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -69,6 +71,7 @@ public class HttpInboundTest {
         "http-inbound-20",
         "http-inbound-21",
         "http-inbound-22",
+        "http-inbound-22b",
         "http-inbound-23",
         "http-inbound-24",
         "http-inbound-25",
@@ -77,7 +80,13 @@ public class HttpInboundTest {
         "http-inbound-28",
         "http-inbound-29",
         "http-inbound-30",
-        "http-inbound-31"
+        "http-inbound-31",
+        "http-inbound-32",
+        "http-inbound-33",
+        "http-inbound-34",
+        "http-inbound-35",
+        "http-inbound-36",
+        "http-inbound-37"
     };
   }
 
@@ -91,6 +100,7 @@ public class HttpInboundTest {
     reportMock = mock(MigrationReport.class);
   }
 
+  private GenericGlobalEndpoint genericGlobalEndpoint;
   private HttpPollingConnector httpPollingConnector;
   private HttpsPollingConnector httpsPollingConnector;
   private HttpGlobalEndpoint httpGlobalEndpoint;
@@ -102,6 +112,7 @@ public class HttpInboundTest {
   private HttpConnectorHeaders httpHeaders;
   private HttpStaticResource httpStaticResource;
   private InboundEndpoint inboundEndpoint;
+  private HttpGlobalBuilders httpGlobalBuilders;
 
   private Document doc;
   private ApplicationModel appModel;
@@ -116,8 +127,12 @@ public class HttpInboundTest {
     when(appModel.getNode(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+    when(appModel.getPomModel()).thenReturn(empty());
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock);
+
+    genericGlobalEndpoint = new GenericGlobalEndpoint();
+    genericGlobalEndpoint.setApplicationModel(appModel);
 
     httpPollingConnector = new HttpPollingConnector();
     httpPollingConnector.setApplicationModel(appModel);
@@ -141,6 +156,7 @@ public class HttpInboundTest {
     httpConfig.setApplicationModel(appModel);
 
     httpTransformers = new HttpTransformers();
+    httpTransformers.setApplicationModel(appModel);
 
     httpHeaders = new HttpConnectorHeaders();
     httpHeaders.setExpressionMigrator(expressionMigrator);
@@ -151,10 +167,14 @@ public class HttpInboundTest {
     inboundEndpoint = new InboundEndpoint();
     inboundEndpoint.setExpressionMigrator(expressionMigrator);
     inboundEndpoint.setApplicationModel(appModel);
+
+    httpGlobalBuilders = new HttpGlobalBuilders();
   }
 
   @Test
   public void execute() throws Exception {
+    getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, httpPollingConnector.getAppliedTo().getExpression())
         .forEach(node -> httpPollingConnector.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, httpsPollingConnector.getAppliedTo().getExpression())
@@ -177,6 +197,8 @@ public class HttpInboundTest {
         .forEach(node -> httpStaticResource.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, httpGlobalBuilders.getAppliedTo().getExpression())
+        .forEach(node -> httpGlobalBuilders.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

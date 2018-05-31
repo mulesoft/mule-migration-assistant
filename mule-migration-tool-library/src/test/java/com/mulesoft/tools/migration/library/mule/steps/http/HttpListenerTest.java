@@ -85,6 +85,7 @@ public class HttpListenerTest {
   private HttpConnectorListenerConfig httpListenerConfig;
   private HttpConnectorListener httpListener;
   private HttpConnectorHeaders httpHeaders;
+  private HttpGlobalBuilders httpGlobalBuilders;
 
   private Document doc;
   private ApplicationModel appModel;
@@ -106,6 +107,7 @@ public class HttpListenerTest {
     httpHeaders = new HttpConnectorHeaders();
     httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
 
+    httpGlobalBuilders = new HttpGlobalBuilders();
   }
 
   @Ignore
@@ -122,6 +124,8 @@ public class HttpListenerTest {
         .forEach(node -> httpListener.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, httpHeaders.getAppliedTo().getExpression())
         .forEach(node -> httpHeaders.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, httpGlobalBuilders.getAppliedTo().getExpression())
+        .forEach(node -> httpGlobalBuilders.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

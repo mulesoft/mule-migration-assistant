@@ -13,7 +13,7 @@
     </http:response-builder>
 
     <flow name="flow">
-        <http:inbound-endpoint config-ref="httpConfig" path="/global"/>
+        <http:inbound-endpoint host="localhost" port="8080" path="/global"/>
         <http:response-builder>
             <http:builder ref="globalResponseBuilder" />
         </http:response-builder>

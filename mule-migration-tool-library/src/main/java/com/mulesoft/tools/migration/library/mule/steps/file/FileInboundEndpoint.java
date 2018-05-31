@@ -65,6 +65,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       redelivery.setName("redelivery-policy");
       Attribute exprAttr = redelivery.getAttribute("idExpression");
 
+      // TODO MMT-128
       exprAttr.setValue(exprAttr.getValue().replaceAll("#\\[header\\:inbound\\:originalFilename\\]", "#[attributes.name]"));
 
       if (getExpressionMigrator().isWrapped(exprAttr.getValue())) {

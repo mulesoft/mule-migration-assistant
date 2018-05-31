@@ -8,11 +8,15 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Migrates the inbound endpoint of the HTTP Transport
@@ -39,56 +43,79 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
     Namespace httpsNamespace = Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https");
     Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
 
-    Element httpsConnector;
-    if (object.getAttribute("ref") != null) {
-      httpsConnector = getApplicationModel().getNode("/mule:mule/https:connector[@name = '"
-          + object.getAttributeValue("ref") + "']");
+    Element httpsConnector = null;
+    if (object.getAttribute("connector-ref") != null) {
+      httpsConnector = getConnector(object.getAttributeValue("connector-ref"));
     } else {
-      httpsConnector = getApplicationModel().getNode("/mule:mule/https:connector");
+      Optional<Element> defaultConnector = getDefaultConnector();
+      if (defaultConnector.isPresent()) {
+        httpsConnector = defaultConnector.get();
+      }
     }
 
     super.execute(object, report);
+
+    getApplicationModel().addNameSpace(HTTP.prefix(), HTTP.uri(),
+                                       "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
     Element httpsListenerConnection = getApplicationModel().getNode("/mule:mule/http:listener-config[@name = '"
         + object.getAttributeValue("config-ref") + "']/http:listener-connection");
 
     httpsListenerConnection.setAttribute("protocol", "HTTPS");
-    Element tlsContext = new Element("context", tlsNamespace);
-    httpsListenerConnection.addContent(tlsContext);
 
-    Element tlsServer = httpsConnector.getChild("tls-server", httpsNamespace);
-    if (tlsServer != null) {
-      Element trustStore = new Element("trust-store", tlsNamespace);
-      copyAttributeIfPresent(tlsServer, trustStore, "path");
-      if (tlsServer.getAttribute("class") != null) {
-        report.report(ERROR, trustStore, tlsServer,
-                      "'class' attribute of 'https:tls-server' was deprecated in 3.x. Use 'type' instead.");
+    if (httpsConnector != null && httpsListenerConnection.getChild("context", tlsNamespace) == null) {
+      Element tlsContext = new Element("context", tlsNamespace);
+      boolean tlsConfigured = false;
+
+      Element tlsServer = httpsConnector.getChild("tls-server", httpsNamespace);
+      if (tlsServer != null) {
+        Element trustStore = new Element("trust-store", tlsNamespace);
+        copyAttributeIfPresent(tlsServer, trustStore, "path");
+        if (tlsServer.getAttribute("class") != null) {
+          report.report(ERROR, trustStore, tlsServer,
+                        "'class' attribute of 'https:tls-server' was deprecated in 3.x. Use 'type' instead.");
+        }
+        copyAttributeIfPresent(tlsServer, trustStore, "type", "type");
+        copyAttributeIfPresent(tlsServer, trustStore, "storePassword", "password");
+        copyAttributeIfPresent(tlsServer, trustStore, "algorithm");
+        tlsContext.addContent(trustStore);
+        tlsConfigured = true;
       }
-      copyAttributeIfPresent(tlsServer, trustStore, "type", "type");
-      copyAttributeIfPresent(tlsServer, trustStore, "storePassword", "password");
-      copyAttributeIfPresent(tlsServer, trustStore, "algorithm");
-      tlsContext.addContent(trustStore);
-    }
-    Element tlsKeyStore = httpsConnector.getChild("tls-key-store", httpsNamespace);
-    if (tlsKeyStore != null) {
-      Element keyStore = new Element("key-store", tlsNamespace);
-      copyAttributeIfPresent(tlsKeyStore, keyStore, "path");
-      copyAttributeIfPresent(tlsKeyStore, keyStore, "storePassword", "password");
-      copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
-      if (tlsKeyStore.getAttribute("class") != null) {
-        report.report(ERROR, tlsKeyStore, tlsKeyStore,
-                      "'class' attribute of 'https:tls-key-store' was deprecated in 3.x. Use 'type' instead.");
+      Element tlsKeyStore = httpsConnector.getChild("tls-key-store", httpsNamespace);
+      if (tlsKeyStore != null) {
+        Element keyStore = new Element("key-store", tlsNamespace);
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "path");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "storePassword", "password");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
+        if (tlsKeyStore.getAttribute("class") != null) {
+          report.report(ERROR, tlsKeyStore, tlsKeyStore,
+                        "'class' attribute of 'https:tls-key-store' was deprecated in 3.x. Use 'type' instead.");
+        }
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "type", "type");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "keyAlias", "alias");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "algorithm");
+        tlsContext.addContent(keyStore);
+        tlsConfigured = true;
       }
-      copyAttributeIfPresent(tlsKeyStore, keyStore, "type", "type");
-      copyAttributeIfPresent(tlsKeyStore, keyStore, "keyAlias", "alias");
-      copyAttributeIfPresent(tlsKeyStore, keyStore, "algorithm");
-      tlsContext.addContent(keyStore);
+
+      if (tlsConfigured) {
+        getApplicationModel().addNameSpace(tlsNamespace.getPrefix(), tlsNamespace.getURI(),
+                                           "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
+
+        httpsListenerConnection.addContent(tlsContext);
+      }
     }
   }
 
   @Override
   protected Element getConnector(String connectorName) {
     return getApplicationModel().getNode("/mule:mule/https:connector[@name = '" + connectorName + "']");
+  }
+
+  @Override
+  protected Optional<Element> getDefaultConnector() {
+    List<Element> nodes = getApplicationModel().getNodes("/mule:mule/https:connector");
+    return nodes.stream().findFirst();
   }
 
 }

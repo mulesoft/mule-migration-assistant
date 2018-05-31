@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -19,7 +21,6 @@ import org.jdom2.Element;
  */
 public class Flow extends AbstractApplicationModelMigrationStep {
 
-
   public static final String XPATH_SELECTOR = "//*[local-name()='flow']";
 
   @Override
@@ -32,7 +33,13 @@ public class Flow extends AbstractApplicationModelMigrationStep {
   }
 
   @Override
-  public void execute(Element element, MigrationReport report) throws RuntimeException {}
+  public void execute(Element element, MigrationReport report) throws RuntimeException {
+    if (element.getAttribute("processingStrategy") != null) {
+      element.removeAttribute("processingStrategy");
+      report.report(WARN, element, element, "'flow' no longer has a 'processingStrategy' attribute.",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core");
+    }
+  }
 
 
 }

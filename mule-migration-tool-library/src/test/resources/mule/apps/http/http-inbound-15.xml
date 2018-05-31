@@ -8,18 +8,24 @@
                http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <http:listener-config name="flowConfig">
-        <http:listener-connection/>
+    <http:listener-config name="flowListenerConfig">
+        <http:listener-connection host="localhost" port="8080"/>
     </http:listener-config>
 
     <flow name="flow">
-        <http:listener config-ref="flowConfig" path="/nested">
-            <http:response>
-                <http:headers>
-                    #[{'testHeader' : 'testValue'}]
-                </http:headers>
+        <http:listener config-ref="flowListenerConfig" path="/nested/*">
+            <http:response statusCode="#[vars.compatibility_outboundProperties['http.status'] default 200]">
+                <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars) ++ {'testHeader' : 'testValue'}]</http:headers>
             </http:response>
+            <http:error-response statusCode="#[vars.compatibility_outboundProperties['http.status']]">
+                <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
         </http:listener>
+        <choice>
+          <when expression="#[(message.attributes.headers['Content-Length'] as Number default 0) == 0]">
+            <set-payload value="#[message.attributes.requestUri]"/>
+          </when>
+        </choice>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
         <compatibility:outbound-properties-to-var/>

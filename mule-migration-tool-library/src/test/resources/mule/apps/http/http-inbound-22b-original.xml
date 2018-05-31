@@ -8,8 +8,17 @@
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
 
-    <http:connector name="httpConnector">
-        <service-overrides sessionHandler="org.mule.transport.http.functional.TestSessionHandler"/>
-    </http:connector>
-   
+    <endpoint name="inbound" address="http://localhost:${port4}" exchange-pattern="request-response"/>
+
+    <custom-transformer name="appendString" class="org.mule.tck.functional.StringAppendTestTransformer"/>
+    
+    <flow name="flow">
+        <http:inbound-endpoint ref="inbound">
+            <object-to-string-transformer/>
+            <transformer ref="appendString"/>
+        </http:inbound-endpoint>
+
+        <logger/>
+    </flow>
+
 </mule>

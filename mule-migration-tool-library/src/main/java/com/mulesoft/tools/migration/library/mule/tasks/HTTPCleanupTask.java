@@ -12,6 +12,8 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConfig;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpGlobalBuilders;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpMuleConfig;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -49,6 +51,8 @@ public class HTTPCleanupTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new HttpConfig());
+    return newArrayList(new HttpConfig(),
+                        new HttpMuleConfig(),
+                        new HttpGlobalBuilders());
   }
 }

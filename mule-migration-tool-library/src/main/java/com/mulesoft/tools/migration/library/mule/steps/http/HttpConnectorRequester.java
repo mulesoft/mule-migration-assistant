@@ -155,7 +155,8 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     expressionsPerProperty.put("http.headers", "message.attributes.headers");
 
     try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.http.api.HttpResponseAttributes", expressionsPerProperty);
+      addAttributesMapping(getApplicationModel(), "org.mule.extension.http.api.HttpResponseAttributes", expressionsPerProperty,
+                           "message.attributes.headers");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
 
 import com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpsInboundEndpoint;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
@@ -86,6 +87,9 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
         } else if (address.startsWith("http://")) {
           migrator = new HttpInboundEndpoint();
           object.setNamespace(Namespace.getNamespace(HTTP.prefix(), HTTP.uri()));
+        } else if (address.startsWith("https://")) {
+          migrator = new HttpsInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https"));
         }
 
         if (migrator != null) {

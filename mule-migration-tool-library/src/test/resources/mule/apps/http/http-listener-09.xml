@@ -19,7 +19,7 @@
                     #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
                 </http:headers>
             </http:response>
-            <http:error-response>
+            <http:error-response statusCode="#[vars.compatibility_outboundProperties['http.status']]">
                 <http:headers>
                     #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
                 </http:headers>

@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
+
 import com.mulesoft.tools.migration.step.AbstractGlobalEndpointMigratorStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -35,6 +37,8 @@ public class HttpsGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     doExecute(object, report);
+    getApplicationModel().addNameSpace(HTTP.prefix(), HTTP.uri(),
+                                       "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
   }
 
   @Override

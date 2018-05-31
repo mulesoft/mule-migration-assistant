@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -43,13 +44,15 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
     Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
 
     Optional<Element> httpsConnector;
-    if (object.getAttribute("ref") != null) {
-      httpsConnector = Optional.of(getConnector(object.getAttributeValue("ref")));
+    if (object.getAttribute("connector-ref") != null) {
+      httpsConnector = Optional.of(getConnector(object.getAttributeValue("connector-ref")));
     } else {
       httpsConnector = getDefaultConnector();
     }
 
     super.execute(object, report);
+    getApplicationModel().addNameSpace(HTTP.prefix(), HTTP.uri(),
+                                       "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
     Element httpsRequesterConnection = getApplicationModel().getNode("/mule:mule/http:request-config[@name = '"
         + object.getAttributeValue("config-ref") + "']/http:request-connection");
@@ -61,27 +64,13 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
                       Namespace httpsNamespace, Namespace tlsNamespace) {
     httpsRequesterConnection.setAttribute("protocol", "HTTPS");
 
-    if (httpsConnector.isPresent()) {
+    if (httpsConnector.isPresent() && httpsRequesterConnection.getChild("context", tlsNamespace) == null) {
       Element tlsContext = new Element("context", tlsNamespace);
       boolean tlsConfigured = false;
 
-      Element tlsServer = httpsConnector.get().getChild("tls-server", httpsNamespace);
-      if (tlsServer != null) {
-        Element trustStore = new Element("trust-store", tlsNamespace);
-        copyAttributeIfPresent(tlsServer, trustStore, "path");
-        if (tlsServer.getAttribute("class") != null) {
-          report.report(ERROR, trustStore, tlsServer,
-                        "'class' attribute of 'https:tls-server' was deprecated in 3.x. Use 'type' instead.");
-        }
-        copyAttributeIfPresent(tlsServer, trustStore, "type", "type");
-        copyAttributeIfPresent(tlsServer, trustStore, "storePassword", "password");
-        copyAttributeIfPresent(tlsServer, trustStore, "algorithm");
-        tlsContext.addContent(trustStore);
-        tlsConfigured = true;
-      }
       Element tlsClient = httpsConnector.get().getChild("tls-client", httpsNamespace);
       if (tlsClient != null) {
-        Element keyStore = new Element("key-store", tlsNamespace);
+        Element keyStore = new Element("trust-store", tlsNamespace);
         copyAttributeIfPresent(tlsClient, keyStore, "path");
         copyAttributeIfPresent(tlsClient, keyStore, "storePassword", "password");
         if (tlsClient.getAttribute("class") != null) {
@@ -92,8 +81,27 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
         tlsContext.addContent(keyStore);
         tlsConfigured = true;
       }
+      Element tlsKeyStore = httpsConnector.get().getChild("tls-key-store", httpsNamespace);
+      if (tlsKeyStore != null) {
+        Element keyStore = new Element("key-store", tlsNamespace);
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "path");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "storePassword", "password");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
+        if (tlsKeyStore.getAttribute("class") != null) {
+          report.report(ERROR, tlsKeyStore, tlsKeyStore,
+                        "'class' attribute of 'https:tls-key-store' was deprecated in 3.x. Use 'type' instead.");
+        }
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "type", "type");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "keyAlias", "alias");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "algorithm");
+        tlsContext.addContent(keyStore);
+        tlsConfigured = true;
+      }
 
       if (tlsConfigured) {
+        getApplicationModel().addNameSpace(tlsNamespace.getPrefix(), tlsNamespace.getURI(),
+                                           "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
+
         httpsRequesterConnection.addContent(tlsContext);
       }
     }

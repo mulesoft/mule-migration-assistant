@@ -8,18 +8,24 @@
                http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <http:listener-config name="flowConfig">
+    <http:listener-config name="flowListenerConfig">
         <http:listener-connection host="localhost" port="${port1}"/>
     </http:listener-config>
 
     <flow name="flow">
-        <http:listener config-ref="flowConfig" path="/resources/move">
+        <http:listener config-ref="flowListenerConfig" path="/resources/move/*">
             <http:response statusCode="301">
-                <http:headers>
-                    #[{'Location' : 'http://localhost:9090/resources/moved'}]
-                </http:headers>
+                <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars) ++ {'Location' : 'http://localhost:9090/resources/moved'}]</http:headers>
             </http:response>
+            <http:error-response statusCode="#[vars.compatibility_outboundProperties['http.status']]">
+                <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
         </http:listener>
+        <choice>
+          <when expression="#[(message.attributes.headers['Content-Length'] as Number default 0) == 0]">
+            <set-payload value="#[message.attributes.requestUri]"/>
+          </when>
+        </choice>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
         <compatibility:outbound-properties-to-var/>

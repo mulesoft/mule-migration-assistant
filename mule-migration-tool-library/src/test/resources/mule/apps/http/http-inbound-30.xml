@@ -23,8 +23,6 @@
         <http:request config-ref="PollingHttpConnectorConfig" path="/"/>
         <compatibility:attributes-to-inbound-properties/>
         <append-string-transformer message=" toClient-only" />
-        <async>
-            <logger/>
-        </async>
+        <logger/>
     </flow>
 </mule>

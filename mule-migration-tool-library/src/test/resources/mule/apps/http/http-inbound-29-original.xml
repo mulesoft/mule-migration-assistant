@@ -9,7 +9,8 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
 
     <http:polling-connector name="PollingHttpConnector"
-        pollingFrequency="30000" reuseAddress="true" />
+        pollingFrequency="30000" reuseAddress="true"
+        checkEtag="false" discardEmptyContent="false" />
 
     <flow name="flow">
         <http:inbound-endpoint user="marie"

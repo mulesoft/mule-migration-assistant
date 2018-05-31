@@ -6,8 +6,15 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <configuration>
-        <http:config useTransportForUris="true"/>
-    </configuration>
-    
+    <http:polling-connector name="PollingHttpConnector"
+        discardEmptyContent="false" checkEtag="true"/>
+
+    <flow name="flow">
+        <inbound-endpoint name="httpEndpoint"
+            connector-ref="PollingHttpConnector" address="http://localhost:${port1}/TestServer"
+            exchange-pattern="request-response" />
+
+        <logger/>
+    </flow>
+
 </mule>

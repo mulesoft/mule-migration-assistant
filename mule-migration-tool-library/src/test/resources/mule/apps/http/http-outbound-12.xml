@@ -10,13 +10,17 @@
                http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <http:request-config name="flowConfig">
+    <http:request-config name="flowRequestConfig">
         <http:request-connection host="localhost" port="${port1}"/>
     </http:request-config>
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <http:request config-ref="flowConfig" path="/newSite/#[header:inbound:http.relative.path]?#[header:inbound:http.query.string]"/>
+        <http:request config-ref="flowRequestConfig" path="/newSite/#[header:inbound:http.relative.path]?#[header:inbound:http.query.string]">
+            <http:headers>
+                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+            </http:headers>
+        </http:request>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
 </mule>

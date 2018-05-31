@@ -9,12 +9,14 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Optional.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
+import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -68,7 +70,9 @@ public class HttpOutboundTest {
         // "http-outbound-17",
         "http-outbound-18",
         "http-outbound-19",
-        "http-outbound-20"
+        "http-outbound-20",
+        "http-outbound-21",
+        "http-outbound-22"
     };
   }
 
@@ -82,6 +86,7 @@ public class HttpOutboundTest {
     reportMock = mock(MigrationReport.class);
   }
 
+  private GenericGlobalEndpoint genericGlobalEndpoint;
   private HttpGlobalEndpoint httpGlobalEndpoint;
   private HttpsGlobalEndpoint httpsGlobalEndpoint;
   private HttpOutboundEndpoint httpOutbound;
@@ -102,8 +107,12 @@ public class HttpOutboundTest {
     when(appModel.getNode(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+    when(appModel.getPomModel()).thenReturn(empty());
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock);
+
+    genericGlobalEndpoint = new GenericGlobalEndpoint();
+    genericGlobalEndpoint.setApplicationModel(appModel);
 
     httpGlobalEndpoint = new HttpGlobalEndpoint();
     httpGlobalEndpoint.setApplicationModel(appModel);
@@ -127,6 +136,8 @@ public class HttpOutboundTest {
 
   @Test
   public void execute() throws Exception {
+    getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, httpGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> httpGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, httpsGlobalEndpoint.getAppliedTo().getExpression())

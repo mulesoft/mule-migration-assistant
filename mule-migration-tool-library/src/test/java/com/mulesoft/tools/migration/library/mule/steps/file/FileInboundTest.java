@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
@@ -81,6 +82,7 @@ public class FileInboundTest {
     reportMock = mock(MigrationReport.class);
   }
 
+  private GenericGlobalEndpoint genericGlobalEndpoint;
   private CustomFilter customFilter;
   private FileGlobalEndpoint fileGlobalEndpoint;
   private FileConfig fileConfig;
@@ -102,6 +104,9 @@ public class FileInboundTest {
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+
+    genericGlobalEndpoint = new GenericGlobalEndpoint();
+    genericGlobalEndpoint.setApplicationModel(appModel);
 
     fileGlobalEndpoint = new FileGlobalEndpoint();
     fileGlobalEndpoint.setApplicationModel(appModel);
@@ -125,6 +130,8 @@ public class FileInboundTest {
 
   @Test
   public void execute() throws Exception {
+    getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
         .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, fileGlobalEndpoint.getAppliedTo().getExpression())

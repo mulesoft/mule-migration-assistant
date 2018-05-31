@@ -11,6 +11,9 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.E
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.VALIDATION_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addValidationModule;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.Arrays.asList;
@@ -56,7 +59,7 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
         .addContent(requestConnection));
 
     if (object.getAttribute("reuseAddress") != null) {
-      report.report(ERROR, object, object, "'reuseAddress' attribute is onli applicable to HTTP listeners, not requesters.");
+      report.report(ERROR, object, object, "'reuseAddress' attribute is only applicable to HTTP listeners, not requesters.");
       object.removeAttribute("reuseAddress");
     }
 
@@ -100,8 +103,22 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
               .addContent(new Element("fixed-frequency", CORE_NAMESPACE)
                   .setAttribute("frequency", changeDefault("1000", "60000", object.getAttributeValue("pollingFrequency")))));
 
-      // TODO checkEtag
-      // TODO discardEmptyContent
+      if (object.getAttribute("checkEtag") == null || "true".equals(object.getAttributeValue("checkEtag"))) {
+        Element etagValidator = new Element("choice", CORE_NAMESPACE).addContent(new Element("when", CORE_NAMESPACE)
+            .setAttribute("expression", "#[message.attributes.headers.ETag != null]")
+            .addContent(new Element("idempotent-message-validator", CORE_NAMESPACE)
+                .setAttribute("idExpression", "#[message.attributes.headers.ETag]")));
+
+        addElementAfter(etagValidator, pollingEndpoint);
+        report.report(ERROR, etagValidator, etagValidator, "Consider using a watermark for checking ETag",
+                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-patterns-watermark");
+      }
+      if (object.getAttribute("discardEmptyContent") == null || "true".equals(object.getAttributeValue("discardEmptyContent"))) {
+        addValidationModule(getApplicationModel());
+        addElementAfter(new Element("is-true", VALIDATION_NAMESPACE)
+            .setAttribute("expression", "#[(message.attributes.headers['Content-Length'] as Number default -1) != 0]"),
+                        pollingEndpoint);
+      }
 
       for (Element prop : pollingEndpoint.getChildren("property", CORE_NAMESPACE)) {
         requestOperation.addContent(new Element("header", httpNamespace)
@@ -144,7 +161,8 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
     expressionsPerProperty.put("http.headers", "message.attributes.headers");
 
     try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.http.api.HttpResponseAttributes", expressionsPerProperty);
+      addAttributesMapping(getApplicationModel(), "org.mule.extension.http.api.HttpResponseAttributes", expressionsPerProperty,
+                           "message.attributes.headers");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

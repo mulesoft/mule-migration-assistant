@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
 import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -23,8 +24,6 @@ public class HttpsPollingConnector extends HttpPollingConnector {
 
   public static final String XPATH_SELECTOR = "/mule:mule/https:polling-connector";
 
-  private HttpsOutboundEndpoint httpRequesterMigrator = new HttpsOutboundEndpoint();
-
   @Override
   public String getDescription() {
     return "Update HTTPs polling connector.";
@@ -40,10 +39,14 @@ public class HttpsPollingConnector extends HttpPollingConnector {
     Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
 
     super.execute(object, report);
+    getApplicationModel().addNameSpace(HTTP.prefix(), HTTP.uri(),
+                                       "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
     Element httpsRequesterConnection = getApplicationModel().getNode("/mule:mule/http:request-config[@name = '"
         + object.getAttributeValue("name") + "Config']/http:request-connection");
 
+    HttpsOutboundEndpoint httpRequesterMigrator = new HttpsOutboundEndpoint();
+    httpRequesterMigrator.setApplicationModel(getApplicationModel());
     httpRequesterMigrator.migrate(httpsRequesterConnection, of(object), report, httpsNamespace, tlsNamespace);
   }
 
