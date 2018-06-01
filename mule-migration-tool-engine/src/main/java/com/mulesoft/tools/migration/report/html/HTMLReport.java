@@ -9,7 +9,6 @@ package com.mulesoft.tools.migration.report.html;
 import com.mulesoft.tools.migration.report.html.model.ApplicationReport;
 import com.mulesoft.tools.migration.report.html.model.ApplicationReport.ApplicationReportBuilder;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -46,11 +45,10 @@ public class HTMLReport {
   private static final String SUMMARY_TEMPLATE_FILE_NAME = "summary.ftl";
   private static final String RESOURCE_TEMPLATE_FILE_NAME = "resource.ftl";
 
+  private static final String JQUERY_SCRIPT = "jquery-3.3.1.js";
   private static final String MULESOFT_STYLES = "mulesoft-styles.css";
-  private static final String TSORTER_STYLES = "tsorter.css";
   private static final String MULESOFT_ICON = "icons/004_logo.svg";
   private static final String MULESOFT_ICON_TTF = "fonts/muleicons.ttf";
-  private static final String TSORTER_SCRIPT = "tsorter.min.js";
 
   private final File reportDirectory;
   private ApplicationReport applicationReport;
@@ -62,7 +60,7 @@ public class HTMLReport {
     checkNotNull(reportDirectory, "Report directory cannot be null");
     this.applicationReport = new ApplicationReportBuilder().withReportEntries(reportEntries).build();
     this.reportDirectory = reportDirectory;
-    this.freemarkerConfig = new Configuration(Configuration.VERSION_2_3_23);
+    this.freemarkerConfig = new Configuration(Configuration.VERSION_2_3_28);
     this.freemarkerConfig.setClassForTemplateLoading(this.getClass(), BASE_TEMPLATE_FOLDER);
   }
 
@@ -87,6 +85,8 @@ public class HTMLReport {
       Map<String, Object> data = new HashMap<>();
       data.put("applicationErrors", applicationReport.getErrorEntries());
       data.put("applicationWarnings", applicationReport.getWarningEntries());
+      data.put("applicationSummaryErrors", applicationReport.getSummaryErrorEntries());
+      data.put("applicationSummaryWarnings", applicationReport.getSummaryWarningEntries());
 
       writer = new StringWriter();
       summaryTemplate.process(data, writer);
@@ -103,27 +103,35 @@ public class HTMLReport {
     generateResourceFiles(applicationReport.getWarningEntries(), WARN);
   }
 
-  private void generateResourceFiles(Map<String, List<ReportEntryModel>> entries, Level level) throws IOException {
+  private void generateResourceFiles(Map<String, Map<String, List<ReportEntryModel>>> entries, Level level) throws IOException {
     StringWriter writer = null;
-    for (Map.Entry<String, List<ReportEntryModel>> entry : entries.entrySet()) {
-      try {
-        Template resourceTemplate = getTemplate(RESOURCE_TEMPLATE_FILE_NAME);
+    for (Map.Entry<String, Map<String, List<ReportEntryModel>>> entry : entries.entrySet()) {
+      Integer fileCounter = 0;
+      for (Map.Entry<String, List<ReportEntryModel>> fileEntry : entry.getValue().entrySet()) {
+        try {
+          if (fileEntry.getValue().size() > 0) {
+            Template resourceTemplate = getTemplate(RESOURCE_TEMPLATE_FILE_NAME);
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("resource", Paths.get(entry.getKey()).getFileName().toString());
-        data.put("entries", entry.getValue());
+            Map<String, Object> data = new HashMap<>();
+            data.put("resource", Paths.get(entry.getKey()).getFileName().toString());
+            data.put("description", fileEntry.getKey());
+            data.put("docLinks", fileEntry.getValue().get(0).getDocumentationLinks());
+            data.put("entries", fileEntry.getValue());
 
-        String fileName = level.toString().toLowerCase() + "-" + Paths.get(entry.getKey()).getFileName().toString();
+            String fileName = level.toString().toLowerCase() + "-" + Paths.get(entry.getKey()).getFileName().toString();
 
-        writer = new StringWriter();
-        resourceTemplate.process(data, writer);
-        reportFileWriter.writeToFile(new File(reportDirectory.toPath().resolve(RESOURCES_FOLDER).toFile(),
-                                              reportFileWriter.getHtmlFileName(fileName)),
-                                     writer.getBuffer().toString());
-      } catch (TemplateException e) {
-        e.printStackTrace();
-      } finally {
-        IOUtils.closeQuietly(writer);
+            writer = new StringWriter();
+            resourceTemplate.process(data, writer);
+            reportFileWriter.writeToFile(new File(reportDirectory.toPath().resolve(RESOURCES_FOLDER).toFile(),
+                                                  reportFileWriter.getHtmlFileName(fileName, fileCounter)),
+                                         writer.getBuffer().toString());
+          }
+        } catch (TemplateException e) {
+          e.printStackTrace();
+        } finally {
+          IOUtils.closeQuietly(writer);
+        }
+        fileCounter++;
       }
     }
   }
@@ -143,7 +151,6 @@ public class HTMLReport {
       reportFileWriter.copyFile(MULESOFT_STYLES, stylesPath.resolve(MULESOFT_STYLES).toFile());
       reportFileWriter.copyFile(MULESOFT_ICON, stylesPath.resolve(MULESOFT_ICON).toFile());
       reportFileWriter.copyFile(MULESOFT_ICON_TTF, stylesPath.resolve(MULESOFT_ICON_TTF).toFile());
-      reportFileWriter.copyFile(TSORTER_STYLES, stylesPath.resolve(TSORTER_STYLES).toFile());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -152,7 +159,7 @@ public class HTMLReport {
   private void addScripts() {
     try {
       Path scriptsPath = reportDirectory.toPath().resolve(ASSETS_FOLDER).resolve(SCRIPTS_FOLDER);
-      reportFileWriter.copyFile(TSORTER_SCRIPT, scriptsPath.resolve(TSORTER_SCRIPT).toFile());
+      reportFileWriter.copyFile(JQUERY_SCRIPT, scriptsPath.resolve(JQUERY_SCRIPT).toFile());
     } catch (IOException e) {
       e.printStackTrace();
     }

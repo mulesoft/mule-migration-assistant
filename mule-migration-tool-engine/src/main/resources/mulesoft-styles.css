@@ -1,4 +1,12 @@
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
+.muleicon {
+  line-height: 30px;
+  font-size: 18px;
+  margin-left: 19px;
+}
+[data-toggle="toggle"] {
+    display: none;
+}
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
@@ -4897,9 +4905,6 @@ button.close {
 .pull-left {
   float: left !important;
 }
-.hide {
-  display: none !important;
-}
 .show {
   display: block !important;
 }
@@ -5666,7 +5671,6 @@ input[type="button"].btn-block {
 .mulesoft-datepicker i.glyphicon.glyphicon-chevron-right {
   display: inline-block;
   font-family: "muleicons";
-  line-height: 1;
   font-weight: normal;
   font-style: normal;
   vertical-align: top;

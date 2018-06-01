@@ -15,7 +15,7 @@
         <licensePath>../LICENSE_HEADER.txt</licensePath>
 
         <semver.version>2.0.3</semver.version>
-        <freemarker.version>2.3.23</freemarker.version>
+        <freemarker.version>2.3.28</freemarker.version>
     </properties>
     <build>
         <plugins>
