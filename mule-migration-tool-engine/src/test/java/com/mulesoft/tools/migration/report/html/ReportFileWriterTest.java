@@ -16,7 +16,7 @@ public class ReportFileWriterTest {
   public void getHtmlFileName() throws Exception {
     String name = "example.xml";
     ReportFileWriter writer = new ReportFileWriter();
-    assertEquals(writer.getHtmlFileName(name), "example-report.html");
+    assertEquals(writer.getHtmlFileName(name, 0), "example-0.html");
   }
 
 }

@@ -27,9 +27,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class ReportFileWriter {
 
-  public String getHtmlFileName(String resourceName) {
+  public String getHtmlFileName(String resourceName, Integer fileCount) {
     String htmlFileName = resourceName;
-    htmlFileName = htmlFileName.substring(0, htmlFileName.indexOf(".xml")) + "-report" + ".html";
+    htmlFileName = htmlFileName.substring(0, htmlFileName.indexOf(".xml")) + "-" + fileCount + ".html";
     return htmlFileName;
   }
 

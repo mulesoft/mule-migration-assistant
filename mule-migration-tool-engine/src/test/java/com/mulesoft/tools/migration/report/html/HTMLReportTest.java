@@ -40,7 +40,7 @@ public class HTMLReportTest {
   public void printingReportWritesFiles() throws IOException {
     printer.printReport();
     verify(writer, times(1)).writeToFile(any(File.class), anyString());
-    verify(writer, times(5)).copyFile(anyString(), any(File.class));
+    verify(writer, times(4)).copyFile(anyString(), any(File.class));
   }
 
 }

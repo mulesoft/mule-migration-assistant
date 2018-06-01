@@ -20,22 +20,23 @@
     </div>
     <div class="col-md-8">
         <h2 class="text-bold">Issues found on: <span class="text-italic text-normal">${resource}</span></h2>
+        <h4 class="text-bold">Description: <span class="text-italic text-normal">${description}</span></h4>
+        <h4 class="text-bold">Documentation: </h4>
+        <#list docLinks as doc>
+            <h4><a href="${doc}">${doc}</a></h4>
+        </#list>
         <hr>
         <br>
         <#list entries as entry>
-        <div class="col-md-12">
-            <h4 class="text-bold">Description: </h4>
-            <h4>${entry.message}</h4>
-            <h4 class="text-bold">Documentation: </h4>
-            <#list entry.documentationLinks as doc>
-                <h4><a href="${doc}">${doc}</a></h4>
-            </#list>
-            <h4 class="text-bold">Line: <span class="text-italic text-normal">${entry.lineNumber}</span></h4>
-            <h4 class="text-bold">Column: <span class="text-italic text-normal">${entry.columnNumber}</span></h4>
-            <br>
-            <code>${entry.elementContent}</code>
-            <hr>
-        </div>
+            <div class="col-md-12">
+                <h4 class="text-bold">
+                    Line: <span class="text-italic text-normal">${entry.lineNumber}</span>&nbsp;
+                    Column: <span class="text-italic text-normal">${entry.columnNumber}</span>
+                </h4>
+                <br>
+                <code>${entry.elementContent}</code>
+                <hr>
+            </div>
         </#list>
     </div>
 </body>

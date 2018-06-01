@@ -11,6 +11,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport.Level;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,21 +23,49 @@ import java.util.Map;
  */
 public class ApplicationReport {
 
-  private Map<String, List<ReportEntryModel>> errorEntries = new HashMap<>();
-  private Map<String, List<ReportEntryModel>> warningEntries = new HashMap<>();
+  private Map<String, Map<String, List<ReportEntryModel>>> errorEntries = new HashMap<>();
+  private Map<String, Map<String, List<ReportEntryModel>>> warningEntries = new HashMap<>();
 
-  protected ApplicationReport(Map<String, List<ReportEntryModel>> errorEntries,
-                              Map<String, List<ReportEntryModel>> warningEntries) {
+  protected ApplicationReport(Map<String, Map<String, List<ReportEntryModel>>> errorEntries,
+                              Map<String, Map<String, List<ReportEntryModel>>> warningEntries) {
     this.errorEntries = errorEntries;
     this.warningEntries = warningEntries;
   }
 
-  public Map<String, List<ReportEntryModel>> getErrorEntries() {
+  public Map<String, Map<String, List<ReportEntryModel>>> getErrorEntries() {
     return this.errorEntries;
   }
 
-  public Map<String, List<ReportEntryModel>> getWarningEntries() {
+  public Map<String, Map<String, List<ReportEntryModel>>> getWarningEntries() {
     return this.warningEntries;
+  }
+
+  public Map<String, Integer> getSummaryErrorEntries() {
+    Map<String, Integer> summaryErrorEntries = new HashMap<>();
+    Integer issuesCount = 0;
+
+    for (Map.Entry<String, Map<String, List<ReportEntryModel>>> entry : errorEntries.entrySet()) {
+      for (Map.Entry<String, List<ReportEntryModel>> e : entry.getValue().entrySet()) {
+        issuesCount = issuesCount + e.getValue().size();
+      }
+      summaryErrorEntries.put(entry.getKey(), issuesCount);
+      issuesCount = 0;
+    }
+    return summaryErrorEntries;
+  }
+
+  public Map<String, Integer> getSummaryWarningEntries() {
+    Map<String, Integer> summaryWarningEntries = new HashMap<>();
+    Integer issuesCount = 0;
+
+    for (Map.Entry<String, Map<String, List<ReportEntryModel>>> entry : warningEntries.entrySet()) {
+      for (Map.Entry<String, List<ReportEntryModel>> e : entry.getValue().entrySet()) {
+        issuesCount = issuesCount + e.getValue().size();
+      }
+      summaryWarningEntries.put(entry.getKey(), issuesCount);
+      issuesCount = 0;
+    }
+    return summaryWarningEntries;
   }
 
   /**
@@ -55,20 +84,22 @@ public class ApplicationReport {
     }
 
     public ApplicationReport build() {
-      Map<String, List<ReportEntryModel>> errorEntries = getEntries(Level.ERROR);
-      Map<String, List<ReportEntryModel>> warningEntries = getEntries(Level.WARN);
+      Map<String, Map<String, List<ReportEntryModel>>> errorEntries = getEntries(Level.ERROR);
+      Map<String, Map<String, List<ReportEntryModel>>> warningEntries = getEntries(Level.WARN);
       return new ApplicationReport(errorEntries, warningEntries);
     }
 
-    private Map<String, List<ReportEntryModel>> getEntries(Level level) {
-      Map<String, List<ReportEntryModel>> resources = new HashMap<>();
+    private Map<String, Map<String, List<ReportEntryModel>>> getEntries(Level level) {
+      Map<String, Map<String, List<ReportEntryModel>>> resources = new HashMap<>();
       reportEntries.forEach(e -> {
         if (e.getLevel().equals(level)) {
           String fileName = Paths.get(e.getFilePath()).getFileName().toString();
-          resources.computeIfAbsent(fileName, k -> new ArrayList<>()).add(e);
+          Map<String, List<ReportEntryModel>> entries = resources.computeIfAbsent(fileName, k -> new LinkedHashMap<>());
+          entries.computeIfAbsent(e.getMessage(), f -> new ArrayList<>()).add(e);
         }
       });
       return resources;
     }
+
   }
 }
