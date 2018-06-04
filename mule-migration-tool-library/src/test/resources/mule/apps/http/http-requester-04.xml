@@ -16,7 +16,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="requestConfig" path="testPath">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars) ++ {'testHeader1' : 'headerValue1'} ++ {'testHeader2' : 'headerValue2'}]
+                #[migration::HttpRequester::httpRequesterHeaders(vars) ++ {'testHeader1' : 'headerValue1'} ++ {'testHeader2' : 'headerValue2'}]
             </http:headers>
             <http:query-params>
                 #[{'queryParam1' : 'testValue1'} ++ {'queryParam2' : 'testValue2'} ++ {'queryParam2' : 'newTestValue2'} ++ {'queryParam3' : 'testValue3'}]
@@ -29,7 +29,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars) ++ {'testName1' : 'testValue1'} ++ vars.headers ++ {'testName1' : 'testValue2'}]
+                #[migration::HttpRequester::httpRequesterHeaders(vars) ++ {'testName1' : 'testValue1'} ++ vars.headers ++ {'testName1' : 'testValue2'}]
             </http:headers>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>

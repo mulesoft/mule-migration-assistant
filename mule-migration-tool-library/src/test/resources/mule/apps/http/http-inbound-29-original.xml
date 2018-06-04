@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
+
+    <http:polling-connector name="PollingHttpConnector"
+        pollingFrequency="30000" reuseAddress="true"
+        checkEtag="false" discardEmptyContent="false" />
+
+    <flow name="flow">
+        <http:inbound-endpoint user="marie"
+            password="marie" host="localhost" port="${port1}"
+            connector-ref="PollingHttpConnector" exchange-pattern="one-way">
+            <property key="Accept" value="application/xml" />
+        </http:inbound-endpoint>
+
+        <logger/>
+    </flow>
+
+</mule>

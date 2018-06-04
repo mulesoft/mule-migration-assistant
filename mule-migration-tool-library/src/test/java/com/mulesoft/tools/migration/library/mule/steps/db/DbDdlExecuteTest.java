@@ -23,7 +23,6 @@ import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -75,9 +74,8 @@ public class DbDdlExecuteTest {
     txScope = new TransactionalScope();
     dbDdlExecute = new DbDdlExecute();
     appModel = mock(ApplicationModel.class);
-    when(appModel.getNodes(Mockito.any(XPathExpression.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc,
-                                                          ((XPathExpression) (invocation.getArguments()[0])).getExpression()));
+    when(appModel.getNodes(Mockito.any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     dbDdlExecute.setApplicationModel(appModel);

@@ -10,11 +10,13 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.OutboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -24,7 +26,6 @@ import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -33,7 +34,6 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.mockito.Mockito;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -66,6 +66,7 @@ public class FileOutboundTest {
     targetPath = FILE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
   }
 
+  private GenericGlobalEndpoint genericGlobalEndpoint;
   private FileGlobalEndpoint fileGlobalEndpoint;
   private FileConfig fileConfig;
   private FileOutboundEndpoint fileOutboundEndpoint;
@@ -79,12 +80,14 @@ public class FileOutboundTest {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
 
     appModel = mock(ApplicationModel.class);
-    when(appModel.getNodes(Mockito.any(XPathExpression.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc,
-                                                          ((XPathExpression) (invocation.getArguments()[0])).getExpression()));
+    when(appModel.getNodes(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(mock(MigrationReport.class));
+
+    genericGlobalEndpoint = new GenericGlobalEndpoint();
+    genericGlobalEndpoint.setApplicationModel(appModel);
 
     fileGlobalEndpoint = new FileGlobalEndpoint();
     fileGlobalEndpoint.setApplicationModel(appModel);
@@ -108,6 +111,8 @@ public class FileOutboundTest {
 
   @Test
   public void execute() throws Exception {
+    getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, fileGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> fileGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, fileConfig.getAppliedTo().getExpression())

@@ -8,13 +8,17 @@ package com.mulesoft.tools.migration.library.mule.steps.endpoint;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
 
 import com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpsInboundEndpoint;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -47,13 +51,18 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
     });
     object.removeChildren("property", CORE_NAMESPACE);
 
+    AbstractApplicationModelMigrationStep migrator = null;
+
     if (object.getAttribute("address") != null) {
       String address = object.getAttributeValue("address");
 
-      AbstractApplicationModelMigrationStep migrator = null;
       // TODO MMT-132 make available migrators discoverable
       if (address.startsWith("file://")) {
         migrator = new FileInboundEndpoint();
+        object.setNamespace(Namespace.getNamespace(FILE.prefix(), FILE.uri()));
+      } else if (address.startsWith("http://")) {
+        migrator = new HttpInboundEndpoint();
+        object.setNamespace(Namespace.getNamespace(HTTP.prefix(), HTTP.uri()));
       }
 
       if (migrator != null) {
@@ -63,9 +72,40 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
         }
 
         migrator.execute(object, report);
-        object.setNamespace(Namespace.getNamespace(FILE.prefix(), FILE.uri()));
       }
       object.removeAttribute("address");
+    } else if (object.getAttribute("ref") != null) {
+      Element globalEndpoint = getApplicationModel().getNode("/mule:mule/*[@name = '" + object.getAttributeValue("ref") + "']");
+
+      // TODO MMT-132 make available migrators discoverable
+      if (globalEndpoint.getAttribute("address") != null) {
+        String address = globalEndpoint.getAttributeValue("address");
+        if (address.startsWith("file://")) {
+          migrator = new FileInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace(FILE.prefix(), FILE.uri()));
+        } else if (address.startsWith("http://")) {
+          migrator = new HttpInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace(HTTP.prefix(), HTTP.uri()));
+        } else if (address.startsWith("https://")) {
+          migrator = new HttpsInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https"));
+        }
+
+        if (migrator != null) {
+          migrator.setApplicationModel(getApplicationModel());
+          if (migrator instanceof ExpressionMigratorAware) {
+            ((ExpressionMigratorAware) migrator).setExpressionMigrator(getExpressionMigrator());
+          }
+
+          for (Attribute attribute : globalEndpoint.getAttributes()) {
+            if (object.getAttribute(attribute.getName()) == null) {
+              object.setAttribute(attribute.getName(), attribute.getValue());
+            }
+          }
+
+          migrator.execute(object, report);
+        }
+      }
     }
 
     if (object.getAttribute("exchange-pattern") != null) {

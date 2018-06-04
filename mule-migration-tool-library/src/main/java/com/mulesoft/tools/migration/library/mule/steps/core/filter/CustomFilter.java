@@ -37,9 +37,9 @@ public class CustomFilter extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    // TODO MMT-140 improve message, add link
     report.report(WARN, element, element,
-                  "Filters no more :(");
+                  "Filters are replaced with the validations module",
+                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation");
     element.setNamespace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
   }
 }

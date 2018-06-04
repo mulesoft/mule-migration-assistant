@@ -8,8 +8,11 @@ package com.mulesoft.tools.migration.library.mule.steps.endpoint;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
 
 import com.mulesoft.tools.migration.library.mule.steps.file.FileOutboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
@@ -54,6 +57,13 @@ public class OutboundEndpoint extends AbstractApplicationModelMigrationStep
       // TODO MMT-132 make available migrators discoverable
       if (address.startsWith("file://")) {
         migrator = new FileOutboundEndpoint();
+        object.setNamespace(Namespace.getNamespace(FILE.prefix(), FILE.uri()));
+      } else if (address.startsWith("http://")) {
+        migrator = new HttpOutboundEndpoint();
+        object.setNamespace(Namespace.getNamespace(HTTP.prefix(), HTTP.uri()));
+      } else if (address.startsWith("https://")) {
+        migrator = new HttpsOutboundEndpoint();
+        object.setNamespace(Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https"));
       }
 
       if (migrator != null) {
@@ -63,7 +73,6 @@ public class OutboundEndpoint extends AbstractApplicationModelMigrationStep
         }
 
         migrator.execute(object, report);
-        object.setNamespace(Namespace.getNamespace(FILE.prefix(), FILE.uri()));
       }
       object.removeAttribute("address");
     }

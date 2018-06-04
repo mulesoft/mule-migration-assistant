@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -23,7 +24,6 @@ import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import org.jdom2.xpath.XPathExpression;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +31,6 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.mockito.Mockito;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,9 +86,8 @@ public class DbInsertTest {
     txScope = new TransactionalScope();
     dbInsert = new DbInsert();
     appModel = mock(ApplicationModel.class);
-    when(appModel.getNodes(Mockito.any(XPathExpression.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc,
-                                                          ((XPathExpression) (invocation.getArguments()[0])).getExpression()));
+    when(appModel.getNodes(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     dbInsert.setApplicationModel(appModel);

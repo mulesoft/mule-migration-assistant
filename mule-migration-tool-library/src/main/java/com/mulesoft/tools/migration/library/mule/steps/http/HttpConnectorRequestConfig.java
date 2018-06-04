@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -119,9 +119,10 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
     }
 
     if ("raml-api-configuration".equals(object.getName())) {
-      report.report(WARN, object, object.getParentElement(),
+      report.report(ERROR, object, object.getParentElement(),
                     "For consuming an API described by a RAML file, Rest-Connect is a more appropriate tool than using the HTTP Connector directly.",
-                    "https://docs.mulesoft.com/anypoint-exchange/to-deploy-using-rest-connect");
+                    "https://docs.mulesoft.com/anypoint-exchange/to-deploy-using-rest-connect",
+                    "https://blogs.mulesoft.com/dev/anypoint-platform-dev/building-reusable-components-with-rest-connect-and-mule-4/");
       object.getParentElement().removeContent(object);
     }
   }

@@ -38,7 +38,8 @@ public class InboundPropertiesHelper {
   private static final String TMP_INBOUND_PROP_DW_FRAGMENT_SUFFIX = ".dwl_tmp";
 
   public static void addAttributesMapping(ApplicationModel appModel, String attributesClassName,
-                                          Map<String, String> expressionsPerProperty)
+                                          Map<String, String> expressionsPerProperty,
+                                          String... additionalInboundProps)
       throws IOException {
 
     File migrationScriptFolder = getMigrationScriptFolder(appModel.getProjectBasePath());
@@ -60,6 +61,12 @@ public class InboundPropertiesHelper {
       }
 
       writer.write(lineSeparator() + "}" + lineSeparator());
+
+      for (String aip : additionalInboundProps) {
+        // No lambda because it messes up with checked exceptions...
+        writer.write(" ++ " + aip + lineSeparator());
+      }
+
       writer.flush();
     }
   }

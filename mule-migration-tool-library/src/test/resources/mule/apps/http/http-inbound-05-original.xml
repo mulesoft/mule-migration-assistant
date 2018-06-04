@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+<!--     <custom-transformer name="Xslt" -->
+<!--         class="org.mule.transport.http.functional.HttpEncodingNonAsciiFunctionalTestCase$ParamMapToString"/> -->
+
+    <flow name="flow">
+        <http:inbound-endpoint name="httpEndpoint" host="localhost" port="${port1}"
+                               contentType="text/xml">
+            <transformer ref="Xslt" />
+        </http:inbound-endpoint>
+
+        <logger/>
+    </flow>
+
+</mule>

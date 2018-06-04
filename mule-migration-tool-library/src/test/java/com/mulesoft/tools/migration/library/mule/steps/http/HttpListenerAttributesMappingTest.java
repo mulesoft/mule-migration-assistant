@@ -80,7 +80,10 @@ public class HttpListenerAttributesMappingTest {
         "if (message.attributes.^class == 'org.mule.extension.http.api.HttpRequestAttributes')" + lineSeparator() +
         "{" + lineSeparator() +
         "    'http.listener.path': message.attributes.listenerPath," + lineSeparator() +
-        "    'http.relative.path': message.attributes.relativePath," + lineSeparator() +
+        "    'http.context.path': if (endsWith(message.attributes.listenerPath, '/*')) message.attributes.listenerPath[0 to -3] default '/' else message.attributes.listenerPath,"
+        + lineSeparator() +
+        "    'http.relative.path': message.attributes.requestPath[1 + sizeOf(if (endsWith(message.attributes.listenerPath, '/*')) message.attributes.listenerPath[0 to -3] default '/' else message.attributes.listenerPath) to -1],"
+        + lineSeparator() +
         "    'http.version': message.attributes.version," + lineSeparator() +
         "    'http.scheme': message.attributes.scheme," + lineSeparator() +
         "    'http.method': message.attributes.method," + lineSeparator() +
@@ -90,9 +93,12 @@ public class HttpListenerAttributesMappingTest {
         "    'http.client.cert': message.attributes.clientCertificate," + lineSeparator() +
         "    'http.query.params': message.attributes.queryParams," + lineSeparator() +
         "    'http.uri.params': message.attributes.uriParams," + lineSeparator() +
+        "    'http.request': message.attributes.requestPath," + lineSeparator() +
         "    'http.request.path': message.attributes.requestPath," + lineSeparator() +
         "    'http.headers': message.attributes.headers" + lineSeparator() +
         "}" + lineSeparator() +
+        " ++ message.attributes.headers" + lineSeparator() +
+        " ++ message.attributes.queryParams" + lineSeparator() +
         "else" + lineSeparator() +
         "{}" + lineSeparator()));
   }

@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
-import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
@@ -40,7 +39,7 @@ public abstract class AbstractApplicationModelMigrationStep implements Applicati
     try {
       this.appliedTo = XPathFactory.instance().compile(xpathExpression);
     } catch (Exception ex) {
-      throw new MigrationStepException("The xpath expression must be valid.");
+      throw new MigrationStepException("The xpath expression must be valid.", ex);
     }
   }
 

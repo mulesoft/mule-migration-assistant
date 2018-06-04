@@ -9,12 +9,12 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.COMPATIBILITY_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
-import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -24,7 +24,6 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.jdom2.xpath.XPathFactory;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -59,14 +58,6 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
 
     object.setName("listener");
 
-    List<Element> transformerChildren =
-        object.getChildren().stream().filter(c -> c.getName().contains("transformer")).collect(toList());
-
-    transformerChildren.forEach(tc -> {
-      tc.getParent().removeContent(tc);
-      object.getParentElement().addContent(2, tc);
-    });
-
     addAttributesToInboundProperties(object, report);
 
     Element redelivery = object.getChild("idempotent-redelivery-policy", CORE_NAMESPACE);
@@ -74,6 +65,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       redelivery.setName("redelivery-policy");
       Attribute exprAttr = redelivery.getAttribute("idExpression");
 
+      // TODO MMT-128
       exprAttr.setValue(exprAttr.getValue().replaceAll("#\\[header\\:inbound\\:originalFilename\\]", "#[attributes.name]"));
 
       if (getExpressionMigrator().isWrapped(exprAttr.getValue())) {
@@ -204,9 +196,9 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.removeAttribute("recursive");
     }
 
-    if (object.getAttribute("address") != null) {
-      object.setAttribute("directory", object.getAttributeValue("address").substring("file://".length()));
-    }
+    processAddress(object, report).ifPresent(address -> {
+      object.setAttribute("directory", address.getPath());
+    });
     if (object.getAttribute("path") != null) {
       object.getAttribute("path").setName("directory");
     }
@@ -236,14 +228,18 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.removeAttribute("comparator");
       object.removeAttribute("reverseOrder");
     }
+
+    if (object.getAttribute("name") != null) {
+      object.removeAttribute("name");
+    }
   }
 
   private Element buildNewMatcher(Element object, Namespace fileNs) {
     Element newMatcher;
     newMatcher = new Element("matcher", fileNs);
 
-    List<Element> referencedMatcher = getApplicationModel().getNodes(XPathFactory.instance()
-        .compile("/mule:mule/file:matcher[@name='" + object.getAttributeValue("matcher") + "']"));
+    List<Element> referencedMatcher =
+        getApplicationModel().getNodes("/mule:mule/file:matcher[@name='" + object.getAttributeValue("matcher") + "']");
     if (!referencedMatcher.isEmpty()) {
       for (Attribute attribute : referencedMatcher.get(0).getAttributes()) {
         newMatcher.setAttribute(attribute.getName(), attribute.getValue());
@@ -262,7 +258,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
-    migrateSourceStructure(getApplicationModel(), object, report);
+    migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
 
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("originalFilename", "message.attributes.fileName");

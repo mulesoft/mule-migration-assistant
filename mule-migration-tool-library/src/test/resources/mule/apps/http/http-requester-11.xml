@@ -16,7 +16,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="requestConfig" path="/" method="POST">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
             <http:response-validator>
                 <http:success-status-code-validator values="200,201,404" />

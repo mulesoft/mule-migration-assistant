@@ -47,7 +47,7 @@ public class OutboundPropertiesTest {
     return new Object[] {
         "outbound-properties-01",
         "outbound-properties-02",
-        // TODO Migrate spring beans
+        // TODO MMT-154 Migrate spring beans
         // "outbound-properties-03",
         "outbound-properties-04",
         "outbound-properties-05"

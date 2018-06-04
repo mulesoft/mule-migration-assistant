@@ -26,7 +26,12 @@ public class HttpMigrationTestCase extends EndToEndTestCase {
         "http1",
         "http1Mvn",
         "http2Mvn",
-        "http3Mvn"
+        "http3Mvn",
+        "httpTransport1",
+        "httpTransport2", //
+        "httpTransport3", //
+        "httpTransport4", //
+        "httpTransport5"
     };
   }
 

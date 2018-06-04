@@ -8,10 +8,9 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
 import static java.lang.System.lineSeparator;
-import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -19,10 +18,8 @@ import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Migrates the outbound endpoints of the file transport
@@ -48,17 +45,9 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace fileNs = Namespace.getNamespace(FILE.prefix(), FILE.uri());
-
     object.setName("write");
 
-    List<Element> transformerChildren =
-        object.getChildren().stream().filter(c -> c.getName().contains("transformer")).collect(toList());
-
-    transformerChildren.forEach(tc -> {
-      tc.getParent().removeContent(tc);
-      object.getParentElement().addContent(object.getParentElement().indexOf(object) + 1, tc);
-    });
+    extractInboundChildren(object, getApplicationModel());
 
     migrateOperationStructure(getApplicationModel(), object, report);
 
@@ -88,6 +77,10 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
     object.removeAttribute("outputPattern");
     object.removeAttribute("outputPatternConfig");
     object.removeAttribute("outputAppend");
+
+    if (object.getAttribute("name") != null) {
+      object.removeAttribute("name");
+    }
   }
 
   private String compatibilityOutputFile(String pathDslParams) {

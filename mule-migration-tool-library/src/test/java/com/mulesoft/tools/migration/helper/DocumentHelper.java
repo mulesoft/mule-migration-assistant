@@ -6,7 +6,10 @@
  */
 package com.mulesoft.tools.migration.helper;
 
+import static java.util.Collections.emptyList;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -39,12 +42,21 @@ public class DocumentHelper {
   }
 
   public static List<Element> getElementsFromDocument(Document doc, String xPathExpression) {
-    return getElementsFromDocument(doc, xPathExpression, "mule");
+    try {
+      return getElementsFromDocument(doc, xPathExpression, "mule");
+    } catch (IllegalArgumentException e) {
+      if (e.getMessage().matches("Namespace with prefix '\\w+' has not been declared.")) {
+        return emptyList();
+      } else {
+        throw e;
+      }
+    }
   }
 
   public static List<Element> getElementsFromDocument(Document doc, String xPathExpression, String defaultNamespacePrefix) {
     List<Namespace> namespaces = new ArrayList<>();
     namespaces.addAll(doc.getRootElement().getAdditionalNamespaces());
+    namespaces.addAll(AdditionalNamespacesFactory.getAdditionalNamespaces());
 
     if (namespaces.stream().noneMatch(n -> defaultNamespacePrefix.equals(n.getPrefix()))) {
       namespaces.add(Namespace.getNamespace(defaultNamespacePrefix, doc.getRootElement().getNamespace().getURI()));

@@ -7,9 +7,12 @@
 package com.mulesoft.tools.migration.step.util;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
 import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -27,13 +30,12 @@ import org.jdom2.Parent;
  */
 public final class XmlDslUtils {
 
-  private static final String COMPATIBILITY_NS_URI = "http://www.mulesoft.org/schema/mule/compatibility";
-  private static final String COMPATIBILITY_NS_SCHEMA_LOC =
-      "http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd";
   private static final String CORE_NS_URI = "http://www.mulesoft.org/schema/mule/core";
 
-  public static final Namespace COMPATIBILITY_NAMESPACE = Namespace.getNamespace("compatibility", COMPATIBILITY_NS_URI);
   public static final Namespace CORE_NAMESPACE = Namespace.getNamespace(CORE_NS_URI);
+
+  public static final Namespace VALIDATION_NAMESPACE =
+      Namespace.getNamespace("validation", "http://www.mulesoft.org/schema/mule/validation");
 
   private XmlDslUtils() {
     // Nothing to do
@@ -46,8 +48,8 @@ public final class XmlDslUtils {
    * @param exprMigrator the migrator for the expressions
    */
   public static void migrateExpression(Attribute attr, ExpressionMigrator exprMigrator) {
-    if (attr != null && exprMigrator.isWrapped(attr.getValue())) {
-      attr.setValue(exprMigrator.wrap(exprMigrator.migrateExpression(attr.getValue(), true, attr.getParent())));
+    if (attr != null) {
+      attr.setValue(exprMigrator.migrateExpression(attr.getValue(), true, attr.getParent()));
     }
   }
 
@@ -73,18 +75,30 @@ public final class XmlDslUtils {
    * Add the required compatibility elements to the flow for a migrated source to work correctly.
    */
   public static void migrateSourceStructure(ApplicationModel appModel, Element object, MigrationReport report) {
+    migrateSourceStructure(appModel, object, report, true);
+  }
+
+  /**
+   * Add the required compatibility elements to the flow for a migrated source to work correctly.
+   */
+  public static void migrateSourceStructure(ApplicationModel appModel, Element object, MigrationReport report,
+                                            boolean expectsOutboundProperties) {
     appModel.addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, object.getDocument());
 
     int index = object.getParent().indexOf(object);
     buildAttributesToInboundProperties(report, object.getParent(), index + 1);
 
-    // TODO MMT-32 Test this
-    // TODO MMT-32 Are we migrating exception handling before or after connectors/transports?
-    Element errorHandlerElement = object.getParentElement().getChild("error-handler", CORE_NAMESPACE);
-    if (errorHandlerElement != null) {
-      buildOutboundPropertiesToVar(report, object.getParent(), object.getParentElement().indexOf(errorHandlerElement) - 1);
-    } else {
-      buildOutboundPropertiesToVar(report, object.getParent(), object.getParent().getContentSize());
+    if (expectsOutboundProperties) {
+      // TODO MMT-32 Test this
+      // TODO MMT-32 Are we migrating exception handling before or after connectors/transports?
+      Element errorHandlerElement = object.getParentElement().getChild("error-handler", CORE_NAMESPACE);
+      if (errorHandlerElement != null) {
+        buildOutboundPropertiesToVar(report, object.getParent(), object.getParentElement().indexOf(errorHandlerElement) - 1);
+
+        errorHandlerElement.getChildren().forEach(eh -> buildOutboundPropertiesToVar(report, eh, eh.getContentSize()));
+      } else {
+        buildOutboundPropertiesToVar(report, object.getParent(), object.getParent().getContentSize());
+      }
     }
   }
 
@@ -172,11 +186,24 @@ public final class XmlDslUtils {
   /**
    *
    * Add new element after some existing element.
+   *
    * @param newElement
    * @param element
    */
   public static void addElementAfter(Element newElement, Element element) {
     Integer parentIndex = element.getParentElement().indexOf(element);
     element.getParentElement().addContent(parentIndex + 1, newElement);
+  }
+
+  public static void addValidationModule(ApplicationModel applicationModel) {
+    applicationModel.getPomModel().ifPresent(pom -> pom.addDependency(new DependencyBuilder()
+        .withGroupId("org.mule.modules")
+        .withArtifactId("mule-validation-module")
+        .withVersion("1.2.0")
+        .withClassifier("mule-plugin")
+        .build()));
+
+    applicationModel.addNameSpace("validation", "http://www.mulesoft.org/schema/mule/validation",
+                                  "http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd");
   }
 }

@@ -14,7 +14,7 @@ package com.mulesoft.tools.migration.xml;
  */
 public enum AdditionalNamespaces {
 
-  HTTP("http", "http://www.mulesoft.org/schema/mule/http"),
+  HTTP("http", "http://www.mulesoft.org/schema/mule/http"), HTTPS("https", "http://www.mulesoft.org/schema/mule/https"),
 
   TLS("tls", "http://www.mulesoft.org/schema/mule/tls"),
 
@@ -27,6 +27,9 @@ public enum AdditionalNamespaces {
   SOCKETS("sockets", "http://www.mulesoft.org/schema/mule/sockets"),
 
   FILE("file", "http://www.mulesoft.org/schema/mule/file"),
+
+  // VM("vm", "http://www.mulesoft.org/schema/mule/vm"),
+  VM("vm", "http://www.mulesoft.org/schema/mule/transport/vm"),
 
   MULE("mule", "http://www.mulesoft.org/schema/mule/core"),
 

@@ -6,9 +6,15 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addAttribute;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
+
 import org.apache.commons.io.FileUtils;
-import org.jdom2.xpath.XPathFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,12 +28,6 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addAttribute;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
 
 /**
  * @author Mulesoft Inc.
@@ -69,11 +69,10 @@ public class ApplicationModelTest {
     applicationModel.addNameSpace("munit-tools", "http://www.mulesoft.org/schema/mule/munit-tools",
                                   "http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd");
 
-    applicationModel.getNodes(XPathFactory.instance().compile(XPATH_SELECTOR))
-        .forEach(n -> changeNodeName("munit-tools", "assert-that")
-            .andThen(changeAttribute("condition", of("expression"), empty()))
-            .andThen(addAttribute("is", "#[equalTo(true)]"))
-            .apply(n));
+    applicationModel.getNodes(XPATH_SELECTOR).forEach(n -> changeNodeName("munit-tools", "assert-that")
+        .andThen(changeAttribute("condition", of("expression"), empty()))
+        .andThen(addAttribute("is", "#[equalTo(true)]"))
+        .apply(n));
   }
 
   private void buildOriginalProject() throws IOException {

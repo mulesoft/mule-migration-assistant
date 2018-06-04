@@ -16,7 +16,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 
 /**
- * Migrates the outbound endpoints of the file transport
+ * Migrates the transformers of the file transport
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -31,7 +31,7 @@ public class FileTransformers extends AbstractApplicationModelMigrationStep
 
   @Override
   public String getDescription() {
-    return "Update File outbound endpoints.";
+    return "Update File transformers.";
   }
 
   public FileTransformers() {

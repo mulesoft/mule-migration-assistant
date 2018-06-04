@@ -14,14 +14,14 @@
     
     <flow name="testFlow">
         <http:listener config-ref="listenerConfig" path="${path}">
-            <http:response>
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
                 <http:headers>
-                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars) ++ { "User-Agent": 'Mule 3.6.0', "Date": vars.server.dateTime }]
+                    #[migration::HttpListener::httpListenerResponseHeaders(vars) ++ { "User-Agent": 'Mule 3.6.0', "Date": vars.server.dateTime }]
                 </http:headers>
             </http:response>
-            <http:error-response>
+            <http:error-response statusCode="#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
                 <http:headers>
-                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
+                    #[migration::HttpListener::httpListenerResponseHeaders(vars)]
                 </http:headers>
             </http:error-response>
         </http:listener>

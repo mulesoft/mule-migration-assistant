@@ -15,24 +15,16 @@ import com.mulesoft.tools.migration.library.mule.steps.core.CatchExceptionStrate
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExpressions;
 import com.mulesoft.tools.migration.library.mule.steps.core.CompatibilityPomContribution;
-import com.mulesoft.tools.migration.library.mule.steps.core.CopyProperties;
 import com.mulesoft.tools.migration.library.mule.steps.core.ExceptionStrategyRef;
 import com.mulesoft.tools.migration.library.mule.steps.core.Flow;
 import com.mulesoft.tools.migration.library.mule.steps.core.ForEachExpressions;
 import com.mulesoft.tools.migration.library.mule.steps.core.ForEachScope;
-import com.mulesoft.tools.migration.library.mule.steps.core.MessagePropertiesTransformer;
+import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.core.Poll;
-import com.mulesoft.tools.migration.library.mule.steps.core.RemoveJsonTransformerNamespace;
-import com.mulesoft.tools.migration.library.mule.steps.core.RemoveObjectToStringTransformer;
-import com.mulesoft.tools.migration.library.mule.steps.core.RemoveProperty;
-import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSchedulersNamespace;
-import com.mulesoft.tools.migration.library.mule.steps.core.RemovedElements;
 import com.mulesoft.tools.migration.library.mule.steps.core.RollbackExceptionStrategy;
-import com.mulesoft.tools.migration.library.mule.steps.core.SetAttachment;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetPayload;
-import com.mulesoft.tools.migration.library.mule.steps.core.SetProperty;
+import com.mulesoft.tools.migration.library.mule.steps.core.SetVariable;
 import com.mulesoft.tools.migration.library.mule.steps.core.TransactionalScope;
-import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.ee.EETransform;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
@@ -72,27 +64,19 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new CompatibilityPomContribution(),
-                        new RemovedElements(),
                         new CatchExceptionStrategy(),
-                        new RemoveObjectToStringTransformer(),
                         new RollbackExceptionStrategy(),
                         new ChoiceExceptionStrategy(),
-                        new SetPayload(),
-                        new SetAttachment(),
-                        new SetProperty(),
-                        new CopyProperties(),
-                        new RemoveProperty(),
                         new TransactionalScope(),
                         new ExceptionStrategyRef(),
                         new ForEachScope(),
-                        new RemoveJsonTransformerNamespace(),
-                        new MessagePropertiesTransformer(),
                         new Flow(),
                         new Poll(),
-                        new RemoveSchedulersNamespace(),
-                        new CustomFilter(),
                         new ChoiceExpressions(),
                         new ForEachExpressions(),
-                        new EETransform());
+                        new SetPayload(),
+                        new SetVariable(),
+                        new EETransform(),
+                        new GenericGlobalEndpoint());
   }
 }
