@@ -77,7 +77,6 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
     } else if (object.getAttribute("ref") != null) {
       Element globalEndpoint = getApplicationModel().getNode("/mule:mule/*[@name = '" + object.getAttributeValue("ref") + "']");
 
-      // execute(globalEndpoint, report);
       // TODO MMT-132 make available migrators discoverable
       if (globalEndpoint.getAttribute("address") != null) {
         String address = globalEndpoint.getAttributeValue("address");

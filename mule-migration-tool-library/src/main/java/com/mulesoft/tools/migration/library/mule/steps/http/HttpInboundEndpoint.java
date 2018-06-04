@@ -211,7 +211,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   public static Element connectionHeaders(ApplicationModel appModel, Namespace httpNamespace) {
-
+    // TODO MMT-155 Review how to implement this
     // // Replicates logic from org.mule.transport.http.HttpMuleMessageFactory.rewriteConnectionAndKeepAliveHeaders(Map<String,
     // Object>)
     // expressionsPerProperty.put("Connection", "message.attributes.headers");
@@ -225,8 +225,6 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
                   + lineSeparator() +
                   " */" + lineSeparator() +
                   "fun httpInboundConnectionAndKeepAliveHeaders(version, headers: {}) = do {" + lineSeparator() +
-                  // " var matcher_regex = /(?i)http\\..*|Connection|Transfer-Encoding/" + lineSeparator() +
-                  // " ---" + lineSeparator() +
                   "    vars.compatibility_outboundProperties default {} filterObject" + lineSeparator() +
                   "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
                   "}" + lineSeparator() +

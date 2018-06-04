@@ -133,9 +133,6 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
       object.getParentElement().addContent(object.getParentElement().indexOf(object), new Element("set-payload", CORE_NAMESPACE)
           .setAttribute("value", "#[payload]")
           .setAttribute("mimeType", object.getAttributeValue("contentType")));
-      // object.getParentElement().addContent(object.getParentElement().indexOf(object), new Element("logger", CORE_NAMESPACE)
-      // .setAttribute("level", "WARN")
-      // .setAttribute("message", "#[payload]"));
       object.removeAttribute("contentType");
     }
     object.addContent(compatibilityHeaders(httpNamespace));
