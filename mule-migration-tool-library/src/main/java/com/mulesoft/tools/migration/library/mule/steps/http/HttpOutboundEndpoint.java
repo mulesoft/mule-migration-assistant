@@ -82,7 +82,9 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
     processAddress(object, report).ifPresent(address -> {
       requestConnection.setAttribute("host", getExpressionMigrator().migrateExpression(address.getHost(), true, object));
-      requestConnection.setAttribute("port", getExpressionMigrator().migrateExpression(address.getPort(), true, object));
+      if (address.getPort() != null) {
+        requestConnection.setAttribute("port", getExpressionMigrator().migrateExpression(address.getPort(), true, object));
+      }
       if (address.getPath() != null) {
         object.setAttribute("path", getExpressionMigrator().migrateExpression(address.getPath(), true, object));
       }
