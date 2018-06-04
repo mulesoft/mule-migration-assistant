@@ -17,10 +17,10 @@
     <flow name="flow">
         <http:listener config-ref="flowListenerConfig" path="/resources/all/*">
             <http:response statusCode="404">
-                <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars) ++ {'Location' : 'http://localhost:9090'} ++ {'Expires' : 'Thu, 01 Dec 2014 16:00:00 GMT'} ++ {'Cache-Control' : 'public'} ++ {'Cache-Control' : 'no-cache'} ++ {'Cache-Control' : 'must-revalidate'} ++ {'Cache-Control' : 'max-age=3600'} ++ {'Set-Cookie' : 'cookie1=value1; Domain=localhost; Path=/; Expires=Fri, 12 Dec 2014 17:00:00 GMT; Secure'} ++ {'Set-Cookie' : 'cookie2=value2; Max-Age=1000'} ++ {'Cache-Control' : 'no-transform'} ++ {'header1' : 'value1'} ++ {'header2' : 'value2'} ++ {'Content-Type' : 'text/html'}]</http:headers>
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'Location' : 'http://localhost:9090'} ++ {'Expires' : 'Thu, 01 Dec 2014 16:00:00 GMT'} ++ {'Cache-Control' : 'public'} ++ {'Cache-Control' : 'no-cache'} ++ {'Cache-Control' : 'must-revalidate'} ++ {'Cache-Control' : 'max-age=3600'} ++ {'Set-Cookie' : 'cookie1=value1; Domain=localhost; Path=/; Expires=Fri, 12 Dec 2014 17:00:00 GMT; Secure'} ++ {'Set-Cookie' : 'cookie2=value2; Max-Age=1000'} ++ {'Cache-Control' : 'no-transform'} ++ {'header1' : 'value1'} ++ {'header2' : 'value2'} ++ {'Content-Type' : 'text/html'}]</http:headers>
             </http:response>
-            <http:error-response statusCode="#[vars.compatibility_outboundProperties['http.status']]">
-                <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]</http:headers>
+            <http:error-response statusCode="#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:error-response>
         </http:listener>
         <choice>

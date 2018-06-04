@@ -6,10 +6,9 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
-import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.httpRequesterLib;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.SOCKETS_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.addSocketsModule;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
@@ -18,7 +17,6 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddr
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
-import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -61,6 +59,9 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    httpRequesterLib(getApplicationModel());
+
+
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);
     object.setName("request");
@@ -123,7 +124,7 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
     if (object.getAttribute("method") == null) {
       // Logic from org.mule.transport.http.transformers.ObjectToHttpClientMethodRequest.detectHttpMethod(MuleMessage)
-      object.setAttribute("method", "#[vars.compatibility_outboundProperties['http.method'] default 'POST']");
+      object.setAttribute("method", "#[migration::HttpRequester::httpRequesterMethod(vars)]");
       report.report(WARN, object, object, "Avoid using an outbound property to determine the method.");
     }
 
@@ -287,28 +288,8 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   private Element compatibilityHeaders(Namespace httpNamespace) {
-    try {
-      library(getMigrationScriptFolder(getApplicationModel().getProjectBasePath()), "HttpRequesterHeaders.dwl",
-              "" +
-                  "/**" + lineSeparator() +
-                  " * Emulates the request headers building logic of the Mule 3.x HTTP Connector." + lineSeparator() +
-                  " */" + lineSeparator() +
-                  "fun httpRequesterHeaders(vars: {}) = do {" + lineSeparator() +
-                  "    var matcher_regex = /(?i)http\\..*|Connection|Host|Transfer-Encoding|"
-                  + "Accept-Ranges|Age|Content-Disposition|Set-Cookie|ETag|Location|"
-                  + "Proxy-Authenticate|Retry-After|Server|Vary|WWW-Authenticate/"
-                  + lineSeparator() +
-                  "    ---" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties filterObject" + lineSeparator() +
-                  "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
-                  "}" + lineSeparator() +
-                  lineSeparator());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
     return new Element("headers", httpNamespace)
-        .setText("#[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]");
+        .setText("#[migration::HttpRequester::httpRequesterTransportHeaders(vars)]");
   }
 
   private void handleReferencedRequestBuilder(Element object, final Namespace httpNamespace) {

@@ -16,11 +16,11 @@
 
     <flow name="flow">
         <http:listener config-ref="inboundListenerConfig" path="/*">
-          <http:response statusCode="#[vars.compatibility_outboundProperties['http.status'] default 200]">
-            <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]</http:headers>
+          <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+            <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
           </http:response>
-          <http:error-response statusCode="#[vars.compatibility_outboundProperties['http.status']]">
-            <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]</http:headers>
+          <http:error-response statusCode="#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+            <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
           </http:error-response>
         </http:listener>
 

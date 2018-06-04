@@ -16,7 +16,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath" method="POST">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
                 #[{'testName1' : 'testValue1'} ++ {vars.paramName : vars.paramValue}]
@@ -29,7 +29,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
                 #[vars.params]
@@ -42,7 +42,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
                 #[{'testName1' : 'testValue1'} ++ vars.params]
@@ -55,7 +55,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="/multipleQueryParamFromListener" method="GET">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
                 #[vars.compatibility_inboundProperties['http.query.params']]
@@ -68,7 +68,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
                 #[{ "testName1": null, "testName2": [ null ] }]

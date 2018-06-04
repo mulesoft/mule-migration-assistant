@@ -23,9 +23,9 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <http:request config-ref="flowRequestConfig" method="#[vars.compatibility_outboundProperties['http.method'] default 'POST']" path="/out1">
+        <http:request config-ref="flowRequestConfig" method="#[migration::HttpRequester::httpRequesterMethod(vars)]" path="/out1">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterTransportHeaders(vars)]
             </http:headers>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>

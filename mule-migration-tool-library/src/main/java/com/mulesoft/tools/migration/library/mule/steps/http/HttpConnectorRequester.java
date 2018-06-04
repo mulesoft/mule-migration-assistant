@@ -17,6 +17,7 @@ import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Content;
@@ -52,6 +53,8 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    httpRequesterLib(getApplicationModel());
+
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);
 
@@ -176,8 +179,13 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
   }
 
   private Element compatibilityHeaders(Namespace httpNamespace) {
+    return new Element("headers", httpNamespace)
+        .setText("#[migration::HttpRequester::httpRequesterHeaders(vars)]");
+  }
+
+  public static void httpRequesterLib(ApplicationModel appModel) {
     try {
-      library(getMigrationScriptFolder(getApplicationModel().getProjectBasePath()), "HttpRequesterHeaders.dwl",
+      library(getMigrationScriptFolder(appModel.getProjectBasePath()), "HttpRequester.dwl",
               "" +
                   "/**" + lineSeparator() +
                   " * Emulates the request headers building logic of the Mule 3.x HTTP Connector." + lineSeparator() +
@@ -188,13 +196,30 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
                   "    vars.compatibility_outboundProperties filterObject" + lineSeparator() +
                   "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
                   "}" + lineSeparator() +
+                  lineSeparator() +
+                  "/**" + lineSeparator() +
+                  " * Emulates the request headers building logic of the Mule 3.x HTTP Transport." + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun httpRequesterTransportHeaders(vars: {}) = do {" + lineSeparator() +
+                  "    var matcher_regex = /(?i)http\\..*|Connection|Host|Transfer-Encoding|"
+                  + "Accept-Ranges|Age|Content-Disposition|Set-Cookie|ETag|Location|"
+                  + "Proxy-Authenticate|Retry-After|Server|Vary|WWW-Authenticate/"
+                  + lineSeparator() +
+                  "    ---" + lineSeparator() +
+                  "    vars.compatibility_outboundProperties filterObject" + lineSeparator() +
+                  "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
+                  "}" + lineSeparator() +
+                  lineSeparator() +
+                  "/**" + lineSeparator() +
+                  " * Emulates the request method logic of the Mule 3.x HTTP Connector." + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun httpRequesterMethod(vars: {}) = do {" + lineSeparator() +
+                  "    vars.compatibility_outboundProperties['http.method'] default 'POST'" + lineSeparator() +
+                  "}" + lineSeparator() +
                   lineSeparator());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
-    return new Element("headers", httpNamespace)
-        .setText("#[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]");
   }
 
   private void handleReferencedRequestBuilder(Element object, final Namespace httpNamespace) {

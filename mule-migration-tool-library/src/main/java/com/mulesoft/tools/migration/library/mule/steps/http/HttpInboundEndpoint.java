@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpC
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.addAttributesToInboundProperties;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.compatibilityHeaders;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.handleReferencedResponseBuilder;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.httpListenerLib;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
@@ -60,6 +61,8 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    httpListenerLib(getApplicationModel());
+
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);
     object.setName("listener");
@@ -126,7 +129,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
           copyAttributeIfPresent(rb, response, "reasonPhrase");
 
           if (response.getAttribute("statusCode") == null) {
-            response.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status'] default 200]");
+            response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
             report.report(WARN, response, response, "Avoid using an outbound property to determine the status code.");
           }
 
@@ -146,7 +149,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
           copyAttributeIfPresent(rb, errorResponse, "reasonPhrase");
 
           if (errorResponse.getAttribute("statusCode") == null) {
-            errorResponse.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status']]");
+            errorResponse.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
             report.report(WARN, errorResponse, errorResponse, "Avoid using an outbound property to determine the status code.");
           }
 
@@ -161,7 +164,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
       response.addContent(new Element("header", httpNamespace)
           .setAttribute("headerName", "Content-Type")
           .setAttribute("value", object.getAttributeValue("contentType")));
-      response.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status'] default 200]");
+      response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
       report.report(WARN, response, response, "Avoid using an outbound property to determine the status code.");
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
@@ -172,7 +175,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     Element response = object.getChild("response", httpNamespace);
     if (response == null) {
       response = getResponse(object, httpNamespace);
-      response.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status'] default 200]");
+      response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
       report.report(WARN, response, response, "Avoid using an outbound property to determine the status code.");
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
@@ -182,7 +185,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     Element errorResponse = object.getChild("error-response", httpNamespace);
     if (errorResponse == null) {
       errorResponse = getErrorResponse(object, httpNamespace);
-      errorResponse.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status']]");
+      errorResponse.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
       report.report(WARN, errorResponse, errorResponse, "Avoid using an outbound property to determine the status code.");
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
@@ -234,7 +237,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     }
 
     return new Element("headers", httpNamespace)
-        .setText("#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]");
+        .setText("#[migration::HttpListener::httpListenerResponseHeaders(vars)]");
   }
 
   private void extractListenerConfig(Element object, final Namespace httpNamespace, String configName, String host, String port) {

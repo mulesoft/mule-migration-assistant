@@ -16,7 +16,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath/{testParam1}/{testParam2}">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
             <http:uri-params>
                 #[{'testParam1' : 'testValue1'} ++ {vars.paramName : vars.paramValue}]
@@ -29,7 +29,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath/{testParam1}/{testParam2}">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
             <http:uri-params>
                 #[vars.params]
@@ -42,7 +42,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath/{testParam1}/{testParam2}">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
             <http:uri-params>
                 #[{'testParam1' : 'testValue1'} ++ vars.params]
@@ -55,7 +55,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="testPath/{testParam1}/{testParam2}">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
             <http:uri-params>
                 #[{'testParam1' : 'testValue1'} ++ {'testParam2' : payload}]

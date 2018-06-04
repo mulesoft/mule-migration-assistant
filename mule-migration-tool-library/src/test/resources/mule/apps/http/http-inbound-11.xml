@@ -15,10 +15,10 @@
     <flow name="flow">
         <http:listener config-ref="flowListenerConfig" path="/resources/error/*">
             <http:response statusCode="500">
-                <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars) ++ {'Content-Type' : 'text/html'}]</http:headers>
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'Content-Type' : 'text/html'}]</http:headers>
             </http:response>
-            <http:error-response statusCode="#[vars.compatibility_outboundProperties['http.status']]">
-                <http:headers>#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]</http:headers>
+            <http:error-response statusCode="#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:error-response>
         </http:listener>
         <choice>

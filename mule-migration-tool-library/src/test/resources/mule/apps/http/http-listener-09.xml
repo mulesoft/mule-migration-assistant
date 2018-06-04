@@ -16,12 +16,12 @@
         <http:listener config-ref="listenerConfig" path="${path}">
             <http:response statusCode="200" reasonPhrase="everything works!">
                 <http:headers>
-                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
+                    #[migration::HttpListener::httpListenerResponseHeaders(vars)]
                 </http:headers>
             </http:response>
-            <http:error-response statusCode="#[vars.compatibility_outboundProperties['http.status']]">
+            <http:error-response statusCode="#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
                 <http:headers>
-                    #[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]
+                    #[migration::HttpListener::httpListenerResponseHeaders(vars)]
                 </http:headers>
             </http:error-response>
         </http:listener>

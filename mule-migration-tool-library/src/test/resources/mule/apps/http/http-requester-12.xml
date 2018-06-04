@@ -16,7 +16,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="test" method="POST">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
@@ -27,7 +27,7 @@
         <http:request config-ref="config" path="test" method="POST">
             <http:body>#[vars.customSource]</http:body>
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
@@ -36,7 +36,7 @@
         <compatibility:outbound-properties-to-var/>
         <http:request config-ref="config" path="test" method="POST" target="#[payload]">
             <http:headers>
-                #[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]
+                #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
@@ -46,7 +46,7 @@
         <!--<compatibility:outbound-properties-to-var/>-->
         <!--<http:request config-ref="config" path="test" method="POST" target="#[mel:header:OUTBOUND:customTarget]">-->
             <!--<http:headers>-->
-                <!--#[migration::HttpRequesterHeaders::httpRequesterHeaders(vars)]-->
+                <!--#[migration::HttpRequester::httpRequesterHeaders(vars)]-->
             <!--</http:headers>-->
         <!--</http:request>-->
         <!--<compatibility:attributes-to-inbound-properties/>-->

@@ -48,6 +48,8 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    httpListenerLib(getApplicationModel());
+
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);
 
@@ -77,7 +79,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     }
     Element response = object.getChild("response", httpNamespace);
     if (response.getAttribute("statusCode") == null) {
-      response.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status'] default 200]");
+      response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
       report.report(WARN, response, response, "Avoid using an outbound property to determine the status code.");
     }
     if (object.getChild("error-response", httpNamespace) == null) {
@@ -89,7 +91,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     }
     Element errorResponse = object.getChild("error-response", httpNamespace);
     if (errorResponse.getAttribute("statusCode") == null) {
-      errorResponse.setAttribute("statusCode", "#[vars.compatibility_outboundProperties['http.status']]");
+      errorResponse.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
       report.report(WARN, errorResponse, errorResponse, "Avoid using an outbound property to determine the status code.");
     }
   }
@@ -144,8 +146,13 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
   }
 
   public static Element compatibilityHeaders(ApplicationModel appModel, Namespace httpNamespace) {
+    return new Element("headers", httpNamespace)
+        .setText("#[migration::HttpListener::httpListenerResponseHeaders(vars)]");
+  }
+
+  public static void httpListenerLib(ApplicationModel appModel) {
     try {
-      library(getMigrationScriptFolder(appModel.getProjectBasePath()), "HttpListenerHeaders.dwl",
+      library(getMigrationScriptFolder(appModel.getProjectBasePath()), "HttpListener.dwl",
               "" +
                   "/**" + lineSeparator() +
                   " * Emulates the response headers building logic of the Mule 3.x HTTP Connector." + lineSeparator() +
@@ -156,13 +163,24 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
                   "    vars.compatibility_outboundProperties default {} filterObject" + lineSeparator() +
                   "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
                   "}" + lineSeparator() +
+                  lineSeparator() +
+                  "/**" + lineSeparator() +
+                  " * Emulates the success status code logic of the Mule 3.x HTTP Connector." + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun httpListenerResponseSuccessStatusCode(vars: {}) = do {" + lineSeparator() +
+                  "    vars.compatibility_outboundProperties['http.status'] default 200" + lineSeparator() +
+                  "}" + lineSeparator() +
+                  lineSeparator() +
+                  "/**" + lineSeparator() +
+                  " * Emulates the error status code logic of the Mule 3.x HTTP Connector." + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun httpListenerResponseErrorStatusCode(vars: {}) = do {" + lineSeparator() +
+                  "    vars.compatibility_outboundProperties['http.status']" + lineSeparator() +
+                  "}" + lineSeparator() +
                   lineSeparator());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
-    return new Element("headers", httpNamespace)
-        .setText("#[migration::HttpListenerHeaders::httpListenerResponseHeaders(vars)]");
   }
 
   public static void handleReferencedResponseBuilder(Element object, ApplicationModel appModel, final Namespace httpNamespace) {
