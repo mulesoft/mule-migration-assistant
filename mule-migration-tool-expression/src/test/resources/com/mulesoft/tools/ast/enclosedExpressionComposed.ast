@@ -1,0 +1,6 @@
+|BinaryOperatorNode(2)
+|--EnclosedExpression
+|----BinaryOperatorNode(2)
+|------VariableReferenceNode(payload)
+|------IdentifierNode(a)
+|--IdentifierNode(b)

@@ -11,7 +11,7 @@ object MelParserHelper {
   def parse(content: String): MelExpressionNode = {
     val input = ParserInput(content)
     val grammar = new MelGrammar(input)
-    val triedNode = grammar.expression.run()
+    val triedNode = grammar.root.run()
     triedNode match {
       case Left(exception) => throw new RuntimeException(exception.format(input))
       case Right(value) => value
