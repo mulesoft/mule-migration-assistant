@@ -6,21 +6,20 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.library.mule.steps.spring.SpringContributions.ADDITIONAL_SPRING_NAMESPACES_PROP;
-import static com.mulesoft.tools.migration.project.model.ApplicationModel.getElementsWithNamespace;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAdditionalNamespaces;
-import static java.lang.System.lineSeparator;
-
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
-
 import org.jdom2.Document;
 import org.jdom2.Namespace;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.mulesoft.tools.migration.library.mule.steps.spring.SpringContributions.ADDITIONAL_SPRING_NAMESPACES_PROP;
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.getElementsWithNamespace;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.containsNamespace;
+import static java.lang.System.lineSeparator;
 
 /**
  * Check for component with no defined migration task yet.
@@ -44,7 +43,7 @@ public class PreprocessNamespaces implements NamespaceContribution {
   public void addReportEntries(Document document, MigrationReport report) {
     List<Namespace> unsupportedNamespaces =
         document.getRootElement().getAdditionalNamespaces().stream().filter(n -> getElementsWithNamespace(document, n).size() > 0
-            && !getAdditionalNamespaces().contains(n)).collect(Collectors.toList());
+            && !containsNamespace(n)).collect(Collectors.toList());
 
     unsupportedNamespaces.forEach(n -> report.report(ERROR, document.getRootElement(), document.getRootElement(),
                                                      "Didn't find migration rules for the following component: " + n.getPrefix()

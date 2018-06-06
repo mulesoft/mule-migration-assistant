@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAdditionalNamespaces;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml;
 
 /**
@@ -76,8 +76,9 @@ public class ReportEntryModel {
 
   private void setElementLocation(Document document) {
     String xpathExpression = XPathHelper.getAbsolutePath(element);
-    List<Element> elements = XPathFactory.instance().compile(xpathExpression, Filters.element(), null, getAdditionalNamespaces())
-        .evaluate(document);
+    List<Element> elements =
+        XPathFactory.instance().compile(xpathExpression, Filters.element(), null, getDocumentNamespaces(document))
+            .evaluate(document);
     if (elements.size() > 0) {
       this.lineNumber = ((LocatedElement) elements.get(0)).getLine();
       this.columnNumber = ((LocatedElement) elements.get(0)).getColumn();
