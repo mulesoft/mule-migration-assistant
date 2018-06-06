@@ -33,8 +33,9 @@ public enum AdditionalNamespaces {
 
   MULE("mule", "http://www.mulesoft.org/schema/mule/core"),
 
-  SPRING_BEANS("spring", "http://www.springframework.org/schema/beans"), SPRING_CONTEXT("context",
-      "http://www.springframework.org/schema/context"),
+  SPRING_BEANS("spring", "http://www.springframework.org/schema/beans"),
+
+  SPRING_CONTEXT("context", "http://www.springframework.org/schema/context"),
 
   // TODO MMT-145 disambiguate spring namespaces
   SPRING("spring-module", "http://www.mulesoft.org/schema/mule/spring"),
@@ -49,7 +50,9 @@ public enum AdditionalNamespaces {
 
   SCRIPTING("scripting", "http://www.mulesoft.org/schema/mule/scripting"),
 
-  DW("dw", "http://www.mulesoft.org/schema/mule/ee/dw");
+  DW("dw", "http://www.mulesoft.org/schema/mule/ee/dw"),
+
+  DB("db", "http://www.mulesoft.org/schema/mule/db");
 
   private String prefix;
   private String uri;

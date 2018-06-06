@@ -6,16 +6,8 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAdditionalNamespaces;
-import static java.lang.String.format;
-import static java.lang.System.lineSeparator;
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
-
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -37,6 +29,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
+import static java.lang.String.format;
+import static java.lang.System.lineSeparator;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Represent the application to be migrated
@@ -112,7 +111,7 @@ public class ApplicationModel {
   public static List<Element> getElementsWithNamespace(Document document, Namespace namespace) {
     String xPathExpression = "//*[namespace-uri()='" + namespace.getURI() + "']";
     XPathExpression<Element> xpath = XPathFactory.instance().compile(xPathExpression, Filters.element(), null,
-                                                                     getAdditionalNamespaces());
+                                                                     getDocumentNamespaces(document));
     return xpath.evaluate(document);
   }
 
@@ -199,7 +198,7 @@ public class ApplicationModel {
    */
   private List<Element> getElementsFromDocument(XPathExpression xpath, Document document) {
     XPathExpression<Element> compiledXPath =
-        XPathFactory.instance().compile(xpath.getExpression(), Filters.element(), null, getAdditionalNamespaces());
+        XPathFactory.instance().compile(xpath.getExpression(), Filters.element(), null, getDocumentNamespaces(document));
     try {
       return compiledXPath.evaluate(document);
     } catch (IllegalArgumentException e) {
