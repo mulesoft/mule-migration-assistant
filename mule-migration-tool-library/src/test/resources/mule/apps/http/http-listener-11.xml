@@ -19,7 +19,7 @@
                     #[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'CusTomName' : 'customValue'}]
                 </http:headers>
             </http:response>
-            <http:error-response statusCode="#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
                 <http:headers>
                     #[migration::HttpListener::httpListenerResponseHeaders(vars)]
                 </http:headers>

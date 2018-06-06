@@ -61,7 +61,6 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     httpRequesterLib(getApplicationModel());
 
-
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);
     object.setName("request");
@@ -124,18 +123,49 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
       });
     }
 
+    migrateExpression(object.getAttribute("method"), expressionMigrator);
+
     if (object.getAttribute("method") == null) {
       // Logic from org.mule.transport.http.transformers.ObjectToHttpClientMethodRequest.detectHttpMethod(MuleMessage)
       object.setAttribute("method", "#[migration::HttpRequester::httpRequesterMethod(vars)]");
+      object.setAttribute("sendBodyMode", getExpressionMigrator()
+          .wrap("if (migration::HttpRequester::httpRequesterMethod(vars) == 'DELETE') 'NEVER' else 'AUTO'"));
       report.report(WARN, object, object, "Avoid using an outbound property to determine the method.");
+      report.report(WARN, object, object, "sendBodyMode added for compatibility. This may not be needed in this app.");
+    } else {
+      if ("DELETE".equals(object.getAttributeValue("method"))) {
+        object.setAttribute("sendBodyMode", "NEVER");
+        report.report(WARN, object, object, "sendBodyMode added for compatibility. This may not be needed in this app.");
+      } else if (getExpressionMigrator().isWrapped(object.getAttributeValue("method"))) {
+        object.setAttribute("sendBodyMode", getExpressionMigrator().wrap("if ("
+            + getExpressionMigrator().unwrap(object.getAttributeValue("method")) + " == 'DELETE') 'NEVER' else 'AUTO'"));
+        report.report(WARN, object, object, "sendBodyMode added for compatibility. This may not be needed in this app.");
+      }
     }
 
     addAttributesToInboundProperties(object, report);
 
     if (object.getAttribute("contentType") != null) {
-      object.getParentElement().addContent(object.getParentElement().indexOf(object), new Element("set-payload", CORE_NAMESPACE)
-          .setAttribute("value", "#[payload]")
-          .setAttribute("mimeType", object.getAttributeValue("contentType")));
+      String contentType = object.getAttributeValue("contentType").toLowerCase();
+      if (contentType.startsWith("application/dw")
+          || contentType.startsWith("application/java")
+          || contentType.startsWith("application/json")
+          || contentType.startsWith("application/xml")
+          || contentType.startsWith("application/csv")
+          || contentType.startsWith("application/octet-stream")
+          || contentType.startsWith("text/plain")
+          || contentType.startsWith("application/x-www-form-urlencoded")
+          || contentType.startsWith("multipart/form-data")
+          || contentType.startsWith("text/x-java-properties")
+          || contentType.startsWith("application/yaml")) {
+        object.getParentElement().addContent(object.getParentElement().indexOf(object), new Element("set-payload", CORE_NAMESPACE)
+            .setAttribute("value", "#[output " + object.getAttributeValue("contentType") + " --- payload]"));
+        object.removeAttribute("contentType");
+      } else {
+        object.addContent(new Element("header", httpNamespace)
+            .setAttribute("headerName", "Content-Type")
+            .setAttribute("value", object.getAttributeValue("contentType")));
+      }
       object.removeAttribute("contentType");
     }
     object.addContent(compatibilityHeaders(httpNamespace));

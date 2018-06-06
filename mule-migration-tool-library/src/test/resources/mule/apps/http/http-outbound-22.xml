@@ -23,7 +23,7 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <http:request config-ref="flowRequestConfig" method="#[migration::HttpRequester::httpRequesterMethod(vars)]" path="/out1">
+        <http:request config-ref="flowRequestConfig" method="#[migration::HttpRequester::httpRequesterMethod(vars)]" path="/out1" sendBodyMode="#[if (migration::HttpRequester::httpRequesterMethod(vars) == 'DELETE') 'NEVER' else 'AUTO']">
             <http:headers>
                 #[migration::HttpRequester::httpRequesterTransportHeaders(vars)]
             </http:headers>

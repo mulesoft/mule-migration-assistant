@@ -20,7 +20,7 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <set-payload mimeType="text/plain; charset=ISO-2022-JP" value="#[payload]"/>
+        <set-payload value="#[output text/plain; charset=ISO-2022-JP --- payload]"/>
         <http:request config-ref="flowRequestConfig" path="/post" method="POST">
             <http:headers>
                 #[migration::HttpRequester::httpRequesterTransportHeaders(vars)]
