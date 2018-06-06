@@ -22,7 +22,9 @@ import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAd
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.core.IsNot.not;
 
 public class AdditionalNamespacesFactoryTest {
 
@@ -50,7 +52,7 @@ public class AdditionalNamespacesFactoryTest {
     namespaces = getDocumentNamespaces(document);
 
     assertThat("The list generate is empty",
-               namespaces.stream().filter(n -> n.getPrefix().equals("spring-pepe")).collect(Collectors.toList()).size(),
-               is(greaterThan(0)));
+               namespaces.stream().filter(n -> n.getPrefix().equals("spring-pepe")).collect(Collectors.toList()),
+               is(not(empty())));
   }
 }

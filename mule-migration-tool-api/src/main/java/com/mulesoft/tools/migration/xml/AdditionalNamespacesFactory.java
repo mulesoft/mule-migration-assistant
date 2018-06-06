@@ -47,7 +47,6 @@ public class AdditionalNamespacesFactory {
 
   public static boolean containsNamespace(Namespace ns) {
     List<Namespace> validNamespaces = getAdditionalNamespaces();
-    return validNamespaces.stream().filter(n -> StringUtils.equalsIgnoreCase(n.getURI(), ns.getURI())).count() > 0 ? true
-        : false;
+    return validNamespaces.stream().anyMatch(n -> StringUtils.equalsIgnoreCase(n.getURI(), ns.getURI()));
   }
 }
