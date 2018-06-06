@@ -23,7 +23,7 @@
             </http:response>
         </http:listener>
         <choice>
-          <when expression="#[(message.attributes.headers['Content-Length'] as Number default 0) == 0]">
+          <when expression="#[message.attributes.headers['Transfer-Encoding'] == null and (message.attributes.headers['Content-Length'] as Number default 0) == 0]">
             <set-payload value="#[message.attributes.requestUri]"/>
           </when>
         </choice>

@@ -165,7 +165,7 @@ public final class TransportsUtils {
   }
 
   public static void extractOutboundChildren(Element outbound, ApplicationModel appModel) {
-    outbound.getParentElement().addContent(0, fetchContent(outbound));
+    outbound.getParentElement().addContent(outbound.getParentElement().indexOf(outbound), fetchContent(outbound));
     outbound.getParentElement().addContent(fetchResponseContent(outbound, appModel));
   }
 

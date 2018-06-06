@@ -17,12 +17,12 @@
             <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
                 <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:response>
-            <http:error-response statusCode="#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
                 <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:error-response>
         </http:listener>
         <choice>
-          <when expression="#[(message.attributes.headers['Content-Length'] as Number default 0) == 0]">
+          <when expression="#[message.attributes.headers['Transfer-Encoding'] == null and (message.attributes.headers['Content-Length'] as Number default 0) == 0]">
             <set-payload value="#[message.attributes.requestUri]"/>
           </when>
         </choice>
@@ -36,12 +36,12 @@
             <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
                 <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:response>
-            <http:error-response statusCode="#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
                 <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:error-response>
         </http:listener>
         <choice>
-          <when expression="#[(message.attributes.headers['Content-Length'] as Number default 0) == 0]">
+          <when expression="#[message.attributes.headers['Transfer-Encoding'] == null and (message.attributes.headers['Content-Length'] as Number default 0) == 0]">
             <set-payload value="#[message.attributes.requestUri]"/>
           </when>
         </choice>

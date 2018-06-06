@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.VALIDATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
@@ -53,30 +52,48 @@ public class HttpTransformers extends AbstractApplicationModelMigrationStep
     if ("request-wildcard-filter".equals(object.getName())) {
       addValidationModule(getApplicationModel());
 
-      object.setName("matches-regex");
-      object.setNamespace(VALIDATION_NAMESPACE);
+      Element wildcardFilterTryScope = new Element("try", CORE_NAMESPACE);
+
+      Element matchValidator = new Element("matches-regex", VALIDATION_NAMESPACE);
 
       String regex;
       Element parent = object.getParentElement();
       if ("not-filter".equals(parent.getName()) && parent.getNamespace().equals(CORE_NAMESPACE)) {
-        object.detach();
-        addElementAfter(object, parent);
-        parent.detach();
+        addElementAfter(wildcardFilterTryScope, object.getParentElement());
+        object.getParentElement().detach();
 
         regex = "^(?!" + object.getAttributeValue("pattern").replaceAll("\\*", ".*") + ").*$";
       } else {
         regex = "^" + object.getAttributeValue("pattern").replaceAll("\\*", ".*") + "$";
+
+        addElementAfter(wildcardFilterTryScope, object);
+        object.detach();
       }
 
-      object.setAttribute("value", "#[message.attributes.requestPath]");
-      object.setAttribute("regex", regex);
-      object.removeAttribute("pattern");
+      matchValidator.setAttribute("value", "#[message.attributes.requestPath]");
+      matchValidator.setAttribute("regex", regex);
+      matchValidator.removeAttribute("pattern");
+
+      wildcardFilterTryScope.addContent(matchValidator);
+      wildcardFilterTryScope.addContent(new Element("error-handler", CORE_NAMESPACE)
+          .addContent(new Element("on-error-propagate", CORE_NAMESPACE)
+              .addContent(new Element("set-variable", CORE_NAMESPACE)
+                  .setAttribute("variableName", "statusCode").setAttribute("value", "406"))
+              .setAttribute("type", "MULE:VALIDATION")));
     } else if ("body-to-parameter-map-transformer".equals(object.getName())) {
-      report.report(WARN, object, object.getParentElement(),
-                    "This transformer is no longer required since DataWeave can handle this kind of payloads.");
-      object.getParent().removeContent(object);
+      Element bodyToParamMap =
+          new Element("set-payload", CORE_NAMESPACE).setAttribute("value", "#[output application/java --- payload]");
+      if (object.getParentElement() == object.getDocument().getRootElement()) {
+        getApplicationModel().getNodes("//mule:transformer[@ref='" + object.getAttributeValue("name") + "']").forEach(t -> {
+          addElementAfter(bodyToParamMap, t);
+          t.detach();
+        });
+      } else {
+        addElementAfter(bodyToParamMap, object);
+      }
+      object.detach();
     } else {
-      object.getParent().removeContent(object);
+      object.detach();
     }
   }
 

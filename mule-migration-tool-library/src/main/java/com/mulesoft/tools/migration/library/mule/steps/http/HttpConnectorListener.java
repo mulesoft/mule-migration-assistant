@@ -91,7 +91,8 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     }
     Element errorResponse = object.getChild("error-response", httpNamespace);
     if (errorResponse.getAttribute("statusCode") == null) {
-      errorResponse.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
+      errorResponse.setAttribute("statusCode",
+                                 "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
       report.report(WARN, errorResponse, errorResponse, "Avoid using an outbound property to determine the status code.");
     }
   }
@@ -110,6 +111,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     expressionsPerProperty.put("http.query.string", "message.attributes.queryString");
     expressionsPerProperty.put("http.remote.address", "message.attributes.remoteAddress");
     expressionsPerProperty.put("http.client.cert", "message.attributes.clientCertificate");
+    expressionsPerProperty.put("LOCAL_CERTIFICATES", "[message.attributes.clientCertificate]");
     expressionsPerProperty.put("http.query.params", "message.attributes.queryParams");
     expressionsPerProperty.put("http.uri.params", "message.attributes.uriParams");
     expressionsPerProperty.put("http.request", "message.attributes.requestPath");

@@ -72,7 +72,9 @@ public class HttpOutboundTest {
         "http-outbound-19",
         "http-outbound-20",
         "http-outbound-21",
-        "http-outbound-22"
+        "http-outbound-22",
+        "http-outbound-23",
+        "http-outbound-24"
     };
   }
 

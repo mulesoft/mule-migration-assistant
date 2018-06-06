@@ -149,7 +149,9 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
           copyAttributeIfPresent(rb, errorResponse, "reasonPhrase");
 
           if (errorResponse.getAttribute("statusCode") == null) {
-            errorResponse.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
+            errorResponse
+                .setAttribute("statusCode",
+                              "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
             report.report(WARN, errorResponse, errorResponse, "Avoid using an outbound property to determine the status code.");
           }
 
@@ -185,7 +187,8 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     Element errorResponse = object.getChild("error-response", httpNamespace);
     if (errorResponse == null) {
       errorResponse = getErrorResponse(object, httpNamespace);
-      errorResponse.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
+      errorResponse.setAttribute("statusCode",
+                                 "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
       report.report(WARN, errorResponse, errorResponse, "Avoid using an outbound property to determine the status code.");
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
@@ -199,7 +202,8 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     // Replicates logic from org.mule.transport.http.HttpMuleMessageFactory#extractPayloadFromHttpRequest
     Element checkPayload = new Element("choice", CORE_NAMESPACE)
         .addContent(new Element("when", CORE_NAMESPACE)
-            .setAttribute("expression", "#[(message.attributes.headers['Content-Length'] as Number default 0) == 0]")
+            .setAttribute("expression",
+                          "#[message.attributes.headers['Transfer-Encoding'] == null and (message.attributes.headers['Content-Length'] as Number default 0) == 0]")
             .addContent(new Element("set-payload", CORE_NAMESPACE).setAttribute("value", "#[message.attributes.requestUri]")));
 
     addElementAfter(checkPayload, object);
@@ -214,12 +218,6 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   public static Element connectionHeaders(ApplicationModel appModel, Namespace httpNamespace) {
-    // TODO MMT-155 Review how to implement this
-    // // Replicates logic from org.mule.transport.http.HttpMuleMessageFactory.rewriteConnectionAndKeepAliveHeaders(Map<String,
-    // Object>)
-    // expressionsPerProperty.put("Connection", "message.attributes.headers");
-    // expressionsPerProperty.put("Keep-Alive", "message.attributes.headers");
-
     try {
       library(getMigrationScriptFolder(appModel.getProjectBasePath()), "HttpInboundConnectionAndKeepAliveHeaders.dwl",
               "" +
