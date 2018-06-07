@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateEnrichers;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.lang.String.format;
@@ -17,6 +18,7 @@ import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
+import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -78,7 +80,9 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     migrateExpression(object.getAttribute("path"), getExpressionMigrator());
     migrateExpression(object.getAttribute("method"), getExpressionMigrator());
     migrateExpression(object.getAttribute("followRedirects"), getExpressionMigrator());
-    migrateExpression(object.getAttribute("target"), getExpressionMigrator());
+
+    migrateEnrichers(object, getExpressionMigrator(), new MelCompatibilityResolver(), getApplicationModel());
+
 
     addAttributesToInboundProperties(object, report);
 

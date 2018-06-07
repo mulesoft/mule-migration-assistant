@@ -48,8 +48,7 @@ public class DbExecuteTest {
     return new Object[] {
         "db-execute-01",
         "db-execute-02",
-        // TODO MMT-128
-        // "db-execute-03",
+        "db-execute-03",
         "db-execute-04",
         "db-execute-05",
     };
@@ -81,7 +80,7 @@ public class DbExecuteTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     dbExecute.setApplicationModel(appModel);
-    dbExecute.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    dbExecute.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
   @Test

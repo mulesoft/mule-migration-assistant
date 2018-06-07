@@ -114,25 +114,25 @@ public class WebServiceConsumerTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     httpOutbound = new HttpOutboundEndpoint();
-    httpOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
     httpOutbound.setApplicationModel(appModel);
 
     httpsOutbound = new HttpsOutboundEndpoint();
-    httpsOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpsOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
     httpsOutbound.setApplicationModel(appModel);
 
     httpRequesterConfig = new HttpConnectorRequestConfig();
-    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
 
     httpRequester = new HttpConnectorRequester();
-    httpRequester.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpRequester.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
     httpRequester.setApplicationModel(appModel);
 
     httpHeaders = new HttpConnectorHeaders();
-    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
 
     wsConsumerConfig = new WsConsumerConfig();
-    wsConsumerConfig.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    wsConsumerConfig.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
     wsConsumerConfig.setApplicationModel(appModel);
 
     wsConsumer = new WsConsumer();

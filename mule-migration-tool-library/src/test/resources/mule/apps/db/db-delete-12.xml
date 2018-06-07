@@ -10,9 +10,11 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <db:delete config-ref="dbConfig" target="#[header:OUTBOUND:updateCount]">
+        <db:delete config-ref="dbConfig" target="#[updateCount]">
             <db:sql>DELETE FROM PLANET WHERE name = 'Venus'</db:sql>
         </db:delete>
+        <compatibility:set-property propertyName="updateCount" value="#[vars.updateCount]"/>
+
     </flow>
 
 </mule>

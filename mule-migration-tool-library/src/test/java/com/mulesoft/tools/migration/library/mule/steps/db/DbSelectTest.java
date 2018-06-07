@@ -89,7 +89,7 @@ public class DbSelectTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     dbSelect.setApplicationModel(appModel);
-    dbSelect.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    dbSelect.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
   @Test

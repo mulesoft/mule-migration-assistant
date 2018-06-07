@@ -48,19 +48,16 @@ public class DbDeleteTest {
     return new Object[] {
         "db-delete-01",
         "db-delete-02",
-        // TODO MMT-128
-        // "db-delete-03",
+        "db-delete-03",
         "db-delete-04",
         "db-delete-05",
         "db-delete-06",
         "db-delete-07",
-        // TODO MMT-128
-        // "db-delete-08",
+        "db-delete-08",
         "db-delete-09",
         "db-delete-10",
         "db-delete-11",
-        // TODO MMT-128
-        // "db-delete-12"
+        "db-delete-12"
     };
   }
 
@@ -90,7 +87,7 @@ public class DbDeleteTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     dbDelete.setApplicationModel(appModel);
-    dbDelete.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    dbDelete.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
   @Test

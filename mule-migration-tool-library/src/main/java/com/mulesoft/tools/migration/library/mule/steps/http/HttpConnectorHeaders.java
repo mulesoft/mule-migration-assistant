@@ -57,11 +57,11 @@ public class HttpConnectorHeaders extends AbstractHttpConnectorMigrationStep {
       String headerName = object.getAttributeValue("headerName");
       String headerValue = object.getAttributeValue("value");
 
+      String migratedName = getExpressionMigrator().migrateExpression(headerName, true, object.getParentElement());
       String migratedValue = getExpressionMigrator().migrateExpression(headerValue, true, object);
 
-      String dwHeaderMapElement = "'" + headerName + "' : " + (getExpressionMigrator().isWrapped(migratedValue)
-          ? getExpressionMigrator().unwrap(migratedValue)
-          : ("'" + migratedValue + "'"));
+      String dwHeaderMapElement = toExpressionOrToLiteral(migratedName)
+          + " : " + toExpressionOrToLiteral(migratedValue);
 
       setMule4MapBuilderTagText(idx, "headers", object.getParentElement(), httpNamespace, report,
                                 () -> getExpressionMigrator().wrap("{" + dwHeaderMapElement + "}"),
@@ -70,6 +70,12 @@ public class HttpConnectorHeaders extends AbstractHttpConnectorMigrationStep {
 
       object.getParent().removeContent(object);
     }
+  }
+
+  private String toExpressionOrToLiteral(String value) {
+    return (getExpressionMigrator().isWrapped(value)
+        ? getExpressionMigrator().unwrap(value)
+        : "'" + value + "'");
   }
 
 }

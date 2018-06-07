@@ -67,7 +67,7 @@ public class MigrationJob implements Executable {
     applicationModel = generateApplicationModel(outputProject, MULE_FOUR_APPLICATION);
     for (AbstractMigrationTask task : migrationTasks) {
       task.setApplicationModel(applicationModel);
-      task.setExpressionMigrator(new MelToDwExpressionMigrator(report));
+      task.setExpressionMigrator(new MelToDwExpressionMigrator(report, applicationModel));
       try {
         task.execute(report);
         persistApplicationModel(applicationModel);

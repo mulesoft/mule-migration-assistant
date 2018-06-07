@@ -7,8 +7,10 @@
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateEnrichers;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 
+import com.mulesoft.tools.migration.library.tools.mel.EnrichersCompatibilityResolver;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -36,7 +38,7 @@ public class DbExecute extends AbstractDbOperationMigrator {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setName("execute-script");
-
+    migrateEnrichers(object, getExpressionMigrator(), new EnrichersCompatibilityResolver(), getApplicationModel());
     if (object.getAttribute("file") == null) {
       String sql = getExpressionMigrator().migrateExpression(object.getText(), true, object);
       object.removeContent();

@@ -52,17 +52,15 @@ public class HttpOutboundTest {
         "http-outbound-01",
         "http-outbound-02",
         "http-outbound-03",
-        // TODO MMT-128
-        // "http-outbound-04",
-        // "http-outbound-05",
+        "http-outbound-04",
+        "http-outbound-05",
         "http-outbound-06",
         "http-outbound-07",
         "http-outbound-08",
         "http-outbound-09",
         "http-outbound-10",
         "http-outbound-11",
-        // TODO MMT-128
-        // "http-outbound-12",
+        "http-outbound-12",
         // TODO MMT-154 Migrate spring beans
         // "http-outbound-13",
         // TODO rest-service-component
@@ -113,7 +111,7 @@ public class HttpOutboundTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     when(appModel.getPomModel()).thenReturn(empty());
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock);
+    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
@@ -124,11 +122,11 @@ public class HttpOutboundTest {
     httpsGlobalEndpoint.setApplicationModel(appModel);
 
     httpOutbound = new HttpOutboundEndpoint();
-    httpOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class)));
     httpOutbound.setApplicationModel(appModel);
 
     httpsOutbound = new HttpsOutboundEndpoint();
-    httpsOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpsOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class)));
     httpsOutbound.setApplicationModel(appModel);
 
     httpConfig = new HttpConfig();

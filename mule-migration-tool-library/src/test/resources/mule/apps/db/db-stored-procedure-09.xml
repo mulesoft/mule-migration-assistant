@@ -10,9 +10,10 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <db:stored-procedure config-ref="dbConfig" target="#[vars.statementResult]">
+        <db:stored-procedure config-ref="dbConfig" target="#[statementResult]">
             <db:sql>{ call updateTestType1() }</db:sql>
         </db:stored-procedure>
+        <compatibility:set-property propertyName="statementResult" value="#[vars.statementResult]"/>
     </flow>
 
 </mule>

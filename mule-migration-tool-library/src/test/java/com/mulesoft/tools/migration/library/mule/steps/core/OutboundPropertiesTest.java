@@ -70,10 +70,10 @@ public class OutboundPropertiesTest {
   @Before
   public void setUp() throws Exception {
     setProperty = new SetProperty();
-    setProperty.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    setProperty.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
     copyProperties = new CopyProperties();
     mpt = new MessagePropertiesTransformer();
-    mpt.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    mpt.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
   @Ignore

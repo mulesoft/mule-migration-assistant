@@ -10,9 +10,10 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <db:bulk-update config-ref="dbConfig" target="#[header:OUTBOUND:updateCounts]">
-            <db:sql>#['update PLANET set NAME='Mercury' where POSITION=$(payload.position)']</db:sql>
+        <db:bulk-update config-ref="dbConfig" target="#[updateCounts]">
+            <db:sql>#["update PLANET set NAME='Mercury' where POSITION=$(payload.position) "]</db:sql>
         </db:bulk-update>
+        <compatibility:set-property propertyName="updateCounts" value="#[vars.updateCounts]"/>
     </flow>
 
 </mule>

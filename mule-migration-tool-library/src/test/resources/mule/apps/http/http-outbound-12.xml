@@ -16,7 +16,7 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <http:request config-ref="flowRequestConfig" path="/newSite/#[header:inbound:http.relative.path]?#[header:inbound:http.query.string]">
+        <http:request config-ref="flowRequestConfig" method="#[migration::HttpRequester::httpRequesterMethod(vars)]" path="#[&quot;/newSite/$(vars.compatibility_inboundProperties.http.relative.path)?$(vars.compatibility_inboundProperties.http.query.string)&quot;]" sendBodyMode="#[if (migration::HttpRequester::httpRequesterMethod(vars) == 'DELETE') 'NEVER' else 'AUTO']" >
             <http:headers>
                 #[migration::HttpRequester::httpRequesterTransportHeaders(vars)]
             </http:headers>

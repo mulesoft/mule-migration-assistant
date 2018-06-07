@@ -17,7 +17,7 @@
     <flow name="flow">
         <async>
             <compatibility:outbound-properties-to-var/>
-            <http:request config-ref="flowRequestConfig" path="/#[header:INBOUND:PATH]" method="POST">
+            <http:request config-ref="flowRequestConfig" path='#["/$(vars.compatibility_inboundProperties.PATH)"]' method="POST">
                 <http:headers>
                     #[migration::HttpRequester::httpRequesterTransportHeaders(vars)]
                 </http:headers>

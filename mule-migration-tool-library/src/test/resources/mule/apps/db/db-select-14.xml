@@ -9,11 +9,11 @@
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <flow name="flow">
-    <!-- TODO MMT-128 -->
-<!--         <compatibility:outbound-properties-to-var/> -->
-<!--         <db:select config-ref="dbConfig" target="#[header:OUTBOUND:resultSet]"> -->
-<!--             <db:sql>select * from PLANET order by ID</db:sql> -->
-<!--         </db:select> -->
+         <compatibility:outbound-properties-to-var/>
+         <db:select config-ref="dbConfig" target="#[resultSet]">
+             <db:sql>select * from PLANET order by ID</db:sql>
+         </db:select>
+        <compatibility:set-property propertyName="resultSet" value="#[vars.resultSet]"/>
     </flow>
 
 </mule>

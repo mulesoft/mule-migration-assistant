@@ -9,11 +9,10 @@
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <flow name="flow">
-    <!-- TODO MMT-128 -->
-<!--         <compatibility:outbound-properties-to-var/> -->
-<!--         <db:bulk-update config-ref="dbConfig"> -->
-<!--             <db:sql>update Planet set position = $(payload.position) where name = #[header:OUTBOUND:name]</db:sql> -->
-<!--         </db:bulk-update> -->
+         <compatibility:outbound-properties-to-var/>
+         <db:bulk-update config-ref="dbConfig">
+             <db:sql>#["update Planet set position = $(payload.position) where name = $(name) "]</db:sql>
+         </db:bulk-update>
     </flow>
 
 </mule>

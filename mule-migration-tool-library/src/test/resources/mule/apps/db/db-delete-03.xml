@@ -11,7 +11,7 @@
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
         <db:bulk-delete config-ref="dbConfig">
-            <db:sql>#['DELETE FROM PLANET WHERE position = $(payload.position) and name = #[header:OUTBOUND:name]']</db:sql>
+            <db:sql>#["DELETE FROM PLANET WHERE position = $(payload.position) and name = $(name) "]</db:sql>
         </db:bulk-delete>
     </flow>
 

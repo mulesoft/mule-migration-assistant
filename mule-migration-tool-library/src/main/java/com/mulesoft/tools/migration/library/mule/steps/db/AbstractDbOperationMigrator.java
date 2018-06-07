@@ -10,10 +10,9 @@ import static java.lang.String.format;
 import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -133,7 +132,6 @@ public abstract class AbstractDbOperationMigrator extends AbstractApplicationMod
       dq.setText(getExpressionMigrator().migrateExpression(dq.getText(), true, dq));
     });
   }
-
 
   @Override
   public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {

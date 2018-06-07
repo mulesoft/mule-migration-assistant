@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -40,7 +41,8 @@ public class ForEachExpressionsTest {
   @Before
   public void setUp() throws Exception {
     forEachExpressions = new ForEachExpressions();
-    forEachExpressions.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    forEachExpressions
+        .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
 

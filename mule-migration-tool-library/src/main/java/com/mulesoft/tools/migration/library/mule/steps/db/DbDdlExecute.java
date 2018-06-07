@@ -7,8 +7,10 @@
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateEnrichers;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 
+import com.mulesoft.tools.migration.library.tools.mel.EnrichersCompatibilityResolver;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -36,7 +38,7 @@ public class DbDdlExecute extends AbstractDbOperationMigrator {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     migrateSql(object);
-
+    migrateEnrichers(object, getExpressionMigrator(), new EnrichersCompatibilityResolver(), getApplicationModel());
     if (object.getAttribute("source") != null) {
       report.report(ERROR, object, object, "'source' attribute does not exist in Mule 4. Update the query accordingly.",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#database_dynamic_queries");

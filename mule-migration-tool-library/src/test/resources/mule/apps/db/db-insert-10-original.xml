@@ -9,10 +9,9 @@
     <flow name="flow">
         <set-variable variableName="names" value="#[['Pluto', 'Saturn']]"/>
 
-    <!-- TODO MMT-128 -->
-<!--         <db:insert config-ref="dbConfig" target="#[header:OUTBOUND:updateCount]"> -->
-<!--             <db:parameterized-query>INSERT INTO PLANET(POSITION, NAME) VALUES (777, 'Pluto')</db:parameterized-query> -->
-<!--         </db:insert> -->
+         <db:insert config-ref="dbConfig" target="#[updateCount]">
+             <db:parameterized-query>INSERT INTO PLANET(POSITION, NAME) VALUES (777, 'Pluto')</db:parameterized-query>
+         </db:insert>
     </flow>
 
 </mule>

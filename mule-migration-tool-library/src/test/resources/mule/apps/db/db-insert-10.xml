@@ -11,11 +11,10 @@
     <flow name="flow">
         <set-variable variableName="names" value="#[['Pluto', 'Saturn']]"/>
 
-    <!-- TODO MMT-128 -->
-<!--         <compatibility:outbound-properties-to-var/> -->
-<!--         <db:insert config-ref="dbConfig" target="#[header:OUTBOUND:updateCount]"> -->
-<!--             <db:sql>INSERT INTO PLANET(POSITION, NAME) VALUES (777, 'Pluto')</db:sql> -->
-<!--         </db:insert> -->
+         <compatibility:outbound-properties-to-var/>
+         <db:insert config-ref="dbConfig" target="#[updateCount]">
+             <db:sql>INSERT INTO PLANET(POSITION, NAME) VALUES (777, 'Pluto')</db:sql>
+         </db:insert>
     </flow>
 
 </mule>

@@ -102,10 +102,10 @@ public class HttpListenerTest {
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     httpListener.setApplicationModel(appModel);
-    httpListener.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpListener.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
 
     httpHeaders = new HttpConnectorHeaders();
-    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
 
     httpGlobalBuilders = new HttpGlobalBuilders();
   }

@@ -91,7 +91,7 @@ public class DbInsertTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     dbInsert.setApplicationModel(appModel);
-    dbInsert.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    dbInsert.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
   @Test

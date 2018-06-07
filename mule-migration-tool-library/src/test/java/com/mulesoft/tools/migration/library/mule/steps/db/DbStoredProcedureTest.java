@@ -54,8 +54,7 @@ public class DbStoredProcedureTest {
         "db-stored-procedure-06",
         "db-stored-procedure-07",
         "db-stored-procedure-08",
-        // TODO MMT-128
-        // "db-stored-procedure-09",
+        "db-stored-procedure-09",
         "db-stored-procedure-10"
     };
   }
@@ -86,7 +85,8 @@ public class DbStoredProcedureTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     dbStoredProcedure.setApplicationModel(appModel);
-    dbStoredProcedure.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    dbStoredProcedure
+        .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
   @Test

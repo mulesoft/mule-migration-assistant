@@ -11,7 +11,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceSt
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;

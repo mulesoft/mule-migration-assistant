@@ -9,11 +9,10 @@
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <flow name="flow">
-    <!-- TODO MMT-128 -->
-<!--         <compatibility:outbound-properties-to-var/> -->
-<!--         <db:bulk-insert config-ref="dbConfig"> -->
-<!--             <db:sql>#['INSERT INTO PLANET(POSITION, NAME) VALUES ($(payload.position), #[header:OUTBOUND:name])']</db:sql> -->
-<!--         </db:bulk-insert> -->
+         <compatibility:outbound-properties-to-var/>
+         <db:bulk-insert config-ref="dbConfig">
+             <db:sql>#["INSERT INTO PLANET(POSITION, NAME) VALUES ($(payload.position), $(name)) "]</db:sql>
+         </db:bulk-insert>
     </flow>
 
 </mule>

@@ -10,10 +10,12 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
 import static java.lang.System.lineSeparator;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
-import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
+import com.mulesoft.tools.migration.util.CompatibilityResolver;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
@@ -123,6 +125,29 @@ public final class XmlDslUtils {
     }
   }
 
+  public static void migrateEnrichers(Element object, ExpressionMigrator expressionMigrator,
+                                      CompatibilityResolver<String> resolver, ApplicationModel model) {
+    String targetValue = object.getAttributeValue("target");
+    if (isNotBlank(targetValue)) {
+      String migratedExpression = expressionMigrator.migrateExpression(targetValue, true, object);
+      object.setAttribute("target", migratedExpression);
+      if (resolver.canResolve(expressionMigrator.unwrap(targetValue))) {
+        addOutboundProperty(expressionMigrator.unwrap(migratedExpression), object, model, object);
+      }
+    }
+  }
+
+  public static Element addOutboundProperty(String propertyName, Element element, ApplicationModel model,
+                                            Element after) {
+    addCompatibilityNamespace(model, element.getDocument());
+    Element setProperty = new Element("set-property", Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE.getURI()));
+    setProperty.setAttribute(new Attribute("propertyName", propertyName));
+    setProperty.setAttribute(new Attribute("value", "#[vars." + propertyName + "]"));
+
+    addElementAfter(setProperty, after);
+    return setProperty;
+  }
+
   private static Element buildAttributesToInboundProperties(MigrationReport report, Parent parent, int index) {
     Element a2ip = new Element("attributes-to-inbound-properties", COMPATIBILITY_NAMESPACE);
     parent.addContent(index, a2ip);
@@ -191,8 +216,8 @@ public final class XmlDslUtils {
    * @param element
    */
   public static void addElementAfter(Element newElement, Element element) {
-    Integer parentIndex = element.getParentElement().indexOf(element);
-    element.getParentElement().addContent(parentIndex + 1, newElement);
+    Integer elementIndex = element.getParentElement().indexOf(element);
+    element.getParentElement().addContent(elementIndex + 1, newElement);
   }
 
   public static void addValidationModule(ApplicationModel applicationModel) {

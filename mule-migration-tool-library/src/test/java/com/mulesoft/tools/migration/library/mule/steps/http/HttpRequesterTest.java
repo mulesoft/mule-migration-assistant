@@ -89,9 +89,9 @@ public class HttpRequesterTest {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
 
     httpRequesterConfig = new HttpConnectorRequestConfig();
-    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class)));
     httpRequester = new HttpConnectorRequester();
-    httpRequester.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpRequester.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class)));
     appModel = mock(ApplicationModel.class);
     when(appModel.getNode(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
@@ -99,11 +99,11 @@ public class HttpRequesterTest {
     httpRequester.setApplicationModel(appModel);
 
     httpHeaders = new HttpConnectorHeaders();
-    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class)));
     httpUriParams = new HttpConnectorUriParams();
-    httpUriParams.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpUriParams.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class)));
     httpQueryParams = new HttpConnectorQueryParams();
-    httpQueryParams.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock));
+    httpQueryParams.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class)));
   }
 
   @Ignore

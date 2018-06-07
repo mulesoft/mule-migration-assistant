@@ -40,15 +40,15 @@
             </http:headers>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
+        <compatibility:set-property propertyName="payload" value="#[vars.payload]"/>
     </flow>
-    <!-- TODO MMT-128 -->
-    <!--<flow name="customTargetFlow">-->
-        <!--<compatibility:outbound-properties-to-var/>-->
-        <!--<http:request config-ref="config" path="test" method="POST" target="#[mel:header:OUTBOUND:customTarget]">-->
-            <!--<http:headers>-->
-                <!--#[migration::HttpRequester::httpRequesterHeaders(vars)]-->
-            <!--</http:headers>-->
-        <!--</http:request>-->
-        <!--<compatibility:attributes-to-inbound-properties/>-->
-    <!--</flow>-->
+    <flow name="customTargetFlow">
+        <compatibility:outbound-properties-to-var xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"/>
+        <http:request config-ref="config" method="POST" path="test" target="#[customTarget]">
+            <http:headers>#[migration::HttpRequester::httpRequesterHeaders(vars)]</http:headers>
+        </http:request>
+        <compatibility:attributes-to-inbound-properties xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"/>
+        <compatibility:set-property propertyName="customTarget" value="#[vars.customTarget]"/>
+    </flow>
+
 </mule>

@@ -7,10 +7,15 @@
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateEnrichers;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import com.mulesoft.tools.migration.library.tools.mel.EnrichersCompatibilityResolver;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 
 /**
@@ -39,6 +44,7 @@ public class DbUpdate extends AbstractDbOperationMigrator {
     if ("true".equals(object.getAttributeValue("bulkMode"))) {
       object.setName("bulk-update");
       object.removeAttribute("bulkMode");
+      migrateEnrichers(object, getExpressionMigrator(), new EnrichersCompatibilityResolver(), getApplicationModel());
       migrateBulkInputParams(object);
     } else {
       migrateInputParams(object);
