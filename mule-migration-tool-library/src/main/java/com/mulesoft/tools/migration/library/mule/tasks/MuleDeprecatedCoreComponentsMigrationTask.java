@@ -19,9 +19,11 @@ import com.mulesoft.tools.migration.library.mule.steps.core.RemoveJsonTransforme
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveObjectToStringTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveProperty;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSchedulersNamespace;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSessionVariable;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemovedElements;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetAttachment;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetProperty;
+import com.mulesoft.tools.migration.library.mule.steps.core.SetSessionVariable;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CompositeFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.project.ProjectType;
@@ -65,8 +67,10 @@ public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigration
                         new RemoveObjectToStringTransformer(),
                         new SetAttachment(),
                         new SetProperty(),
+                        new SetSessionVariable(),
                         new CopyProperties(),
                         new RemoveProperty(),
+                        new RemoveSessionVariable(),
                         new RemoveJsonTransformerNamespace(),
                         new MessagePropertiesTransformer(),
                         new RemoveSchedulersNamespace(),

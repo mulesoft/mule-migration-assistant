@@ -6,8 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.addAttributesToInboundProperties;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.httpRequesterLib;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.SOCKETS_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.addSocketsModule;
@@ -22,18 +22,15 @@ import static java.util.Collections.emptyList;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 import com.google.common.collect.ImmutableList;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -73,6 +70,14 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
             ? object.getAttributeValue("ref")
             : flowName)).replaceAll("\\\\", "_")
         + "RequestConfig";
+
+    Optional<Element> nodeOptional = getApplicationModel()
+        .getNodeOptional("/mule:mule/http:request-config[@name='" + configName + "']/http:request-connection");
+
+    if (nodeOptional.isPresent()) {
+      // If there are multiple outbound endpoints in a flow, generate a config for each one, with an index appended
+      configName = configName + object.getParentElement().indexOf(object);
+    }
 
     final Element requestConfig = new Element("request-config", httpNamespace).setAttribute("name", configName);
     final Element requestConnection = new Element("request-connection", httpNamespace);
@@ -137,7 +142,8 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
       }
     }
 
-    addAttributesToInboundProperties(object, report);
+    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
+    addAttributesToInboundProperties(object, getApplicationModel(), report);
 
     if (object.getAttribute("contentType") != null) {
       String contentType = object.getAttributeValue("contentType").toLowerCase();
@@ -182,8 +188,7 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   protected Optional<Element> getDefaultConnector() {
-    List<Element> nodes = getApplicationModel().getNodes("/mule:mule/http:connector");
-    return nodes.stream().findFirst();
+    return getApplicationModel().getNodeOptional("/mule:mule/http:connector");
   }
 
   public static void handleConnector(Element connector, Element reqConnection, MigrationReport report,
@@ -286,22 +291,6 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
       return socketProps;
     }
 
-  }
-
-  private void addAttributesToInboundProperties(Element object, MigrationReport report) {
-    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
-
-    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    expressionsPerProperty.put("http.status", "message.attributes.statusCode");
-    expressionsPerProperty.put("http.reason", "message.attributes.reasonPhrase");
-    expressionsPerProperty.put("http.headers", "message.attributes.headers");
-
-    try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.http.api.HttpResponseAttributes", expressionsPerProperty,
-                           "message.attributes.headers");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   public void executeChild(Element object, MigrationReport report, Namespace httpNamespace) throws RuntimeException {

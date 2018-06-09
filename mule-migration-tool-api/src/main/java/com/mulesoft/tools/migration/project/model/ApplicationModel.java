@@ -6,8 +6,18 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
+import static java.lang.String.format;
+import static java.lang.System.lineSeparator;
+import static java.util.Collections.emptyList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -29,13 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
-import static java.lang.String.format;
-import static java.lang.System.lineSeparator;
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Represent the application to be migrated
@@ -84,6 +87,22 @@ public class ApplicationModel {
       throw new IllegalStateException(format("Found %d nodes for xpath expression '%s'", nodes.size(), xpathExpression));
     }
     return nodes.get(0);
+  }
+
+  /**
+   * Returns a single node in the application documents that match the xpath expression
+   *
+   * @param xpathExpression the xpath expression that defines which nodes should be retrieved
+   * @return all the nodes that match the xpath expression
+   */
+  public Optional<Element> getNodeOptional(String xpathExpression) {
+    List<Element> nodes = getNodes(XPathFactory.instance().compile(xpathExpression));
+    if (nodes.isEmpty()) {
+      return empty();
+    } else if (nodes.size() > 1) {
+      throw new IllegalStateException(format("Found %d nodes for xpath expression '%s'", nodes.size(), xpathExpression));
+    }
+    return of(nodes.get(0));
   }
 
   /**

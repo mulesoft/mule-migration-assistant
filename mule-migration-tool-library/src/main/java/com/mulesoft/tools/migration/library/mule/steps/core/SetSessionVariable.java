@@ -6,51 +6,46 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 /**
- * Migrate Set Property to the compatibility plugin
+ * Migrate Set Session Variable to the compatibility plugin
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class SetProperty extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
+public class SetSessionVariable extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  private static final String COMPATIBILITY_NAMESPACE_PREFIX = "compatibility";
-  private static final String COMPATIBILITY_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/compatibility";
-  private static final Namespace COMPATIBILITY_NAMESPACE =
-      Namespace.getNamespace(COMPATIBILITY_NAMESPACE_PREFIX, COMPATIBILITY_NAMESPACE_URI);
+  private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
 
-  public static final String XPATH_SELECTOR = "//mule:set-property";
+  public static final String XPATH_SELECTOR = "//mule:set-session-variable";
   private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
-    return "Update Set Property namespace to compatibility.";
+    return "Update Set Session Variable namespace to compatibility.";
   }
 
-  public SetProperty() {
+  public SetSessionVariable() {
     this.setAppliedTo(XPATH_SELECTOR);
-    this.setNamespacesContributions(newArrayList(COMPATIBILITY_NAMESPACE));
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     XmlDslUtils.migrateExpression(element.getAttribute("value"), getExpressionMigrator());
     report.report(WARN, element, element,
-                  "Instead of using outbound properties in the flow, its values must be set explicitly in the operation/listener.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
-    element.setNamespace(COMPATIBILITY_NAMESPACE);
+                  "Instead of using session variables in the flow, use variables.",
+                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
+    element.setNamespace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
   }
 
   @Override
@@ -62,5 +57,4 @@ public class SetProperty extends AbstractApplicationModelMigrationStep implement
   public ExpressionMigrator getExpressionMigrator() {
     return expressionMigrator;
   }
-
 }

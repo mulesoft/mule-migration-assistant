@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.addAttributesToInboundProperties;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -19,15 +19,14 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIf
 import static java.util.Arrays.asList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Migrates the polling connector of the http transport
@@ -35,9 +34,11 @@ import java.util.Map;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class HttpPollingConnector extends AbstractApplicationModelMigrationStep {
+public class HttpPollingConnector extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
   public static final String XPATH_SELECTOR = "/mule:mule/http:polling-connector";
+
+  private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
@@ -126,7 +127,8 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
             .setAttribute("value", prop.getAttributeValue("value")));
       }
 
-      addAttributesToInboundProperties(pollingEndpoint, report);
+      migrateInboundEndpointStructure(getApplicationModel(), pollingEndpoint, report, false);
+      addAttributesToInboundProperties(pollingEndpoint, getApplicationModel(), report);
       pollingEndpoint.getParentElement().addContent(0, asList(pollingSource, requestOperation));
       pollingEndpoint.detach();
     }
@@ -152,19 +154,13 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
     return basicAuth;
   }
 
-  private void addAttributesToInboundProperties(Element object, MigrationReport report) {
-    migrateInboundEndpointStructure(getApplicationModel(), object, report, false);
+  @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
 
-    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    expressionsPerProperty.put("http.status", "message.attributes.statusCode");
-    expressionsPerProperty.put("http.reason", "message.attributes.reasonPhrase");
-    expressionsPerProperty.put("http.headers", "message.attributes.headers");
-
-    try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.http.api.HttpResponseAttributes", expressionsPerProperty,
-                           "message.attributes.headers");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return expressionMigrator;
   }
 }

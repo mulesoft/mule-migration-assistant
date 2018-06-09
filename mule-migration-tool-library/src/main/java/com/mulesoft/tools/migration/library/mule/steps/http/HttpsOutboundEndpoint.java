@@ -15,7 +15,6 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -116,8 +115,7 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
 
   @Override
   protected Optional<Element> getDefaultConnector() {
-    List<Element> nodes = getApplicationModel().getNodes("/mule:mule/https:connector");
-    return nodes.stream().findFirst();
+    return getApplicationModel().getNodeOptional("/mule:mule/https:connector");
   }
 
 }
