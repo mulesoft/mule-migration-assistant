@@ -7,13 +7,15 @@
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateEnrichers;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.util.stream.Collectors.toList;
 
-import com.mulesoft.tools.migration.library.tools.mel.EnrichersCompatibilityResolver;
+import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
+import com.mulesoft.tools.migration.library.tools.mel.HeaderSyntaxCompatibilityResolver;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.jdom2.Element;
 
 import java.util.List;
@@ -40,7 +42,6 @@ public class DbDelete extends AbstractDbOperationMigrator {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     migrateSql(object);
-    migrateEnrichers(object, getExpressionMigrator(), new EnrichersCompatibilityResolver(), getApplicationModel());
     if ("true".equals(object.getAttributeValue("bulkMode"))) {
       object.setName("bulk-delete");
       object.removeAttribute("bulkMode");
@@ -65,7 +66,8 @@ public class DbDelete extends AbstractDbOperationMigrator {
       object.removeAttribute("source");
     }
 
-    migrateOperationStructure(getApplicationModel(), object, report, false);
+    migrateOperationStructure(getApplicationModel(), object, report, false, getExpressionMigrator(),
+                              new DefaultMelCompatibilityResolver());
   }
 
 

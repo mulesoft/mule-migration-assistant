@@ -116,7 +116,7 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
   private void addOutboundProperty(Element element, MigrationReport report) {
     Attribute propName = element.getAttribute("variableName");
     Element setProperty =
-        XmlDslUtils.addOutboundProperty(propName.getValue(), element, getApplicationModel(), element.getParentElement());
+        XmlDslUtils.addOutboundPropertySetter(propName.getValue(), element, getApplicationModel(), element.getParentElement());
     report.report(WARN, setProperty, setProperty,
                   "Instead of setting outbound properties in the flow, you can set Variables.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");

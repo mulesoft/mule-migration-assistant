@@ -34,9 +34,4 @@ public class DefaultMelCompatibilityResolver implements CompatibilityResolver<St
     return "mel:" + original;
   }
 
-  public static String resolveIdentifiers(String expression) {
-    return expression.replaceAll("flowVars", "vars").replaceAll("message\\.inboundProperties",
-                                                                "vars.compatibility_inboundProperties");
-  }
-
 }

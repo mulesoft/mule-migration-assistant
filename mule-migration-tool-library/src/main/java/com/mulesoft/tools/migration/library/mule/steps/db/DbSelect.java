@@ -8,13 +8,14 @@ package com.mulesoft.tools.migration.library.mule.steps.db;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateEnrichers;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 
-import com.mulesoft.tools.migration.library.tools.mel.EnrichersCompatibilityResolver;
+import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
+import com.mulesoft.tools.migration.library.tools.mel.HeaderSyntaxCompatibilityResolver;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.jdom2.Element;
 
 /**
@@ -39,7 +40,6 @@ public class DbSelect extends AbstractDbOperationMigrator {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     migrateSql(object);
-    migrateEnrichers(object, getExpressionMigrator(), new EnrichersCompatibilityResolver(), getApplicationModel());
     migrateInputParams(object);
 
     if (object.getAttribute("streaming") == null || "false".equals(object.getAttributeValue("streaming"))) {
@@ -54,7 +54,8 @@ public class DbSelect extends AbstractDbOperationMigrator {
       object.removeAttribute("source");
     }
 
-    migrateOperationStructure(getApplicationModel(), object, report, false);
+    migrateOperationStructure(getApplicationModel(), object, report, false, getExpressionMigrator(),
+                              new DefaultMelCompatibilityResolver());
   }
 
 }

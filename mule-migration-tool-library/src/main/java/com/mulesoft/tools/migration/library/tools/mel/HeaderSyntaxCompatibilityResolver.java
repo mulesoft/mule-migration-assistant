@@ -20,7 +20,7 @@ import java.util.List;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class EnrichersCompatibilityResolver implements CompatibilityResolver<String> {
+public class HeaderSyntaxCompatibilityResolver implements CompatibilityResolver<String> {
 
   private static List<CompatibilityResolver<String>> resolvers;
 

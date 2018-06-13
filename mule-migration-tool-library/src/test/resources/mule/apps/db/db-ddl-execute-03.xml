@@ -10,7 +10,7 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <db:execute-ddl config-ref="dbConfig" target="#[updateCount]">
+        <db:execute-ddl config-ref="dbConfig" target="updateCount">
             <db:sql>CREATE TABLE TestDdl(NAME VARCHAR(255))</db:sql>
         </db:execute-ddl>
         <compatibility:set-property propertyName="updateCount" value="#[vars.updateCount]"/>

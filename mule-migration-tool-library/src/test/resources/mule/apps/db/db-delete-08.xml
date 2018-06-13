@@ -10,7 +10,7 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <db:bulk-delete config-ref="dbConfig" target="#[updateCount]">
+        <db:bulk-delete config-ref="dbConfig" target="updateCount">
             <db:sql>#["DELETE FROM PLANET WHERE name = $(payload)"]</db:sql>
         </db:bulk-delete>
         <compatibility:set-property propertyName="updateCount" value="#[vars.updateCount]"/>

@@ -26,7 +26,7 @@ public class MelCompatibilityResolver implements CompatibilityResolver<String> {
 
   static {
     resolvers = new ArrayList<>();
-    resolvers.add(new EnrichersCompatibilityResolver());
+    resolvers.add(new HeaderSyntaxCompatibilityResolver());
   }
 
   @Override

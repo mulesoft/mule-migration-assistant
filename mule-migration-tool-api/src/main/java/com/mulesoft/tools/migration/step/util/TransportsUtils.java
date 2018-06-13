@@ -156,7 +156,7 @@ public final class TransportsUtils {
     }
     outboundEndpoint.removeAttribute("exchange-pattern");
     extractOutboundChildren(outboundEndpoint, appModel);
-    migrateOperationStructure(appModel, outboundEndpoint, report, outputsAttributes);
+    migrateOperationStructure(appModel, outboundEndpoint, report, outputsAttributes, null, null);
   }
 
   public static void extractInboundChildren(Element inbound, ApplicationModel appModel) {

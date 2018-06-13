@@ -12,9 +12,11 @@
         <set-variable variableName="names" value="#[['Pluto', 'Saturn']]"/>
 
          <compatibility:outbound-properties-to-var/>
-         <db:insert config-ref="dbConfig" target="#[updateCount]">
+         <db:insert config-ref="dbConfig" target="updateCount">
              <db:sql>INSERT INTO PLANET(POSITION, NAME) VALUES (777, 'Pluto')</db:sql>
          </db:insert>
+        <compatibility:set-property propertyName="updateCount" value="#[vars.updateCount]"/>
+
     </flow>
 
 </mule>

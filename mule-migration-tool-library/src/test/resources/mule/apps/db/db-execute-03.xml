@@ -10,7 +10,7 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <db:execute-script config-ref="dbConfig" target="#[updateCounts]">
+        <db:execute-script config-ref="dbConfig" target="updateCounts">
             <db:sql>
                 update PLANET set NAME='Mercury' where POSITION=0;
                 update PLANET set NAME='Mercury' where POSITION=4

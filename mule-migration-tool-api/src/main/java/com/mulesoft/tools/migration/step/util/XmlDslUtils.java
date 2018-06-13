@@ -46,7 +46,7 @@ public final class XmlDslUtils {
   /**
    * Assuming the value of {@code attr} is an expression, migrate it and update the value.
    *
-   * @param attr the attribute containing the expression to migrate
+   * @param attr         the attribute containing the expression to migrate
    * @param exprMigrator the migrator for the expressions
    */
   public static void migrateExpression(Attribute attr, ExpressionMigrator exprMigrator) {
@@ -108,14 +108,18 @@ public final class XmlDslUtils {
    * Add the required compatibility elements to the flow for a migrated operation to work correctly.
    */
   public static void migrateOperationStructure(ApplicationModel appModel, Element object, MigrationReport report) {
-    migrateOperationStructure(appModel, object, report, true);
+    migrateOperationStructure(appModel, object, report, true, null, null);
   }
 
   /**
    * Add the required compatibility elements to the flow for a migrated operation to work correctly.
    */
   public static void migrateOperationStructure(ApplicationModel appModel, Element object, MigrationReport report,
-                                               boolean outputsAttributes) {
+                                               boolean outputsAttributes, ExpressionMigrator expressionMigrator,
+                                               CompatibilityResolver resolver) {
+    if (expressionMigrator != null && resolver != null) {
+      migrateEnrichers(object, expressionMigrator, resolver, appModel, report);
+    }
     addCompatibilityNamespace(appModel, object.getDocument());
 
     int index = object.getParent().indexOf(object);
@@ -126,19 +130,22 @@ public final class XmlDslUtils {
   }
 
   public static void migrateEnrichers(Element object, ExpressionMigrator expressionMigrator,
-                                      CompatibilityResolver<String> resolver, ApplicationModel model) {
+                                      CompatibilityResolver<String> resolver, ApplicationModel model,
+                                      MigrationReport report) {
     String targetValue = object.getAttributeValue("target");
     if (isNotBlank(targetValue)) {
       String migratedExpression = expressionMigrator.migrateExpression(targetValue, true, object);
-      object.setAttribute("target", migratedExpression);
+      object.setAttribute("target", expressionMigrator.unwrap(migratedExpression));
       if (resolver.canResolve(expressionMigrator.unwrap(targetValue))) {
-        addOutboundProperty(expressionMigrator.unwrap(migratedExpression), object, model, object);
+        addOutboundPropertySetter(expressionMigrator.unwrap(migratedExpression), object, model, object);
+        report.report(WARN, object, object, "Setting outbound property as variable",
+                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
       }
     }
   }
 
-  public static Element addOutboundProperty(String propertyName, Element element, ApplicationModel model,
-                                            Element after) {
+  public static Element addOutboundPropertySetter(String propertyName, Element element, ApplicationModel model,
+                                                  Element after) {
     addCompatibilityNamespace(model, element.getDocument());
     Element setProperty = new Element("set-property", Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE.getURI()));
     setProperty.setAttribute(new Attribute("propertyName", propertyName));
@@ -179,9 +186,8 @@ public final class XmlDslUtils {
   }
 
   /**
-   *
-   * @param source the element to remove the attribute from
-   * @param target the element to add the element to
+   * @param source        the element to remove the attribute from
+   * @param target        the element to add the element to
    * @param attributeName the name of the attribute to move from source to target
    * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
    */
@@ -190,9 +196,8 @@ public final class XmlDslUtils {
   }
 
   /**
-   *
-   * @param source the element to remove the attribute from
-   * @param target the element to add the element to
+   * @param source              the element to remove the attribute from
+   * @param target              the element to add the element to
    * @param sourceAttributeName the name of the attribute to remove from source
    * @param targetAttributeName the name of the attribute to add to target
    * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
@@ -209,7 +214,6 @@ public final class XmlDslUtils {
   }
 
   /**
-   *
    * Add new element after some existing element.
    *
    * @param newElement

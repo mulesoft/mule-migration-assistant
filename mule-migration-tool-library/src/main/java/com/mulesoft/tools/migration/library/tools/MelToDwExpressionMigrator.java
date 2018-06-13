@@ -17,7 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver.resolveIdentifiers;
 
 /**
  * Migrate mel expressions to dw expression
@@ -64,6 +63,11 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     }
     migratedExpression = resolveIdentifiers(migratedExpression);
     return dataWeaveBodyOnly ? migratedExpression.replaceFirst("---", "").trim() : migratedExpression;
+  }
+
+  public String resolveIdentifiers(String expression) {
+    return expression.replaceAll("flowVars", "vars").replaceAll("message\\.inboundProperties",
+                                                                "vars.compatibility_inboundProperties");
   }
 
   @Override
