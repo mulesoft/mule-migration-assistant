@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.wsc;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
@@ -40,6 +41,7 @@ public class WsConsumer extends AbstractApplicationModelMigrationStep {
 
   public WsConsumer() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(WSC_NAMESPACE));
   }
 
   @Override

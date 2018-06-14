@@ -27,6 +27,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
+import org.jdom2.Namespace;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
@@ -105,6 +106,7 @@ public class WebServiceConsumerTest {
   public void setUp() throws Exception {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     appModel = mock(ApplicationModel.class);
+    doc.getRootElement().addNamespaceDeclaration(Namespace.getNamespace("wsc", "http://www.mulesoft.org/schema/mule/wsc"));
     when(appModel.getNode(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
     when(appModel.getNodes(any(String.class)))
