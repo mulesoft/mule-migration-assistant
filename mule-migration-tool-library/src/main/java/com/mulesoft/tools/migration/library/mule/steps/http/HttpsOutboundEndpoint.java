@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.E
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -40,9 +41,6 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace httpsNamespace = Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https");
-    Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
-
     Optional<Element> httpsConnector;
     if (object.getAttribute("connector-ref") != null) {
       httpsConnector = Optional.of(getConnector(object.getAttributeValue("connector-ref")));
@@ -57,11 +55,14 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
     Element httpsRequesterConnection = getApplicationModel().getNode("/mule:mule/http:request-config[@name = '"
         + object.getAttributeValue("config-ref") + "']/http:request-connection");
 
-    migrate(httpsRequesterConnection, httpsConnector, report, httpsNamespace, tlsNamespace);
+    migrate(httpsRequesterConnection, httpsConnector, report, getApplicationModel());
   }
 
-  public void migrate(Element httpsRequesterConnection, Optional<Element> httpsConnector, MigrationReport report,
-                      Namespace httpsNamespace, Namespace tlsNamespace) {
+  public static void migrate(Element httpsRequesterConnection, Optional<Element> httpsConnector, MigrationReport report,
+                             ApplicationModel appModel) {
+    Namespace httpsNamespace = Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https");
+    Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
+
     httpsRequesterConnection.setAttribute("protocol", "HTTPS");
 
     if (httpsConnector.isPresent() && httpsRequesterConnection.getChild("context", tlsNamespace) == null) {
@@ -99,8 +100,8 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
       }
 
       if (tlsConfigured) {
-        getApplicationModel().addNameSpace(tlsNamespace.getPrefix(), tlsNamespace.getURI(),
-                                           "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
+        appModel.addNameSpace(tlsNamespace.getPrefix(), tlsNamespace.getURI(),
+                              "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
 
         httpsRequesterConnection.addContent(tlsContext);
       }

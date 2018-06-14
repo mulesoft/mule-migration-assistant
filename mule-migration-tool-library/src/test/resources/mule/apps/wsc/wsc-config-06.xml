@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd
+               http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+
+    <wsc:config name="globalConfig">
+        <wsc:connection service="TestService" port="TestPort" wsdlLocation="Test.wsdl" address="#[&quot;http://localhost:${port}/$(vars.pathFlowVar)&quot;]"/>
+    </wsc:config>
+
+    <flow name="flow">
+        <set-variable variableName="pathFlowVar" value="services/Test" />
+        <compatibility:outbound-properties-to-var/>
+        <wsc:consume config-ref="globalConfig" operation="echo" />
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+
+</mule>

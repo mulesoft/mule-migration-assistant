@@ -19,6 +19,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIf
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static java.util.Collections.emptyList;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
@@ -96,13 +97,6 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("keepAlive") != null || object.getAttribute("keep-alive") != null) {
       copyAttributeIfPresent(object, requestConnection, "keep-alive", "usePersistentConnections");
       copyAttributeIfPresent(object, requestConnection, "keepAlive", "usePersistentConnections");
-    } else {
-      if (object.getAttribute("connector-ref") != null) {
-        Element connector = getConnector(object.getAttributeValue("connector-ref"));
-        if (connector.getAttribute("keepAlive") != null) {
-          copyAttributeIfPresent(connector, requestConnection, "keepAlive", "usePersistentConnections");
-        }
-      }
     }
 
     if (object.getAttribute("path") == null) {
@@ -114,12 +108,12 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("connector-ref") != null) {
       Element connector = getConnector(object.getAttributeValue("connector-ref"));
 
-      handleConnector(connector, requestConnection, report, httpNamespace);
+      handleConnector(connector, requestConnection, report, httpNamespace, getApplicationModel());
 
       object.removeAttribute("connector-ref");
     } else {
       getDefaultConnector().ifPresent(connector -> {
-        handleConnector(connector, requestConnection, report, httpNamespace);
+        handleConnector(connector, requestConnection, report, httpNamespace, getApplicationModel());
       });
     }
 
@@ -192,35 +186,39 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     return nodes.stream().findFirst();
   }
 
-  private void handleConnector(Element connector, Element reqConnection, MigrationReport report,
-                               Namespace httpNamespace) {
+  public static void handleConnector(Element connector, Element reqConnection, MigrationReport report,
+                                     Namespace httpNamespace, ApplicationModel appModel) {
+    if (connector.getAttribute("keepAlive") != null && reqConnection.getAttribute("usePersistentConnections") == null) {
+      copyAttributeIfPresent(connector, reqConnection, "keepAlive", "usePersistentConnections");
+    }
+
     if (connector.getAttribute("connectionTimeout") != null) {
-      getSocketProperties(reqConnection, httpNamespace)
+      getSocketProperties(reqConnection, httpNamespace, appModel)
           .setAttribute("connectionTimeout", connector.getAttributeValue("connectionTimeout"));
     }
     if (connector.getAttribute("clientSoTimeout") != null) {
-      getSocketProperties(reqConnection, httpNamespace)
+      getSocketProperties(reqConnection, httpNamespace, appModel)
           .setAttribute("clientTimeout", connector.getAttributeValue("clientSoTimeout"));
     }
     if (connector.getAttribute("sendTcpNoDelay") != null) {
-      getSocketProperties(reqConnection, httpNamespace)
+      getSocketProperties(reqConnection, httpNamespace, appModel)
           .setAttribute("sendTcpNoDelay", connector.getAttributeValue("sendTcpNoDelay"));
     }
 
     if (connector.getAttribute("sendBufferSize") != null) {
-      getSocketProperties(reqConnection, httpNamespace)
+      getSocketProperties(reqConnection, httpNamespace, appModel)
           .setAttribute("sendBufferSize", connector.getAttributeValue("sendBufferSize"));
     }
     if (connector.getAttribute("receiveBufferSize") != null) {
-      getSocketProperties(reqConnection, httpNamespace)
+      getSocketProperties(reqConnection, httpNamespace, appModel)
           .setAttribute("receiveBufferSize", connector.getAttributeValue("receiveBufferSize"));
     }
     if (connector.getAttribute("socketSoLinger") != null) {
-      getSocketProperties(reqConnection, httpNamespace)
+      getSocketProperties(reqConnection, httpNamespace, appModel)
           .setAttribute("linger", connector.getAttributeValue("socketSoLinger"));
     }
     if (connector.getAttribute("failOnUnresolvedHost") != null) {
-      getSocketProperties(reqConnection, httpNamespace)
+      getSocketProperties(reqConnection, httpNamespace, appModel)
           .setAttribute("failOnUnresolvedHost", connector.getAttributeValue("failOnUnresolvedHost"));
     }
 
@@ -249,8 +247,8 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     }
   }
 
-  private Element getSocketProperties(Element reqConnection, Namespace httpNamespace) {
-    addSocketsModule(getApplicationModel());
+  private static Element getSocketProperties(Element reqConnection, Namespace httpNamespace, ApplicationModel appModel) {
+    addSocketsModule(appModel);
 
     Element clientSocket = reqConnection.getChild("client-socket-properties", httpNamespace);
     if (clientSocket != null) {
@@ -270,7 +268,7 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     }
   }
 
-  private Element getProxyConfig(Element reqConnection, Namespace httpNamespace) {
+  private static Element getProxyConfig(Element reqConnection, Namespace httpNamespace) {
     Element clientSocket = reqConnection.getChild("proxy-config", httpNamespace);
     if (clientSocket != null) {
       Element tcpClientSocket = clientSocket.getChild("proxy", httpNamespace);
