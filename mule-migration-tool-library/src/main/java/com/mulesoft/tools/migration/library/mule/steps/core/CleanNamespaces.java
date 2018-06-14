@@ -11,9 +11,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 import org.jdom2.Document;
 import org.jdom2.Namespace;
-import org.jdom2.filter.Filters;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,13 +36,14 @@ public class CleanNamespaces implements NamespaceContribution {
   @Override
   public void execute(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
     List<Document> documents = applicationModel.getApplicationDocuments().values().stream().collect(Collectors.toList());
-    documents.forEach(d -> removeUnusedNamespaces(d));
+    documents.forEach(d -> removeUnusedNamespaces(d, applicationModel));
   }
 
 
-  public void removeUnusedNamespaces(Document document) {
+  public void removeUnusedNamespaces(Document document, ApplicationModel applicationModel) {
     List<Namespace> unusedNamespaces = document.getRootElement().getAdditionalNamespaces().stream()
-        .filter(n -> getElementsWithNamespace(document, n).size() <= 0 && !nonRemovableNamespaces.contains(n.getPrefix()))
+        .filter(n -> getElementsWithNamespace(document, n, applicationModel).size() <= 0
+            && !nonRemovableNamespaces.contains(n.getPrefix()))
         .collect(Collectors.toList());
     unusedNamespaces.forEach(n -> document.getRootElement().removeNamespaceDeclaration(n));
   }

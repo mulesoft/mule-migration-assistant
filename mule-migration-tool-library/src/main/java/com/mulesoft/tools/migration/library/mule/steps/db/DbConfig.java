@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -36,9 +37,11 @@ import java.util.Optional;
 public class DbConfig extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  private static final String DB_NAMESPACE = "http://www.mulesoft.org/schema/mule/db";
+  private static final String DB_NAMESPACE_PREFIX = "db";
+  private static final String DB_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/db";
+  private static final Namespace DB_NAMESPACE = Namespace.getNamespace(DB_NAMESPACE_PREFIX, DB_NAMESPACE_URI);
 
-  public static final String XPATH_SELECTOR = "/mule:mule/*[namespace-uri() = '" + DB_NAMESPACE + "']";
+  public static final String XPATH_SELECTOR = "/mule:mule/*[namespace-uri() = '" + DB_NAMESPACE_URI + "']";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -49,14 +52,14 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
 
   public DbConfig() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(DB_NAMESPACE));
   }
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    final Namespace dbNamespace = Namespace.getNamespace("db", DB_NAMESPACE);
 
     if ("template-query".equals(object.getName())) {
-      List<Element> templateRefs = getApplicationModel().getNodes("//*[namespace-uri() = '" + DB_NAMESPACE
+      List<Element> templateRefs = getApplicationModel().getNodes("//*[namespace-uri() = '" + DB_NAMESPACE_URI
           + "' and local-name() = 'template-query-ref' and @name = '" + object.getAttributeValue("name") + "']");
 
       for (Element templateRef : new ArrayList<>(templateRefs)) {
@@ -78,10 +81,10 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
       return;
     }
 
-    Element dataTypes = object.getChild("data-types", dbNamespace);
+    Element dataTypes = object.getChild("data-types", DB_NAMESPACE);
     if (dataTypes != null) {
       dataTypes.setName("column-types");
-      for (Element dataType : dataTypes.getChildren("data-type", dbNamespace)) {
+      for (Element dataType : dataTypes.getChildren("data-type", DB_NAMESPACE)) {
         dataType.setName("column-type");
         dataType.getAttribute("name").setName("typeName");
       }
@@ -94,7 +97,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
                         + "' with a dataSource-ref. It was converted to a 'db:data-source-connection'",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_data_source_db");
 
-      connection = new Element("data-source-connection", dbNamespace);
+      connection = new Element("data-source-connection", DB_NAMESPACE);
       object.addContent(connection);
       copyAttributeIfPresent(object, connection, "dataSource-ref", "dataSourceRef");
 
@@ -107,7 +110,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
                       "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_data_source_db");
       }
     } else if (object.getAttribute("url") != null) {
-      connection = new Element("generic-connection", dbNamespace);
+      connection = new Element("generic-connection", DB_NAMESPACE);
       object.addContent(connection);
 
       copyAttributeIfPresent(object, connection, "user");
@@ -143,10 +146,10 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
                     "The config in Mule 3 is specific for an engine, but it contained an 'url' attribute. It will be made generic in order to keep the url.",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_generic_db");
 
-      Element connectionProps = object.getChild("connection-properties", dbNamespace);
+      Element connectionProps = object.getChild("connection-properties", DB_NAMESPACE);
       if (connectionProps != null) {
         // Have to use isPresent() because connection cannot be final
-        Optional<Element> userProp = connectionProps.getChildren("property", dbNamespace)
+        Optional<Element> userProp = connectionProps.getChildren("property", DB_NAMESPACE)
             .stream()
             .filter(p -> "user".equals(p.getAttributeValue("key")))
             .findFirst();
@@ -160,14 +163,14 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
         }
       }
     } else if ("derby-config".equals(object.getName())) {
-      connection = new Element("derby-connection", dbNamespace);
+      connection = new Element("derby-connection", DB_NAMESPACE);
       object.addContent(connection);
       copyAttributeIfPresent(object, connection, "user");
       copyAttributeIfPresent(object, connection, "password");
       copyAttributeIfPresent(object, connection, "useXaTransactions");
       copyAttributeIfPresent(object, connection, "transactionIsolation");
     } else if ("mysql-config".equals(object.getName())) {
-      connection = new Element("my-sql-connection", dbNamespace);
+      connection = new Element("my-sql-connection", DB_NAMESPACE);
       object.addContent(connection);
       copyAttributeIfPresent(object, connection, "database");
       copyAttributeIfPresent(object, connection, "host");
@@ -181,7 +184,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
                     "Add a suitable jdbc driver dependency for this connection",
                     "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
     } else if ("oracle-config".equals(object.getName())) {
-      connection = new Element("oracle-connection", dbNamespace);
+      connection = new Element("oracle-connection", DB_NAMESPACE);
       object.addContent(connection);
       copyAttributeIfPresent(object, connection, "host");
       copyAttributeIfPresent(object, connection, "port");

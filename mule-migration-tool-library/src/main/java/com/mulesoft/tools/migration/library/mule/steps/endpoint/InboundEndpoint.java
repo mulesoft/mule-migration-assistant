@@ -7,8 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.endpoint;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
 
 import com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpInboundEndpoint;
@@ -31,6 +29,10 @@ import org.jdom2.Namespace;
 public class InboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
+  private static final String HTTP_NS_PREFIX = "http";
+  private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
+  private static final String FILE_NS_PREFIX = "file";
+  private static final String FILE_NS_URI = "http://www.mulesoft.org/schema/mule/file";
   public static final String XPATH_SELECTOR = "/mule:mule//mule:inbound-endpoint";
 
   private ExpressionMigrator expressionMigrator;
@@ -59,10 +61,10 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
       // TODO MMT-132 make available migrators discoverable
       if (address.startsWith("file://")) {
         migrator = new FileInboundEndpoint();
-        object.setNamespace(Namespace.getNamespace(FILE.prefix(), FILE.uri()));
+        object.setNamespace(Namespace.getNamespace(FILE_NS_PREFIX, FILE_NS_URI));
       } else if (address.startsWith("http://")) {
         migrator = new HttpInboundEndpoint();
-        object.setNamespace(Namespace.getNamespace(HTTP.prefix(), HTTP.uri()));
+        object.setNamespace(Namespace.getNamespace(HTTP_NS_PREFIX, HTTP_NS_URI));
       }
 
       if (migrator != null) {
@@ -82,10 +84,10 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
         String address = globalEndpoint.getAttributeValue("address");
         if (address.startsWith("file://")) {
           migrator = new FileInboundEndpoint();
-          object.setNamespace(Namespace.getNamespace(FILE.prefix(), FILE.uri()));
+          object.setNamespace(Namespace.getNamespace(FILE_NS_PREFIX, FILE_NS_URI));
         } else if (address.startsWith("http://")) {
           migrator = new HttpInboundEndpoint();
-          object.setNamespace(Namespace.getNamespace(HTTP.prefix(), HTTP.uri()));
+          object.setNamespace(Namespace.getNamespace(HTTP_NS_PREFIX, HTTP_NS_URI));
         } else if (address.startsWith("https://")) {
           migrator = new HttpsInboundEndpoint();
           object.setNamespace(Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https"));

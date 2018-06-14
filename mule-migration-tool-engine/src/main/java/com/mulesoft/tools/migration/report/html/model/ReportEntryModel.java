@@ -77,7 +77,8 @@ public class ReportEntryModel {
   private void setElementLocation(Document document) {
     String xpathExpression = XPathHelper.getAbsolutePath(element);
     List<Element> elements =
-        XPathFactory.instance().compile(xpathExpression, Filters.element(), null, getDocumentNamespaces(document))
+        XPathFactory.instance()
+            .compile(xpathExpression, Filters.element(), null, document.getRootElement().getAdditionalNamespaces())
             .evaluate(document);
     if (elements.size() > 0) {
       this.lineNumber = ((LocatedElement) elements.get(0)).getLine();

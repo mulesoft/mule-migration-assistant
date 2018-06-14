@@ -49,6 +49,7 @@ public class ApplicationModel {
   private PomModel pomModel;
   private Path projectBasePath;
   private MuleArtifactJsonModel muleArtifactJsonModel;
+  private List<Namespace> supportedNamespaces;
 
   protected ApplicationModel(Map<Path, Document> applicationDocuments) {
     this.applicationDocuments = applicationDocuments;
@@ -108,10 +109,12 @@ public class ApplicationModel {
    * @param namespace the namespace of the elements that should be retrieved
    * @return a list of elements within the document that have that namespace
    */
-  public static List<Element> getElementsWithNamespace(Document document, Namespace namespace) {
+  public static List<Element> getElementsWithNamespace(Document document, Namespace namespace,
+                                                       ApplicationModel applicationModel) {
     String xPathExpression = "//*[namespace-uri()='" + namespace.getURI() + "']";
     XPathExpression<Element> xpath = XPathFactory.instance().compile(xPathExpression, Filters.element(), null,
-                                                                     getDocumentNamespaces(document));
+                                                                     getDocumentNamespaces(document, applicationModel
+                                                                         .getSupportedNamespaces()));
     return xpath.evaluate(document);
   }
 
@@ -137,10 +140,10 @@ public class ApplicationModel {
    * @param document
    */
   public void addNameSpace(Namespace namespace, String schemaLocation, Document document) {
-    Element rootElement = document.getRootElement();
-    rootElement.addNamespaceDeclaration(namespace);
+    document.getRootElement().addNamespaceDeclaration(namespace);
 
-    Attribute schemaLocationAttribute = rootElement.getAttribute("schemaLocation", rootElement.getNamespace("xsi"));
+    Attribute schemaLocationAttribute =
+        document.getRootElement().getAttribute("schemaLocation", document.getRootElement().getNamespace("xsi"));
     if (!schemaLocationAttribute.getValue().contains(namespace.getURI() + " ")
         && !schemaLocationAttribute.getValue().contains(schemaLocation)) {
 
@@ -198,7 +201,8 @@ public class ApplicationModel {
    */
   private List<Element> getElementsFromDocument(XPathExpression xpath, Document document) {
     XPathExpression<Element> compiledXPath =
-        XPathFactory.instance().compile(xpath.getExpression(), Filters.element(), null, getDocumentNamespaces(document));
+        XPathFactory.instance().compile(xpath.getExpression(), Filters.element(), null,
+                                        getDocumentNamespaces(document, supportedNamespaces));
     try {
       return compiledXPath.evaluate(document);
     } catch (IllegalArgumentException e) {
@@ -262,6 +266,24 @@ public class ApplicationModel {
     return Optional.ofNullable(muleArtifactJsonModel);
   }
 
+  /**
+   * Sets the  {@link List<Namespace>} that represents the supported namespaces for the tool.
+   *
+   * @param supportedNamespaces
+   */
+  public void setSupportedNamespaces(List<Namespace> supportedNamespaces) {
+    this.supportedNamespaces = supportedNamespaces;
+  }
+
+  /**
+   * Retrieves the {@link List<Namespace>}.
+   *
+   * @return an optional {@link List<Namespace>}
+   */
+  public List<Namespace> getSupportedNamespaces() {
+    return this.supportedNamespaces;
+  }
+
 
   /**
    * It represent the builder to obtain a {@link ApplicationModel}
@@ -277,6 +299,7 @@ public class ApplicationModel {
     private Path pom;
     private Path projectBasePath;
     private String muleVersion;
+    private List<Namespace> supportedNamespaces;
 
     /**
      * Collection of paths to project configuration files
@@ -345,6 +368,17 @@ public class ApplicationModel {
     }
 
     /**
+     * List representing the supported namespaces
+     *
+     * @param supportedNamespaces
+     * @return the builder
+     */
+    public ApplicationModelBuilder withSupportedNamespaces(List<Namespace> supportedNamespaces) {
+      this.supportedNamespaces = supportedNamespaces;
+      return this;
+    }
+
+    /**
      * Build the {@link ApplicationModel}
      *
      * @return an {@link ApplicationModel} instance
@@ -386,6 +420,7 @@ public class ApplicationModel {
       }
       applicationModel.setPomModel(pomModel);
       applicationModel.setProjectBasePath(projectBasePath);
+      applicationModel.setSupportedNamespaces(supportedNamespaces);
 
       return applicationModel;
     }

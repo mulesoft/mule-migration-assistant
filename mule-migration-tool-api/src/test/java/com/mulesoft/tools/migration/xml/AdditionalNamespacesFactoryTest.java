@@ -17,13 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getAdditionalNamespaces;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.IsNot.not;
 
 public class AdditionalNamespacesFactoryTest {
@@ -41,15 +40,8 @@ public class AdditionalNamespacesFactoryTest {
   }
 
   @Test
-  public void getAdditionalNamespacesTest() throws Exception {
-    namespaces = getAdditionalNamespaces();
-    assertThat("The list generated is empty", namespaces.size(), is(greaterThan(0)));
-    assertThat("The namespace doesn't match", namespaces.get(0).getPrefix(), is("http"));
-  }
-
-  @Test
   public void getDocumentNamespacesTest() throws Exception {
-    namespaces = getDocumentNamespaces(document);
+    namespaces = getDocumentNamespaces(document, newArrayList());
 
     assertThat("The list generate is empty",
                namespaces.stream().filter(n -> n.getPrefix().equals("spring-pepe")).collect(Collectors.toList()),

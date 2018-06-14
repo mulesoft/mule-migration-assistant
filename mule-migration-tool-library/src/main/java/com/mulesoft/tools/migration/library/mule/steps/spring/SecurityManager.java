@@ -32,12 +32,12 @@ public class SecurityManager extends AbstractSpringMigratorStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    object.setNamespace(SPRING_MODULE_NAMESPACE);
+    object.setNamespace(SPRING_NAMESPACE);
     for (Element provider : object.getChildren("delegate-security-provider", SPRING_SECURITY_NAMESPACE)) {
-      provider.setNamespace(SPRING_MODULE_NAMESPACE);
+      provider.setNamespace(SPRING_NAMESPACE);
       for (Element property : provider
           .getChildren("security-property", SPRING_SECURITY_NAMESPACE)) {
-        property.setNamespace(SPRING_MODULE_NAMESPACE);
+        property.setNamespace(SPRING_NAMESPACE);
       }
     }
   }

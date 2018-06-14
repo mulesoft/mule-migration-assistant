@@ -6,10 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.file;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
 import static java.util.stream.Collectors.joining;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -32,6 +32,9 @@ import java.util.stream.Stream;
 public class FileConfig extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
+  private static final String FILE_NAMESPACE_PREFIX = "file";
+  private static final String FILE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/file";
+  private static final Namespace FILE_NAMESPACE = Namespace.getNamespace(FILE_NAMESPACE_PREFIX, FILE_NAMESPACE_URI);
   public static final String XPATH_SELECTOR = "/mule:mule/file:connector";
 
   private ExpressionMigrator expressionMigrator;
@@ -43,11 +46,12 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   public FileConfig() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(FILE_NAMESPACE));
   }
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace fileNs = Namespace.getNamespace(FILE.prefix(), FILE.uri());
+    Namespace fileNs = Namespace.getNamespace(FILE_NAMESPACE_PREFIX, FILE_NAMESPACE_URI);
 
     handleInputImplicitConnectorRef(object, report);
     handleOutputImplicitConnectorRef(object, report);
@@ -95,7 +99,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
       connection.addContent(reconnection);
     }
 
-    Element matcher = new Element("matcher", FILE.uri());
+    Element matcher = new Element("matcher", FILE_NAMESPACE_URI);
     matcher.setAttribute("name", object.getAttributeValue("name") + "Matcher");
     boolean matcherUsed = false;
 

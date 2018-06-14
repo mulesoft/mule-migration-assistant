@@ -12,15 +12,25 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * This steps migrates the MUnit 1.x assert-true
  * @author Mulesoft Inc.
  */
 public class MoveMUnitProcessorsToSections extends AbstractApplicationModelMigrationStep {
+
+  private static final String MUNIT_TOOLS_PREFIX = "munit-tools";
+  private static final String MUNIT_TOOLS_URI = "http://www.mulesoft.org/schema/mule/munit-tools";
+  private static final Namespace MUNIT_TOOLS_NS = Namespace.getNamespace(MUNIT_TOOLS_PREFIX, MUNIT_TOOLS_URI);
+  private static final String MUNIT_NS_PREFIX = "munit";
+  private static final String MUNIT_NS_URI = "http://www.mulesoft.org/schema/mule/munit";
+  private static final Namespace MUNIT_NS = Namespace.getNamespace(MUNIT_NS_PREFIX, MUNIT_NS_URI);
 
   private static String[] sections = new String[] {"munit:behavior", "munit:execution", "munit:validation"};
   public static final String XPATH_SELECTOR = "//*[local-name()='test']";
@@ -32,6 +42,7 @@ public class MoveMUnitProcessorsToSections extends AbstractApplicationModelMigra
 
   public MoveMUnitProcessorsToSections() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(MUNIT_NS, MUNIT_TOOLS_NS));
   }
 
   @Override

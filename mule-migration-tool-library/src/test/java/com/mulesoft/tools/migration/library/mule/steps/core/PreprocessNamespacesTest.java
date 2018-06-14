@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.utils.ApplicationModelUtils.generateAppModel;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -49,6 +50,7 @@ public class PreprocessNamespacesTest {
     documentPath = this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString());
     applicationDocuments.add(documentPath);
     applicationModel = generateAppModel(applicationDocuments, projectPath);
+    applicationModel.setSupportedNamespaces(newArrayList());
   }
 
   @Test

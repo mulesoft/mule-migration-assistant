@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -25,7 +26,10 @@ import org.jdom2.Namespace;
  */
 public class SetProperty extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
+  private static final String COMPATIBILITY_NAMESPACE_PREFIX = "compatibility";
+  private static final String COMPATIBILITY_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/compatibility";
+  private static final Namespace COMPATIBILITY_NAMESPACE =
+      Namespace.getNamespace(COMPATIBILITY_NAMESPACE_PREFIX, COMPATIBILITY_NAMESPACE_URI);
 
   public static final String XPATH_SELECTOR = "//mule:set-property";
   private ExpressionMigrator expressionMigrator;
@@ -37,6 +41,7 @@ public class SetProperty extends AbstractApplicationModelMigrationStep implement
 
   public SetProperty() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(COMPATIBILITY_NAMESPACE));
   }
 
   @Override
@@ -45,7 +50,7 @@ public class SetProperty extends AbstractApplicationModelMigrationStep implement
     report.report(WARN, element, element,
                   "Instead of setting outbound properties in the flow, its values must be set explicitly in the operation/listener.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
-    element.setNamespace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
+    element.setNamespace(COMPATIBILITY_NAMESPACE);
   }
 
   @Override
@@ -57,4 +62,5 @@ public class SetProperty extends AbstractApplicationModelMigrationStep implement
   public ExpressionMigrator getExpressionMigrator() {
     return expressionMigrator;
   }
+
 }

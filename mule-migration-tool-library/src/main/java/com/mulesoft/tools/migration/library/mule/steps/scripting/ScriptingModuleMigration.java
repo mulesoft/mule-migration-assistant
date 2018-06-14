@@ -12,12 +12,14 @@ import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 
@@ -29,10 +31,15 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.E
  */
 public class ScriptingModuleMigration extends AbstractApplicationModelMigrationStep {
 
+  private static final String SCRIPT_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/scripting";
+  private static final String SCRIPT_NAMESPACE_PREFIX = "scripting";
+  private static final Namespace SCRIPT_NAMESPACE = Namespace.getNamespace(SCRIPT_NAMESPACE_PREFIX, SCRIPT_NAMESPACE_URI);
+
   public static final String XPATH_SELECTOR = "//scripting:*[local-name()='component']";
 
   public ScriptingModuleMigration() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(SCRIPT_NAMESPACE));
   }
 
   @Override

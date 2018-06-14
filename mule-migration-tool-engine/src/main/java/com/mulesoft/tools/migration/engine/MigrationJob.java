@@ -33,6 +33,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
 import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTasksDeclaredNamespaces;
 
 /**
  * It represent a migration job which is composed by one or more {@link AbstractMigrationTask}
@@ -92,7 +93,8 @@ public class MigrationJob implements Executable {
         .withConfigurationFiles(getFiles(muleProject.srcMainConfiguration(), "xml"))
         .withMuleVersion(muleVersion)
         .withPom(muleProject.pom())
-        .withProjectBasePath(muleProject.getBaseFolder());
+        .withProjectBasePath(muleProject.getBaseFolder())
+        .withSupportedNamespaces(getTasksDeclaredNamespaces(migrationTasks));
     if (muleProject.srcTestConfiguration().toFile().exists()) {
       builder.withTestConfigurationFiles(getFiles(muleProject.srcTestConfiguration(), "xml"));
     }
@@ -107,6 +109,7 @@ public class MigrationJob implements Executable {
           .withTestConfigurationFiles(getFiles(application.srcTestConfiguration(), "xml"))
           .withMuleArtifactJson(application.muleArtifactJson())
           .withMuleVersion(muleVersion)
+          .withSupportedNamespaces(getTasksDeclaredNamespaces(migrationTasks))
           .withProjectBasePath(application.getBaseFolder())
           .withPom(application.pom()).build();
     } else {
