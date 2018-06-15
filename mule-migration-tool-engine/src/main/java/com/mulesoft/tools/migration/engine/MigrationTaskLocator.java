@@ -21,6 +21,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.SecurePropertiesMigration
 import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SpringMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.VMMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.WscMigrationTask;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -99,6 +100,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
     coreMigrationTasks.add(new HTTPMigrationTask());
     coreMigrationTasks.add(new SocketsMigrationTask());
+    coreMigrationTasks.add(new WscMigrationTask());
     coreMigrationTasks.add(new DbMigrationTask());
     coreMigrationTasks.add(new FileMigrationTask());
     coreMigrationTasks.add(new VMMigrationTask());

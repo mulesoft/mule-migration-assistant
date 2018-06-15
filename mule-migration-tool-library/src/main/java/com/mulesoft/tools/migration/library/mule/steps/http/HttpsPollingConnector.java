@@ -6,13 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint.migrate;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
 import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrates the polling connector of the https transport
@@ -35,9 +35,6 @@ public class HttpsPollingConnector extends HttpPollingConnector {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace httpsNamespace = Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https");
-    Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
-
     super.execute(object, report);
     getApplicationModel().addNameSpace(HTTP.prefix(), HTTP.uri(),
                                        "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
@@ -47,7 +44,7 @@ public class HttpsPollingConnector extends HttpPollingConnector {
 
     HttpsOutboundEndpoint httpRequesterMigrator = new HttpsOutboundEndpoint();
     httpRequesterMigrator.setApplicationModel(getApplicationModel());
-    httpRequesterMigrator.migrate(httpsRequesterConnection, of(object), report, httpsNamespace, tlsNamespace);
+    migrate(httpsRequesterConnection, of(object), report, getApplicationModel());
   }
 
 }

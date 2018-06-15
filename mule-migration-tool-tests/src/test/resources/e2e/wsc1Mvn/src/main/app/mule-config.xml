@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:https="http://www.mulesoft.org/schema/mule/https"
+      xmlns:ws="http://www.mulesoft.org/schema/mule/ws"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
+               http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
+               http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+    <https:connector name="httpsConnector">
+        <https:tls-client path="clientKeystore" storePassword="mulepassword"/>
+        <https:tls-key-store path="serverKeystore" keyPassword="mulepassword" storePassword="mulepassword"/>
+        <https:tls-server path="trustStore" storePassword="mulepassword"/>
+    </https:connector>
+
+    <tls:context name="tlsContextSignature">
+        <tls:trust-store path="trustStore" password="mulepassword" type="jks" />
+        <tls:key-store path="clientKeystore" keyPassword="mulepassword" password="mulepassword" alias="muleclient" type="jks" />
+    </tls:context>
+
+    <tls:context name="tlsContextEncryption">
+        <tls:trust-store path="ssltest-cacerts.jks" password="changeit" type="jks" />
+        <tls:key-store path="ssltest-keystore.jks" keyPassword="changeit" password="changeit" alias="s1as" type="jks" />
+    </tls:context>
+
+    <ws:consumer-config serviceAddress="https://localhost:${httpPort}/services/Test" wsdlLocation="Test.wsdl"
+                        service="TestService" port="TestPort" name="consumerConfig">
+        <ws:security>
+            <ws:wss-username-token username="admin" password="textPassword" passwordType="TEXT" addCreated="true" addNonce="true"/>
+            <ws:wss-timestamp expires="60" />
+            <ws:wss-sign tlsContext-ref="tlsContextSignature" />
+            <ws:wss-verify-signature tlsContext-ref="tlsContextSignature" />
+            <ws:wss-encrypt tlsContext-ref="tlsContextEncryption" alias="s1as" />
+            <ws:wss-decrypt tlsContext-ref="tlsContextEncryption" />
+        </ws:security>
+    </ws:consumer-config>
+
+
+    <flow name="request">
+        <ws:consumer operation="echo" config-ref="consumerConfig" />
+    </flow>
+   
+</mule>

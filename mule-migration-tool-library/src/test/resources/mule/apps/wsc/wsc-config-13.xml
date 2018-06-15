@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+               http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+    <http:request-config name="customConfig" >
+        <http:request-connection host="localhost" port="${port}"/>
+    </http:request-config>
+
+    <wsc:config name="globalConfig">
+        <wsc:connection address="http://localhost:${port}/services/Test" wsdlLocation="Test.wsdl" service="TestService" port="TestPort">
+            <wsc:custom-transport-configuration>
+                <wsc:http-transport-configuration requesterConfig="customConfig"/>
+            </wsc:custom-transport-configuration>
+        </wsc:connection>
+    </wsc:config>
+
+</mule>

@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  protected static final String HTTP_NAMESPACE = "http://www.mulesoft.org/schema/mule/http";
+  public static final String HTTP_NAMESPACE = "http://www.mulesoft.org/schema/mule/http";
   protected static final String TLS_NAMESPACE = "http://www.mulesoft.org/schema/mule/tls";
   private ExpressionMigrator expressionMigrator;
 

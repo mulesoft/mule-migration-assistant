@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+               http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+    <http:request-config name="httpsConnector" >
+        <http:request-connection host="localhost" port="${port}" protocol="HTTPS">
+            <tls:context>
+                <tls:trust-store password="mulepassword" path="clientKeystore"/>
+                <tls:key-store keyPassword="mulepassword" password="mulepassword" path="serverKeystore"/>
+            </tls:context>
+        </http:request-connection>
+    </http:request-config>
+
+    <wsc:config name="globalConfig">
+        <wsc:connection address="https://localhost:${port}/services/Echo" wsdlLocation="Echo.wsdl" service="EchoService" port="EchoPort">
+            <wsc:custom-transport-configuration>
+                <wsc:http-transport-configuration requesterConfig="httpsConnector"/>
+            </wsc:custom-transport-configuration>
+        </wsc:connection>
+    </wsc:config>
+
+</mule>

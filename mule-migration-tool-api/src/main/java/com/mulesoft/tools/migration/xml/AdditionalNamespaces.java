@@ -16,6 +16,8 @@ public enum AdditionalNamespaces {
 
   HTTP("http", "http://www.mulesoft.org/schema/mule/http"), HTTPS("https", "http://www.mulesoft.org/schema/mule/https"),
 
+  WSC("wsc", "http://www.mulesoft.org/schema/mule/wsc"),
+
   TLS("tls", "http://www.mulesoft.org/schema/mule/tls"),
 
   COMPATIBILITY("compatibility", "http://www.mulesoft.org/schema/mule/compatibility"),

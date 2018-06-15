@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+               http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+    <http:request-config name="HTTP_Request_Configuration" >
+        <http:request-connection host="fake.com" port="80" protocol="HTTPS" proxyConfig="Proxy_Configuration"/>
+    </http:request-config>
+
+    <http:proxy name="Proxy_Configuration" host="localhost"
+                port="${port}"/>
+
+    <wsc:config name="Web_Service_Consumer">
+        <wsc:connection address="http://fake.com/service/Test" wsdlLocation="http://fake.com/services/Test?wsdl" service="TestService" port="TestPort">
+            <wsc:custom-transport-configuration>
+                <wsc:http-transport-configuration requesterConfig="HTTP_Request_Configuration"/>
+            </wsc:custom-transport-configuration>
+        </wsc:connection>
+    </wsc:config>
+
+</mule>
