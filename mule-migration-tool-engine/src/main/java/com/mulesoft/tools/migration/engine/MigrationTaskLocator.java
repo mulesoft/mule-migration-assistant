@@ -6,11 +6,6 @@
  */
 package com.mulesoft.tools.migration.engine;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.Lists.newArrayList;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-
 import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
@@ -30,12 +25,17 @@ import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationTask;
-import com.mulesoft.tools.migration.task.Version;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.engine.project.version.VersionUtils.isVersionGreaterOrEquals;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 /**
  * The goal of this class is to locate migration tasks
@@ -44,11 +44,11 @@ import java.util.stream.Collectors;
  */
 public class MigrationTaskLocator {
 
-  private Version from;
-  private Version to;
+  private String from;
+  private String to;
   private ProjectType projectType;
 
-  public MigrationTaskLocator(Version from, Version to, ProjectType projectType) {
+  public MigrationTaskLocator(String from, String to, ProjectType projectType) {
     checkArgument(from != null, "From must not be null");
     checkArgument(to != null, "To must not be null");
     checkArgument(projectType != null, "ProjectType must not be null");
@@ -77,7 +77,7 @@ public class MigrationTaskLocator {
       return FALSE;
     }
     if (projectType.equals(migrationTask.getProjectType())) {
-      if (from.matches(migrationTask.getFrom()) && to.matches(migrationTask.getTo())) {
+      if (isVersionGreaterOrEquals(migrationTask.getFrom(), from) && isVersionGreaterOrEquals(to, migrationTask.getTo())) {
         return TRUE;
       }
     }

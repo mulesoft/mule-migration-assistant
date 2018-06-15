@@ -22,7 +22,6 @@ import com.mulesoft.tools.migration.report.html.HTMLReport;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,8 +147,8 @@ public class MigrationJob implements Executable {
     private Path project;
     private Path outputProject;
     private ProjectType outputProjectType;
-    private Version inputVersion;
-    private Version outputVersion;
+    private String inputVersion;
+    private String outputVersion;
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
 
     public MigrationJobBuilder withProject(Path project) {
@@ -167,12 +166,12 @@ public class MigrationJob implements Executable {
       return this;
     }
 
-    public MigrationJobBuilder withInputVersion(Version inputVersion) {
+    public MigrationJobBuilder withInputVersion(String inputVersion) {
       this.inputVersion = inputVersion;
       return this;
     }
 
-    public MigrationJobBuilder withOuputVersion(Version outputVersion) {
+    public MigrationJobBuilder withOuputVersion(String outputVersion) {
       this.outputVersion = outputVersion;
       return this;
     }

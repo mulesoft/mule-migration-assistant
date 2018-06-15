@@ -47,7 +47,7 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     ProcessBuilder pb = new ProcessBuilder("java", "-jar", getProperty("migrator.runner"),
                                            "-projectBasePath", projectBasePath,
                                            "-destinationProjectBasePath", outPutPath,
-                                           "-muleVersion", "4.1.1");
+                                           "-muleVersion", getProperty("mule.version"));
     pb.redirectErrorStream(true);
     Process p = pb.start();
 

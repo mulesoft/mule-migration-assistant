@@ -6,25 +6,11 @@
  */
 package com.mulesoft.tools.migration.engine;
 
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.Version;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -40,6 +26,17 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 /**
  * @author Mulesoft Inc.
  */
@@ -53,6 +50,10 @@ public class MigrationJobTest {
   private static final String MULE_SAMPLE_XML = "mule-sample.xml";
   private static final Path MULE_EXAMPLES_PATH = Paths.get("mule/examples/core");
   private static final Path MULE_SAMPLE_PATH = MULE_EXAMPLES_PATH.resolve(MULE_SAMPLE_XML);
+
+  public static final String MULE_413_VERSION = "4.1.3";
+  public static final String MULE_380_VERSION = "3.8.0";
+  public static final String MULE_370_VERSION = "3.7.0";
 
   private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
   private MigrationJob migrationJob;
@@ -118,8 +119,8 @@ public class MigrationJobTest {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withProject(originalProjectPath)
         .withOutputProject(migratedProjectPath)
-        .withInputVersion(MULE_3_VERSION)
-        .withOuputVersion(MULE_4_VERSION)
+        .withInputVersion(MULE_380_VERSION)
+        .withOuputVersion(MULE_413_VERSION)
         .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
 
@@ -138,16 +139,8 @@ public class MigrationJobTest {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withProject(originalProjectPath)
         .withOutputProject(migratedProjectPath)
-        .withInputVersion(new Version.VersionBuilder()
-            .withMajor("3")
-            .withMinor("7")
-            .withRevision("0")
-            .build())
-        .withOuputVersion(new Version.VersionBuilder()
-            .withMajor("4")
-            .withMinor("3")
-            .withRevision("0")
-            .build())
+        .withInputVersion(MULE_370_VERSION)
+        .withOuputVersion(MULE_413_VERSION)
         .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
     migrationJob.execute(new DefaultMigrationReport());
@@ -158,8 +151,8 @@ public class MigrationJobTest {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withProject(originalProjectPath)
         .withOutputProject(migratedProjectPath)
-        .withInputVersion(MULE_3_VERSION)
-        .withOuputVersion(MULE_4_VERSION)
+        .withInputVersion(MULE_380_VERSION)
+        .withOuputVersion(MULE_413_VERSION)
         .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
 
@@ -171,8 +164,8 @@ public class MigrationJobTest {
     migrationJob = new MigrationJob.MigrationJobBuilder()
         .withProject(originalProjectPath)
         .withOutputProject(migratedProjectPath)
-        .withInputVersion(MULE_3_VERSION)
-        .withOuputVersion(MULE_4_VERSION)
+        .withInputVersion(MULE_380_VERSION)
+        .withOuputVersion(MULE_413_VERSION)
         .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
 

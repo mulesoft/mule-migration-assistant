@@ -54,6 +54,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <migrator.runner>${com.mulesoft.tools:mule-migration-tool-runner:jar:jar-with-dependencies}</migrator.runner>
+                        <mule.version>${mule.runtime.version}</mule.version>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
