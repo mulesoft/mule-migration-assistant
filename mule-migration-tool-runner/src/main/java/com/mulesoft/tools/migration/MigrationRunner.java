@@ -6,22 +6,13 @@
  */
 package com.mulesoft.tools.migration;
 
-import static com.mulesoft.tools.migration.engine.project.version.VersionUtils.buildVersion;
-import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
-import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationError;
-import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static java.lang.System.exit;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
+import com.google.common.base.Stopwatch;
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.Version;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -29,9 +20,14 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.google.common.base.Stopwatch;
-
 import java.nio.file.Paths;
+
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationError;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static java.lang.System.exit;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
@@ -47,12 +43,12 @@ public class MigrationRunner {
   private final static String DESTINATION_PROJECT_BASE_PATH = "destinationProjectBasePath";
   private final static String MULE_VERSION = "muleVersion";
   private final static String REPORT_HOME = "summary.html";
-  public static final Version MULE_3_VERSION = new Version.VersionBuilder().withMajor("3").build();
+  public static final String MULE_3_VERSION = "3.*.*";
   public static final ProjectType OUTPUT_PROJECT_TYPE = MULE_FOUR_APPLICATION;
 
   private String projectBasePath;
   private String destinationProjectBasePath;
-  private Version muleVersion;
+  private String muleVersion;
 
   public static void main(String args[]) throws Exception {
     Stopwatch stopwatch = Stopwatch.createStarted();
@@ -113,7 +109,7 @@ public class MigrationRunner {
       }
 
       if (line.hasOption(MULE_VERSION)) {
-        this.muleVersion = buildVersion(line.getOptionValue(MULE_VERSION));
+        this.muleVersion = line.getOptionValue(MULE_VERSION);
       } else {
         throw new ConsoleOptionsException("You must specify a destination project base path");
       }

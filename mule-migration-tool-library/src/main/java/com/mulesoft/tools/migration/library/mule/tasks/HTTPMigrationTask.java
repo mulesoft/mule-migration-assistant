@@ -6,11 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
-
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpBasicSecurity;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorHeaders;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener;
@@ -34,9 +29,13 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpsStaticResource;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.Version;
 
 import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 /**
  * Migration definition for HTTP component
@@ -52,12 +51,12 @@ public class HTTPMigrationTask extends AbstractMigrationTask {
   }
 
   @Override
-  public Version getTo() {
+  public String getTo() {
     return MULE_4_VERSION;
   }
 
   @Override
-  public Version getFrom() {
+  public String getFrom() {
     return MULE_3_VERSION;
   }
 

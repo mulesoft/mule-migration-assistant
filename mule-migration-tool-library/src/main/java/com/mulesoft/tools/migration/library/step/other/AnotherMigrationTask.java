@@ -9,7 +9,6 @@ package com.mulesoft.tools.migration.library.step.other;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.Version;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +21,12 @@ import java.util.List;
 public class AnotherMigrationTask extends AbstractMigrationTask {
 
   @Override
-  public Version getTo() {
+  public String getTo() {
     return null;
   }
 
   @Override
-  public Version getFrom() {
+  public String getFrom() {
     return null;
   }
 

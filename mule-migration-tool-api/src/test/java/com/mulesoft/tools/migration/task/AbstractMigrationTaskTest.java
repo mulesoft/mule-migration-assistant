@@ -218,12 +218,12 @@ public class AbstractMigrationTaskTest {
 
 
     @Override
-    public Version getTo() {
+    public String getTo() {
       return null;
     }
 
     @Override
-    public Version getFrom() {
+    public String getFrom() {
       return null;
     }
 

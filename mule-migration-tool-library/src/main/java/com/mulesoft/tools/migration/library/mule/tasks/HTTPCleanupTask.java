@@ -10,6 +10,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
+import static sun.rmi.transport.TransportConstants.Version;
 
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConfig;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpGlobalBuilders;
@@ -17,7 +18,6 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpMuleConfig;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.Version;
 
 import java.util.List;
 
@@ -35,12 +35,12 @@ public class HTTPCleanupTask extends AbstractMigrationTask {
   }
 
   @Override
-  public Version getTo() {
+  public String getTo() {
     return MULE_4_VERSION;
   }
 
   @Override
-  public Version getFrom() {
+  public String getFrom() {
     return MULE_3_VERSION;
   }
 

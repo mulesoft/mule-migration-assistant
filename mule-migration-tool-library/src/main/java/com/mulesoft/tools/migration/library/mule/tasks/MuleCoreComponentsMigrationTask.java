@@ -6,11 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
-
 import com.mulesoft.tools.migration.library.mule.steps.core.CatchExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExpressions;
@@ -29,9 +24,13 @@ import com.mulesoft.tools.migration.library.mule.steps.ee.EETransform;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.Version;
 
 import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 /**
  * Migration definition for Mule Core components
@@ -47,12 +46,12 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
   }
 
   @Override
-  public Version getTo() {
+  public String getTo() {
     return MULE_4_VERSION;
   }
 
   @Override
-  public Version getFrom() {
+  public String getFrom() {
     return MULE_3_VERSION;
   }
 

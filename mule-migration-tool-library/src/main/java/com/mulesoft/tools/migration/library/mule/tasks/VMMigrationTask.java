@@ -15,7 +15,6 @@ import com.mulesoft.tools.migration.library.mule.steps.vm.VmInboundEndpoint;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.Version;
 
 import java.util.List;
 
@@ -33,12 +32,12 @@ public class VMMigrationTask extends AbstractMigrationTask {
   }
 
   @Override
-  public Version getTo() {
+  public String getTo() {
     return MULE_4_VERSION;
   }
 
   @Override
-  public Version getFrom() {
+  public String getFrom() {
     return MULE_3_VERSION;
   }
 
