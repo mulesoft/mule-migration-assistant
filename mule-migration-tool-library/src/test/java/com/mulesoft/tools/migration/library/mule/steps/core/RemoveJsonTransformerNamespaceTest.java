@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.utils.ApplicationModelUtils.generateAppModel;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -52,6 +53,7 @@ public class RemoveJsonTransformerNamespaceTest {
     documentPath = this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString());
     applicationDocuments.add(documentPath);
     applicationModel = generateAppModel(applicationDocuments, projectPath);
+    applicationModel.setSupportedNamespaces(newArrayList());
   }
 
   @Test(expected = MigrationStepException.class)

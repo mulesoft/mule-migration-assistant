@@ -11,6 +11,8 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 /**
  * Migrates the spring configuration from the mule config to its own file.
  *
@@ -28,6 +30,7 @@ public class SpringConfigContainingMuleConfig extends AbstractSpringMigratorStep
 
   public SpringConfigContainingMuleConfig() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(SPRING_NAMESPACE));
   }
 
   @Override

@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.munit.steps;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.attributeToChildNode;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
@@ -18,6 +19,7 @@ import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 import java.util.List;
 
@@ -27,10 +29,12 @@ import java.util.List;
  */
 public class Mock extends AbstractApplicationModelMigrationStep {
 
-  private static final String MOCK_NAMESPACE = "http://www.mulesoft.org/schema/mule/mock";
+  private static final String MOCK_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/mock";
+  private static final String MOCK_NAMESPACE_PREFIX = "mock";
+  private static final Namespace MOCK_NAMESPACE = Namespace.getNamespace(MOCK_NAMESPACE_PREFIX, MOCK_NAMESPACE_URI);
   private static final String MUNIT_TOOLS_PREFIX = "munit-tools";
 
-  public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + MOCK_NAMESPACE + "'"
+  public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + MOCK_NAMESPACE_URI + "'"
       + " and local-name()='when']";
 
   @Override
@@ -40,6 +44,7 @@ public class Mock extends AbstractApplicationModelMigrationStep {
 
   public Mock() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(MOCK_NAMESPACE));
   }
 
   @Override

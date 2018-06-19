@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
-
 import com.mulesoft.tools.migration.step.AbstractGlobalEndpointMigratorStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -22,6 +20,8 @@ import org.jdom2.Namespace;
  */
 public class HttpsGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
+  private static final String HTTP_NS_PREFIX = "http";
+  private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
   public static final String XPATH_SELECTOR =
       "/mule:mule/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/https' and local-name() = 'endpoint']";
 
@@ -37,7 +37,7 @@ public class HttpsGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     doExecute(object, report);
-    getApplicationModel().addNameSpace(HTTP.prefix(), HTTP.uri(),
+    getApplicationModel().addNameSpace(HTTP_NS_PREFIX, HTTP_NS_URI,
                                        "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
   }
 

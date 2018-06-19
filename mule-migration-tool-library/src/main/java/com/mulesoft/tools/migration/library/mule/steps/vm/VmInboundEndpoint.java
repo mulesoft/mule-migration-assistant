@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.vm;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -14,6 +15,7 @@ import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the inbound endpoint of the VM Transport
@@ -24,6 +26,9 @@ import org.jdom2.Element;
 public class VmInboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
+  private static final String VM_NAMESPACE_PREFIX = "vm";
+  private static final String VM_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/transport/vm";
+  private static final Namespace VM_NAMESPACE = Namespace.getNamespace(VM_NAMESPACE_PREFIX, VM_NAMESPACE_URI);
   public static final String XPATH_SELECTOR = "/mule:mule/mule:flow/vm:inbound-endpoint";
 
   private ExpressionMigrator expressionMigrator;
@@ -35,6 +40,7 @@ public class VmInboundEndpoint extends AbstractApplicationModelMigrationStep
 
   public VmInboundEndpoint() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(VM_NAMESPACE));
   }
 
   @Override

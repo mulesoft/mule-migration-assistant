@@ -12,8 +12,12 @@ import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
 
+import org.jdom2.Namespace;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Basic unit of execution.
@@ -25,8 +29,8 @@ import org.jdom2.xpath.XPathFactory;
 public abstract class AbstractApplicationModelMigrationStep implements ApplicationModelContribution {
 
   private XPathExpression appliedTo;
-
   private ApplicationModel applicationModel;
+  public List<Namespace> namespacesContribution = new ArrayList<>();
 
   @Override
   public XPathExpression getAppliedTo() {
@@ -53,4 +57,18 @@ public abstract class AbstractApplicationModelMigrationStep implements Applicati
     this.applicationModel = applicationModel;
   }
 
+  @Override
+  public String getDescription() {
+    return "";
+  }
+
+  @Override
+  public List<Namespace> getNamespacesContributions() {
+    return namespacesContribution;
+  }
+
+  @Override
+  public void setNamespacesContributions(List<Namespace> namespaces) {
+    this.namespacesContribution = namespaces;
+  }
 }

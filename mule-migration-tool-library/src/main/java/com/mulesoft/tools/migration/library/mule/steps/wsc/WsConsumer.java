@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.wsc;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
@@ -28,6 +29,9 @@ import java.util.Map;
  */
 public class WsConsumer extends AbstractApplicationModelMigrationStep {
 
+  private static final String WSC_NAMESPACE_PREFIX = "wsc";
+  private static final String WSC_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/wsc";
+  private static final Namespace WSC_NAMESPACE = Namespace.getNamespace(WSC_NAMESPACE_PREFIX, WSC_NAMESPACE_URI);
   public static final String XPATH_SELECTOR = "/mule:mule//ws:consumer";
 
   @Override
@@ -37,14 +41,15 @@ public class WsConsumer extends AbstractApplicationModelMigrationStep {
 
   public WsConsumer() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(WSC_NAMESPACE));
   }
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace wscNamespace = Namespace.getNamespace("wsc", "http://www.mulesoft.org/schema/mule/wsc");
-    getApplicationModel().addNameSpace(wscNamespace.getPrefix(), wscNamespace.getURI(),
+
+    getApplicationModel().addNameSpace(WSC_NAMESPACE_PREFIX, WSC_NAMESPACE_URI,
                                        "http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd");
-    object.setNamespace(wscNamespace);
+    object.setNamespace(WSC_NAMESPACE);
     object.setName("consume");
 
     addAttributesToInboundProperties(object, report);
@@ -61,7 +66,7 @@ public class WsConsumer extends AbstractApplicationModelMigrationStep {
     // org.mule.module.ws.consumer.WSConsumer.copyAttachmentsRequest(MuleEvent) in 3.x
 
     if (object.getAttribute("mtomEnabled") != null) {
-      copyAttributeIfPresent(object, config.getChild("connection", wscNamespace), "mtomEnabled");
+      copyAttributeIfPresent(object, config.getChild("connection", WSC_NAMESPACE), "mtomEnabled");
       object.removeAttribute("mtomEnabled");
     }
   }

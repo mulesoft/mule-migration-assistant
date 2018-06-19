@@ -31,7 +31,10 @@ public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplica
     implements ExpressionMigratorAware {
 
   public static final String HTTP_NAMESPACE = "http://www.mulesoft.org/schema/mule/http";
-  protected static final String TLS_NAMESPACE = "http://www.mulesoft.org/schema/mule/tls";
+  protected static final String TLS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/tls";
+  protected static final String TLS_NAMESPACE_PREFIX = "tls";
+  protected static final Namespace TLS_NAMESPACE = Namespace.getNamespace(TLS_NAMESPACE_PREFIX, TLS_NAMESPACE_URI);
+
   private ExpressionMigrator expressionMigrator;
 
   protected void setMule4MapBuilderTagText(int idx, String tagName, Element parentTag, Namespace httpNamespace,

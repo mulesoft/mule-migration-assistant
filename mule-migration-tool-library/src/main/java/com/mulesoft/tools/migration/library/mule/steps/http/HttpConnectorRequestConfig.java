@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
@@ -24,7 +25,9 @@ import org.jdom2.Namespace;
  */
 public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationStep {
 
-  private static final String TCP_NAMESPACE = "http://www.mulesoft.org/schema/mule/tcp";
+  private static final String TCP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/tcp";
+  private static final String TCP_NAMESPACE_PREFIX = "tcp";
+  private static final Namespace TCP_NAMESPACE = Namespace.getNamespace(TCP_NAMESPACE_PREFIX, TCP_NAMESPACE_URI);
 
   public static final String XPATH_SELECTOR = ""
       + "/mule:mule/http:*["
@@ -40,6 +43,7 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
 
   public HttpConnectorRequestConfig() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(TLS_NAMESPACE, TCP_NAMESPACE));
   }
 
   @Override
@@ -77,11 +81,11 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
         execute(c, report);
-      } else if (TLS_NAMESPACE.equals(c.getNamespaceURI()) && "context".equals(c.getName())) {
+      } else if (TLS_NAMESPACE_URI.equals(c.getNamespaceURI()) && "context".equals(c.getName())) {
         final Element requestConnection = c.getParentElement().getChild("request-connection", httpNamespace);
         c.getParentElement().removeContent(c);
         requestConnection.addContent(c);
-      } else if (TCP_NAMESPACE.equals(c.getNamespaceURI()) && "client-socket-properties".equals(c.getName())) {
+      } else if (TCP_NAMESPACE_URI.equals(c.getNamespaceURI()) && "client-socket-properties".equals(c.getName())) {
         final Element clientSocketPropsContainer = new Element("client-socket-properties", httpNamespace);
         final Element requestConnection = c.getParentElement().getChild("request-connection", httpNamespace);
 

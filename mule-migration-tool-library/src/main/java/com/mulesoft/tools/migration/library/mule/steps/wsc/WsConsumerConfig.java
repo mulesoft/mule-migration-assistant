@@ -14,7 +14,6 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.TLS;
 import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -170,7 +169,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
 
     Namespace ws3Namespace = Namespace.getNamespace("ws", "http://www.mulesoft.org/schema/mule/ws");
     if (object.getChild("security", ws3Namespace) != null) {
-      Namespace tlsNamespace = Namespace.getNamespace(TLS.prefix(), TLS.uri());
+      Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
       Element security = object.getChild("security", ws3Namespace);
 
       security.setName("web-service-security");

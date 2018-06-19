@@ -13,12 +13,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import scala.Int;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Attributes;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addChildNode;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 
@@ -36,8 +37,10 @@ public class Poll extends AbstractApplicationModelMigrationStep {
   private static final String POLL_NEW_NAME = "scheduler";
   private static final String PROCESSOR_CHAIN = "processor-chain";
   private static final String XPATH_SELECTOR = "//*[local-name()='poll']";
-  private static final String SCHEDULERS_NAMESPACE = "http://www.mulesoft.org/schema/mule/schedulers";
-  private static final String SCHEDULERS_NAME = "schedulers";
+  private static final String SCHEDULERS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/schedulers";
+  private static final String SCHEDULERS_NAMESPACE_PREFIX = "schedulers";
+  private static final Namespace SCHEDULERS_NAMESPACE =
+      Namespace.getNamespace(SCHEDULERS_NAMESPACE_PREFIX, SCHEDULERS_NAMESPACE_URI);
   private static final String CORE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/core";
   private static final String CORE_NAME = "mule";
   private static final Namespace CORE_NAMESPACE = Namespace.getNamespace(CORE_NAME, CORE_NAMESPACE_URI);
@@ -49,6 +52,7 @@ public class Poll extends AbstractApplicationModelMigrationStep {
 
   public Poll() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(CORE_NAMESPACE, SCHEDULERS_NAMESPACE));
   }
 
   @Override
@@ -83,9 +87,8 @@ public class Poll extends AbstractApplicationModelMigrationStep {
   }
 
   private void updateCronScheduler(Element element) {
-    Namespace cronNamespace = Namespace.getNamespace(SCHEDULERS_NAME, SCHEDULERS_NAMESPACE);
-    if (element.getChild(CRON_FREQ_SCHEDULER, cronNamespace) != null) {
-      Element cronScheduler = element.getChild(CRON_FREQ_SCHEDULER, cronNamespace);
+    if (element.getChild(CRON_FREQ_SCHEDULER, SCHEDULERS_NAMESPACE) != null) {
+      Element cronScheduler = element.getChild(CRON_FREQ_SCHEDULER, SCHEDULERS_NAMESPACE);
       moveSchedulerToSchedulingStrategy(cronScheduler, "cron");
       moveAttributeToChildNode(cronScheduler.getAttribute("expression"), element, "cron");
       moveAttributeToChildNode(cronScheduler.getAttribute("timeZone"), element, "cron");

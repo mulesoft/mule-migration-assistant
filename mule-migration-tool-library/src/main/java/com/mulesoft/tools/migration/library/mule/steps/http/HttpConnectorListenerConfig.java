@@ -59,7 +59,7 @@ public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationS
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
         execute(c, report);
-      } else if (TLS_NAMESPACE.equals(c.getNamespaceURI()) && "context".equals(c.getName())) {
+      } else if (TLS_NAMESPACE_URI.equals(c.getNamespaceURI()) && "context".equals(c.getName())) {
         final Element listenerConnection = c.getParentElement().getChild("listener-connection", httpNamespace);
         c.getParentElement().removeContent(c);
         listenerConnection.addContent(c);

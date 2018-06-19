@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.helper;
 
 import static java.util.Collections.emptyList;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory;
 
@@ -56,7 +57,6 @@ public class DocumentHelper {
   public static List<Element> getElementsFromDocument(Document doc, String xPathExpression, String defaultNamespacePrefix) {
     List<Namespace> namespaces = new ArrayList<>();
     namespaces.addAll(doc.getRootElement().getAdditionalNamespaces());
-    namespaces.addAll(AdditionalNamespacesFactory.getDocumentNamespaces(doc));
 
     if (namespaces.stream().noneMatch(n -> defaultNamespacePrefix.equals(n.getPrefix()))) {
       namespaces.add(Namespace.getNamespace(defaultNamespacePrefix, doc.getRootElement().getNamespace().getURI()));

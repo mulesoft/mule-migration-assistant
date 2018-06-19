@@ -14,7 +14,6 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInbo
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -39,6 +38,8 @@ import java.util.Map;
 public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
+  private static final String FILE_NS_PREFIX = "file";
+  private static final String FILE_NS_URI = "http://www.mulesoft.org/schema/mule/file";
   public static final String XPATH_SELECTOR = "/mule:mule/mule:flow/file:inbound-endpoint[1]";
 
   private ExpressionMigrator expressionMigrator;
@@ -54,7 +55,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace fileNs = Namespace.getNamespace(FILE.prefix(), FILE.uri());
+    Namespace fileNs = Namespace.getNamespace(FILE_NS_PREFIX, FILE_NS_URI);
 
     object.setName("listener");
 

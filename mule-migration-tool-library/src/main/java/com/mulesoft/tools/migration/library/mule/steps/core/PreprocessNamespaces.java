@@ -37,13 +37,15 @@ public class PreprocessNamespaces implements NamespaceContribution {
   @Override
   public void execute(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
     List<Document> documents = applicationModel.getApplicationDocuments().values().stream().collect(Collectors.toList());
-    documents.forEach(d -> addReportEntries(d, report));
+    documents.forEach(d -> addReportEntries(d, report, applicationModel));
   }
 
-  public void addReportEntries(Document document, MigrationReport report) {
+  public void addReportEntries(Document document, MigrationReport report, ApplicationModel applicationModel) {
     List<Namespace> unsupportedNamespaces =
-        document.getRootElement().getAdditionalNamespaces().stream().filter(n -> getElementsWithNamespace(document, n).size() > 0
-            && !containsNamespace(n)).collect(Collectors.toList());
+        document.getRootElement().getAdditionalNamespaces().stream()
+            .filter(n -> !getElementsWithNamespace(document, n, applicationModel).isEmpty()
+                && !containsNamespace(n, applicationModel.getSupportedNamespaces()))
+            .collect(Collectors.toList());
 
     unsupportedNamespaces.forEach(n -> report.report(ERROR, document.getRootElement(), document.getRootElement(),
                                                      "Didn't find migration rules for the following component: " + n.getPrefix()

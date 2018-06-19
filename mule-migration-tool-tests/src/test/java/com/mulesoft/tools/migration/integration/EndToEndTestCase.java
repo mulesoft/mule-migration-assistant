@@ -48,6 +48,7 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
                                            "-projectBasePath", projectBasePath,
                                            "-destinationProjectBasePath", outPutPath,
                                            "-muleVersion", getProperty("mule.version"));
+
     pb.redirectErrorStream(true);
     Process p = pb.start();
 

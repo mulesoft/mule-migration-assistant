@@ -8,7 +8,6 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.HTTP;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -27,6 +26,8 @@ import java.util.Optional;
  */
 public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
 
+  private static final String HTTP_NS_PREFIX = "http";
+  private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
   public static final String XPATH_SELECTOR =
       "/mule:mule//https:outbound-endpoint";
 
@@ -49,7 +50,7 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
     }
 
     super.execute(object, report);
-    getApplicationModel().addNameSpace(HTTP.prefix(), HTTP.uri(),
+    getApplicationModel().addNameSpace(HTTP_NS_PREFIX, HTTP_NS_URI,
                                        "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
     Element httpsRequesterConnection = getApplicationModel().getNode("/mule:mule/http:request-config[@name = '"

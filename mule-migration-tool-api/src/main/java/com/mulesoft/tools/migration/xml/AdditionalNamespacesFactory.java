@@ -6,18 +6,21 @@
  */
 package com.mulesoft.tools.migration.xml;
 
+import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import com.mulesoft.tools.migration.task.MigrationStepSelector;
+import com.mulesoft.tools.migration.task.MigrationTask;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Document;
 import org.jdom2.Namespace;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 
 /**
  * Generates a {@link List<Namespace>}
@@ -27,26 +30,40 @@ import java.util.stream.Collectors;
  */
 public class AdditionalNamespacesFactory {
 
-  public static List<Namespace> getAdditionalNamespaces() {
-    List<Namespace> namespaces = new ArrayList<>();
-    Arrays.stream(AdditionalNamespaces.values()).forEach(n -> namespaces.add(Namespace.getNamespace(n.prefix(), n.uri())));
-    return namespaces;
-  }
-
-  public static List<Namespace> getDocumentNamespaces(Document document) {
+  public static List<Namespace> getDocumentNamespaces(Document document, List<Namespace> tasksSupportedNamespaces) {
     Map<String, String> namespaces = new HashMap<>();
     List<Namespace> documentNamespaces = new ArrayList<>();
     document.getRootElement().getAdditionalNamespaces().forEach(n -> namespaces.computeIfAbsent(n.getURI(), k -> n.getPrefix()));
-    getAdditionalNamespaces().forEach(n -> namespaces.computeIfAbsent(n.getURI(), k -> n.getPrefix()));
+
+    if (tasksSupportedNamespaces != null) {
+      tasksSupportedNamespaces.stream()
+          .filter(n -> namespaces.get(n.getURI()) == null)
+          .filter(n -> !namespaces.containsValue(n.getPrefix()))
+          .forEach(n -> namespaces.put(n.getURI(), n.getPrefix()));
+    }
 
     documentNamespaces.addAll(namespaces.entrySet().stream()
-        .map(namespace -> Namespace.getNamespace(namespace.getValue(), namespace.getKey())).collect(Collectors.toList()));
+        .map(namespace -> Namespace.getNamespace(namespace.getValue(), namespace.getKey()))
+        .collect(Collectors.toList()));
 
     return documentNamespaces;
   }
 
-  public static boolean containsNamespace(Namespace ns) {
-    List<Namespace> validNamespaces = getAdditionalNamespaces();
-    return validNamespaces.stream().anyMatch(n -> StringUtils.equalsIgnoreCase(n.getURI(), ns.getURI()));
+  public static List<Namespace> getTasksDeclaredNamespaces(List<AbstractMigrationTask> migrationTasks) {
+    List<Namespace> taskSupportedNamespaces = new ArrayList<>();
+    for (MigrationTask task : ofNullable(migrationTasks).orElse(emptyList())) {
+      MigrationStepSelector stepSelector = new MigrationStepSelector(task.getSteps());
+      stepSelector.getApplicationModelContributionSteps()
+          .forEach(s -> taskSupportedNamespaces.addAll(s.getNamespacesContributions()));
+    }
+    return taskSupportedNamespaces;
+  }
+
+  public static boolean containsNamespace(Namespace ns, List<Namespace> tasksSupportedNamespaces) {
+    if (tasksSupportedNamespaces != null) {
+      return tasksSupportedNamespaces.stream().anyMatch(n -> StringUtils.equalsIgnoreCase(n.getURI(), ns.getURI()));
+    } else {
+      return false;
+    }
   }
 }

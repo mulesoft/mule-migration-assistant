@@ -17,6 +17,7 @@ import org.jdom2.Namespace;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.migrateDWToV2;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
@@ -47,6 +48,7 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
 
   public EETransform() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(Namespace.getNamespace("dw", DW_NAMESPACE_URI)));
   }
 
   @Override

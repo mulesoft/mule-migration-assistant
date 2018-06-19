@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.file;
 
-import static com.mulesoft.tools.migration.xml.AdditionalNamespaces.FILE;
-
 import com.mulesoft.tools.migration.step.AbstractGlobalEndpointMigratorStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -40,7 +38,7 @@ public class FileGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
   @Override
   protected Namespace getNamespace() {
-    return Namespace.getNamespace(FILE.prefix(), FILE.uri());
+    return Namespace.getNamespace("file", "http://www.mulesoft.org/schema/mule/file");
   }
 
 }
