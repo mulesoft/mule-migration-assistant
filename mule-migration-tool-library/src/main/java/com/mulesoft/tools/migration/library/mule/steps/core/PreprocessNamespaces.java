@@ -43,7 +43,7 @@ public class PreprocessNamespaces implements NamespaceContribution {
   public void addReportEntries(Document document, MigrationReport report, ApplicationModel applicationModel) {
     List<Namespace> unsupportedNamespaces =
         document.getRootElement().getAdditionalNamespaces().stream()
-            .filter(n -> getElementsWithNamespace(document, n, applicationModel).size() > 0
+            .filter(n -> !getElementsWithNamespace(document, n, applicationModel).isEmpty()
                 && !containsNamespace(n, applicationModel.getSupportedNamespaces()))
             .collect(Collectors.toList());
 

@@ -59,7 +59,7 @@ public abstract class AbstractApplicationModelMigrationStep implements Applicati
 
   @Override
   public String getDescription() {
-    return null;
+    return "";
   }
 
   @Override

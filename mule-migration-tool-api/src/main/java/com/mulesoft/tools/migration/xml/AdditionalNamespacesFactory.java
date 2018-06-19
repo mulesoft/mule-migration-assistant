@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
+
 /**
  * Generates a {@link List<Namespace>}
  *
@@ -32,10 +35,12 @@ public class AdditionalNamespacesFactory {
     List<Namespace> documentNamespaces = new ArrayList<>();
     document.getRootElement().getAdditionalNamespaces().forEach(n -> namespaces.computeIfAbsent(n.getURI(), k -> n.getPrefix()));
 
-    tasksSupportedNamespaces.stream()
-        .filter(n -> namespaces.get(n.getURI()) == null)
-        .filter(n -> !namespaces.containsValue(n.getPrefix()))
-        .forEach(n -> namespaces.put(n.getURI(), n.getPrefix()));
+    if (tasksSupportedNamespaces != null) {
+      tasksSupportedNamespaces.stream()
+          .filter(n -> namespaces.get(n.getURI()) == null)
+          .filter(n -> !namespaces.containsValue(n.getPrefix()))
+          .forEach(n -> namespaces.put(n.getURI(), n.getPrefix()));
+    }
 
     documentNamespaces.addAll(namespaces.entrySet().stream()
         .map(namespace -> Namespace.getNamespace(namespace.getValue(), namespace.getKey()))
@@ -46,7 +51,7 @@ public class AdditionalNamespacesFactory {
 
   public static List<Namespace> getTasksDeclaredNamespaces(List<AbstractMigrationTask> migrationTasks) {
     List<Namespace> taskSupportedNamespaces = new ArrayList<>();
-    for (MigrationTask task : migrationTasks) {
+    for (MigrationTask task : ofNullable(migrationTasks).orElse(emptyList())) {
       MigrationStepSelector stepSelector = new MigrationStepSelector(task.getSteps());
       stepSelector.getApplicationModelContributionSteps()
           .forEach(s -> taskSupportedNamespaces.addAll(s.getNamespacesContributions()));
@@ -55,6 +60,10 @@ public class AdditionalNamespacesFactory {
   }
 
   public static boolean containsNamespace(Namespace ns, List<Namespace> tasksSupportedNamespaces) {
-    return tasksSupportedNamespaces.stream().anyMatch(n -> StringUtils.equalsIgnoreCase(n.getURI(), ns.getURI()));
+    if (tasksSupportedNamespaces != null) {
+      return tasksSupportedNamespaces.stream().anyMatch(n -> StringUtils.equalsIgnoreCase(n.getURI(), ns.getURI()));
+    } else {
+      return false;
+    }
   }
 }
