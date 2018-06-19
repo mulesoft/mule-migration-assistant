@@ -48,8 +48,7 @@ public class DbDdlExecuteTest {
     return new Object[] {
         "db-ddl-execute-01",
         "db-ddl-execute-02",
-        // TODO MMT-128
-        // "db-ddl-execute-03"
+        "db-ddl-execute-03"
     };
   }
 
@@ -79,7 +78,7 @@ public class DbDdlExecuteTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     dbDdlExecute.setApplicationModel(appModel);
-    dbDdlExecute.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    dbDdlExecute.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
   @Test

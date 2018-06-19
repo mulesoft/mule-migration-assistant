@@ -17,7 +17,7 @@
     <flow name="TestOut">
         <compatibility:outbound-properties-to-var/>
            <!-- TODO  (mel:header:TARGET_FILE)) -->
-        <file:write config-ref="fileConnector" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: null, address: null, outputPattern: null, outputPatternConfig: mel:header:TARGET_FILE})]" mode="APPEND"/>
+        <file:write config-ref="fileConnector" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: null, address: null, outputPattern: null, outputPatternConfig: TARGET_FILE})]" mode="APPEND"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
     

@@ -63,8 +63,7 @@ public class HttpInboundTest {
         "http-inbound-11",
         "http-inbound-12",
         "http-inbound-13",
-        // TODO MMT-128
-        // "http-inbound-14",
+        "http-inbound-14",
         "http-inbound-15",
         "http-inbound-16",
         "http-inbound-17",
@@ -131,7 +130,7 @@ public class HttpInboundTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     when(appModel.getPomModel()).thenReturn(empty());
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock);
+    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);

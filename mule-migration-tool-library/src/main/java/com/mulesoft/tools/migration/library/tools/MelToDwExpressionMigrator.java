@@ -7,7 +7,9 @@
 package com.mulesoft.tools.migration.library.tools;
 
 import com.mulesoft.tools.Migrator;
-import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
+import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 
@@ -28,8 +30,12 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
 
   private final Pattern EXPRESSION_WRAPPER = Pattern.compile("^\\s*#\\[(.*)]\\s*$", Pattern.DOTALL);
 
-  public MelToDwExpressionMigrator(MigrationReport report) {
+  private final MelCompatibilityResolver compatibilityResolver = new MelCompatibilityResolver();
+  private final ApplicationModel model;
+
+  public MelToDwExpressionMigrator(MigrationReport report, ApplicationModel model) {
     this.report = report;
+    this.model = model;
   }
 
   @Override
@@ -38,6 +44,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
       return originalExpression;
     }
     String unwrapped = unwrap(originalExpression);
+    unwrapped = unwrapped.replaceAll("mel:", "");
     if (!unwrapped.contains("#[")) {
       return wrap(translateSingleExpression(unwrapped, dataWeaveBodyOnly, element));
     }
@@ -52,15 +59,15 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     try {
       migratedExpression = Migrator.migrate(unwrappedExpression);
     } catch (Exception e) {
-      report.report(MigrationReport.Level.WARN, element, element,
-                    "MEL expression could not be migrated to a DataWeave expression",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-mel",
-                    "https://blogs.mulesoft.com/dev/mule-dev/why-dataweave-main-expression-language-mule-4/");
-      return "mel:" + unwrappedExpression;
+      return compatibilityResolver.resolve(unwrappedExpression, element, report, model);
     }
-    migratedExpression = migratedExpression.replaceAll("flowVars", "vars").replaceAll("message.inboundProperties",
-                                                                                      "vars.compatibility_inboundProperties");
+    migratedExpression = resolveIdentifiers(migratedExpression);
     return dataWeaveBodyOnly ? migratedExpression.replaceFirst("---", "").trim() : migratedExpression;
+  }
+
+  public String resolveIdentifiers(String expression) {
+    return expression.replaceAll("flowVars", "vars").replaceAll("message\\.inboundProperties",
+                                                                "vars.compatibility_inboundProperties");
   }
 
   @Override

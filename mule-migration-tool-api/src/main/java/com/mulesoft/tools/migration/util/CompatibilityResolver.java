@@ -4,20 +4,22 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.step;
+package com.mulesoft.tools.migration.util;
 
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
-
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import org.jdom2.Element;
 
 /**
- * Element that can has an expression migrator. All steps that use an expression migrator should implement this interface.
+ * Comptibility resolver
  *
+ * @param <T>
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public interface ExpressionMigratorAware {
+public interface CompatibilityResolver<T> {
 
-  void setExpressionMigrator(ExpressionMigrator expressionMigrator);
+  boolean canResolve(T original);
 
-  ExpressionMigrator getExpressionMigrator();
+  T resolve(T original, Element element, MigrationReport report, ApplicationModel model);
 }

@@ -56,8 +56,7 @@ public class DbUpdateTest {
         "db-update-08",
         "db-update-09",
         "db-update-10",
-        // TODO MMT-128
-        // "db-update-11",
+        "db-update-11",
         "db-update-12",
         "db-update-13",
         "db-update-14",
@@ -65,8 +64,7 @@ public class DbUpdateTest {
         "db-update-16",
         "db-update-17",
         "db-update-18",
-        // TODO MMT-128
-        // "db-update-19",
+        "db-update-19",
         "db-update-20",
     };
   }
@@ -97,7 +95,7 @@ public class DbUpdateTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     dbUpdate.setApplicationModel(appModel);
-    dbUpdate.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    dbUpdate.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
   @Test

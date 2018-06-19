@@ -87,13 +87,14 @@ public class FileConfigTest {
 
     fileGlobalEndpoint = new FileGlobalEndpoint();
     fileConfig = new FileConfig();
-    fileConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    fileConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
     fileConfig.setApplicationModel(appModel);
     fileInboundEndpoint = new FileInboundEndpoint();
     fileInboundEndpoint.setApplicationModel(appModel);
     fileOutboundEndpoint = new FileOutboundEndpoint();
     fileOutboundEndpoint.setApplicationModel(appModel);
-    fileOutboundEndpoint.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    fileOutboundEndpoint
+        .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
   @Ignore

@@ -8,9 +8,13 @@ package com.mulesoft.tools.migration.library.mule.steps.db;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 
+import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
+import com.mulesoft.tools.migration.library.tools.mel.HeaderSyntaxCompatibilityResolver;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.jdom2.Element;
 
 /**
@@ -36,7 +40,6 @@ public class DbExecute extends AbstractDbOperationMigrator {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setName("execute-script");
-
     if (object.getAttribute("file") == null) {
       String sql = getExpressionMigrator().migrateExpression(object.getText(), true, object);
       object.removeContent();
@@ -50,7 +53,8 @@ public class DbExecute extends AbstractDbOperationMigrator {
       object.removeAttribute("source");
     }
 
-    migrateOperationStructure(getApplicationModel(), object, report, false);
+    migrateOperationStructure(getApplicationModel(), object, report, false, getExpressionMigrator(),
+                              new DefaultMelCompatibilityResolver());
   }
 
 

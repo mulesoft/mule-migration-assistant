@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.ee;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
@@ -32,7 +33,7 @@ import static org.jdom2.Namespace.getNamespace;
  */
 public class EETransform extends AbstractApplicationModelMigrationStep {
 
-  private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
+  public static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
   private static final String DW_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ee/dw";
   private static final String DW_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd";
   private static final String EE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ee/core";
@@ -113,14 +114,9 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
   }
 
   private void addOutboundProperty(Element element, MigrationReport report) {
-    addCompatibilityNamespace(this.getApplicationModel(), element.getDocument());
-    Element setProperty = new Element("set-property", Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
     Attribute propName = element.getAttribute("variableName");
-    setProperty.setAttribute(new Attribute("propertyName", propName.getValue()));
-    setProperty.setAttribute(new Attribute("value", "#[vars." + propName.getValue() + "]"));
-
-    addElementAfter(setProperty, element.getParentElement());
-
+    Element setProperty =
+        XmlDslUtils.addOutboundPropertySetter(propName.getValue(), element, getApplicationModel(), element.getParentElement());
     report.report(WARN, setProperty, setProperty,
                   "Instead of setting outbound properties in the flow, you can set Variables.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");

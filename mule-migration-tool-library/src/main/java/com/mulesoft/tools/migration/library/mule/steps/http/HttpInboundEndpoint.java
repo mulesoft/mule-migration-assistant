@@ -25,7 +25,7 @@ import static java.lang.System.lineSeparator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.lang3.StringUtils;
@@ -381,7 +381,8 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     }
 
     if (responseBuilder.getAttribute("status") != null) {
-      listenerResponse.setAttribute("statusCode", responseBuilder.getAttributeValue("status"));
+      listenerResponse.setAttribute("statusCode", getExpressionMigrator()
+          .migrateExpression(responseBuilder.getAttributeValue("status"), false, listenerResponse));
     }
 
     if (responseBuilder.getAttribute("contentType") != null) {

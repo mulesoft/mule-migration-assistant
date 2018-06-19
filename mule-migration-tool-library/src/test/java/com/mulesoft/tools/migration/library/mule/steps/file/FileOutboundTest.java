@@ -84,7 +84,8 @@ public class FileOutboundTest {
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(mock(MigrationReport.class));
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class));
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
@@ -92,7 +93,7 @@ public class FileOutboundTest {
     fileGlobalEndpoint = new FileGlobalEndpoint();
     fileGlobalEndpoint.setApplicationModel(appModel);
     fileConfig = new FileConfig();
-    fileConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class)));
+    fileConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
     fileConfig.setApplicationModel(appModel);
 
     fileOutboundEndpoint = new FileOutboundEndpoint();

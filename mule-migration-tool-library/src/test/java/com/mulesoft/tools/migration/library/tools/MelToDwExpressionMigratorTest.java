@@ -6,7 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.tools;
 
-import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
@@ -28,11 +29,13 @@ public class MelToDwExpressionMigratorTest {
 
   private ExpressionMigrator expressionMigrator;
   private MigrationReport reportMock;
+  private ApplicationModel modelMock;
 
   @Before
   public void setUp() {
     reportMock = mock(MigrationReport.class);
-    expressionMigrator = new MelToDwExpressionMigrator(reportMock);
+    modelMock = mock(ApplicationModel.class);
+    expressionMigrator = new MelToDwExpressionMigrator(reportMock, modelMock);
   }
 
   @Test
@@ -152,7 +155,7 @@ public class MelToDwExpressionMigratorTest {
   @Test
   public void migrateNotMigratableExpression() {
     Element elementMock = mock(Element.class);
-    String originalExpression = "OUTBOUND::BLA";
+    String originalExpression = "OUTBOUND:BLA";
     String migratedExpression = expressionMigrator.migrateExpression("#[" + originalExpression + "]", false, elementMock);
     verify(reportMock).report(eq(MigrationReport.Level.WARN), eq(elementMock), eq(elementMock), anyString(), anyString(),
                               anyString());

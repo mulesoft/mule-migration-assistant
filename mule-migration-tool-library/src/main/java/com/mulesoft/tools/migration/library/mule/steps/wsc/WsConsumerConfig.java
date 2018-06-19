@@ -18,9 +18,9 @@ import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.step.category.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
