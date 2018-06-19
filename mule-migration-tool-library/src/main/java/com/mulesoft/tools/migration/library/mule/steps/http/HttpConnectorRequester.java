@@ -82,9 +82,6 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     migrateExpression(object.getAttribute("method"), getExpressionMigrator());
     migrateExpression(object.getAttribute("followRedirects"), getExpressionMigrator());
 
-    XmlDslUtils.migrateEnrichers(object, getExpressionMigrator(), new MelCompatibilityResolver(), getApplicationModel(),
-                                 report);
-
 
     addAttributesToInboundProperties(object, report);
 
@@ -156,7 +153,8 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
   }
 
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
-    migrateOperationStructure(getApplicationModel(), object, report);
+    migrateOperationStructure(getApplicationModel(), object, report, true, getExpressionMigrator(),
+                              new MelCompatibilityResolver());
 
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("http.status", "message.attributes.statusCode");
