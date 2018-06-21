@@ -29,14 +29,6 @@ import java.util.List;
  */
 public class MessagePropertiesTransformer extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  private static final String OUTBOUND_PROPERTIES_REPORT_MESSAGE =
-      "Instead of using properties in the flow, its values must be set explicitly in the operation/listener.";
-  private static final String OUTBOUND_PROPERTIES_DOC_LINK =
-      "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties";
-  private static final String SESSION_VARS_REPORT_MESSAGE = "Instead of using session variables in the flow, use variables.";
-  private static final String SESSION_VARS_DOC_LINK =
-      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties";
-
   private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
 
   public static final String XPATH_SELECTOR = "//*[local-name()='message-properties-transformer']";
@@ -56,11 +48,11 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
     Namespace compatibilityNamespace = Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE);
 
     if (element.getAttribute("scope") == null) {
-      report.report(WARN, element, element, OUTBOUND_PROPERTIES_REPORT_MESSAGE, OUTBOUND_PROPERTIES_DOC_LINK);
+      report.report(WARN, element, element, "Instead of using properties in the flow, its values must be set explicitly in the operation/listener.", "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
       element.setNamespace(compatibilityNamespace);
     }
     if ("session".equals(element.getAttributeValue("scope"))) {
-      report.report(WARN, element, element, SESSION_VARS_REPORT_MESSAGE, SESSION_VARS_DOC_LINK);
+      report.report(WARN, element, element, "Instead of using session variables in the flow, use variables.", "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
       element.setNamespace(compatibilityNamespace);
     }
 
