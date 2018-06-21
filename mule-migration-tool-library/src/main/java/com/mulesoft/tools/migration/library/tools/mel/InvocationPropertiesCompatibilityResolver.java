@@ -11,38 +11,24 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import org.jdom2.Element;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
- * Resolver for enrichers
+ * Resolver for invocation properties message enrichers
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class HeaderSyntaxCompatibilityResolver implements CompatibilityResolver<String> {
-
-  private static List<CompatibilityResolver<String>> resolvers;
-
-  static {
-    resolvers = new ArrayList<>();
-    resolvers.add(new InboundPropertiesCompatibilityResolver());
-    resolvers.add(new OutboundPropertiesCompatibilityResolver());
-    resolvers.add(new InvocationPropertiesCompatibilityResolver());
-    resolvers.add(new SessionVariablesCompatibilityResolver());
-  }
-
+public class InvocationPropertiesCompatibilityResolver implements CompatibilityResolver<String> {
 
   @Override
   public boolean canResolve(String original) {
-    return resolvers.stream().anyMatch(r -> r.canResolve(original));
+    return original != null && original.trim().toLowerCase().startsWith("header:invocation:");
   }
 
   @Override
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model) {
-    return resolvers.stream()
-        .filter(r -> r.canResolve(original))
-        .findFirst().get()
-        .resolve(original, element, report, model);
+    String sessionVarName = original.trim().replaceFirst("(?i)^header:invocation:", EMPTY);
+    return "vars." + sessionVarName;
   }
 }

@@ -6,11 +6,12 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.cxf;
 
+import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -37,8 +38,16 @@ public class CxfModuleNamespaceMigrator extends AbstractApplicationModelMigratio
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    getApplicationModel().addNameSpace(Namespace.getNamespace("cxf", "http://www.mulesoft.org/schema/mule/cxf"), XPATH_SELECTOR,
-                                       null);
+    getApplicationModel().getPomModel().get().addDependency(new DependencyBuilder()
+        .withGroupId("com.mulesoft.mule.modules")
+        .withArtifactId("mule-compatibility-module")
+        .withVersion("1.2.0-SNAPSHOT")
+        .withClassifier("mule-plugin")
+        .build());
+
+    getApplicationModel().addNameSpace(Namespace.getNamespace("cxf", "http://www.mulesoft.org/schema/mule/cxf"),
+                                       "http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd",
+                                       object.getDocument());
     object.setNamespace(Namespace.getNamespace("cxf", "http://www.mulesoft.org/schema/mule/cxf"));
 
   }

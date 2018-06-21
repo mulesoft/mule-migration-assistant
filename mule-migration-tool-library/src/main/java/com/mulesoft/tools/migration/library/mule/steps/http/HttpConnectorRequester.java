@@ -10,7 +10,6 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.lang.String.format;
@@ -22,7 +21,6 @@ import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -82,8 +80,9 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     migrateExpression(object.getAttribute("method"), getExpressionMigrator());
     migrateExpression(object.getAttribute("followRedirects"), getExpressionMigrator());
 
-
-    addAttributesToInboundProperties(object, report);
+    migrateOperationStructure(getApplicationModel(), object, report, true, getExpressionMigrator(),
+                              new MelCompatibilityResolver());
+    addAttributesToInboundProperties(object, getApplicationModel(), report);
 
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
@@ -152,18 +151,15 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     }
   }
 
-  private void addAttributesToInboundProperties(Element object, MigrationReport report) {
-    migrateOperationStructure(getApplicationModel(), object, report, true, getExpressionMigrator(),
-                              new MelCompatibilityResolver());
-
+  public static void addAttributesToInboundProperties(Element object, ApplicationModel appModel, MigrationReport report) {
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("http.status", "message.attributes.statusCode");
     expressionsPerProperty.put("http.reason", "message.attributes.reasonPhrase");
     expressionsPerProperty.put("http.headers", "message.attributes.headers");
 
     try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.http.api.HttpResponseAttributes", expressionsPerProperty,
-                           "message.attributes.headers");
+      addAttributesMapping(appModel, "org.mule.extension.http.api.HttpResponseAttributes", expressionsPerProperty,
+                           "message.attributes.headers mapObject ((value, key, index) -> { (if(upper(key as String) startsWith 'X-MULE_') upper((key as String) [2 to -1]) else key) : value })");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -199,6 +195,10 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
                   "    ---" + lineSeparator() +
                   "    vars.compatibility_outboundProperties filterObject" + lineSeparator() +
                   "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
+                  "        mapObject ((value, key, index) -> {" + lineSeparator() +
+                  "            (if (upper(key as String) startsWith 'MULE_') upper('X-' ++ key as String) else key) : value"
+                  + lineSeparator() +
+                  "        })" + lineSeparator() +
                   "}" + lineSeparator() +
                   lineSeparator() +
                   "/**" + lineSeparator() +
@@ -212,6 +212,10 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
                   "    ---" + lineSeparator() +
                   "    vars.compatibility_outboundProperties filterObject" + lineSeparator() +
                   "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
+                  "        mapObject ((value, key, index) -> {" + lineSeparator() +
+                  "            (if (upper(key as String) startsWith 'MULE_') upper('X-' ++ key as String) else key) : value"
+                  + lineSeparator() +
+                  "        })" + lineSeparator() +
                   "}" + lineSeparator() +
                   lineSeparator() +
                   "/**" + lineSeparator() +

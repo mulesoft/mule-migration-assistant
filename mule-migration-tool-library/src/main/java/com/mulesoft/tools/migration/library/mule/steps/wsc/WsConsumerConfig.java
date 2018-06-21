@@ -19,8 +19,8 @@ import static java.util.Optional.of;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -198,7 +198,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         copyAttributeIfPresent(keyStore, keyStoreConfig, "type");
         sign.addContent(keyStoreConfig);
 
-        if (getApplicationModel().getNodes("//*[@tlsContext-ref='" + tlsContextName + "']").isEmpty()) {
+        if (!getApplicationModel().getNodeOptional("//*[@tlsContext-ref='" + tlsContextName + "']").isPresent()) {
           tlsContext.detach();
         }
 
@@ -224,7 +224,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         copyAttributeIfPresent(trustStore, keyStoreConfig, "type");
         verifySignature.addContent(keyStoreConfig);
 
-        if (getApplicationModel().getNodes("//*[@tlsContext-ref='" + tlsContextName + "']").isEmpty()) {
+        if (!getApplicationModel().getNodeOptional("//*[@tlsContext-ref='" + tlsContextName + "']").isPresent()) {
           tlsContext.detach();
         }
 
@@ -278,7 +278,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
           decrypt.removeAttribute("alias");
         }
 
-        if (getApplicationModel().getNodes("//*[@tlsContext-ref='" + tlsContextName + "']").isEmpty()) {
+        if (!getApplicationModel().getNodeOptional("//*[@tlsContext-ref='" + tlsContextName + "']").isPresent()) {
           tlsContext.detach();
         }
 
@@ -309,7 +309,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
           encrypt.removeAttribute("alias");
         }
 
-        if (getApplicationModel().getNodes("//*[@tlsContext-ref='" + tlsContextName + "']").isEmpty()) {
+        if (!getApplicationModel().getNodeOptional("//*[@tlsContext-ref='" + tlsContextName + "']").isPresent()) {
           tlsContext.detach();
         }
 

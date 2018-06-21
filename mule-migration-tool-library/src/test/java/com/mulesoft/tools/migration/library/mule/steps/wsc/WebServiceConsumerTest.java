@@ -111,6 +111,8 @@ public class WebServiceConsumerTest {
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
+    when(appModel.getNodeOptional(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).stream().findAny());
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     httpOutbound = new HttpOutboundEndpoint();

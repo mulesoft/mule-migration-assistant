@@ -98,7 +98,8 @@ public class HttpListenerAttributesMappingTest {
         "    'http.request.path': message.attributes.requestPath," + lineSeparator() +
         "    'http.headers': message.attributes.headers" + lineSeparator() +
         "}" + lineSeparator() +
-        " ++ message.attributes.headers" + lineSeparator() +
+        " ++ message.attributes.headers mapObject ((value, key, index) -> { (if(upper(key as String) startsWith 'X-MULE_') upper((key as String) [2 to -1]) else key) : value })"
+        + lineSeparator() +
         " ++ message.attributes.queryParams" + lineSeparator() +
         "else" + lineSeparator() +
         "{}" + lineSeparator()));

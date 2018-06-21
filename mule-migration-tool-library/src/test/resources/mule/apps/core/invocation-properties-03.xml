@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="testFlow">
+        <remove-variable variableName="h1" />
+        <set-variable variableName="h2" value="#[vars['h2'] default 'vvv']" />
+        <set-variable variableName="h2b" value="#[vars['h2b'] default (vars.pepe)]" />
+        <set-variable variableName="h4" value="#[vars['h3']]" />
+        <remove-variable variableName="h3" />
+        <logger/>
+    </flow>
+</mule>

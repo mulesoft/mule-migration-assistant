@@ -8,10 +8,13 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -42,12 +45,16 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-
-    report.report(WARN, element, element,
-                  "Instead of setting properties in the flow, its values must be set explicitly in the operation/listener.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
     Namespace compatibilityNamespace = Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE);
-    element.setNamespace(compatibilityNamespace);
+
+    if (element.getAttribute("scope") == null) {
+      report.report(WARN, element, element, "Instead of using properties in the flow, its values must be set explicitly in the operation/listener.", "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
+      element.setNamespace(compatibilityNamespace);
+    }
+    if ("session".equals(element.getAttributeValue("scope"))) {
+      report.report(WARN, element, element, "Instead of using session variables in the flow, use variables.", "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
+      element.setNamespace(compatibilityNamespace);
+    }
 
     boolean notOverwrite = false;
     if (element.getAttribute("overwrite") != null && "false".equals(element.getAttributeValue("overwrite"))) {
@@ -59,42 +66,93 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
     List<Element> children = new ArrayList<>();
 
     for (Element child : element.getChildren()) {
-      child.setNamespace(compatibilityNamespace);
-
       if ("delete-message-property".equals(child.getName())) {
-        child.setName("remove-property");
-        child.getAttribute("key").setName("propertyName");
         children.add(child);
-      } else if ("add-message-property".equals(child.getName())) {
-
-        if (notOverwrite) {
-          String value = child.getAttributeValue("value");
-          child.getAttribute("value")
-              .setValue(getExpressionMigrator()
-                  .wrap("mel:message.outboundProperties['" + child.getAttributeValue("key") + "'] != null "
-                      + "? message.outboundProperties['" + child.getAttributeValue("key") + "'] "
-                      + ": "
-                      + (getExpressionMigrator().isWrapped(value) ? getExpressionMigrator().unwrap(value) : "'" + value + "'")));
+        if (element.getAttribute("scope") == null) {
+          child.setNamespace(compatibilityNamespace);
+          child.setName("remove-property");
+          child.getAttribute("key").setName("propertyName");
+        } else if ("session".equals(element.getAttributeValue("scope"))) {
+          child.setNamespace(compatibilityNamespace);
+          child.setName("remove-session-variable");
+          child.getAttribute("key").setName("variableName");
+        } else {
+          // invocation -> var
+          child.setName("remove-variable");
+          child.getAttribute("key").setName("variableName");
         }
-
-        child.setName("set-property");
-        child.getAttribute("key").setName("propertyName");
+      } else if ("add-message-property".equals(child.getName())) {
         children.add(child);
+        if (element.getAttribute("scope") == null) {
+          if (notOverwrite) {
+            setMelExpressionValue(child, child.getAttributeValue("value"), "message.outboundProperties");
+          }
+
+          child.setNamespace(compatibilityNamespace);
+          child.setName("set-property");
+          child.getAttribute("key").setName("propertyName");
+        } else if ("session".equals(element.getAttributeValue("scope"))) {
+          if (notOverwrite) {
+            setMelExpressionValue(child, child.getAttributeValue("value"), "sessionVars");
+          }
+
+          child.setNamespace(compatibilityNamespace);
+          child.setName("set-session-variable");
+          child.getAttribute("key").setName("variableName");
+        } else {
+          // invocation -> var
+          if (notOverwrite) {
+            String value = child.getAttributeValue("value");
+            String migrated = getExpressionMigrator().migrateExpression(value, true, child);
+
+            if (getExpressionMigrator().isWrapped(value) && migrated.startsWith("#[mel:")) {
+              setMelExpressionValue(child, value, "vars");
+            } else {
+              child.getAttribute("value")
+                  .setValue(getExpressionMigrator()
+                      .wrap("vars['" + child.getAttributeValue("key") + "'] default "
+                          + (getExpressionMigrator().isWrapped(migrated) ? "(" + getExpressionMigrator().unwrap(migrated) + ")"
+                              : "'" + value + "'")));
+            }
+          }
+
+          child.setName("set-variable");
+          child.getAttribute("key").setName("variableName");
+        }
       } else if ("rename-message-property".equals(child.getName())) {
-        // MessagePropertiesTransformer in 3.x doesn't use the 'overwrite' flag when renaming, so we do not contemplate that case
-        // in the migrator
-        children.add(new Element("set-property", compatibilityNamespace)
-            .setAttribute("propertyName", child.getAttributeValue("value"))
-            .setAttribute("value", getExpressionMigrator()
-                .wrap("mel:message.outboundProperties['" + child.getAttributeValue("key") + "']")));
-        children.add(new Element("remove-property", compatibilityNamespace).setAttribute("propertyName",
-                                                                                         child.getAttributeValue("key")));
+        // MessagePropertiesTransformer in 3.x doesn't use the 'overwrite' flag when renaming, so we do not contemplate that
+        // case in the migrator
+        if (element.getAttribute("scope") == null) {
+          child.setNamespace(compatibilityNamespace);
+          children.add(new Element("set-property", compatibilityNamespace)
+              .setAttribute("propertyName", child.getAttributeValue("value"))
+              .setAttribute("value", getExpressionMigrator()
+                  .wrap("mel:message.outboundProperties['" + child.getAttributeValue("key") + "']")));
+          children.add(new Element("remove-property", compatibilityNamespace).setAttribute("propertyName",
+                                                                                           child
+                                                                                               .getAttributeValue("key")));
+        } else if ("session".equals(element.getAttributeValue("scope"))) {
+          child.setNamespace(compatibilityNamespace);
+          children.add(new Element("set-session-variable", compatibilityNamespace)
+              .setAttribute("variableName", child.getAttributeValue("value"))
+              .setAttribute("value", getExpressionMigrator()
+                  .wrap("mel:sessionVars['" + child.getAttributeValue("key") + "']")));
+          children.add(new Element("remove-session-variable", compatibilityNamespace).setAttribute("variableName",
+                                                                                                   child
+                                                                                                       .getAttributeValue("key")));
+        } else {
+          children.add(new Element("set-variable", CORE_NAMESPACE)
+              .setAttribute("variableName", child.getAttributeValue("value"))
+              .setAttribute("value", getExpressionMigrator()
+                  .wrap("vars['" + child.getAttributeValue("key") + "']")));
+          children.add(new Element("remove-variable", CORE_NAMESPACE).setAttribute("variableName",
+                                                                                   child.getAttributeValue("key")));
+        }
       } else if ("add-message-properties".equals(child.getName())) {
         // TODO Migrate to spring module
-        report
-            .report(ERROR, child, element,
-                    "Spring beans definition inside mule components is not allowed. This inner definition must be moved to its own spring config file, and it may be referenced by an `ee:transform` component or in an expression in the operation/listeenr directly.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-module-spring");
+        report.report(ERROR, child, element,
+                      "Spring beans definition inside mule components is not allowed. This inner definition must be moved to its own spring config file, and it may be referenced by an `ee:transform` component or in an expression in the operation/listeenr directly.",
+                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-module-spring");
       }
     }
 
@@ -104,6 +162,16 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
 
     element.getParent().addContent(index, children);
     element.getParent().removeContent(element);
+  }
+
+  private void setMelExpressionValue(Element child, String value, String binding) {
+    child.getAttribute("value")
+        .setValue(getExpressionMigrator()
+            .wrap("mel:" + binding + "['" + child.getAttributeValue("key") + "'] != null "
+                + "? " + binding + "['" + child.getAttributeValue("key") + "'] "
+                + ": "
+                + (getExpressionMigrator().isWrapped(value) ? getExpressionMigrator().unwrap(value)
+                    : "'" + value + "'")));
   }
 
   @Override

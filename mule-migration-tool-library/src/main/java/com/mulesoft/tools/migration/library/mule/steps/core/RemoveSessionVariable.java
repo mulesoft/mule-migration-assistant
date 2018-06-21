@@ -15,31 +15,31 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 /**
- * Migrate Remove Property to the compatibility plugin
+ * Migrate Remove Session Variable to the compatibility plugin
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class RemoveProperty extends AbstractApplicationModelMigrationStep {
+public class RemoveSessionVariable extends AbstractApplicationModelMigrationStep {
 
   private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='remove-property']";
+  public static final String XPATH_SELECTOR = "//*[local-name()='remove-session-variable']";
 
   @Override
   public String getDescription() {
-    return "Update Remove Property namespace to compatibility.";
+    return "Update Remove Session Variable namespace to compatibility.";
   }
 
-  public RemoveProperty() {
+  public RemoveSessionVariable() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     report.report(WARN, element, element,
-                  "Instead of using properties in the flow, just don't use them in the listener/operation.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
+                  "Instead of using session variables in the flow, use variables.",
+                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
     element.setNamespace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
   }
 }

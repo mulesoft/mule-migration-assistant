@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -24,6 +25,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
+import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -37,6 +39,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class HttpOutboundTest {
@@ -74,7 +77,9 @@ public class HttpOutboundTest {
         "http-outbound-21",
         "http-outbound-22",
         "http-outbound-23",
-        "http-outbound-24"
+        "http-outbound-24",
+        "http-outbound-25",
+        "http-outbound-26"
     };
   }
 
@@ -108,6 +113,11 @@ public class HttpOutboundTest {
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
     when(appModel.getNode(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
+    when(appModel.getNodeOptional(any(String.class)))
+        .thenAnswer(invocation -> {
+          List<Element> elements = getElementsFromDocument(doc, (String) invocation.getArguments()[0]);
+          return elements.isEmpty() ? empty() : ofNullable(elements.iterator().next());
+        });
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     when(appModel.getPomModel()).thenReturn(empty());
 

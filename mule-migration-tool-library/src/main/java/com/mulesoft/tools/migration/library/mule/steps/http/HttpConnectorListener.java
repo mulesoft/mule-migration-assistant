@@ -120,7 +120,8 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
 
     try {
       addAttributesMapping(appModel, "org.mule.extension.http.api.HttpRequestAttributes", expressionsPerProperty,
-                           "message.attributes.headers", "message.attributes.queryParams");
+                           "message.attributes.headers mapObject ((value, key, index) -> { (if(upper(key as String) startsWith 'X-MULE_') upper((key as String) [2 to -1]) else key) : value })",
+                           "message.attributes.queryParams");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -164,6 +165,10 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
                   "    ---" + lineSeparator() +
                   "    vars.compatibility_outboundProperties default {} filterObject" + lineSeparator() +
                   "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
+                  "        mapObject ((value, key, index) -> {" + lineSeparator() +
+                  "            (if (upper(key as String) startsWith 'MULE_') upper('X-' ++ key as String) else key) : value"
+                  + lineSeparator() +
+                  "        })" + lineSeparator() +
                   "}" + lineSeparator() +
                   lineSeparator() +
                   "/**" + lineSeparator() +

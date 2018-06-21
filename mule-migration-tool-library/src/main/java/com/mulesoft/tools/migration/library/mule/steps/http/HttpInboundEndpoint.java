@@ -25,8 +25,8 @@ import static java.lang.System.lineSeparator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
@@ -34,7 +34,6 @@ import org.jdom2.Namespace;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -239,12 +238,12 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   private void extractListenerConfig(Element object, final Namespace httpNamespace, String configName, String host, String port) {
-    List<Element> existingListener = getApplicationModel()
-        .getNodes("/mule:mule/http:listener-config/http:listener-connection[@host = '" + host + "' and @port = '" + port
-            + "']");
-    if (!existingListener.isEmpty()) {
-      existingListener.get(0);
-      object.setAttribute("config-ref", existingListener.get(0).getParentElement().getAttributeValue("name"));
+    Optional<Element> existingListener =
+        getApplicationModel().getNodeOptional("/mule:mule/http:listener-config/http:listener-connection[@host = '" + host
+            + "' and @port = '" + port + "']");
+
+    if (existingListener.isPresent()) {
+      object.setAttribute("config-ref", existingListener.get().getParentElement().getAttributeValue("name"));
     } else {
       final Element listenerConfig = new Element("listener-config", httpNamespace).setAttribute("name", configName);
       final Element listenerConnection = new Element("listener-connection", httpNamespace);
@@ -285,8 +284,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   protected Optional<Element> getDefaultConnector() {
-    List<Element> nodes = getApplicationModel().getNodes("/mule:mule/http:connector");
-    return nodes.stream().findFirst();
+    return getApplicationModel().getNodeOptional("/mule:mule/http:connector");
   }
 
   private void handleResponseBuilder(Element listenerSource, Element listenerResponse, Element responseBuilder,

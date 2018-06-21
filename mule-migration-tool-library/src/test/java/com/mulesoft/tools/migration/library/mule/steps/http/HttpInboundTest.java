@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -127,6 +126,8 @@ public class HttpInboundTest {
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
     when(appModel.getNode(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
+    when(appModel.getNodeOptional(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).stream().findAny());
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     when(appModel.getPomModel()).thenReturn(empty());
 
