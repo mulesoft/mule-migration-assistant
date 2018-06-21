@@ -6,7 +6,8 @@
 
     <flow name="testFlow">
         <remove-variable variableName="h1" />
-        <set-variable variableName="h2" value="#[vars['h2'] != null ? vars['h2'] : 'vvv']" />
+        <set-variable variableName="h2" value="#[vars['h2'] default 'vvv']" />
+        <set-variable variableName="h2b" value="#[vars['h2b'] default (vars.pepe)]" />
         <set-variable variableName="h4" value="#[vars['h3']]" />
         <remove-variable variableName="h3" />
         <logger/>
