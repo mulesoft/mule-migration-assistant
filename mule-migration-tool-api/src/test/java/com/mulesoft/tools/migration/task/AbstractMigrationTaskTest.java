@@ -26,11 +26,11 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 import org.jdom2.xpath.XPathExpression;
@@ -121,7 +121,7 @@ public class AbstractMigrationTaskTest {
 
     migrationTask.execute(mock(MigrationReport.class));
     verify(namespaceContributionMock, times(1)).execute(any(ApplicationModel.class), any(MigrationReport.class));
-    verify(applicationModelContributionMock, times(1)).getAppliedTo();
+    verify(applicationModelContributionMock, times(2)).getAppliedTo();
     verify(projectStructureContributionMock, times(1)).execute(any(Path.class), any(MigrationReport.class));
     verify(pomContributionMock, times(1)).execute(any(PomModel.class), any(MigrationReport.class));
 

@@ -9,11 +9,8 @@ package com.mulesoft.tools.migration.library.mule.steps.vm;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
-import static java.lang.Integer.parseInt;
 import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -29,36 +26,30 @@ import java.util.Optional;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class VmInboundEndpoint extends AbstractVmEndpoint {
+public class VmOutboundEndpoint extends AbstractVmEndpoint {
 
-  public static final String XPATH_SELECTOR = "/mule:mule/mule:flow/vm:inbound-endpoint";
+  public static final String XPATH_SELECTOR = "/mule:mule//vm:outbound-endpoint";
 
   @Override
   public String getDescription() {
-    return "Update VM transport inbound endpoint.";
+    return "Update VM transport outbound endpoint.";
   }
 
-  public VmInboundEndpoint() {
+  public VmOutboundEndpoint() {
     this.setAppliedTo(XPATH_SELECTOR);
     this.setNamespacesContributions(newArrayList(VM_NAMESPACE));
   }
 
   private String mapTransactionalAction(String action, MigrationReport report, Element tx, Element object) {
-    // Values defined in org.mule.runtime.extension.api.tx.SourceTransactionalAction
-    if ("BEGIN_OR_JOIN".equals(action)) {
-      report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.");
-      return "ALWAYS_BEGIN";
-    } else if ("ALWAYS_JOIN".equals(action)) {
-      report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.");
-      return "NONE";
-    } else if ("JOIN_IF_POSSIBLE".equals(action)) {
-      report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.");
-      return "NONE";
-    } else if ("NOT_SUPPORTED".equals(action)) {
-      return "NONE";
+    // Values defined in org.mule.runtime.extension.api.tx.OperationTransactionalAction
+    if ("NONE".equals(action)) {
+      return "NOT_SUPPORTED";
+    } else if ("ALWAYS_BEGIN".equals(action)) {
+      report.report(ERROR, tx, object, "Use a <try> scope to begin a nested transaction.",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/try-scope-xml-reference#properties-of-try");
+      return "ALWAYS_JOIN";
+    } else if ("BEGIN_OR_JOIN".equals(action)) {
+      return "JOIN_IF_POSSIBLE";
     }
 
     return action;
@@ -75,11 +66,6 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
     while (object.getChild("xa-transaction", CORE_NAMESPACE) != null) {
       Element xaTx = object.getChild("xa-transaction", CORE_NAMESPACE);
       object.setAttribute("transactionalAction", mapTransactionalAction(xaTx.getAttributeValue("action"), report, xaTx, object));
-      object.setAttribute("transactionType", "XA");
-
-      if ("true".equals(xaTx.getAttributeValue("interactWithExternal"))) {
-        report.report(ERROR, xaTx, object, "Mule 4 does not support joining with external transactions.");
-      }
 
       object.removeChild("xa-transaction", CORE_NAMESPACE);
     }
@@ -87,9 +73,14 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
     final Namespace vmConnectorNamespace = Namespace.getNamespace("vm", "http://www.mulesoft.org/schema/mule/vm");
     getApplicationModel().addNameSpace(vmConnectorNamespace, "http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd",
                                        object.getDocument());
-
     object.setNamespace(vmConnectorNamespace);
-    object.setName("listener");
+
+    if (object.getAttribute("exchange-pattern") == null
+        || object.getAttributeValue("exchange-pattern").equals("one-way")) {
+      object.setName("publish");
+    } else {
+      object.setName("publish-consume");
+    }
 
     Optional<Element> connector;
     if (object.getAttribute("connector-ref") != null) {
@@ -105,6 +96,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
             ? object.getAttributeValue("ref")
             : "")).replaceAll("\\\\", "_")
         + "VmConfig");
+
 
     Optional<Element> config = getApplicationModel().getNodeOptional("mule:mule/vm:config[@name='" + configName + "']");
     Element vmConfig = config.orElseGet(() -> {
@@ -122,30 +114,6 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
 
     addQueue(vmConnectorNamespace, connector, vmConfig, path);
 
-    connector.ifPresent(conn -> {
-      Integer consumers = null;
-      if (conn.getAttribute("numberOfConcurrentTransactedReceivers") != null) {
-        consumers = parseInt(conn.getAttributeValue("numberOfConcurrentTransactedReceivers"));
-      } else if (conn.getChild("receiver-threading-profile", CORE_NAMESPACE) != null
-          && conn.getChild("receiver-threading-profile", CORE_NAMESPACE).getAttribute("maxThreadsActive") != null) {
-        consumers = parseInt(conn.getChild("receiver-threading-profile", CORE_NAMESPACE).getAttributeValue("maxThreadsActive"));
-      }
-
-      if (consumers != null) {
-        getFlow(object).setAttribute("maxConcurrency", "" + consumers);
-        object.setAttribute("numberOfConsumers", "" + consumers);
-      }
-    });
-
-    if (object.getAttribute("mimeType") != null) {
-      Element setMimeType =
-          new Element("set-payload", CORE_NAMESPACE)
-              .setAttribute("value", "#[output " + object.getAttributeValue("mimeType") + " --- payload]");
-
-      addElementAfter(setMimeType, object);
-      object.removeAttribute("mimeType");
-    }
-
     if (object.getAttribute("responseTimeout") != null) {
       object.setAttribute("timeout", object.getAttributeValue("responseTimeout"));
       object.setAttribute("timeoutUnit", "MILLISECONDS");
@@ -156,20 +124,16 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
     object.setAttribute("queueName", path);
     object.removeAttribute("path");
     object.removeAttribute("name");
+    object.removeAttribute("mimeType");
     object.removeAttribute("disableTransportTransformer");
 
     Element content = buildContent(vmConnectorNamespace);
-    object.addContent(new Element("response", vmConnectorNamespace).addContent(content));
+    object.addContent(content);
     report.report(WARN, content, content,
                   "You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.",
                   "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
 
-    if (object.getAttribute("exchange-pattern") == null
-        || object.getAttributeValue("exchange-pattern").equals("one-way")) {
-      migrateInboundEndpointStructure(getApplicationModel(), object, report, false, true);
-    } else {
-      migrateInboundEndpointStructure(getApplicationModel(), object, report, true, true);
-    }
+    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true, true);
   }
 
 }

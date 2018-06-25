@@ -11,10 +11,11 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import com.mulesoft.tools.migration.library.mule.steps.file.FileOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmOutboundEndpoint;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -32,6 +33,8 @@ public class OutboundEndpoint extends AbstractApplicationModelMigrationStep
   private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
   private static final String FILE_NS_PREFIX = "file";
   private static final String FILE_NS_URI = "http://www.mulesoft.org/schema/mule/file";
+  private static final String VM_NS_PREFIX = "vm";
+  private static final String VM_NS_URI = "http://www.mulesoft.org/schema/mule/vm";
   public static final String XPATH_SELECTOR = "/mule:mule//mule:outbound-endpoint";
 
   private ExpressionMigrator expressionMigrator;
@@ -66,6 +69,9 @@ public class OutboundEndpoint extends AbstractApplicationModelMigrationStep
       } else if (address.startsWith("https://")) {
         migrator = new HttpsOutboundEndpoint();
         object.setNamespace(Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https"));
+      } else if (address.startsWith("vm://")) {
+        migrator = new VmOutboundEndpoint();
+        object.setNamespace(Namespace.getNamespace(VM_NS_PREFIX, VM_NS_URI));
       }
 
       if (migrator != null) {
