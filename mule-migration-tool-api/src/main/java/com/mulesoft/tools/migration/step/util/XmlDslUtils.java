@@ -256,4 +256,37 @@ public final class XmlDslUtils {
     applicationModel.addNameSpace("validation", "http://www.mulesoft.org/schema/mule/validation",
                                   "http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd");
   }
+
+  public static boolean isTopLevelElement(Element element) {
+    if (element.getParentElement().getName().equals("mule")) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public static void createErrorHandlerParent(Element element) {
+    Element parent = element.getParentElement();
+    parent.removeContent(element);
+
+    Element errorHandler = new Element("error-handler");
+    errorHandler.setNamespace(parent.getNamespace());
+    errorHandler.addContent(element);
+
+    if (element.getAttribute("name") != null) {
+      Attribute name = element.getAttribute("name");
+      name.detach();
+      errorHandler.setAttribute(name);
+    }
+
+    parent.addContent(errorHandler);
+  }
+
+  public static Element getElementParentFlow(Element element) {
+    Element parentElement = element.getParentElement();
+    while (parentElement != null && !parentElement.getName().equals("flow")) {
+      parentElement = parentElement.getParentElement();
+    }
+    return parentElement;
+  }
 }

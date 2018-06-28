@@ -6,13 +6,12 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-
-import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
 import org.jdom2.Element;
+
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 
 /**
  * Migrate references of exception strategies
@@ -35,11 +34,12 @@ public class ExceptionStrategyRef extends AbstractApplicationModelMigrationStep 
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    try {
-      changeNodeName("", "error-handler")
-          .apply(element);
-    } catch (Exception ex) {
-      throw new MigrationStepException("Failed to migrate references to Exception Strategies.");
+    changeNodeName("", "error-handler")
+        .apply(element);
+
+    if (element.getParentElement().getName().equals("error-handler")) {
+      report.report(ERROR, element, element, "The way to reuse on-errors scopes have change.",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/on-error-scope-concept#reusing-on-error-scopes");
     }
   }
 }

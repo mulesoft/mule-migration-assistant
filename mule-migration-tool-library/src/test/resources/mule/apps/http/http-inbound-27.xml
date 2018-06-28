@@ -20,7 +20,7 @@
     </http:listener-config>
 
     <flow name="flow">
-        <http:listener config-ref="clientEndpointListenerConfig" path="/*">
+        <http:listener config-ref="clientEndpointListenerConfig" path="/*" isMessageSource="true">
           <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
             <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
           </http:response>

@@ -42,7 +42,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
     this.setAppliedTo(XPATH_SELECTOR);
     this.setNamespacesContributions(newArrayList(VM_NAMESPACE));
   }
-
+  
   private String mapTransactionalAction(String action, MigrationReport report, Element tx, Element object) {
     // Values defined in org.mule.runtime.extension.api.tx.SourceTransactionalAction
     if ("BEGIN_OR_JOIN".equals(action)) {
@@ -67,6 +67,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     Element tx = object.getChild("transaction", VM_NAMESPACE);
+    object.setAttribute("isMessageSource", "true");
     while (tx != null) {
       object.setAttribute("transactionalAction", mapTransactionalAction(tx.getAttributeValue("action"), report, tx, object));
       object.removeChild("transaction", VM_NAMESPACE);

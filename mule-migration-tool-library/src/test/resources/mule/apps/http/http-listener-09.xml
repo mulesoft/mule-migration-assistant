@@ -13,7 +13,7 @@
     </http:listener-config>
     
     <flow name="testFlow">
-        <http:listener config-ref="listenerConfig" path="${path}">
+        <http:listener config-ref="listenerConfig" path="${path}" isMessageSource="true">
             <http:response statusCode="200" reasonPhrase="everything works!">
                 <http:headers>
                     #[migration::HttpListener::httpListenerResponseHeaders(vars)]

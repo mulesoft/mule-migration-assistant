@@ -58,6 +58,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     Namespace fileNs = Namespace.getNamespace(FILE_NS_PREFIX, FILE_NS_URI);
 
     object.setName("listener");
+    object.setAttribute("isMessageSource", "true");
 
     addAttributesToInboundProperties(object, report);
 

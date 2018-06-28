@@ -13,7 +13,7 @@
     </file:config>
 
     <flow name="Test">
-        <file:listener config-ref="fileConnector" recursive="false" moveToDirectory="${workingDirectory}/done" applyPostActionWhenFailed="false">
+        <file:listener config-ref="fileConnector" recursive="false" moveToDirectory="${workingDirectory}/done" applyPostActionWhenFailed="false" isMessageSource="true">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

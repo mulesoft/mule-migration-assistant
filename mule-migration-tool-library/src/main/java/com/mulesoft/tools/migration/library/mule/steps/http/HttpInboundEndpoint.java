@@ -66,6 +66,8 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     object.setNamespace(httpNamespace);
     object.setName("listener");
 
+    object.setAttribute("isMessageSource", "true");
+
     String flowName = object.getParentElement().getAttributeValue("name");
     String configName = (object.getAttribute("name") != null
         ? object.getAttributeValue("name")

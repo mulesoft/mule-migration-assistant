@@ -56,6 +56,8 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
     });
     object.removeChildren("property", CORE_NAMESPACE);
 
+    object.setAttribute("isMessageSource", "true");
+
     AbstractApplicationModelMigrationStep migrator = null;
 
     if (object.getAttribute("address") != null) {

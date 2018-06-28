@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:file="http://www.mulesoft.org/schema/mule/file"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+               http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+
+    <flow name="Test">
+        <file:listener config-ref="fileConnector" recursive="false" applyPostActionWhenFailed="false">
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000"/>
+            </scheduling-strategy>
+        </file:listener>
+    </flow>
+
+    <flow name="Test2">
+        <http:listener config-ref="inStreamingListenerConfig" path="/streaming/*">
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
+        </http:listener>
+    </flow>
+
+    <flow name="Test3">
+        <scheduler>
+            <scheduling-strategy>
+                <fixed-frequency frequency="30000"/>
+            </scheduling-strategy>
+        </scheduler>
+    </flow>
+
+    <flow name="Test4">
+        <vm:listener queueName="test" config-ref="VM_Config"/>
+    </flow>
+
+</mule>
