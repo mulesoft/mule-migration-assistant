@@ -63,9 +63,9 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new CompatibilityPomContribution(),
+                        new ChoiceExceptionStrategy(),
                         new CatchExceptionStrategy(),
                         new RollbackExceptionStrategy(),
-                        new ChoiceExceptionStrategy(),
                         new TransactionalScope(),
                         new ExceptionStrategyRef(),
                         new ForEachScope(),

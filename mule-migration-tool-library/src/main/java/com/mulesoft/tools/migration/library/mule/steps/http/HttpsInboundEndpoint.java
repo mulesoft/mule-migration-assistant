@@ -43,6 +43,8 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
     Namespace httpsNamespace = Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https");
     Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
 
+    object.setAttribute("isMessageSource", "true");
+
     Element httpsConnector = null;
     if (object.getAttribute("connector-ref") != null) {
       httpsConnector = getConnector(object.getAttributeValue("connector-ref"));

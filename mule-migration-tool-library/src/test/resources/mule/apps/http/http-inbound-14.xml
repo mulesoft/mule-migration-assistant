@@ -15,7 +15,7 @@
     </http:listener-config>
 
     <flow name="flow">
-        <http:listener config-ref="flowListenerConfig" path="/resources/allExpressions/*">
+        <http:listener config-ref="flowListenerConfig" path="/resources/allExpressions/*" isMessageSource="true">
             <http:response statusCode="#[vars.compatibility_inboundProperties.status]">
                 <http:headers>
                     #[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'Location' : 'http://localhost:9090'} ++ {'Expires' : 'Thu, 01 Dec 2014 16:00:00 GMT'} ++ {'Cache-Control' : "max-age=$(vars.compatibility_inboundProperties.cacheControl)"} ++ {'Set-Cookie' : "$(vars.compatibility_inboundProperties.cookie1)=$(vars.compatibility_inboundProperties.value1); Domain=$(vars.compatibility_inboundProperties.domain); Path=$(vars.compatibility_inboundProperties.path); Expires=$(vars.compatibility_inboundProperties.expiryDate); Secure"} ++ {'Set-Cookie' : "$(vars.compatibility_inboundProperties.cookie2)=$(vars.compatibility_inboundProperties.value2); Max-Age=$(vars.compatibility_inboundProperties.maxAge)"} ++ {vars.compatibility_inboundProperties.header1 : vars.compatibility_inboundProperties.value1} ++ {vars.compatibility_inboundProperties.header2 : vars.compatibility_inboundProperties.value2} ++ {'Content-Type' : vars.compatibility_inboundProperties.contentType}]

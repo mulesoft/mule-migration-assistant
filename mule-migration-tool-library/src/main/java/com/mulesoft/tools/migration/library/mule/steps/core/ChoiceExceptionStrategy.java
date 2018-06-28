@@ -6,13 +6,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-
-import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
 import org.jdom2.Element;
+
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 
 /**
  * Migration steps for choice exception strategy component
@@ -35,11 +33,7 @@ public class ChoiceExceptionStrategy extends AbstractApplicationModelMigrationSt
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    try {
-      changeNodeName("", "error-handler")
-          .apply(element);
-    } catch (Exception ex) {
-      throw new MigrationStepException("Failed to migrate Choice Exception Strategy.");
-    }
+    changeNodeName("", "error-handler")
+        .apply(element);
   }
 }

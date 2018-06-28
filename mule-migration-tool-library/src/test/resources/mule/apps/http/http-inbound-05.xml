@@ -13,7 +13,7 @@
     </http:listener-config>
     
     <flow name="flow">
-        <http:listener config-ref="httpEndpointListenerConfig" path="/*">
+        <http:listener config-ref="httpEndpointListenerConfig" path="/*" isMessageSource="true">
             <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
                 <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'Content-Type' : 'text/xml'}]</http:headers>
             </http:response>

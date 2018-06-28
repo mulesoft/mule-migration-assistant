@@ -50,6 +50,8 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     httpListenerLib(getApplicationModel());
 
+    object.setAttribute("isMessageSource", "true");
+
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+    <http:listener-config host="0.0.0.0" name="HTTP_Listener_Configuration" port="8081"/>
+
+    <flow name="global-rollback-ref">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/" isMessageSource="true"/>
+        <logger/>
+        <error-handler ref="global-rollback"/>
+    </flow>
+
+    <error-handler name="global-rollback">
+        <on-error-propagate when="#[mel:exception.causedBy(java.lang.IllegalStateException)]">
+            <logger/>
+        </on-error-propagate>
+        <on-error-propagate type="REDELIVERY_EXHAUSTED">
+            <logger/>
+        </on-error-propagate>
+    </error-handler>
+</mule>

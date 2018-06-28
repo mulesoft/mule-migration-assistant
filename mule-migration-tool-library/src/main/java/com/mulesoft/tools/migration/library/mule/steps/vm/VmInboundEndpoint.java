@@ -46,6 +46,7 @@ public class VmInboundEndpoint extends AbstractApplicationModelMigrationStep
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     // This is a temporary simple implementation for getting the outbound properties in variables
+    object.setAttribute("isMessageSource", "true");
     migrateSourceStructure(getApplicationModel(), object, report, false);
   }
 

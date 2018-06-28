@@ -61,6 +61,8 @@ public class Poll extends AbstractApplicationModelMigrationStep {
       changeNodeName("", POLL_NEW_NAME)
           .apply(element);
 
+      element.setAttribute("isMessageSource", "true");
+
       List<Element> childElementsToMove = element.getChildren().stream()
           .filter(s -> !StringUtils.equals(s.getName(), FIXED_FREQ_SCHEDULER)
               && !StringUtils.equals(s.getName(), CRON_FREQ_SCHEDULER))
