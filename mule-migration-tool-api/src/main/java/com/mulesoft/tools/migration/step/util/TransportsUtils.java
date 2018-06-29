@@ -190,7 +190,6 @@ public final class TransportsUtils {
 
     // may be a try scope too
     Element flow = inbound.getParentElement();
-    // Element flow = getFlow(inbound);
     if (flow.getChild("error-handler", CORE_NAMESPACE) != null) {
       flow.addContent(flow.indexOf(flow.getChild("error-handler", CORE_NAMESPACE)),
                       fetchResponseContent(inbound, appModel));
