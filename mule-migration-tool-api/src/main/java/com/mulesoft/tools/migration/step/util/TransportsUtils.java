@@ -67,7 +67,7 @@ public final class TransportsUtils {
 
       endpoint.removeAttribute("address");
 
-      if ("file".equals(protocol)) {
+      if ("file".equals(protocol) || "vm".equals(protocol)) {
         // Ref: https://stackoverflow.com/questions/7857416/file-uri-scheme-and-relative-files
         return of(new EndpointAddress(protocol, credentials, null, port, host + (path != null ? path : "")));
       } else {
@@ -127,9 +127,17 @@ public final class TransportsUtils {
    */
   public static void migrateInboundEndpointStructure(ApplicationModel appModel, Element inboundEndpoint, MigrationReport report,
                                                      boolean expectsOutboundProperties) {
+    migrateInboundEndpointStructure(appModel, inboundEndpoint, report, expectsOutboundProperties, false);
+  }
+
+  /**
+   * Add the required compatibility elements to the flow for a migrated inbound endpoint to work correctly.
+   */
+  public static void migrateInboundEndpointStructure(ApplicationModel appModel, Element inboundEndpoint, MigrationReport report,
+                                                     boolean expectsOutboundProperties, boolean consumeStreams) {
     inboundEndpoint.removeAttribute("exchange-pattern");
     extractInboundChildren(inboundEndpoint, appModel);
-    migrateSourceStructure(appModel, inboundEndpoint, report, expectsOutboundProperties);
+    migrateSourceStructure(appModel, inboundEndpoint, report, expectsOutboundProperties, consumeStreams);
   }
 
   /**
@@ -137,15 +145,33 @@ public final class TransportsUtils {
    */
   public static void migrateOutboundEndpointStructure(ApplicationModel appModel, Element outboundEndpoint, MigrationReport report,
                                                       boolean outputsAttributes) {
+    migrateOutboundEndpointStructure(appModel, outboundEndpoint, report, outputsAttributes, false);
+  }
+
+  /**
+   * Add the required compatibility elements to the flow for a migrated outbound endpoint to work correctly.
+   */
+  public static void migrateOutboundEndpointStructure(ApplicationModel appModel, Element outboundEndpoint, MigrationReport report,
+                                                      boolean outputsAttributes, boolean consumeStreams) {
     if (outboundEndpoint.getAttributeValue("exchange-pattern") != null
         && "one-way".equals(outboundEndpoint.getAttributeValue("exchange-pattern"))) {
       Element asyncWrapper = new Element("async", CORE_NAMESPACE);
+      Element nestedAsync = asyncWrapper;
 
+      // may be a try scope too
       Element flow = outboundEndpoint.getParentElement();
+
+      if (flow.getChild("error-handler", CORE_NAMESPACE) != null) {
+        nestedAsync = new Element("try", CORE_NAMESPACE);
+        asyncWrapper.addContent(nestedAsync);
+      }
+
       List<Element> allChildren = flow.getChildren();
       for (Element processor : new ArrayList<>(allChildren.subList(allChildren.indexOf(outboundEndpoint), allChildren.size()))) {
         if (!"error-handler".equals(processor.getName())) {
-          asyncWrapper.addContent(processor.detach());
+          nestedAsync.addContent(processor.detach());
+        } else {
+          nestedAsync.addContent(processor.clone());
         }
       }
       if (flow.getChild("error-handler", CORE_NAMESPACE) != null) {
@@ -156,17 +182,27 @@ public final class TransportsUtils {
     }
     outboundEndpoint.removeAttribute("exchange-pattern");
     extractOutboundChildren(outboundEndpoint, appModel);
-    migrateOperationStructure(appModel, outboundEndpoint, report, outputsAttributes, null, null);
+    migrateOperationStructure(appModel, outboundEndpoint, report, outputsAttributes, null, null, consumeStreams);
   }
 
   public static void extractInboundChildren(Element inbound, ApplicationModel appModel) {
     inbound.getParentElement().addContent(2, fetchContent(inbound));
-    inbound.getParentElement().addContent(fetchResponseContent(inbound, appModel));
+
+    // may be a try scope too
+    Element flow = inbound.getParentElement();
+    if (flow.getChild("error-handler", CORE_NAMESPACE) != null) {
+      flow.addContent(flow.indexOf(flow.getChild("error-handler", CORE_NAMESPACE)),
+                      fetchResponseContent(inbound, appModel));
+    } else {
+      flow.addContent(fetchResponseContent(inbound, appModel));
+    }
+
   }
 
   public static void extractOutboundChildren(Element outbound, ApplicationModel appModel) {
     outbound.getParentElement().addContent(outbound.getParentElement().indexOf(outbound), fetchContent(outbound));
-    outbound.getParentElement().addContent(fetchResponseContent(outbound, appModel));
+    outbound.getParentElement().addContent(outbound.getParentElement().indexOf(outbound) + 1,
+                                           fetchResponseContent(outbound, appModel));
   }
 
   private static List<Content> fetchContent(Element outbound) {
@@ -184,7 +220,8 @@ public final class TransportsUtils {
     }
 
     outbound.getChildren().stream()
-        .filter(c -> c.getName().contains("transformer") || c.getName().contains("filter") || "set-property".equals(c.getName()))
+        .filter(c -> c.getName().contains("transformer") || c.getName().contains("filter") || "set-property".equals(c.getName())
+            || "processor".equals(c.getName()))
         .collect(toList()).forEach(tc -> {
           tc.getParent().removeContent(tc);
           content.add(tc);
@@ -192,15 +229,15 @@ public final class TransportsUtils {
     return content;
   }
 
-  private static List<Content> fetchResponseContent(Element outbound, ApplicationModel appModel) {
+  private static List<Content> fetchResponseContent(Element endpoint, ApplicationModel appModel) {
     List<Content> responseContent = new ArrayList<>();
-    if (outbound.getChild("response", CORE_NAMESPACE) != null) {
-      responseContent.addAll(outbound.getChild("response", CORE_NAMESPACE).cloneContent());
-      outbound.getChild("response", CORE_NAMESPACE).detach();
+    if (endpoint.getChild("response", CORE_NAMESPACE) != null) {
+      responseContent.addAll(endpoint.getChild("response", CORE_NAMESPACE).cloneContent());
+      endpoint.getChild("response", CORE_NAMESPACE).detach();
     }
 
-    if (outbound.getAttribute("responseTransformer-refs") != null) {
-      String[] transformerNames = outbound.getAttributeValue("responseTransformer-refs").split(",");
+    if (endpoint.getAttribute("responseTransformer-refs") != null) {
+      String[] transformerNames = endpoint.getAttributeValue("responseTransformer-refs").split(",");
 
       for (String transformerName : transformerNames) {
         Element transformer = appModel.getNode("/mule:mule/*[@name = '" + transformerName + "']");
@@ -212,7 +249,7 @@ public final class TransportsUtils {
           responseContent.add(new Element("transformer", CORE_NAMESPACE).setAttribute("ref", transformerName));
         }
       }
-      outbound.removeAttribute("responseTransformer-refs");
+      endpoint.removeAttribute("responseTransformer-refs");
     }
     return responseContent;
   }

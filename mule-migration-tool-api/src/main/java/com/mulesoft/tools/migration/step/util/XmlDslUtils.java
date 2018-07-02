@@ -14,9 +14,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
 import org.jdom2.Document;
@@ -77,14 +77,14 @@ public final class XmlDslUtils {
    * Add the required compatibility elements to the flow for a migrated source to work correctly.
    */
   public static void migrateSourceStructure(ApplicationModel appModel, Element object, MigrationReport report) {
-    migrateSourceStructure(appModel, object, report, true);
+    migrateSourceStructure(appModel, object, report, true, false);
   }
 
   /**
    * Add the required compatibility elements to the flow for a migrated source to work correctly.
    */
   public static void migrateSourceStructure(ApplicationModel appModel, Element object, MigrationReport report,
-                                            boolean expectsOutboundProperties) {
+                                            boolean expectsOutboundProperties, boolean consumeStreams) {
     appModel.addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, object.getDocument());
 
     int index = object.getParent().indexOf(object);
@@ -95,11 +95,13 @@ public final class XmlDslUtils {
       // TODO MMT-32 Are we migrating exception handling before or after connectors/transports?
       Element errorHandlerElement = object.getParentElement().getChild("error-handler", CORE_NAMESPACE);
       if (errorHandlerElement != null) {
-        buildOutboundPropertiesToVar(report, object.getParent(), object.getParentElement().indexOf(errorHandlerElement) - 1);
+        buildOutboundPropertiesToVar(report, object.getParent(), object.getParentElement().indexOf(errorHandlerElement) - 1,
+                                     consumeStreams);
 
-        errorHandlerElement.getChildren().forEach(eh -> buildOutboundPropertiesToVar(report, eh, eh.getContentSize()));
+        errorHandlerElement.getChildren()
+            .forEach(eh -> buildOutboundPropertiesToVar(report, eh, eh.getContentSize(), consumeStreams));
       } else {
-        buildOutboundPropertiesToVar(report, object.getParent(), object.getParent().getContentSize());
+        buildOutboundPropertiesToVar(report, object.getParent(), object.getParent().getContentSize(), consumeStreams);
       }
     }
   }
@@ -108,7 +110,13 @@ public final class XmlDslUtils {
    * Add the required compatibility elements to the flow for a migrated operation to work correctly.
    */
   public static void migrateOperationStructure(ApplicationModel appModel, Element object, MigrationReport report) {
-    migrateOperationStructure(appModel, object, report, true, null, null);
+    migrateOperationStructure(appModel, object, report, true, null, null, false);
+  }
+
+  public static void migrateOperationStructure(ApplicationModel appModel, Element object, MigrationReport report,
+                                               boolean outputsAttributes, ExpressionMigrator expressionMigrator,
+                                               CompatibilityResolver resolver) {
+    migrateOperationStructure(appModel, object, report, outputsAttributes, expressionMigrator, resolver, false);
   }
 
   /**
@@ -116,14 +124,14 @@ public final class XmlDslUtils {
    */
   public static void migrateOperationStructure(ApplicationModel appModel, Element object, MigrationReport report,
                                                boolean outputsAttributes, ExpressionMigrator expressionMigrator,
-                                               CompatibilityResolver resolver) {
+                                               CompatibilityResolver resolver, boolean consumeStreams) {
     if (expressionMigrator != null && resolver != null) {
       migrateEnrichers(object, expressionMigrator, resolver, appModel, report);
     }
     addCompatibilityNamespace(appModel, object.getDocument());
 
     int index = object.getParent().indexOf(object);
-    buildOutboundPropertiesToVar(report, object.getParent(), index);
+    buildOutboundPropertiesToVar(report, object.getParent(), index, consumeStreams);
     if (outputsAttributes) {
       buildAttributesToInboundProperties(report, object.getParent(), index + 2);
     }
@@ -167,8 +175,13 @@ public final class XmlDslUtils {
     return a2ip;
   }
 
-  private static Element buildOutboundPropertiesToVar(MigrationReport report, Parent parent, int index) {
+  private static Element buildOutboundPropertiesToVar(MigrationReport report, Parent parent, int index, boolean consumeStreams) {
     Element op2v = new Element("outbound-properties-to-var", COMPATIBILITY_NAMESPACE);
+
+    if (consumeStreams) {
+      op2v.setAttribute("consumeStreams", "true");
+    }
+
     parent.addContent(index, op2v);
 
     report.report(WARN, op2v, op2v,
@@ -222,6 +235,14 @@ public final class XmlDslUtils {
   public static void addElementAfter(Element newElement, Element element) {
     Integer elementIndex = element.getParentElement().indexOf(element);
     element.getParentElement().addContent(elementIndex + 1, newElement);
+  }
+
+  public static Element getFlow(Element processor) {
+    while (!"flow".equals(processor.getName()) && !"sub-flow".equals(processor.getName())) {
+      processor = processor.getParentElement();
+    }
+
+    return processor;
   }
 
   public static void addValidationModule(ApplicationModel applicationModel) {

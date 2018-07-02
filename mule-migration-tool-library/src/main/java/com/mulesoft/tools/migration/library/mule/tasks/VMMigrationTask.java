@@ -11,7 +11,11 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICA
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmConnector;
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmConnectorPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.vm.VmInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmOutboundEndpoint;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -48,6 +52,8 @@ public class VMMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new VmInboundEndpoint());
+    return newArrayList(new VmConnectorPomContribution(),
+                        new VmGlobalEndpoint(), new VmInboundEndpoint(), new VmOutboundEndpoint(),
+                        new VmConnector());
   }
 }

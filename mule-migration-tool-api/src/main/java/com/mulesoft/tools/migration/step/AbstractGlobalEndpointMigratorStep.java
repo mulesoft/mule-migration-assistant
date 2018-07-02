@@ -6,13 +6,17 @@
  */
 package com.mulesoft.tools.migration.step;
 
+import static java.util.stream.Collectors.toList;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
+import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -26,17 +30,14 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
   protected abstract Namespace getNamespace();
 
   protected final void doExecute(Element object, MigrationReport report) {
+    List<Content> children = object.removeContent();
+
     for (Element referent : getRefs(object)) {
       changeNamespace(referent);
-      referent.setName("endpoint");
 
-      for (Attribute attribute : object.getAttributes()) {
-        if (referent.getAttribute(attribute.getName()) == null) {
-          referent.setAttribute(attribute.getName(), attribute.getValue());
-        }
-      }
+      copyAttributes(object, referent);
 
-      referent.addContent(object.removeContent());
+      referent.addContent(children.stream().map(e -> e.clone()).collect(toList()));
 
       referent.setAttribute("name", referent.getAttributeValue("ref"));
       referent.removeAttribute("ref");
@@ -44,15 +45,10 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
 
     for (Element referent : getInboundRefs(object)) {
       changeNamespace(referent);
-      referent.setName("inbound-endpoint");
 
-      for (Attribute attribute : object.getAttributes()) {
-        if (referent.getAttribute(attribute.getName()) == null) {
-          referent.setAttribute(attribute.getName(), attribute.getValue());
-        }
-      }
+      copyAttributes(object, referent);
 
-      referent.addContent(object.removeContent());
+      referent.addContent(children.stream().map(e -> e.clone()).collect(toList()));
 
       referent.setAttribute("name", referent.getAttributeValue("ref"));
       referent.removeAttribute("ref");
@@ -60,15 +56,10 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
 
     for (Element referent : getOutboundRefs(object)) {
       changeNamespace(referent);
-      referent.setName("outbound-endpoint");
 
-      for (Attribute attribute : object.getAttributes()) {
-        if (!"name".equals(attribute.getName()) && referent.getAttribute(attribute.getName()) == null) {
-          referent.setAttribute(attribute.getName(), attribute.getValue());
-        }
-      }
+      copyAttributes(object, referent);
 
-      referent.addContent(object.removeContent());
+      referent.addContent(children.stream().map(e -> e.clone()).collect(toList()));
 
       referent.setAttribute("name", referent.getAttributeValue("ref"));
       referent.removeAttribute("ref");
@@ -77,10 +68,18 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
     object.getParent().removeContent(object);
   }
 
+  private void copyAttributes(Element object, Element referent) {
+    for (Attribute attribute : object.getAttributes()) {
+      if (!"name".equals(attribute.getName()) && referent.getAttribute(attribute.getName()) == null) {
+        referent.setAttribute(attribute.getName(), attribute.getValue());
+      }
+    }
+  }
+
   protected Set<Element> getRefs(Element object) {
     Set<Element> refsToGlobal = new HashSet<>();
     refsToGlobal
-        .addAll(getApplicationModel().getNodes("/mule:mule/mule:flow/" + getNamespace().getPrefix() + ":endpoint[@ref='"
+        .addAll(getApplicationModel().getNodes("/mule:mule//" + getNamespace().getPrefix() + ":endpoint[@ref='"
             + object.getAttributeValue("name") + "']"));
     return refsToGlobal;
   }
@@ -99,9 +98,9 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
   protected Set<Element> getOutboundRefs(Element object) {
     Set<Element> outboundRefsToGlobal = new HashSet<>();
     outboundRefsToGlobal.addAll(getApplicationModel()
-        .getNodes("/mule:mule/mule:flow/mule:outbound-endpoint[@ref='" + object.getAttributeValue("name") + "']"));
+        .getNodes("/mule:mule//mule:outbound-endpoint[@ref='" + object.getAttributeValue("name") + "']"));
     outboundRefsToGlobal.addAll(getApplicationModel()
-        .getNodes("/mule:mule/mule:flow/" + getNamespace().getPrefix() + ":outbound-endpoint[@ref='"
+        .getNodes("/mule:mule//" + getNamespace().getPrefix() + ":outbound-endpoint[@ref='"
             + object.getAttributeValue("name") + "']"));
     return outboundRefsToGlobal;
   }

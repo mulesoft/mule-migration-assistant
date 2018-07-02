@@ -14,8 +14,11 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.MigrationStep;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
+import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
+import org.jdom2.Element;
 
 import java.util.List;
 
@@ -60,7 +63,7 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
           stepSelector.getApplicationModelContributionSteps()
               .forEach(s -> {
                 s.setApplicationModel(applicationModel);
-                applicationModel.getNodes(s.getAppliedTo()).forEach(n -> s.execute(n, report));
+                fetchAndProcessNodes(report, s);
               });
 
 
@@ -74,6 +77,20 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
 
     } catch (Exception e) {
       throw new MigrationTaskException("Task execution exception. " + e.getMessage(), e);
+    }
+  }
+
+  private void fetchAndProcessNodes(MigrationReport report, ApplicationModelContribution s) {
+    List<Element> nodes = applicationModel.getNodes(s.getAppliedTo());
+    nodes.forEach(n -> s.execute(n, report));
+
+    nodes.removeAll(applicationModel.getNodes(s.getAppliedTo()));
+    if (!nodes.isEmpty()) {
+      // This recursive calls is here so if any task adds nodes to the config that would be processed by this task, those are
+      // processed.
+      // Also, this is recursive rather than iterative so in the case of a bug, we get a StackOverflow rather than an infinite
+      // loop.
+      fetchAndProcessNodes(report, s);
     }
   }
 
