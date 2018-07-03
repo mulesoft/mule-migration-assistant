@@ -147,6 +147,93 @@ public class MelToDwExpressionMigratorTest {
     assertThat(result, is(script));
   }
 
+  @Test
+  public void migrateStringConcatenationTwoLiterals() {
+    String script = "#['java' + 'script']";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#['java' ++ 'script']"));
+  }
+
+  @Test
+  public void migrateStringConcatenationLeftVariableIsCoerced() {
+    String script = "#[foo + 'bar']";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[vars.foo ++ 'bar']"));
+  }
+
+  @Test
+  public void migrateStringConcatenationRightVariableIsCoerced() {
+    String script = "#['foo' + bar]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#['foo' ++ vars.bar]"));
+  }
+
+  @Test
+  public void migrateStringConcatenationLeftIntegerIsCoerced() {
+    String script = "#[14 + 'la']";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[14 ++ 'la']"));
+  }
+
+  @Test
+  public void migrateStringConcatenationRightIntegerIsCoerced() {
+    String script = "#['la' + 14]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#['la' ++ 14]"));
+  }
+
+  @Test
+  public void migrateStringConcatenationMoreThanTwoElementsAtLeastOneString() {
+    String script = "#[14 + 'la' + 14]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[14 ++ 'la' ++ 14]"));
+  }
+
+  @Test
+  public void migrateStringConcatenationWithIdentifier() {
+    String script = "#[payload + 'reload']";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[payload ++ 'reload']"));
+  }
+
+  @Test
+  public void migrateStringConcatenationWithMoreThanOneIdentifier() {
+    String script = "#[payload.foo + payload.bar + 'max']";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[payload.foo ++ payload.bar ++ 'max']"));
+  }
+
+  @Test
+  public void migrateStringConcatenationWithMoreThanOneIdentifier2() {
+    String script = "#['max' + payload.foo + payload.bar]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#['max' ++ payload.foo ++ payload.bar]"));
+  }
+
+  @Test
+  public void migrateSum() {
+    String script = "#[1 + 1]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[1 + 1]"));
+  }
+
+  @Test
+  public void migrateSumWithIdentifier() {
+    String script = "#[payload + 1]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[payload + 1]"));
+  }
+
+  @Test
+  public void migrateComplexConcatenation() {
+    String script =
+        "#['Successfully redirected: ' + message.inboundProperties['http.relative.path'] + '?' + message.inboundProperties['http.query.string']]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result,
+               is("#['Successfully redirected: ' ++ vars.compatibility_inboundProperties['http.relative.path'] ++ '?' ++ vars.compatibility_inboundProperties['http.query.string']]"));
+  }
+
+
   @Test(expected = IllegalArgumentException.class)
   public void isWrappedNull() {
     expressionMigrator.isWrapped(null);
