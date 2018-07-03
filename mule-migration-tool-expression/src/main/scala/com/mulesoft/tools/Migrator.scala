@@ -1,10 +1,13 @@
 package com.mulesoft.tools
 
+import com.mulesoft.tools.ast.{EnclosedExpression, MelExpressionNode, StringNode}
 import com.mulesoft.tools.{ast => mel}
 import org.mule.weave.v2.codegen.CodeGenerator
 import org.mule.weave.v2.grammar._
-import org.mule.weave.v2.parser.annotation.{EnclosedMarkAnnotation, QuotedStringAnnotation}
+import org.mule.weave.v2.parser.annotation.{EnclosedMarkAnnotation, InfixNotationFunctionCallAnnotation, QuotedStringAnnotation}
+import org.mule.weave.v2.parser.ast.functions.FunctionCallParametersNode
 import org.mule.weave.v2.parser.ast.header.HeaderNode
+import org.mule.weave.v2.parser.ast.variables.VariableReferenceNode
 import org.mule.weave.v2.parser.{ast => dw}
 
 object Migrator {
@@ -23,10 +26,7 @@ object Migrator {
           case mel.OperatorType.minus => dw.operators.BinaryOpNode(SubtractionOpId, toDataweaveAst(left), toDataweaveAst(right))
           case mel.OperatorType.dot => dw.operators.BinaryOpNode(ValueSelectorOpId, toDataweaveAst(left), toDataweaveAst(right))
           case mel.OperatorType.subscript => dw.operators.BinaryOpNode(DynamicSelectorOpId, toDataweaveAst(left), toDataweaveAst(right))
-          case mel.OperatorType.plus => {
-            //TODO this with string is not going to work requires ++
-            dw.operators.BinaryOpNode(AdditionOpId, toDataweaveAst(left), toDataweaveAst(right))
-          }
+          case mel.OperatorType.plus => dw.operators.BinaryOpNode(AdditionOpId, toDataweaveAst(left), toDataweaveAst(right))
         }
       }
       case mel.MapNode(elements) => {
@@ -45,17 +45,61 @@ object Migrator {
     }
   }
 
+  def forceConcatenation(expressionNode: dw.AstNode): dw.AstNode = {
+    expressionNode match {
+      case dw.operators.BinaryOpNode(AdditionOpId, left, right) => {
+        dw.functions.FunctionCallNode(VariableReferenceNode("++"), FunctionCallParametersNode(Seq(forceConcatenation(left), forceConcatenation(right)))).annotate(InfixNotationFunctionCallAnnotation())
+      }
+      case _ => expressionNode
+    }
+  }
+
+  def resolveStringConcatenation(expressionNode: dw.AstNode): dw.AstNode = {
+    expressionNode match {
+      case dw.operators.BinaryOpNode(operatorType, left, right) => {
+        operatorType match {
+          case AdditionOpId => {
+            if (isStringType(left) || isStringType(right)) {
+              return dw.functions.FunctionCallNode(VariableReferenceNode("++"), FunctionCallParametersNode(Seq(forceConcatenation(left), forceConcatenation(right)))).annotate(InfixNotationFunctionCallAnnotation())
+            } else expressionNode
+          }
+          case _ => expressionNode
+        }
+      }
+      case _ => expressionNode
+    }
+    expressionNode.children.map(resolveStringConcatenation)
+    return expressionNode
+  }
+
   def migrate(melScript: String): String = {
     val expressionNode = MelParserHelper.parse(melScript)
-    val bodyNode = toDataweaveAst(expressionNode)
+    val bodyNode = resolveStringConcatenation(toDataweaveAst(expressionNode))
     val documentNode = dw.structure.DocumentNode(HeaderNode(Seq()), bodyNode)
     CodeGenerator.generate(documentNode)
   }
 
   def resolveName(literal: String): String = {
-    if(bindingContextVariable.exists(name => literal.equals(name)))
+    if (bindingContextVariable.exists(name => literal.equals(name)))
       literal
     else
       "vars." + literal
+  }
+
+  def isStringType(left: MelExpressionNode): Boolean = {
+    left match {
+      //TODO check cast and .toString()
+      case StringNode(_) => true
+      case EnclosedExpression(expression) => isStringType(expression)
+      case _ => false
+    }
+  }
+
+  def isStringType(node: dw.AstNode): Boolean = {
+    node match {
+      //TODO check cast and .toString()
+      case dw.structure.StringNode(_) => true
+      case _ => node.children().exists(isStringType)
+    }
   }
 }
