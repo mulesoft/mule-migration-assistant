@@ -6,6 +6,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
+
 import com.mulesoft.tools.migration.library.mule.steps.core.CatchExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExpressions;
@@ -20,17 +25,16 @@ import com.mulesoft.tools.migration.library.mule.steps.core.RollbackExceptionStr
 import com.mulesoft.tools.migration.library.mule.steps.core.SetPayload;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetVariable;
 import com.mulesoft.tools.migration.library.mule.steps.core.TransactionalScope;
+import com.mulesoft.tools.migration.library.mule.steps.ee.CacheHttpCachingStrategy;
+import com.mulesoft.tools.migration.library.mule.steps.ee.CacheInvalidateKey;
+import com.mulesoft.tools.migration.library.mule.steps.ee.CacheObjectStoreCachingStrategy;
+import com.mulesoft.tools.migration.library.mule.steps.ee.CacheScope;
 import com.mulesoft.tools.migration.library.mule.steps.ee.EETransform;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 /**
  * Migration definition for Mule Core components
@@ -76,6 +80,10 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new SetPayload(),
                         new SetVariable(),
                         new EETransform(),
+                        new CacheScope(),
+                        new CacheInvalidateKey(),
+                        new CacheObjectStoreCachingStrategy(),
+                        new CacheHttpCachingStrategy(),
                         new GenericGlobalEndpoint());
   }
 }
