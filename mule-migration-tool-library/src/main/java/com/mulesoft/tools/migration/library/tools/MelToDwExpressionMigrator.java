@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 
 /**
  * Migrate mel expressions to dw expression
@@ -61,8 +62,14 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     } catch (Exception e) {
       return compatibilityResolver.resolve(unwrappedExpression, element, report, model);
     }
+    migratedExpression = resolveServerContext(migratedExpression);
     migratedExpression = resolveIdentifiers(migratedExpression);
     return dataWeaveBodyOnly ? migratedExpression.replaceFirst("---", "").trim() : migratedExpression;
+  }
+
+  private String resolveServerContext(String expression) {
+    return expression.replaceAll("(vars\\.)?server\\.dateTime", "now()").replaceAll("(vars\\.)?server\\.nanoSeconds",
+                                                                                    "System.nanoTime()");
   }
 
   public String resolveIdentifiers(String expression) {

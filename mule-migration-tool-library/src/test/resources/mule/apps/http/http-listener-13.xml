@@ -16,7 +16,7 @@
         <http:listener config-ref="listenerConfig" path="${path}">
             <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
                 <http:headers>
-                    #[migration::HttpListener::httpListenerResponseHeaders(vars) ++ { "User-Agent": 'Mule 3.6.0', "Date": vars.server.dateTime }]
+                    #[migration::HttpListener::httpListenerResponseHeaders(vars) ++ { "User-Agent": 'Mule 3.6.0', "Date": now() }]
                 </http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">

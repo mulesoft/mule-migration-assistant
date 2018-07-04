@@ -21,7 +21,7 @@
             </http:response>
             <http:error-response statusCode="200" reasonPhrase="OK">
                 <http:headers>
-                    #[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'Date' : vars.server.dateTime} ++ { "user-agent": 'Mule 3.8.0' }]
+                    #[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'Date' : now()} ++ { "user-agent": 'Mule 3.8.0' }]
                 </http:headers>
             </http:error-response>
         </http:listener>
