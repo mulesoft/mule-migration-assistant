@@ -19,7 +19,7 @@
                        directory="${workingDirectory}/path"
                        moveToDirectory="${workingDirectory}/temp/output-directory"
                        recursive="false"
-                       applyPostActionWhenFailed="false" isMessageSource="true">
+                       applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

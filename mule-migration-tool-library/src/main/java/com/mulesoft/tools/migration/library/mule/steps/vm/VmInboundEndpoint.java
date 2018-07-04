@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.vm;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -14,6 +15,7 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -46,7 +48,7 @@ public class VmInboundEndpoint extends AbstractApplicationModelMigrationStep
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     // This is a temporary simple implementation for getting the outbound properties in variables
-    object.setAttribute("isMessageSource", "true");
+    addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
     migrateSourceStructure(getApplicationModel(), object, report, false);
   }
 

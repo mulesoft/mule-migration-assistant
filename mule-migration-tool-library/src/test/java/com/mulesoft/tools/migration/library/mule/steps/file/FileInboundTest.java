@@ -17,6 +17,7 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
@@ -89,6 +90,7 @@ public class FileInboundTest {
   private FileInboundEndpoint fileInboundEndpoint;
   private FileTransformers fileTransformers;
   private InboundEndpoint inboundEndpoint;
+  private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
 
   private Document doc;
   private ApplicationModel appModel;
@@ -120,6 +122,7 @@ public class FileInboundTest {
     inboundEndpoint = new InboundEndpoint();
     inboundEndpoint.setExpressionMigrator(expressionMigrator);
     inboundEndpoint.setApplicationModel(appModel);
+    removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
   }
 
   @Ignore
@@ -144,6 +147,8 @@ public class FileInboundTest {
         .forEach(node -> fileTransformers.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

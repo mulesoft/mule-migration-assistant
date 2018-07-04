@@ -18,7 +18,7 @@
     </message-properties-transformer>
 
     <flow name="flow">
-        <http:listener config-ref="flowListenerConfig" path="/post/*" isMessageSource="true">
+        <http:listener config-ref="flowListenerConfig" path="/post/*">
           <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
             <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
           </http:response>

@@ -2,23 +2,36 @@
 
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-      http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+      http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+      http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <http:listener-config host="0.0.0.0" name="HTTP_Listener_Configuration" port="8081"/>
+    <http:listener-config name="HTTP_Listener_Configuration">
+        <http:listener-connection host="0.0.0.0" port="8081"/>
+    </http:listener-config>
 
     <flow name="rollback">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/" isMessageSource="true">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/">
             <redelivery-policy maxRedeliveryCount="10"/>
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
         </http:listener>
+        <compatibility:attributes-to-inbound-properties/>
         <logger/>
+        <compatibility:outbound-properties-to-var/>
         <error-handler>
             <on-error-propagate when="#[mel:exception.causedBy(java.lang.IllegalStateException)]">
-                <logger/>
+                <logger message="#['IlegalState']" />
+                <compatibility:outbound-properties-to-var/>
             </on-error-propagate>
             <on-error-propagate type="REDELIVERY_EXHAUSTED">
-                <logger/>
+                <logger message="#['Redelivery']" />
             </on-error-propagate>
         </error-handler>
     </flow>

@@ -17,7 +17,7 @@
     <append-string-transformer name="appendResponse" message=" response"/>
 
     <flow name="flow">
-        <http:listener config-ref="bothListenerConfig" path="/*" isMessageSource="true">
+        <http:listener config-ref="bothListenerConfig" path="/*">
           <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
             <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
           </http:response>

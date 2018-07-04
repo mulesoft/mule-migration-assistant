@@ -8,6 +8,8 @@ package com.mulesoft.tools.migration.step.util;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExcetionHandlingElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isErrorHanldingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
 import static java.util.Optional.empty;
@@ -144,12 +146,13 @@ public final class TransportsUtils {
       Element flow = outboundEndpoint.getParentElement();
       List<Element> allChildren = flow.getChildren();
       for (Element processor : new ArrayList<>(allChildren.subList(allChildren.indexOf(outboundEndpoint), allChildren.size()))) {
-        if (!"error-handler".equals(processor.getName())) {
+        if (!isErrorHanldingElement(processor)) {
           asyncWrapper.addContent(processor.detach());
         }
       }
-      if (flow.getChild("error-handler", CORE_NAMESPACE) != null) {
-        flow.addContent(flow.indexOf(flow.getChild("error-handler", CORE_NAMESPACE)), asyncWrapper);
+      Element errorHandler = getFlowExcetionHandlingElement(flow);
+      if (errorHandler != null) {
+        flow.addContent(flow.indexOf(errorHandler), asyncWrapper);
       } else {
         flow.addContent(asyncWrapper);
       }

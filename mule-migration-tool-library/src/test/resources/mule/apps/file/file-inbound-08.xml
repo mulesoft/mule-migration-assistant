@@ -11,7 +11,7 @@
     <file:matcher name="TestMatcher" filenamePattern="*.txt"/>
 
     <flow name="Test">
-        <file:listener directory="${workingDirectory}/path" autoDelete="true" recursive="false" matcher="TestMatcher" applyPostActionWhenFailed="false" isMessageSource="true">
+        <file:listener directory="${workingDirectory}/path" autoDelete="true" recursive="false" matcher="TestMatcher" applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

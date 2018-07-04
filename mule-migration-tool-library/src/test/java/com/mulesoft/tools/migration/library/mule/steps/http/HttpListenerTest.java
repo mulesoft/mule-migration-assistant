@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -86,6 +87,7 @@ public class HttpListenerTest {
   private HttpConnectorListener httpListener;
   private HttpConnectorHeaders httpHeaders;
   private HttpGlobalBuilders httpGlobalBuilders;
+  private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
 
   private Document doc;
   private ApplicationModel appModel;
@@ -108,6 +110,7 @@ public class HttpListenerTest {
     httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
 
     httpGlobalBuilders = new HttpGlobalBuilders();
+    removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
   }
 
   @Ignore
@@ -126,6 +129,8 @@ public class HttpListenerTest {
         .forEach(node -> httpHeaders.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, httpGlobalBuilders.getAppliedTo().getExpression())
         .forEach(node -> httpGlobalBuilders.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

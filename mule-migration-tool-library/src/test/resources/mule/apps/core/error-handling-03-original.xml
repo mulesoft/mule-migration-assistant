@@ -12,7 +12,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
     </flow>
 
     <catch-exception-strategy name="global-catch" when="#[exception.causedBy(java.lang.ArithmeticException)]">
-        <logger/>
+        <logger message="#['ArithmeticException']" />
     </catch-exception-strategy>
     
 </mule>

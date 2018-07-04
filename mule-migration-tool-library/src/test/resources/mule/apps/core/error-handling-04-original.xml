@@ -9,14 +9,14 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
     <http:listener-config host="0.0.0.0" name="HTTP_Listener_Configuration" port="8081"/>
 
     <rollback-exception-strategy maxRedeliveryAttempts="3" name="global-rollback" when="#[exception.causedBy(java.lang.IllegalStateException)]">
-        <logger/>
+        <logger message="#['IllegalStateException']" />
         <on-redelivery-attempts-exceeded>
-            <logger/>
+            <logger message="#['Redelivery']" />
         </on-redelivery-attempts-exceeded>
     </rollback-exception-strategy>
 
     <flow name="global-rollback-ref">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/" isMessageSource="true"/>
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/"/>
         <logger/>
         <exception-strategy ref="global-rollback"/>
     </flow>

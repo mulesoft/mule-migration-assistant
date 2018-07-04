@@ -13,7 +13,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 
     <error-handler name="global-catch">
         <on-error-continue when="#[mel:exception.causedBy(java.lang.ArithmeticException)]">
-            <logger />
+            <logger message="#['ArithmeticException']" />
         </on-error-continue>
     </error-handler>
 

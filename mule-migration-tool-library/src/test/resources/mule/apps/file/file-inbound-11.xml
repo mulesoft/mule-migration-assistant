@@ -24,7 +24,7 @@
                        renameTo="#[&quot;$(vars.compatibility_inboundProperties.originalFilename)_$(message.id)&quot;]"
                        recursive="false"
                        config-ref="FileConnector" matcher="FileConnector-TestMatcher"
-                       applyPostActionWhenFailed="false" isMessageSource="true">
+                       applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

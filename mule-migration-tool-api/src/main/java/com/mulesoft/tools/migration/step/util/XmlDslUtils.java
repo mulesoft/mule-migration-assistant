@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
 import static java.lang.System.lineSeparator;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -23,6 +24,8 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.Parent;
+
+import java.util.Optional;
 
 /**
  * Provides reusable methods for common migration scenarios.
@@ -91,9 +94,7 @@ public final class XmlDslUtils {
     buildAttributesToInboundProperties(report, object.getParent(), index + 1);
 
     if (expectsOutboundProperties) {
-      // TODO MMT-32 Test this
-      // TODO MMT-32 Are we migrating exception handling before or after connectors/transports?
-      Element errorHandlerElement = object.getParentElement().getChild("error-handler", CORE_NAMESPACE);
+      Element errorHandlerElement = getFlowExcetionHandlingElement(object.getParentElement());
       if (errorHandlerElement != null) {
         buildOutboundPropertiesToVar(report, object.getParent(), object.getParentElement().indexOf(errorHandlerElement) - 1);
 
@@ -237,11 +238,7 @@ public final class XmlDslUtils {
   }
 
   public static boolean isTopLevelElement(Element element) {
-    if (element.getParentElement().getName().equals("mule")) {
-      return true;
-    } else {
-      return false;
-    }
+    return (element.getParentElement().equals(element.getDocument().getRootElement()));
   }
 
   public static void createErrorHandlerParent(Element element) {
@@ -249,7 +246,7 @@ public final class XmlDslUtils {
     parent.removeContent(element);
 
     Element errorHandler = new Element("error-handler");
-    errorHandler.setNamespace(parent.getNamespace());
+    errorHandler.setNamespace(CORE_NAMESPACE);
     errorHandler.addContent(element);
 
     if (element.getAttribute("name") != null) {
@@ -263,9 +260,23 @@ public final class XmlDslUtils {
 
   public static Element getElementParentFlow(Element element) {
     Element parentElement = element.getParentElement();
-    while (parentElement != null && !parentElement.getName().equals("flow")) {
+    while (parentElement != null && !parentElement.getName().matches("flow|subflow")) {
       parentElement = parentElement.getParentElement();
     }
     return parentElement;
+  }
+
+  public static void addMigrationAttributeToElement(Element element, Attribute attribute) {
+    attribute.setNamespace(Namespace.getNamespace("migration", "migration"));
+    element.setAttribute(attribute);
+  }
+
+  public static boolean isErrorHanldingElement(Element element) {
+    return element.getName()
+        .matches("choice-exception-strategy|catch-exception-strategy|rollback-exception-strategy|exception-strategy");
+  }
+
+  public static Element getFlowExcetionHandlingElement(Element flow) {
+    return flow.getChildren().stream().filter(e -> isErrorHanldingElement(e)).findFirst().orElse(null);
   }
 }

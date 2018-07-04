@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.endpoint;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 
 import com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpInboundEndpoint;
@@ -53,7 +54,7 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
     });
     object.removeChildren("property", CORE_NAMESPACE);
 
-    object.setAttribute("isMessageSource", "true");
+    addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     AbstractApplicationModelMigrationStep migrator = null;
 
