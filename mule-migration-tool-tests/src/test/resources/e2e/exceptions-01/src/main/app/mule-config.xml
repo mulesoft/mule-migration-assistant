@@ -7,10 +7,10 @@
     <flow name="matchesCorrectExceptionStrategyUsingExceptionType">
         <logger/>
         <choice-exception-strategy>
-            <catch-exception-strategy name="illegalArg" when="#[exception.causedBy(java.lang.IllegalArgumentException)]">
+            <catch-exception-strategy when="#[exception.causedBy(java.lang.IllegalArgumentException)]">
                 <logger/>
             </catch-exception-strategy>
-            <catch-exception-strategy name="illegalSt" when="#[exception.causedBy(java.lang.IllegalStateException)]">
+            <catch-exception-strategy when="#[exception.causedBy(java.lang.IllegalStateException)]">
                 <logger/>
             </catch-exception-strategy>
         </choice-exception-strategy>

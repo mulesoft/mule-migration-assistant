@@ -13,6 +13,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILI
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -58,7 +59,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     Namespace fileNs = Namespace.getNamespace(FILE_NS_PREFIX, FILE_NS_URI);
 
     object.setName("listener");
-    object.setAttribute("isMessageSource", "true");
+    addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     addAttributesToInboundProperties(object, report);
 

@@ -13,7 +13,7 @@
     </http:listener-config>
 
     <flow name="flow">
-        <http:listener config-ref="flowListenerConfig" path="/resources/error/*" isMessageSource="true">
+        <http:listener config-ref="flowListenerConfig" path="/resources/error/*">
             <http:response statusCode="500">
                 <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'Content-Type' : 'text/html'}]</http:headers>
             </http:response>

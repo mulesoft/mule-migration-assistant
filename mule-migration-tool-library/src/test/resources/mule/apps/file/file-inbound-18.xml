@@ -19,7 +19,7 @@
     <file:matcher name="fileConnectorMatcher" updatedUntil="60"/>
 
     <flow name="Test">
-        <file:listener directory="${path}" autoDelete="true" recursive="false" config-ref="fileConnector" matcher="fileConnectorMatcher" applyPostActionWhenFailed="false"  isMessageSource="true">
+        <file:listener directory="${path}" autoDelete="true" recursive="false" config-ref="fileConnector" matcher="fileConnectorMatcher" applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="2000"/>
             </scheduling-strategy>

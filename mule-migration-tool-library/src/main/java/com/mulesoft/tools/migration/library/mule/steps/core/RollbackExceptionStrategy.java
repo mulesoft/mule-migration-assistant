@@ -6,12 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +17,7 @@ import java.util.List;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.createErrorHandlerParent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getElementParentFlow;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isTopLevelElement;
 
 /**
  * Migration step to update Rollback Exception Strategy
@@ -29,11 +25,9 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isTopLevelEleme
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class RollbackExceptionStrategy extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
+public class RollbackExceptionStrategy extends AbstractExceptionsMigrationStep {
 
   public static final String XPATH_SELECTOR = "//*[local-name()='rollback-exception-strategy']";
-
-  private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
@@ -49,14 +43,9 @@ public class RollbackExceptionStrategy extends AbstractApplicationModelMigration
     changeNodeName("", "on-error-propagate")
         .apply(element);
 
-    if (!element.getParentElement().getName().equals("error-handler") || isTopLevelElement(element)) {
-      createErrorHandlerParent(element);
-    }
+    encapsulateException(element);
 
-    if (element.getAttribute("when") != null) {
-      Attribute whenCondition = element.getAttribute("when");
-      whenCondition.setValue(getExpressionMigrator().migrateExpression(whenCondition.getValue(), true, element));
-    }
+    migrateWhenExpression(element);
 
     if (element.getAttribute("maxRedeliveryAttempts") != null) {
       Attribute maxRedelivery = element.getAttribute("maxRedeliveryAttempts");
@@ -65,14 +54,13 @@ public class RollbackExceptionStrategy extends AbstractApplicationModelMigration
       Element flow = getElementParentFlow(element);
       if (flow != null && !flow.getChildren().isEmpty()) {
         Element source = flow.getChildren().get(0);
-        if (source.getAttribute("isMessageSource") != null) {
+        if (source.getAttribute("isMessageSource", Namespace.getNamespace("migration")) != null) {
           Element redelivery = source.getChild("idempotent-redelivery-policy", CORE_NAMESPACE);
           if (redelivery != null) {
             redelivery.setName("redelivery-policy");
             Attribute exprAttr = redelivery.getAttribute("idExpression");
 
-            // TODO MMT-128
-            exprAttr.setValue(exprAttr.getValue().replaceAll("#\\[header\\:inbound\\:originalFilename\\]", "#[attributes.name]"));
+            exprAttr.setValue(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, redelivery));
 
             Attribute maxRedeliveryCountAtt = redelivery.getAttribute("maxRedeliveryCount");
             if (maxRedeliveryCountAtt != null) {
@@ -109,8 +97,10 @@ public class RollbackExceptionStrategy extends AbstractApplicationModelMigration
       newOnError.setAttribute("type", "REDELIVERY_EXHAUSTED");
 
       List<Element> redeliveryElements = new ArrayList<>();
-      redeliveryElements.addAll(redeliverySection.getChildren());
-      redeliverySection.getChildren().forEach(redeliverySection::removeContent);
+      redeliverySection.getChildren().forEach(e -> {
+        e.detach();
+        redeliveryElements.add(e);
+      });
 
       newOnError.addContent(redeliveryElements);
 
@@ -119,13 +109,4 @@ public class RollbackExceptionStrategy extends AbstractApplicationModelMigration
 
   }
 
-  @Override
-  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
-    this.expressionMigrator = expressionMigrator;
-  }
-
-  @Override
-  public ExpressionMigrator getExpressionMigrator() {
-    return expressionMigrator;
-  }
 }

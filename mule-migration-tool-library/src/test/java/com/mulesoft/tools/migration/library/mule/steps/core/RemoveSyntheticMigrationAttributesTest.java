@@ -30,7 +30,7 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 
 @RunWith(Parameterized.class)
-public class RemoveSourcesTagAttributeTest {
+public class RemoveSyntheticMigrationAttributesTest {
 
   private static final Path CORE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/core");
 
@@ -47,24 +47,24 @@ public class RemoveSourcesTagAttributeTest {
   private final Path configPath;
   private final Path targetPath;
 
-  public RemoveSourcesTagAttributeTest(String filePrefix) {
+  public RemoveSyntheticMigrationAttributesTest(String filePrefix) {
     configPath = CORE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = CORE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
   }
 
-  private RemoveSourcesTagAttribute removeSourcesTagAttribute;
+  private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
 
   @Before
   public void setUp() throws Exception {
-    removeSourcesTagAttribute = new RemoveSourcesTagAttribute();
+    removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
   }
 
   @Test
   public void execute() throws Exception {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
-    getElementsFromDocument(doc, removeSourcesTagAttribute.getAppliedTo().getExpression())
-        .forEach(node -> removeSourcesTagAttribute.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

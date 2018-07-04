@@ -15,7 +15,7 @@
     </http:listener-config>
 
     <flow name="flow">
-        <http:listener config-ref="inHttpInListenerConfig" path="/*" isMessageSource="true">
+        <http:listener config-ref="inHttpInListenerConfig" path="/*">
           <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
             <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
           </http:response>

@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Remove isMessageSource attribute that is used for migration purposes.
@@ -16,21 +17,21 @@ import org.jdom2.Element;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class RemoveSourcesTagAttribute extends AbstractApplicationModelMigrationStep {
+public class RemoveSyntheticMigrationAttributes extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//*[@isMessageSource]";
+  public static final String XPATH_SELECTOR = "//*[@*[local-name() = 'isMessageSource' and namespace-uri() = 'migration']]";
 
   @Override
   public String getDescription() {
     return "Update Remove Session Variable namespace to compatibility.";
   }
 
-  public RemoveSourcesTagAttribute() {
+  public RemoveSyntheticMigrationAttributes() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    element.removeAttribute("isMessageSource");
+    element.removeAttribute("isMessageSource", Namespace.getNamespace("migration"));
   }
 }

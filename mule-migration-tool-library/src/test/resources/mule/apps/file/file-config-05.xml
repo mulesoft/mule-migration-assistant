@@ -13,7 +13,7 @@
     </file:config>
 
     <flow name="TestIn">
-        <file:listener config-ref="fileConnector" recursive="false" directory="${workingDirectory}/readFromDirectory" renameTo="bcd" applyPostActionWhenFailed="false" isMessageSource="true">
+        <file:listener config-ref="fileConnector" recursive="false" directory="${workingDirectory}/readFromDirectory" renameTo="bcd" applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

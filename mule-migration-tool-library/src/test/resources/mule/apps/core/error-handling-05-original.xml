@@ -6,19 +6,17 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <http:listener-config name="HTTP_Listener_config">
-        <http:listener-connection host="localhost" port="8081" />
-    </http:listener-config>
+    <http:listener-config name="listenerConfig" host="localhost" port="${port}"/>
 
    <flow name="choiceAndRollback">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/" isMessageSource="true"/>
+        <http:listener config-ref="listenerConfig" path="${path}"/>
         <logger/>
         <choice-exception-strategy>
             <catch-exception-strategy when="#[exception.causedBy(java.lang.IllegalArgumentException)]">
-                <logger/>
+                <logger message="#['IllegalArgumentException']"/>
             </catch-exception-strategy>
             <rollback-exception-strategy maxRedeliveryAttempts="10" when="#[exception.causedBy(java.lang.IllegalStateException)]" >
-                <logger/>
+                <logger message="#['IllegalStateException']"/>
             </rollback-exception-strategy>
         </choice-exception-strategy>
     </flow>

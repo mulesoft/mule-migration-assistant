@@ -13,7 +13,7 @@
     </http:listener-config>
 
     <flow name="flow">
-        <http:listener config-ref="flowListenerConfig" path="/resources/move/*" isMessageSource="true">
+        <http:listener config-ref="flowListenerConfig" path="/resources/move/*">
             <http:response statusCode="301">
                 <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'Location' : 'http://localhost:9090/resources/moved'}]</http:headers>
             </http:response>
