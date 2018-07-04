@@ -233,6 +233,20 @@ public class MelToDwExpressionMigratorTest {
                is("#['Successfully redirected: ' ++ vars.compatibility_inboundProperties['http.relative.path'] ++ '?' ++ vars.compatibility_inboundProperties['http.query.string']]"));
   }
 
+  @Test
+  public void migrateServerDateTime() {
+    String script = "#[server.dateTime]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[now()]"));
+  }
+
+  @Test
+  public void migrateServerNanoSeconds() {
+    String script = "#[server.nanoSeconds]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[System.nanoTime()]"));
+  }
+
 
   @Test(expected = IllegalArgumentException.class)
   public void isWrappedNull() {
