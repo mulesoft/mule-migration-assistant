@@ -239,7 +239,7 @@ public final class XmlDslUtils {
   }
 
   public static Element getFlow(Element processor) {
-    while (!"flow".equals(processor.getName()) && !"sub-flow".equals(processor.getName())) {
+    while (processor != null && !"flow".equals(processor.getName()) && !"sub-flow".equals(processor.getName())) {
       processor = processor.getParentElement();
     }
 
@@ -279,14 +279,6 @@ public final class XmlDslUtils {
     parent.addContent(errorHandler);
   }
 
-  public static Element getElementParentFlow(Element element) {
-    Element parentElement = element.getParentElement();
-    while (parentElement != null && !parentElement.getName().matches("flow|subflow")) {
-      parentElement = parentElement.getParentElement();
-    }
-    return parentElement;
-  }
-
   public static void addMigrationAttributeToElement(Element element, Attribute attribute) {
     attribute.setNamespace(Namespace.getNamespace("migration", "migration"));
     element.setAttribute(attribute);
@@ -294,7 +286,7 @@ public final class XmlDslUtils {
 
   public static boolean isErrorHanldingElement(Element element) {
     return element.getName()
-        .matches("choice-exception-strategy|catch-exception-strategy|rollback-exception-strategy|exception-strategy");
+        .matches("choice-exception-strategy|catch-exception-strategy|rollback-exception-strategy|exception-strategy|error-handler");
   }
 
   public static Element getFlowExcetionHandlingElement(Element flow) {

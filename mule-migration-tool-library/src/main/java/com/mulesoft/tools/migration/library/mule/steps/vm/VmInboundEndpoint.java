@@ -44,7 +44,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
     this.setAppliedTo(XPATH_SELECTOR);
     this.setNamespacesContributions(newArrayList(VM_NAMESPACE));
   }
-  
+
   private String mapTransactionalAction(String action, MigrationReport report, Element tx, Element object) {
     // Values defined in org.mule.runtime.extension.api.tx.SourceTransactionalAction
     if ("BEGIN_OR_JOIN".equals(action)) {

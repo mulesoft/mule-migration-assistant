@@ -11,6 +11,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.HTTPCleanupTask;
 import com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.MigrationCleanTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MuleDeprecatedCoreComponentsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.PostprocessMuleApplication;
@@ -120,7 +121,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new SpringMigrationTask());
     coreMigrationTasks.add(new HTTPCleanupTask());
     coreMigrationTasks.add(new PostprocessMuleApplication());
-
+    coreMigrationTasks.add(new MigrationCleanTask());
     return coreMigrationTasks;
   }
 }

@@ -162,8 +162,9 @@ public final class TransportsUtils {
 
       // may be a try scope too
       Element flow = outboundEndpoint.getParentElement();
+      Element errorHandler = getFlowExcetionHandlingElement(flow);
 
-      if (flow.getChild("error-handler", CORE_NAMESPACE) != null) {
+      if (errorHandler != null) {
         nestedAsync = new Element("try", CORE_NAMESPACE);
         asyncWrapper.addContent(nestedAsync);
       }
@@ -176,7 +177,7 @@ public final class TransportsUtils {
           nestedAsync.addContent(processor.clone());
         }
       }
-      Element errorHandler = getFlowExcetionHandlingElement(flow);
+
       if (errorHandler != null) {
         flow.addContent(flow.indexOf(errorHandler), asyncWrapper);
       } else {
@@ -193,8 +194,9 @@ public final class TransportsUtils {
 
     // may be a try scope too
     Element flow = inbound.getParentElement();
-    if (flow.getChild("error-handler", CORE_NAMESPACE) != null) {
-      flow.addContent(flow.indexOf(flow.getChild("error-handler", CORE_NAMESPACE)),
+    Element errorHandler = getFlowExcetionHandlingElement(flow);
+    if (errorHandler != null) {
+      flow.addContent(flow.indexOf(errorHandler),
                       fetchResponseContent(inbound, appModel));
     } else {
       flow.addContent(fetchResponseContent(inbound, appModel));

@@ -6,14 +6,22 @@
  */
 package com.mulesoft.tools.migration.integration;
 
+import org.mule.tck.junit4.rule.DynamicPort;
+
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import static org.junit.runners.Parameterized.*;
+
 @RunWith(Parameterized.class)
 public class ExceptionsTestCase extends EndToEndTestCase {
 
-  @Parameterized.Parameters(name = "{0}")
+  @Rule
+  public final DynamicPort httpPort = new DynamicPort("httpPort");
+
+  @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
         "exceptions-01",
@@ -30,6 +38,6 @@ public class ExceptionsTestCase extends EndToEndTestCase {
 
   @Test
   public void test() throws Exception {
-    simpleCase(appToMigrate);
+    simpleCase(appToMigrate, "-M-DhttpPort=" + httpPort.getValue());
   }
 }
