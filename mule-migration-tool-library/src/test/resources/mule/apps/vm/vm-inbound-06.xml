@@ -7,15 +7,15 @@
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
 
-    <vm:config name="vm2">
-        <vm:queues>
-            <vm:queue queueName="in2" queueType="TRANSIENT" />
-        </vm:queues>
-    </vm:config>
-
     <vm:config name="vm1">
         <vm:queues>
             <vm:queue queueName="in" queueType="TRANSIENT" />
+        </vm:queues>
+    </vm:config>
+
+    <vm:config name="vm2">
+        <vm:queues>
+            <vm:queue queueName="in2" queueType="TRANSIENT" />
         </vm:queues>
     </vm:config>
 

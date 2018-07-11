@@ -8,14 +8,14 @@
                http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <http:listener-config name="flowListenerConfig">
-        <http:listener-connection host="localhost" port="${port1}" />
-    </http:listener-config>
-
     <!-- This transformer would be removed by another task -->
     <message-properties-transformer name="setResponseType">
         <add-message-property key="Content-Type" value="text/plain;charset=EUC-JP" />
     </message-properties-transformer>
+
+    <http:listener-config name="flowListenerConfig">
+        <http:listener-connection host="localhost" port="${port1}" />
+    </http:listener-config>
 
     <flow name="flow">
         <http:listener config-ref="flowListenerConfig" path="/post/*">

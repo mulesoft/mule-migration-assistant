@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xsi:schemaLocation="
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+      http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+      http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <description>Test session properties propagates between flows</description>
+
+    <spring:bean id="property-f1p1" class="com.mulesoft.mule.test.tck.SessionPropertiesValidatorComponent">
+        <spring:property name="expectedProperties">
+            <spring:map>
+                <spring:entry key="flow1-p1" value="flow1-p1-value"/>
+            </spring:map>
+        </spring:property>
+    </spring:bean>
+
+    <http:connector name="httpConnector" enableCookies="true"/>
+
+    <flow name="Flow1s1">
+        <logger/>
+    </flow>
+
+    <flow name="Flow2s1">
+        <logger/>
+    </flow>
+
+    <flow name="Flow3s1">
+        <logger/>
+    </flow>
+
+</mule>

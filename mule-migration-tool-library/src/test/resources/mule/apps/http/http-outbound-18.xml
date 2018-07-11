@@ -10,6 +10,8 @@
                http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
+    <configuration defaultResponseTimeout="100"/>
+
     <http:request-config name="flowRequestConfig">
         <http:request-connection host="localhost" port="${port}">
             <http:client-socket-properties>
@@ -17,8 +19,6 @@
             </http:client-socket-properties>
         </http:request-connection>
     </http:request-config>
-
-    <configuration defaultResponseTimeout="100"/>
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>

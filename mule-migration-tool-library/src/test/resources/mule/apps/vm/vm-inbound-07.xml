@@ -7,13 +7,13 @@
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
 
+    <append-string-transformer message="response" name="response"/>
+
     <vm:config name="VmConfig">
         <vm:queues>
             <vm:queue queueName="in" queueType="TRANSIENT" />
         </vm:queues>
     </vm:config>
-
-    <append-string-transformer message="response" name="response"/>
 
     <flow name="flow">
         <vm:listener config-ref="VmConfig" queueName="in">

@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static java.util.Arrays.stream;
 import static org.jdom2.Namespace.getNamespace;
 
@@ -74,7 +75,7 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
           throw new MigrationStepException(e.getMessage(), e);
         }
 
-        addSpringModuleConfig(currentDoc.getRootElement(), "spring/" + beansPath.getFileName().toString());
+        addSpringModuleConfig(currentDoc, "spring/" + beansPath.getFileName().toString());
         break;
       }
     }
@@ -123,14 +124,14 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
     return declaredNamespaces;
   }
 
-  protected void addSpringModuleConfig(Element rootElement, String beansPath) {
+  protected void addSpringModuleConfig(Document document, String beansPath) {
     Element config = new Element("config", SPRING_NAMESPACE);
     config.setAttribute("name", "springConfig");
     config.setAttribute("files", beansPath);
-    rootElement.addContent(0, config);
+    addTopLevelElement(config, document);
 
     getApplicationModel().addNameSpace(SPRING_NAMESPACE, "http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd",
-                                       rootElement.getDocument());
+                                       document);
   }
 
   private Path resolveSpringBeansPath(Entry<Path, Document> entry) {
