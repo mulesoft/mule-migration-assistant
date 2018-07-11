@@ -6,18 +6,18 @@
  */
 package com.mulesoft.tools.migration.library.tools;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.mulesoft.tools.Migrator;
 import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import org.jdom2.Element;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 
 /**
  * Migrate mel expressions to dw expression
@@ -68,13 +68,14 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
   }
 
   private String resolveServerContext(String expression) {
-    return expression.replaceAll("(vars\\.)?server\\.dateTime", "now()").replaceAll("(vars\\.)?server\\.nanoSeconds",
-                                                                                    "System.nanoTime()");
+    return expression.replaceAll("(vars\\.)?server\\.dateTime", "now()")
+        .replaceAll("(vars\\.)?server\\.nanoSeconds", "System.nanoTime()");
   }
 
   public String resolveIdentifiers(String expression) {
-    return expression.replaceAll("flowVars", "vars").replaceAll("message\\.inboundProperties",
-                                                                "vars.compatibility_inboundProperties");
+    return expression.replaceAll("flowVars", "vars")
+        .replaceAll("message\\.inboundProperties", "vars.compatibility_inboundProperties")
+        .replaceAll("message\\.outboundProperties", "vars.compatibility_outboundProperties");
   }
 
   @Override
