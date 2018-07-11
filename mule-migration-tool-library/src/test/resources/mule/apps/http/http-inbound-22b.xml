@@ -8,11 +8,11 @@
                http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
+    <custom-transformer name="appendString" class="org.mule.tck.functional.StringAppendTestTransformer"/>
+
     <http:listener-config name="inboundListenerConfig">
         <http:listener-connection host="localhost" port="${port4}"/>
     </http:listener-config>
-
-    <custom-transformer name="appendString" class="org.mule.tck.functional.StringAppendTestTransformer"/>
 
     <flow name="flow">
         <http:listener config-ref="inboundListenerConfig" path="/*">

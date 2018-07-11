@@ -10,6 +10,14 @@
                http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
                http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
 
+    <wsc:config name="globalConfig">
+        <wsc:connection address="https://localhost:${port}/services/Echo" wsdlLocation="Echo.wsdl" service="EchoService" port="EchoPort">
+            <wsc:custom-transport-configuration>
+                <wsc:http-transport-configuration requesterConfig="httpsConnector"/>
+            </wsc:custom-transport-configuration>
+        </wsc:connection>
+    </wsc:config>
+
     <http:request-config name="httpsConnector" >
         <http:request-connection host="localhost" port="${port}" protocol="HTTPS">
             <tls:context>
@@ -18,13 +26,5 @@
             </tls:context>
         </http:request-connection>
     </http:request-config>
-
-    <wsc:config name="globalConfig">
-        <wsc:connection address="https://localhost:${port}/services/Echo" wsdlLocation="Echo.wsdl" service="EchoService" port="EchoPort">
-            <wsc:custom-transport-configuration>
-                <wsc:http-transport-configuration requesterConfig="httpsConnector"/>
-            </wsc:custom-transport-configuration>
-        </wsc:connection>
-    </wsc:config>
 
 </mule>

@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutbound
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static java.util.Optional.of;
@@ -91,7 +92,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
       final Element requestConnection = new Element("request-connection", httpNamespace);
 
       requestConfig.addContent(requestConnection);
-      object.getDocument().getRootElement().addContent(0, requestConfig);
+      addTopLevelElement(requestConfig, object.getDocument());
 
       String address = connection.getAttributeValue("address");
 
@@ -140,7 +141,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
           final Element requestConnection = new Element("request-connection", httpNamespace);
 
           requestConfig.addContent(requestConnection);
-          object.getDocument().getRootElement().addContent(0, requestConfig);
+          addTopLevelElement(requestConfig, object.getDocument());
 
           requestConnection.setAttribute("host", getExpressionMigrator().migrateExpression(a.getHost(), true, object));
           if (a.getPort() != null) {

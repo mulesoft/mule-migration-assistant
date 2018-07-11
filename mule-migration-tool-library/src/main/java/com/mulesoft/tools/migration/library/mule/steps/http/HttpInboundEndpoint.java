@@ -20,6 +20,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddr
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.lang.System.lineSeparator;
 
@@ -268,7 +269,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
         }
       }
 
-      object.getDocument().getRootElement().addContent(0, listenerConfig);
+      addTopLevelElement(listenerConfig, object.getDocument());
       object.setAttribute("config-ref", configName);
     }
   }
