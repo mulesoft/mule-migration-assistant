@@ -11,7 +11,7 @@
                http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
 
     <wsc:config name="globalConfig">
-        <wsc:connection service="TestService" port="TestPort" wsdlLocation="Test.wsdl" address="#[&quot;http://localhost:${port}/$(vars['pathOutboundProperty'])&quot;]"/>
+        <wsc:connection service="TestService" port="TestPort" wsdlLocation="Test.wsdl" address="#[&quot;http://localhost:${port}/$(vars.compatibility_outboundProperties['pathOutboundProperty'])&quot;]"/>
     </wsc:config>
 
     <flow name="flow">

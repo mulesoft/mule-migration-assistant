@@ -6,16 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.tools;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.apache.commons.lang3.StringUtils;
-import org.jdom2.Element;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -24,6 +14,17 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Element;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
 
 public class MelToDwExpressionMigratorTest {
 
@@ -134,6 +135,20 @@ public class MelToDwExpressionMigratorTest {
   }
 
   @Test
+  public void migrateMelInterpolation2() {
+    String script = "#[message.outboundProperties.name]_#[message.id]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[\"$(vars.compatibility_outboundProperties.name)_$(message.id)\"]"));
+  }
+
+  @Test
+  public void migrateMelInterpolationWithMelPrefix2() {
+    String script = "#[mel:message.outboundProperties.name]_#[message.id]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[\"$(vars.compatibility_outboundProperties.name)_$(message.id)\"]"));
+  }
+
+  @Test
   public void migrateMelEmptyList() {
     String script = "#[[]]";
     String result = expressionMigrator.migrateExpression(script, true, null);
@@ -231,6 +246,15 @@ public class MelToDwExpressionMigratorTest {
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result,
                is("#['Successfully redirected: ' ++ vars.compatibility_inboundProperties['http.relative.path'] ++ '?' ++ vars.compatibility_inboundProperties['http.query.string']]"));
+  }
+
+  @Test
+  public void migrateComplexConcatenation2() {
+    String script =
+        "#['Redirecting to: ' + message.outboundProperties['path'] + '?' + message.outboundProperties.path2]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result,
+               is("#['Redirecting to: ' ++ vars.compatibility_outboundProperties['path'] ++ '?' ++ vars.compatibility_outboundProperties.path2]"));
   }
 
   @Test

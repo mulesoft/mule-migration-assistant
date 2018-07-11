@@ -56,8 +56,7 @@ public class WebServiceConsumerTest {
         "wsc-config-02",
         "wsc-config-03",
         "wsc-config-04",
-        // TODO MMT-160
-        // "wsc-config-05",
+        "wsc-config-05",
         "wsc-config-06",
         "wsc-config-07",
         "wsc-config-08",
