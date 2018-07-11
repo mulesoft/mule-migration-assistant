@@ -8,16 +8,16 @@
                http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <http:request-config name="flowRequestConfig9">
-        <http:request-connection host="remotehost" port="${httpPort1}" />
+    <http:request-config name="flowRequestConfig">
+        <http:request-connection host="localhost" port="${httpPort1}" />
     </http:request-config>
 
     <http:request-config name="flowRequestConfig5">
         <http:request-connection host="localhost" port="${httpPort2}" />
     </http:request-config>
 
-    <http:request-config name="flowRequestConfig">
-        <http:request-connection host="localhost" port="${httpPort1}" />
+    <http:request-config name="flowRequestConfig9">
+        <http:request-connection host="remotehost" port="${httpPort1}" />
     </http:request-config>
 
     <flow name="flow">

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <description>Test session properties propagates between flows</description>
+
+    <sub-flow name="Flow1s1">
+        <logger/>
+    </sub-flow>
+
+    <flow name="Flow2s1">
+        <logger/>
+    </flow>
+
+    <flow name="Flow3s1">
+        <logger/>
+    </flow>
+
+</mule>

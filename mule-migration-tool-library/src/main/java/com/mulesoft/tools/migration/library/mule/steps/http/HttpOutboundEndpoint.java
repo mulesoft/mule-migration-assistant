@@ -15,6 +15,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
@@ -84,7 +85,7 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     final Element requestConnection = new Element("request-connection", httpNamespace);
 
     requestConfig.addContent(requestConnection);
-    object.getDocument().getRootElement().addContent(0, requestConfig);
+    addTopLevelElement(requestConfig, object.getDocument());
 
     processAddress(object, report).ifPresent(address -> {
       requestConnection.setAttribute("host", getExpressionMigrator().migrateExpression(address.getHost(), true, object));

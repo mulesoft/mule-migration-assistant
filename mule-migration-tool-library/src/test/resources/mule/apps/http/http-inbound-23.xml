@@ -8,11 +8,11 @@
                http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
+    <append-string-transformer name="appendResponse" message=" response"/>
+
     <http:listener-config name="responseListenerConfig">
         <http:listener-connection host="localhost" port="${port2}"/>
     </http:listener-config>
-
-    <append-string-transformer name="appendResponse" message=" response"/>
 
     <flow name="flow">
         <http:listener config-ref="responseListenerConfig" path="/*">

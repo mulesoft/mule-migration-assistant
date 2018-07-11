@@ -8,13 +8,13 @@
                http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <http:listener-config name="bothListenerConfig">
-        <http:listener-connection host="localhost" port="${port3}"/>
-    </http:listener-config>
-
     <append-string-transformer name="appendString" message=" transformed"/>
     
     <append-string-transformer name="appendResponse" message=" response"/>
+
+    <http:listener-config name="bothListenerConfig">
+        <http:listener-connection host="localhost" port="${port3}"/>
+    </http:listener-config>
 
     <flow name="flow">
         <http:listener config-ref="bothListenerConfig" path="/*">

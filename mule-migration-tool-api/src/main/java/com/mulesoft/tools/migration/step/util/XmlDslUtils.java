@@ -256,4 +256,21 @@ public final class XmlDslUtils {
     applicationModel.addNameSpace("validation", "http://www.mulesoft.org/schema/mule/validation",
                                   "http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd");
   }
+
+  /**
+   * Add new top level element after all the existing ones.
+   *
+   * @param element
+   * @param document
+   */
+  public static void addTopLevelElement(Element element, Document document) {
+    Integer elementIndex = document.getRootElement().getContent().indexOf(document.getRootElement().getChildren().stream()
+        .filter(c -> c.getName().matches("flow|sub-flow")).findFirst().orElse(null));
+    if (elementIndex >= 0) {
+      document.getRootElement().addContent(elementIndex, element);
+    } else {
+      elementIndex = document.getRootElement().getContent().size();
+      document.getRootElement().addContent(elementIndex > 0 ? elementIndex - 1 : 0, element);
+    }
+  }
 }

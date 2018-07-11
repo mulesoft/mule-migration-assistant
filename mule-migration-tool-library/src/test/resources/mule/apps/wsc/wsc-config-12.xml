@@ -10,10 +10,6 @@
                http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
                http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
 
-    <http:request-config name="httpConnector" >
-        <http:request-connection host="localhost" port="${port}" protocol="HTTP"/>
-    </http:request-config>
-
     <wsc:config name="globalConfig">
         <wsc:connection address="http://localhost:${port}/services/Test" wsdlLocation="Test.wsdl" service="TestService" port="TestPort">
             <wsc:custom-transport-configuration>
@@ -21,5 +17,9 @@
             </wsc:custom-transport-configuration>
         </wsc:connection>
     </wsc:config>
+
+    <http:request-config name="httpConnector" >
+        <http:request-connection host="localhost" port="${port}" protocol="HTTP"/>
+    </http:request-config>
 
 </mule>

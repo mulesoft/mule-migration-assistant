@@ -10,11 +10,11 @@
                http://www.mulesoft.org/schema/mule/sockets http://www.mulesoft.org/schema/mule/sockets/current/mule-sockets.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <http:request-config name="clientEndpoint2RequestConfig">
+    <http:request-config name="clientEndpoint1RequestConfig">
         <http:request-connection host="localhost" port="${port1}"/>
     </http:request-config>
 
-    <http:request-config name="clientEndpoint1RequestConfig">
+    <http:request-config name="clientEndpoint2RequestConfig">
         <http:request-connection host="localhost" port="${port1}"/>
     </http:request-config>
 

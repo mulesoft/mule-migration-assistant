@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static java.lang.Integer.parseInt;
 import static java.util.Optional.of;
@@ -112,8 +113,8 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
       vmCfg.setAttribute("name", configName);
       Element queues = new Element("queues", vmConnectorNamespace);
       vmCfg.addContent(queues);
-      // TODO MMT-158
-      object.getDocument().getRootElement().addContent(0, vmCfg);
+
+      addTopLevelElement(vmCfg, object.getDocument());
 
       return vmCfg;
     });

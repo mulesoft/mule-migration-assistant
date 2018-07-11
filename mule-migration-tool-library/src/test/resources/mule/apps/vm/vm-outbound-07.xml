@@ -3,17 +3,16 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
       xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
-    xsi:schemaLocation="
-               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+
+    <append-string-transformer message="response" name="response"/>
 
     <vm:config name="VmConfig">
         <vm:queues>
             <vm:queue queueName="out" queueType="TRANSIENT" />
         </vm:queues>
     </vm:config>
-
-    <append-string-transformer message="response" name="response"/>
 
     <flow name="flow">
         <async>
