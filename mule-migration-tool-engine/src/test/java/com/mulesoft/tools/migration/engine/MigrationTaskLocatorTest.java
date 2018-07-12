@@ -16,8 +16,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.mulesoft.tools.migration.engine.project.version.VersionUtils.isVersionGreaterOrEquals;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;

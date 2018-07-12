@@ -14,8 +14,6 @@
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
 
-        <semver.version>2.0.3</semver.version>
-        <semantic.version.version>1.1.0</semantic.version.version>
         <freemarker.version>2.3.28</freemarker.version>
     </properties>
     <build>
@@ -103,16 +101,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>mule-migration-tool-library</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vdurmont</groupId>
-            <artifactId>semver4j</artifactId>
-            <version>${semver.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.skuzzle</groupId>
-            <artifactId>semantic-version</artifactId>
-            <version>${semantic.version.version}</version>
         </dependency>
     </dependencies>
 </project>

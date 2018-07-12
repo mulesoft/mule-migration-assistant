@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.engine.project.version.VersionUtils.isVersionGreaterOrEquals;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 

@@ -30,37 +30,42 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 
 @RunWith(Parameterized.class)
 public class SpringTest {
 
   private static final Path SPRING_EXAMPLES_PATH = Paths.get("mule/apps/spring");
 
-
-  @Parameters(name = "{0}")
-  public static Object[] params() {
-    return new Object[] {
-        "spring-01",
-        "spring-02",
-        "spring-03",
-        "spring-04",
-        "spring-05",
-        "spring-06",
-        "spring-07",
-        "spring-08",
-        "spring-09",
-        "spring-10"
-    };
+  @Parameters(name = "{0}, {1}")
+  public static Collection<Object[]> data() {
+    return asList(new Object[][] {
+        {"spring-01", "4.1.1"},
+        {"spring-02", "4.1.1"},
+        {"spring-03", "4.1.1"},
+        {"spring-04", "4.1.1"},
+        {"spring-05", "4.1.1"},
+        {"spring-06", "4.1.1"},
+        {"spring-07", "4.1.1"},
+        {"spring-08", "4.1.1"},
+        {"spring-09", "4.1.1"},
+        {"spring-10", "4.1.1"},
+        {"spring-11", "4.2.0"},
+        {"spring-12", "4.2.0"}
+    });
   }
 
   private final Path configPath;
   private final Path targetMulePath;
   private final Path targetSpringPath;
+  private final String muleVersion;
 
-  public SpringTest(String filePrefix) {
+  public SpringTest(String filePrefix, String muleVersion) {
     configPath = SPRING_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetMulePath = SPRING_EXAMPLES_PATH.resolve(filePrefix + "-mule.xml");
     targetSpringPath = SPRING_EXAMPLES_PATH.resolve(filePrefix + "-original-beans.xml");
+
+    this.muleVersion = muleVersion;
   }
 
   private SpringPropertiesPlaceholder springPropertiesPlaceholder;
@@ -87,6 +92,7 @@ public class SpringTest {
         new ApplicationModelBuilder()
             .withProjectBasePath(Paths.get(this.getClass().getClassLoader().getResource(SPRING_EXAMPLES_PATH.toString()).toURI()))
             .withConfigurationFiles(asList(resolvedConfigPath))
+            .withMuleVersion(muleVersion)
             .build();
 
     Document doc = appModel.getApplicationDocuments().get(configPath.getFileName());

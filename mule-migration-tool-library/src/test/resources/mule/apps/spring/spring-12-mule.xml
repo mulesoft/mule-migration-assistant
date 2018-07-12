@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring-module="http://www.mulesoft.org/schema/mule/spring"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    
+    <configuration-properties file="other.properties" encoding="ISO8859_2"/>
+    <configuration-properties file="messages.properties" encoding="ISO8859_2"/>
+    
+    <spring-module:config files="spring/spring-12-original-beans.xml" name="springConfig"/>
+    
+    <flow name="test">
+        <logger message="${my.property}"/>
+    </flow>
+
+</mule>

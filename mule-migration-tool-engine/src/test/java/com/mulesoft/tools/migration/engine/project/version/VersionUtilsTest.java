@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.engine.project.version;
 
 import org.junit.Test;
 
-import static com.mulesoft.tools.migration.engine.project.version.VersionUtils.isVersionGreaterOrEquals;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 

@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.spring;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
 import static java.lang.Boolean.parseBoolean;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -41,12 +42,18 @@ public class SpringPropertiesPlaceholder extends AbstractSpringMigratorStep {
       Element confProp = new Element("configuration-properties", CORE_NAMESPACE);
       confProp.setAttribute("file", location);
 
+      if (object.getAttribute("file-encoding") != null) {
+        if (isVersionGreaterOrEquals(getApplicationModel().getMuleVersion(), "4.2.0")) {
+          confProp.setAttribute("encoding", object.getAttributeValue("file-encoding"));
+        } else {
+          report.report(ERROR, object, object,
+                        "'file-encoding' is not available in Mule 4.1.x. It is included in 4.2.0 or higher.");
+        }
+      }
+
       object.getDocument().getRootElement().addContent(idx, confProp);
     }
 
-    if (object.getAttribute("file-encoding") != null) {
-      // TODO MMT-146 Migrate this field
-    }
     if (object.getAttribute("order") != null) {
       report.report(ERROR, object, object,
                     "'order' is no longer available. The properties are resolved in the order they were declared.",

@@ -49,6 +49,7 @@ import java.util.Set;
 public class ApplicationModel {
 
   private Map<Path, Document> applicationDocuments;
+  private String muleVersion;
   private PomModel pomModel;
   private Path projectBasePath;
   private MuleArtifactJsonModel muleArtifactJsonModel;
@@ -251,6 +252,14 @@ public class ApplicationModel {
     return Optional.ofNullable(pomModel);
   }
 
+  public void setMuleVersion(String muleVersion) {
+    this.muleVersion = muleVersion;
+  }
+
+  public String getMuleVersion() {
+    return muleVersion;
+  }
+
   /**
    * The path to the root of the project represented by the application model instance
    *
@@ -437,6 +446,7 @@ public class ApplicationModel {
       } else {
         pomModel = new PomModel.PomModelBuilder().withArtifactId(projectBasePath.getFileName().toString()).build();
       }
+      applicationModel.setMuleVersion(muleVersion);
       applicationModel.setPomModel(pomModel);
       applicationModel.setProjectBasePath(projectBasePath);
       applicationModel.setSupportedNamespaces(supportedNamespaces);

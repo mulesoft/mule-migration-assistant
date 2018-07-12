@@ -40,7 +40,8 @@ public class SecurePropertiesTest {
     return new Object[] {
         "secure-props-01",
         "secure-props-02",
-        "secure-props-03"
+        "secure-props-03",
+        "secure-props-04"
     };
   }
 

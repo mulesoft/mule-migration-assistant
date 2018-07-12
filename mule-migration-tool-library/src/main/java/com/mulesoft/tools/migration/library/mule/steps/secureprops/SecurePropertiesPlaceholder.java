@@ -45,6 +45,9 @@ public class SecurePropertiesPlaceholder extends AbstractApplicationModelMigrati
     for (String location : object.getAttributeValue("location").split("\\,")) {
       Element confProp = new Element("config", SECURE_NAMESPACE);
       confProp.setAttribute("file", location);
+      if (object.getAttribute("fileEncoding") != null) {
+        confProp.setAttribute("encoding", object.getAttributeValue("fileEncoding"));
+      }
       confProp.setAttribute("key", object.getAttributeValue("key"));
       confProp.setAttribute("name", object.getAttributeValue("name") + (j > 1 ? "_" + j : ""));
 
