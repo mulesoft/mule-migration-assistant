@@ -13,7 +13,7 @@ import com.mulesoft.tools.migration.step.category.PomContribution;
 
 /**
  * Adds the Compatibility plugin dependency
- * 
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -29,6 +29,7 @@ public class CompatibilityPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("com.mulesoft.mule.modules")
         .withArtifactId("mule-compatibility-module")
+        // TODO MMT-171
         .withVersion("1.2.0-SNAPSHOT")
         .withClassifier("mule-plugin")
         .build());

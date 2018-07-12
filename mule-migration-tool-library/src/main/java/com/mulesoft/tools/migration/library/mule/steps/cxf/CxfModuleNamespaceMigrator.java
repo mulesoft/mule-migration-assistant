@@ -41,6 +41,7 @@ public class CxfModuleNamespaceMigrator extends AbstractApplicationModelMigratio
     getApplicationModel().getPomModel().get().addDependency(new DependencyBuilder()
         .withGroupId("com.mulesoft.mule.modules")
         .withArtifactId("mule-compatibility-module")
+        // TODO MMT-171
         .withVersion("1.2.0-SNAPSHOT")
         .withClassifier("mule-plugin")
         .build());
