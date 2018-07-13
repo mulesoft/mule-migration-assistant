@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
@@ -17,6 +18,7 @@ import static java.util.Collections.emptyList;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -49,6 +51,8 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     httpListenerLib(getApplicationModel());
+
+    addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);

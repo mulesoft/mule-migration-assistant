@@ -7,10 +7,12 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -42,6 +44,8 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     Namespace httpsNamespace = Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https");
     Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
+
+    addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     Element httpsConnector = null;
     if (object.getAttribute("connector-ref") != null) {

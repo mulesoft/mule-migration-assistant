@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addChildNode;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 
 /**
  * Migration step for poll component
@@ -60,6 +61,8 @@ public class Poll extends AbstractApplicationModelMigrationStep {
     try {
       changeNodeName("", POLL_NEW_NAME)
           .apply(element);
+
+      addMigrationAttributeToElement(element, new Attribute("isMessageSource", "true"));
 
       List<Element> childElementsToMove = element.getChildren().stream()
           .filter(s -> !StringUtils.equals(s.getName(), FIXED_FREQ_SCHEDULER)

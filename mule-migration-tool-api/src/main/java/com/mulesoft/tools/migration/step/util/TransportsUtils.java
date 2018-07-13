@@ -8,6 +8,8 @@ package com.mulesoft.tools.migration.step.util;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExcetionHandlingElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isErrorHanldingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
 import static java.util.Optional.empty;
@@ -160,22 +162,24 @@ public final class TransportsUtils {
 
       // may be a try scope too
       Element flow = outboundEndpoint.getParentElement();
+      Element errorHandler = getFlowExcetionHandlingElement(flow);
 
-      if (flow.getChild("error-handler", CORE_NAMESPACE) != null) {
+      if (errorHandler != null) {
         nestedAsync = new Element("try", CORE_NAMESPACE);
         asyncWrapper.addContent(nestedAsync);
       }
 
       List<Element> allChildren = flow.getChildren();
       for (Element processor : new ArrayList<>(allChildren.subList(allChildren.indexOf(outboundEndpoint), allChildren.size()))) {
-        if (!"error-handler".equals(processor.getName())) {
+        if (!isErrorHanldingElement(processor)) {
           nestedAsync.addContent(processor.detach());
         } else {
           nestedAsync.addContent(processor.clone());
         }
       }
-      if (flow.getChild("error-handler", CORE_NAMESPACE) != null) {
-        flow.addContent(flow.indexOf(flow.getChild("error-handler", CORE_NAMESPACE)), asyncWrapper);
+
+      if (errorHandler != null) {
+        flow.addContent(flow.indexOf(errorHandler), asyncWrapper);
       } else {
         flow.addContent(asyncWrapper);
       }
@@ -190,8 +194,9 @@ public final class TransportsUtils {
 
     // may be a try scope too
     Element flow = inbound.getParentElement();
-    if (flow.getChild("error-handler", CORE_NAMESPACE) != null) {
-      flow.addContent(flow.indexOf(flow.getChild("error-handler", CORE_NAMESPACE)),
+    Element errorHandler = getFlowExcetionHandlingElement(flow);
+    if (errorHandler != null) {
+      flow.addContent(flow.indexOf(errorHandler),
                       fetchResponseContent(inbound, appModel));
     } else {
       flow.addContent(fetchResponseContent(inbound, appModel));

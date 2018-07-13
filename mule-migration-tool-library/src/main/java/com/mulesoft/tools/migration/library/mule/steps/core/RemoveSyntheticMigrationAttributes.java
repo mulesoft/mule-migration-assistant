@@ -9,37 +9,29 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import org.jdom2.Namespace;
 
 /**
- * Migrate references of exception strategies
+ * Remove isMessageSource attribute that is used for migration purposes.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class ExceptionStrategyRef extends AbstractApplicationModelMigrationStep {
+public class RemoveSyntheticMigrationAttributes extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='exception-strategy']";
+  public static final String XPATH_SELECTOR = "//*[@*[local-name() = 'isMessageSource' and namespace-uri() = 'migration']]";
 
   @Override
   public String getDescription() {
-    return "Update references to Exception Strategies.";
+    return "Update Remove Session Variable namespace to compatibility.";
   }
 
-  public ExceptionStrategyRef() {
+  public RemoveSyntheticMigrationAttributes() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    changeNodeName("", "error-handler")
-        .apply(element);
-
-    if (element.getParentElement().getName().equals("error-handler")) {
-      report.report(ERROR, element, element, "The way to reuse on-errors scopes have change.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/on-error-scope-concept#reusing-on-error-scopes");
-    }
+    element.removeAttribute("isMessageSource", Namespace.getNamespace("migration"));
   }
 }

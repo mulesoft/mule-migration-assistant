@@ -19,6 +19,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInbo
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.lang.System.lineSeparator;
@@ -30,6 +31,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -66,6 +68,8 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);
     object.setName("listener");
+
+    addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     String flowName = object.getParentElement().getAttributeValue("name");
     String configName = (object.getAttribute("name") != null

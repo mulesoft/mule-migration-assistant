@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static java.lang.Integer.parseInt;
@@ -19,6 +20,7 @@ import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -68,6 +70,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     Element tx = object.getChild("transaction", VM_NAMESPACE);
+    addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
     while (tx != null) {
       object.setAttribute("transactionalAction", mapTransactionalAction(tx.getAttributeValue("action"), report, tx, object));
       object.removeChild("transaction", VM_NAMESPACE);

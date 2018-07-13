@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <http:listener-config name="listenerConfig">
+        <http:listener-connection host="localhost" port="${port}" />
+    </http:listener-config>
+
+    <flow name="choiceAndRollback">
+        <http:listener config-ref="listenerConfig" path="${path}">
+            <redelivery-policy maxRedeliveryCount="10"/>
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <http:headers>
+                    #[migration::HttpListener::httpListenerResponseHeaders(vars)]
+                </http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <http:headers>
+                    #[migration::HttpListener::httpListenerResponseHeaders(vars)]
+                </http:headers>
+            </http:error-response>
+        </http:listener>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger/>
+        <compatibility:outbound-properties-to-var/>
+        <error-handler>
+            <on-error-continue when="#[mel:exception.causedBy(java.lang.IllegalArgumentException)]">
+                <logger message="#['IllegalArgumentException']"/>
+                <compatibility:outbound-properties-to-var/>
+            </on-error-continue>
+            <on-error-propagate when="#[mel:exception.causedBy(java.lang.IllegalStateException)]">
+                <logger message="#['IllegalStateException']"/>
+                <compatibility:outbound-properties-to-var/>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+
+</mule>

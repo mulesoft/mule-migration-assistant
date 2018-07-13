@@ -6,8 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
-import com.mulesoft.tools.migration.library.mule.steps.core.AttributesToInboundPropertiesScriptGenerator;
-import com.mulesoft.tools.migration.library.mule.steps.core.CleanNamespaces;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -20,16 +19,16 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 /**
- * Postprocess Mule Application Migration Task
+ * Task to clean all the behavior added by the migration tool.
  *
  * @author Mulesoft Inc.
- * @since 1.0.0
+ * @since 2.0.0
  */
-public class PostprocessMuleApplication extends AbstractMigrationTask {
+public class MigrationCleanTask extends AbstractMigrationTask {
 
   @Override
   public String getDescription() {
-    return "Postprocess the application";
+    return "Clean migration behavior added to the app.";
   }
 
   @Override
@@ -49,8 +48,7 @@ public class PostprocessMuleApplication extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new AttributesToInboundPropertiesScriptGenerator(),
-                        new CleanNamespaces());
+    return newArrayList(new RemoveSyntheticMigrationAttributes());
   }
 
 }
