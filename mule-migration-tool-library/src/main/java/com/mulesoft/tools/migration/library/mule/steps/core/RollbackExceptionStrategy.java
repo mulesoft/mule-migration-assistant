@@ -97,6 +97,9 @@ public class RollbackExceptionStrategy extends AbstractExceptionsMigrationStep {
       newOnError.setAttribute("type", "REDELIVERY_EXHAUSTED");
 
       List<Element> redeliveryElements = new ArrayList<>();
+
+      element.getChildren().forEach(e -> redeliveryElements.add(e.clone()));
+
       redeliverySection.getChildren().forEach(e -> {
         e.detach();
         redeliveryElements.add(e);

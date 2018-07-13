@@ -28,9 +28,9 @@
         <error-handler>
             <on-error-propagate when="#[mel:exception.causedBy(java.lang.IllegalStateException)]">
                 <logger message="#['IlegalState']" />
-                <compatibility:outbound-properties-to-var/>
             </on-error-propagate>
             <on-error-propagate type="REDELIVERY_EXHAUSTED">
+                <logger message="#['IlegalState']" />
                 <logger message="#['Redelivery']" />
             </on-error-propagate>
         </error-handler>

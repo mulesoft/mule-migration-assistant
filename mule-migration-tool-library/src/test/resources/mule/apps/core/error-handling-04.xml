@@ -30,6 +30,7 @@
             <logger message="#['IllegalStateException']" />
         </on-error-propagate>
         <on-error-propagate type="REDELIVERY_EXHAUSTED">
+            <logger message="#['IllegalStateException']" />
             <logger message="#['Redelivery']" />
         </on-error-propagate>
     </error-handler>
