@@ -41,7 +41,7 @@
                             <#list applicationErrors[path] as message, entries>
                                     <tr>
                                         <td colspan="2">
-                                            <a href=${"resources/error-" + path?remove_ending(".xml") + "-" + count + ".html"}>${message}</a>
+                                            <a href=${"resources/error-" + path?remove_ending(".xml") + "-" + count + ".html"}>${ "- " + message}</a>
                                         </td>
                                         <td>${entries?size}</td>
                                     </tr>
@@ -81,7 +81,7 @@
                             <#list applicationWarnings[path] as message, entries>
                                     <tr>
                                         <td colspan="2">
-                                            <a href=${"resources/warn-" + path?remove_ending(".xml") + "-" + count + ".html"}>${message}</a>
+                                            <a href=${"resources/warn-" + path?remove_ending(".xml") + "-" + count + ".html"}>${ "- " + message}</a>
                                         </td>
                                         <td>${entries?size}</td>
                                     </tr>

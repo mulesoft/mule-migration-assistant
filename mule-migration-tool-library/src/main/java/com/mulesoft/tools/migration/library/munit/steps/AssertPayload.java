@@ -6,23 +6,22 @@
  */
 package com.mulesoft.tools.migration.library.munit.steps;
 
+import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-
-import org.jdom2.Element;
-
 /**
  * This steps migrates the MUnit 1.x assert-payload
  * @author Mulesoft Inc.
  */
-public class AssertPayload extends AbstractApplicationModelMigrationStep {
+public class AssertPayload extends AbstractAssertionMigration {
 
   public static final String XPATH_SELECTOR = "//*[local-name()='assert-payload-equals']";
 
@@ -39,10 +38,23 @@ public class AssertPayload extends AbstractApplicationModelMigrationStep {
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     try {
       changeNodeName("munit-tools", "assert-that")
-          .andThen(changeAttribute("expectedValue", of("expression"), empty()))
-          .andThen(addAttribute("is", "#[MunitTools::equalTo(payload)]"))
+          .andThen(addAttribute("expression", "#[payload]"))
+          .andThen(changeAttribute("expectedValue", of("is"), empty()))
           .apply(element);
 
+      Attribute isAttribute = element.getAttribute("is");
+      if (isAttribute != null) {
+        String attributeValue = isAttribute.getValue().trim();
+        if (attributeValue.startsWith("#[")) {
+          StringBuffer sb = new StringBuffer(attributeValue);
+          sb.replace(0, sb.indexOf("[") + 1, "#[MunitTools::equalTo(");
+          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, ")]");
+          attributeValue = sb.toString();
+        } else {
+          attributeValue = "#[MUnitTools::equalTo(" + attributeValue + ")]";
+        }
+        isAttribute.setValue(attributeValue);
+      }
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());
     }
