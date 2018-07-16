@@ -52,6 +52,6 @@ public class AssertEqualsTest {
     assertEquals.execute(node, mock(MigrationReport.class));
 
     assertThat("The node didn't change", node.getName(), is("assert-that"));
-    assertThat("The attribute didn't change", node.getAttribute("is").getValue(), is("#[MUnitTools::equalTo(3)]"));
+    assertThat("The attribute didn't change", node.getAttribute("is").getValue(), is("#[MunitTools::equalTo(3)]"));
   }
 }

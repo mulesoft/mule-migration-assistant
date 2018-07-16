@@ -47,14 +47,11 @@ public abstract class AbstractAssertionMigration extends AbstractApplicationMode
     return e -> {
       Attribute attribute = e.getAttribute(attributeName);
       if (attribute != null) {
-        String attributeValue = attribute.getValue().trim();
-        if (attributeValue.startsWith("#[")) {
-          StringBuffer sb = new StringBuffer(attributeValue);
-          sb.replace(0, sb.indexOf("[") + 1, "#[MUnitTools::equalTo(");
-          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, ")]");
-          attributeValue = sb.toString();
+        String attributeValue = attribute.getValue();
+        if (getExpressionMigrator().isWrapped(attributeValue)) {
+          attributeValue = "#[MunitTools::equalTo(" + getExpressionMigrator().unwrap(attributeValue) + ")]";
         } else {
-          attributeValue = "#[MUnitTools::equalTo(" + attributeValue + ")]";
+          attributeValue = "#[MunitTools::equalTo(" + attributeValue + ")]";
         }
         attribute.setValue(attributeValue);
       }
@@ -62,16 +59,13 @@ public abstract class AbstractAssertionMigration extends AbstractApplicationMode
     };
   }
 
-  protected static Function<Element, Element> updateMUnitAssertionNotEqualsExpression(String attributeName) {
+  protected Function<Element, Element> updateMUnitAssertionNotEqualsExpression(String attributeName) {
     return e -> {
       Attribute attribute = e.getAttribute(attributeName);
       if (attribute != null) {
-        String attributeValue = attribute.getValue().trim();
-        if (attributeValue.startsWith("#[")) {
-          StringBuffer sb = new StringBuffer(attributeValue);
-          sb.replace(0, sb.indexOf("[") + 1, "#[MunitTools::not(MUnitTools::equalTo(");
-          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, "))]");
-          attributeValue = sb.toString();
+        String attributeValue = attribute.getValue();
+        if (getExpressionMigrator().isWrapped(attributeValue)) {
+          attributeValue = "#[MunitTools::not(MUnitTools::equalTo(" + getExpressionMigrator().unwrap(attributeValue) + "))]";
         } else {
           attributeValue = "#[MunitTools::not(MUnitTools::equalTo(" + attributeValue + "))]";
         }

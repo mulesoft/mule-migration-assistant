@@ -44,14 +44,11 @@ public class AssertPayload extends AbstractAssertionMigration {
 
       Attribute isAttribute = element.getAttribute("is");
       if (isAttribute != null) {
-        String attributeValue = isAttribute.getValue().trim();
-        if (attributeValue.startsWith("#[")) {
-          StringBuffer sb = new StringBuffer(attributeValue);
-          sb.replace(0, sb.indexOf("[") + 1, "#[MunitTools::equalTo(");
-          sb.replace(sb.lastIndexOf("]"), sb.lastIndexOf("]") + 1, ")]");
-          attributeValue = sb.toString();
+        String attributeValue = isAttribute.getValue();
+        if (getExpressionMigrator().isWrapped(attributeValue)) {
+          attributeValue = "#[MunitTools::equalTo(" + getExpressionMigrator().unwrap(attributeValue) + ")]";
         } else {
-          attributeValue = "#[MUnitTools::equalTo(" + attributeValue + ")]";
+          attributeValue = "#[MunitTools::equalTo(" + attributeValue + ")]";
         }
         isAttribute.setValue(attributeValue);
       }
