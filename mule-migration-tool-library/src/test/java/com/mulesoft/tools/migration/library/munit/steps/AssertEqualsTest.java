@@ -13,6 +13,8 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Document;
@@ -35,6 +37,7 @@ public class AssertEqualsTest {
   @Before
   public void setUp() throws Exception {
     assertEquals = new AssertEquals();
+    assertEquals.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
   @Test(expected = MigrationStepException.class)
@@ -49,6 +52,6 @@ public class AssertEqualsTest {
     assertEquals.execute(node, mock(MigrationReport.class));
 
     assertThat("The node didn't change", node.getName(), is("assert-that"));
-    assertThat("The attribute didn't change", node.getAttribute("is").getValue(), is("#[MUnitTools::equalTo(3)]"));
+    assertThat("The attribute didn't change", node.getAttribute("is").getValue(), is("#[MunitTools::equalTo(3)]"));
   }
 }

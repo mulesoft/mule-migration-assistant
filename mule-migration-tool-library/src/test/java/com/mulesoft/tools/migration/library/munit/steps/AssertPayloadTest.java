@@ -14,6 +14,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Document;
@@ -36,9 +38,11 @@ public class AssertPayloadTest {
   @Before
   public void setUp() throws Exception {
     assertPayloadEquals = new AssertPayload();
+    assertPayloadEquals
+        .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
-  @Test
+  @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
     assertPayloadEquals.execute(null, mock(MigrationReport.class));
   }
@@ -50,7 +54,7 @@ public class AssertPayloadTest {
     assertPayloadEquals.execute(node, mock(MigrationReport.class));
 
     assertThat("The node didn't change", node.getName(), is("assert-that"));
-    assertThat("The attribute didn't change", node.getAttribute("is"), is(notNullValue()));
-    assertThat("The attribute didn't change", node.getAttribute("is").getValue(), is("#[MunitTools::equalTo(payload)]"));
+    assertThat("The attribute didn't change", node.getAttribute("expression").getValue(), is("#[payload]"));
+    assertThat("The attribute didn't change", node.getAttribute("is").getValue(), is("#[MunitTools::equalTo(2)]"));
   }
 }

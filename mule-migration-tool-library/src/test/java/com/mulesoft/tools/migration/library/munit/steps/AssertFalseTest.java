@@ -14,6 +14,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Document;
@@ -36,9 +38,10 @@ public class AssertFalseTest {
   @Before
   public void setUp() throws Exception {
     assertFalse = new AssertFalse();
+    assertFalse.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
   }
 
-  @Test
+  @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
     assertFalse.execute(null, mock(MigrationReport.class));
   }
