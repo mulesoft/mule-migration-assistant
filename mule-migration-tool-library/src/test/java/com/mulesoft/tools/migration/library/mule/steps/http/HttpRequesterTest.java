@@ -62,6 +62,8 @@ public class HttpRequesterTest {
         "http-requester-12",
         "http-requester-13",
         "http-requester-14"
+        //TODO MMT-172
+        //"http-requester-15"
     };
   }
 

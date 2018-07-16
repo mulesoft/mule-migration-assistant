@@ -22,7 +22,7 @@ import org.jdom2.Element;
  * This steps migrates the MUnit 1.x assert-true
  * @author Mulesoft Inc.
  */
-public class AssertTrue extends AbstractApplicationModelMigrationStep {
+public class AssertTrue extends AbstractAssertionMigration {
 
   public static final String XPATH_SELECTOR = "//*[local-name()='assert-true']";
 
@@ -42,6 +42,8 @@ public class AssertTrue extends AbstractApplicationModelMigrationStep {
           .andThen(changeAttribute("condition", of("expression"), empty()))
           .andThen(addAttribute("is", "#[MunitTools::equalTo(true)]"))
           .apply(element);
+
+      migrateExpression(element);
 
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());

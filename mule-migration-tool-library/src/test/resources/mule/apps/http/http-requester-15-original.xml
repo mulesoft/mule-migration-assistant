@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+    <http:request-config name="HTTP_Request_Configuration" host="0.0.0.0" port="8092" sendBodyMode="AUTO" requestStreamingMode="AUTO" doc:name="HTTP Request Configuration" basePath="/sync/prpConfig" protocol="HTTPS">
+        <tls:context>
+            <tls:trust-store path="whitbreadamedus.jks" password="whishworks@123" type="jks" insecure="true" />
+        </tls:context>
+    </http:request-config>
+
+    <flow name="flow">
+        <logger message="Calling /inventory for 415  Status" level="INFO" doc:name="Logger - 415" />
+        <http:request config-ref="HTTP_Request_Configuration" path="/v1/Configurations/{chainCode}/{propertyCode}" method="POST" doc:name="HTTP">
+            <http:request-builder>
+                <http:uri-param paramName="chainCode" value="111" />
+                <http:uri-param paramName="propertyCode" value="111" />
+                <http:header headerName="Ama-Api-Version" value="111" />
+                <http:header headerName="Ama-Request-ID" value="111" />
+                <http:header headerName="Ama-Correlation-ID" value="111" />
+                <http:header headerName="Ama-Sequence-ID" value="111" />
+            </http:request-builder>
+        </http:request>
+    </flow>
+
+</mule>
