@@ -6,10 +6,13 @@
  */
 package com.mulesoft.tools.migration.util.version;
 
+import com.mulesoft.tools.migration.exception.MigrationException;
 import com.vdurmont.semver4j.Semver;
 
+import static com.google.common.base.Preconditions.checkState;
 import static com.vdurmont.semver4j.Semver.SemverType.NPM;
 import static de.skuzzle.semantic.Version.create;
+import static de.skuzzle.semantic.Version.isValidVersion;
 
 /**
  * Obtain a version from a string
@@ -18,6 +21,23 @@ import static de.skuzzle.semantic.Version.create;
  * @since 1.0.0
  */
 public class VersionUtils {
+
+  public static final String MIN_MULE4_VALID_VERSION = "4.0.0";
+
+  /**
+   * Validates if a mule 3 version complies with semantic versioning specification
+   *
+   * @param version the version to validate
+   * @return false if the version does not comply with semantic versioning, true otherwise
+   */
+  public static Boolean isVersionValid(String version, String complyVersion) throws Exception {
+    try {
+      checkState(version != null, "The input version must not be null");
+      return isVersionGreaterOrEquals(version, complyVersion) && isValidVersion(version);
+    } catch (Exception e) {
+      throw new MigrationException("Failed to continue executing migration: " + e.getMessage(), e);
+    }
+  }
 
   /**
    * Validates if {@code version1} is greater or equal than {@code version2}

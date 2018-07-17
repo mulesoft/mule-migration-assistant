@@ -25,6 +25,7 @@ public class MigrationJobBuilderTest {
 
   private static final String ORIGINAL_PROJECT_NAME = "original-project";
   private static final String MIGRATED_PROJECT_NAME = "migrated-project";
+  private static final String MULE4_VERSION = "4.1.2";
 
   private MigrationJob migrationJob;
   private Path originalProjectPath;
@@ -75,7 +76,7 @@ public class MigrationJobBuilderTest {
         .withProject(originalProjectPath)
         .withOutputProject(migratedProjectPath)
         .withInputVersion(MULE_3_VERSION)
-        .withOuputVersion(MULE_4_VERSION)
+        .withOuputVersion(MULE4_VERSION)
         .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
   }

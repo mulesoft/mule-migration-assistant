@@ -33,6 +33,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
 import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionValid;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTasksDeclaredNamespaces;
 
 /**
@@ -184,7 +186,11 @@ public class MigrationJob implements Executable {
       checkState(outputProject != null, "The output project must not be null");
       checkState(outputProjectType != null, "The output project type must not be null");
       checkState(inputVersion != null, "The input version must not be null");
-      checkState(outputVersion != null, "The output version must not be null");
+
+      if (!isVersionValid(outputVersion, MIN_MULE4_VALID_VERSION)) {
+        throw new MigrationJobException("Output Version " + outputVersion
+            + " does not comply with semantic versioning specification");
+      }
 
       if (outputProject.toFile().exists()) {
         throw new MigrationJobException("Destination folder already exist.");
