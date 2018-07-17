@@ -98,13 +98,13 @@ public class VersionUtilsTest {
 
   @Test
   public void isVersionValid6() throws Exception {
-    String version = "4.1.0-rc.SNAPSHOT";
+    String version = "4.1.2-rc.SNAPSHOT";
     assertThat(version + "is not valid", isVersionValid(version, MIN_MULE4_VALID_VERSION), is(true));
   }
 
   @Test
   public void isVersionValid7() throws Exception {
-    String version = "4.1.0-rc-SNAPSHOT";
+    String version = "4.1.1-rc-SNAPSHOT";
     assertThat(version + "is not valid", isVersionValid(version, MIN_MULE4_VALID_VERSION), is(true));
   }
 

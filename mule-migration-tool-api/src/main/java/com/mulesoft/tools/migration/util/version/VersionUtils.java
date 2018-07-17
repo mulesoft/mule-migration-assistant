@@ -22,7 +22,7 @@ import static de.skuzzle.semantic.Version.isValidVersion;
  */
 public class VersionUtils {
 
-  public static final String MIN_MULE4_VALID_VERSION = "4.0.0";
+  public static final String MIN_MULE4_VALID_VERSION = "4.1.1";
 
   /**
    * Validates if a mule 3 version complies with semantic versioning specification
