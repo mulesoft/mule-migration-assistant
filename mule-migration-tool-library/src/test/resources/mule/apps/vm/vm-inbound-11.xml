@@ -27,6 +27,7 @@
 
     <flow name="flow2">
         <vm:listener config-ref="VmConfig" queueName="in2" transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+            <redelivery-policy/>
             <vm:response>
                 <vm:content>#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType, 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]</vm:content>
             </vm:response>

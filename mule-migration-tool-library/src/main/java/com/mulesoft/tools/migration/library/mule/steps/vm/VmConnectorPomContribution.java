@@ -13,7 +13,7 @@ import com.mulesoft.tools.migration.step.category.PomContribution;
 
 /**
  * Adds the VM Connector dependency
- * 
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -29,7 +29,7 @@ public class VmConnectorPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-vm-connector")
-        .withVersion("1.1.1")
+        .withVersion("2.0.0")
         .withClassifier("mule-plugin")
         .build());
   }
