@@ -27,10 +27,6 @@ import java.util.Optional;
  */
 public abstract class AbstractVmEndpoint extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  protected static final String CORE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/core";
-  protected static final String CORE_NAME = "mule";
-  protected static final Namespace CORE_NAMESPACE = Namespace.getNamespace(CORE_NAME, CORE_NAMESPACE_URI);
-
   protected static final String VM_NAMESPACE_PREFIX = "vm";
   protected static final String VM_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/vm";
   protected static final Namespace VM_NAMESPACE = Namespace.getNamespace(VM_NAMESPACE_PREFIX, VM_NAMESPACE_URI);

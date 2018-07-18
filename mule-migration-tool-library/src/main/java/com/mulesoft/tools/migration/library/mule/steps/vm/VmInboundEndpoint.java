@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.E
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
@@ -72,14 +73,26 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
     Element tx = object.getChild("transaction", VM_NAMESPACE);
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
     while (tx != null) {
-      object.setAttribute("transactionalAction", mapTransactionalAction(tx.getAttributeValue("action"), report, tx, object));
+      String txAction = mapTransactionalAction(tx.getAttributeValue("action"), report, tx, object);
+      object.setAttribute("transactionalAction", txAction);
+      if (!"NONE".equals(txAction)) {
+        if (object.getChild("redelivery-policy", CORE_NAMESPACE) == null) {
+          object.addContent(new Element("redelivery-policy", CORE_NAMESPACE));
+        }
+      }
       object.removeChild("transaction", VM_NAMESPACE);
       tx = object.getChild("transaction", VM_NAMESPACE);
     }
     while (object.getChild("xa-transaction", CORE_NAMESPACE) != null) {
       Element xaTx = object.getChild("xa-transaction", CORE_NAMESPACE);
-      object.setAttribute("transactionalAction", mapTransactionalAction(xaTx.getAttributeValue("action"), report, xaTx, object));
+      String txAction = mapTransactionalAction(xaTx.getAttributeValue("action"), report, xaTx, object);
+      object.setAttribute("transactionalAction", txAction);
       object.setAttribute("transactionType", "XA");
+      if (!"NONE".equals(txAction)) {
+        if (object.getChild("redelivery-policy", CORE_NAMESPACE) == null) {
+          object.addContent(new Element("redelivery-policy", CORE_NAMESPACE));
+        }
+      }
 
       if ("true".equals(xaTx.getAttributeValue("interactWithExternal"))) {
         report.report(ERROR, xaTx, object, "Mule 4 does not support joining with external transactions.");
