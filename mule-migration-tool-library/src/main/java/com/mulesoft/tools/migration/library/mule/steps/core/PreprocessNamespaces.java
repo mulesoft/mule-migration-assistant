@@ -47,13 +47,22 @@ public class PreprocessNamespaces implements NamespaceContribution {
                 && !containsNamespace(n, applicationModel.getSupportedNamespaces()))
             .collect(Collectors.toList());
 
-    unsupportedNamespaces.forEach(n -> report.report(ERROR, document.getRootElement(), document.getRootElement(),
-                                                     "Didn't find migration rules for the following component: " + n.getPrefix()
-                                                         + "." + lineSeparator()
-                                                         + "If that component is defined in a Spring namespace handler of an app dependency, include its uri ("
-                                                         + n.getURI() + ") in the '" + ADDITIONAL_SPRING_NAMESPACES_PROP
-                                                         + "' so it is handled by the Spring Module.",
-                                                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors",
-                                                     "https://docs.mulesoft.com/connectors/spring-module"));
+
+    unsupportedNamespaces.forEach(n -> {
+      if (n.getURI().startsWith("http://www.mulesoft.org")) {
+        report.report(ERROR, document.getRootElement(), document.getRootElement(),
+                      "The migration of " + n.getPrefix() + " is not yet supported.",
+                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors");
+      } else {
+        report.report(ERROR, document.getRootElement(), document.getRootElement(),
+                      "Didn't find migration rules for the following component: " + n.getPrefix()
+                          + "." + lineSeparator()
+                          + "If that component is defined in a Spring namespace handler of an app dependency, include its uri ("
+                          + n.getURI() + ") in the '" + ADDITIONAL_SPRING_NAMESPACES_PROP
+                          + "' so it is handled by the Spring Module.",
+                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors",
+                      "https://docs.mulesoft.com/connectors/spring-module");
+      }
+    });
   }
 }
