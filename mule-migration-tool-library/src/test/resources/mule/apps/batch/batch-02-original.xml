@@ -10,7 +10,8 @@
 
     <batch:job name="basic">
         <batch:input>
-            <logger message="batch input phase"/>
+            <logger message="batch input phase1"/>
+            <logger message="batch input phase2"/>
         </batch:input>
         <batch:process-records>
             <batch:step name="firstStep">

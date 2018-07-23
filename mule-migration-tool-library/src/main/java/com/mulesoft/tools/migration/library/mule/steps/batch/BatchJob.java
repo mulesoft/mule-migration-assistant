@@ -11,6 +11,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,14 +46,15 @@ public class BatchJob extends AbstractApplicationModelMigrationStep {
     Optional<Element> batchInput = Optional.ofNullable(originalBatchJob.getChild("input", BATCH_NAMESPACE));
     batchInput.ifPresent(input -> originalBatchJob.removeContent(input));
 
-    List<Element> children = originalBatchJob.getChildren();
+    List<Element> children = new ArrayList<>(originalBatchJob.getChildren());
     children.forEach(child -> {
       originalBatchJob.removeContent(child);
       batchJob.addContent(child);
     });
 
     batchInput.ifPresent(input -> {
-      input.getChildren().forEach(child -> {
+      List<Element> inputChildren = new ArrayList<>(input.getChildren());
+      inputChildren.forEach(child -> {
         input.removeContent(child);
         originalBatchJob.addContent(child);
       });
