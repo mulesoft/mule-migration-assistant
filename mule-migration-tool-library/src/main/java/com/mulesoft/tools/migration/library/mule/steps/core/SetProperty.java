@@ -8,15 +8,15 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrate Set Property to the compatibility plugin
@@ -25,11 +25,6 @@ import org.jdom2.Namespace;
  * @since 1.0.0
  */
 public class SetProperty extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
-
-  private static final String COMPATIBILITY_NAMESPACE_PREFIX = "compatibility";
-  private static final String COMPATIBILITY_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/compatibility";
-  private static final Namespace COMPATIBILITY_NAMESPACE =
-      Namespace.getNamespace(COMPATIBILITY_NAMESPACE_PREFIX, COMPATIBILITY_NAMESPACE_URI);
 
   public static final String XPATH_SELECTOR = "//mule:set-property";
   private ExpressionMigrator expressionMigrator;

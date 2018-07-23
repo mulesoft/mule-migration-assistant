@@ -10,7 +10,6 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
 import static java.lang.System.lineSeparator;
-import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -24,8 +23,6 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.Parent;
-
-import java.util.Optional;
 
 /**
  * Provides reusable methods for common migration scenarios.
@@ -88,7 +85,7 @@ public final class XmlDslUtils {
    */
   public static void migrateSourceStructure(ApplicationModel appModel, Element object, MigrationReport report,
                                             boolean expectsOutboundProperties, boolean consumeStreams) {
-    appModel.addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, object.getDocument());
+    addCompatibilityNamespace(appModel, object.getDocument());
 
     int index = object.getParent().indexOf(object);
     buildAttributesToInboundProperties(report, object.getParent(), index + 1);
@@ -156,7 +153,7 @@ public final class XmlDslUtils {
   public static Element addOutboundPropertySetter(String propertyName, Element element, ApplicationModel model,
                                                   Element after) {
     addCompatibilityNamespace(model, element.getDocument());
-    Element setProperty = new Element("set-property", Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE.getURI()));
+    Element setProperty = new Element("set-property", COMPATIBILITY_NAMESPACE);
     setProperty.setAttribute(new Attribute("propertyName", propertyName));
     setProperty.setAttribute(new Attribute("value", "#[vars." + propertyName + "]"));
 

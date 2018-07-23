@@ -25,7 +25,6 @@ import org.jdom2.Namespace;
  */
 public class CacheInvalidateKey extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  public static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
   private static final String EE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ee/core";
   private static final String EE_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd";
   private static final String EE_NAMESPACE_NAME = "ee";

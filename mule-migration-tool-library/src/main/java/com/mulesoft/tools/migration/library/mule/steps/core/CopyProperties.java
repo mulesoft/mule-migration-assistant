@@ -7,12 +7,12 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrate Copy Properties to the compatibility plugin
@@ -21,8 +21,6 @@ import org.jdom2.Namespace;
  * @since 1.0.0
  */
 public class CopyProperties extends AbstractApplicationModelMigrationStep {
-
-  private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
 
   public static final String XPATH_SELECTOR = "//*[local-name()='copy-properties']";
 
@@ -40,6 +38,6 @@ public class CopyProperties extends AbstractApplicationModelMigrationStep {
     report.report(WARN, element, element,
                   "Instead of copying properties in the flow, use the 'attributes' of the message directly.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes");
-    element.setNamespace(Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
+    element.setNamespace(COMPATIBILITY_NAMESPACE);
   }
 }
