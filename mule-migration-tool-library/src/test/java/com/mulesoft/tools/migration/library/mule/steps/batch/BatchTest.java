@@ -52,7 +52,8 @@ public class BatchTest {
   public static Object[] params() {
     return new Object[] {
         "batch-01",
-        "batch-02"
+        "batch-02",
+        "batch-03"
     };
   }
 
@@ -61,7 +62,7 @@ public class BatchTest {
   private final MigrationReport reportMock;
   private BatchJob batchJob;
   private BatchExecute batchExecute;
-  private Element node;
+  private BatchSetRecordVariable batchSetRecordVariable;
   private Document doc;
   private ApplicationModel appModel;
 
@@ -77,8 +78,10 @@ public class BatchTest {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     batchJob = new BatchJob();
     batchExecute = new BatchExecute();
+    batchSetRecordVariable = new BatchSetRecordVariable();
 
-    //MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    batchSetRecordVariable.setExpressionMigrator(expressionMigrator);
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
@@ -88,10 +91,11 @@ public class BatchTest {
 
   @Test
   public void execute() throws Exception {
-    node = getElementsFromDocument(doc, batchExecute.getAppliedTo().getExpression()).get(0);
-    batchExecute.execute(node, reportMock);
-    node = getElementsFromDocument(doc, batchJob.getAppliedTo().getExpression()).get(0);
-    batchJob.execute(node, reportMock);
+    getElementsFromDocument(doc, batchExecute.getAppliedTo().getExpression())
+        .forEach(node -> batchExecute.execute(node, reportMock));
+    getElementsFromDocument(doc, batchJob.getAppliedTo().getExpression()).forEach(node -> batchJob.execute(node, reportMock));
+    getElementsFromDocument(doc, batchSetRecordVariable.getAppliedTo().getExpression())
+        .forEach(node -> batchSetRecordVariable.execute(node, reportMock));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
