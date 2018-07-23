@@ -114,7 +114,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
 
         if (connector != null) {
           handleConnector(connector, requestConnection, report, wscNamespace, getApplicationModel());
-          migrate(requestConnection, of(connector), report, getApplicationModel());
+          migrate(requestConnection, of(connector), report, getApplicationModel(), "tls-client");
         }
       }
 
@@ -150,7 +150,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
           requestConnection.setAttribute("protocol", "HTTPS");
 
           handleConnector(connector, requestConnection, report, wscNamespace, getApplicationModel());
-          migrate(requestConnection, of(connector), report, getApplicationModel());
+          migrate(requestConnection, of(connector), report, getApplicationModel(), "tls-client");
 
           connection.addContent(new Element("custom-transport-configuration", wscNamespace)
               .addContent(new Element("http-transport-configuration", wscNamespace)

@@ -55,11 +55,11 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
     Element httpsRequesterConnection = getApplicationModel().getNode("/mule:mule/http:request-config[@name = '"
         + object.getAttributeValue("config-ref") + "']/http:request-connection");
 
-    migrate(httpsRequesterConnection, httpsConnector, report, getApplicationModel());
+    migrate(httpsRequesterConnection, httpsConnector, report, getApplicationModel(), "tls-client");
   }
 
   public static void migrate(Element httpsRequesterConnection, Optional<Element> httpsConnector, MigrationReport report,
-                             ApplicationModel appModel) {
+                             ApplicationModel appModel, String tlsClientTagName) {
     Namespace httpsNamespace = Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https");
     Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
 
@@ -69,7 +69,7 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
       Element tlsContext = new Element("context", tlsNamespace);
       boolean tlsConfigured = false;
 
-      Element tlsClient = httpsConnector.get().getChild("tls-client", httpsNamespace);
+      Element tlsClient = httpsConnector.get().getChild(tlsClientTagName, httpsNamespace);
       if (tlsClient != null) {
         Element keyStore = new Element("trust-store", tlsNamespace);
         copyAttributeIfPresent(tlsClient, keyStore, "path");

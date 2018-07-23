@@ -9,7 +9,7 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
 
     <https:polling-connector name="pollingConnector" pollingFrequency="30000" reuseAddress="true" checkEtag="false" discardEmptyContent="false">
-        <https:tls-client path="trustStore" storePassword="mulepassword"/>
+        <https:tls-server path="trustStore" storePassword="mulepassword"/>
     </https:polling-connector>
 
     <flow name="flow">
