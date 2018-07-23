@@ -12,6 +12,7 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Migrate BatchJob component
@@ -40,11 +41,23 @@ public class BatchJob extends AbstractApplicationModelMigrationStep {
   public void execute(Element originalBatchJob, MigrationReport report) throws RuntimeException {
     Element batchJob = new Element("job", BATCH_NAMESPACE);
     batchJob.setAttribute("jobName", originalBatchJob.getAttributeValue("name"));
+
+    Optional<Element> batchInput = Optional.ofNullable(originalBatchJob.getChild("input", BATCH_NAMESPACE));
+    batchInput.ifPresent(input -> originalBatchJob.removeContent(input));
+
     List<Element> children = originalBatchJob.getChildren();
     children.forEach(child -> {
       originalBatchJob.removeContent(child);
       batchJob.addContent(child);
     });
+
+    batchInput.ifPresent(input -> {
+      input.getChildren().forEach(child -> {
+        input.removeContent(child);
+        originalBatchJob.addContent(child);
+      });
+    });
+
     originalBatchJob.addContent(batchJob);
     originalBatchJob.setNamespace(CORE_NAMESPACE);
     originalBatchJob.setName("flow");

@@ -51,7 +51,8 @@ public class BatchTest {
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "batch-01"
+        "batch-01",
+        "batch-02"
     };
   }
 
