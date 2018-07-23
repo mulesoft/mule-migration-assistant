@@ -116,6 +116,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     expressionsPerProperty.put("http.remote.address", "message.attributes.remoteAddress");
     expressionsPerProperty.put("http.client.cert", "message.attributes.clientCertificate");
     expressionsPerProperty.put("LOCAL_CERTIFICATES", "[message.attributes.clientCertificate]");
+    expressionsPerProperty.put("PEER_CERTIFICATES", "[message.attributes.clientCertificate]");
     expressionsPerProperty.put("http.query.params", "message.attributes.queryParams");
     expressionsPerProperty.put("http.uri.params", "message.attributes.uriParams");
     expressionsPerProperty.put("http.request", "message.attributes.requestPath");
