@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+
+    <validation:config name="config1">
+        <validation:i18n bundlePath="test-messages" locale="ar"/>
+    </validation:config>
+
+    <validation:config name="config2">
+        <validation:i18n bundlePath="test" locale="br"/>
+    </validation:config>
+
+    <flow name="localizedMessage">
+        <validation:is-true expression="false" config-ref="config1"/>
+    </flow>
+
+    <flow name="localizedMessage2">
+        <validation:is-true expression="false" config-ref="config2"/>
+    </flow>
+
+</mule>

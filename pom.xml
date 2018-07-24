@@ -65,12 +65,12 @@
 
         <maven.model.version>3.5.0</maven.model.version>
 
-        <mule.runtime.version>4.1.3-SNAPSHOT</mule.runtime.version>
+        <mule.runtime.version>4.1.3</mule.runtime.version>
 
         <mule.api.version>1.1.1</mule.api.version>
         <migrant.version>2.1.1-SNAPSHOT</migrant.version>
         <mel.dw.migrator.version>1.0.0-SNAPSHOT</mel.dw.migrator.version>
-        <parser.version>2.1.3-SNAPSHOT</parser.version>
+        <parser.version>2.1.3</parser.version>
 
         <!-- Properties -->
         <lib-dir>${basedir}/lib</lib-dir>
