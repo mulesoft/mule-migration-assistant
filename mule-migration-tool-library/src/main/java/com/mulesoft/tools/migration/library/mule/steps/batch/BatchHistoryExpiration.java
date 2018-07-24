@@ -25,7 +25,7 @@ public class BatchHistoryExpiration extends AbstractApplicationModelMigrationSte
 
   @Override
   public String getDescription() {
-    return "Update batch history expiration attributes.";
+    return "Update batch history expiration attributes to camel case.";
   }
 
   public BatchHistoryExpiration() {

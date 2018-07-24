@@ -23,7 +23,7 @@ public class BatchCommit extends AbstractApplicationModelMigrationStep {
 
   @Override
   public String getDescription() {
-    return "Update batch execute to a flow-ref with equal reference name.";
+    return "Update batch commit to batch aggregator.";
   }
 
   public BatchCommit() {

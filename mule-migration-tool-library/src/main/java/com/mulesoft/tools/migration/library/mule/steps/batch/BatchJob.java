@@ -35,7 +35,7 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
 
   @Override
   public String getDescription() {
-    return "Update batch job to a flow with equal name.";
+    return "Update batch job to a flow with equal name that contains the actual batch job.";
   }
 
   public BatchJob() {

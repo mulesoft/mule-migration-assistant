@@ -33,7 +33,7 @@ public class BatchSetRecordVariable extends AbstractApplicationModelMigrationSte
 
   @Override
   public String getDescription() {
-    return "Update batch execute to a flow-ref with equal reference name.";
+    return "Update batch set record variable to a set variable component.";
   }
 
   public BatchSetRecordVariable() {
