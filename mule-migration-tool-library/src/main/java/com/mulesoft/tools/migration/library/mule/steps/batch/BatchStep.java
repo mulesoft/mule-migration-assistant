@@ -46,6 +46,15 @@ public class BatchStep extends AbstractApplicationModelMigrationStep implements 
       acceptExpression.setName("acceptExpression");
       acceptExpression.setValue(expressionMigrator.migrateExpression(acceptExpression.getValue(), true, object));
     }
+    Attribute filterExpression = object.getAttribute("filter-expression");
+    if (filterExpression != null) {
+      filterExpression.setName("acceptExpression");
+      String expr = filterExpression.getValue();
+      expr = expressionMigrator.unwrap(expr);
+      expr = "!(" + expr + ")";
+      expr = expressionMigrator.wrap(expr);
+      filterExpression.setValue(expressionMigrator.migrateExpression(expr, true, object));
+    }
   }
 
   @Override

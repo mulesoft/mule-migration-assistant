@@ -12,7 +12,7 @@
         <logger message="something"/>
         <batch:job jobName="batchJob_withInput" maxFailedRecords="-1">
             <batch:process-records>
-                <batch:step name="batchStep" acceptPolicy="ALL" acceptExpression="#[!(payload == 'orange')]">
+                <batch:step name="batchStep" acceptPolicy="ALL" acceptExpression="#[mel:!(payload == 'orange')]">
                     <logger message="other"/>
                 </batch:step>
             </batch:process-records>
