@@ -62,7 +62,8 @@ public class BatchTest {
         "batch-08",
         "batch-09",
         "batch-10",
-        "batch-11"
+        "batch-11",
+        "batch-12"
     };
   }
 
@@ -99,6 +100,7 @@ public class BatchTest {
     batchSetRecordVariable.setExpressionMigrator(expressionMigrator);
     batchExecute.setExpressionMigrator(expressionMigrator);
     batchStep.setExpressionMigrator(expressionMigrator);
+    batchJob.setExpressionMigrator(expressionMigrator);
 
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))

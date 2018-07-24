@@ -7,7 +7,9 @@
 package com.mulesoft.tools.migration.library.mule.steps.batch;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -21,13 +23,15 @@ import java.util.Optional;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class BatchJob extends AbstractApplicationModelMigrationStep {
+public class BatchJob extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
   public static final String BATCH_NAMESPACE_PREFIX = "batch";
   public static final String BATCH_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/batch";
   private static final Namespace BATCH_NAMESPACE = Namespace.getNamespace(BATCH_NAMESPACE_PREFIX, BATCH_NAMESPACE_URI);
   private static final Namespace CORE_NAMESPACE = Namespace.getNamespace("core", "http://www.mulesoft.org/schema/mule/core");
   public static final String XPATH_SELECTOR = "//*[namespace-uri() = '" + BATCH_NAMESPACE_URI + "' and local-name() = 'job']";
+
+  private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
@@ -65,17 +69,28 @@ public class BatchJob extends AbstractApplicationModelMigrationStep {
     originalBatchJob.setName("flow");
   }
 
-  private void moveAttribute(Element originalBatchJob, Element batchJob, String oldName, String newName) {
+  private void moveAttribute(Element originalBatchJob, Element batchJob, String oldName, String newName, boolean expression) {
     Optional.ofNullable(originalBatchJob.getAttributeValue(oldName)).ifPresent(value -> {
       originalBatchJob.removeAttribute(oldName);
-      batchJob.setAttribute(newName, value);
+      batchJob.setAttribute(newName, expression ? expressionMigrator.migrateExpression(value, true, originalBatchJob) : value);
     });
   }
 
   private void setAttributes(Element originalBatchJob, Element batchJob) {
     batchJob.setAttribute("jobName", originalBatchJob.getAttributeValue("name"));
-    moveAttribute(originalBatchJob, batchJob, "schedulingStrategy", "schedulingStrategy");
-    moveAttribute(originalBatchJob, batchJob, "max-failed-records", "maxFailedRecords");
-    moveAttribute(originalBatchJob, batchJob, "block-size", "blockSize");
+    moveAttribute(originalBatchJob, batchJob, "schedulingStrategy", "schedulingStrategy", false);
+    moveAttribute(originalBatchJob, batchJob, "max-failed-records", "maxFailedRecords", false);
+    moveAttribute(originalBatchJob, batchJob, "block-size", "blockSize", false);
+    moveAttribute(originalBatchJob, batchJob, "job-instance-id", "jobInstanceId", true);
+  }
+
+  @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
+
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return expressionMigrator;
   }
 }
