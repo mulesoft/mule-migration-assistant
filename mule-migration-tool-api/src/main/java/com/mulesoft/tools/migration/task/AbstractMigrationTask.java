@@ -8,7 +8,9 @@ package com.mulesoft.tools.migration.task;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static java.lang.System.lineSeparator;
 
+import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
@@ -19,7 +21,9 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
+import org.jdom2.output.XMLOutputter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +36,8 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
 
   private ApplicationModel applicationModel;
   private ExpressionMigrator expressionMigrator;
+
+  private XMLOutputter outp = new XMLOutputter();
 
   @Override
   public ApplicationModel getApplicationModel() {
@@ -63,7 +69,7 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
           stepSelector.getApplicationModelContributionSteps()
               .forEach(s -> {
                 s.setApplicationModel(applicationModel);
-                fetchAndProcessNodes(report, s);
+                fetchAndProcessNodes(report, s, new ArrayList<>());
               });
 
 
@@ -80,9 +86,18 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
     }
   }
 
-  private void fetchAndProcessNodes(MigrationReport report, ApplicationModelContribution s) {
+  private void fetchAndProcessNodes(MigrationReport report, ApplicationModelContribution s, List<Element> alreadyProcessed) {
     List<Element> nodes = applicationModel.getNodes(s.getAppliedTo());
-    nodes.forEach(n -> s.execute(n, report));
+    nodes.stream().filter(n -> !alreadyProcessed.contains(n)).forEach(n -> {
+      try {
+        s.execute(n, report);
+      } catch (Exception e) {
+        throw new MigrationStepException("Task execution exception (" + e.getMessage() + ") migrating node:" + lineSeparator()
+            + outp.outputString(n), e);
+      }
+    });
+
+    alreadyProcessed.addAll(nodes);
 
     nodes.removeAll(applicationModel.getNodes(s.getAppliedTo()));
     if (!nodes.isEmpty()) {
@@ -90,7 +105,7 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
       // processed.
       // Also, this is recursive rather than iterative so in the case of a bug, we get a StackOverflow rather than an infinite
       // loop.
-      fetchAndProcessNodes(report, s);
+      fetchAndProcessNodes(report, s, alreadyProcessed);
     }
   }
 

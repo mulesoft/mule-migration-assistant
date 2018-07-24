@@ -87,12 +87,12 @@ public class MelToDwExpressionMigratorTest {
     assertThat("Not the expected unwrapped string", unwrappedExpression, equalTo(unwrappedEmptyExpression));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = NullPointerException.class)
   public void unwrapNull() {
     expressionMigrator.unwrap(null);
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = NullPointerException.class)
   public void wrapNull() {
     expressionMigrator.wrap(null);
   }
@@ -272,7 +272,7 @@ public class MelToDwExpressionMigratorTest {
   }
 
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test(expected = NullPointerException.class)
   public void isWrappedNull() {
     expressionMigrator.isWrapped(null);
   }

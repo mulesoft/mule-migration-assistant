@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.tools;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.mulesoft.tools.Migrator;
 import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
@@ -101,6 +101,6 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
   }
 
   private void checkExpression(String expression) {
-    checkArgument(expression != null, "Expression cannot be null");
+    requireNonNull(expression, "Expression cannot be null");
   }
 }
