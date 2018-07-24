@@ -42,6 +42,10 @@ public class BatchJob extends AbstractApplicationModelMigrationStep {
   public void execute(Element originalBatchJob, MigrationReport report) throws RuntimeException {
     Element batchJob = new Element("job", BATCH_NAMESPACE);
     batchJob.setAttribute("jobName", originalBatchJob.getAttributeValue("name"));
+    Optional.ofNullable(originalBatchJob.getAttributeValue("schedulingStrategy")).ifPresent(value -> {
+      originalBatchJob.removeAttribute("schedulingStrategy");
+      batchJob.setAttribute("schedulingStrategy", value);
+    });
 
     Optional<Element> batchInput = Optional.ofNullable(originalBatchJob.getChild("input", BATCH_NAMESPACE));
     batchInput.ifPresent(input -> originalBatchJob.removeContent(input));

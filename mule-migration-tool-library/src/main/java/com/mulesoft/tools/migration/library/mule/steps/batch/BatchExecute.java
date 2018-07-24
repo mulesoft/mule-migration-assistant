@@ -7,9 +7,14 @@
 package com.mulesoft.tools.migration.library.mule.steps.batch;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 
 /**
  * Migrate BatchExecute component
@@ -17,11 +22,13 @@ import org.jdom2.Namespace;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class BatchExecute extends AbstractApplicationModelMigrationStep {
+public class BatchExecute extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
   private static final Namespace CORE_NAMESPACE = Namespace.getNamespace("core", "http://www.mulesoft.org/schema/mule/core");
   public static final String BATCH_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/batch";
   public static final String XPATH_SELECTOR = "//*[namespace-uri() = '" + BATCH_NAMESPACE_URI + "' and local-name() = 'execute']";
+
+  private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
@@ -36,5 +43,24 @@ public class BatchExecute extends AbstractApplicationModelMigrationStep {
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setNamespace(CORE_NAMESPACE);
     object.setName("flow-ref");
+
+    Attribute expression = object.getAttribute("name");
+    if (expression != null) {
+      String migratedExpression = getExpressionMigrator().migrateExpression(expression.getValue(), true, object);
+      if (migratedExpression.startsWith("#[mel:")) {
+        addCompatibilityNamespace(getApplicationModel(), object.getDocument());
+      }
+      expression.setValue(migratedExpression);
+    }
+  }
+
+  @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
+
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return expressionMigrator;
   }
 }

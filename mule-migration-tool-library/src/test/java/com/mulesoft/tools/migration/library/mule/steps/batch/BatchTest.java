@@ -54,7 +54,9 @@ public class BatchTest {
         "batch-01",
         "batch-02",
         "batch-03",
-        "batch-04"
+        "batch-04",
+            "batch-05",
+            "batch-06"
     };
   }
 
@@ -85,6 +87,8 @@ public class BatchTest {
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
     batchSetRecordVariable.setExpressionMigrator(expressionMigrator);
+    batchExecute.setExpressionMigrator(expressionMigrator);
+
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
