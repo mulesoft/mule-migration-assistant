@@ -92,6 +92,7 @@ public class HttpListenerAttributesMappingTest {
         "    'http.remote.address': message.attributes.remoteAddress," + lineSeparator() +
         "    'http.client.cert': message.attributes.clientCertificate," + lineSeparator() +
         "    'LOCAL_CERTIFICATES': [message.attributes.clientCertificate]," + lineSeparator() +
+        "    'PEER_CERTIFICATES': [message.attributes.clientCertificate]," + lineSeparator() +
         "    'http.query.params': message.attributes.queryParams," + lineSeparator() +
         "    'http.uri.params': message.attributes.uriParams," + lineSeparator() +
         "    'http.request': message.attributes.requestPath," + lineSeparator() +
