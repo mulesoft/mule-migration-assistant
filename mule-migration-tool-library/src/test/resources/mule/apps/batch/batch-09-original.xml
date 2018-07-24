@@ -12,6 +12,9 @@
         <batch:input>
             <logger message="something"/>
         </batch:input>
+        <batch:history>
+            <batch:expiration max-age="10" age-unit="SECONDS"/>
+        </batch:history>
         <batch:process-records>
             <batch:step name="batchStep" accept-policy="ALL">
                 <logger message="other"/>

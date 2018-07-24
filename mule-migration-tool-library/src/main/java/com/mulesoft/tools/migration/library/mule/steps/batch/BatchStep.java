@@ -7,7 +7,9 @@
 package com.mulesoft.tools.migration.library.mule.steps.batch;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
@@ -17,10 +19,12 @@ import org.jdom2.Element;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class BatchStep extends AbstractApplicationModelMigrationStep {
+public class BatchStep extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
   public static final String BATCH_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/batch";
   public static final String XPATH_SELECTOR = "//*[namespace-uri() = '" + BATCH_NAMESPACE_URI + "' and local-name() = 'step']";
+
+  private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
@@ -37,5 +41,20 @@ public class BatchStep extends AbstractApplicationModelMigrationStep {
     if (acceptPolicy != null) {
       acceptPolicy.setName("acceptPolicy");
     }
+    Attribute acceptExpression = object.getAttribute("accept-expression");
+    if (acceptExpression != null) {
+      acceptExpression.setName("acceptExpression");
+      acceptExpression.setValue(expressionMigrator.migrateExpression(acceptExpression.getValue(), true, object));
+    }
+  }
+
+  @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
+
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return expressionMigrator;
   }
 }

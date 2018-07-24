@@ -59,7 +59,10 @@ public class BatchTest {
         "batch-05",
         "batch-06",
         "batch-07",
-        "batch-08"
+        "batch-08",
+        "batch-09",
+        "batch-10",
+        "batch-11"
     };
   }
 
@@ -71,6 +74,7 @@ public class BatchTest {
   private BatchSetRecordVariable batchSetRecordVariable;
   private BatchCommit batchCommit;
   private BatchStep batchStep;
+  private BatchHistoryExpiration batchHistoryExpiration;
   private Document doc;
   private ApplicationModel appModel;
 
@@ -89,10 +93,12 @@ public class BatchTest {
     batchSetRecordVariable = new BatchSetRecordVariable();
     batchCommit = new BatchCommit();
     batchStep = new BatchStep();
+    batchHistoryExpiration = new BatchHistoryExpiration();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
     batchSetRecordVariable.setExpressionMigrator(expressionMigrator);
     batchExecute.setExpressionMigrator(expressionMigrator);
+    batchStep.setExpressionMigrator(expressionMigrator);
 
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
@@ -113,6 +119,7 @@ public class BatchTest {
     migrate(batchSetRecordVariable);
     migrate(batchStep);
     migrate(batchCommit);
+    migrate(batchHistoryExpiration);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
