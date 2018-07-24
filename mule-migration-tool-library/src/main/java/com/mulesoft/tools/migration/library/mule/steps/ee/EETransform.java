@@ -6,9 +6,17 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.ee;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.migrateDWToV2;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static org.jdom2.Namespace.getNamespace;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
@@ -17,13 +25,6 @@ import org.jdom2.Namespace;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.migrateDWToV2;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
-import static org.jdom2.Namespace.getNamespace;
 
 /**
  * Migrate EE Transform DW 1.0 Script to DW 2.0
@@ -101,7 +102,7 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
 
   private void addSessionVariable(Element element, MigrationReport report) {
     addCompatibilityNamespace(this.getApplicationModel(), element.getDocument());
-    Element sessionVar = new Element("set-session-variable", Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE));
+    Element sessionVar = new Element("set-session-variable", COMPATIBILITY_NAMESPACE);
     Attribute varName = element.getAttribute("variableName");
     sessionVar.setAttribute(new Attribute(varName.getName(), varName.getValue()));
     sessionVar.setAttribute(new Attribute("value", "#[vars." + varName.getValue() + "]"));

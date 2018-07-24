@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -16,7 +17,6 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,6 @@ import java.util.List;
  * @since 1.0.0
  */
 public class MessagePropertiesTransformer extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
-
-  private static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
 
   public static final String XPATH_SELECTOR = "//*[local-name()='message-properties-transformer']";
   private ExpressionMigrator expressionMigrator;
@@ -45,18 +43,14 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    Namespace compatibilityNamespace = Namespace.getNamespace("compatibility", COMPATIBILITY_NAMESPACE);
-
     if (element.getAttribute("scope") == null) {
       report.report(WARN, element, element,
                     "Instead of using properties in the flow, its values must be set explicitly in the operation/listener.",
                     "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
-      element.setNamespace(compatibilityNamespace);
     }
     if ("session".equals(element.getAttributeValue("scope"))) {
       report.report(WARN, element, element, "Instead of using session variables in the flow, use variables.",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
-      element.setNamespace(compatibilityNamespace);
     }
 
     boolean notOverwrite = false;
@@ -72,11 +66,11 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
       if ("delete-message-property".equals(child.getName())) {
         children.add(child);
         if (element.getAttribute("scope") == null) {
-          child.setNamespace(compatibilityNamespace);
+          child.setNamespace(COMPATIBILITY_NAMESPACE);
           child.setName("remove-property");
           child.getAttribute("key").setName("propertyName");
         } else if ("session".equals(element.getAttributeValue("scope"))) {
-          child.setNamespace(compatibilityNamespace);
+          child.setNamespace(COMPATIBILITY_NAMESPACE);
           child.setName("remove-session-variable");
           child.getAttribute("key").setName("variableName");
         } else {
@@ -91,7 +85,7 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
             setMelExpressionValue(child, child.getAttributeValue("value"), "message.outboundProperties");
           }
 
-          child.setNamespace(compatibilityNamespace);
+          child.setNamespace(COMPATIBILITY_NAMESPACE);
           child.setName("set-property");
           child.getAttribute("key").setName("propertyName");
         } else if ("session".equals(element.getAttributeValue("scope"))) {
@@ -99,7 +93,7 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
             setMelExpressionValue(child, child.getAttributeValue("value"), "sessionVars");
           }
 
-          child.setNamespace(compatibilityNamespace);
+          child.setNamespace(COMPATIBILITY_NAMESPACE);
           child.setName("set-session-variable");
           child.getAttribute("key").setName("variableName");
         } else {
@@ -126,23 +120,23 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
         // MessagePropertiesTransformer in 3.x doesn't use the 'overwrite' flag when renaming, so we do not contemplate that
         // case in the migrator
         if (element.getAttribute("scope") == null) {
-          child.setNamespace(compatibilityNamespace);
-          children.add(new Element("set-property", compatibilityNamespace)
+          child.setNamespace(COMPATIBILITY_NAMESPACE);
+          children.add(new Element("set-property", COMPATIBILITY_NAMESPACE)
               .setAttribute("propertyName", child.getAttributeValue("value"))
               .setAttribute("value", getExpressionMigrator()
                   .wrap("mel:message.outboundProperties['" + child.getAttributeValue("key") + "']")));
-          children.add(new Element("remove-property", compatibilityNamespace).setAttribute("propertyName",
-                                                                                           child
-                                                                                               .getAttributeValue("key")));
+          children.add(new Element("remove-property", COMPATIBILITY_NAMESPACE).setAttribute("propertyName",
+                                                                                            child
+                                                                                                .getAttributeValue("key")));
         } else if ("session".equals(element.getAttributeValue("scope"))) {
-          child.setNamespace(compatibilityNamespace);
-          children.add(new Element("set-session-variable", compatibilityNamespace)
+          child.setNamespace(COMPATIBILITY_NAMESPACE);
+          children.add(new Element("set-session-variable", COMPATIBILITY_NAMESPACE)
               .setAttribute("variableName", child.getAttributeValue("value"))
               .setAttribute("value", getExpressionMigrator()
                   .wrap("mel:sessionVars['" + child.getAttributeValue("key") + "']")));
-          children.add(new Element("remove-session-variable", compatibilityNamespace).setAttribute("variableName",
-                                                                                                   child
-                                                                                                       .getAttributeValue("key")));
+          children.add(new Element("remove-session-variable", COMPATIBILITY_NAMESPACE).setAttribute("variableName",
+                                                                                                    child
+                                                                                                        .getAttributeValue("key")));
         } else {
           children.add(new Element("set-variable", CORE_NAMESPACE)
               .setAttribute("variableName", child.getAttributeValue("value"))
