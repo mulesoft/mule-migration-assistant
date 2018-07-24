@@ -55,8 +55,9 @@ public class BatchTest {
         "batch-02",
         "batch-03",
         "batch-04",
-            "batch-05",
-            "batch-06"
+        "batch-05",
+        "batch-06",
+        "batch-07"
     };
   }
 

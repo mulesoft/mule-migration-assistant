@@ -74,7 +74,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
 
   public String resolveIdentifiers(String expression) {
     return expression.replaceAll("flowVars", "vars")
-            .replaceAll("recordVars", "vars")
+        .replaceAll("recordVars", "vars")
         .replaceAll("message\\.inboundProperties", "vars.compatibility_inboundProperties")
         .replaceAll("message\\.outboundProperties", "vars.compatibility_outboundProperties");
   }

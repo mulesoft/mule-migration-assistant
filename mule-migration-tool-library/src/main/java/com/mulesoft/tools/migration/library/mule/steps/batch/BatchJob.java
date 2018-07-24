@@ -41,11 +41,7 @@ public class BatchJob extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element originalBatchJob, MigrationReport report) throws RuntimeException {
     Element batchJob = new Element("job", BATCH_NAMESPACE);
-    batchJob.setAttribute("jobName", originalBatchJob.getAttributeValue("name"));
-    Optional.ofNullable(originalBatchJob.getAttributeValue("schedulingStrategy")).ifPresent(value -> {
-      originalBatchJob.removeAttribute("schedulingStrategy");
-      batchJob.setAttribute("schedulingStrategy", value);
-    });
+    setAttributes(originalBatchJob, batchJob);
 
     Optional<Element> batchInput = Optional.ofNullable(originalBatchJob.getChild("input", BATCH_NAMESPACE));
     batchInput.ifPresent(input -> originalBatchJob.removeContent(input));
@@ -67,5 +63,17 @@ public class BatchJob extends AbstractApplicationModelMigrationStep {
     originalBatchJob.addContent(batchJob);
     originalBatchJob.setNamespace(CORE_NAMESPACE);
     originalBatchJob.setName("flow");
+  }
+
+  private void setAttributes(Element originalBatchJob, Element batchJob) {
+    batchJob.setAttribute("jobName", originalBatchJob.getAttributeValue("name"));
+    Optional.ofNullable(originalBatchJob.getAttributeValue("schedulingStrategy")).ifPresent(value -> {
+      originalBatchJob.removeAttribute("schedulingStrategy");
+      batchJob.setAttribute("schedulingStrategy", value);
+    });
+    Optional.ofNullable(originalBatchJob.getAttributeValue("max-failed-records")).ifPresent(value -> {
+      originalBatchJob.removeAttribute("max-failed-records");
+      batchJob.setAttribute("maxFailedRecords", value);
+    });
   }
 }
