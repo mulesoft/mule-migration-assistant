@@ -21,6 +21,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.io.IOUtils;
@@ -100,17 +101,18 @@ public class BatchTest {
 
   }
 
+  public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
+    getElementsFromDocument(doc, migrationStep.getAppliedTo().getExpression())
+        .forEach(node -> migrationStep.execute(node, reportMock));
+  }
+
   @Test
   public void execute() throws Exception {
-    getElementsFromDocument(doc, batchExecute.getAppliedTo().getExpression())
-        .forEach(node -> batchExecute.execute(node, reportMock));
-    getElementsFromDocument(doc, batchJob.getAppliedTo().getExpression()).forEach(node -> batchJob.execute(node, reportMock));
-    getElementsFromDocument(doc, batchSetRecordVariable.getAppliedTo().getExpression())
-        .forEach(node -> batchSetRecordVariable.execute(node, reportMock));
-    getElementsFromDocument(doc, batchCommit.getAppliedTo().getExpression())
-        .forEach(node -> batchCommit.execute(node, reportMock));
-    getElementsFromDocument(doc, batchStep.getAppliedTo().getExpression())
-        .forEach(node -> batchStep.execute(node, reportMock));
+    migrate(batchExecute);
+    migrate(batchJob);
+    migrate(batchSetRecordVariable);
+    migrate(batchStep);
+    migrate(batchCommit);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
