@@ -46,7 +46,7 @@ public class HttpsPollingConnector extends HttpPollingConnector {
 
     HttpsOutboundEndpoint httpRequesterMigrator = new HttpsOutboundEndpoint();
     httpRequesterMigrator.setApplicationModel(getApplicationModel());
-    migrate(httpsRequesterConnection, of(object), report, getApplicationModel());
+    migrate(httpsRequesterConnection, of(object), report, getApplicationModel(), "tls-server");
   }
 
 }
