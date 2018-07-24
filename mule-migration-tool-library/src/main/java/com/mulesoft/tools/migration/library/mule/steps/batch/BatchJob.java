@@ -65,15 +65,17 @@ public class BatchJob extends AbstractApplicationModelMigrationStep {
     originalBatchJob.setName("flow");
   }
 
+  private void moveAttribute(Element originalBatchJob, Element batchJob, String oldName, String newName) {
+    Optional.ofNullable(originalBatchJob.getAttributeValue(oldName)).ifPresent(value -> {
+      originalBatchJob.removeAttribute(oldName);
+      batchJob.setAttribute(newName, value);
+    });
+  }
+
   private void setAttributes(Element originalBatchJob, Element batchJob) {
     batchJob.setAttribute("jobName", originalBatchJob.getAttributeValue("name"));
-    Optional.ofNullable(originalBatchJob.getAttributeValue("schedulingStrategy")).ifPresent(value -> {
-      originalBatchJob.removeAttribute("schedulingStrategy");
-      batchJob.setAttribute("schedulingStrategy", value);
-    });
-    Optional.ofNullable(originalBatchJob.getAttributeValue("max-failed-records")).ifPresent(value -> {
-      originalBatchJob.removeAttribute("max-failed-records");
-      batchJob.setAttribute("maxFailedRecords", value);
-    });
+    moveAttribute(originalBatchJob, batchJob, "schedulingStrategy", "schedulingStrategy");
+    moveAttribute(originalBatchJob, batchJob, "max-failed-records", "maxFailedRecords");
+    moveAttribute(originalBatchJob, batchJob, "block-size", "blockSize");
   }
 }

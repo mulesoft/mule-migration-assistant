@@ -10,7 +10,7 @@
 
     <flow name="batchJob_withInput">
         <logger message="something"/>
-        <batch:job jobName="batchJob_withInput" maxFailedRecords="-1">
+        <batch:job jobName="batchJob_withInput" maxFailedRecords="-1" blockSize="1">
             <batch:process-records>
                 <batch:step name="batchStep">
                     <logger message="other"/>

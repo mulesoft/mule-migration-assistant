@@ -13,7 +13,7 @@
             <logger message="something"/>
         </batch:input>
         <batch:process-records>
-            <batch:step name="batchStep" accept-policy="ALL">
+            <batch:step name="batchStep" accept-policy="ALL"> <!-- filter-expression="#[payload == 'orange']" -->
                 <logger message="other"/>
             </batch:step>
         </batch:process-records>
