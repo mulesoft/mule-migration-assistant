@@ -19,7 +19,8 @@ import org.jdom2.Namespace;
  */
 public class HttpConnectorUriParams extends AbstractHttpConnectorMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//http:*[local-name()='uri-param' or local-name()='uri-params']";
+  public static final String XPATH_SELECTOR =
+      "//http:*[local-name()='uri-param' or (local-name()='uri-params' and normalize-space(text())='')]";
 
   @Override
   public String getDescription() {

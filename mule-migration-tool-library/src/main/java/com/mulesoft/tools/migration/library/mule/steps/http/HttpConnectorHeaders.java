@@ -20,7 +20,8 @@ import org.jdom2.Namespace;
  */
 public class HttpConnectorHeaders extends AbstractHttpConnectorMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//http:*[local-name()='header' or local-name()='headers']";
+  public static final String XPATH_SELECTOR =
+      "//http:*[local-name()='header' or (local-name()='headers' and normalize-space(text())='')]";
 
   @Override
   public String getDescription() {

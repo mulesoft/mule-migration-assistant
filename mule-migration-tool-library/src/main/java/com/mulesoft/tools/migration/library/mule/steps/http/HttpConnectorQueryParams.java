@@ -19,7 +19,8 @@ import org.jdom2.Namespace;
  */
 public class HttpConnectorQueryParams extends AbstractHttpConnectorMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//http:*[local-name()='query-param' or local-name()='query-params']";
+  public static final String XPATH_SELECTOR =
+      "//http:*[local-name()='query-param' or (local-name()='query-params' and normalize-space(text())='')]";
 
   @Override
   public String getDescription() {
