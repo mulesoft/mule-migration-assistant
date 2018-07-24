@@ -16,8 +16,8 @@ public class BatchTestCase extends EndToEndTestCase {
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "batch1",
-        //"batch2"
+        //"batch1",
+        "batch2"
     };
   }
 
