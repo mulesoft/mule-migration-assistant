@@ -4,21 +4,20 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps.scripting;
+package com.mulesoft.tools.migration.library.mule.steps.validation;
 
+import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 
-import static com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
-
 /**
- * Add scripting dependency on pom.
+ * Add validation module dependency on pom.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class ScriptingPomContribution implements PomContribution {
+public class ValidationPomContribution implements PomContribution {
 
   @Override
   public String getDescription() {
@@ -27,10 +26,10 @@ public class ScriptingPomContribution implements PomContribution {
 
   @Override
   public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
-    pomModel.addDependency(new DependencyBuilder()
+    pomModel.addDependency(new Dependency.DependencyBuilder()
         .withGroupId("org.mule.modules")
-        .withArtifactId("mule-scripting-module")
-        .withVersion("1.1.0")
+        .withArtifactId("mule-validation-module")
+        .withVersion("1.2.1")
         .withClassifier("mule-plugin")
         .build());
   }

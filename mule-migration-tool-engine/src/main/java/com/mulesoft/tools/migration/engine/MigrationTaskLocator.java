@@ -22,6 +22,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.SecurePropertiesMigration
 import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SpringMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.VMMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.ValidationMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.WscMigrationTask;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.project.ProjectType;
@@ -108,6 +109,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new EndpointsMigrationTask());
     coreMigrationTasks.add(new ScriptingMigrationTask());
     coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask());
+    coreMigrationTasks.add(new ValidationMigrationTask());
     coreMigrationTasks.add(new MunitMigrationTask());
     // Spring has to run after MUnit, since MUnit in Mule 3 has some custom spring components that are removed by the migrator
 
