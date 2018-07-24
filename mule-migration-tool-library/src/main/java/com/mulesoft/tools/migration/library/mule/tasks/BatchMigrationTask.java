@@ -6,11 +6,17 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
-import com.mulesoft.tools.migration.library.mule.steps.batch.*;
+import static com.google.common.collect.Lists.newArrayList;
+
+import com.mulesoft.tools.migration.library.mule.steps.batch.BatchCommit;
+import com.mulesoft.tools.migration.library.mule.steps.batch.BatchExecute;
+import com.mulesoft.tools.migration.library.mule.steps.batch.BatchJob;
+import com.mulesoft.tools.migration.library.mule.steps.batch.BatchHistoryExpiration;
+import com.mulesoft.tools.migration.library.mule.steps.batch.BatchSetRecordVariable;
+import com.mulesoft.tools.migration.library.mule.steps.batch.BatchStep;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
@@ -49,7 +55,11 @@ public class BatchMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new BatchJob(), new BatchExecute(), new BatchStep(), new BatchCommit(), new BatchHistoryExpiration(),
+    return newArrayList(new BatchJob(),
+                        new BatchExecute(),
+                        new BatchStep(),
+                        new BatchCommit(),
+                        new BatchHistoryExpiration(),
                         new BatchSetRecordVariable());
   }
 }
