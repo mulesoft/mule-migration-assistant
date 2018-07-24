@@ -6,6 +6,7 @@
 
     <flow name="dispatcher">
         <batch:execute name="#[message.inboundProperties['batchName']]"/>
+        <set-payload value="10"/>
     </flow>
 
     <batch:job name="concurrent" scheduling-strategy="ROUND_ROBIN">
@@ -23,7 +24,7 @@
             </batch:step>
             <batch:step name="secondStep">
                 <flow-ref name="upperCasePipe"/>
-                <component class="com.mulesoft.module.batch.BatchConcurrencyTestCase"/>
+                <logger message="something"/>
             </batch:step>
         </batch:process-records>
         <batch:on-complete>

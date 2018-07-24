@@ -10,7 +10,7 @@
         <batch:execute name="#[message.inboundProperties['batchName']]"/>
     </flow>
 
-    <batch:job name="messageTransformer" schedulingStrategy="ROUND_ROBIN">
+    <batch:job name="messageTransformer" scheduling-strategy="ROUND_ROBIN">
         <batch:process-records>
             <batch:step name="step">
                 <logger message="something"/>
