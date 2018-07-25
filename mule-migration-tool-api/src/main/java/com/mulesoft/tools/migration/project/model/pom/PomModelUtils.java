@@ -21,7 +21,7 @@ public class PomModelUtils {
   public static final String DEFAULT_MODEL_VERSION = "4.0.0";
   public static final String MULE_MAVEN_PLUGIN_ARTIFACT_ID = "mule-maven-plugin";
   public static final String MULE_MAVEN_PLUGIN_GROUP_ID = "org.mule.tools.maven";
-  public static final String MULE_MAVEN_PLUGIN_VERSION = "3.0.0";
+  public static final String MULE_MAVEN_PLUGIN_VERSION = "3.1.4";
   private static final String MULESOFT_RELEASES = "mulesoft-releases";
   private static final String MULESOFT_RELEASES_REPOSITORY_NAME = "MuleSoft Releases Repository";
   private static final String MULESOFT_RELEASES_REPOSITORY_URL = "https://repository.mulesoft.org/releases/";

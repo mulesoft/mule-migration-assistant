@@ -247,7 +247,7 @@ public final class XmlDslUtils {
     applicationModel.getPomModel().ifPresent(pom -> pom.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-validation-module")
-        .withVersion("1.2.0")
+        .withVersion("1.2.2")
         .withClassifier("mule-plugin")
         .build()));
 

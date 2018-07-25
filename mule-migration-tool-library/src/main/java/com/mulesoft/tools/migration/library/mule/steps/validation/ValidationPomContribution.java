@@ -29,7 +29,7 @@ public class ValidationPomContribution implements PomContribution {
     pomModel.addDependency(new Dependency.DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-validation-module")
-        .withVersion("1.2.1")
+        .withVersion("1.2.2")
         .withClassifier("mule-plugin")
         .build());
   }
