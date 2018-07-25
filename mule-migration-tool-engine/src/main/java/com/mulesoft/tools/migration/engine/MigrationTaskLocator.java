@@ -100,6 +100,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new SecurePropertiesMigrationTask());
     coreMigrationTasks.add(new PropertiesMigrationTask());
     coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
+    coreMigrationTasks.add(new ValidationMigrationTask());
     coreMigrationTasks.add(new HTTPMigrationTask());
     coreMigrationTasks.add(new SocketsMigrationTask());
     coreMigrationTasks.add(new WscMigrationTask());
@@ -109,7 +110,6 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new EndpointsMigrationTask());
     coreMigrationTasks.add(new ScriptingMigrationTask());
     coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask());
-    coreMigrationTasks.add(new ValidationMigrationTask());
     coreMigrationTasks.add(new MunitMigrationTask());
     // Spring has to run after MUnit, since MUnit in Mule 3 has some custom spring components that are removed by the migrator
 
