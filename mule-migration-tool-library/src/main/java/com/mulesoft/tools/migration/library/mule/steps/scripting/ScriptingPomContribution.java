@@ -30,7 +30,7 @@ public class ScriptingPomContribution implements PomContribution {
     pomModel.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-scripting-module")
-        .withVersion("1.1.0")
+        .withVersion("1.1.3")
         .withClassifier("mule-plugin")
         .build());
   }

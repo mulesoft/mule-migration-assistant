@@ -31,7 +31,7 @@ public class DbConnectorPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-db-connector")
-        .withVersion("1.3.2")
+        .withVersion("1.3.4")
         .withClassifier("mule-plugin")
         .build());
 

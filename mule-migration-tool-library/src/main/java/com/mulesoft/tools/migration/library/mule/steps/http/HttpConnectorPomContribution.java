@@ -28,7 +28,7 @@ public class HttpConnectorPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-http-connector")
-        .withVersion("1.2.0")
+        .withVersion("1.3.1")
         .withClassifier("mule-plugin")
         .build());
   }

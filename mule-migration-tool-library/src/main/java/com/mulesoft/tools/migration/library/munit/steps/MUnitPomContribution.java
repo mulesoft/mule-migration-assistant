@@ -31,7 +31,7 @@ public class MUnitPomContribution implements PomContribution {
   private static final String MUNIT_MAVEN_PLUGIN_ARTIFACT_ID = "munit-maven-plugin";
   private static final String MUNIT_SUPPORT_PROPERTY = "mule.munit.support.version";
   private static final String MUNIT_PROPERTY = "munit.version";
-  private static final String MUNIT_MAVEN_PLUGIN_VERSION = "2.1.1";
+  private static final String MUNIT_MAVEN_PLUGIN_VERSION = "2.1.2";
 
   @Override
   public String getDescription() {
