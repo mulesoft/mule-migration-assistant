@@ -6,15 +6,15 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.batch;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
-
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 
 /**
  * Migrate Batch set record variable component
@@ -24,7 +24,6 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilit
  */
 public class BatchSetRecordVariable extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  private static final Namespace CORE_NAMESPACE = Namespace.getNamespace("core", "http://www.mulesoft.org/schema/mule/core");
   public static final String BATCH_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/batch";
   public static final String XPATH_SELECTOR =
       "//*[namespace-uri() = '" + BATCH_NAMESPACE_URI + "' and local-name() = 'set-record-variable']";

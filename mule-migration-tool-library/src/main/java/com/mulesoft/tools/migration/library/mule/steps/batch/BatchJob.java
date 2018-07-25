@@ -6,6 +6,9 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.batch;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -28,7 +31,6 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
   public static final String BATCH_NAMESPACE_PREFIX = "batch";
   public static final String BATCH_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/batch";
   private static final Namespace BATCH_NAMESPACE = Namespace.getNamespace(BATCH_NAMESPACE_PREFIX, BATCH_NAMESPACE_URI);
-  private static final Namespace CORE_NAMESPACE = Namespace.getNamespace("core", "http://www.mulesoft.org/schema/mule/core");
   public static final String XPATH_SELECTOR = "/mule:mule/batch:job";
 
   private ExpressionMigrator expressionMigrator;
@@ -49,6 +51,10 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
 
     Optional<Element> batchInput = Optional.ofNullable(originalBatchJob.getChild("input", BATCH_NAMESPACE));
     batchInput.ifPresent(input -> originalBatchJob.removeContent(input));
+    Optional<Element> batchThreadingProfile =
+        Optional.ofNullable(originalBatchJob.getChild("threading-profile", BATCH_NAMESPACE));
+    batchThreadingProfile.ifPresent(input -> originalBatchJob.removeContent(input));
+
 
     List<Element> children = new ArrayList<>(originalBatchJob.getChildren());
     children.forEach(child -> {
@@ -62,6 +68,17 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
         input.removeContent(child);
         originalBatchJob.addContent(child);
       });
+    });
+
+    batchThreadingProfile.ifPresent(threadingProfile -> {
+      String maxThreadsActive = threadingProfile.getAttributeValue("maxThreadsActive");
+      if (maxThreadsActive != null) {
+        batchJob.setAttribute("maxConcurrency", maxThreadsActive);
+      }
+      report
+          .report(WARN, originalBatchJob, originalBatchJob,
+                  "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the batch component.",
+                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
     });
 
     originalBatchJob.addContent(batchJob);
