@@ -5,19 +5,33 @@
                http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
 
     <flow name="dispatcher">
-        <flow-ref name="batchJob_withInput"/>
+        <flow-ref name="basic"/>
     </flow>
 
-    <flow name="batchJob_withInput">
-        <logger message="something"/>
-        <batch:job jobName="batchJob_withInput" maxFailedRecords="-1">
+    <flow name="basic">
+        <batch:job jobName="basic" maxConcurrency="10">
             <batch:process-records>
-                <batch:step name="batchStep" acceptPolicy="ALL" acceptExpression="#[mel:!(payload == 'orange')]">
-                    <logger message="other"/>
+                <batch:step name="firstStep">
+                    <set-payload value="#[payload.toLowerCase()]" />
+                </batch:step>
+                <batch:step name="secondStep">
+                    <set-payload value="#[payload.toUpperCase()]" />
                 </batch:step>
             </batch:process-records>
         </batch:job>
     </flow>
 
+    <flow name="basic2">
+        <batch:job jobName="basic2">
+            <batch:process-records>
+                <batch:step name="firstStep">
+                    <set-payload value="#[payload.toLowerCase()]" />
+                </batch:step>
+                <batch:step name="secondStep">
+                    <set-payload value="#[payload.toUpperCase()]" />
+                </batch:step>
+            </batch:process-records>
+        </batch:job>
+    </flow>
 
 </mule>

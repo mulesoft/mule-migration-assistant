@@ -64,8 +64,7 @@ public class BatchTest {
         "batch-10",
         "batch-11",
         "batch-12",
-        "batch-13",
-        "batch-14"
+        "batch-13"
     };
   }
 
