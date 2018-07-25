@@ -6,29 +6,27 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.pom;
 
-import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 
-import java.util.List;
-
 /**
- * Preprocess Mule Application Pom Migration Step
+ * Update the version of the project to avoid conflicts with the original app
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class PreprocessPom implements PomContribution {
+public class UpdateProjectVersion implements PomContribution {
+
 
   @Override
   public String getDescription() {
-    return "Remove mule dependencies from pom";
+    return "Update project version";
   }
 
   @Override
-  public void execute(PomModel pomModel, MigrationReport report) {
-    List<Dependency> dependencies = pomModel.getDependencies();
-    dependencies.removeIf(d -> d.getGroupId().startsWith("org.mule") || d.getGroupId().startsWith("com.mulesoft"));
-    pomModel.setDependencies(dependencies);
+  public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
+    pomModel.setVersion(pomModel.getVersion().replaceAll("(\\d+\\.\\d+\\.)(\\d+)(.*)", "$1$2-M4$3"));
   }
+
 }

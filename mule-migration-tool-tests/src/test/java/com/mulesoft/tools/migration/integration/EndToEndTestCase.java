@@ -68,7 +68,7 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     }
 
     BundleDescriptor migratedAppDescriptor = new BundleDescriptor.Builder().setGroupId("org.mule.migrated")
-        .setArtifactId(appName).setVersion("1.0.0-SNAPSHOT").setClassifier(MULE_APPLICATION_CLASSIFIER).build();
+        .setArtifactId(appName).setVersion("1.0.0-M4-SNAPSHOT").setClassifier(MULE_APPLICATION_CLASSIFIER).build();
 
     File migratedAppArtifact = installMavenArtifact(outPutPath, migratedAppDescriptor);
 
