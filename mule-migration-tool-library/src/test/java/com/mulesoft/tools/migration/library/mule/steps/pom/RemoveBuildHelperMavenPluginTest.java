@@ -25,8 +25,9 @@ import java.nio.file.Paths;
 
 public class RemoveBuildHelperMavenPluginTest {
 
-  private static final String POM_WITH_MULE_APP_MAVEN_PLUGIN = "/pommodel/buildHelperMavenPlugin/pom.xml";
-  private static final String POM_WITHOUT_MULE_APP_MAVEN_PLUGIN = "/pommodel/simple-pom/pom.xml";
+  private static final String POM_WITH_HELPER_MAVEN_PLUGIN = "/pommodel/buildHelperMavenPlugin/pom.xml";
+  private static final String POM_WITH_CHANGED_HELPER_MAVEN_PLUGIN = "/pommodel/buildHelperMavenPluginChanged/pom.xml";
+  private static final String POM_WITHOUT_HELPER_MAVEN_PLUGIN = "/pommodel/simple-pom/pom.xml";
   private PomModel model;
   private RemoveBuildHelperMavenPlugin removeBuildHelperMavenPlugin;
 
@@ -37,7 +38,7 @@ public class RemoveBuildHelperMavenPluginTest {
 
   @Test
   public void executeWhenMuleAppMavenPluginIsPresent() throws IOException, XmlPullParserException, URISyntaxException {
-    Path pomPath = Paths.get(getClass().getResource(POM_WITH_MULE_APP_MAVEN_PLUGIN).toURI());
+    Path pomPath = Paths.get(getClass().getResource(POM_WITH_HELPER_MAVEN_PLUGIN).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     assertThat("build-helper-maven-plugin should be present in pom", isPluginInModel(), is(true));
     removeBuildHelperMavenPlugin.execute(model, mock(MigrationReport.class));
@@ -45,8 +46,18 @@ public class RemoveBuildHelperMavenPluginTest {
   }
 
   @Test
+  public void executeWhenMuleAppMavenPluginIsPresentAndWasChanged()
+      throws IOException, XmlPullParserException, URISyntaxException {
+    Path pomPath = Paths.get(getClass().getResource(POM_WITH_CHANGED_HELPER_MAVEN_PLUGIN).toURI());
+    model = new PomModel.PomModelBuilder().withPom(pomPath).build();
+    assertThat("build-helper-maven-plugin should be present in pom", isPluginInModel(), is(true));
+    removeBuildHelperMavenPlugin.execute(model, mock(MigrationReport.class));
+    assertThat("build-helper-maven-plugin should still be present in pom", isPluginInModel(), is(true));
+  }
+
+  @Test
   public void executeWhenMuleAppMavenPluginIsNotPresent() throws IOException, XmlPullParserException, URISyntaxException {
-    Path pomPath = Paths.get(getClass().getResource(POM_WITHOUT_MULE_APP_MAVEN_PLUGIN).toURI());
+    Path pomPath = Paths.get(getClass().getResource(POM_WITHOUT_HELPER_MAVEN_PLUGIN).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     assertThat("build-helper-maven-plugin should not be present in pom", isPluginInModel(), is(false));
     removeBuildHelperMavenPlugin.execute(model, mock(MigrationReport.class));
