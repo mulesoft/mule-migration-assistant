@@ -17,6 +17,7 @@ import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveBuildHelperMave
 import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleAppMavenPlugin;
 import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleDependencies;
 import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateMuleMavenPlugin;
+import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateProjectVersion;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -57,6 +58,7 @@ public class PreprocessMuleApplication extends AbstractMigrationTask {
                         new RemoveMuleAppMavenPlugin(),
                         new RemoveBuildHelperMavenPlugin(),
                         new RemoveMuleDependencies(),
+                        new UpdateProjectVersion(),
                         new PreprocessNamespaces(),
                         new MigrateDWScriptFiles());
   }
