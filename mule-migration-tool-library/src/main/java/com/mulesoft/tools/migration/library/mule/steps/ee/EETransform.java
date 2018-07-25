@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.ee;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.migrateDWToV2;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static org.jdom2.Namespace.getNamespace;
@@ -34,7 +35,6 @@ import java.util.List;
  */
 public class EETransform extends AbstractApplicationModelMigrationStep {
 
-  public static final String COMPATIBILITY_NAMESPACE = "http://www.mulesoft.org/schema/mule/compatibility";
   private static final String DW_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ee/dw";
   private static final String DW_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd";
   private static final String EE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ee/core";
