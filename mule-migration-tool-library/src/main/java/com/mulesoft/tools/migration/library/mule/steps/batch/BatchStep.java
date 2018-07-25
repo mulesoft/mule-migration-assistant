@@ -52,7 +52,7 @@ public class BatchStep extends AbstractApplicationModelMigrationStep implements 
     if (filterExpression != null) {
       report
           .report(WARN, object, object,
-                  "filter-expression do not exist in Mule 4. This may be replaced with acceptExpression attribute in the batch step.",
+                  "'filter-expression' do not exist in Mule 4. This may be replaced with acceptExpression attribute in the batch step.",
                   "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core-batch#xml_changes");
     }
   }

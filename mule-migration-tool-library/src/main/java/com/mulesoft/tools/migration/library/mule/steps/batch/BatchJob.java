@@ -53,8 +53,17 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
     batchInput.ifPresent(input -> originalBatchJob.removeContent(input));
     Optional<Element> batchThreadingProfile =
         Optional.ofNullable(originalBatchJob.getChild("threading-profile", BATCH_NAMESPACE));
-    batchThreadingProfile.ifPresent(input -> originalBatchJob.removeContent(input));
 
+    batchThreadingProfile.ifPresent(threadingProfile -> {
+      originalBatchJob.removeContent(threadingProfile);
+      String maxThreadsActive = threadingProfile.getAttributeValue("maxThreadsActive");
+      if (maxThreadsActive != null) {
+        batchJob.setAttribute("maxConcurrency", maxThreadsActive);
+      }
+      report.report(WARN, originalBatchJob, originalBatchJob,
+                    "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' attribute in the batch job.",
+                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
+    });
 
     List<Element> children = new ArrayList<>(originalBatchJob.getChildren());
     children.forEach(child -> {
@@ -68,17 +77,6 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
         input.removeContent(child);
         originalBatchJob.addContent(child);
       });
-    });
-
-    batchThreadingProfile.ifPresent(threadingProfile -> {
-      String maxThreadsActive = threadingProfile.getAttributeValue("maxThreadsActive");
-      if (maxThreadsActive != null) {
-        batchJob.setAttribute("maxConcurrency", maxThreadsActive);
-      }
-      report
-          .report(WARN, originalBatchJob, originalBatchJob,
-                  "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' attribute in the batch job.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
     });
 
     originalBatchJob.addContent(batchJob);
