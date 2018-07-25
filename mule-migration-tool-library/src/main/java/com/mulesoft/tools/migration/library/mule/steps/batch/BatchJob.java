@@ -77,7 +77,7 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
       }
       report
           .report(WARN, originalBatchJob, originalBatchJob,
-                  "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the batch component.",
+                  "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' attribute in the batch job.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
     });
 
