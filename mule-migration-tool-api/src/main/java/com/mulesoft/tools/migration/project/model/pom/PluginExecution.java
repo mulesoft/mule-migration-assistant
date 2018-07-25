@@ -6,11 +6,13 @@
  */
 package com.mulesoft.tools.migration.project.model.pom;
 
-import java.util.List;
-import java.util.Objects;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a plugin in the pom model. The default id is "default".
@@ -60,6 +62,15 @@ public class PluginExecution {
    */
   public List<String> getGoals() {
     return pluginExecution.getGoals();
+  }
+
+  /**
+   * Retrieves the configuration tag of this execution
+   *
+   * @return a {@link Xpp3Dom} representing the configuration
+   */
+  public Xpp3Dom getConfiguration() {
+    return (Xpp3Dom) pluginExecution.getConfiguration();
   }
 
   /**
@@ -139,6 +150,7 @@ public class PluginExecution {
    *
    * @return a string with the plugin execution id
    */
+  @Override
   public String toString() {
     return pluginExecution.toString();
   }
