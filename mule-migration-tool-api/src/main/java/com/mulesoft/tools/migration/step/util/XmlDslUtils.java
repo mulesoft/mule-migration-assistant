@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.step.util;
 
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
@@ -38,6 +39,8 @@ public final class XmlDslUtils {
 
   public static final Namespace VALIDATION_NAMESPACE =
       Namespace.getNamespace("validation", "http://www.mulesoft.org/schema/mule/validation");
+  public static final String VALIDATION_NS_SCHEMA_LOC =
+      "http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd";
 
   private XmlDslUtils() {
     // Nothing to do
@@ -85,7 +88,7 @@ public final class XmlDslUtils {
    */
   public static void migrateSourceStructure(ApplicationModel appModel, Element object, MigrationReport report,
                                             boolean expectsOutboundProperties, boolean consumeStreams) {
-    addCompatibilityNamespace(appModel, object.getDocument());
+    addCompatibilityNamespace(object.getDocument());
 
     int index = object.getParent().indexOf(object);
     buildAttributesToInboundProperties(report, object.getParent(), index + 1);
@@ -126,7 +129,7 @@ public final class XmlDslUtils {
     if (expressionMigrator != null && resolver != null) {
       migrateEnrichers(object, expressionMigrator, resolver, appModel, report);
     }
-    addCompatibilityNamespace(appModel, object.getDocument());
+    addCompatibilityNamespace(object.getDocument());
 
     int index = object.getParent().indexOf(object);
     buildOutboundPropertiesToVar(report, object.getParent(), index, consumeStreams);
@@ -152,7 +155,7 @@ public final class XmlDslUtils {
 
   public static Element addOutboundPropertySetter(String propertyName, Element element, ApplicationModel model,
                                                   Element after) {
-    addCompatibilityNamespace(model, element.getDocument());
+    addCompatibilityNamespace(element.getDocument());
     Element setProperty = new Element("set-property", COMPATIBILITY_NAMESPACE);
     setProperty.setAttribute(new Attribute("propertyName", propertyName));
     setProperty.setAttribute(new Attribute("value", "#[vars." + propertyName + "]"));
@@ -192,8 +195,8 @@ public final class XmlDslUtils {
   /**
    * Add the required compatibility namespace declaration on document.
    */
-  public static void addCompatibilityNamespace(ApplicationModel appModel, Document document) {
-    appModel.addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, document);
+  public static void addCompatibilityNamespace(Document document) {
+    addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, document);
   }
 
   /**
@@ -243,7 +246,7 @@ public final class XmlDslUtils {
     return processor;
   }
 
-  public static void addValidationModule(ApplicationModel applicationModel) {
+  public static void addValidationModule(ApplicationModel applicationModel, Document document) {
     applicationModel.getPomModel().ifPresent(pom -> pom.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-validation-module")
@@ -251,8 +254,7 @@ public final class XmlDslUtils {
         .withClassifier("mule-plugin")
         .build()));
 
-    applicationModel.addNameSpace("validation", "http://www.mulesoft.org/schema/mule/validation",
-                                  "http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd");
+    addNameSpace(VALIDATION_NAMESPACE, VALIDATION_NS_SCHEMA_LOC, document);
   }
 
   public static boolean isTopLevelElement(Element element) {

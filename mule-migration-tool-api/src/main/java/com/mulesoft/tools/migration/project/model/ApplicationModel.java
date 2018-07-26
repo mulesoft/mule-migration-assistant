@@ -159,7 +159,7 @@ public class ApplicationModel {
    * @param schemaLocation
    * @param document
    */
-  public void addNameSpace(Namespace namespace, String schemaLocation, Document document) {
+  public static void addNameSpace(Namespace namespace, String schemaLocation, Document document) {
     document.getRootElement().addNamespaceDeclaration(namespace);
 
     Attribute schemaLocationAttribute =

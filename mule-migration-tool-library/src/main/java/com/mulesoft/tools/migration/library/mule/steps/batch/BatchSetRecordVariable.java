@@ -48,9 +48,6 @@ public class BatchSetRecordVariable extends AbstractApplicationModelMigrationSte
     if (expression != null) {
       String migratedExpression = getExpressionMigrator().migrateExpression(expression.getValue(), true, object);
       migratedExpression = expressionMigrator.wrap(migratedExpression);
-      if (migratedExpression.startsWith("#[mel:")) {
-        addCompatibilityNamespace(getApplicationModel(), object.getDocument());
-      }
       expression.setValue(migratedExpression);
     }
 

@@ -50,7 +50,7 @@ public class HttpTransformers extends AbstractApplicationModelMigrationStep
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     if ("request-wildcard-filter".equals(object.getName())) {
-      addValidationModule(getApplicationModel());
+      addValidationModule(getApplicationModel(), object.getDocument());
 
       Element wildcardFilterTryScope = new Element("try", CORE_NAMESPACE);
 

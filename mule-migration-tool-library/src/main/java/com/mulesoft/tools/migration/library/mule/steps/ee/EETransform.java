@@ -101,7 +101,7 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
   }
 
   private void addSessionVariable(Element element, MigrationReport report) {
-    addCompatibilityNamespace(this.getApplicationModel(), element.getDocument());
+    addCompatibilityNamespace(element.getDocument());
     Element sessionVar = new Element("set-session-variable", COMPATIBILITY_NAMESPACE);
     Attribute varName = element.getAttribute("variableName");
     sessionVar.setAttribute(new Attribute(varName.getName(), varName.getValue()));

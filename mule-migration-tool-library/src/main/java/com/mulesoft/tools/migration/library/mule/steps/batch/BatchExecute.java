@@ -46,9 +46,6 @@ public class BatchExecute extends AbstractApplicationModelMigrationStep implemen
     Attribute expression = object.getAttribute("name");
     if (expression != null) {
       String migratedExpression = getExpressionMigrator().migrateExpression(expression.getValue(), true, object);
-      if (migratedExpression.startsWith("#[mel:")) {
-        addCompatibilityNamespace(getApplicationModel(), object.getDocument());
-      }
       expression.setValue(migratedExpression);
     }
   }
