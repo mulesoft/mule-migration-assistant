@@ -37,10 +37,11 @@ public class RemoveBuildHelperMavenPlugin implements PomContribution {
     pomModel.removePlugin(p -> studio6GeneratedHelper(p)
         && p.getExecutions().stream().allMatch(exec -> studio6GeneratedHelperExecution(exec)
             && stream(exec.getConfiguration().getChildren("resources")[0].getChildren())
-                .allMatch(resource -> resource.getChild("directory").getValue().equals("src/main/resources/")
-                    || resource.getChild("directory").getValue().equals("src/main/app/")
-                    || resource.getChild("directory").getValue().equals("mappings/")
-                    || resource.getChild("directory").getValue().equals("src/main/api/"))));
+                .allMatch(resource -> resource.getChildCount() == 1
+                    && (resource.getChild("directory").getValue().equals("src/main/resources/")
+                        || resource.getChild("directory").getValue().equals("src/main/app/")
+                        || resource.getChild("directory").getValue().equals("mappings/")
+                        || resource.getChild("directory").getValue().equals("src/main/api/")))));
 
     pomModel.getPlugins().stream().filter(p -> studio6GeneratedHelper(p)).forEach(p -> {
       p.getExecutions().stream().filter(exec -> studio6GeneratedHelperExecution(exec)).forEach(exec -> {
