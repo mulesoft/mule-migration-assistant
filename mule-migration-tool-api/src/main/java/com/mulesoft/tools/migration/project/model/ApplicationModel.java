@@ -168,7 +168,7 @@ public class ApplicationModel {
         && !schemaLocationAttribute.getValue().contains(schemaLocation)) {
 
       StringBuilder value = new StringBuilder(schemaLocationAttribute.getValue());
-      value.append(lineSeparator() + " " + namespace.getURI());
+      value.append(" " + namespace.getURI());
       value.append(" " + schemaLocation);
       schemaLocationAttribute.setValue(value.toString());
     }
