@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+
+    <flow name="dispatcher">
+        <flow-ref name="batchJob_withInput"/>
+    </flow>
+
+    <flow name="batchJob_withInput">
+        <logger message="something"/>
+        <batch:job jobName="batchJob_withInput" maxFailedRecords="-1" blockSize="1">
+            <batch:process-records>
+                <batch:step name="batchStep">
+                    <logger message="other"/>
+                </batch:step>
+            </batch:process-records>
+        </batch:job>
+    </flow>
+
+
+</mule>

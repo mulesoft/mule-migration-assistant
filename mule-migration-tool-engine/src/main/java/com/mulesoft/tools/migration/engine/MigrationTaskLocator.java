@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.engine;
 
+import com.mulesoft.tools.migration.library.mule.tasks.BatchMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
@@ -100,6 +101,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new SecurePropertiesMigrationTask());
     coreMigrationTasks.add(new PropertiesMigrationTask());
     coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
+    coreMigrationTasks.add(new BatchMigrationTask());
     coreMigrationTasks.add(new ValidationMigrationTask());
     coreMigrationTasks.add(new HTTPMigrationTask());
     coreMigrationTasks.add(new SocketsMigrationTask());

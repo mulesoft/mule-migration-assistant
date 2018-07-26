@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+
+    <flow name="flow">
+        <flow-ref name="varsPropagation" />
+    </flow>
+
+    <flow name="varsPropagation">
+        <set-variable variableName="foo" value="10"/>
+        <batch:job jobName="varsPropagation">
+            <batch:process-records>
+                <batch:step name="step">
+                    <set-variable variableName="hello" value="#[vars['hello']]"/>
+                </batch:step>
+            </batch:process-records>
+        </batch:job>
+    </flow>
+
+
+</mule>

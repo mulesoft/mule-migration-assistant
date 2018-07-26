@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+
+    <flow name="dispatcher">
+        <batch:execute name="basic" />
+    </flow>
+
+    <batch:job name="basic">
+        <batch:input>
+            <logger message="batch input phase1"/>
+            <logger message="batch input phase2"/>
+        </batch:input>
+        <batch:process-records>
+            <batch:step name="firstStep">
+                <logger message="batch first step"/>
+            </batch:step>
+            <batch:step name="secondStep">
+                <logger message="batch second step"/>
+            </batch:step>
+        </batch:process-records>
+    </batch:job>
+</mule>
