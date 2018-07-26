@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.tools;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static java.util.Objects.requireNonNull;
 
 import com.mulesoft.tools.Migrator;
@@ -51,8 +52,13 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     }
     // Probably an interpolation
     TemplateParser muleStyleParser = TemplateParser.createMuleStyleParser();
-    return muleStyleParser.translate(originalExpression,
-                                     (script) -> translateSingleExpression(script, dataWeaveBodyOnly, element));
+    String migratedExpression = muleStyleParser.translate(originalExpression,
+                                                          (script) -> translateSingleExpression(script, dataWeaveBodyOnly,
+                                                                                                element));
+    if (migratedExpression.startsWith("#[mel:")) {
+      addCompatibilityNamespace(element.getDocument());
+    }
+    return migratedExpression;
   }
 
   private String translateSingleExpression(String unwrappedExpression, boolean dataWeaveBodyOnly, Element element) {

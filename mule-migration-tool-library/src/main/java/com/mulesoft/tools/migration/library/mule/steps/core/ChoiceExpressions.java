@@ -50,9 +50,6 @@ public class ChoiceExpressions extends AbstractApplicationModelMigrationStep imp
     if (expression != null) {
       String migratedExpression = getExpressionMigrator().migrateExpression(expression.getValue(), true, element);
       migratedExpression = expressionMigrator.wrap(migratedExpression);
-      if (migratedExpression.startsWith("#[mel:")) {
-        addCompatibilityNamespace(getApplicationModel(), element.getDocument());
-      }
       expression.setValue(migratedExpression);
     }
   }

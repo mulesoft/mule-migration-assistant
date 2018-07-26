@@ -115,7 +115,7 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
                       "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-patterns-watermark");
       }
       if (object.getAttribute("discardEmptyContent") == null || "true".equals(object.getAttributeValue("discardEmptyContent"))) {
-        addValidationModule(getApplicationModel());
+        addValidationModule(getApplicationModel(), object.getDocument());
         addElementAfter(new Element("is-true", VALIDATION_NAMESPACE)
             .setAttribute("expression", "#[(message.attributes.headers['Content-Length'] as Number default -1) != 0]"),
                         pollingEndpoint);

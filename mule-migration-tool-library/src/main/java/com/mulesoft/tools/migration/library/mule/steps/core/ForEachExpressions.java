@@ -42,9 +42,6 @@ public class ForEachExpressions extends AbstractApplicationModelMigrationStep im
     if (expression != null) {
       String migratedExpression = expressionMigrator.migrateExpression(expression.getValue(), true, element);
       migratedExpression = expressionMigrator.wrap(migratedExpression);
-      if (migratedExpression.startsWith("#[mel:")) {
-        addCompatibilityNamespace(getApplicationModel(), element.getDocument());
-      }
       expression.setValue(migratedExpression);
     }
   }
