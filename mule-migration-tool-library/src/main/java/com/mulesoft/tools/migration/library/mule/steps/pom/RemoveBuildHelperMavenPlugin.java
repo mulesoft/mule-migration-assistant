@@ -9,6 +9,8 @@ package com.mulesoft.tools.migration.library.mule.steps.pom;
 import static java.util.Arrays.stream;
 import static java.util.Collections.singletonList;
 
+import com.mulesoft.tools.migration.project.model.pom.Plugin;
+import com.mulesoft.tools.migration.project.model.pom.PluginExecution;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
@@ -32,16 +34,33 @@ public class RemoveBuildHelperMavenPlugin implements PomContribution {
 
   @Override
   public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
-    pomModel.removePlugin(p -> StringUtils.equals(p.getArtifactId(), BUILD_HELPER_MAVEN_PLUGIN_ARTIFACT_ID)
-        && StringUtils.isBlank(p.getConfiguration().getValue())
-        && p.getConfiguration().getChildCount() == 0
-        && p.getExecutions().stream().allMatch(exec -> exec.getPhase().equals("generate-resources")
-            && exec.getGoals().equals(singletonList("add-resource"))
-            && exec.getConfiguration().getChildren().length == 1
+    pomModel.removePlugin(p -> studio6GeneratedHelper(p)
+        && p.getExecutions().stream().allMatch(exec -> studio6GeneratedHelperExecution(exec)
             && stream(exec.getConfiguration().getChildren("resources")[0].getChildren())
-                .allMatch(resource -> resource.getChild("directory").getValue().equals("src/main/resources/")
-                    || resource.getChild("directory").getValue().equals("src/main/app/")
-                    || resource.getChild("directory").getValue().equals("mappings/")
-                    || resource.getChild("directory").getValue().equals("src/main/api/"))));
+                .allMatch(resource -> resource.getChildCount() == 1
+                    && (resource.getChild("directory").getValue().equals("src/main/resources/")
+                        || resource.getChild("directory").getValue().equals("src/main/app/")
+                        || resource.getChild("directory").getValue().equals("mappings/")
+                        || resource.getChild("directory").getValue().equals("src/main/api/")))));
+
+    pomModel.getPlugins().stream().filter(p -> studio6GeneratedHelper(p)).forEach(p -> {
+      p.getExecutions().stream().filter(exec -> studio6GeneratedHelperExecution(exec)).forEach(exec -> {
+        stream(exec.getConfiguration().getChildren("resources")[0].getChildren())
+            .filter(resource -> resource.getChild("directory").getValue().equals("src/main/app/"))
+            .forEach(resource -> resource.getChild("directory").setValue("src/main/mule/"));
+      });
+    });
+  }
+
+  private boolean studio6GeneratedHelperExecution(PluginExecution exec) {
+    return exec.getPhase().equals("generate-resources")
+        && exec.getGoals().equals(singletonList("add-resource"))
+        && exec.getConfiguration().getChildren().length == 1;
+  }
+
+  private boolean studio6GeneratedHelper(Plugin p) {
+    return StringUtils.equals(p.getArtifactId(), BUILD_HELPER_MAVEN_PLUGIN_ARTIFACT_ID)
+        && StringUtils.isBlank(p.getConfiguration().getValue())
+        && p.getConfiguration().getChildCount() == 0;
   }
 }
