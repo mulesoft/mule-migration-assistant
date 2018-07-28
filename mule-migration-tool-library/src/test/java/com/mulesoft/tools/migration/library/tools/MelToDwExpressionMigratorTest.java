@@ -124,28 +124,28 @@ public class MelToDwExpressionMigratorTest {
   public void migrateMelInterpolation() {
     String script = "#[message.inboundProperties.originalFilename]_#[message.id]";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("#[\"$(vars.compatibility_inboundProperties.originalFilename)_$(message.id)\"]"));
+    assertThat(result, is("#[\"$(vars.compatibility_inboundProperties.originalFilename)_$(correlationId)\"]"));
   }
 
   @Test
   public void migrateMelInterpolationWithMelPrefix() {
     String script = "#[mel:message.inboundProperties.originalFilename]_#[message.id]";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("#[\"$(vars.compatibility_inboundProperties.originalFilename)_$(message.id)\"]"));
+    assertThat(result, is("#[\"$(vars.compatibility_inboundProperties.originalFilename)_$(correlationId)\"]"));
   }
 
   @Test
   public void migrateMelInterpolation2() {
     String script = "#[message.outboundProperties.name]_#[message.id]";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("#[\"$(vars.compatibility_outboundProperties.name)_$(message.id)\"]"));
+    assertThat(result, is("#[\"$(vars.compatibility_outboundProperties.name)_$(correlationId)\"]"));
   }
 
   @Test
   public void migrateMelInterpolationWithMelPrefix2() {
     String script = "#[mel:message.outboundProperties.name]_#[message.id]";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("#[\"$(vars.compatibility_outboundProperties.name)_$(message.id)\"]"));
+    assertThat(result, is("#[\"$(vars.compatibility_outboundProperties.name)_$(correlationId)\"]"));
   }
 
   @Test

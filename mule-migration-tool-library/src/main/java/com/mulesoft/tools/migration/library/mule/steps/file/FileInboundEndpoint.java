@@ -18,8 +18,8 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -93,11 +93,9 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     }
     object.removeAttribute("pollingFrequency");
 
-    Element newMatcher = null;
-
-    if (object.getAttribute("fileAge") != null) {
-      newMatcher = buildNewMatcher(object, fileNs);
-      newMatcher.setAttribute("updatedUntil", object.getAttributeValue("fileAge"));
+    if (object.getAttribute("fileAge") != null && !"0".equals(object.getAttributeValue("fileAge"))) {
+      String fileAge = object.getAttributeValue("fileAge");
+      object.setAttribute("timeBetweenSizeCheck", fileAge);
       object.removeAttribute("fileAge");
     }
 
@@ -114,6 +112,8 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
         object.removeAttribute("autoDelete");
       }
     }
+
+    Element newMatcher = null;
 
     Element globFilterIn = object.getChild("filename-wildcard-filter", fileNs);
     if (globFilterIn != null) {

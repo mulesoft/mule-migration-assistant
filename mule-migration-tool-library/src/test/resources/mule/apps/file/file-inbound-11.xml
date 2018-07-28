@@ -14,16 +14,13 @@
         </file:connection>
     </file:config>
 
-<!-- TODO MMT-141  Correctly migrate this expression  -->
-<!--     <file:matcher name="fileConnectorMatcher" updatedUntil="#[currentDate - 1000]"/> -->
-    <file:matcher name="FileConnector-TestMatcher" updatedUntil="1000"/>
-
     <flow name="Test">
         <file:listener directory="${FileMoveToFunctionalTestCase-inputDirectory}"
                        moveToDirectory="${FileMoveToFunctionalTestCase-moveToDirectory}"
-                       renameTo="#[&quot;$(vars.compatibility_inboundProperties.originalFilename)_$(message.id)&quot;]"
+                       renameTo="#[&quot;$(vars.compatibility_inboundProperties.originalFilename)_$(correlationId)&quot;]"
                        recursive="false"
-                       config-ref="FileConnector" matcher="FileConnector-TestMatcher"
+                       timeBetweenSizeCheck="1000"
+                       config-ref="FileConnector"
                        applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
