@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAtt
 import com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.jms.JmsInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.vm.VmInboundEndpoint;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -35,6 +36,8 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
   private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
   private static final String FILE_NS_PREFIX = "file";
   private static final String FILE_NS_URI = "http://www.mulesoft.org/schema/mule/file";
+  private static final String JMS_NS_PREFIX = "jms";
+  private static final String JMS_NS_URI = "http://www.mulesoft.org/schema/mule/jms";
   private static final String VM_NS_PREFIX = "vm";
   private static final String VM_NS_URI = "http://www.mulesoft.org/schema/mule/vm";
   public static final String XPATH_SELECTOR = "/mule:mule//mule:inbound-endpoint";
@@ -71,6 +74,9 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
       } else if (address.startsWith("http://")) {
         migrator = new HttpInboundEndpoint();
         object.setNamespace(Namespace.getNamespace(HTTP_NS_PREFIX, HTTP_NS_URI));
+      } else if (address.startsWith("jms://")) {
+        migrator = new JmsInboundEndpoint();
+        object.setNamespace(Namespace.getNamespace(JMS_NS_PREFIX, JMS_NS_URI));
       } else if (address.startsWith("vm://")) {
         migrator = new VmInboundEndpoint();
         object.setNamespace(Namespace.getNamespace(VM_NS_PREFIX, VM_NS_URI));
@@ -100,6 +106,9 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
         } else if (address.startsWith("https://")) {
           migrator = new HttpsInboundEndpoint();
           object.setNamespace(Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https"));
+        } else if (address.startsWith("jms://")) {
+          migrator = new JmsInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace(JMS_NS_PREFIX, JMS_NS_URI));
         } else if (address.startsWith("vm://")) {
           migrator = new VmInboundEndpoint();
           object.setNamespace(Namespace.getNamespace(VM_NS_PREFIX, VM_NS_URI));
