@@ -30,5 +30,8 @@ public class RemoveMuleAppMavenPlugin implements PomContribution {
   @Override
   public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
     pomModel.removePlugin(p -> StringUtils.equals(p.getArtifactId(), MULE_APP_MAVEN_PLUGIN_ARTIFACT_ID));
+    pomModel.getProfiles().stream().map(profile -> profile.getBuild()).forEach(b -> {
+      b.getPlugins().removeIf(p -> StringUtils.equals(p.getArtifactId(), MULE_APP_MAVEN_PLUGIN_ARTIFACT_ID));
+    });
   }
 }
