@@ -19,7 +19,7 @@
                 #[migration::HttpRequester::httpRequesterHeaders(vars)]
             </http:headers>
             <http:query-params>
-                #[{'testName1' : 'testValue1'} ++ {vars.paramName : vars.paramValue}]
+                #[{'testName1' : 'testValue1'} ++ {(vars.paramName) : vars.paramValue}]
             </http:query-params>
         </http:request>
         <compatibility:attributes-to-inbound-properties/>
