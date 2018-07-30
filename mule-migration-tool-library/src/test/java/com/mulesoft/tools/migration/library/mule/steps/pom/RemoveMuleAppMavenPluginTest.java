@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 public class RemoveMuleAppMavenPluginTest {
 
   private static final String POM_WITH_MULE_APP_MAVEN_PLUGIN = "/pommodel/muleAppMavenPlugin/pom.xml";
+  private static final String POM_WITH_MULE_APP_MAVEN_PLUGIN_IN_PROFILE = "/pommodel/muleAppMavenPluginInProfile/pom.xml";
   private static final String POM_WITHOUT_MULE_APP_MAVEN_PLUGIN = "/pommodel/simple-pom/pom.xml";
   private PomModel model;
   private RemoveMuleAppMavenPlugin removeMuleAppMavenPlugin;
@@ -45,6 +46,15 @@ public class RemoveMuleAppMavenPluginTest {
   }
 
   @Test
+  public void executeWhenMuleAppMavenPluginIsPresentInProfile() throws IOException, XmlPullParserException, URISyntaxException {
+    Path pomPath = Paths.get(getClass().getResource(POM_WITH_MULE_APP_MAVEN_PLUGIN_IN_PROFILE).toURI());
+    model = new PomModel.PomModelBuilder().withPom(pomPath).build();
+    assertThat("mule-app-maven-plugin should be present in pom", isPluginInModel(), is(true));
+    removeMuleAppMavenPlugin.execute(model, mock(MigrationReport.class));
+    assertThat("mule-app-maven-plugin should not be present in pom", isPluginInModel(), is(false));
+  }
+
+  @Test
   public void executeWhenMuleAppMavenPluginIsNotPresent() throws IOException, XmlPullParserException, URISyntaxException {
     Path pomPath = Paths.get(getClass().getResource(POM_WITHOUT_MULE_APP_MAVEN_PLUGIN).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
@@ -54,6 +64,8 @@ public class RemoveMuleAppMavenPluginTest {
   }
 
   public boolean isPluginInModel() {
-    return model.getPlugins().stream().anyMatch(plugin -> StringUtils.equals(plugin.getArtifactId(), "mule-app-maven-plugin"));
+    return model.getPlugins().stream().anyMatch(plugin -> StringUtils.equals(plugin.getArtifactId(), "mule-app-maven-plugin"))
+        || model.getProfiles().stream().flatMap(profile -> profile.getBuild().getPlugins().stream())
+            .anyMatch(plugin -> StringUtils.equals(plugin.getArtifactId(), "mule-app-maven-plugin"));
   }
 }

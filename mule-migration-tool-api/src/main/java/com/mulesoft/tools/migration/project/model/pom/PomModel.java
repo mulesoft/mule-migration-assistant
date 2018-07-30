@@ -11,6 +11,7 @@ import static java.util.stream.Collectors.toList;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -296,6 +297,10 @@ public class PomModel {
     Optional<Plugin> removedPlugin = getPlugins().stream().filter(pluginPredicate).findFirst();
     removedPlugin.ifPresent(this::removePlugin);
     return removedPlugin;
+  }
+
+  public List<Profile> getProfiles() {
+    return model.getProfiles();
   }
 
   /**
