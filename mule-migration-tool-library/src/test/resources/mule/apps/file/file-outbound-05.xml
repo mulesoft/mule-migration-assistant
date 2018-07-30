@@ -14,8 +14,6 @@
         </file:connection>
     </file:config>
 
-    <file:matcher name="fileConnectorMatcher" updatedUntil="500"/>
-    
     <flow name="relay">
         <logger/>
         <compatibility:outbound-properties-to-var/>

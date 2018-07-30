@@ -14,12 +14,8 @@
         </file:connection>
     </file:config>
 
-<!-- TODO MMT-141  Correctly migrate this expression  -->
-<!--     <file:matcher name="fileConnectorMatcher" updatedUntil="#[currentDate - 60]"/> -->
-    <file:matcher name="fileConnectorMatcher" updatedUntil="60"/>
-
     <flow name="Test">
-        <file:listener directory="${path}" autoDelete="true" recursive="false" config-ref="fileConnector" matcher="fileConnectorMatcher" applyPostActionWhenFailed="false">
+        <file:listener directory="${path}" autoDelete="true" recursive="false" config-ref="fileConnector" timeBetweenSizeCheck="60" applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="2000"/>
             </scheduling-strategy>

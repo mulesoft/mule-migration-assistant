@@ -14,8 +14,8 @@ import static java.util.stream.Collectors.joining;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -103,18 +103,14 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     matcher.setAttribute("name", object.getAttributeValue("name") + "Matcher");
     boolean matcherUsed = false;
 
+    String fileAge = null;
     if (object.getAttribute("fileAge") != null) {
-      int idx = object.getParent().indexOf(object);
-
-      matcher.setAttribute("updatedUntil", object.getAttributeValue("fileAge"));
-      matcherUsed = true;
-
-      object.getParent().addContent(idx + 1, matcher);
+      fileAge = object.getAttributeValue("fileAge");
       object.removeAttribute("fileAge");
     }
 
     handleChildElements(object, report, fileNs);
-    handleInputSpecificAttributes(object, matcherUsed, report);
+    handleInputSpecificAttributes(object, matcherUsed, fileAge, report);
     handleOutputSpecificAttributes(object, report);
   }
 
@@ -180,14 +176,14 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     object.removeContent(object.getChild("expression-filename-parser", fileNs));
   }
 
-  private void handleInputSpecificAttributes(Element object, boolean matcherUsed, MigrationReport report) {
+  private void handleInputSpecificAttributes(Element object, boolean matcherUsed, String fileAge, MigrationReport report) {
     Stream.concat(getApplicationModel()
         .getNodes("/mule:mule//file:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
         .stream(),
                   getApplicationModel()
                       .getNodes("/mule:mule//mule:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
                       .stream())
-        .forEach(e -> passConnectorConfigToInboundEnpoint(object, matcherUsed, e));
+        .forEach(e -> passConnectorConfigToInboundEnpoint(object, matcherUsed, fileAge, e));
 
     object.removeAttribute("pollingFrequency");
     object.removeAttribute("readFromDirectory");
@@ -213,7 +209,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
   }
 
 
-  private void passConnectorConfigToInboundEnpoint(Element object, boolean matcherUsed, Element listener) {
+  private void passConnectorConfigToInboundEnpoint(Element object, boolean matcherUsed, String fileAge, Element listener) {
     Element schedulingStr = new Element("scheduling-strategy", CORE_NAMESPACE);
     listener.addContent(schedulingStr);
     Element fixedFrequency = new Element("fixed-frequency", CORE_NAMESPACE);
@@ -222,6 +218,9 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
     if (object.getAttribute("readFromDirectory") != null) {
       listener.setAttribute("directory", object.getAttributeValue("readFromDirectory"));
+    }
+    if (fileAge != null && !"0".equals(fileAge)) {
+      listener.setAttribute("timeBetweenSizeCheck", fileAge);
     }
 
     String autoDelete = changeDefault("true", "false", object.getAttributeValue("autoDelete"));
