@@ -56,9 +56,7 @@ public class HttpConnectorQueryParams extends AbstractHttpConnectorMigrationStep
       String paramName = object.getAttributeValue("paramName");
       String paramValue = object.getAttributeValue("value");
 
-      String dwParamMapElement = (getExpressionMigrator().isWrapped(paramName)
-          ? getExpressionMigrator().unwrap(getExpressionMigrator().migrateExpression(paramName, true, object))
-          : ("'" + paramName + "'")) + " : "
+      String dwParamMapElement = migrateToDwMapKey(paramName, object) + " : "
           + (getExpressionMigrator().isWrapped(paramValue)
               ? getExpressionMigrator().unwrap(getExpressionMigrator().migrateExpression(paramValue, true, object))
               : ("'" + paramValue + "'"));
@@ -70,6 +68,12 @@ public class HttpConnectorQueryParams extends AbstractHttpConnectorMigrationStep
 
       object.getParent().removeContent(object);
     }
+  }
+
+  public String migrateToDwMapKey(String originalExpression, Element object) {
+    return (getExpressionMigrator().isWrapped(originalExpression)
+        ? "(" + getExpressionMigrator().unwrap(getExpressionMigrator().migrateExpression(originalExpression, true, object)) + ")"
+        : ("'" + originalExpression + "'"));
   }
 
 }
