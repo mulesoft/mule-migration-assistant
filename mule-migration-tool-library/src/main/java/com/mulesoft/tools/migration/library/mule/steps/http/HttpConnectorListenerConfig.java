@@ -37,7 +37,7 @@ public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationS
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(httpNamespace);
 
-    if ("listener-config".equals(object.getName())) {
+    if ("listener-config".equals(object.getName()) && object.getChild("listener-connection", httpNamespace) == null) {
       final Element listenerConnection = new Element("listener-connection", httpNamespace);
       copyAttributeIfPresent(object, listenerConnection, "protocol");
       copyAttributeIfPresent(object, listenerConnection, "host");

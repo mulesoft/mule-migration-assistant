@@ -108,8 +108,8 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new WscMigrationTask());
     coreMigrationTasks.add(new DbMigrationTask());
 
-    coreMigrationTasks.add(new EndpointsMigrationTask());
     coreMigrationTasks.add(new FileMigrationTask());
+    coreMigrationTasks.add(new EndpointsMigrationTask());
     coreMigrationTasks.add(new VMMigrationTask());
     coreMigrationTasks.add(new ScriptingMigrationTask());
     coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask());
