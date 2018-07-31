@@ -130,7 +130,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
       Element queues = new Element("queues", vmConnectorNamespace);
       vmCfg.addContent(queues);
 
-      addTopLevelElement(vmCfg, object.getDocument());
+      addTopLevelElement(vmCfg, connector.map(c -> c.getDocument()).orElse(object.getDocument()));
 
       return vmCfg;
     });

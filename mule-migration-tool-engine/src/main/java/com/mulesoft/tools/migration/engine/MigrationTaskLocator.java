@@ -6,6 +6,12 @@
  */
 package com.mulesoft.tools.migration.engine;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 import com.mulesoft.tools.migration.library.mule.tasks.BatchMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
@@ -34,12 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 
 /**
  * The goal of this class is to locate migration tasks
@@ -107,9 +107,10 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new SocketsMigrationTask());
     coreMigrationTasks.add(new WscMigrationTask());
     coreMigrationTasks.add(new DbMigrationTask());
+
+    coreMigrationTasks.add(new EndpointsMigrationTask());
     coreMigrationTasks.add(new FileMigrationTask());
     coreMigrationTasks.add(new VMMigrationTask());
-    coreMigrationTasks.add(new EndpointsMigrationTask());
     coreMigrationTasks.add(new ScriptingMigrationTask());
     coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask());
     coreMigrationTasks.add(new MunitMigrationTask());

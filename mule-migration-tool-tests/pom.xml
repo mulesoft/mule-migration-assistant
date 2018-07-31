@@ -12,6 +12,8 @@
     <properties>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
+        
+        <e2e.tests.forkCount>1</e2e.tests.forkCount>
     </properties>
 
     <build>
@@ -52,6 +54,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <forkCount>${e2e.tests.forkCount}</forkCount>
+                    <reuseForks>true</reuseForks>
                     <systemPropertyVariables>
                         <migrator.runner>${com.mulesoft.tools:mule-migration-tool-runner:jar:jar-with-dependencies}</migrator.runner>
                         <mule.version>${mule.runtime.version}</mule.version>
