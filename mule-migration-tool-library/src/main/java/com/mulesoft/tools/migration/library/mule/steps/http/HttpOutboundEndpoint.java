@@ -85,7 +85,7 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     final Element requestConnection = new Element("request-connection", httpNamespace);
 
     requestConfig.addContent(requestConnection);
-    addTopLevelElement(requestConfig, object.getDocument());
+    addTopLevelElement(requestConfig, nodeOptional.map(n -> n.getDocument()).orElse(object.getDocument()));
 
     processAddress(object, report).ifPresent(address -> {
       requestConnection.setAttribute("host", getExpressionMigrator().migrateExpression(address.getHost(), true, object));

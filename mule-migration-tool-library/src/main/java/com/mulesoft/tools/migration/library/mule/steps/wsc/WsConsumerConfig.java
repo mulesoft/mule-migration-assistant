@@ -141,7 +141,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
           final Element requestConnection = new Element("request-connection", httpNamespace);
 
           requestConfig.addContent(requestConnection);
-          addTopLevelElement(requestConfig, object.getDocument());
+          addTopLevelElement(requestConfig, connector.getDocument());
 
           requestConnection.setAttribute("host", getExpressionMigrator().migrateExpression(a.getHost(), true, object));
           if (a.getPort() != null) {
