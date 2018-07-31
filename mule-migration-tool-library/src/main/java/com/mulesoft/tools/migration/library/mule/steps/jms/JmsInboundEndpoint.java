@@ -7,7 +7,9 @@
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.addConnectionToConfig;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static java.util.Optional.of;
 
@@ -116,18 +118,23 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
 
     Optional<Element> config = getApplicationModel().getNodeOptional("mule:mule/jms:config[@name='" + configName + "']");
     Element jmsConfig = config.orElseGet(() -> {
-      Element jmsCfg = new Element("config", jmsConnectorNamespace);
+      final Element jmsCfg = new Element("config", jmsConnectorNamespace);
       jmsCfg.setAttribute("name", configName);
-      Element queues = new Element("queues", jmsConnectorNamespace);
-      jmsCfg.addContent(queues);
+      // Element queues = new Element("queues", jmsConnectorNamespace);
+      // jmsCfg.addContent(queues);
 
-      addTopLevelElement(jmsCfg, object.getDocument());
+      connector.ifPresent(conn -> {
+        addConnectionToConfig(jmsCfg, conn);
+      });
+
+      addTopLevelElement(jmsCfg, connector.map(c -> c.getDocument()).orElse(object.getDocument()));
 
       return jmsCfg;
     });
 
     // String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
-    //
+    String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> "");
+
     // addQueue(vmConnectorNamespace, connector, vmConfig, path);
     //
     // connector.ifPresent(conn -> {
@@ -161,7 +168,7 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     // }
 
     object.setAttribute("config-ref", configName);
-    // object.setAttribute("queueName", path);
+    object.setAttribute("destination", path);
     object.removeAttribute("path");
     object.removeAttribute("name");
     // object.removeAttribute("disableTransportTransformer");

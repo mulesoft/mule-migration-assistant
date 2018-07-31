@@ -30,29 +30,29 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
 
   private ExpressionMigrator expressionMigrator;
 
-  // protected String obtainPath(Element object) {
-  // String path = object.getAttributeValue("path");
+  //  protected String obtainPath(Element object) {
+  //    String path = object.getAttributeValue("path");
   //
-  // if (path.contains("?")) {
-  // String[] splitPath = path.split("\\?");
-  // path = splitPath[0];
+  //    if (path.contains("?")) {
+  //      String[] splitPath = path.split("\\?");
+  //      path = splitPath[0];
   //
-  // for (String urlParam : splitPath[1].split("&")) {
-  // String[] splitUrlParam = urlParam.split("=");
+  //      for (String urlParam : splitPath[1].split("&")) {
+  //        String[] splitUrlParam = urlParam.split("=");
   //
-  // String key = splitUrlParam[0];
-  // String value = splitUrlParam[1];
+  //        String key = splitUrlParam[0];
+  //        String value = splitUrlParam[1];
   //
-  // if ("responseTransformers".equals(key)) {
-  // object.setAttribute("responseTransformer-refs", value);
-  // } else {
-  // object.setAttribute(key, value);
-  // }
-  // }
-  // }
-  // return path;
-  // }
-  //
+  //        if ("responseTransformers".equals(key)) {
+  //          object.setAttribute("responseTransformer-refs", value);
+  //        } else {
+  //          object.setAttribute(key, value);
+  //        }
+  //      }
+  //    }
+  //    return path;
+  //  }
+
   // protected void addQueue(final Namespace vmConnectorNamespace, Optional<Element> connector, Element vmConfig, String path) {
   // Element queues = vmConfig.getChild("queues", vmConnectorNamespace);
   // if (!queues.getChildren().stream().filter(e -> path.equals(e.getAttributeValue("queueName"))).findAny().isPresent()) {
@@ -88,11 +88,12 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
   // }
 
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/mule:mule/jms:connector[@name = '" + connectorName + "']");
+    return getApplicationModel()
+        .getNode("/mule:mule/jms:*[local-name() = 'activemq-connector' and @name = '" + connectorName + "']");
   }
 
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/mule:mule/jms:connector");
+    return getApplicationModel().getNodeOptional("/mule:mule/jms:*[local-name() = 'activemq-connector']");
   }
 
   @Override

@@ -7,7 +7,9 @@
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.addConnectionToConfig;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static java.util.Optional.of;
 
@@ -100,15 +102,20 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     Element jmsConfig = config.orElseGet(() -> {
       Element jmsCfg = new Element("config", jmsConnectorNamespace);
       jmsCfg.setAttribute("name", configName);
-      Element queues = new Element("queues", jmsConnectorNamespace);
-      jmsCfg.addContent(queues);
+      // Element queues = new Element("queues", jmsConnectorNamespace);
+      // jmsCfg.addContent(queues);
 
-      addTopLevelElement(jmsCfg, object.getDocument());
+      connector.ifPresent(conn -> {
+        addConnectionToConfig(jmsCfg, conn);
+      });
+
+      addTopLevelElement(jmsCfg, connector.map(c -> c.getDocument()).orElse(object.getDocument()));
 
       return jmsCfg;
     });
 
     // String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
+    String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> "");
     //
     // addQueue(jmsConnectorNamespace, connector, vmConfig, path);
     //
@@ -119,7 +126,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     // }
 
     object.setAttribute("config-ref", configName);
-    // object.setAttribute("queueName", path);
+    object.setAttribute("destination", path);
     object.removeAttribute("path");
     object.removeAttribute("name");
     // object.removeAttribute("mimeType");
@@ -131,7 +138,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     // "You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.",
     // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
 
-    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true, true);
+    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
   }
 
 }

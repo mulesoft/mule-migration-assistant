@@ -13,9 +13,10 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.xpath.XPathExpression;
 
 /**
- * Migrates the vm connector of the JMS transport
+ * Migrates the jms connector of the JMS transport
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -27,7 +28,7 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
   private static final Namespace JMS_NAMESPACE = Namespace.getNamespace(JMS_NAMESPACE_PREFIX, JMS_NAMESPACE_URI);
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri() = '" + JMS_NAMESPACE_URI + "' and local-name() = 'connector']";
+      "/mule:mule/jms:*[local-name() = 'activemq-connector']";
 
   @Override
   public String getDescription() {
@@ -42,5 +43,20 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.detach();
+  }
+
+  public static void addConnectionToConfig(final Element m4JmsCinfig, Element m3Connector) {
+    switch (m3Connector.getName()) {
+      case "activemq-connector":
+        m4JmsCinfig.addContent(new Element("active-mq-connection", JMS_NAMESPACE));
+        break;
+      default:
+    }
+  }
+
+  @Override
+  public XPathExpression getAppliedTo() {
+    // TODO Auto-generated method stub
+    return super.getAppliedTo();
   }
 }

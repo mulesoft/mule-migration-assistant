@@ -69,7 +69,7 @@ public final class TransportsUtils {
 
       endpoint.removeAttribute("address");
 
-      if ("file".equals(protocol) || "vm".equals(protocol)) {
+      if ("file".equals(protocol) || "jms".equals(protocol) || "vm".equals(protocol)) {
         // Ref: https://stackoverflow.com/questions/7857416/file-uri-scheme-and-relative-files
         return of(new EndpointAddress(protocol, credentials, null, port, host + (path != null ? path : "")));
       } else {
