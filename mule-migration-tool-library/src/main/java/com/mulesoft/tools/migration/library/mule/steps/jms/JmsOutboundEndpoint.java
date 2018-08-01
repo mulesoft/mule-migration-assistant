@@ -8,8 +8,10 @@ package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.addConnectionToConfig;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static java.util.Optional.of;
 
@@ -40,35 +42,35 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     this.setNamespacesContributions(newArrayList(JMS_NAMESPACE));
   }
 
-  // private String mapTransactionalAction(String action, MigrationReport report, Element tx, Element object) {
-  // // Values defined in org.mule.runtime.extension.api.tx.OperationTransactionalAction
-  // if ("NONE".equals(action)) {
-  // return "NOT_SUPPORTED";
-  // } else if ("ALWAYS_BEGIN".equals(action)) {
-  // report.report(ERROR, tx, object, "Use a <try> scope to begin a nested transaction.",
-  // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/try-scope-xml-reference#properties-of-try");
-  // return "ALWAYS_JOIN";
-  // } else if ("BEGIN_OR_JOIN".equals(action)) {
-  // return "JOIN_IF_POSSIBLE";
-  // }
-  //
-  // return action;
-  // }
+  private String mapTransactionalAction(String action, MigrationReport report, Element tx, Element object) {
+    // Values defined in org.mule.runtime.extension.api.tx.OperationTransactionalAction
+    if ("NONE".equals(action)) {
+      return "NOT_SUPPORTED";
+    } else if ("ALWAYS_BEGIN".equals(action)) {
+      report.report(ERROR, tx, object, "Use a <try> scope to begin a nested transaction.",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/try-scope-xml-reference#properties-of-try");
+      return "ALWAYS_JOIN";
+    } else if ("BEGIN_OR_JOIN".equals(action)) {
+      return "JOIN_IF_POSSIBLE";
+    }
+
+    return action;
+  }
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    // Element tx = object.getChild("transaction", JMS_NAMESPACE);
-    // while (tx != null) {
-    // object.setAttribute("transactionalAction", mapTransactionalAction(tx.getAttributeValue("action"), report, tx, object));
-    // object.removeChild("transaction", JMS_NAMESPACE);
-    // tx = object.getChild("transaction", JMS_NAMESPACE);
-    // }
-    // while (object.getChild("xa-transaction", CORE_NAMESPACE) != null) {
-    // Element xaTx = object.getChild("xa-transaction", CORE_NAMESPACE);
-    // object.setAttribute("transactionalAction", mapTransactionalAction(xaTx.getAttributeValue("action"), report, xaTx, object));
-    //
-    // object.removeChild("xa-transaction", CORE_NAMESPACE);
-    // }
+    Element tx = object.getChild("transaction", JMS_NAMESPACE);
+    while (tx != null) {
+      object.setAttribute("transactionalAction", mapTransactionalAction(tx.getAttributeValue("action"), report, tx, object));
+      object.removeChild("transaction", JMS_NAMESPACE);
+      tx = object.getChild("transaction", JMS_NAMESPACE);
+    }
+    while (object.getChild("xa-transaction", CORE_NAMESPACE) != null) {
+      Element xaTx = object.getChild("xa-transaction", CORE_NAMESPACE);
+      object.setAttribute("transactionalAction", mapTransactionalAction(xaTx.getAttributeValue("action"), report, xaTx, object));
+
+      object.removeChild("xa-transaction", CORE_NAMESPACE);
+    }
 
     final Namespace jmsConnectorNamespace = Namespace.getNamespace("jms", "http://www.mulesoft.org/schema/mule/jms");
     getApplicationModel().addNameSpace(jmsConnectorNamespace, "http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd",
@@ -115,7 +117,8 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     });
 
     // String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
-    String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> "");
+    String destination =
+        processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> object.getAttributeValue("queue"));
     //
     // addQueue(jmsConnectorNamespace, connector, vmConfig, path);
     //
@@ -126,8 +129,8 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     // }
 
     object.setAttribute("config-ref", configName);
-    object.setAttribute("destination", path);
-    object.removeAttribute("path");
+    object.setAttribute("destination", destination);
+    object.removeAttribute("queue");
     object.removeAttribute("name");
     // object.removeAttribute("mimeType");
     // object.removeAttribute("disableTransportTransformer");

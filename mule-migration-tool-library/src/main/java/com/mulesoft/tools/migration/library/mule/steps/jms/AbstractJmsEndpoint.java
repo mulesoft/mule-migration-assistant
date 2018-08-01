@@ -6,10 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
+import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.XPATH_SELECTOR;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -30,28 +33,28 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
 
   private ExpressionMigrator expressionMigrator;
 
-  //  protected String obtainPath(Element object) {
-  //    String path = object.getAttributeValue("path");
+  // protected String obtainPath(Element object) {
+  // String path = object.getAttributeValue("path");
   //
-  //    if (path.contains("?")) {
-  //      String[] splitPath = path.split("\\?");
-  //      path = splitPath[0];
+  // if (path.contains("?")) {
+  // String[] splitPath = path.split("\\?");
+  // path = splitPath[0];
   //
-  //      for (String urlParam : splitPath[1].split("&")) {
-  //        String[] splitUrlParam = urlParam.split("=");
+  // for (String urlParam : splitPath[1].split("&")) {
+  // String[] splitUrlParam = urlParam.split("=");
   //
-  //        String key = splitUrlParam[0];
-  //        String value = splitUrlParam[1];
+  // String key = splitUrlParam[0];
+  // String value = splitUrlParam[1];
   //
-  //        if ("responseTransformers".equals(key)) {
-  //          object.setAttribute("responseTransformer-refs", value);
-  //        } else {
-  //          object.setAttribute(key, value);
-  //        }
-  //      }
-  //    }
-  //    return path;
-  //  }
+  // if ("responseTransformers".equals(key)) {
+  // object.setAttribute("responseTransformer-refs", value);
+  // } else {
+  // object.setAttribute(key, value);
+  // }
+  // }
+  // }
+  // return path;
+  // }
 
   // protected void addQueue(final Namespace vmConnectorNamespace, Optional<Element> connector, Element vmConfig, String path) {
   // Element queues = vmConfig.getChild("queues", vmConnectorNamespace);
@@ -89,11 +92,11 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
 
   protected Element getConnector(String connectorName) {
     return getApplicationModel()
-        .getNode("/mule:mule/jms:*[local-name() = 'activemq-connector' and @name = '" + connectorName + "']");
+        .getNode(StringUtils.substring(XPATH_SELECTOR, 0, -1) + " and @name = '" + connectorName + "']");
   }
 
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/mule:mule/jms:*[local-name() = 'activemq-connector']");
+    return getApplicationModel().getNodeOptional(XPATH_SELECTOR);
   }
 
   @Override

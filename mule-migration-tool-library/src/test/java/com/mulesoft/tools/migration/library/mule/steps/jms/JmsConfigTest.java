@@ -43,7 +43,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @RunWith(Parameterized.class)
-public class JmsInboundTest {
+public class JmsConfigTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
@@ -53,10 +53,10 @@ public class JmsInboundTest {
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "jms-inbound-01",
-        "jms-inbound-02",
-        "jms-inbound-03",
-        "jms-inbound-04",
+        "jms-config-01",
+        "jms-config-02",
+        "jms-config-03",
+        "jms-config-04"
     };
   }
 
@@ -64,7 +64,7 @@ public class JmsInboundTest {
   private final Path targetPath;
   private final MigrationReport reportMock;
 
-  public JmsInboundTest(String jmsPrefix) {
+  public JmsConfigTest(String jmsPrefix) {
     configPath = JMS_CONFIG_EXAMPLES_PATH.resolve(jmsPrefix + "-original.xml");
     targetPath = JMS_CONFIG_EXAMPLES_PATH.resolve(jmsPrefix + ".xml");
     reportMock = mock(MigrationReport.class);

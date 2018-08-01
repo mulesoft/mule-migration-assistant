@@ -6,10 +6,8 @@
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
-    <jms:activemq-connector name="jmsConnector"/>    
-
     <flow name="flow">
-        <jms:inbound-endpoint address="jms://in" exchange-pattern="one-way" />
+        <jms:inbound-endpoint queue="in" exchange-pattern="one-way" />
         <logger/>
     </flow>
 

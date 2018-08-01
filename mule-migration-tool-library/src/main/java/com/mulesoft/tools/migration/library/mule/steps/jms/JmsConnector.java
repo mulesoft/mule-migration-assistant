@@ -7,13 +7,13 @@
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.jdom2.xpath.XPathExpression;
 
 /**
  * Migrates the jms connector of the JMS transport
@@ -27,8 +27,9 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
   private static final String JMS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/jms";
   private static final Namespace JMS_NAMESPACE = Namespace.getNamespace(JMS_NAMESPACE_PREFIX, JMS_NAMESPACE_URI);
 
-  public static final String XPATH_SELECTOR =
-      "/mule:mule/jms:*[local-name() = 'activemq-connector']";
+  public static final String XPATH_SELECTOR = "/mule:mule/jms:*["
+      + "(local-name() = 'activemq-connector' or "
+      + "local-name() = 'activemq-xa-connector')]";
 
   @Override
   public String getDescription() {
@@ -45,18 +46,34 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
     object.detach();
   }
 
-  public static void addConnectionToConfig(final Element m4JmsCinfig, Element m3Connector) {
+  public static void addConnectionToConfig(final Element m4JmsConfig, Element m3Connector) {
+    Element connection;
     switch (m3Connector.getName()) {
       case "activemq-connector":
-        m4JmsCinfig.addContent(new Element("active-mq-connection", JMS_NAMESPACE));
+        connection = addActiveMqConnection(m4JmsConfig);
+        break;
+      case "activemq-xa-connector":
+        connection = addActiveMqConnection(m4JmsConfig)
+            .addContent(new Element("factory-configuration", JMS_NAMESPACE).setAttribute("enable-xa", "true"));
         break;
       default:
+        connection = new Element("generic-connection", JMS_NAMESPACE);
+        m4JmsConfig.addContent(connection);
     }
+
+    String m4Specification = changeDefault("1.0.2b", "1.1", m3Connector.getAttributeValue("specification"));
+    if (m4Specification != null && m4Specification.equals("1.0.2b")) {
+      connection.setAttribute("specification", "JMS_1_0_2b");
+    }
+
   }
 
-  @Override
-  public XPathExpression getAppliedTo() {
-    // TODO Auto-generated method stub
-    return super.getAppliedTo();
+  private static Element addActiveMqConnection(final Element m4JmsConfig) {
+    Element amqConnection = new Element("active-mq-connection", JMS_NAMESPACE);
+    m4JmsConfig.addContent(amqConnection);
+    // TODO:
+    // disableTemporaryDestinations -> JmsMessageDispatcher.469
+    // jms/integration/activemq-config.xml
+    return amqConnection;
   }
 }

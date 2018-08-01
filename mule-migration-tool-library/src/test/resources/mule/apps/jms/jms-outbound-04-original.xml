@@ -2,19 +2,17 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
-      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
     xsi:schemaLocation="
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
-    <jms:config name="JmsConfig"/>
+    <jms:activemq-xa-connector name="jmsConnector"/>    
 
     <flow name="flow">
-        <async>
-            <compatibility:outbound-properties-to-var/>
-            <jms:publish config-ref="JmsConfig" destination="out"/>
-            <compatibility:attributes-to-inbound-properties/>
-        </async>
+        <jms:outbound-endpoint address="jms://out" exchange-pattern="one-way" >
+            <xa-transaction action="ALWAYS_JOIN"/>
+        </jms:outbound-endpoint>
+        <logger/>
     </flow>
 
 </mule>

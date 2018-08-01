@@ -7,14 +7,14 @@
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
-    <jms:config name="JmsConfig"/>
+    <jms:config name="jmsConnector">
+        <jms:active-mq-connection/>
+    </jms:config>
 
     <flow name="flow">
-        <async>
-            <compatibility:outbound-properties-to-var/>
-            <jms:publish config-ref="JmsConfig" destination="out"/>
-            <compatibility:attributes-to-inbound-properties/>
-        </async>
+        <jms:listener config-ref="jmsConnector" destination="in"/>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger/>
     </flow>
 
 </mule>

@@ -52,7 +52,9 @@ public class JmsOutboundTest {
   public static Object[] params() {
     return new Object[] {
         "jms-outbound-01",
-        "jms-outbound-02"
+        "jms-outbound-02",
+        "jms-outbound-03",
+        "jms-outbound-04",
     };
   }
 
