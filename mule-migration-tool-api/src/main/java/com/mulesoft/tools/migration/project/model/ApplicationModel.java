@@ -435,7 +435,6 @@ public class ApplicationModel {
       if (muleArtifactJson != null) {
         MuleArtifactJsonModel muleArtifactJsonModel = new MuleArtifactJsonModel.MuleApplicationJsonModelBuilder()
             .withMuleArtifactJson(muleArtifactJson)
-            .withConfigs(configurationFiles)
             .withMuleVersion(muleVersion)
             .build();
         applicationModel.setMuleArtifactJsonModel(muleArtifactJsonModel);

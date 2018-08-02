@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.project.model.artifact;
 import org.mule.runtime.api.deployment.meta.MuleApplicationModel;
 import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptor;
 import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptorBuilder;
+import org.mule.runtime.api.deployment.persistence.MuleApplicationModelJsonSerializer;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.String.format;
 import static org.mule.runtime.api.deployment.meta.Product.MULE_EE;
 
 /**
@@ -27,6 +29,7 @@ import static org.mule.runtime.api.deployment.meta.Product.MULE_EE;
 public class MuleArtifactJsonModelUtils {
 
   private static final String MULE_ID = "mule";
+  private static MuleApplicationModelJsonSerializer serializer = new MuleApplicationModelJsonSerializer();
 
   /**
    * Builds a minimal mule-artifact.json representational model with the specified name.
@@ -34,7 +37,7 @@ public class MuleArtifactJsonModelUtils {
    * @param name the name to be set in the mule artifact model
    * @return a {@link MuleArtifactJsonModel}
    */
-  public static MuleArtifactJsonModel buildMinimalMule4ArtifactJson(String name, Collection<Path> configs, String muleVersion) {
+  public static MuleArtifactJsonModel buildMule4ArtifactJson(String name, Collection<Path> configs, String muleVersion) {
     MuleApplicationModel.MuleApplicationModelBuilder builder = new MuleApplicationModel.MuleApplicationModelBuilder();
 
     builder.setName(name);
@@ -60,5 +63,16 @@ public class MuleArtifactJsonModelUtils {
     builder.withBundleDescriptorLoader(loaderDescriptor);
 
     return new MuleArtifactJsonModel(builder.build());
+  }
+
+  /**
+   * Builds a minimal mule-artifact.json representational model with the specified name.
+   *
+   * @param minMuleVersion
+   * @return a {@link MuleArtifactJsonModel}
+   */
+  public static MuleArtifactJsonModel buildMinimalMuleArtifactJson(String minMuleVersion) {
+    MuleApplicationModel muleApplicationModel = serializer.deserialize(format("{ minMuleVersion: %s }", minMuleVersion));
+    return new MuleArtifactJsonModel(muleApplicationModel);
   }
 }

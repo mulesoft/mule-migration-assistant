@@ -12,7 +12,6 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 import com.mulesoft.tools.migration.library.mule.steps.spring.AuthorizationFilter;
-import com.mulesoft.tools.migration.library.mule.steps.spring.ExportSpringBeanPackages;
 import com.mulesoft.tools.migration.library.mule.steps.spring.SecurityManager;
 import com.mulesoft.tools.migration.library.mule.steps.spring.SpringBeans;
 import com.mulesoft.tools.migration.library.mule.steps.spring.SpringConfigContainingMuleConfig;
@@ -63,7 +62,6 @@ public class SpringMigrationTask extends AbstractMigrationTask {
                         new SpringContext(),
                         new SecurityManager(),
                         new AuthorizationFilter(),
-                        new SpringContributions(),
-                        new ExportSpringBeanPackages());
+                        new SpringContributions());
   }
 }
