@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.engine.project.structure.mule.four;
 
 import com.mulesoft.tools.migration.engine.project.structure.mule.MuleProject;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -17,8 +18,8 @@ import java.nio.file.Path;
  */
 public class MuleFourApplication extends MuleProject {
 
-  public static final String srcMainConfigurationPath = "src/main/mule";
-  public static final String srcTestConfigurationPath = "src/test/munit";
+  public static final String srcMainConfigurationPath = "src" + File.separator + "main" + File.separator + "mule";
+  public static final String srcTestConfigurationPath = "src" + File.separator + "test" + File.separator + "munit";
   private static final String MULE_ARTIFACT_JSON = "mule-artifact.json";
 
   public MuleFourApplication(Path baseFolder) {

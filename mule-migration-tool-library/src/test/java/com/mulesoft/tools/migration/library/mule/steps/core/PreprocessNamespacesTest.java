@@ -15,41 +15,40 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.utils.ApplicationModelUtils.generateAppModel;
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PreprocessNamespacesTest {
 
   private static final String FILE_SAMPLE_XML = "unsupported-namespace.xml";
   private static final Path FILE_EXAMPLES_PATH = Paths.get("mule/examples/core/namespaces");
   private static final Path FILE_SAMPLE_PATH = FILE_EXAMPLES_PATH.resolve(FILE_SAMPLE_XML);
-  private static final String PROJECT_NAME = "test-app";
 
   private PreprocessNamespaces preprocessNamespaces;
   private ApplicationModel applicationModel;
-  private List<URL> applicationDocuments = new ArrayList<>();
-  private Path projectPath;
-  private URL documentPath;
+  private Document doc;
 
   @Rule
   public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
   @Before
   public void setUp() throws Exception {
+    doc = getDocument(this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString()).toURI().getPath());
+    Map<Path, Document> appDocs = new HashMap<>();
+    appDocs.put(FILE_SAMPLE_PATH, doc);
+    applicationModel = mock(ApplicationModel.class);
+    when(applicationModel.getApplicationDocuments())
+        .thenAnswer(invocation -> appDocs);
     preprocessNamespaces = new PreprocessNamespaces();
-    projectPath = temporaryFolder.newFolder(PROJECT_NAME).toPath();
-    documentPath = this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString());
-    applicationDocuments.add(documentPath);
-    applicationModel = generateAppModel(applicationDocuments, projectPath);
     applicationModel.setSupportedNamespaces(newArrayList());
   }
 

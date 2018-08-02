@@ -116,7 +116,7 @@ public class ApplicationModel {
     checkArgument(xpathExpression != null, "The Xpath Expression must not be null nor empty");
 
     List<Element> nodes = new ArrayList<>();
-    for (Document doc : applicationDocuments.values()) {
+    for (Document doc : getApplicationDocuments().values()) {
       nodes.addAll(getElementsFromDocument(xpathExpression, doc));
     }
     return nodes;
@@ -183,7 +183,7 @@ public class ApplicationModel {
    */
   public void removeNameSpace(String prefix, String uri, String schemaLocation) {
     Namespace namespace = Namespace.getNamespace(prefix, uri);
-    for (Document doc : applicationDocuments.values()) {
+    for (Document doc : getApplicationDocuments().values()) {
       removeNameSpace(namespace, schemaLocation, doc);
     }
   }

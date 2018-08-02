@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.engine.project.structure.mule.four;
 
 import com.mulesoft.tools.migration.engine.project.structure.mule.MuleProject;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -17,7 +18,7 @@ import java.nio.file.Path;
  */
 public class MuleFourDomain extends MuleProject {
 
-  public static final String srcMainConfigurationPath = "src/main/mule";
+  public static final String srcMainConfigurationPath = "src" + File.separator + "main" + File.separator + "mule";
 
   public MuleFourDomain(Path baseFolder) {
     super(baseFolder);
