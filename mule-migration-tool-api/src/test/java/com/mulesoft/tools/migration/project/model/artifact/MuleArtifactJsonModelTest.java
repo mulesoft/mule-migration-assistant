@@ -42,7 +42,7 @@ public class MuleArtifactJsonModelTest {
     muleArtifactJsonModel = builder.withMuleArtifactJson(temporaryFolder.getRoot().toPath().resolve(MULE_ARTIFACT_FILE))
         .withMuleVersion(MULE_VERSION)
         .build();
-    assertThat("Name in mule-artifact.json is not the expected", muleArtifactJsonModel.toString(),
-               containsString("\"name\": \"" + temporaryFolder.getRoot().getName() + "\""));
+    assertThat("Name expecting minimal mule artifact",
+               muleArtifactJsonModel.toString().matches("^\\{\\s*\"minMuleVersion\": \"" + MULE_VERSION + "\"\\s*}$"));
   }
 }

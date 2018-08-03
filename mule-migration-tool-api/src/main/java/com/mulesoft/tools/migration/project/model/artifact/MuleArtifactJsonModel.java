@@ -7,18 +7,22 @@
 package com.mulesoft.tools.migration.project.model.artifact;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils.buildMinimalMule4ArtifactJson;
+import static com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils.buildMinimalMuleArtifactJson;
 
 import org.mule.runtime.api.deployment.meta.MuleApplicationModel;
 import org.mule.runtime.api.deployment.meta.MuleApplicationModel.MuleApplicationModelBuilder;
+import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptor;
 import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptorBuilder;
 import org.mule.runtime.api.deployment.persistence.MuleApplicationModelJsonSerializer;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -31,7 +35,6 @@ import java.util.TreeSet;
 public class MuleArtifactJsonModel {
 
   private MuleApplicationModel model;
-  private Set<String> exportedPackages = new TreeSet<>();
 
   protected MuleArtifactJsonModel(MuleApplicationModel muleApplicationModel) {
     this.model = muleApplicationModel;
@@ -39,26 +42,7 @@ public class MuleArtifactJsonModel {
 
   @Override
   public String toString() {
-    if (!exportedPackages.isEmpty()) {
-      MuleArtifactLoaderDescriptorBuilder builder =
-          new MuleArtifactLoaderDescriptorBuilder().setId(model.getClassLoaderModelLoaderDescriptor().getId());
-      model.getClassLoaderModelLoaderDescriptor().getAttributes().forEach((k, v) -> {
-        builder.addProperty(k, v);
-      });
-
-      MuleApplicationModelBuilder modelBuilder = new MuleApplicationModelBuilder();
-      modelBuilder.setName(model.getName());
-      modelBuilder.setRequiredProduct(model.getRequiredProduct());
-      modelBuilder.setMinMuleVersion(model.getMinMuleVersion());
-      modelBuilder.withBundleDescriptorLoader(model.getBundleDescriptorLoader());
-      modelBuilder.withClassLoaderModelDescriptorLoader(builder.addProperty("exportedPackages", exportedPackages).build());
-      modelBuilder.setConfigs(model.getConfigs());
-      modelBuilder.setRedeploymentEnabled(model.isRedeploymentEnabled());
-      modelBuilder.setSecureProperties(model.getSecureProperties());
-      model = modelBuilder.build();
-    }
     return new MuleApplicationModelJsonSerializer().serialize(model);
-
   }
 
   /**
@@ -71,16 +55,10 @@ public class MuleArtifactJsonModel {
 
     private final MuleApplicationModelJsonSerializer serializer = new MuleApplicationModelJsonSerializer();
     private Path muleArtifactJsonPath;
-    private Collection<Path> configs;
     private String muleVersion;
 
     public MuleApplicationJsonModelBuilder withMuleArtifactJson(Path muleArtifactJsonPath) {
       this.muleArtifactJsonPath = muleArtifactJsonPath;
-      return this;
-    }
-
-    public MuleApplicationJsonModelBuilder withConfigs(Collection<Path> configs) {
-      this.configs = configs;
       return this;
     }
 
@@ -99,7 +77,7 @@ public class MuleArtifactJsonModel {
       checkArgument(muleArtifactJsonPath != null, "mule-artifact.json path should not be null");
       if (!muleArtifactJsonPath.toAbsolutePath().toFile().exists()
           && muleArtifactJsonPath.toAbsolutePath().getParent().toFile().exists()) {
-        return buildMinimalMule4ArtifactJson(muleArtifactJsonPath.getParent().toFile().getName(), configs, muleVersion);
+        return buildMinimalMuleArtifactJson(muleVersion);
       }
       MuleApplicationModel model = getModel(muleArtifactJsonPath);
       return new MuleArtifactJsonModel(model);
@@ -111,14 +89,5 @@ public class MuleArtifactJsonModel {
       return serializer.deserialize(muleArtifactJsonContent);
     }
 
-  }
-
-  /**
-   * Adds a package to be exported by the app.
-   *
-   * @param packageName the name of the package to be exported by the application so it's accessible from the runtime and plugins.
-   */
-  public void addExportedPackage(String packageName) {
-    exportedPackages.add(packageName);
   }
 }
