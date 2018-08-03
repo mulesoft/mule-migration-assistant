@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.engine.project.structure.mule.three;
 
 import com.mulesoft.tools.migration.engine.project.structure.mule.MuleProject;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -17,7 +18,7 @@ import java.nio.file.Path;
  */
 public class MuleThreeDomain extends MuleProject {
 
-  public static final String srcMainConfigurationPath = "src/main/domain";
+  public static final String srcMainConfigurationPath = "src" + File.separator + "main" + File.separator + "domain";
 
   public MuleThreeDomain(Path baseFolder) {
     super(baseFolder);

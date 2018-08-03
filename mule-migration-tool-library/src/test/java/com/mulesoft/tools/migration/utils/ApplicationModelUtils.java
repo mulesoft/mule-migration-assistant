@@ -26,8 +26,7 @@ import java.util.stream.Collectors;
 
 public class ApplicationModelUtils {
 
-  public static ApplicationModel generateAppModel(List<URL> applicationDocuments, Path projectPath) throws Exception {
-    buildProject(applicationDocuments, projectPath);
+  public static ApplicationModel generateAppModel(Path projectPath) throws Exception {
     return new ApplicationModelBuilder().withProjectBasePath(projectPath).withPom(projectPath.resolve("pom.xml"))
         .withConfigurationFiles(getFiles(projectPath.resolve("src").resolve("main").resolve("app"))).build();
   }
@@ -36,15 +35,5 @@ public class ApplicationModelUtils {
     String[] filter = extensions.length != 0 ? extensions : null;
     Collection<File> files = FileUtils.listFiles(path.toFile(), filter, true);
     return files.stream().map(f -> f.toPath()).collect(Collectors.toList());
-  }
-
-  private static Path buildProject(List<URL> applicationDocuments, Path projectPath) throws IOException {
-    File app = projectPath.resolve("src").resolve("main").resolve("app").toFile();
-    app.mkdirs();
-
-    for (URL documentPath : applicationDocuments) {
-      FileUtils.copyURLToFile(documentPath, new File(app, documentPath.getFile()));
-    }
-    return projectPath;
   }
 }

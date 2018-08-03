@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.report.html.model;
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
@@ -22,9 +23,11 @@ import org.jdom2.output.support.XMLOutputProcessor;
 import org.jdom2.xpath.XPathFactory;
 import org.jdom2.xpath.XPathHelper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +40,7 @@ import static org.apache.commons.lang3.StringEscapeUtils.escapeXml;
  * Model for the HTML Report
  *
  * @author Mulesoft Inc.
- * @since 2.0.0
+ * @since 1.0.0
  */
 public class ReportEntryModel {
 
@@ -56,8 +59,11 @@ public class ReportEntryModel {
     this.elementContent = escapeXml(domElementToString(element));
     this.element = element;
     this.message = message;
-    this.filePath = element.getDocument().getBaseURI();
-
+    try {
+      this.filePath = new File(new URI(element.getDocument().getBaseURI())).getAbsolutePath();
+    } catch (URISyntaxException e) {
+      throw new RuntimeException("Report Generation Error - Fail to get file: " + element.getDocument().getBaseURI(), e);
+    }
     for (String link : documentationLinks) {
       this.getDocumentationLinks().add(link);
     }
@@ -67,7 +73,7 @@ public class ReportEntryModel {
     try {
       SAXBuilder saxBuilder = new SAXBuilder();
       saxBuilder.setJDOMFactory(new LocatedJDOMFactory());
-      Document document = saxBuilder.build(Paths.get(URI.create(filePath)).toFile());
+      Document document = saxBuilder.build(Paths.get(filePath).toFile());
       setElementLocation(document);
     } catch (Exception ex) {
       throw new MigrationJobException("Failed to obtain new element location.", ex.getCause());
