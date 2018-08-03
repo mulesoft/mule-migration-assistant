@@ -46,15 +46,21 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
     object.detach();
   }
 
-  public static void addConnectionToConfig(final Element m4JmsConfig, Element m3Connector) {
+  public static void addConnectionToConfig(final Element m4JmsConfig, final Element m3Connector) {
     Element connection;
     switch (m3Connector.getName()) {
       case "activemq-connector":
-        connection = addActiveMqConnection(m4JmsConfig);
+        connection = addActiveMqConnection(m4JmsConfig, m3Connector);
         break;
       case "activemq-xa-connector":
-        connection = addActiveMqConnection(m4JmsConfig)
-            .addContent(new Element("factory-configuration", JMS_NAMESPACE).setAttribute("enable-xa", "true"));
+        connection = addActiveMqConnection(m4JmsConfig, m3Connector);
+
+        Element factoryConfig = connection.getChild("factory-configuration", JMS_NAMESPACE);
+        if (factoryConfig == null) {
+          factoryConfig = new Element("factory-configuration", JMS_NAMESPACE);
+        }
+
+        connection.addContent(factoryConfig.setAttribute("enable-xa", "true"));
         break;
       default:
         connection = new Element("generic-connection", JMS_NAMESPACE);
@@ -68,9 +74,14 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
 
   }
 
-  private static Element addActiveMqConnection(final Element m4JmsConfig) {
+  private static Element addActiveMqConnection(final Element m4JmsConfig, final Element m3Connector) {
     Element amqConnection = new Element("active-mq-connection", JMS_NAMESPACE);
     m4JmsConfig.addContent(amqConnection);
+
+    if (m3Connector.getAttributeValue("maxRedelivery") != null) {
+      amqConnection.addContent(new Element("factory-configuration", JMS_NAMESPACE)
+          .setAttribute("maxRedelivery", m3Connector.getAttributeValue("maxRedelivery")));
+    }
     // TODO:
     // disableTemporaryDestinations -> JmsMessageDispatcher.469
     // jms/integration/activemq-config.xml

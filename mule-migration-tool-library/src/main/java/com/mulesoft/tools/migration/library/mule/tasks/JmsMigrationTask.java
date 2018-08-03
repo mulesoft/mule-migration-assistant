@@ -13,6 +13,7 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector;
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnectorPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.jms.JmsGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsOutboundEndpoint;
 import com.mulesoft.tools.migration.project.ProjectType;
@@ -52,7 +53,7 @@ public class JmsMigrationTask extends AbstractMigrationTask {
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new JmsConnectorPomContribution(),
-                        new JmsInboundEndpoint(), new JmsOutboundEndpoint(),
+                        new JmsGlobalEndpoint(), new JmsInboundEndpoint(), new JmsOutboundEndpoint(),
                         new JmsConnector());
   }
 }

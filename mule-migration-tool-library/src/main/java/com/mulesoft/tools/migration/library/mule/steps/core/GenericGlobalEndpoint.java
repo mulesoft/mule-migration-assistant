@@ -29,7 +29,7 @@ public class GenericGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
   @Override
   public String getDescription() {
-    return "Update File global endpoints.";
+    return "Update generic global endpoints.";
   }
 
   public GenericGlobalEndpoint() {
@@ -55,7 +55,7 @@ public class GenericGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
   protected Set<Element> getRefs(Element object) {
     Set<Element> refsToGlobal = new HashSet<>();
     refsToGlobal
-        .addAll(getApplicationModel().getNodes("/mule:mule/mule:flow/*[local-name() = 'endpoint' and @ref='"
+        .addAll(getApplicationModel().getNodes("/mule:mule/mule:flow//*[local-name() = 'endpoint' and @ref='"
             + object.getAttributeValue("name") + "']"));
     return refsToGlobal;
   }
@@ -73,7 +73,7 @@ public class GenericGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
   protected Set<Element> getOutboundRefs(Element object) {
     Set<Element> outboundRefsToGlobal = new HashSet<>();
     outboundRefsToGlobal.addAll(getApplicationModel()
-        .getNodes("/mule:mule/mule:flow/*[local-name() = 'outbound-endpoint' and @ref='"
+        .getNodes("/mule:mule/mule:flow//*[local-name() = 'outbound-endpoint' and @ref='"
             + object.getAttributeValue("name") + "']"));
     return outboundRefsToGlobal;
   }

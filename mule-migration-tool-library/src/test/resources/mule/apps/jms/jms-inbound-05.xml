@@ -8,13 +8,11 @@
                http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <jms:config name="jmsConnector">
-        <jms:active-mq-connection specification="JMS_1_0_2b">
-            <jms:factory-configuration enable-xa="true"/>
-        </jms:active-mq-connection>
+        <jms:active-mq-connection specification="JMS_1_0_2b"/>
     </jms:config>
 
     <flow name="flow">
-        <jms:listener config-ref="jmsConnector" destination="in" transactionalAction="ALWAYS_BEGIN" transactionType="XA"/>
+        <jms:listener config-ref="jmsConnector" destination="in" ackMode="MANUAL"/>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
     </flow>

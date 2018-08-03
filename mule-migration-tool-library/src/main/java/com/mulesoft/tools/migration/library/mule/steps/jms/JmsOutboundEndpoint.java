@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.jms;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.addConnectionToConfig;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -132,6 +133,21 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     object.setAttribute("destination", destination);
     object.removeAttribute("queue");
     object.removeAttribute("name");
+
+    connector.ifPresent(m3c -> {
+      // This logic comes from JmsMessageDispatcher#dispatchMessage in Mule 3
+      if ("true".equals(m3c.getAttributeValue("honorQosHeaders"))) {
+        report.report(WARN, m3c, object,
+                      "Store the attributes of the source in a variable instead of using the inound properties",
+                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes",
+                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#sending-messages");
+        String defaultDeliveryMode = "true".equals(m3c.getAttributeValue("persistentDelivery")) ? "2" : "1";
+
+        object.setAttribute("persistentDelivery",
+                            "#[(vars.compatibility_inboundProperties.JMSDeliveryMode default " + defaultDeliveryMode + ") == 2]");
+        object.setAttribute("priority", "#[vars.compatibility_inboundProperties.JMSPriority default 4]");
+      }
+    });
     // object.removeAttribute("mimeType");
     // object.removeAttribute("disableTransportTransformer");
 
@@ -141,6 +157,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     // "You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.",
     // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
 
+    object.removeAttribute("exchange-pattern");
     migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
   }
 

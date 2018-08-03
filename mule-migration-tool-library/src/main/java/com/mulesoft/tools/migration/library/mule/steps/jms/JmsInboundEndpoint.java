@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.addConnectionToConfig;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
@@ -16,12 +17,16 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAtt
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static java.util.Optional.of;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -89,6 +94,7 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       Element xaTx = object.getChild("xa-transaction", CORE_NAMESPACE);
       String txAction = mapTransactionalAction(xaTx.getAttributeValue("action"), report, xaTx, object);
       object.setAttribute("transactionalAction", txAction);
+      object.setAttribute("transactionType", "XA");
       // if (!"NONE".equals(txAction)) {
       // if (object.getChild("redelivery-policy", CORE_NAMESPACE) == null) {
       // object.addContent(new Element("redelivery-policy", CORE_NAMESPACE));
@@ -180,6 +186,22 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     object.setAttribute("destination", destination);
     object.removeAttribute("queue");
     object.removeAttribute("name");
+
+    connector.ifPresent(m3c -> {
+      if (m3c.getAttributeValue("acknowledgementMode") != null) {
+        switch (m3c.getAttributeValue("acknowledgementMode")) {
+          case "CLIENT_ACKNOWLEDGE":
+            object.setAttribute("ackMode", "MANUAL");
+            break;
+          case "DUPS_OK_ACKNOWLEDGE":
+            object.setAttribute("ackMode", "DUPS_OK");
+            break;
+          default:
+            // AUTO is default, no need to set it
+        }
+      }
+    });
+
     // object.removeAttribute("disableTransportTransformer");
 
     // Element content = buildContent(jmsConnectorNamespace);
@@ -194,6 +216,19 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     } else {
       migrateInboundEndpointStructure(getApplicationModel(), object, report, true, true);
     }
+
+    addAttributesToInboundProperties(object, getApplicationModel(), report);
   }
 
+  public static void addAttributesToInboundProperties(Element object, ApplicationModel appModel, MigrationReport report) {
+    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
+    expressionsPerProperty.put("JMSDeliveryMode", "message.attributes.headers.deliveryMode");
+    expressionsPerProperty.put("JMSPriority", "message.attributes.headers.priority");
+
+    try {
+      addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", expressionsPerProperty);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 }

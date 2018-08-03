@@ -8,15 +8,18 @@
                http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <jms:config name="jmsConnector">
-        <jms:active-mq-connection specification="JMS_1_0_2b">
-            <jms:factory-configuration enable-xa="true"/>
-        </jms:active-mq-connection>
+        <jms:active-mq-connection specification="JMS_1_0_2b"/>
     </jms:config>
 
     <flow name="flow">
-        <jms:listener config-ref="jmsConnector" destination="in" transactionalAction="ALWAYS_BEGIN" transactionType="XA"/>
-        <compatibility:attributes-to-inbound-properties/>
-        <logger/>
+        <async>
+            <compatibility:outbound-properties-to-var/>
+            <jms:publish config-ref="jmsConnector" destination="out" 
+                         persistentDelivery="#[(vars.compatibility_inboundProperties.JMSDeliveryMode default 1) == 2]"
+                         priority="#[vars.compatibility_inboundProperties.JMSPriority default 4]"/>
+            <compatibility:attributes-to-inbound-properties/>
+            <logger/>
+        </async>
     </flow>
 
 </mule>
