@@ -6,16 +6,22 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.XPATH_SELECTOR;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -89,6 +95,19 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
   // .setText("#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType,
   // 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]");
   // }
+
+  public static void addAttributesToInboundProperties(Element object, ApplicationModel appModel, MigrationReport report) {
+    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
+    expressionsPerProperty.put("JMSCorrelationID", "message.attributes.headers.correlationId");
+    expressionsPerProperty.put("JMSDeliveryMode", "message.attributes.headers.deliveryMode");
+    expressionsPerProperty.put("JMSPriority", "message.attributes.headers.priority");
+
+    try {
+      addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", expressionsPerProperty);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   protected Element getConnector(String connectorName) {
     return getApplicationModel()

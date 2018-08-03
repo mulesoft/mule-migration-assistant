@@ -129,16 +129,18 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     // object.removeAttribute("responseTimeout");
     // }
 
-    object.setAttribute("config-ref", configName);
-    object.setAttribute("destination", destination);
-    object.removeAttribute("queue");
-    object.removeAttribute("name");
+    Element outboundBuilder = new Element("message", jmsConnectorNamespace);
+    object.addContent(outboundBuilder
+        .setAttribute("correlationId",
+                      "#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]"));
+    object.setAttribute("sendCorrelationId",
+                        "#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']");
 
     connector.ifPresent(m3c -> {
       // This logic comes from JmsMessageDispatcher#dispatchMessage in Mule 3
       if ("true".equals(m3c.getAttributeValue("honorQosHeaders"))) {
         report.report(WARN, m3c, object,
-                      "Store the attributes of the source in a variable instead of using the inound properties",
+                      "Store the attributes of the source in a variable instead of using the inbound properties",
                       "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes",
                       "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#sending-messages");
         String defaultDeliveryMode = "true".equals(m3c.getAttributeValue("persistentDelivery")) ? "2" : "1";
@@ -148,6 +150,12 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
         object.setAttribute("priority", "#[vars.compatibility_inboundProperties.JMSPriority default 4]");
       }
     });
+
+    object.setAttribute("config-ref", configName);
+    object.setAttribute("destination", destination);
+    object.removeAttribute("queue");
+    object.removeAttribute("name");
+
     // object.removeAttribute("mimeType");
     // object.removeAttribute("disableTransportTransformer");
 
@@ -159,6 +167,8 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
 
     object.removeAttribute("exchange-pattern");
     migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
+
+    addAttributesToInboundProperties(object, getApplicationModel(), report);
   }
 
 }

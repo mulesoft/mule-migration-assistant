@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.addConnectionToConfig;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
@@ -17,16 +16,12 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAtt
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static java.util.Optional.of;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -182,6 +177,31 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     // object.removeAttribute("responseTimeout");
     // }
 
+    if (object.getAttribute("exchange-pattern") == null
+        || object.getAttributeValue("exchange-pattern").equals("request-response")) {
+      Element outboundBuilder = new Element("response", jmsConnectorNamespace);
+      object.addContent(outboundBuilder.setAttribute("correlationId",
+                                                     "#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]"));
+      // TODO MMT-196 uncomment this
+      // response.setAttribute("sendCorrelationId",
+      // "#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']");
+    }
+
+    // connector.ifPresent(m3c -> {
+    // // This logic comes from JmsMessageDispatcher#dispatchMessage in Mule 3
+    // if ("true".equals(m3c.getAttributeValue("honorQosHeaders"))) {
+    // report.report(WARN, m3c, object,
+    // "Store the attributes of the source in a variable instead of using the inbound properties",
+    // "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes",
+    // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#sending-messages");
+    // String defaultDeliveryMode = "true".equals(m3c.getAttributeValue("persistentDelivery")) ? "2" : "1";
+    //
+    // object.setAttribute("persistentDelivery",
+    // "#[(vars.compatibility_inboundProperties.JMSDeliveryMode default " + defaultDeliveryMode + ") == 2]");
+    // object.setAttribute("priority", "#[vars.compatibility_inboundProperties.JMSPriority default 4]");
+    // }
+    // });
+
     object.setAttribute("config-ref", configName);
     object.setAttribute("destination", destination);
     object.removeAttribute("queue");
@@ -212,23 +232,11 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
 
     if (object.getAttribute("exchange-pattern") == null
         || object.getAttributeValue("exchange-pattern").equals("one-way")) {
-      migrateInboundEndpointStructure(getApplicationModel(), object, report, false, true);
+      migrateInboundEndpointStructure(getApplicationModel(), object, report, false);
     } else {
-      migrateInboundEndpointStructure(getApplicationModel(), object, report, true, true);
+      migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
     }
 
     addAttributesToInboundProperties(object, getApplicationModel(), report);
-  }
-
-  public static void addAttributesToInboundProperties(Element object, ApplicationModel appModel, MigrationReport report) {
-    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    expressionsPerProperty.put("JMSDeliveryMode", "message.attributes.headers.deliveryMode");
-    expressionsPerProperty.put("JMSPriority", "message.attributes.headers.priority");
-
-    try {
-      addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", expressionsPerProperty);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 }

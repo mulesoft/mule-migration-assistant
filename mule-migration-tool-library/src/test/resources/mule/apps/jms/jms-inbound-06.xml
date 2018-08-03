@@ -7,20 +7,15 @@
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
-    <jms:config name="jmsConnector">
-        <jms:active-mq-connection specification="JMS_1_0_2b">
-            <jms:factory-configuration enable-xa="true"/>
-        </jms:active-mq-connection>
-    </jms:config>
+    <jms:config name="JmsConfig"/>
 
     <flow name="flow">
-        <compatibility:outbound-properties-to-var/>
-        <jms:publish config-ref="jmsConnector" destination="out" transactionalAction="ALWAYS_JOIN"
-                     sendCorrelationId="#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']">
-            <jms:message correlationId="#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]"/>
-        </jms:publish>
+        <jms:listener config-ref="JmsConfig" destination="in">
+            <jms:response correlationId="#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]"/>
+        </jms:listener>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
+        <compatibility:outbound-properties-to-var/>
     </flow>
 
 </mule>

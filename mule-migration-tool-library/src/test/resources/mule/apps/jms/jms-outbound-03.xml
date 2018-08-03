@@ -13,7 +13,10 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <jms:publish config-ref="jmsConnector" destination="out" transactionalAction="ALWAYS_JOIN"/>
+        <jms:publish config-ref="jmsConnector" destination="out" transactionalAction="ALWAYS_JOIN"
+                     sendCorrelationId="#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']">
+            <jms:message correlationId="#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]"/>
+        </jms:publish>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
     </flow>
