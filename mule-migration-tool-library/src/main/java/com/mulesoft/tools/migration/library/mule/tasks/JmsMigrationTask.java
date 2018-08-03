@@ -16,6 +16,7 @@ import com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnectorPomContri
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsOutboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.jms.JmsTransformers;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -54,6 +55,7 @@ public class JmsMigrationTask extends AbstractMigrationTask {
   public List<MigrationStep> getSteps() {
     return newArrayList(new JmsConnectorPomContribution(),
                         new JmsGlobalEndpoint(), new JmsInboundEndpoint(), new JmsOutboundEndpoint(),
+                        new JmsTransformers(),
                         new JmsConnector());
   }
 }

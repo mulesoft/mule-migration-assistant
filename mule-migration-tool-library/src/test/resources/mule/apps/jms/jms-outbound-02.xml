@@ -10,11 +10,9 @@
     <jms:config name="JmsConfig"/>
 
     <flow name="flow">
-        <async>
-            <compatibility:outbound-properties-to-var/>
-            <jms:publish config-ref="JmsConfig" destination="out"/>
-            <compatibility:attributes-to-inbound-properties/>
-        </async>
+        <compatibility:outbound-properties-to-var/>
+        <jms:publish config-ref="JmsConfig" destination="out"/>
+        <compatibility:attributes-to-inbound-properties/>
     </flow>
 
 </mule>
