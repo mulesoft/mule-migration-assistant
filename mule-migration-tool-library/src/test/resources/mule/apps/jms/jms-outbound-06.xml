@@ -17,7 +17,9 @@
                      persistentDelivery="#[(vars.compatibility_inboundProperties.JMSDeliveryMode default 2) == 2]"
                      priority="#[vars.compatibility_inboundProperties.JMSPriority default 4]"
                      sendCorrelationId="#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']">
-            <jms:message correlationId="#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]"/>
+            <jms:message correlationId="#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]">
+                <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
+            </jms:message>
         </jms:publish>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>

@@ -10,12 +10,21 @@
     <jms:config name="JmsConfig"/>
 
     <flow name="flow">
-        <compatibility:outbound-properties-to-var/>
-        <jms:publish-consume config-ref="JmsConfig" destination="out"
-                     sendCorrelationId="#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']">
-            <jms:message correlationId="#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]"/>
-        </jms:publish-consume>
-        <compatibility:attributes-to-inbound-properties/>
+        <try>
+            <compatibility:outbound-properties-to-var/>
+            <jms:publish-consume config-ref="JmsConfig" destination="out"
+                         sendCorrelationId="#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']">
+                <jms:message correlationId="#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]">
+                <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
+            </jms:message>
+            </jms:publish-consume>
+            <compatibility:attributes-to-inbound-properties/>
+            <error-handler>
+                <on-error-continue type="JMS:TIMEOUT">
+                    <set-payload value="#[null]"/>
+                </on-error-continue>
+            </error-handler>
+        </try>
         <logger/>
     </flow>
 

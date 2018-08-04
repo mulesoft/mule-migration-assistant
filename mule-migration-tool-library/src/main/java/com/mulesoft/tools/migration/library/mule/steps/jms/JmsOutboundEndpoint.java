@@ -60,6 +60,8 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    jmsTransportLib(getApplicationModel());
+
     Element tx = object.getChild("transaction", JMS_NAMESPACE);
     while (tx != null) {
       object.setAttribute("transactionalAction", mapTransactionalAction(tx.getAttributeValue("action"), report, tx, object));
@@ -82,6 +84,20 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
         || object.getAttributeValue("exchange-pattern").equals("one-way")) {
       object.setName("publish");
     } else {
+
+      Element wrappingTry = new Element("try", CORE_NAMESPACE);
+
+      object.getParentElement().addContent(object.getParentElement().indexOf(object), wrappingTry);
+
+      object.detach();
+      wrappingTry.addContent(object);
+
+      wrappingTry.addContent(new Element("error-handler", CORE_NAMESPACE)
+          .addContent(new Element("on-error-continue", CORE_NAMESPACE)
+              .setAttribute("type", "JMS:TIMEOUT")
+              .addContent(new Element("set-payload", CORE_NAMESPACE)
+                  .setAttribute("value", "#[null]"))));
+
       object.setName("publish-consume");
     }
 
@@ -130,11 +146,14 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     // }
 
     Element outboundBuilder = new Element("message", jmsConnectorNamespace);
-    object.addContent(outboundBuilder
-        .setAttribute("correlationId",
-                      "#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]"));
+    outboundBuilder.addContent(compatibilityProperties(getApplicationModel()));
+
+    outboundBuilder.setAttribute("correlationId",
+                                 "#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]");
     object.setAttribute("sendCorrelationId",
                         "#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']");
+
+    object.addContent(outboundBuilder);
 
     connector.ifPresent(m3c -> {
       // This logic comes from JmsMessageDispatcher#dispatchMessage in Mule 3
@@ -150,6 +169,12 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
         object.setAttribute("priority", "#[vars.compatibility_inboundProperties.JMSPriority default 4]");
       }
     });
+
+    if (object.getAttribute("responseTimeout") != null) {
+      object.addContent(new Element("consume-configuration", jmsConnectorNamespace)
+          .setAttribute("maximumWait", object.getAttributeValue("responseTimeout")));
+    }
+    object.removeAttribute("responseTimeout");
 
     object.setAttribute("config-ref", configName);
     object.setAttribute("destination", destination);

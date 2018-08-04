@@ -6,8 +6,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.XPATH_SELECTOR;
+import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -100,10 +103,49 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("JMSCorrelationID", "message.attributes.headers.correlationId");
     expressionsPerProperty.put("JMSDeliveryMode", "message.attributes.headers.deliveryMode");
+    //    expressionsPerProperty.put("JMSDestination", "message.attributes.headers.destination");
+    //    expressionsPerProperty.put("JMSExpiration", "message.attributes.headers.expiration");
+    //    expressionsPerProperty.put("JMSMessageID", "message.attributes.headers.messageId");
     expressionsPerProperty.put("JMSPriority", "message.attributes.headers.priority");
+    //    expressionsPerProperty.put("JMSRedelivered", "message.attributes.headers.redelivered");
+    //    expressionsPerProperty.put("JMSReplyTo", "message.attributes.headers.replyTo");
+    //    expressionsPerProperty.put("JMSTimestamp", "message.attributes.headers.timestamp");
+    //    expressionsPerProperty.put("JMSType", "message.attributes.headers.type");
 
     try {
       addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", expressionsPerProperty);
+      // addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", expressionsPerProperty,
+      // "message.attributes.properties.userProperties");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static Element compatibilityProperties(ApplicationModel appModel) {
+    return new Element("properties", JMS_NAMESPACE)
+        .setText("#[migration::JmsTransport::jmsPublishProperties(vars)]");
+  }
+
+  public static void jmsTransportLib(ApplicationModel appModel) {
+    try {
+      // Replicates logic fom org.mule.transport.jms.transformers.AbstractJmsTransformer.setJmsProperties(MuleMessage, Message)
+      library(getMigrationScriptFolder(appModel.getProjectBasePath()), "JmsTransport.dwl",
+              "" +
+                  "/**" + lineSeparator() +
+                  " * Emulates the properties building logic of the Mule 3.x JMS Connector." + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun jmsPublishProperties(vars: {}) = do {" + lineSeparator() +
+                  "    var jmsProperties = ['JMSCorrelationID', 'JMSDeliveryMode', 'JMSDestination', 'JMSExpiration',"
+                  + " 'JMSMessageID', 'JMSPriority', 'JMSRedelivered', 'JMSReplyTo', 'JMSTimestamp', 'JMSType',"
+                  + " 'selector', 'MULE_REPLYTO']" + lineSeparator() +
+                  "    ---" + lineSeparator() +
+                  "    vars.compatibility_outboundProperties default {} filterObject" + lineSeparator() +
+                  "    ((value,key) -> not contains(jmsProperties, (key as String)))" + lineSeparator() +
+                  "    mapObject ((value, key, index) -> {" + lineSeparator() +
+                  "        ((key as String) replace \" \" with \"_\") : value" + lineSeparator() +
+                  "        })" + lineSeparator() +
+                  "}" + lineSeparator() +
+                  lineSeparator());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

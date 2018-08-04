@@ -71,6 +71,8 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    jmsTransportLib(getApplicationModel());
+
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     Element tx = object.getChild("transaction", JMS_NAMESPACE);
@@ -180,11 +182,16 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     if (object.getAttribute("exchange-pattern") == null
         || object.getAttributeValue("exchange-pattern").equals("request-response")) {
       Element outboundBuilder = new Element("response", jmsConnectorNamespace);
-      object.addContent(outboundBuilder.setAttribute("correlationId",
-                                                     "#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]"));
+
+      outboundBuilder.addContent(compatibilityProperties(getApplicationModel()));
+
+      outboundBuilder.setAttribute("correlationId",
+                                   "#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]");
       // TODO MMT-196 uncomment this
       // response.setAttribute("sendCorrelationId",
       // "#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']");
+
+      object.addContent(outboundBuilder);
     }
 
     // connector.ifPresent(m3c -> {
