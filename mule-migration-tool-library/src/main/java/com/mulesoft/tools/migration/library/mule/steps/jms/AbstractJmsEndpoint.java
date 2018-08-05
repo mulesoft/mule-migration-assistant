@@ -103,19 +103,18 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("JMSCorrelationID", "message.attributes.headers.correlationId");
     expressionsPerProperty.put("JMSDeliveryMode", "message.attributes.headers.deliveryMode");
-    //    expressionsPerProperty.put("JMSDestination", "message.attributes.headers.destination");
-    //    expressionsPerProperty.put("JMSExpiration", "message.attributes.headers.expiration");
-    //    expressionsPerProperty.put("JMSMessageID", "message.attributes.headers.messageId");
+    expressionsPerProperty.put("JMSDestination", "message.attributes.headers.destination");
+    expressionsPerProperty.put("JMSExpiration", "message.attributes.headers.expiration");
+    expressionsPerProperty.put("JMSMessageID", "message.attributes.headers.messageId");
     expressionsPerProperty.put("JMSPriority", "message.attributes.headers.priority");
-    //    expressionsPerProperty.put("JMSRedelivered", "message.attributes.headers.redelivered");
-    //    expressionsPerProperty.put("JMSReplyTo", "message.attributes.headers.replyTo");
-    //    expressionsPerProperty.put("JMSTimestamp", "message.attributes.headers.timestamp");
-    //    expressionsPerProperty.put("JMSType", "message.attributes.headers.type");
+    expressionsPerProperty.put("JMSRedelivered", "message.attributes.headers.redelivered");
+    expressionsPerProperty.put("JMSReplyTo", "message.attributes.headers.replyTo");
+    expressionsPerProperty.put("JMSTimestamp", "message.attributes.headers.timestamp");
+    expressionsPerProperty.put("JMSType", "message.attributes.headers['type']");
 
     try {
-      addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", expressionsPerProperty);
-      // addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", expressionsPerProperty,
-      // "message.attributes.properties.userProperties");
+      addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", expressionsPerProperty,
+                           "message.attributes.properties.userProperties");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

@@ -146,6 +146,10 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     // }
 
     Element outboundBuilder = new Element("message", jmsConnectorNamespace);
+
+    outboundBuilder.addContent(new Element("reply-to", jmsConnectorNamespace)
+        .setAttribute("destination",
+                      "#[if (vars.compatibility_outboundProperties.MULE_REPLYTO != null) (vars.compatibility_outboundProperties.MULE_REPLYTO splitBy 'jms://')[1] else null]"));
     outboundBuilder.addContent(compatibilityProperties(getApplicationModel()));
 
     outboundBuilder.setAttribute("correlationId",
