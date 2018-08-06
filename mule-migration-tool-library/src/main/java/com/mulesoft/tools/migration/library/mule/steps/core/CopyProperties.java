@@ -6,8 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -31,10 +33,12 @@ public class CopyProperties extends AbstractApplicationModelMigrationStep {
 
   public CopyProperties() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(COMPATIBILITY_NAMESPACE));
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
+    addCompatibilityNamespace(element.getDocument());
     report.report(WARN, element, element,
                   "Instead of copying properties in the flow, use the 'attributes' of the message directly.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes");

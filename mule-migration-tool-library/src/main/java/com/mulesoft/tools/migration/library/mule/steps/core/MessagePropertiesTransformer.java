@@ -6,10 +6,12 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -40,10 +42,12 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
 
   public MessagePropertiesTransformer() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(COMPATIBILITY_NAMESPACE));
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
+    addCompatibilityNamespace(element.getDocument());
     if (element.getAttribute("scope") == null) {
       report.report(WARN, element, element,
                     "Instead of using properties in the flow, its values must be set explicitly in the operation/listener.",
