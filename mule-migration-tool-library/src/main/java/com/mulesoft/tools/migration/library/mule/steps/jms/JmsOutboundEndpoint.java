@@ -135,7 +135,13 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
 
     // String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
     String destination =
-        processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> object.getAttributeValue("queue"));
+        processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> {
+          if (object.getAttributeValue("queue") != null) {
+            return object.getAttributeValue("queue");
+          } else {
+            return object.getAttributeValue("topic");
+          }
+        });
     //
     // addQueue(jmsConnectorNamespace, connector, vmConfig, path);
     //
@@ -149,7 +155,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
 
     outboundBuilder.addContent(new Element("reply-to", jmsConnectorNamespace)
         .setAttribute("destination",
-                      "#[if (vars.compatibility_outboundProperties.MULE_REPLYTO != null) (vars.compatibility_outboundProperties.MULE_REPLYTO splitBy 'jms://')[1] else null]"));
+                      "#[vars.compatibility_inboundProperties.JMSReplyTo default (if (vars.compatibility_outboundProperties.MULE_REPLYTO != null) (vars.compatibility_outboundProperties.MULE_REPLYTO splitBy 'jms://')[1] else null)]"));
     outboundBuilder.addContent(compatibilityProperties(getApplicationModel()));
 
     outboundBuilder.setAttribute("correlationId",
@@ -183,6 +189,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     object.setAttribute("config-ref", configName);
     object.setAttribute("destination", destination);
     object.removeAttribute("queue");
+    object.removeAttribute("topic");
     object.removeAttribute("name");
 
     // object.removeAttribute("mimeType");

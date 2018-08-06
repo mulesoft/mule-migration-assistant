@@ -145,7 +145,13 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
 
     // String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
     String destination =
-        processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> object.getAttributeValue("queue"));
+        processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> {
+          if (object.getAttributeValue("queue") != null) {
+            return object.getAttributeValue("queue");
+          } else {
+            return object.getAttributeValue("topic");
+          }
+        });
 
     // addQueue(vmConnectorNamespace, connector, vmConfig, path);
     //
@@ -212,6 +218,7 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     object.setAttribute("config-ref", configName);
     object.setAttribute("destination", destination);
     object.removeAttribute("queue");
+    object.removeAttribute("topic");
     object.removeAttribute("name");
 
     connector.ifPresent(m3c -> {
@@ -238,10 +245,10 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
 
     if (object.getAttribute("exchange-pattern") == null
-        || object.getAttributeValue("exchange-pattern").equals("one-way")) {
-      migrateInboundEndpointStructure(getApplicationModel(), object, report, false);
-    } else {
+        || object.getAttributeValue("exchange-pattern").equals("request-response")) {
       migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
+    } else {
+      migrateInboundEndpointStructure(getApplicationModel(), object, report, false);
     }
 
     addAttributesToInboundProperties(object, getApplicationModel(), report);

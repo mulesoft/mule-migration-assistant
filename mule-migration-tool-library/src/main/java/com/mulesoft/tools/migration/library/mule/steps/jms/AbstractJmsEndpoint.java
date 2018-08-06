@@ -108,7 +108,7 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
     expressionsPerProperty.put("JMSMessageID", "message.attributes.headers.messageId");
     expressionsPerProperty.put("JMSPriority", "message.attributes.headers.priority");
     expressionsPerProperty.put("JMSRedelivered", "message.attributes.headers.redelivered");
-    expressionsPerProperty.put("JMSReplyTo", "message.attributes.headers.replyTo");
+    expressionsPerProperty.put("JMSReplyTo", "message.attributes.headers.replyTo.destination");
     expressionsPerProperty.put("JMSTimestamp", "message.attributes.headers.timestamp");
     expressionsPerProperty.put("JMSType", "message.attributes.headers['type']");
 
