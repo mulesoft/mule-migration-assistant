@@ -14,7 +14,7 @@
             <compatibility:outbound-properties-to-var/>
             <jms:publish-consume config-ref="JmsConfig" destination="out"
                          sendCorrelationId="#[migration::JmsTransport::jmsSendCorrelationId(vars)]">
-                <jms:message correlationId="#[migration::JmsTransport::jmsCorrelationId(vars)]">
+                <jms:message correlationId="#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]">
                     <jms:reply-to destination="#[migration::JmsTransport::jmsPublishReplyTo(vars)]"/>
                     <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
                 </jms:message>

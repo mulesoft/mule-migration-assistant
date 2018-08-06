@@ -17,7 +17,7 @@
         <compatibility:outbound-properties-to-var/>
         <jms:publish config-ref="jmsConnector" destination="out" transactionalAction="ALWAYS_JOIN"
                      sendCorrelationId="#[migration::JmsTransport::jmsSendCorrelationId(vars)]">
-            <jms:message correlationId="#[migration::JmsTransport::jmsCorrelationId(vars)]">
+            <jms:message correlationId="#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]">
                 <jms:reply-to destination="#[migration::JmsTransport::jmsPublishReplyTo(vars)]"/>
                 <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
             </jms:message>

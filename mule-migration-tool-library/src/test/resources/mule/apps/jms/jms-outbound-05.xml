@@ -17,7 +17,7 @@
                      persistentDelivery="#[(vars.compatibility_inboundProperties.JMSDeliveryMode default 1) == 2]"
                      priority="#[vars.compatibility_inboundProperties.JMSPriority default 4]"
                      sendCorrelationId="#[migration::JmsTransport::jmsSendCorrelationId(vars)]">
-            <jms:message correlationId="#[migration::JmsTransport::jmsCorrelationId(vars)]">
+            <jms:message correlationId="#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]">
                 <jms:reply-to destination="#[migration::JmsTransport::jmsPublishReplyTo(vars)]"/>
                 <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
             </jms:message>

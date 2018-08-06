@@ -10,8 +10,8 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 
@@ -40,12 +40,17 @@ public class FileTransformers extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    if (object.getAttribute("name") != null) {
+      getApplicationModel().getNodes("//mule:transformer[@ref = '" + object.getAttributeValue("name") + "']")
+          .forEach(t -> t.detach());
+    }
+
     report.report(WARN, object, object.getParentElement(),
                   "'" + object.getName()
                       + "' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.",
                   "https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about");
 
-    object.getParent().removeContent(object);
+    object.detach();
   }
 
   @Override

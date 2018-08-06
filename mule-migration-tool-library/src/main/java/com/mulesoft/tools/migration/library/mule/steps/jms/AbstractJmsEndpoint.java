@@ -127,11 +127,13 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
 
   public static void jmsTransportLib(ApplicationModel appModel) {
     try {
-      // Replicates logic fom org.mule.transport.jms.transformers.AbstractJmsTransformer.setJmsProperties(MuleMessage, Message)
+      // Replicates logic from org.mule.transport.jms.transformers.AbstractJmsTransformer.setJmsProperties(MuleMessage, Message)
       library(getMigrationScriptFolder(appModel.getProjectBasePath()), "JmsTransport.dwl",
               "" +
                   "/**" + lineSeparator() +
                   " * Emulates the properties building logic of the Mule 3.x JMS Connector." + lineSeparator() +
+                  " * Replicates logic from org.mule.transport.jms.transformers.AbstractJmsTransformer.setJmsProperties(MuleMessage, Message)."
+                  + lineSeparator() +
                   " */" + lineSeparator() +
                   "fun jmsPublishProperties(vars: {}) = do {" + lineSeparator() +
                   "    var jmsProperties = ['JMSCorrelationID', 'JMSDeliveryMode', 'JMSDestination', 'JMSExpiration',"
@@ -148,7 +150,7 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
                   "/**" + lineSeparator() +
                   " * Adapts the Mule 4 correlationId to the way it was used in 3.x" + lineSeparator() +
                   " */" + lineSeparator() +
-                  "fun jmsCorrelationId(vars: {}) = do {" + lineSeparator() +
+                  "fun jmsCorrelationId(correlationId, vars: {}) = do {" + lineSeparator() +
                   "    vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId" + lineSeparator() +
                   "}" + lineSeparator() +
                   "" + lineSeparator() +

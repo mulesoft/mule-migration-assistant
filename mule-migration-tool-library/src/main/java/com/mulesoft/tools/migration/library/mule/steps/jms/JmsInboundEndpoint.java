@@ -194,7 +194,7 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
 
       outboundBuilder.addContent(compatibilityProperties(getApplicationModel()));
 
-      outboundBuilder.setAttribute("correlationId", "#[migration::JmsTransport::jmsCorrelationId(vars)]");
+      outboundBuilder.setAttribute("correlationId", "#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]");
       // TODO MMT-196 uncomment this
       // response.setAttribute("sendCorrelationId", "#[migration::JmsTransport::jmsSendCorrelationId(vars)]");
 
@@ -221,10 +221,15 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     // });
 
     object.setAttribute("config-ref", configName);
-    object.setAttribute("destination", destination);
+    if (destination != null) {
+      object.setAttribute("destination", destination);
+    }
     object.removeAttribute("queue");
     object.removeAttribute("topic");
     object.removeAttribute("name");
+
+    // TODO
+    object.removeAttribute("xaPollingTimeout");
 
     connector.ifPresent(m3c -> {
       if (m3c.getAttributeValue("acknowledgementMode") != null) {
@@ -238,6 +243,10 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
           default:
             // AUTO is default, no need to set it
         }
+      }
+
+      if (m3c.getAttributeValue("numberOfConsumers") != null) {
+        object.setAttribute("numberOfConsumers", m3c.getAttributeValue("numberOfConsumers"));
       }
     });
 

@@ -13,8 +13,8 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addValidationMo
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 
@@ -93,6 +93,10 @@ public class HttpTransformers extends AbstractApplicationModelMigrationStep
       }
       object.detach();
     } else {
+      if (object.getAttribute("name") != null) {
+        getApplicationModel().getNodes("//mule:transformer[@ref = '" + object.getAttributeValue("name") + "']")
+            .forEach(t -> t.detach());
+      }
       object.detach();
     }
   }

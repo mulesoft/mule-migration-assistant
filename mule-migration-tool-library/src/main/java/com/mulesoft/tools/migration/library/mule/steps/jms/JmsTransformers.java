@@ -39,6 +39,10 @@ public class JmsTransformers extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    if (object.getAttribute("name") != null) {
+      getApplicationModel().getNodes("//mule:transformer[@ref = '" + object.getAttributeValue("name") + "']")
+          .forEach(t -> t.detach());
+    }
     object.detach();
   }
 

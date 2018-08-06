@@ -160,7 +160,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
         .setAttribute("destination", "#[migration::JmsTransport::jmsPublishReplyTo(vars)]"));
     outboundBuilder.addContent(compatibilityProperties(getApplicationModel()));
 
-    outboundBuilder.setAttribute("correlationId", "#[migration::JmsTransport::jmsCorrelationId(vars)]");
+    outboundBuilder.setAttribute("correlationId", "#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]");
     object.setAttribute("sendCorrelationId", "#[migration::JmsTransport::jmsSendCorrelationId(vars)]");
 
     object.addContent(outboundBuilder);
@@ -187,7 +187,9 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     object.removeAttribute("responseTimeout");
 
     object.setAttribute("config-ref", configName);
-    object.setAttribute("destination", destination);
+    if (destination != null) {
+      object.setAttribute("destination", destination);
+    }
     object.removeAttribute("queue");
     object.removeAttribute("topic");
     object.removeAttribute("name");

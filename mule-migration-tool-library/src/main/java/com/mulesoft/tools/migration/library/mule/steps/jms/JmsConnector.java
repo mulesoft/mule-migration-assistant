@@ -58,9 +58,10 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
         Element factoryConfig = connection.getChild("factory-configuration", JMS_NAMESPACE);
         if (factoryConfig == null) {
           factoryConfig = new Element("factory-configuration", JMS_NAMESPACE);
+          connection.addContent(factoryConfig);
         }
 
-        connection.addContent(factoryConfig.setAttribute("enable-xa", "true"));
+        factoryConfig.setAttribute("enable-xa", "true");
         break;
       default:
         connection = new Element("generic-connection", JMS_NAMESPACE);
