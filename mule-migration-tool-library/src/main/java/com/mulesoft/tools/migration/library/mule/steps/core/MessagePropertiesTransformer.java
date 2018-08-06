@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.E
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -111,6 +112,8 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
                           + (getExpressionMigrator().isWrapped(migrated) ? "(" + getExpressionMigrator().unwrap(migrated) + ")"
                               : "'" + value + "'")));
             }
+          } else {
+            migrateExpression(child.getAttribute("value"), expressionMigrator);
           }
 
           child.setName("set-variable");
