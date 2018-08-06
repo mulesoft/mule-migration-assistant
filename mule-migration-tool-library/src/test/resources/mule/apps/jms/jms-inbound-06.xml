@@ -11,7 +11,7 @@
 
     <flow name="flow">
         <jms:listener config-ref="JmsConfig" destination="in">
-            <jms:response correlationId="#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]">
+            <jms:response correlationId="#[migration::JmsTransport::jmsCorrelationId(vars)]">
                 <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
             </jms:response>
         </jms:listener>

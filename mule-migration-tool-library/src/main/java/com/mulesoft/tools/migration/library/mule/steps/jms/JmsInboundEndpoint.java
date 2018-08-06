@@ -52,15 +52,18 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       return "ALWAYS_BEGIN";
     } else if ("BEGIN_OR_JOIN".equals(action)) {
       report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.");
+                    "There can be no transaction active before the listener, so JOIN is not supported at this point.",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#UsingTransactions");
       return "ALWAYS_BEGIN";
     } else if ("ALWAYS_JOIN".equals(action)) {
       report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.");
+                    "There can be no transaction active before the listener, so JOIN is not supported at this point.",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#UsingTransactions");
       return "NONE";
     } else if ("JOIN_IF_POSSIBLE".equals(action)) {
       report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.");
+                    "There can be no transaction active before the listener, so JOIN is not supported at this point.",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#UsingTransactions");
       return "NONE";
     } else if ("NOT_SUPPORTED".equals(action)) {
       return "NONE";
@@ -191,11 +194,13 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
 
       outboundBuilder.addContent(compatibilityProperties(getApplicationModel()));
 
-      outboundBuilder.setAttribute("correlationId",
-                                   "#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]");
+      outboundBuilder.setAttribute("correlationId", "#[migration::JmsTransport::jmsCorrelationId(vars)]");
       // TODO MMT-196 uncomment this
-      // response.setAttribute("sendCorrelationId",
-      // "#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']");
+      // response.setAttribute("sendCorrelationId", "#[migration::JmsTransport::jmsSendCorrelationId(vars)]");
+
+      report.report(WARN, object, object, "Avoid using properties to set the JMS response properties and headers",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#ListeningForNewMessages",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#RespondingToIncommingMessages");
 
       object.addContent(outboundBuilder);
     }

@@ -151,17 +151,17 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     // object.removeAttribute("responseTimeout");
     // }
 
+    report.report(WARN, object, object, "Avoid using properties to set the JMS properties and headers",
+                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#SendingMessages");
+
     Element outboundBuilder = new Element("message", jmsConnectorNamespace);
 
     outboundBuilder.addContent(new Element("reply-to", jmsConnectorNamespace)
-        .setAttribute("destination",
-                      "#[vars.compatibility_inboundProperties.JMSReplyTo default (if (vars.compatibility_outboundProperties.MULE_REPLYTO != null) (vars.compatibility_outboundProperties.MULE_REPLYTO splitBy 'jms://')[1] else null)]"));
+        .setAttribute("destination", "#[migration::JmsTransport::jmsPublishReplyTo(vars)]"));
     outboundBuilder.addContent(compatibilityProperties(getApplicationModel()));
 
-    outboundBuilder.setAttribute("correlationId",
-                                 "#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]");
-    object.setAttribute("sendCorrelationId",
-                        "#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']");
+    outboundBuilder.setAttribute("correlationId", "#[migration::JmsTransport::jmsCorrelationId(vars)]");
+    object.setAttribute("sendCorrelationId", "#[migration::JmsTransport::jmsSendCorrelationId(vars)]");
 
     object.addContent(outboundBuilder);
 

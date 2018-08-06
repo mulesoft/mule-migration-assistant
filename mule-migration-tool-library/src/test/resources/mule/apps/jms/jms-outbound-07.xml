@@ -13,9 +13,9 @@
         <try>
             <compatibility:outbound-properties-to-var/>
             <jms:publish-consume config-ref="JmsConfig" destination="out"
-                         sendCorrelationId="#[if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS']">
-                <jms:message correlationId="#[vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId]">
-                    <jms:reply-to destination="#[if (vars.compatibility_outboundProperties.MULE_REPLYTO != null) (vars.compatibility_outboundProperties.MULE_REPLYTO splitBy 'jms://')[1] else null]"/>
+                         sendCorrelationId="#[migration::JmsTransport::jmsSendCorrelationId(vars)]">
+                <jms:message correlationId="#[migration::JmsTransport::jmsCorrelationId(vars)]">
+                    <jms:reply-to destination="#[migration::JmsTransport::jmsPublishReplyTo(vars)]"/>
                     <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
                 </jms:message>
             </jms:publish-consume>

@@ -144,6 +144,35 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
                   "        ((key as String) replace \" \" with \"_\") : value" + lineSeparator() +
                   "        })" + lineSeparator() +
                   "}" + lineSeparator() +
+                  "" + lineSeparator() +
+                  "/**" + lineSeparator() +
+                  " * Adapts the Mule 4 correlationId to the way it was used in 3.x" + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun jmsCorrelationId(vars: {}) = do {" + lineSeparator() +
+                  "    vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId" + lineSeparator() +
+                  "}" + lineSeparator() +
+                  "" + lineSeparator() +
+                  "/**" + lineSeparator() +
+                  " * Adapts the Mule 4 correlationId to the way it was used in 3.x" + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun jmsSendCorrelationId(vars: {}) = do {" + lineSeparator() +
+                  "    if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS'"
+                  + lineSeparator() +
+                  "}" + lineSeparator() +
+                  "" + lineSeparator() +
+                  "/**" + lineSeparator() +
+                  " * Adapts the Mule 4 reply-to to the way it was used in 3.x" + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun jmsPublishReplyTo(vars: {}) = do {" + lineSeparator() +
+                  "    vars.compatibility_inboundProperties.JMSReplyTo default" + lineSeparator() +
+                  "    (if (vars.compatibility_outboundProperties.MULE_REPLYTO != null)" + lineSeparator() +
+                  "        (vars.compatibility_outboundProperties.MULE_REPLYTO splitBy 'jms://')[1]" + lineSeparator() +
+                  "        else null)"
+                  + lineSeparator() +
+                  "}" + lineSeparator() +
+                  "" + lineSeparator() +
+                  "" + lineSeparator() +
+                  "" + lineSeparator() +
                   lineSeparator());
     } catch (IOException e) {
       throw new RuntimeException(e);
