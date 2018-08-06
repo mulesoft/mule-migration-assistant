@@ -46,7 +46,8 @@ public class InvocationPropertiesTest {
         "invocation-properties-01",
         // TODO MMT-154 Migrate spring beans
         // "invocation-properties-02",
-        "invocation-properties-03"
+        "invocation-properties-03",
+        "invocation-properties-04"
     };
   }
 
