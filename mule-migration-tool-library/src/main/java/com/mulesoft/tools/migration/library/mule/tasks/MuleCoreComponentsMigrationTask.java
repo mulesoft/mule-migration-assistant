@@ -23,6 +23,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoin
 import com.mulesoft.tools.migration.library.mule.steps.core.Logger;
 import com.mulesoft.tools.migration.library.mule.steps.core.Poll;
 import com.mulesoft.tools.migration.library.mule.steps.core.RollbackExceptionStrategy;
+import com.mulesoft.tools.migration.library.mule.steps.core.ScatterGather;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetPayload;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetVariable;
 import com.mulesoft.tools.migration.library.mule.steps.core.TransactionalScope;
@@ -75,6 +76,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new TransactionalScope(),
                         new ExceptionStrategyRef(),
                         new ForEachScope(),
+                        new ScatterGather(),
                         new Flow(),
                         new Poll(),
                         new ChoiceExpressions(),
