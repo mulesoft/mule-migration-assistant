@@ -10,13 +10,13 @@
     <jms:config name="jmsConnector">
         <jms:active-mq-connection specification="JMS_1_0_2b">
             <jms:caching-strategy>
-                <jms:no-caching/>
+                <jms:default-caching sessionCacheSize="10" cacheProducers="true" />
             </jms:caching-strategy>
         </jms:active-mq-connection>
     </jms:config>
 
     <flow name="flow">
-        <jms:listener config-ref="jmsConnector" destination="in" transactionalAction="ALWAYS_BEGIN"/>
+        <jms:listener config-ref="jmsConnector" destination="in"/>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
     </flow>

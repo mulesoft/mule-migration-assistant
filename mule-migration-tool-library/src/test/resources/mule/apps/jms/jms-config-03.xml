@@ -8,7 +8,11 @@
                http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <jms:config name="jmsConnector">
-        <jms:active-mq-connection/>
+        <jms:active-mq-connection>
+            <jms:caching-strategy>
+                <jms:no-caching/>
+            </jms:caching-strategy>
+        </jms:active-mq-connection>
     </jms:config>
 
     <flow name="flow">

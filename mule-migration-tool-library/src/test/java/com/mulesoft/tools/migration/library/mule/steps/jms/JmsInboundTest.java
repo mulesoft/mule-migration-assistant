@@ -60,6 +60,12 @@ public class JmsInboundTest {
         "jms-inbound-05",
         "jms-inbound-06",
         "jms-inbound-07",
+        "jms-inbound-08",
+        "jms-inbound-09",
+        "jms-inbound-10",
+        "jms-inbound-11",
+        "jms-inbound-12",
+        "jms-inbound-13",
     };
   }
 

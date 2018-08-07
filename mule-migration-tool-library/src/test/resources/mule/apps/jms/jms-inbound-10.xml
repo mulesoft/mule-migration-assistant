@@ -16,7 +16,9 @@
     </jms:config>
 
     <flow name="flow">
-        <jms:listener config-ref="jmsConnector" destination="in" transactionalAction="ALWAYS_BEGIN"/>
+        <jms:listener config-ref="jmsConnector" destination="in">
+            <reconnect frequency="1000" count="1"/>
+        </jms:listener>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
     </flow>

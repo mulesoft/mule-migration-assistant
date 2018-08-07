@@ -2,22 +2,16 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
-      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
     xsi:schemaLocation="
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
-    <jms:config name="jmsConnector">
-        <jms:active-mq-connection specification="JMS_1_0_2b">
-            <jms:caching-strategy>
-                <jms:no-caching/>
-            </jms:caching-strategy>
-        </jms:active-mq-connection>
-    </jms:config>
+    <jms:activemq-connector name="jmsConnector"/>
 
     <flow name="flow">
-        <jms:listener config-ref="jmsConnector" destination="in" transactionalAction="ALWAYS_BEGIN"/>
-        <compatibility:attributes-to-inbound-properties/>
+        <jms:inbound-endpoint address="jms://in" exchange-pattern="one-way" >
+            <jms:selector expression="JMSPriority=4"/>
+        </jms:inbound-endpoint>
         <logger/>
     </flow>
 

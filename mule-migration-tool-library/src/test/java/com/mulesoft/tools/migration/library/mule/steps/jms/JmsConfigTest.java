@@ -57,7 +57,9 @@ public class JmsConfigTest {
         "jms-config-02",
         "jms-config-03",
         "jms-config-04",
-        "jms-config-05"
+        "jms-config-05",
+        "jms-config-06",
+        "jms-config-07"
     };
   }
 

@@ -125,7 +125,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
       // jmsCfg.addContent(queues);
 
       connector.ifPresent(conn -> {
-        addConnectionToConfig(jmsCfg, conn);
+        addConnectionToConfig(jmsCfg, conn, getApplicationModel(), report);
       });
 
       addTopLevelElement(jmsCfg, connector.map(c -> c.getDocument()).orElse(object.getDocument()));
@@ -134,14 +134,22 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     });
 
     // String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
-    String destination =
-        processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> {
-          if (object.getAttributeValue("queue") != null) {
-            return object.getAttributeValue("queue");
-          } else {
-            return object.getAttributeValue("topic");
-          }
-        });
+    String destination = processAddress(object, report).map(address -> {
+      String path = address.getPath();
+      if ("topic".equals(path)) {
+        configureTopicPublisher(object);
+        return address.getPort();
+      } else {
+        return path;
+      }
+    }).orElseGet(() -> {
+      if (object.getAttributeValue("queue") != null) {
+        return object.getAttributeValue("queue");
+      } else {
+        configureTopicPublisher(object);
+        return object.getAttributeValue("topic");
+      }
+    });
     //
     // addQueue(jmsConnectorNamespace, connector, vmConfig, path);
     //
@@ -207,6 +215,10 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
 
     addAttributesToInboundProperties(object, getApplicationModel(), report);
+  }
+
+  private void configureTopicPublisher(Element object) {
+    object.setAttribute("destinationType", "TOPIC");
   }
 
 }

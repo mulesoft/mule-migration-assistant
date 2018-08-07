@@ -59,6 +59,7 @@ public class JmsOutboundTest {
         "jms-outbound-06",
         "jms-outbound-07",
         "jms-outbound-08",
+        "jms-outbound-09",
     };
   }
 

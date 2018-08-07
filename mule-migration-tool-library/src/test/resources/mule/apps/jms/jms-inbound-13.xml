@@ -16,7 +16,11 @@
     </jms:config>
 
     <flow name="flow">
-        <jms:listener config-ref="jmsConnector" destination="in" transactionalAction="ALWAYS_BEGIN"/>
+        <jms:listener config-ref="jmsConnector" destination="in">
+            <jms:consumer-type>
+                <jms:topic-consumer durable="true" subscriptionName="subscriber1"/>
+            </jms:consumer-type>
+        </jms:listener>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
     </flow>

@@ -83,13 +83,13 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
         execute(c, report);
       } else if (TLS_NAMESPACE_URI.equals(c.getNamespaceURI()) && "context".equals(c.getName())) {
         final Element requestConnection = c.getParentElement().getChild("request-connection", httpNamespace);
-        c.getParentElement().removeContent(c);
+        c.detach();
         requestConnection.addContent(c);
       } else if (TCP_NAMESPACE_URI.equals(c.getNamespaceURI()) && "client-socket-properties".equals(c.getName())) {
         final Element clientSocketPropsContainer = new Element("client-socket-properties", httpNamespace);
         final Element requestConnection = c.getParentElement().getChild("request-connection", httpNamespace);
 
-        c.getParentElement().removeContent(c);
+        c.detach();
         clientSocketPropsContainer.addContent(c);
         requestConnection.addContent(clientSocketPropsContainer);
       }
@@ -102,7 +102,7 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
       final Element authentication = new Element("authentication", httpNamespace);
       final Element requestConnection = object.getParentElement().getChild("request-connection", httpNamespace);
 
-      object.getParentElement().removeContent(object);
+      object.detach();
       authentication.addContent(object);
       requestConnection.addContent(authentication);
 
@@ -117,7 +117,7 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
       final Element proxyConfig = new Element("proxy-config", httpNamespace);
       final Element requestConnection = object.getParentElement().getChild("request-connection", httpNamespace);
 
-      object.getParentElement().removeContent(object);
+      object.detach();
       proxyConfig.addContent(object);
       requestConnection.addContent(proxyConfig);
     }
@@ -127,7 +127,7 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
                     "For consuming an API described by a RAML file, Rest-Connect is a more appropriate tool than using the HTTP Connector directly.",
                     "https://docs.mulesoft.com/anypoint-exchange/to-deploy-using-rest-connect",
                     "https://blogs.mulesoft.com/dev/anypoint-platform-dev/building-reusable-components-with-rest-connect-and-mule-4/");
-      object.getParentElement().removeContent(object);
+      object.detach();
     }
   }
 

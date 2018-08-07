@@ -9,6 +9,9 @@
 
     <jms:config name="jmsConnector">
         <jms:active-mq-connection specification="JMS_1_0_2b">
+            <jms:caching-strategy>
+                <jms:no-caching/>
+            </jms:caching-strategy>
             <jms:factory-configuration maxRedelivery="1"/>
         </jms:active-mq-connection>
     </jms:config>

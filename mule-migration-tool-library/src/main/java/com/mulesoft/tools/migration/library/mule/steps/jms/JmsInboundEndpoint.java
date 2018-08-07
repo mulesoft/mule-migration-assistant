@@ -14,6 +14,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddr
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -138,7 +139,7 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       // jmsCfg.addContent(queues);
 
       connector.ifPresent(conn -> {
-        addConnectionToConfig(jmsCfg, conn);
+        addConnectionToConfig(jmsCfg, conn, getApplicationModel(), report);
       });
 
       addTopLevelElement(jmsCfg, connector.map(c -> c.getDocument()).orElse(object.getDocument()));
@@ -146,15 +147,55 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       return jmsCfg;
     });
 
+    connector.ifPresent(m3c -> {
+      Element reconnectforever = m3c.getChild("reconnect-forever", CORE_NAMESPACE);
+      if (reconnectforever != null) {
+        object.addContent(new Element("reconnect-forever", CORE_NAMESPACE)
+            .setAttribute("frequency", reconnectforever.getAttributeValue("frequency")));
+      }
+
+      Element reconnect = m3c.getChild("reconnect", CORE_NAMESPACE);
+      if (reconnect != null) {
+        object.addContent(new Element("reconnect", CORE_NAMESPACE)
+            .setAttribute("frequency", reconnect.getAttributeValue("frequency"))
+            .setAttribute("count", reconnect.getAttributeValue("count")));
+      }
+
+      if (m3c.getAttributeValue("acknowledgementMode") != null) {
+        switch (m3c.getAttributeValue("acknowledgementMode")) {
+          case "CLIENT_ACKNOWLEDGE":
+            object.setAttribute("ackMode", "MANUAL");
+            break;
+          case "DUPS_OK_ACKNOWLEDGE":
+            object.setAttribute("ackMode", "DUPS_OK");
+            break;
+          default:
+            // AUTO is default, no need to set it
+        }
+      }
+
+      if (m3c.getAttributeValue("numberOfConsumers") != null) {
+        object.setAttribute("numberOfConsumers", m3c.getAttributeValue("numberOfConsumers"));
+      }
+    });
+
     // String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
-    String destination =
-        processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> {
-          if (object.getAttributeValue("queue") != null) {
-            return object.getAttributeValue("queue");
-          } else {
-            return object.getAttributeValue("topic");
-          }
-        });
+    String destination = processAddress(object, report).map(address -> {
+      String path = address.getPath();
+      if ("topic".equals(path)) {
+        configureTopicListener(object, jmsConnectorNamespace, connector);
+        return address.getPort();
+      } else {
+        return path;
+      }
+    }).orElseGet(() -> {
+      if (object.getAttributeValue("queue") != null) {
+        return object.getAttributeValue("queue");
+      } else {
+        configureTopicListener(object, jmsConnectorNamespace, connector);
+        return object.getAttributeValue("topic");
+      }
+    });
 
     // addQueue(vmConnectorNamespace, connector, vmConfig, path);
     //
@@ -205,6 +246,11 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       object.addContent(outboundBuilder);
     }
 
+    if (object.getChild("selector", jmsConnectorNamespace) != null) {
+      object.setAttribute("selector", object.getChild("selector", jmsConnectorNamespace).getAttributeValue("expression"));
+      object.removeChild("selector", jmsConnectorNamespace);
+    }
+
     // connector.ifPresent(m3c -> {
     // // This logic comes from JmsMessageDispatcher#dispatchMessage in Mule 3
     // if ("true".equals(m3c.getAttributeValue("honorQosHeaders"))) {
@@ -228,27 +274,9 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     object.removeAttribute("topic");
     object.removeAttribute("name");
 
+    object.removeAttribute("responseTimeout");
     // TODO
     object.removeAttribute("xaPollingTimeout");
-
-    connector.ifPresent(m3c -> {
-      if (m3c.getAttributeValue("acknowledgementMode") != null) {
-        switch (m3c.getAttributeValue("acknowledgementMode")) {
-          case "CLIENT_ACKNOWLEDGE":
-            object.setAttribute("ackMode", "MANUAL");
-            break;
-          case "DUPS_OK_ACKNOWLEDGE":
-            object.setAttribute("ackMode", "DUPS_OK");
-            break;
-          default:
-            // AUTO is default, no need to set it
-        }
-      }
-
-      if (m3c.getAttributeValue("numberOfConsumers") != null) {
-        object.setAttribute("numberOfConsumers", m3c.getAttributeValue("numberOfConsumers"));
-      }
-    });
 
     // object.removeAttribute("disableTransportTransformer");
 
@@ -266,5 +294,19 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     }
 
     addAttributesToInboundProperties(object, getApplicationModel(), report);
+  }
+
+  private void configureTopicListener(Element object, final Namespace jmsConnectorNamespace, Optional<Element> connector) {
+    Element topicConsumer = new Element("topic-consumer", jmsConnectorNamespace);
+
+    connector.ifPresent(m3c -> {
+      copyAttributeIfPresent(m3c, topicConsumer, "durable");
+      copyAttributeIfPresent(m3c, topicConsumer, "clientId", "subscriptionName");
+      m3c.removeAttribute("durable");
+      m3c.removeAttribute("subscriptionName");
+    });
+
+    object.addContent(new Element("consumer-type", jmsConnectorNamespace)
+        .addContent(topicConsumer));
   }
 }

@@ -10,7 +10,11 @@
     <jms:config name="JmsConfig"/>
 
     <flow name="flow">
-        <jms:listener config-ref="JmsConfig" destination="in"/>
+        <jms:listener config-ref="JmsConfig" destination="in">
+            <jms:consumer-type>
+                <jms:topic-consumer/>
+            </jms:consumer-type>
+        </jms:listener>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
     </flow>
