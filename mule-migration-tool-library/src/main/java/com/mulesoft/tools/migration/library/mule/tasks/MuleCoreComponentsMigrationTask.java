@@ -74,6 +74,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new TransactionalScope(),
                         new ExceptionStrategyRef(),
                         new ForEachScope(),
+                        new ScatterGather(),
                         new Flow(),
                         new Poll(),
                         new ChoiceExpressions(),
@@ -85,7 +86,6 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new CacheInvalidateKey(),
                         new CacheObjectStoreCachingStrategy(),
                         new CacheHttpCachingStrategy(),
-                        new GenericGlobalEndpoint(),
-                        new ScatterGather());
+                        new GenericGlobalEndpoint());
   }
 }
