@@ -34,6 +34,8 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
   public static final String XPATH_SELECTOR = "/mule:mule/jms:*["
       + "(local-name() = 'activemq-connector' or "
       + "local-name() = 'activemq-xa-connector' or "
+      + "local-name() = 'weblogic-connector' or "
+      + "local-name() = 'websphere-connector' or "
       + "local-name() = 'connector' or "
       + "local-name() = 'custom-connector')]";
 
@@ -77,6 +79,10 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
         connection = new Element("generic-connection", JMS_NAMESPACE);
         m4JmsConfig.addContent(connection);
         break;
+      case "websphere-connector":
+        // TODO MMT-202
+        report.report(ERROR, m3Connector, m4JmsConfig, "IBM MQ Connector should be used to connecto to an IBM MQ broker",
+                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker");
       default:
         connection = new Element("generic-connection", JMS_NAMESPACE);
         m4JmsConfig.addContent(connection);
