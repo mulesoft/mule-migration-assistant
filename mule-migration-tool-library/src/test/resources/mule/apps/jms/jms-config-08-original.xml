@@ -2,20 +2,18 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
-      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
     xsi:schemaLocation="
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
-    <jms:config name="JmsConfig"/>
+    <!-- Use JNDI ConnectionFactory but not JNDI Destinations -->
+    <jms:connector name="jmsConnector"
+                   jndiInitialFactory="org.apache.activemq.jndi.ActiveMQInitialContextFactory"
+                   jndiProviderUrl="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"
+                   connectionFactoryJndiName="ConnectionFactory"/>
 
     <flow name="flow">
-        <jms:listener config-ref="JmsConfig" destination="in" numberOfConsumers="1">
-            <jms:consumer-type>
-                <jms:topic-consumer/>
-            </jms:consumer-type>
-        </jms:listener>
-        <compatibility:attributes-to-inbound-properties/>
+        <jms:inbound-endpoint address="jms://in" exchange-pattern="one-way" />
         <logger/>
     </flow>
 

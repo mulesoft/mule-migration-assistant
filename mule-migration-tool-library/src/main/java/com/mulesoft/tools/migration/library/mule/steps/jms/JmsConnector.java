@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
@@ -86,6 +87,10 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
       connection.setAttribute("specification", "JMS_1_0_2b");
     }
 
+    copyAttributeIfPresent(m3Connector, connection, "username");
+    copyAttributeIfPresent(m3Connector, connection, "password");
+    copyAttributeIfPresent(m3Connector, connection, "clientId");
+
     if (m3Connector.getAttribute("connectionFactory-ref") != null) {
       Element connFactory =
           appModel.getNode("/mule:mule/*[@name='" + m3Connector.getAttributeValue("connectionFactory-ref") + "']");
@@ -98,10 +103,79 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
 
       connFactory.detach();
     } else {
-      // TODO default is no caching, implement other cases
       connection.addContent(0, new Element("caching-strategy", JMS_NAMESPACE)
           .addContent(new Element("no-caching", JMS_NAMESPACE)));
 
+    }
+
+    if (m3Connector.getAttribute("connectionFactoryJndiName") != null) {
+      Element jndiConnFactory = new Element("jndi-connection-factory", JMS_NAMESPACE);
+
+      copyAttributeIfPresent(m3Connector, jndiConnFactory, "connectionFactoryJndiName");
+
+      Element nameResolverBuilder = new Element("name-resolver-builder", JMS_NAMESPACE);
+      copyAttributeIfPresent(m3Connector, nameResolverBuilder, "jndiInitialFactory", "jndiInitialContextFactory");
+      copyAttributeIfPresent(m3Connector, nameResolverBuilder, "jndiProviderUrl");
+      copyAttributeIfPresent(m3Connector, nameResolverBuilder, "jndiProviderUrl");
+      processProviderProperties(m3Connector, appModel, nameResolverBuilder);
+
+      Element m3defaultJndiNameResolver = m3Connector.getChild("default-jndi-name-resolver", JMS_NAMESPACE);
+      if (m3defaultJndiNameResolver != null) {
+        copyAttributeIfPresent(m3defaultJndiNameResolver, nameResolverBuilder, "jndiInitialFactory", "jndiInitialContextFactory");
+        copyAttributeIfPresent(m3defaultJndiNameResolver, nameResolverBuilder, "jndiProviderUrl");
+        processProviderProperties(m3defaultJndiNameResolver, appModel, nameResolverBuilder);
+      }
+
+      Element m3customJndiNameResolver = m3Connector.getChild("custom-jndi-name-resolver", JMS_NAMESPACE);
+      if (m3customJndiNameResolver != null) {
+        copyAttributeIfPresent(m3customJndiNameResolver.getChildren().stream()
+            .filter(p -> "jndiInitialFactory".equals(p.getAttributeValue("key"))).findFirst().get(), nameResolverBuilder, "value",
+                               "jndiInitialContextFactory");
+        copyAttributeIfPresent(m3customJndiNameResolver.getChildren().stream()
+            .filter(p -> "jndiProviderUrl".equals(p.getAttributeValue("key"))).findFirst().get(), nameResolverBuilder, "value",
+                               "jndiProviderUrl");
+
+        m3customJndiNameResolver.getChildren("property", CORE_NAMESPACE)
+            .forEach(prop -> {
+              if ("jndiProviderProperties".equals(prop.getAttributeValue("key"))) {
+                processProviderPropertiesRef(prop.getAttributeValue("value-ref"), appModel, nameResolverBuilder);
+              }
+            });
+      }
+
+      if ("true".equals(m3Connector.getAttributeValue("jndiDestinations"))) {
+        if ("true".equals(m3Connector.getAttributeValue("forceJndiDestinations"))) {
+          jndiConnFactory.setAttribute("lookupDestination", "ALWAYS");
+        } else {
+          jndiConnFactory.setAttribute("lookupDestination", "TRY_ALWAYS");
+        }
+      }
+
+
+      jndiConnFactory.addContent(nameResolverBuilder);
+
+      Element connFactory = new Element("connection-factory", JMS_NAMESPACE).addContent(jndiConnFactory);
+
+      connection.addContent(connFactory);
+    }
+  }
+
+  private static void processProviderProperties(final Element m3Connector, ApplicationModel appModel,
+                                                Element nameResolverBuilder) {
+    processProviderPropertiesRef(m3Connector.getAttributeValue("jndiProviderProperties-ref"), appModel, nameResolverBuilder);
+  }
+
+  private static void processProviderPropertiesRef(String jndiProviderPropertiesRef, ApplicationModel appModel,
+                                                   Element nameResolverBuilder) {
+    if (jndiProviderPropertiesRef != null) {
+      Element providerProperties = new Element("provider-properties", JMS_NAMESPACE);
+      nameResolverBuilder.addContent(providerProperties);
+
+      appModel.getNodes("//*[@id='" + jndiProviderPropertiesRef + "']/spring:prop").forEach(prop -> {
+        providerProperties.addContent(new Element("provider-property", JMS_NAMESPACE)
+            .setAttribute("key", prop.getAttributeValue("key"))
+            .setAttribute("value", prop.getTextTrim()));
+      });
     }
   }
 

@@ -301,10 +301,10 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
 
     connector.ifPresent(m3c -> {
       copyAttributeIfPresent(m3c, topicConsumer, "durable");
-      copyAttributeIfPresent(m3c, topicConsumer, "clientId", "subscriptionName");
       m3c.removeAttribute("durable");
       m3c.removeAttribute("subscriptionName");
     });
+    object.setAttribute("numberOfConsumers", "1");
 
     object.addContent(new Element("consumer-type", jmsConnectorNamespace)
         .addContent(topicConsumer));

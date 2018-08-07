@@ -8,19 +8,21 @@
                http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
     <jms:config name="jmsConnector">
-        <jms:active-mq-connection specification="JMS_1_0_2b" clientId="subscriber1">
+        <jms:generic-connection specification="JMS_1_0_2b">
             <jms:caching-strategy>
-                <jms:no-caching/>
+                <jms:no-caching />
             </jms:caching-strategy>
-        </jms:active-mq-connection>
+            <jms:connection-factory>
+                <jms:jndi-connection-factory connectionFactoryJndiName="ConnectionFactory">
+                    <jms:name-resolver-builder jndiInitialContextFactory="org.apache.activemq.jndi.ActiveMQInitialContextFactory"
+                                               jndiProviderUrl="vm://localhost?broker.persistent=false&amp;broker.useJmx=false" />
+                </jms:jndi-connection-factory>
+            </jms:connection-factory>
+        </jms:generic-connection>
     </jms:config>
 
     <flow name="flow">
-        <jms:listener config-ref="jmsConnector" destination="in" numberOfConsumers="1">
-            <jms:consumer-type>
-                <jms:topic-consumer durable="true"/>
-            </jms:consumer-type>
-        </jms:listener>
+        <jms:listener config-ref="jmsConnector" destination="in"/>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
     </flow>
