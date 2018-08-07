@@ -22,6 +22,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.ForEachScope;
 import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.core.Poll;
 import com.mulesoft.tools.migration.library.mule.steps.core.RollbackExceptionStrategy;
+import com.mulesoft.tools.migration.library.mule.steps.core.ScatterGather;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetPayload;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetVariable;
 import com.mulesoft.tools.migration.library.mule.steps.core.TransactionalScope;
@@ -84,6 +85,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new CacheInvalidateKey(),
                         new CacheObjectStoreCachingStrategy(),
                         new CacheHttpCachingStrategy(),
-                        new GenericGlobalEndpoint());
+                        new GenericGlobalEndpoint(),
+                        new ScatterGather());
   }
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <flow name="scatterFlow">
+        <scatter-gather timeout="2">
+            <route>
+                <logger level="INFO" message="#['before chain']" />
+            </route>
+            <route>
+                <logger level="INFO" message="#[payload]"/>
+                <logger level="INFO" />
+            </route>
+            <route>
+                <logger level="INFO" message="#['after chain']"/>
+            </route>
+        </scatter-gather>
+    </flow>
+</mule>
