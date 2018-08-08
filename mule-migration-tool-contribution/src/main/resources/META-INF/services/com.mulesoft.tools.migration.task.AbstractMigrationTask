@@ -1,2 +1,3 @@
 # Contributed tasks here
 com.mulesoft.tools.migration.apikit.tasks.ApikitMigrationTask
+com.mulesoft.tools.migration.soapkit.tasks.SoapkitMigrationTask
