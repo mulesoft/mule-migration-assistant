@@ -170,8 +170,7 @@
                         <execution>
                             <phase>verify</phase>
                             <goals>
-                                <goal>check</goal>
-                                <goal>checkstyle-aggregate</goal>
+                                <goal>check</goal>                                
                             </goals>
                         </execution>
                     </executions>
