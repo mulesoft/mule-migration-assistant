@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-current.xsd">
+
+    <spring:beans>
+        <util:properties id="providerProperties">
+            <spring:prop key="queue.jndi-queue-in">in.queue</spring:prop>
+            <spring:prop key="topic.jndi-topic-in">in.topic</spring:prop>
+        </util:properties>
+    </spring:beans>
+    
+    <!-- Use JNDI ConnectionFactory and optional JNDI Destinations -->
+    <jms:activemq-connector name="jmsConnector"
+                            jndiInitialFactory="org.apache.activemq.jndi.ActiveMQInitialContextFactory"
+                            jndiProviderUrl="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"
+                            jndiProviderProperties-ref="providerProperties"
+                            jndiDestinations="true"
+                            connectionFactoryJndiName="ConnectionFactory"/>
+
+    <flow name="flow">
+        <jms:inbound-endpoint address="jms://in" exchange-pattern="one-way" />
+        <logger/>
+    </flow>
+
+</mule>

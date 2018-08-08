@@ -69,7 +69,7 @@ public final class TransportsUtils {
 
       endpoint.removeAttribute("address");
 
-      if ("file".equals(protocol) || "vm".equals(protocol)) {
+      if ("file".equals(protocol) || "jms".equals(protocol) || "vm".equals(protocol)) {
         // Ref: https://stackoverflow.com/questions/7857416/file-uri-scheme-and-relative-files
         return of(new EndpointAddress(protocol, credentials, null, port, host + (path != null ? path : "")));
       } else {
@@ -138,6 +138,7 @@ public final class TransportsUtils {
   public static void migrateInboundEndpointStructure(ApplicationModel appModel, Element inboundEndpoint, MigrationReport report,
                                                      boolean expectsOutboundProperties, boolean consumeStreams) {
     inboundEndpoint.removeAttribute("exchange-pattern");
+    inboundEndpoint.removeAttribute("disableTransportTransformer");
     extractInboundChildren(inboundEndpoint, appModel);
     migrateSourceStructure(appModel, inboundEndpoint, report, expectsOutboundProperties, consumeStreams);
   }
@@ -185,12 +186,13 @@ public final class TransportsUtils {
       }
     }
     outboundEndpoint.removeAttribute("exchange-pattern");
+    outboundEndpoint.removeAttribute("disableTransportTransformer");
     extractOutboundChildren(outboundEndpoint, appModel);
     migrateOperationStructure(appModel, outboundEndpoint, report, outputsAttributes, null, null, consumeStreams);
   }
 
   public static void extractInboundChildren(Element inbound, ApplicationModel appModel) {
-    inbound.getParentElement().addContent(2, fetchContent(inbound));
+    inbound.getParentElement().addContent(2, fetchContent(inbound, appModel));
 
     // may be a try scope too
     Element flow = inbound.getParentElement();
@@ -205,12 +207,12 @@ public final class TransportsUtils {
   }
 
   public static void extractOutboundChildren(Element outbound, ApplicationModel appModel) {
-    outbound.getParentElement().addContent(outbound.getParentElement().indexOf(outbound), fetchContent(outbound));
+    outbound.getParentElement().addContent(outbound.getParentElement().indexOf(outbound), fetchContent(outbound, appModel));
     outbound.getParentElement().addContent(outbound.getParentElement().indexOf(outbound) + 1,
                                            fetchResponseContent(outbound, appModel));
   }
 
-  private static List<Content> fetchContent(Element outbound) {
+  private static List<Content> fetchContent(Element outbound, ApplicationModel appModel) {
     List<Content> content = new ArrayList<>();
     if (outbound.getChild("properties", CORE_NAMESPACE) != null) {
       for (Element element : outbound.getChild("properties", CORE_NAMESPACE).getChildren()) {
@@ -222,6 +224,22 @@ public final class TransportsUtils {
         }
       }
       outbound.getChild("properties", CORE_NAMESPACE).detach();
+    }
+
+    if (outbound.getAttribute("transformer-refs") != null) {
+      String[] transformerNames = outbound.getAttributeValue("transformer-refs").split(",");
+
+      for (String transformerName : transformerNames) {
+        Element transformer = appModel.getNode("/mule:mule/*[@name = '" + transformerName + "']");
+        if ("message-properties-transformer".equals(transformer.getName())) {
+          Element clonedMpt = transformer.clone();
+          clonedMpt.removeAttribute("name");
+          content.add(clonedMpt);
+        } else {
+          content.add(new Element("transformer", CORE_NAMESPACE).setAttribute("ref", transformerName));
+        }
+      }
+      outbound.removeAttribute("transformer-refs");
     }
 
     outbound.getChildren().stream()

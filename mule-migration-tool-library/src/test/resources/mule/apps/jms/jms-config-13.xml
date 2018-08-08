@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:util="http://www.springframework.org/schema/util"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+    xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-current.xsd">
+
+    <spring:beans>
+        <util:properties id="providerProperties">
+            <spring:prop key="queue.jndi-queue-in">in.queue</spring:prop>
+            <spring:prop key="topic.jndi-topic-in">in.topic</spring:prop>
+        </util:properties>
+    </spring:beans>
+
+    <jms:config name="jmsConnector">
+        <jms:active-mq-connection specification="JMS_1_0_2b">
+            <jms:caching-strategy>
+                <jms:no-caching />
+            </jms:caching-strategy>
+            <jms:connection-factory>
+                <jms:jndi-connection-factory connectionFactoryJndiName="ConnectionFactory" lookupDestination="ALWAYS">
+                    <jms:name-resolver-builder jndiInitialContextFactory="org.apache.activemq.jndi.ActiveMQInitialContextFactory" jndiProviderUrl="vm://localhost?broker.persistent=false&amp;broker.useJmx=false">
+                        <jms:provider-properties>
+                            <jms:provider-property key="queue.jndi-queue-in" value="in.queue"/>
+                            <jms:provider-property key="topic.jndi-topic-in" value="in.topic"/>
+                        </jms:provider-properties>
+                    </jms:name-resolver-builder>
+                </jms:jndi-connection-factory>
+            </jms:connection-factory>
+        </jms:active-mq-connection>
+    </jms:config>
+
+    <flow name="flow">
+        <jms:listener config-ref="jmsConnector" destination="in"/>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger/>
+    </flow>
+
+</mule>

@@ -4,9 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps.file;
-
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -16,25 +14,26 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
 
 /**
- * Migrates the transformers of the file transport
+ * Migrates the transformers of the jms transport
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class FileTransformers extends AbstractApplicationModelMigrationStep
+public class JmsTransformers extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
   public static final String XPATH_SELECTOR =
-      "//file:*[local-name()='file-to-string-transformer' or local-name()='file-to-byte-array-transformer']";
+      "//jms:*[local-name()='jmsmessage-to-object-transformer' or "
+          + "local-name()='object-to-jmsmessage-transformer']";
 
   private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
-    return "Update File transformers.";
+    return "Remove JMS tranformers.";
   }
 
-  public FileTransformers() {
+  public JmsTransformers() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
@@ -44,12 +43,6 @@ public class FileTransformers extends AbstractApplicationModelMigrationStep
       getApplicationModel().getNodes("//mule:transformer[@ref = '" + object.getAttributeValue("name") + "']")
           .forEach(t -> t.detach());
     }
-
-    report.report(WARN, object, object.getParentElement(),
-                  "'" + object.getName()
-                      + "' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about");
-
     object.detach();
   }
 
