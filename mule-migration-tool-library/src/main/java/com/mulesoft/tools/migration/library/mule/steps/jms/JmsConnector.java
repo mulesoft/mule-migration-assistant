@@ -207,9 +207,6 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
       amqConnection.addContent(factoryConfiguration);
     }
 
-    // TODO:
-    // disableTemporaryDestinations -> JmsMessageDispatcher.469
-    // jms/integration/activemq-config.xml
     return amqConnection;
   }
 }

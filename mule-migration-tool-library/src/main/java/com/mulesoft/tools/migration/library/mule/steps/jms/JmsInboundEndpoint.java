@@ -83,11 +83,6 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     while (tx != null) {
       String txAction = mapTransactionalAction(tx.getAttributeValue("action"), report, tx, object);
       object.setAttribute("transactionalAction", txAction);
-      // if (!"NONE".equals(txAction)) {
-      // if (object.getChild("redelivery-policy", CORE_NAMESPACE) == null) {
-      // object.addContent(new Element("redelivery-policy", CORE_NAMESPACE));
-      // }
-      // }
       object.removeChild("transaction", JMS_NAMESPACE);
       tx = object.getChild("transaction", JMS_NAMESPACE);
     }
@@ -96,16 +91,6 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       String txAction = mapTransactionalAction(xaTx.getAttributeValue("action"), report, xaTx, object);
       object.setAttribute("transactionalAction", txAction);
       object.setAttribute("transactionType", "XA");
-      // if (!"NONE".equals(txAction)) {
-      // if (object.getChild("redelivery-policy", CORE_NAMESPACE) == null) {
-      // object.addContent(new Element("redelivery-policy", CORE_NAMESPACE));
-      // }
-      // }
-      //
-      // if ("true".equals(xaTx.getAttributeValue("interactWithExternal"))) {
-      // report.report(ERROR, xaTx, object, "Mule 4 does not support joining with external transactions.");
-      // }
-      //
       object.removeChild("xa-transaction", CORE_NAMESPACE);
     }
 
@@ -135,8 +120,6 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     Element jmsConfig = config.orElseGet(() -> {
       final Element jmsCfg = new Element("config", jmsConnectorNamespace);
       jmsCfg.setAttribute("name", configName);
-      // Element queues = new Element("queues", jmsConnectorNamespace);
-      // jmsCfg.addContent(queues);
 
       connector.ifPresent(conn -> {
         addConnectionToConfig(jmsCfg, conn, getApplicationModel(), report);
@@ -179,7 +162,6 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       }
     });
 
-    // String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
     String destination = processAddress(object, report).map(address -> {
       String path = address.getPath();
       if ("topic".equals(path)) {
@@ -196,38 +178,6 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
         return object.getAttributeValue("topic");
       }
     });
-
-    // addQueue(vmConnectorNamespace, connector, vmConfig, path);
-    //
-    // connector.ifPresent(conn -> {
-    // Integer consumers = null;
-    // if (conn.getAttribute("numberOfConcurrentTransactedReceivers") != null) {
-    // consumers = parseInt(conn.getAttributeValue("numberOfConcurrentTransactedReceivers"));
-    // } else if (conn.getChild("receiver-threading-profile", CORE_NAMESPACE) != null
-    // && conn.getChild("receiver-threading-profile", CORE_NAMESPACE).getAttribute("maxThreadsActive") != null) {
-    // consumers = parseInt(conn.getChild("receiver-threading-profile", CORE_NAMESPACE).getAttributeValue("maxThreadsActive"));
-    // }
-    //
-    // if (consumers != null) {
-    // getFlow(object).setAttribute("maxConcurrency", "" + consumers);
-    // object.setAttribute("numberOfConsumers", "" + consumers);
-    // }
-    // });
-    //
-    // if (object.getAttribute("mimeType") != null) {
-    // Element setMimeType =
-    // new Element("set-payload", CORE_NAMESPACE)
-    // .setAttribute("value", "#[output " + object.getAttributeValue("mimeType") + " --- payload]");
-    //
-    // addElementAfter(setMimeType, object);
-    // object.removeAttribute("mimeType");
-    // }
-    //
-    // if (object.getAttribute("responseTimeout") != null) {
-    // object.setAttribute("timeout", object.getAttributeValue("responseTimeout"));
-    // object.setAttribute("timeoutUnit", "MILLISECONDS");
-    // object.removeAttribute("responseTimeout");
-    // }
 
     if (object.getAttribute("exchange-pattern") == null
         || object.getAttributeValue("exchange-pattern").equals("request-response")) {
@@ -251,21 +201,6 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       object.removeChild("selector", jmsConnectorNamespace);
     }
 
-    // connector.ifPresent(m3c -> {
-    // // This logic comes from JmsMessageDispatcher#dispatchMessage in Mule 3
-    // if ("true".equals(m3c.getAttributeValue("honorQosHeaders"))) {
-    // report.report(WARN, m3c, object,
-    // "Store the attributes of the source in a variable instead of using the inbound properties",
-    // "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes",
-    // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#sending-messages");
-    // String defaultDeliveryMode = "true".equals(m3c.getAttributeValue("persistentDelivery")) ? "2" : "1";
-    //
-    // object.setAttribute("persistentDelivery",
-    // "#[(vars.compatibility_inboundProperties.JMSDeliveryMode default " + defaultDeliveryMode + ") == 2]");
-    // object.setAttribute("priority", "#[vars.compatibility_inboundProperties.JMSPriority default 4]");
-    // }
-    // });
-
     object.setAttribute("config-ref", configName);
     if (destination != null) {
       object.setAttribute("destination", destination);
@@ -277,14 +212,6 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     object.removeAttribute("responseTimeout");
     // TODO
     object.removeAttribute("xaPollingTimeout");
-
-    // object.removeAttribute("disableTransportTransformer");
-
-    // Element content = buildContent(jmsConnectorNamespace);
-    // object.addContent(new Element("response", jmsConnectorNamespace).addContent(content));
-    // report.report(WARN, content, content,
-    // "You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.",
-    // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
 
     if (object.getAttribute("exchange-pattern") == null
         || object.getAttributeValue("exchange-pattern").equals("request-response")) {

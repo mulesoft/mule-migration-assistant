@@ -121,8 +121,6 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     Element jmsConfig = config.orElseGet(() -> {
       Element jmsCfg = new Element("config", jmsConnectorNamespace);
       jmsCfg.setAttribute("name", configName);
-      // Element queues = new Element("queues", jmsConnectorNamespace);
-      // jmsCfg.addContent(queues);
 
       connector.ifPresent(conn -> {
         addConnectionToConfig(jmsCfg, conn, getApplicationModel(), report);
@@ -133,7 +131,6 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
       return jmsCfg;
     });
 
-    // String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
     String destination = processAddress(object, report).map(address -> {
       String path = address.getPath();
       if ("topic".equals(path)) {
@@ -150,14 +147,6 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
         return object.getAttributeValue("topic");
       }
     });
-    //
-    // addQueue(jmsConnectorNamespace, connector, vmConfig, path);
-    //
-    // if (object.getAttribute("responseTimeout") != null) {
-    // object.setAttribute("timeout", object.getAttributeValue("responseTimeout"));
-    // object.setAttribute("timeoutUnit", "MILLISECONDS");
-    // object.removeAttribute("responseTimeout");
-    // }
 
     report.report(WARN, object, object, "Avoid using properties to set the JMS properties and headers",
                   "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#SendingMessages");
@@ -201,15 +190,6 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     object.removeAttribute("queue");
     object.removeAttribute("topic");
     object.removeAttribute("name");
-
-    // object.removeAttribute("mimeType");
-    // object.removeAttribute("disableTransportTransformer");
-
-    // Element content = buildContent(jmsConnectorNamespace);
-    // object.addContent(content);
-    // report.report(WARN, content, content,
-    // "You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.",
-    // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
 
     object.removeAttribute("exchange-pattern");
     migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
