@@ -6,7 +6,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     <http:listener-config name="httpListenerConfig" host="0.0.0.0" port="${httpPort}"/>
     <apikit:config name="api-config" raml="api.raml" consoleEnabled="false">
         <apikit:flow-mapping resource="/resource" action="post" flow-ref="post-resource"/>
-        <apikit:flow-mapping resource="/resource/{id}" action="get" contentType="application/json" flow-ref="get-specific-resource"/>
+        <apikit:flow-mapping resource="/resource/{id}" action="get" content-type="application/json" flow-ref="get-specific-resource"/>
     </apikit:config>
     <flow name="api-main">
         <http:listener config-ref="httpListenerConfig" path="/api/*"/>
