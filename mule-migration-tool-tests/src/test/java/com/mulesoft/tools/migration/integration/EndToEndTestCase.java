@@ -6,23 +6,23 @@
  */
 package com.mulesoft.tools.migration.integration;
 
+import com.mulesoft.mule.distributions.server.AbstractEeAppControl;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
+import org.mule.runtime.module.artifact.api.descriptor.BundleDescriptor;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.System.getProperty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.junit.Assert.fail;
 import static org.mule.runtime.deployment.model.api.application.ApplicationDescriptor.MULE_APPLICATION_CLASSIFIER;
 import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArtifact;
-
-import org.mule.runtime.module.artifact.api.descriptor.BundleDescriptor;
-
-import com.mulesoft.mule.distributions.server.AbstractEeAppControl;
-
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
 
 /**
  * Tests the whole migration process, starting with a Mule 3 source config, migrating it to Mule 4, packaging and deploying it to
@@ -34,6 +34,8 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
 
   private static final String ONLY_MIGRATE = getProperty("mule.test.migratorOnly");
 
+  private static final boolean DEBUG_RUNNER = Boolean.getBoolean("mule.test.debugRunner");
+
   @Rule
   public TemporaryFolder migrationResult = new TemporaryFolder();
 
@@ -44,10 +46,8 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     String outPutPath = migrationResult.getRoot().toPath().resolve(appName).toAbsolutePath().toString();
 
     // Run migration tool
-    ProcessBuilder pb = new ProcessBuilder("java", "-jar", getProperty("migrator.runner"),
-                                           "-projectBasePath", projectBasePath,
-                                           "-destinationProjectBasePath", outPutPath,
-                                           "-muleVersion", getProperty("mule.version"));
+    final List<String> command = buildRunnerCommand(projectBasePath, outPutPath);
+    ProcessBuilder pb = new ProcessBuilder(command);
 
     pb.redirectErrorStream(true);
     Process p = pb.start();
@@ -83,6 +83,25 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
         getMule().undeployAll();
       }
     }
+  }
+
+  private List<String> buildRunnerCommand(String projectBasePath, String outPutPath) {
+    final List<String> command = new ArrayList<>();
+    command.add("java");
+
+    if (DEBUG_RUNNER)
+      command.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
+
+    command.add("-jar");
+    command.add(getProperty("migrator.runner"));
+    command.add("-projectBasePath");
+    command.add(projectBasePath);
+    command.add("-destinationProjectBasePath");
+    command.add(outPutPath);
+    command.add("-muleVersion");
+    command.add(getProperty("mule.version"));
+
+    return command;
   }
 
   @Override

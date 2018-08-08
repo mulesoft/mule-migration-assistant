@@ -18,5 +18,10 @@
 
     <dependencies>
         <!-- CONTRIBUTIONS SHOULD BE ADDED HERE -->
+        <dependency>
+            <groupId>com.mulesoft.tools</groupId>
+            <artifactId>mule-migration-tool-apikit</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>
