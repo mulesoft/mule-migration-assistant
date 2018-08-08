@@ -193,6 +193,12 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#ListeningForNewMessages",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#RespondingToIncommingMessages");
 
+      connector.ifPresent(m3c -> {
+        if (m3c.getAttributeValue("persistentDelivery") != null) {
+          outboundBuilder.setAttribute("persistentDelivery", m3c.getAttributeValue("persistentDelivery"));
+        }
+      });
+
       object.addContent(outboundBuilder);
     }
 

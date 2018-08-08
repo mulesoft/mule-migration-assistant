@@ -21,6 +21,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoin
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.OutboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.io.IOUtils;
@@ -99,15 +100,13 @@ public class JmsOutboundTest {
           }
         });
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+    when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
 
     MelToDwExpressionMigrator expressionMigrator =
         new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class));
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
-
-    // vmGlobalEndpoint = new VmGlobalEndpoint();
-    // vmGlobalEndpoint.setApplicationModel(appModel);
 
     jmsOutboundEndpoint = new JmsOutboundEndpoint();
     jmsOutboundEndpoint.setApplicationModel(appModel);
@@ -123,8 +122,6 @@ public class JmsOutboundTest {
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, vmGlobalEndpoint.getAppliedTo().getExpression())
-    // .forEach(node -> vmGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, jmsOutboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> jmsOutboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, outboundEndpoint.getAppliedTo().getExpression())

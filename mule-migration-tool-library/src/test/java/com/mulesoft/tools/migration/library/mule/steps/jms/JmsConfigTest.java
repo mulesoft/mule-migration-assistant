@@ -21,8 +21,10 @@ import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoin
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.endpoint.OutboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.io.IOUtils;
@@ -66,6 +68,7 @@ public class JmsConfigTest {
         "jms-config-11",
         "jms-config-12",
         "jms-config-13",
+        "jms-config-14"
     };
   }
 
@@ -81,9 +84,10 @@ public class JmsConfigTest {
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
   private CustomFilter customFilter;
-  // private VmGlobalEndpoint jmsGlobalEndpoint;
   private JmsInboundEndpoint jmsInboundEndpoint;
   private InboundEndpoint inboundEndpoint;
+  private JmsOutboundEndpoint jmsOutboundEndpoint;
+  private OutboundEndpoint outboundEndpoint;
   private JmsConnector jmsConfig;
   private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
 
@@ -112,18 +116,23 @@ public class JmsConfigTest {
           }
         });
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+    when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
 
-    // vmGlobalEndpoint = new VmGlobalEndpoint();
-    // vmGlobalEndpoint.setApplicationModel(appModel);
     jmsInboundEndpoint = new JmsInboundEndpoint();
     jmsInboundEndpoint.setExpressionMigrator(expressionMigrator);
     jmsInboundEndpoint.setApplicationModel(appModel);
     inboundEndpoint = new InboundEndpoint();
     inboundEndpoint.setExpressionMigrator(expressionMigrator);
     inboundEndpoint.setApplicationModel(appModel);
+    jmsOutboundEndpoint = new JmsOutboundEndpoint();
+    jmsOutboundEndpoint.setExpressionMigrator(expressionMigrator);
+    jmsOutboundEndpoint.setApplicationModel(appModel);
+    outboundEndpoint = new OutboundEndpoint();
+    outboundEndpoint.setExpressionMigrator(expressionMigrator);
+    outboundEndpoint.setApplicationModel(appModel);
     jmsConfig = new JmsConnector();
     jmsConfig.setApplicationModel(appModel);
     removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
@@ -135,12 +144,14 @@ public class JmsConfigTest {
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
         .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, vmGlobalEndpoint.getAppliedTo().getExpression())
-    // .forEach(node -> vmGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, jmsInboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> jmsInboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, jmsOutboundEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> jmsOutboundEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, outboundEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> outboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, jmsConfig.getAppliedTo().getExpression())
         .forEach(node -> jmsConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())

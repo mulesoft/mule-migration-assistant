@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICA
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
+import com.mulesoft.tools.migration.library.mule.steps.jms.BtiXaCachingConnectionFactory;
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector;
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnectorPomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsGlobalEndpoint;
@@ -56,6 +57,6 @@ public class JmsMigrationTask extends AbstractMigrationTask {
     return newArrayList(new JmsConnectorPomContribution(),
                         new JmsGlobalEndpoint(), new JmsInboundEndpoint(), new JmsOutboundEndpoint(),
                         new JmsTransformers(),
-                        new JmsConnector());
+                        new JmsConnector(), new BtiXaCachingConnectionFactory());
   }
 }

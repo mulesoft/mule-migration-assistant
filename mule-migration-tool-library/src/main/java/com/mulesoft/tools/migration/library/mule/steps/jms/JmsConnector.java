@@ -7,12 +7,15 @@
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.addSharedLibs;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.Dependency;
+import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -59,10 +62,10 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
     Element connection;
     switch (m3Connector.getName()) {
       case "activemq-connector":
-        connection = addActiveMqConnection(m4JmsConfig, m3Connector);
+        connection = addActiveMqConnection(m4JmsConfig, m3Connector, appModel);
         break;
       case "activemq-xa-connector":
-        connection = addActiveMqConnection(m4JmsConfig, m3Connector);
+        connection = addActiveMqConnection(m4JmsConfig, m3Connector, appModel);
 
         Element factoryConfig = connection.getChild("factory-configuration", JMS_NAMESPACE);
         if (factoryConfig == null) {
@@ -79,10 +82,21 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
         connection = new Element("generic-connection", JMS_NAMESPACE);
         m4JmsConfig.addContent(connection);
         break;
+      case "weblogic-connector":
+        report.report(ERROR, m3Connector, m4JmsConfig, "Add the client library of the Weblogic MQ as a shared library.",
+                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker");
+
+        connection = new Element("generic-connection", JMS_NAMESPACE);
+        m4JmsConfig.addContent(connection);
+        break;
       case "websphere-connector":
         // TODO MMT-202
-        report.report(ERROR, m3Connector, m4JmsConfig, "IBM MQ Connector should be used to connecto to an IBM MQ broker",
+        report.report(ERROR, m3Connector, m4JmsConfig, "IBM MQ Connector should be used to connecto to an IBM MQ broker.",
                       "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker");
+
+        connection = new Element("generic-connection", JMS_NAMESPACE);
+        m4JmsConfig.addContent(connection);
+        break;
       default:
         connection = new Element("generic-connection", JMS_NAMESPACE);
         m4JmsConfig.addContent(connection);
@@ -185,7 +199,15 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
     }
   }
 
-  private static Element addActiveMqConnection(final Element m4JmsConfig, final Element m3Connector) {
+  private static Element addActiveMqConnection(final Element m4JmsConfig, final Element m3Connector, ApplicationModel appModel) {
+    Dependency activeMqClient = new DependencyBuilder()
+        .withGroupId("org.apache.activemq")
+        .withArtifactId("activemq-client")
+        .withVersion("${activeMq.version}")
+        .build();
+
+    addSharedLibs(appModel.getPomModel().get(), activeMqClient);
+
     Element amqConnection = new Element("active-mq-connection", JMS_NAMESPACE);
     m4JmsConfig.addContent(amqConnection);
 

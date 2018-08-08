@@ -163,6 +163,10 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     object.addContent(outboundBuilder);
 
     connector.ifPresent(m3c -> {
+      if (m3c.getAttributeValue("persistentDelivery") != null) {
+        object.setAttribute("persistentDelivery", m3c.getAttributeValue("persistentDelivery"));
+      }
+
       // This logic comes from JmsMessageDispatcher#dispatchMessage in Mule 3
       if ("true".equals(m3c.getAttributeValue("honorQosHeaders"))) {
         report.report(WARN, m3c, object,

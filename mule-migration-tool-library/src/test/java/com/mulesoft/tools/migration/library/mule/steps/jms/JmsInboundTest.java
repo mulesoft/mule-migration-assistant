@@ -23,6 +23,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.io.IOUtils;
@@ -65,7 +66,7 @@ public class JmsInboundTest {
         "jms-inbound-10",
         "jms-inbound-11",
         "jms-inbound-12",
-        "jms-inbound-13",
+        "jms-inbound-13"
     };
   }
 
@@ -81,7 +82,6 @@ public class JmsInboundTest {
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
   private CustomFilter customFilter;
-  // private VmGlobalEndpoint jmsGlobalEndpoint;
   private JmsInboundEndpoint jmsInboundEndpoint;
   private InboundEndpoint inboundEndpoint;
   private JmsConnector jmsConfig;
@@ -112,12 +112,11 @@ public class JmsInboundTest {
           }
         });
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+    when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
 
-    // vmGlobalEndpoint = new VmGlobalEndpoint();
-    // vmGlobalEndpoint.setApplicationModel(appModel);
     jmsInboundEndpoint = new JmsInboundEndpoint();
     jmsInboundEndpoint.setExpressionMigrator(expressionMigrator);
     jmsInboundEndpoint.setApplicationModel(appModel);
@@ -135,8 +134,6 @@ public class JmsInboundTest {
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
         .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, vmGlobalEndpoint.getAppliedTo().getExpression())
-    // .forEach(node -> vmGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, jmsInboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> jmsInboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
