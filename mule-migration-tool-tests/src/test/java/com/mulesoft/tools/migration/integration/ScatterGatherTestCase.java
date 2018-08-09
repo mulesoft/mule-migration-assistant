@@ -16,7 +16,8 @@ public class ScatterGatherTestCase extends EndToEndTestCase {
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "scatter-gather-01"
+        "scatter-gather-01",
+        "scatter-gather-02"
 
     };
   }
