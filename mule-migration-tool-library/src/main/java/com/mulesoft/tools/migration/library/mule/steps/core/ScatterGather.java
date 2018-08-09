@@ -29,7 +29,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILI
  */
 public class ScatterGather extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//mule:scatter-gather";
+  public static final String XPATH_SELECTOR = "//mule:*[local-name()='scatter-gather' or local-name()='all']";
 
   @Override
   public String getDescription() {
@@ -42,6 +42,11 @@ public class ScatterGather extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
+
+    if (element.getName().equals("all")) {
+      element.setName("scatter-gather");
+    }
+
     List<Element> childs = new ArrayList<>(element.getChildren());
     childs.forEach(c -> {
       if (c.getName().equals("processor-chain")) {

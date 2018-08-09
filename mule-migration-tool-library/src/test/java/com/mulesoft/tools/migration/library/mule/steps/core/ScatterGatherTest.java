@@ -41,7 +41,9 @@ public class ScatterGatherTest {
     return new Object[] {
         "scatter-gather-01",
         "scatter-gather-02",
-        "scatter-gather-03"
+        "scatter-gather-03",
+        "all-01",
+        "all-02"
     };
   }
 
