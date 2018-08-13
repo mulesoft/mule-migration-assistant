@@ -6,49 +6,37 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 
 /**
- * Migrate flow definitions
+ * Migrate sub-flow definitions
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class Flow extends AbstractApplicationModelMigrationStep {
+public class SubFlow extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow";
+  public static final String XPATH_SELECTOR = "/*/mule:sub-flow";
 
   @Override
   public String getDescription() {
-    return "Migrate flow definitions";
+    return "Migrate sub-flow definitions";
   }
 
-  public Flow() {
+  public SubFlow() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     element.setAttribute("name", element.getAttributeValue("name")
-        .replaceAll("/", "\\\\")
+        .replaceAll("\\/", "\\\\")
         .replaceAll("\\[|\\{", "(")
         .replaceAll("\\]|\\}", ")")
         .replaceAll("#", "_"));
-
-    if (element.getAttribute("processingStrategy") != null) {
-      if ("synchronous".equals(element.getAttributeValue("processingStrategy"))) {
-        element.setAttribute("maxConcurrency", "1");
-      }
-
-      element.removeAttribute("processingStrategy");
-      report.report(WARN, element, element, "'flow' no longer has a 'processingStrategy' attribute.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core");
-    }
   }
 
 
