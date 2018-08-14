@@ -57,7 +57,7 @@
                     <forkCount>${e2e.tests.forkCount}</forkCount>
                     <reuseForks>true</reuseForks>
                     <systemPropertyVariables>
-                        <migrator.runner>${com.mulesoft.tools:mule-migration-tool-runner:jar:jar-with-dependencies}</migrator.runner>
+                        <migrator.runner>${com.mulesoft.tools:mule-migration-tool-runner:jar}</migrator.runner>
                         <mule.version>${mule.runtime.version}</mule.version>
                     </systemPropertyVariables>
                 </configuration>
@@ -81,7 +81,6 @@
             <groupId>com.mulesoft.tools</groupId>
             <artifactId>mule-migration-tool-runner</artifactId>
             <version>${project.version}</version>
-            <classifier>jar-with-dependencies</classifier>
         </dependency>
     
         <!-- Test Dependencies -->

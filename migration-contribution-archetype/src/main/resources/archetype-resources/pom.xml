@@ -9,19 +9,21 @@
     <properties>
         <java.source>1.8</java.source>
         <java.target>1.8</java.target>
-        <mule.migration.tool.version>1.0.0-SNAPSHOT</mule.migration.tool.version>
+        <mule.migration.tool.version>0.0.1</mule.migration.tool.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.mulesoft.tools</groupId>
-            <artifactId>mule-migration-tool-expression</artifactId>
+            <artifactId>mule-migration-tool-api</artifactId>
             <version>${mule.migration.tool.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.mulesoft.tools</groupId>
-            <artifactId>mule-migration-tool-api</artifactId>
+            <artifactId>mule-migration-tool-expression</artifactId>
             <version>${mule.migration.tool.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

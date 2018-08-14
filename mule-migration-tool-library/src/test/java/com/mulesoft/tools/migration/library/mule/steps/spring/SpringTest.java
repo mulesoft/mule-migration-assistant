@@ -40,16 +40,16 @@ public class SpringTest {
   @Parameters(name = "{0}, {1}")
   public static Collection<Object[]> data() {
     return asList(new Object[][] {
-        {"spring-01", "4.1.1"},
-        {"spring-02", "4.1.1"},
-        {"spring-03", "4.1.1"},
-        {"spring-04", "4.1.1"},
-        {"spring-05", "4.1.1"},
-        {"spring-06", "4.1.1"},
-        {"spring-07", "4.1.1"},
-        {"spring-08", "4.1.1"},
-        {"spring-09", "4.1.1"},
-        {"spring-10", "4.1.1"},
+        {"spring-01", "4.1.3"},
+        {"spring-02", "4.1.3"},
+        {"spring-03", "4.1.3"},
+        {"spring-04", "4.1.3"},
+        {"spring-05", "4.1.3"},
+        {"spring-06", "4.1.3"},
+        {"spring-07", "4.1.3"},
+        {"spring-08", "4.1.3"},
+        {"spring-09", "4.1.3"},
+        {"spring-10", "4.1.3"},
         {"spring-11", "4.2.0"},
         {"spring-12", "4.2.0"}
     });
