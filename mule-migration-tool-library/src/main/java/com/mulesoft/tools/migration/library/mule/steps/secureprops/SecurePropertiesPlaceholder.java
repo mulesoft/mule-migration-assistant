@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.secureprops;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
 import static java.lang.Boolean.parseBoolean;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -45,9 +46,16 @@ public class SecurePropertiesPlaceholder extends AbstractApplicationModelMigrati
     for (String location : object.getAttributeValue("location").split("\\,")) {
       Element confProp = new Element("config", SECURE_NAMESPACE);
       confProp.setAttribute("file", location);
+
       if (object.getAttribute("fileEncoding") != null) {
-        confProp.setAttribute("encoding", object.getAttributeValue("fileEncoding"));
+        if (isVersionGreaterOrEquals(getApplicationModel().getMuleVersion(), "4.2.0")) {
+          confProp.setAttribute("encoding", object.getAttributeValue("fileEncoding"));
+        } else {
+          report.report(ERROR, object, object,
+                        "'encoding' is not available in Mule 4.1.x. It will be included in 4.2.0 or higher.");
+        }
       }
+
       confProp.setAttribute("key", object.getAttributeValue("key"));
       confProp.setAttribute("name", object.getAttributeValue("name") + (j > 1 ? "_" + j : ""));
 

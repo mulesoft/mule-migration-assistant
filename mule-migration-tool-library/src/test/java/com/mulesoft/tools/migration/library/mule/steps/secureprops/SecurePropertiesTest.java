@@ -29,28 +29,32 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 
 @RunWith(Parameterized.class)
 public class SecurePropertiesTest {
 
   private static final Path SECURE_PROPS_EXAMPLES_PATH = Paths.get("mule/apps/secureprops");
 
-  @Parameters(name = "{0}")
-  public static Object[] params() {
-    return new Object[] {
-        "secure-props-01",
-        "secure-props-02",
-        "secure-props-03",
-        "secure-props-04"
-    };
+  @Parameters(name = "{0}, {1}")
+  public static Collection<Object[]> data() {
+    return asList(new Object[][] {
+        {"secure-props-01", "4.1.3"},
+        {"secure-props-02", "4.1.3"},
+        {"secure-props-03", "4.1.3"},
+        {"secure-props-04", "4.2.0"}
+    });
   }
 
   private final Path configPath;
   private final Path targetMulePath;
+  private final String muleVersion;
 
-  public SecurePropertiesTest(String filePrefix) {
+  public SecurePropertiesTest(String filePrefix, String muleVersion) {
     configPath = SECURE_PROPS_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetMulePath = SECURE_PROPS_EXAMPLES_PATH.resolve(filePrefix + ".xml");
+
+    this.muleVersion = muleVersion;
   }
 
   private SecurePropertiesPlaceholder securePropertiesPlaceholder;
@@ -68,6 +72,7 @@ public class SecurePropertiesTest {
             .withProjectBasePath(Paths
                 .get(this.getClass().getClassLoader().getResource(SECURE_PROPS_EXAMPLES_PATH.toString()).toURI()))
             .withConfigurationFiles(asList(resolvedConfigPath))
+            .withMuleVersion(muleVersion)
             .build();
 
     Document doc = appModel.getApplicationDocuments().get(configPath.getFileName());

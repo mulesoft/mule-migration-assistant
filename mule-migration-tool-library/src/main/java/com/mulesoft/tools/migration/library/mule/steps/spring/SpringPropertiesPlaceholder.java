@@ -47,7 +47,7 @@ public class SpringPropertiesPlaceholder extends AbstractSpringMigratorStep {
           confProp.setAttribute("encoding", object.getAttributeValue("file-encoding"));
         } else {
           report.report(ERROR, object, object,
-                        "'file-encoding' is not available in Mule 4.1.x. It is included in 4.2.0 or higher.");
+                        "'encoding' is not available in Mule 4.1.x. It will be included in 4.2.0 or higher.");
         }
       }
 

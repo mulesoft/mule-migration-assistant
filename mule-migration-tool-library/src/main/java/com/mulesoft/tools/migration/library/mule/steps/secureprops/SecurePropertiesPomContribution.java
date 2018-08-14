@@ -30,7 +30,7 @@ public class SecurePropertiesPomContribution implements PomContribution {
         .withGroupId("com.mulesoft.modules")
         .withArtifactId("mule-secure-configuration-property-module")
         // TODO MMT-171
-        .withVersion("1.2.0-SNAPSHOT")
+        .withVersion("1.0.1")
         .withClassifier("mule-plugin")
         .build());
 
