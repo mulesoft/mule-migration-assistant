@@ -38,7 +38,7 @@ public class RemoveProperty extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    addCompatibilityNamespace(element.getDocument());
+    addCompatibilityNamespace(element.getDocument(), report);
     report.report(WARN, element, element,
                   "Instead of using properties in the flow, just don't use them in the listener/operation.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");

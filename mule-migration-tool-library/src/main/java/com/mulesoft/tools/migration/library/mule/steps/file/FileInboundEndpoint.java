@@ -13,6 +13,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILI
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 
@@ -132,6 +133,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.removeContent(globFilterIn);
     }
 
+    addCompatibilityNamespace(object.getDocument(), report);
     Element customFilterIn = object.getChild("custom-filter", COMPATIBILITY_NAMESPACE);
     if (customFilterIn != null) {
       object.removeContent(customFilterIn);

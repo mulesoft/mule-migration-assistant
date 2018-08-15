@@ -8,14 +8,12 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
 import java.util.List;
-
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 
 /**
  * Migrate expressions on Choice router

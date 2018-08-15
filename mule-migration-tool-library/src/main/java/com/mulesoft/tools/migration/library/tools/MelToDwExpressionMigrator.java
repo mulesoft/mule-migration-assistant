@@ -56,7 +56,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
                                                           (script) -> translateSingleExpression(script, dataWeaveBodyOnly,
                                                                                                 element));
     if (migratedExpression.startsWith("#[mel:")) {
-      addCompatibilityNamespace(element.getDocument());
+      addCompatibilityNamespace(element.getDocument(), report);
     }
     return migratedExpression;
   }

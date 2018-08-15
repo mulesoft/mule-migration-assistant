@@ -42,7 +42,7 @@ public class SetProperty extends AbstractApplicationModelMigrationStep implement
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    addCompatibilityNamespace(element.getDocument());
+    addCompatibilityNamespace(element.getDocument(), report);
     migrateExpression(element.getAttribute("value"), getExpressionMigrator());
     report.report(WARN, element, element,
                   "Instead of using outbound properties in the flow, its values must be set explicitly in the operation/listener.",
