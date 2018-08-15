@@ -39,7 +39,8 @@ public class EETransformTest {
         "ee-transform-01",
         "ee-transform-02",
         "ee-transform-03",
-        "ee-transform-04"
+        "ee-transform-04",
+        "ee-transform-05"
     };
   }
 
