@@ -42,7 +42,7 @@ public class SetSessionVariable extends AbstractApplicationModelMigrationStep im
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    addCompatibilityNamespace(element.getDocument());
+    addCompatibilityNamespace(element.getDocument(), report);
     migrateExpression(element.getAttribute("value"), getExpressionMigrator());
     report.report(WARN, element, element,
                   "Instead of using session variables in the flow, use variables.",

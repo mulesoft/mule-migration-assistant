@@ -88,7 +88,7 @@ public final class XmlDslUtils {
    */
   public static void migrateSourceStructure(ApplicationModel appModel, Element object, MigrationReport report,
                                             boolean expectsOutboundProperties, boolean consumeStreams) {
-    addCompatibilityNamespace(object.getDocument());
+    addCompatibilityNamespace(object.getDocument(), report);
 
     int index = object.getParent().indexOf(object);
     buildAttributesToInboundProperties(report, object.getParent(), index + 1);
@@ -129,7 +129,7 @@ public final class XmlDslUtils {
     if (expressionMigrator != null && resolver != null) {
       migrateEnrichers(object, expressionMigrator, resolver, appModel, report);
     }
-    addCompatibilityNamespace(object.getDocument());
+    addCompatibilityNamespace(object.getDocument(), report);
 
     int index = object.getParent().indexOf(object);
     buildOutboundPropertiesToVar(report, object.getParent(), index, consumeStreams);
@@ -146,7 +146,7 @@ public final class XmlDslUtils {
       String migratedExpression = expressionMigrator.migrateExpression(targetValue, true, object);
       object.setAttribute("target", expressionMigrator.unwrap(migratedExpression));
       if (resolver.canResolve(expressionMigrator.unwrap(targetValue))) {
-        addOutboundPropertySetter(expressionMigrator.unwrap(migratedExpression), object, model, object);
+        addOutboundPropertySetter(expressionMigrator.unwrap(migratedExpression), object, model, object, report);
         report.report(WARN, object, object, "Setting outbound property as variable",
                       "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
       }
@@ -154,8 +154,8 @@ public final class XmlDslUtils {
   }
 
   public static Element addOutboundPropertySetter(String propertyName, Element element, ApplicationModel model,
-                                                  Element after) {
-    addCompatibilityNamespace(element.getDocument());
+                                                  Element after, MigrationReport report) {
+    addCompatibilityNamespace(element.getDocument(), report);
     Element setProperty = new Element("set-property", COMPATIBILITY_NAMESPACE);
     setProperty.setAttribute(new Attribute("propertyName", propertyName));
     setProperty.setAttribute(new Attribute("value", "#[vars." + propertyName + "]"));
@@ -195,8 +195,13 @@ public final class XmlDslUtils {
   /**
    * Add the required compatibility namespace declaration on document.
    */
-  public static void addCompatibilityNamespace(Document document) {
-    addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, document);
+  public static void addCompatibilityNamespace(Document document, MigrationReport report) {
+    if (!document.getRootElement().getAdditionalNamespaces().contains(COMPATIBILITY_NAMESPACE)) {
+      addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, document);
+      report.report(WARN, document.getRootElement(), document.getRootElement(),
+                    "Ensure to make the proper changes in order to not use the compatibility module on your app.",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-tool#compatibility-module");
+    }
   }
 
   /**
