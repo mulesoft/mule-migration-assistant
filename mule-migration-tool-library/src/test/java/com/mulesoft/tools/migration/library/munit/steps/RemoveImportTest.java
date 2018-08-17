@@ -22,18 +22,18 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 
-public class RemoveSpringImportTest {
+public class RemoveImportTest {
 
   private static final String MUNIT_SAMPLE_XML = "munit-processors.xml";
   private static final Path MUNIT_EXAMPLES_PATH = Paths.get("munit/examples");
   private static final Path MUNIT_SAMPLE_PATH = MUNIT_EXAMPLES_PATH.resolve(MUNIT_SAMPLE_XML);
 
-  private RemoveSpringImport removeSpringImport;
+  private RemoveImport removeSpringImport;
   private Element node;
 
   @Before
   public void setUp() throws Exception {
-    removeSpringImport = new RemoveSpringImport();
+    removeSpringImport = new RemoveImport();
   }
 
   @Test
@@ -47,7 +47,7 @@ public class RemoveSpringImportTest {
     removeSpringImport.execute(node, mock(MigrationReport.class));
 
     assertThat("The spring section wasn't removed.", node.getParent(), nullValue());
-    assertThat("The spring section wasn't removed.", doc.getRootElement().getChildren().size(), is(9));
+    assertThat("The spring section wasn't removed.", doc.getRootElement().getChildren().size(), is(10));
   }
 
 }
