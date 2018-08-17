@@ -6,26 +6,14 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
-import static java.lang.String.format;
-import static java.lang.System.lineSeparator;
-import static java.util.Collections.emptyList;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
-
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
@@ -39,6 +27,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.generateDocument;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
+import static java.lang.String.format;
+import static java.util.Collections.emptyList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Represent the application to be migrated
@@ -451,12 +448,6 @@ public class ApplicationModel {
       applicationModel.setSupportedNamespaces(supportedNamespaces);
 
       return applicationModel;
-    }
-
-    private Document generateDocument(Path filePath) throws JDOMException, IOException {
-      SAXBuilder saxBuilder = new SAXBuilder();
-      saxBuilder.setJDOMFactory(new LocatedJDOMFactory());
-      return saxBuilder.build(filePath.toFile());
     }
   }
 

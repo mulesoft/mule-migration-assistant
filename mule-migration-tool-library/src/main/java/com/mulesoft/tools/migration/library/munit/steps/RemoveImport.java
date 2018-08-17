@@ -8,10 +8,10 @@ package com.mulesoft.tools.migration.library.munit.steps;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
 import org.jdom2.Document;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
+
+import java.io.File;
 
 /**
  * Remove spring beans import since no longer needed on MUnit 2
@@ -19,33 +19,25 @@ import org.jdom2.Namespace;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class RemoveSpringImport extends AbstractApplicationModelMigrationStep {
+public class RemoveImport extends AbstractApplicationModelMigrationStep {
 
-  private static final String MUNIT_PATH = "src/test/munit";
-  private static final String SPRING_NAME = "spring";
-  private static final String SPRING_URI = "http://www.springframework.org/schema/beans";
-  private static final String XPATH_SELECTOR = "//*[local-name()='beans']";
+  private static final String MUNIT_PATH = "src" + File.separator + "test" + File.separator + "munit";
+  private static final String XPATH_SELECTOR = "//*[local-name()='import']";
 
   @Override
   public String getDescription() {
     return "Remove spring beans.";
   }
 
-  public RemoveSpringImport() {
+  public RemoveImport() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    //TODO MMT-99 Once spring migration is supported, need to update this to only remove mule config files
     if (isMUnitFile(element.getDocument())) {
-      removeSpringNamespace(element.getDocument());
       element.detach();
     }
-  }
-
-  private void removeSpringNamespace(Document document) {
-    document.getRootElement().removeNamespaceDeclaration(Namespace.getNamespace(SPRING_NAME, SPRING_URI));
   }
 
   public boolean isMUnitFile(Document document) {

@@ -19,11 +19,19 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import org.apache.commons.io.FileUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.Parent;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.located.LocatedJDOMFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Provides reusable methods for common migration scenarios.
@@ -307,5 +315,35 @@ public final class XmlDslUtils {
       elementIndex = document.getRootElement().getContent().size();
       document.getRootElement().addContent(elementIndex > 0 ? elementIndex - 1 : 0, element);
     }
+  }
+
+  /**
+   * Return JDOM document from a file path.
+   *
+   * @param filePath
+   * @return the jdom document.
+   */
+  public static Document generateDocument(Path filePath) throws JDOMException, IOException {
+    SAXBuilder saxBuilder = new SAXBuilder();
+    saxBuilder.setJDOMFactory(new LocatedJDOMFactory());
+    return saxBuilder.build(filePath.toFile());
+  }
+
+  public static boolean isMuleConfigFile(String fileName, Path appBasePath) {
+    boolean muleConfig = false;
+    if (fileName.endsWith("xml")) {
+      File xmlFile = FileUtils.listFiles(appBasePath.toFile(), new String[] {"xml"}, true).stream()
+          .filter(f -> f.getName().equals(fileName.replace("classpath:", ""))).findFirst().orElse(null);
+      if (xmlFile != null) {
+        try {
+          Document doc = generateDocument(xmlFile.toPath());
+          if (doc.getRootElement().getNamespace().equals(CORE_NAMESPACE)) {
+            muleConfig = true;
+          }
+        } catch (Exception ex) {
+        }
+      }
+    }
+    return muleConfig;
   }
 }
