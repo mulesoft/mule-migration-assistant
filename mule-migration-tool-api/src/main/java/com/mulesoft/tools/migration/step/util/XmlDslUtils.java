@@ -329,6 +329,7 @@ public final class XmlDslUtils {
     return saxBuilder.build(filePath.toFile());
   }
 
+//  TODO MMT-115 Support policies and domains
   public static boolean isMuleConfigFile(String fileName, Path appBasePath) {
     boolean muleConfig = false;
     if (fileName.endsWith("xml")) {
