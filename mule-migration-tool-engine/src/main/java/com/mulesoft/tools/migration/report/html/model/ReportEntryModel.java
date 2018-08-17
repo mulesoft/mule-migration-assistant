@@ -9,7 +9,6 @@ package com.mulesoft.tools.migration.report.html.model;
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import org.jdom2.Document;
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
@@ -33,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml;
 
 /**
@@ -96,6 +94,7 @@ public class ReportEntryModel {
     Format format = Format.getPrettyFormat();
     format.setTextMode(Format.TextMode.NORMALIZE);
     format.setEncoding("UTF-8");
+    format.setIndent("    ");
 
     XMLOutputter xmlOut = new XMLOutputter(noNamespaces);
     xmlOut.setFormat(format);

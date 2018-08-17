@@ -34,7 +34,7 @@
                     Column: <span class="text-italic text-normal">${entry.columnNumber}</span>
                 </h4>
                 <br>
-                <code>${entry.elementContent}</code>
+                <pre>${entry.elementContent}</pre>
                 <hr>
             </div>
         </#list>
