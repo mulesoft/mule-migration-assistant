@@ -133,7 +133,7 @@ public class VmOutboundEndpoint extends AbstractVmEndpoint {
     object.addContent(content);
     report.report(WARN, content, content,
                   "You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
+                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
 
     migrateOutboundEndpointStructure(getApplicationModel(), object, report, true, true);
   }

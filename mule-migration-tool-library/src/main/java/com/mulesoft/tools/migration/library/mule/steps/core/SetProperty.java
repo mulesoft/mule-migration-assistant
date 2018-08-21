@@ -46,7 +46,7 @@ public class SetProperty extends AbstractApplicationModelMigrationStep implement
     migrateExpression(element.getAttribute("value"), getExpressionMigrator());
     report.report(WARN, element, element,
                   "Instead of using outbound properties in the flow, its values must be set explicitly in the operation/listener.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
+                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
     element.setNamespace(COMPATIBILITY_NAMESPACE);
   }
 

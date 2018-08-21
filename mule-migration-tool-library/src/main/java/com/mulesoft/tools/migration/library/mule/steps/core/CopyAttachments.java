@@ -6,10 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -17,31 +15,30 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 
 /**
- * Migrate Remove Property to the compatibility plugin
+ * Migrate Copy Attachments component
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class RemoveProperty extends AbstractApplicationModelMigrationStep {
+public class CopyAttachments extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='remove-property']";
+  public static final String XPATH_SELECTOR = "//*[local-name()='copy-attachments']";
 
   @Override
   public String getDescription() {
-    return "Update Remove Property namespace to compatibility.";
+    return "Update Copy Attachments.";
   }
 
-  public RemoveProperty() {
+  public CopyAttachments() {
     this.setAppliedTo(XPATH_SELECTOR);
-    this.setNamespacesContributions(newArrayList(COMPATIBILITY_NAMESPACE));
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    addCompatibilityNamespace(element.getDocument());
-    report.report(WARN, element, element,
-                  "Instead of using properties in the flow, just don't use them in the listener/operation.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
+    report.report(WARN, element, element, "Identify the received attachments and set them as variables.",
+                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments");
+    element.setName("multipart-to-vars");
     element.setNamespace(COMPATIBILITY_NAMESPACE);
+    element.getAttribute("attachmentName").setName("partName");
   }
 }

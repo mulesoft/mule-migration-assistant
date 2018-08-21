@@ -10,6 +10,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.migrateDWToV2;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static org.jdom2.Namespace.getNamespace;
@@ -37,9 +38,7 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
 
   private static final String DW_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ee/dw";
   private static final String DW_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd";
-  private static final String EE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ee/core";
   private static final String EE_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd";
-  private static final String EE_NAMESPACE_NAME = "ee";
   public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + DW_NAMESPACE_URI + "'"
       + " and local-name()='transform-message']";
 
@@ -55,8 +54,7 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-
-    Namespace eeNamespace = getNamespace(EE_NAMESPACE_NAME, EE_NAMESPACE_URI);
+    Namespace eeNamespace = CORE_EE_NAMESPACE;
 
     getApplicationModel().addNameSpace(eeNamespace, EE_NAMESPACE_SCHEMA, element.getDocument());
     getApplicationModel().removeNameSpace(getNamespace("dw", DW_NAMESPACE_URI), DW_NAMESPACE_SCHEMA, element.getDocument());
@@ -111,7 +109,7 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
 
     report.report(WARN, sessionVar, sessionVar,
                   "Instead of setting session variables in the flow, you can set Variables.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
+                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
   }
 
   private void addOutboundProperty(Element element, MigrationReport report) {
@@ -120,7 +118,7 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
         XmlDslUtils.addOutboundPropertySetter(propName.getValue(), element, getApplicationModel(), element.getParentElement());
     report.report(WARN, setProperty, setProperty,
                   "Instead of setting outbound properties in the flow, you can set Variables.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
+                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
   }
 
   private void migrateDWScript(Element element) {

@@ -15,7 +15,7 @@
 
         <copy-properties propertyName="*" />
         <remove-property propertyName="http.*" />
-<!--         <copy-attachments attachmentName="*" /> -->
+        <copy-attachments attachmentName="*" />
 
         <set-property propertyName="X-Forwarded-For" value="#[message.inboundProperties['http.remote.address']]" />
         
@@ -23,7 +23,7 @@
 
         <copy-properties propertyName="*" />
         <remove-property propertyName="http.*" />
-<!--         <copy-attachments attachmentName="*" /> -->
+        <copy-attachments attachmentName="*" />
     </flow>
     
 </mule>

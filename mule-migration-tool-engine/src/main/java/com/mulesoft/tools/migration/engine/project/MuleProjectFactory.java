@@ -6,19 +6,22 @@
  */
 package com.mulesoft.tools.migration.engine.project;
 
+import static com.mulesoft.tools.migration.project.ProjectType.BASIC;
+import static com.mulesoft.tools.migration.project.ProjectType.JAVA;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_APPLICATION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_DOMAIN;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_MAVEN_APPLICATION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_MAVEN_DOMAIN;
+
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
-import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.engine.project.structure.mule.MuleProject;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeDomain;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeMavenApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeMavenDomain;
+import com.mulesoft.tools.migration.project.ProjectType;
 
 import java.nio.file.Path;
-
-import static com.mulesoft.tools.migration.project.ProjectType.*;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_DOMAIN;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_MAVEN_DOMAIN;
 
 /**
  * Generates an {@link MuleProject} for a valid mule project
@@ -43,6 +46,6 @@ public class MuleProjectFactory {
         return new MuleThreeMavenDomain(projectPath);
       }
     }
-    throw new MigrationJobException("Cannot generate mule project");
+    throw new MigrationJobException("Cannot read mule project. Is it a Mule Studio project?");
   }
 }

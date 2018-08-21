@@ -51,11 +51,11 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
     if (element.getAttribute("scope") == null) {
       report.report(WARN, element, element,
                     "Instead of using properties in the flow, its values must be set explicitly in the operation/listener.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
+                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
     }
     if ("session".equals(element.getAttributeValue("scope"))) {
       report.report(WARN, element, element, "Instead of using session variables in the flow, use variables.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message#session-properties");
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
     }
 
     boolean notOverwrite = false;

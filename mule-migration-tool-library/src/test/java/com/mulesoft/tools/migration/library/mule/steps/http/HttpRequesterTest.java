@@ -49,8 +49,6 @@ public class HttpRequesterTest {
     return new Object[] {
         "http-requester-01",
         "http-requester-02",
-        // TODO attachments
-        // "http-requester-03",
         "http-requester-04",
         "http-requester-05",
         "http-requester-06",
