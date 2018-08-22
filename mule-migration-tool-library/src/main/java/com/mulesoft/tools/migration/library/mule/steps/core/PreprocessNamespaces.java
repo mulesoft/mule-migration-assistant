@@ -6,20 +6,21 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.category.NamespaceContribution;
-import org.jdom2.Document;
-import org.jdom2.Namespace;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static com.mulesoft.tools.migration.library.mule.steps.spring.SpringContributions.ADDITIONAL_SPRING_NAMESPACES_PROP;
 import static com.mulesoft.tools.migration.project.model.ApplicationModel.getElementsWithNamespace;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.containsNamespace;
 import static java.lang.System.lineSeparator;
+
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.category.NamespaceContribution;
+
+import org.jdom2.Document;
+import org.jdom2.Namespace;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Check for component with no defined migration task yet.
@@ -51,8 +52,9 @@ public class PreprocessNamespaces implements NamespaceContribution {
     unsupportedNamespaces.forEach(n -> {
       if (n.getURI().startsWith("http://www.mulesoft.org")) {
         report.report(ERROR, document.getRootElement(), document.getRootElement(),
-                      "The migration of " + n.getPrefix() + " is not yet supported.",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors");
+                      "The migration of " + n.getPrefix() + " is not supported.",
+                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors",
+                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-tool#unsupported_connectors");
       } else {
         report.report(ERROR, document.getRootElement(), document.getRootElement(),
                       "Didn't find migration rules for the following component: " + n.getPrefix()
