@@ -32,7 +32,7 @@ public class RemoveJsonTransformerNamespace implements NamespaceContribution {
   @Override
   public void execute(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
     try {
-      if (!applicationModel.getNodeOptional(JSON_TRANSFORMER_XPRESSION).isPresent()) {
+      if (applicationModel.getNodes(JSON_TRANSFORMER_XPRESSION).isEmpty()) {
         applicationModel.removeNameSpace(JSON_TRANSFORMER_NAME, JSON_TRANSFORMER_URI, JSON_TRANSFORMER_SCHEMA);
       }
     } catch (Exception e) {
