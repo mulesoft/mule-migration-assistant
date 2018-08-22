@@ -42,8 +42,11 @@ import java.nio.file.Path;
 public final class XmlDslUtils {
 
   private static final String CORE_NS_URI = "http://www.mulesoft.org/schema/mule/core";
-
   public static final Namespace CORE_NAMESPACE = Namespace.getNamespace(CORE_NS_URI);
+
+  public static final String EE_NAMESPACE_NAME = "ee";
+  public static final String CORE_EE_NS_URI = "http://www.mulesoft.org/schema/mule/ee/core";
+  public static final Namespace CORE_EE_NAMESPACE = Namespace.getNamespace(EE_NAMESPACE_NAME, CORE_EE_NS_URI);
 
   public static final Namespace VALIDATION_NAMESPACE =
       Namespace.getNamespace("validation", "http://www.mulesoft.org/schema/mule/validation");
@@ -156,7 +159,7 @@ public final class XmlDslUtils {
       if (resolver.canResolve(expressionMigrator.unwrap(targetValue))) {
         addOutboundPropertySetter(expressionMigrator.unwrap(migratedExpression), object, model, object);
         report.report(WARN, object, object, "Setting outbound property as variable",
-                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
+                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
       }
     }
   }
@@ -195,7 +198,7 @@ public final class XmlDslUtils {
 
     report.report(WARN, op2v, op2v,
                   "Instead of setting outbound properties in the flow, its values must be set explicitly in the operation/listener.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
+                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
 
     return op2v;
   }

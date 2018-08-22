@@ -12,37 +12,25 @@ import com.mulesoft.tools.migration.util.CompatibilityResolver;
 
 import org.jdom2.Element;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Compatibility resolver for general MEL expressions
+ * Resolver for inbound properties message enrichers
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class MelCompatibilityResolver implements CompatibilityResolver<String> {
-
-  private static List<CompatibilityResolver<String>> resolvers;
-
-  static {
-    resolvers = new ArrayList<>();
-    resolvers.add(new InboundAttachmentsCompatibilityResolver());
-    resolvers.add(new HeaderSyntaxCompatibilityResolver());
-  }
+public class InboundAttachmentsCompatibilityResolver implements CompatibilityResolver<String> {
 
   @Override
   public boolean canResolve(String original) {
-    return true;
+    return original != null && original.contains("message.inboundAttachments");
   }
 
   @Override
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model) {
-    CompatibilityResolver<String> resolver = resolvers.stream()
-        .filter(r -> r.canResolve(original))
-        .findFirst()
-        .orElse(new DefaultMelCompatibilityResolver());
+    report.report(MigrationReport.Level.ERROR, element, element,
+                  "Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.",
+                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments");
 
-    return resolver.resolve(original, element, report, model);
+    return "mel:" + original;
   }
 }

@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.tools.mel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
+
 import org.jdom2.Element;
 
 /**
@@ -29,6 +30,7 @@ public class DefaultMelCompatibilityResolver implements CompatibilityResolver<St
     report.report(MigrationReport.Level.WARN, element, element,
                   "MEL expression could not be migrated to a DataWeave expression",
                   "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-mel",
+                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#mel_expressions",
                   "https://blogs.mulesoft.com/dev/mule-dev/why-dataweave-main-expression-language-mule-4/");
 
     return "mel:" + original;

@@ -7,6 +7,8 @@
 package com.mulesoft.tools.migration.library.mule.steps.ee;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NS_URI;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -15,7 +17,6 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrate EE Cache scope
@@ -25,10 +26,7 @@ import org.jdom2.Namespace;
  */
 public class CacheInvalidateKey extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  private static final String EE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ee/core";
-  private static final String EE_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd";
-  private static final String EE_NAMESPACE_NAME = "ee";
-  public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + EE_NAMESPACE_URI + "'"
+  public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + CORE_EE_NS_URI + "'"
       + " and local-name()='invalidate-key']";
 
   private ExpressionMigrator expressionMigrator;
@@ -40,7 +38,7 @@ public class CacheInvalidateKey extends AbstractApplicationModelMigrationStep im
 
   public CacheInvalidateKey() {
     this.setAppliedTo(XPATH_SELECTOR);
-    this.setNamespacesContributions(newArrayList(Namespace.getNamespace(EE_NAMESPACE_NAME, EE_NAMESPACE_URI)));
+    this.setNamespacesContributions(newArrayList(CORE_EE_NAMESPACE));
   }
 
   @Override

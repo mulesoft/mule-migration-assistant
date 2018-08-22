@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.tools;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static java.util.Objects.requireNonNull;
 
@@ -68,8 +69,15 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     } catch (Exception e) {
       return compatibilityResolver.resolve(unwrappedExpression, element, report, model);
     }
+    if (migratedExpression.contains("message.inboundAttachments")) {
+      report.report(ERROR, element, element,
+                    "Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments");
+    }
+
     migratedExpression = resolveServerContext(migratedExpression);
     migratedExpression = resolveIdentifiers(migratedExpression);
+
     return dataWeaveBodyOnly ? migratedExpression.replaceFirst("---", "").trim() : migratedExpression;
   }
 
@@ -83,7 +91,8 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
         .replaceAll("recordVars", "vars")
         .replaceAll("message\\.id", "correlationId")
         .replaceAll("message\\.inboundProperties", "vars.compatibility_inboundProperties")
-        .replaceAll("message\\.outboundProperties", "vars.compatibility_outboundProperties");
+        .replaceAll("message\\.outboundProperties", "vars.compatibility_outboundProperties")
+        .replaceAll("message\\.inboundAttachments", "payload.parts");
   }
 
   @Override

@@ -10,8 +10,8 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
@@ -57,7 +57,7 @@ public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplica
 
           report.report(WARN, mapBuilderElement, parentTag,
                         "Build the '" + tagName + "' map with a single DW expression",
-                        "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#outbound-properties");
+                        "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
           parentTag.addContent(idx, mapBuilderElement);
 
           return mapBuilderElement;

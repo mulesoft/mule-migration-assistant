@@ -49,9 +49,6 @@ public class HttpListenerTest {
   public static Object[] params() {
     return new Object[] {
         "http-listener-01",
-        // TODO Attachments/multipart support
-        // "http-listener-02",
-        // "http-listener-03",
         "http-listener-04",
         "http-listener-05",
         "http-listener-09",
@@ -59,7 +56,6 @@ public class HttpListenerTest {
         "http-listener-11",
         // TODO Multiheader support
         // "http-listener-12",
-        // TODO MEL 2 DW
         "http-listener-13",
         "http-listener-14",
         // TODO Multiheader support
@@ -67,7 +63,6 @@ public class HttpListenerTest {
         "http-listener-16",
         "http-listener-17",
         "http-listener-18",
-        // TODO MEL 2 DW: map expressions
         "http-listener-19",
         "http-listener-20"
     };

@@ -10,11 +10,12 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
-import static sun.rmi.transport.TransportConstants.Version;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.CompatibilityPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.core.CopyAttachments;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyProperties;
 import com.mulesoft.tools.migration.library.mule.steps.core.MessagePropertiesTransformer;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveAttachment;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveJsonTransformerNamespace;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveObjectToStringTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveProperty;
@@ -68,7 +69,9 @@ public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigration
                         new SetAttachment(),
                         new SetProperty(),
                         new SetSessionVariable(),
+                        new CopyAttachments(),
                         new CopyProperties(),
+                        new RemoveAttachment(),
                         new RemoveProperty(),
                         new RemoveSessionVariable(),
                         new RemoveJsonTransformerNamespace(),
