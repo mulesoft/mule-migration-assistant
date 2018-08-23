@@ -47,7 +47,7 @@ public class Flow extends AbstractApplicationModelMigrationStep {
 
       element.removeAttribute("processingStrategy");
       report.report(WARN, element, element, "'flow' no longer has a 'processingStrategy' attribute.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core");
+                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
     }
   }
 

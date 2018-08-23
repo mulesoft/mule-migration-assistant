@@ -76,7 +76,7 @@ public final class TransportsUtils {
         return of(new EndpointAddress(protocol, credentials, host, port, path));
       }
     } else {
-      report.report(ERROR, endpoint, endpoint, "Unable to parse endpoint address '" + address + "'");
+      report.report(ERROR, endpoint, endpoint, "Unable to parse endpoint address '" + address + "'.");
       return empty();
     }
   }

@@ -155,7 +155,7 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
       } else if ("add-message-properties".equals(child.getName())) {
         // TODO Migrate to spring module
         report.report(ERROR, child, element,
-                      "Spring beans definition inside mule components is not allowed. This inner definition must be moved to its own spring config file, and it may be referenced by an `ee:transform` component or in an expression in the operation/listeenr directly.",
+                      "Spring beans definition inside mule components is not allowed. This inner definition must be moved to its own spring config file, and it may be referenced by an 'ee:transform' component or in an expression in the operation/listener directly.",
                       "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-module-spring");
       }
     }

@@ -40,7 +40,7 @@ public class RemoveProperty extends AbstractApplicationModelMigrationStep {
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     addCompatibilityNamespace(element.getDocument());
     report.report(WARN, element, element,
-                  "Instead of using properties in the flow, just don't use them in the listener/operation.",
+                  "Instead of using properties in the flow, its values must be set explicitly in the operation/listener.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
     element.setNamespace(COMPATIBILITY_NAMESPACE);
   }

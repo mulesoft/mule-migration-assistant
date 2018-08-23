@@ -136,7 +136,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
         // linked docs
         report.report(ERROR, implicitConnectorRef, implicitConnectorRef,
                       "There are at least 2 connectors matching protocol \"file\","
-                          + " so the connector to use must be specified on the endpoint using the ''connector'' property/attribute."
+                          + " so the connector to use must be specified on the endpoint using the 'connector' property/attribute."
                           + " Connectors in your configuration that support \"file\" are: "
                           + availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
       }

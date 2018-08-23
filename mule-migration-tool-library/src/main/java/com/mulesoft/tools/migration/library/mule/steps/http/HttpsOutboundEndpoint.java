@@ -76,7 +76,8 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
         copyAttributeIfPresent(tlsClient, keyStore, "storePassword", "password");
         if (tlsClient.getAttribute("class") != null) {
           report.report(ERROR, tlsClient, tlsClient,
-                        "'class' attribute of 'https:tls-client' was deprecated in 3.x. Use 'type' instead.");
+                        "'class' attribute of 'https:tls-client' was deprecated in 3.x. Use 'type' instead.",
+                        "https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration");
         }
         copyAttributeIfPresent(tlsClient, keyStore, "type", "type");
         tlsContext.addContent(keyStore);
@@ -90,7 +91,8 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
         if (tlsKeyStore.getAttribute("class") != null) {
           report.report(ERROR, tlsKeyStore, tlsKeyStore,
-                        "'class' attribute of 'https:tls-key-store' was deprecated in 3.x. Use 'type' instead.");
+                        "'class' attribute of 'https:tls-key-store' was deprecated in 3.x. Use 'type' instead.",
+                        "https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration");
         }
         copyAttributeIfPresent(tlsKeyStore, keyStore, "type", "type");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyAlias", "alias");

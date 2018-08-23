@@ -70,7 +70,7 @@ public class RemovedElements extends AbstractApplicationModelMigrationStep {
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     // TODO get links for each replacement feature
     report.report(ERROR, object, object, "Element '" + object.getName()
-        + "' no longer exists in Mule 4. Replace its usages with the new ' " + "' feature.");
+        + "' no longer exists in Mule 4. Replace its usages with a new Mule 4 feature.");
   }
 
 }
