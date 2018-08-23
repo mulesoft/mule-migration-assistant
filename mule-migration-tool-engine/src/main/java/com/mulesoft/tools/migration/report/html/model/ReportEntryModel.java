@@ -127,6 +127,10 @@ public class ReportEntryModel {
     return columnNumber;
   }
 
+  public Element getElement() {
+    return element;
+  }
+
   public String getMessage() {
     return message;
   }
