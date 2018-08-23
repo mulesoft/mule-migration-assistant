@@ -68,6 +68,11 @@ expressions:
     message: Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments
+  encodeBase64:
+    type: ERROR
+    message: Cannot migrate encodeBase64 method. Please consider using the toBase64 function from DataWeave.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/dw-binaries-functions-tobase64
 
 http:
   mapExpression:
