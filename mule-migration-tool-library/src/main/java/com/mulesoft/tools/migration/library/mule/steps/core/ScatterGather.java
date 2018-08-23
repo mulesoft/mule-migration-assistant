@@ -52,8 +52,10 @@ public class ScatterGather extends AbstractApplicationModelMigrationStep {
                       "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
         c.detach();
       } else if (c.getName().equals("custom-aggregation-strategy")) {
-        report.report(ERROR, c, c, "Custom Aggregations are no longer supported.",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core");
+        report.report(ERROR, c, c,
+                      "Custom Aggregations are no longer supported. Add an 'ee:transform' after the 'scatteg-gather' to perfrom the aggregation.",
+                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/scatter-gather-concept",
+                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/transform-component-about");
       } else {
         Element newRouteElement = new Element("route", element.getNamespace());
         Integer childIndex = element.indexOf(c);

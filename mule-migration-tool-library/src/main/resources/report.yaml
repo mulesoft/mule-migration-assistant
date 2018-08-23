@@ -394,9 +394,10 @@ scatterGather:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
   customAggregation:
     type: ERROR
-    message: Custom Aggregations are no longer supported in Mule 4.
+    message: Custom Aggregations are no longer supported. Add an \'ee:transform\' after the \'scatteg-gather\' to perfrom the aggregation.
     docLinks:
-      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/scatter-gather-concept
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/transform-component-about
   
 batch:
   threading:

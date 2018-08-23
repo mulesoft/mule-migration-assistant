@@ -76,8 +76,8 @@ public class ScriptingModuleMigration extends AbstractApplicationModelMigrationS
     report
         .report(ERROR, element, element,
                 "The message format in Mule 4 has changed. Change any usages of the message to match the new bindings in Mule 4.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-scripting");
+                "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message",
+                "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-scripting");
   }
 
   private String updateEngineValue(String engine) {
