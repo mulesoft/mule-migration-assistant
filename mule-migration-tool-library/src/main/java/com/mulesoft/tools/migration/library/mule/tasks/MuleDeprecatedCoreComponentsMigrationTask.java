@@ -14,6 +14,7 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 import com.mulesoft.tools.migration.library.mule.steps.core.CompatibilityPomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyAttachments;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyProperties;
+import com.mulesoft.tools.migration.library.mule.steps.core.DataMapper;
 import com.mulesoft.tools.migration.library.mule.steps.core.MessagePropertiesTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveAttachment;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveJsonTransformerNamespace;
@@ -78,6 +79,7 @@ public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigration
                         new MessagePropertiesTransformer(),
                         new RemoveSchedulersNamespace(),
                         new CompositeFilter(),
+                        new DataMapper(),
                         new CustomFilter());
   }
 }

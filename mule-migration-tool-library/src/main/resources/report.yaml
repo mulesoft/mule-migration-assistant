@@ -72,7 +72,13 @@ expressions:
     type: ERROR
     message: Cannot migrate encodeBase64 method. Please consider using the toBase64 function from DataWeave.
     docLinks:
-      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/dw-binaries-functions-tobase64
+      - https://docs.mulesof.com/mule4-user-guide/v/4.1/dw-binaries-functions-tobase64
+  datamapper:
+    type: ERROR
+    message: DataMapper migration is not supported. Please migrate the DataMapper usage using the Studio DataWeave migration tool.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/3.8/dataweave-migrator
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-tool#datamapper
 
 http:
   mapExpression:
