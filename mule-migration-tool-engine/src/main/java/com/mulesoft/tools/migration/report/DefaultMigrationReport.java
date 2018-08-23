@@ -14,7 +14,9 @@ import org.jdom2.Element;
 import org.jdom2.output.XMLOutputter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Default implementation of a {@link MigrationReport}.
@@ -25,7 +27,7 @@ import java.util.List;
 public class DefaultMigrationReport implements MigrationReport {
 
   private XMLOutputter outp = new XMLOutputter();
-  private List<ReportEntryModel> reportEntries = new ArrayList<>();
+  private Set<ReportEntryModel> reportEntries = new HashSet<>();
 
   @Override
   public void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks) {
@@ -33,12 +35,7 @@ public class DefaultMigrationReport implements MigrationReport {
 
     ReportEntryModel reportEntry = new ReportEntryModel(level, elementToComment, message, documentationLinks);
 
-    if (!reportEntries.stream().anyMatch(entry -> entry.getLevel().equals(reportEntry.getLevel()) &&
-        entry.getMessage().equals(reportEntry.getMessage()) &&
-        entry.getElement().equals(reportEntry.getElement()) &&
-        entry.getDocumentationLinks().equals(reportEntry.getDocumentationLinks()))) {
-
-      reportEntries.add(reportEntry);
+    if (reportEntries.add(reportEntry)) {
 
       elementToComment.addContent(i++, new Comment("Migration " + level.name() + ": " + message));
       elementToComment.addContent(i++, new Comment("    For more information refer to:"));
@@ -55,7 +52,7 @@ public class DefaultMigrationReport implements MigrationReport {
 
   @Override
   public List<ReportEntryModel> getReportEntries() {
-    return this.reportEntries;
+    return new ArrayList<>(this.reportEntries);
   }
 
 }
