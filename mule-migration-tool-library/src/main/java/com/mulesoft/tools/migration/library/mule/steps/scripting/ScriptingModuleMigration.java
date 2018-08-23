@@ -6,22 +6,24 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.scripting;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 
 /**
  * Update scripting module.
@@ -71,9 +73,11 @@ public class ScriptingModuleMigration extends AbstractApplicationModelMigrationS
       }
       movePropertiesToMap(scriptNode);
     }
-    report.report(ERROR, element, element, "The message format in Mule 4 has changed. Please review the docs about it",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-scripting");
+    report
+        .report(ERROR, element, element,
+                "The message format in Mule 4 has changed. Change any usages of the message to match the new bindings in Mule 4.",
+                "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message",
+                "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-scripting");
   }
 
   private String updateEngineValue(String engine) {

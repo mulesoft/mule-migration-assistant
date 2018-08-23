@@ -10,7 +10,6 @@ import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNam
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
-import static java.lang.System.lineSeparator;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -158,7 +157,7 @@ public final class XmlDslUtils {
       object.setAttribute("target", expressionMigrator.unwrap(migratedExpression));
       if (resolver.canResolve(expressionMigrator.unwrap(targetValue))) {
         addOutboundPropertySetter(expressionMigrator.unwrap(migratedExpression), object, model, object);
-        report.report(WARN, object, object, "Setting outbound property as variable",
+        report.report(WARN, object, object, "Setting outbound property as variable.",
                       "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
       }
     }
@@ -180,9 +179,8 @@ public final class XmlDslUtils {
     parent.addContent(index, a2ip);
 
     report.report(WARN, a2ip, a2ip,
-                  "Expressions that query inboundProperties from the message should instead query the attributes of the message."
-                      + lineSeparator()
-                      + "Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as copy-properties)",
+                  "Expressions that query inboundProperties from the message should instead query the attributes of the message. "
+                      + "Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as copy-properties).",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes");
     return a2ip;
   }
@@ -197,7 +195,7 @@ public final class XmlDslUtils {
     parent.addContent(index, op2v);
 
     report.report(WARN, op2v, op2v,
-                  "Instead of setting outbound properties in the flow, its values must be set explicitly in the operation/listener.",
+                  "Instead of using outbound properties in the flow, its values must be set explicitly in the operation/listener.",
                   "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
 
     return op2v;

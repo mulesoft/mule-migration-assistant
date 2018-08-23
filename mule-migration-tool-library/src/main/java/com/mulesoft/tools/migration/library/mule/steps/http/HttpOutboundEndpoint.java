@@ -132,15 +132,15 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
       object.setAttribute("sendBodyMode", getExpressionMigrator()
           .wrap("if (migration::HttpRequester::httpRequesterMethod(vars) == 'DELETE') 'NEVER' else 'AUTO'"));
       report.report(WARN, object, object, "Avoid using an outbound property to determine the method.");
-      report.report(WARN, object, object, "sendBodyMode added for compatibility. This may not be needed in this app.");
+      report.report(WARN, object, object, "'sendBodyMode' added for compatibility. This may not be needed in this app.");
     } else {
       if ("DELETE".equals(object.getAttributeValue("method"))) {
         object.setAttribute("sendBodyMode", "NEVER");
-        report.report(WARN, object, object, "sendBodyMode added for compatibility. This may not be needed in this app.");
+        report.report(WARN, object, object, "'sendBodyMode' added for compatibility. This may not be needed in this app.");
       } else if (getExpressionMigrator().isWrapped(object.getAttributeValue("method"))) {
         object.setAttribute("sendBodyMode", getExpressionMigrator().wrap("if ("
             + getExpressionMigrator().unwrap(object.getAttributeValue("method")) + " == 'DELETE') 'NEVER' else 'AUTO'"));
-        report.report(WARN, object, object, "sendBodyMode added for compatibility. This may not be needed in this app.");
+        report.report(WARN, object, object, "'sendBodyMode' added for compatibility. This may not be needed in this app.");
       }
     }
 

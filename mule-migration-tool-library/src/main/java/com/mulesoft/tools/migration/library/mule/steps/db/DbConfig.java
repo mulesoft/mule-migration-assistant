@@ -16,8 +16,8 @@ import static org.jdom2.Content.CType.Element;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Attribute;
 import org.jdom2.Content;
@@ -94,7 +94,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("dataSource-ref") != null) {
       report.report(WARN, object, object,
                     "Mule 3 config has a '" + object.getName()
-                        + "' with a dataSource-ref. It was converted to a 'db:data-source-connection'",
+                        + "' with a dataSource-ref. It was converted to a 'db:data-source-connection'.",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_data_source_db");
 
       connection = new Element("data-source-connection", DB_NAMESPACE);
@@ -106,7 +106,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
       if (!otherAttributes.isEmpty()) {
         report.report(WARN, connection, connection,
                       "The attributes " + otherAttributes.toString()
-                          + " overlap with properties of the referenced DataSource and were removed",
+                          + " overlap with properties of the referenced DataSource and were removed.",
                       "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_data_source_db");
       }
     } else if (object.getAttribute("url") != null) {
@@ -126,17 +126,17 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
           connection.setAttribute("driverClassName", "com.mysql.jdbc.Driver");
 
           report.report(ERROR, connection, connection,
-                        "Add a suitable jdbc driver dependency for this connection",
+                        "Add a suitable jdbc driver dependency for this connection.",
                         "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
         } else if ("oracle-config".equals(object.getName())) {
           connection.setAttribute("driverClassName", "oracle.jdbc.driver.OracleDriver");
 
           report.report(ERROR, connection, connection,
-                        "Add a suitable jdbc driver dependency for this connection",
+                        "Add a suitable jdbc driver dependency for this connection.",
                         "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
         } else {
           report.report(ERROR, connection, connection,
-                        "Add a suitable jdbc driver dependency for this connection",
+                        "Add a suitable jdbc driver dependency for this connection.",
                         "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
 
         }
@@ -181,7 +181,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
       copyAttributeIfPresent(object, connection, "transactionIsolation");
 
       report.report(ERROR, connection, connection,
-                    "Add a suitable jdbc driver dependency for this connection",
+                    "Add a suitable jdbc driver dependency for this connection.",
                     "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
     } else if ("oracle-config".equals(object.getName())) {
       connection = new Element("oracle-connection", DB_NAMESPACE);
@@ -195,7 +195,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
       copyAttributeIfPresent(object, connection, "transactionIsolation");
 
       report.report(ERROR, connection, connection,
-                    "Add a suitable jdbc driver dependency for this connection",
+                    "Add a suitable jdbc driver dependency for this connection.",
                     "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
     }
 
@@ -210,7 +210,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
     if (reconnect != null) {
       // TODO migrate reconnections
       report.report(ERROR, reconnect, connection,
-                    "Reconnection notifiers cannot be configured on the 'reconnect' element",
+                    "Reconnection notifiers cannot be configured on the 'reconnect' element.",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#reconnection_strategies");
       connection.removeContent(reconnect);
     }

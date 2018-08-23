@@ -6,11 +6,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.validation;
 
-import static java.lang.System.lineSeparator;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.category.MigrationReport.Level;
+
 import org.jdom2.Element;
 
 /**
@@ -36,9 +36,7 @@ public class CustomValidationMigration extends AbstractApplicationModelMigration
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    report.report(Level.ERROR, element, element, "Custom Validators were replaced with the Extension Validators. " +
-        lineSeparator() +
-        "Please review the documentation site to check how to migrate them.",
+    report.report(ERROR, element, element, "Custom Validators were replaced with the Extension Validators.",
                   "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation#custom_validator");
   }
 

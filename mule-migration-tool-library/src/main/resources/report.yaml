@@ -1,0 +1,423 @@
+message:
+  sessionVars:
+    type: WARN
+    message: Instead of using session variables in the flow, use variables.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables
+  outboundProperties:
+    type: WARN
+    message: Instead of using outbound properties in the flow, its values must be set explicitly in the operation/listener.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties
+  copyProperties:
+    type: WARN
+    message: Instead of copying properties in the flow, use the \'attributes\' of the message directly.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes
+  attributesToInboundProperties:
+    type: WARN
+    message: Expressions that query inboundProperties from the message should instead query the attributes of the message. Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as copy-properties).
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes
+  outboundPropertyEnricher:
+    type: WARN
+    message: Setting outbound property as variable.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties
+  inboundAttachments:
+    type: WARN
+    message: Identify the received attachments and set them as variables.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments
+  outboundAttachments:
+    type: ERROR
+    message: Refer to the documentation of the connectors/operations in the flow or the source to know how attachments are sent.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#outbound_attachments
+  expressionsAttachments:
+    type: ERROR
+    message: Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments
+  springBeanDefinitionInsideMuleObject:
+    type: ERORR
+    message: Spring beans definition inside mule components is not allowed. This inner definition must be moved to its own spring config file, and it may be referenced by an 'ee:transform' component or in an expression in the operation/listener directly.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-module-spring
+
+flow:
+  dynamicFlowRefName:
+    type: WARN
+    message: Make sure the expression used in the flow-ref already has the correct flow name and remove the replacements from this expression.
+  processingStrategy:
+    type: WARN
+    message: \'flow\' no longer has a \'processingStrategy\' attribute.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
+
+expressions:
+  melToDw:
+    type: WARN
+    message: MEL expression could not be migrated to a DataWeave expression.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-mel
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#mel_expressions
+      - https://blogs.mulesoft.com/dev/mule-dev/why-dataweave-main-expression-language-mule-4
+  inboundAttachments:
+    type: ERROR
+    message: Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments
+
+http:
+  mapExpression:
+    type: WARN
+    message: Build the {tagName} map with a single DW expression
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties
+  parseRequest:
+    type: WARN
+    message: \'parseRequest\' is not needed in Mule 4, since the InputStream of the multipart payload is provided at it is read.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-mime-types
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/dataweave-formats#format_form_data
+  statusCode:
+    type: WARN
+    message: Avoid using an outbound property to determine the status code.
+  method:
+    type: WARN
+    message: Avoid using an outbound property to determine the method.
+  threading:
+    type: WARN
+    message: Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
+  restConnect:
+    type: ERROR
+    message: For consuming an API described by a RAML file, Rest-Connect is a more appropriate tool than using the HTTP Connector directly.
+    docLinks:
+      - https://docs.mulesoft.com/anypoint-exchange/to-deploy-using-rest-connect
+      - https://blogs.mulesoft.com/dev/anypoint-platform-dev/building-reusable-components-with-rest-connect-and-mule-4
+  port:
+    type: ERROR
+    message: \'port\' cannot be overridden at the HTTP request operation. You may use an expression in the config to make it dynamic.\r\nOriginal value was port="{portNumber}" 
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request
+  host:
+    type: ERROR
+    message: \'host\' cannot be overridden at the HTTP request operation. You may use an expression in the config to make it dynamic.\r\nOriginal value was host="{host}" 
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request
+  socketProperties:
+    type: ERROR
+    message: The server socket properties may be configured at the runtime level in Mule 4.2.0 or higher.
+    # TODO MULE-15135
+  sendBodyMode:
+    type: WARN
+    message: \'sendBodyMode\' added for compatibility. This may not be needed in this app.
+  cookies:
+    type: ERROR
+    message: Cookie support in Mule 4 is limited to resending any cookie received by the server before.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-http
+  reuseAddress:
+    type: ERROR
+    message: \'reuseAddress\' attribute is only applicable to HTTP listeners, not requesters.
+  eTag:
+    type: ERROR
+    message: Consider using a watermark for checking ETag.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-patterns-watermark
+  tlsClientClass:
+    type: ERROR
+    message: \'class\' attribute of 'https:tls-client' was deprecated in 3.x. Use 'type' instead.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration
+  tlsServerClass:
+    type: ERROR
+    message: \'class\' attribute of 'https:tls-server' was deprecated in 3.x. Use 'type' instead.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration
+  tlsKeyStoreClass:
+    type: ERROR
+    message: \'class\' attribute of 'https:tls-key-store' was deprecated in 3.x. Use 'type' instead.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration
+
+jms:
+  customConnector:
+    type: ERROR
+    message: Cannot automatically migrate JMS custom-connector.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker
+  weblogicMqConnector:
+    type: ERROR
+    message: Add the client library of the Weblogic MQ as a shared library.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker
+  websphereMqConnector:
+    type: ERROR
+    message: IBM MQ Connector should be used to connecto to an IBM MQ broker.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker
+  xaConnectionCache:
+    type: ERROR
+    message: Cannot configure the connection cache for XA in JMS.
+  propertiesListener:
+    type: WARN
+    message: Avoid using properties to set the JMS response properties and headers.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#ListeningForNewMessages
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#RespondingToIncommingMessages
+  listenerTx:
+    type: WARN
+    message: There can be no transaction active before the listener, so JOIN is not supported at this point.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#UsingTransactions
+  propertiesPublish:
+    type: WARN
+    message: Avoid using properties to set the JMS properties and headers.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#SendingMessages
+  nestedTx:
+    type: ERROR
+    message: Use a <try> scope to begin a nested transaction.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/try-scope-xml-reference#properties-of-try
+
+file:
+  streaming:
+    type: WARN
+    message: \'streaming\' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about
+  serialiseObjects:
+    type: ERROR
+    message: \'serialiseObjects\' is not needed in Mule 4 File Connector, you may process the payload with DataWeave directly without the need to convert it to a Java object.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/transform-component-about
+  workDirectory:
+    type: ERROR
+    message: \'workDirectory\' is not needed in Mule 4 File Connector. The source file is locked, so there is no need to move it to a temporary location.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-file#file_configs
+  workFileNamePattern:
+    type: WARN
+    message: \'workFileNamePattern\' is not needed in Mule 4 File Connector. The source file is locked, so there is no need to move it to a temporary location.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-file#file_configs
+  threading:
+    type: WARN
+    message: Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
+  filePath:
+    type: ERROR
+    message: Use a DataWeave expression in <file:write> path attribute to set the filename of the file to write.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-file#file_write
+  manyConnectors:
+    type: ERROR
+    message: There are at least 2 connectors matching protocol \'file\', so the connector to use must be specified on the endpoint using the \'connector\' property/attribute. Connectors in your configuration that support \'file\' are {connectors}
+  caseSensitive:
+    type: WARN
+    message: \'caseSensitive\' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.
+    docLinks:
+      - https://docs.mulesoft.com/connectors/file-on-new-file
+  responseTimeout:
+    type: WARN
+    message: \'responseTimeout\' was not being used by the file transport.
+  comparator:
+    type: ERROR
+    message: \'comparator\'/\'reverseOrder\' are not yet supported by the file connector listener.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-file#file_listener
+  notNeeded:
+    type: WARN
+    message: \'{attribute}\' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about
+
+db:
+  referencedDataSource:
+    type: WARN
+    message: Mule 3 config has a \'{referencer}\' with a dataSource-ref. It was converted to a \'db:data-source-connection\'.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_data_source_db
+  configAttributesOverlap:
+    type: WARN
+    message: The attributes \'{otherAttributes}\' overlap with properties of the referenced DataSource and were removed.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_data_source_db
+  jdbcDriverDependency:
+    type: ERROR
+    message: Add a suitable jdbc driver dependency for this connection.
+    docLinks:
+      - https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver
+  jdbcUrlForSpecificEngine:
+    type: WARN
+    message: The config in Mule 3 is specific for an engine, but it contained an \'url\' attribute. It will be made generic in order to keep the url.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_generic_db
+  jbossTxManager:
+    type: ERROR
+    message: JBoss Transaction manager must be replaced by Bitronix Transaction Manager provided by Mule.
+  reconnectNotifiers:
+    type: ERROR
+    message: Reconnection notifiers cannot be configured on the \'reconnect\' element.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#reconnection_strategies
+  source:
+    type: ERORR
+    message: \'source\' attribute does not exist in Mule 4. Update the query accordingly.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#database_dynamic_queries
+  streaming:
+    type: WARN
+    message: Streaming is enabled by default in Mule 4
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#database_streaming
+
+wsc:
+  unsupportedProtocol:
+    type: ERROR
+    message: WebService consumer only supports HTTP or JMS transports.
+
+validation:
+  exceptionFactory:
+    type: ERROR
+    message: Exception Factory is no longer supported.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation
+  customValidatros:
+    type: ERROR
+    message: Custom Validators were replaced with the Extension Validators.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation#custom_validator
+
+scripting:
+  messageFormat:
+    type: ERROR
+    message: The message format in Mule 4 has changed. Change any usages of the message to match the new bindings in Mule 4.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-scripting
+
+vm:
+  externalTx:
+    type: ERROR
+    message: Mule 4 does not support joining with external transactions.
+  listenerTx:
+    type: WARN
+    message: There can be no transaction active before the listener, so JOIN is not supported at this point.
+  nestedTx:
+    type: ERROR
+    message: Use a <try> scope to begin a nested transaction.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/try-scope-xml-reference#properties-of-try
+  sessionVars:
+    type: WARN
+    message: You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables
+
+transports:
+  cantParseAddress:
+    type: ERROR
+    message: Unable to parse endpoint address \'{address}\'.
+
+transform:
+  sessionVars:
+    type: WARN
+    message: Instead of setting session variables in the flow, you msut set Variables.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables
+  outboundProperties:
+    type: WARN
+    message: Instead of setting outbound properties in the flow, you must set Variables.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties
+
+configProperties:
+  encoding:
+    type: ERROR
+    message: \'encoding\' is not available in Mule 4.1.x. It will be included in 4.2.0 or higher.
+  order:
+    type: ERROR
+    message: \'order\' is no longer available. The properties are resolved in the order they were declared.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties#properties-files
+  springAttributes:
+    type: ERROR
+    message: Spring specific attributes are no loger available. The default behavior cannot be changed in Mule 4.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties
+  securePrefix:
+    type: ERROR
+    message: Review usages of properties defined in the referenced file and add the \'secure\' prefix to those.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-secure-properties-placeholder
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/secure-configuration-properties#usage
+  ignoreResourceNotFound:
+    type: ERROR
+    message: \'ignoreResourceNotFound\' is no longer available. The deployment will fail if a referenced file does not exist.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties#properties-files
+  ignoreUnresolvablePlaceholders:
+    type: ERROR
+    message: \'ignoreUnresolvablePlaceholders\' is no longer available. The deployment will fail if a referenced property is not defined.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties
+  systemPropertiesMode:
+    type: ERROR
+    message: \'systemPropertiesMode\' is no longer available. The default behavior cannot be changed in Mule 4.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties#properties-hierarchy
+
+errorHandling:
+  redelivery:
+    type: ERROR
+    message: \'maxRedeliveryAttempts\' is not supported anymore in the error handler. A <redelivery-policy> element must be created on the message source.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core-exception-strategies#with-redelivery
+  reuse:
+    type: ERROR
+    message: The way to reuse on-errors scopes have changed.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/on-error-scope-concept#reusing-on-error-scopes
+
+scatterGather:
+  threading:
+    type: WARN
+    message: Threading Profile is no longer needed in Mule 4.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
+  customAggregation:
+    type: ERROR
+    message: Custom Aggregations are no longer supported. Add an \'ee:transform\' after the \'scatteg-gather\' to perfrom the aggregation.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/scatter-gather-concept
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/transform-component-about
+  
+batch:
+  threading:
+    type: WARN
+    message: Threading profiles do not exist in Mule 4. This may be replaced by a \'maxConcurrency\' attribute in the batch job.
+    docLinks:
+      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
+  filterExpression:
+    type: WARN
+    message: \'filter-expression\' does not exist in Mule 4. This may be replaced with \'acceptExpression\' attribute in the batch step.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core-batch#xml_changes
+
+cache:
+  filterExpression:
+    type: ERROR
+    message: Rewrite the logic of the referenced filter as a DataWeave expression in the \'filterExpression\' attribute.
+  consumableFilter:
+    type: ERROR
+    message: \'consumableFilter-ref\' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about
+  

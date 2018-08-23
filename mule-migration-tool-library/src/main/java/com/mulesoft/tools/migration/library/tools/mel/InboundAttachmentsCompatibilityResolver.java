@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
@@ -27,7 +29,7 @@ public class InboundAttachmentsCompatibilityResolver implements CompatibilityRes
 
   @Override
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model) {
-    report.report(MigrationReport.Level.ERROR, element, element,
+    report.report(ERROR, element, element,
                   "Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.",
                   "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments");
 

@@ -277,7 +277,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
   private void handleConnector(Element connector, MigrationReport report) {
     if (connector.getAttribute("serverSoTimeout") != null
         || connector.getAttribute("reuseAddress") != null) {
-      // TODO MULE-14960
+      // TODO MULE-14960, MULE-15135
       report.report(ERROR, connector, connector, "The server socket properties have to be configured at the runtime level.");
       connector.removeAttribute("serverSoTimeout");
       connector.removeAttribute("reuseAddress");
