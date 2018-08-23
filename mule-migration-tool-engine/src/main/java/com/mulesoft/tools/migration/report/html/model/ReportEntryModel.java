@@ -30,6 +30,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml;
@@ -127,6 +128,10 @@ public class ReportEntryModel {
     return columnNumber;
   }
 
+  public Element getElement() {
+    return element;
+  }
+
   public String getMessage() {
     return message;
   }
@@ -138,4 +143,23 @@ public class ReportEntryModel {
   public List<String> getDocumentationLinks() {
     return documentationLinks;
   }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getLevel(), getElement(), getMessage(), getDocumentationLinks());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null || getClass() != obj.getClass())
+      return false;
+    ReportEntryModel that = (ReportEntryModel) obj;
+    return Objects.equals(getLevel(), that.getLevel()) &&
+        Objects.equals(getElement(), that.getElement()) &&
+        Objects.equals(getMessage(), that.getMessage()) &&
+        Objects.equals(getDocumentationLinks(), that.getDocumentationLinks());
+  }
+
 }
