@@ -21,5 +21,6 @@ public interface CompatibilityResolver<T> {
 
   boolean canResolve(T original);
 
-  T resolve(T original, Element element, MigrationReport report, ApplicationModel model);
+  T resolve(String original, Element element, MigrationReport report, ApplicationModel model,
+            ExpressionMigrator expressionMigrator);
 }
