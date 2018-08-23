@@ -286,4 +286,11 @@ public class MelToDwExpressionMigratorTest {
     verify(reportMock).report(eq(MigrationReport.Level.WARN), eq(elementMock), eq(elementMock), anyString(), anyVararg());
     assertThat("Migrated expression is not the expected", migratedExpression, equalTo("#[mel:" + originalExpression + "]"));
   }
+
+  @Test
+  public void migrateEncode64Method() {
+    String script = "#[org.apache.commons.codec.binary.Base64.encodeBase64(flowVars['your_variable'].getBytes())] ";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[dw::core::Binaries::toBase64(vars['your_variable'])]"));
+  }
 }

@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.tools.mel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class HeaderSyntaxCompatibilityResolver implements CompatibilityResolver<
     resolvers.add(new OutboundPropertiesCompatibilityResolver());
     resolvers.add(new InvocationPropertiesCompatibilityResolver());
     resolvers.add(new SessionVariablesCompatibilityResolver());
+    resolvers.add(new Encode64Resolver());
   }
 
 
@@ -39,10 +41,11 @@ public class HeaderSyntaxCompatibilityResolver implements CompatibilityResolver<
   }
 
   @Override
-  public String resolve(String original, Element element, MigrationReport report, ApplicationModel model) {
+  public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
+                        ExpressionMigrator expressionMigrator) {
     return resolvers.stream()
         .filter(r -> r.canResolve(original))
         .findFirst().get()
-        .resolve(original, element, report, model);
+        .resolve(original, element, report, model, expressionMigrator);
   }
 }

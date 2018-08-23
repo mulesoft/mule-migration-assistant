@@ -62,12 +62,12 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     return migratedExpression;
   }
 
-  private String translateSingleExpression(String unwrappedExpression, boolean dataWeaveBodyOnly, Element element) {
+  public String translateSingleExpression(String unwrappedExpression, boolean dataWeaveBodyOnly, Element element) {
     String migratedExpression;
     try {
       migratedExpression = Migrator.migrate(unwrappedExpression);
     } catch (Exception e) {
-      return compatibilityResolver.resolve(unwrappedExpression, element, report, model);
+      return compatibilityResolver.resolve(unwrappedExpression, element, report, model, this);
     }
     if (migratedExpression.contains("message.inboundAttachments")) {
       report.report(ERROR, element, element,
