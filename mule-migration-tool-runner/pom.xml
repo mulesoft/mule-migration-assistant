@@ -64,6 +64,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                                     <mainClass>
                                         com.mulesoft.tools.migration.MigrationRunner
                                     </mainClass>

@@ -53,6 +53,7 @@ public class MigrationJob implements Executable {
   private Path reportPath;
   private List<AbstractMigrationTask> migrationTasks;
   private String muleVersion;
+  private String runnerVersion;
 
   private MigrationJob(Path project, Path outputProject, List<AbstractMigrationTask> migrationTasks, String muleVersion) {
     this.migrationTasks = migrationTasks;
@@ -60,6 +61,7 @@ public class MigrationJob implements Executable {
     this.outputProject = outputProject;
     this.project = project;
     this.reportPath = outputProject.resolve(HTML_REPORT_FOLDER);
+    this.runnerVersion = this.getClass().getPackage().getImplementationVersion();
   }
 
   @Override
@@ -133,12 +135,16 @@ public class MigrationJob implements Executable {
         throw new MigrationJobException("Failed to generate report.", ex.getCause());
       }
     }
-    HTMLReport htmlReport = new HTMLReport(report.getReportEntries(), reportPath.toFile());
+    HTMLReport htmlReport = new HTMLReport(report.getReportEntries(), reportPath.toFile(), this.getRunnerVersion());
     htmlReport.printReport();
   }
 
   public Path getReportPath() {
     return this.reportPath;
+  }
+
+  public String getRunnerVersion() {
+    return this.runnerVersion;
   }
 
   /**

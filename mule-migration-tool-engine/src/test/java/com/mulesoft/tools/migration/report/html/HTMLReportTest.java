@@ -31,7 +31,7 @@ public class HTMLReportTest {
 
   @Before
   public void setUp() {
-    printer = new HTMLReport(mock(List.class), temporaryFolder.getRoot());
+    printer = new HTMLReport(mock(List.class), temporaryFolder.getRoot(), "1.0.0");
     writer = mock(ReportFileWriter.class);
     printer.setReportFileWriter(writer);
   }

@@ -10,7 +10,7 @@
     <div class="mulesoft-topbar">
         <div class="mulesoft-appbar">
             <div class="muleicon muleicon-logo"></div>
-            <div class="anypoint-brand">Mule Migration Tool Report - ${resource}</div>
+            <div class="anypoint-brand">Mule Migration Tool ${version}</div>
         </div>
     </div>
     <div class="col-md-2 col-md-offset-1 sidemenu">

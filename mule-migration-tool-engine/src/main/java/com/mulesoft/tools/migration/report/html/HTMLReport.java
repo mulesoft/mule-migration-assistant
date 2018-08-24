@@ -54,14 +54,16 @@ public class HTMLReport {
   private ApplicationReport applicationReport;
   private ReportFileWriter reportFileWriter = new ReportFileWriter();
   private Configuration freemarkerConfig;
+  private String runnerVersion;
 
-  public HTMLReport(List<ReportEntryModel> reportEntries, File reportDirectory) {
+  public HTMLReport(List<ReportEntryModel> reportEntries, File reportDirectory, String runnerVersion) {
     checkNotNull(reportEntries, "Report Entries cannot be null");
     checkNotNull(reportDirectory, "Report directory cannot be null");
     this.applicationReport = new ApplicationReportBuilder().withReportEntries(reportEntries).build();
     this.reportDirectory = reportDirectory;
     this.freemarkerConfig = new Configuration(Configuration.VERSION_2_3_28);
     this.freemarkerConfig.setClassForTemplateLoading(this.getClass(), BASE_TEMPLATE_FOLDER);
+    this.runnerVersion = runnerVersion;
   }
 
   public void printReport() {
@@ -83,6 +85,7 @@ public class HTMLReport {
     try {
       Template summaryTemplate = getTemplate(SUMMARY_TEMPLATE_FILE_NAME);
       Map<String, Object> data = new HashMap<>();
+      data.put("version", runnerVersion);
       data.put("applicationErrors", applicationReport.getErrorEntries());
       data.put("applicationWarnings", applicationReport.getWarningEntries());
       data.put("applicationSummaryErrors", applicationReport.getSummaryErrorEntries());
@@ -113,6 +116,7 @@ public class HTMLReport {
             Template resourceTemplate = getTemplate(RESOURCE_TEMPLATE_FILE_NAME);
 
             Map<String, Object> data = new HashMap<>();
+            data.put("version", runnerVersion);
             data.put("resource", Paths.get(entry.getKey()).getFileName().toString());
             data.put("description", fileEntry.getKey());
             data.put("docLinks", fileEntry.getValue().get(0).getDocumentationLinks());
