@@ -298,7 +298,7 @@ public class ApplicationModel {
   /**
    * The path to the root of the project represented by the application model instance
    *
-   * @param projectBasePath
+   * @param sourceProjectBasePath
    */
   private void setSourceProjectBasePath(Path sourceProjectBasePath) {
     this.sourceProjectBasePath = sourceProjectBasePath;
@@ -452,7 +452,7 @@ public class ApplicationModel {
     /**
      * Path to the parent domain of the app being migrated
      *
-     * @param projectBasePath
+     * @param parentDomainBasePath
      * @return the builder
      */
     public ApplicationModelBuilder withParentDomainBasePath(Path parentDomainBasePath) {
@@ -542,11 +542,13 @@ public class ApplicationModel {
 
 
       if (muleArtifactJson != null) {
-        MuleArtifactJsonModel muleArtifactJsonModel = new MuleArtifactJsonModel.MuleApplicationJsonModelBuilder()
-            .withMuleArtifactJson(muleArtifactJson)
-            .withMuleVersion(muleVersion)
-            .build();
-        applicationModel.setMuleArtifactJsonModel(muleArtifactJsonModel);
+        MuleArtifactJsonModel.MuleApplicationJsonModelBuilder builder =
+            new MuleArtifactJsonModel.MuleApplicationJsonModelBuilder();
+        builder.withMuleArtifactJson(muleArtifactJson);
+        if (!muleArtifactJson.toFile().exists()) {
+          builder.withMuleVersion(muleVersion);
+        }
+        applicationModel.setMuleArtifactJsonModel(builder.build());
       }
       PomModel pomModel;
       if (pom != null && pom.toFile().exists()) {

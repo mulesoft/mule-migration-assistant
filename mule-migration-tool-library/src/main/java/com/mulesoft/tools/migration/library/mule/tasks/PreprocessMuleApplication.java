@@ -10,6 +10,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
+import com.mulesoft.tools.migration.library.mule.steps.core.SetSecureProperties;
 import com.mulesoft.tools.migration.library.mule.steps.core.PreprocessNamespaces;
 import com.mulesoft.tools.migration.library.mule.steps.ee.MigrateDWScriptFiles;
 import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveBuildHelperMavenPlugin;
@@ -53,7 +54,8 @@ public class PreprocessMuleApplication extends AbstractMigrationTask {
                         new RemoveMuleDependencies(),
                         new UpdateProjectVersion(),
                         new PreprocessNamespaces(),
-                        new MigrateDWScriptFiles());
+                        new MigrateDWScriptFiles(),
+                        new SetSecureProperties());
   }
 
 }
