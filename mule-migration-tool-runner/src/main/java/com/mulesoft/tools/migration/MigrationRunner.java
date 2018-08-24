@@ -55,10 +55,10 @@ public class MigrationRunner {
     try {
       MigrationRunner migrationRunner = new MigrationRunner();
       migrationRunner.initializeOptions(args);
-      log("Executing migration...");
 
       MigrationJob job = migrationRunner.buildMigrationJob();
       DefaultMigrationReport report = new DefaultMigrationReport();
+      log("Executing migrator " + job.getRunnerVersion() + "...");
       job.execute(report);
       printMigrationSummary(job.getReportPath().resolve(REPORT_HOME).toAbsolutePath().toString(),
                             stopwatch.stop().elapsed(MILLISECONDS));
