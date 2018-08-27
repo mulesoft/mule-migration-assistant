@@ -23,7 +23,7 @@ public class HttpsGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
   private static final String HTTP_NS_PREFIX = "http";
   private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/https' and local-name() = 'endpoint']";
+      "/*/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/https' and local-name() = 'endpoint']";
 
   @Override
   public String getDescription() {

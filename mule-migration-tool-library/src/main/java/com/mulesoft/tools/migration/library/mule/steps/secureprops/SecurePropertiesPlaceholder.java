@@ -28,7 +28,7 @@ public class SecurePropertiesPlaceholder extends AbstractApplicationModelMigrati
   public static final Namespace SECURE_NAMESPACE = Namespace.getNamespace("secure-properties", SECURE_NS_URI);
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri()='http://www.mulesoft.org/schema/mule/secure-property-placeholder' and local-name()='config']";
+      "/*/*[namespace-uri()='http://www.mulesoft.org/schema/mule/secure-property-placeholder' and local-name()='config']";
 
   @Override
   public String getDescription() {

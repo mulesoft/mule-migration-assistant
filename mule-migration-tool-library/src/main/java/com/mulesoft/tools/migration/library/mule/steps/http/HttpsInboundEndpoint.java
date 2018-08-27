@@ -29,7 +29,7 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
   private static final String HTTP_NS_PREFIX = "http";
   private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
   public static final String XPATH_SELECTOR =
-      "/mule:mule/mule:flow/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/https' and local-name() = 'inbound-endpoint' and position() = 1]";
+      "/*/mule:flow/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/https' and local-name() = 'inbound-endpoint' and position() = 1]";
 
   @Override
   public String getDescription() {
@@ -62,7 +62,7 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
     getApplicationModel().addNameSpace(HTTP_NS_PREFIX, HTTP_NS_URI,
                                        "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
-    Element httpsListenerConnection = getApplicationModel().getNode("/mule:mule/http:listener-config[@name = '"
+    Element httpsListenerConnection = getApplicationModel().getNode("/*/http:listener-config[@name = '"
         + object.getAttributeValue("config-ref") + "']/http:listener-connection");
 
     httpsListenerConnection.setAttribute("protocol", "HTTPS");
@@ -115,12 +115,12 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
 
   @Override
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/mule:mule/https:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/https:connector[@name = '" + connectorName + "']");
   }
 
   @Override
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/mule:mule/https:connector");
+    return getApplicationModel().getNodeOptional("/*/https:connector");
   }
 
 }

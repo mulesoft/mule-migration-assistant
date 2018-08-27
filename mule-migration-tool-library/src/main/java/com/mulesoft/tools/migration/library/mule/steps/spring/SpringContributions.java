@@ -28,7 +28,7 @@ public class SpringContributions extends AbstractSpringMigratorStep {
   private static final String ADDITIONAL_SPRING_NAMESPACES = System.getProperty(ADDITIONAL_SPRING_NAMESPACES_PROP);
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[starts-with(namespace-uri(), 'http://www.springframework.org/schema') %s]";
+      "/*[starts-with(namespace-uri(), 'http://www.mulesoft.org/schema/mule/')]/*[starts-with(namespace-uri(), 'http://www.springframework.org/schema') %s]";
 
   @Override
   public String getDescription() {

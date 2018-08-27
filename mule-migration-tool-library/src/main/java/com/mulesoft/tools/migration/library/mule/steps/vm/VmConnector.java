@@ -27,7 +27,7 @@ public class VmConnector extends AbstractApplicationModelMigrationStep {
   private static final Namespace VM_NAMESPACE = Namespace.getNamespace(VM_NAMESPACE_PREFIX, VM_NAMESPACE_URI);
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri() = '" + VM_NAMESPACE_URI + "' and local-name() = 'connector']";
+      "/*/*[namespace-uri() = '" + VM_NAMESPACE_URI + "' and local-name() = 'connector']";
 
   @Override
   public String getDescription() {

@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class GenericGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
-  public static final String XPATH_SELECTOR = "/mule:mule/mule:endpoint";
+  public static final String XPATH_SELECTOR = "/*/mule:endpoint";
 
   @Override
   public String getDescription() {
@@ -55,7 +55,7 @@ public class GenericGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
   protected Set<Element> getRefs(Element object) {
     Set<Element> refsToGlobal = new HashSet<>();
     refsToGlobal
-        .addAll(getApplicationModel().getNodes("/mule:mule/mule:flow//*[local-name() = 'endpoint' and @ref='"
+        .addAll(getApplicationModel().getNodes("/*/mule:flow//*[local-name() = 'endpoint' and @ref='"
             + object.getAttributeValue("name") + "']"));
     return refsToGlobal;
   }
@@ -64,7 +64,7 @@ public class GenericGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
   protected Set<Element> getInboundRefs(Element object) {
     Set<Element> inboundRefsToGlobal = new HashSet<>();
     inboundRefsToGlobal
-        .addAll(getApplicationModel().getNodes("/mule:mule/mule:flow/*[local-name() = 'inbound-endpoint' and @ref='"
+        .addAll(getApplicationModel().getNodes("/*/mule:flow/*[local-name() = 'inbound-endpoint' and @ref='"
             + object.getAttributeValue("name") + "']"));
     return inboundRefsToGlobal;
   }
@@ -73,7 +73,7 @@ public class GenericGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
   protected Set<Element> getOutboundRefs(Element object) {
     Set<Element> outboundRefsToGlobal = new HashSet<>();
     outboundRefsToGlobal.addAll(getApplicationModel()
-        .getNodes("/mule:mule/mule:flow//*[local-name() = 'outbound-endpoint' and @ref='"
+        .getNodes("/*/mule:flow//*[local-name() = 'outbound-endpoint' and @ref='"
             + object.getAttributeValue("name") + "']"));
     return outboundRefsToGlobal;
   }

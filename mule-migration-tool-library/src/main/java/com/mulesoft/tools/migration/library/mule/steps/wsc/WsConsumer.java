@@ -32,7 +32,7 @@ public class WsConsumer extends AbstractApplicationModelMigrationStep {
   private static final String WSC_NAMESPACE_PREFIX = "wsc";
   private static final String WSC_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/wsc";
   private static final Namespace WSC_NAMESPACE = Namespace.getNamespace(WSC_NAMESPACE_PREFIX, WSC_NAMESPACE_URI);
-  public static final String XPATH_SELECTOR = "/mule:mule//ws:consumer";
+  public static final String XPATH_SELECTOR = "//ws:consumer";
 
   @Override
   public String getDescription() {
@@ -56,9 +56,9 @@ public class WsConsumer extends AbstractApplicationModelMigrationStep {
 
     Element config;
     if (object.getAttribute("config-ref") != null) {
-      config = getApplicationModel().getNode("/mule:mule/wsc:config[@name='" + object.getAttributeValue("config-ref") + "']");
+      config = getApplicationModel().getNode("/*/wsc:config[@name='" + object.getAttributeValue("config-ref") + "']");
     } else {
-      config = getApplicationModel().getNode("/mule:mule/wsc:config");
+      config = getApplicationModel().getNode("/*/wsc:config");
       object.setAttribute("config-ref", config.getAttributeValue("name"));
     }
 

@@ -22,7 +22,7 @@ import com.mulesoft.tools.migration.step.category.PomContribution;
  */
 public class SpringPomContribution implements PomContribution {
 
-  private static final String SPRING_MODULE_VERSION = "1.1.1";
+  private static final String SPRING_MODULE_VERSION = "1.2.0";
   private static final String SPRING_VERSION = "4.3.17.RELEASE";
   private static final String SPRING_SECURITY_VERSION = "4.2.6.RELEASE";
 

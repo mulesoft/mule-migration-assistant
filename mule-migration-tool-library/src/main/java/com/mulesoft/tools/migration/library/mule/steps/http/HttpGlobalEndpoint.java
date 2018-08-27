@@ -12,10 +12,6 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
-
 /**
  * Migrates the global endpoints of the http transport
  *
@@ -26,7 +22,7 @@ public class HttpGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
   private static final String HTTP_NAMESPACE_PREFIX = "http";
   private static final String HTTP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/http";
-  public static final String XPATH_SELECTOR = "/mule:mule/http:endpoint";
+  public static final String XPATH_SELECTOR = "/*/http:endpoint";
 
   @Override
   public String getDescription() {

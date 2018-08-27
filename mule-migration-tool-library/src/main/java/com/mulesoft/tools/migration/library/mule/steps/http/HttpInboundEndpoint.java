@@ -48,7 +48,7 @@ import java.util.Optional;
 public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "/mule:mule/mule:flow/http:inbound-endpoint[1]";
+  public static final String XPATH_SELECTOR = "/*/mule:flow/http:inbound-endpoint[1]";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -123,7 +123,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     }
 
     getApplicationModel()
-        .getNodes("/mule:mule/mule:flow[@name='" + flowName + "']/http:response-builder")
+        .getNodes("/*/mule:flow[@name='" + flowName + "']/http:response-builder")
         .forEach(rb -> {
           handleReferencedResponseBuilder(rb, getApplicationModel(), httpNamespace);
           Element response = getResponse(object, httpNamespace);
@@ -144,7 +144,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
         });
 
     getApplicationModel()
-        .getNodes("/mule:mule/mule:flow[@name='" + flowName + "']/http:error-response-builder")
+        .getNodes("/*/mule:flow[@name='" + flowName + "']/http:error-response-builder")
         .forEach(rb -> {
           handleReferencedResponseBuilder(rb, getApplicationModel(), httpNamespace);
           Element errorResponse = getErrorResponse(object, httpNamespace);
@@ -244,7 +244,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
 
   private void extractListenerConfig(Element object, final Namespace httpNamespace, String configName, String host, String port) {
     Optional<Element> existingListener =
-        getApplicationModel().getNodeOptional("/mule:mule/http:listener-config/http:listener-connection[@host = '" + host
+        getApplicationModel().getNodeOptional("/*/http:listener-config/http:listener-connection[@host = '" + host
             + "' and @port = '" + port + "']");
 
     if (existingListener.isPresent()) {
@@ -285,11 +285,11 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/mule:mule/http:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/http:connector[@name = '" + connectorName + "']");
   }
 
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/mule:mule/http:connector");
+    return getApplicationModel().getNodeOptional("/*/http:connector");
   }
 
   private void handleResponseBuilder(Element listenerSource, Element listenerResponse, Element responseBuilder,

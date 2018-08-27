@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_APPLIC
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_DOMAIN;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_MAVEN_APPLICATION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_MAVEN_DOMAIN;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_POLICY;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.project.structure.mule.MuleProject;
@@ -19,6 +20,7 @@ import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThre
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeDomain;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeMavenApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeMavenDomain;
+import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreePolicy;
 import com.mulesoft.tools.migration.project.ProjectType;
 
 import java.nio.file.Path;
@@ -31,19 +33,18 @@ import java.nio.file.Path;
  */
 public class MuleProjectFactory {
 
-  private static ProjectTypeFactory projectFactory = new ProjectTypeFactory();
-
-  public static MuleProject getMuleProject(Path projectPath) throws Exception {
-    ProjectType type = projectFactory.getProjectType(projectPath);
-    if (!type.equals(BASIC) && !type.equals(JAVA)) {
-      if (type.equals(MULE_THREE_APPLICATION)) {
+  public static MuleProject getMuleProject(Path projectPath, ProjectType projectType) throws Exception {
+    if (!projectType.equals(BASIC) && !projectType.equals(JAVA)) {
+      if (projectType.equals(MULE_THREE_APPLICATION)) {
         return new MuleThreeApplication(projectPath);
-      } else if (type.equals(MULE_THREE_MAVEN_APPLICATION)) {
+      } else if (projectType.equals(MULE_THREE_MAVEN_APPLICATION)) {
         return new MuleThreeMavenApplication(projectPath);
-      } else if (type.equals(MULE_THREE_DOMAIN)) {
+      } else if (projectType.equals(MULE_THREE_DOMAIN)) {
         return new MuleThreeDomain(projectPath);
-      } else if (type.equals(MULE_THREE_MAVEN_DOMAIN)) {
+      } else if (projectType.equals(MULE_THREE_MAVEN_DOMAIN)) {
         return new MuleThreeMavenDomain(projectPath);
+      } else if (projectType.equals(MULE_THREE_POLICY)) {
+        return new MuleThreePolicy(projectPath);
       }
     }
     throw new MigrationJobException("Cannot read mule project. Is it a Mule Studio project?");

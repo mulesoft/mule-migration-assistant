@@ -9,12 +9,15 @@ package com.mulesoft.tools.migration.engine.project.structure;
 import static com.mulesoft.tools.migration.engine.project.ProjectMatcher.getProjectDestination;
 import static java.lang.System.lineSeparator;
 import static java.nio.file.Files.exists;
+import static org.apache.commons.io.FileUtils.moveFileToDirectory;
 import static org.jdom2.output.Format.getPrettyFormat;
 
+import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.project.ProjectTypeFactory;
 import com.mulesoft.tools.migration.engine.project.structure.mule.MuleProject;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourDomain;
+import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourPolicy;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeDomain;
 import com.mulesoft.tools.migration.engine.project.structure.util.CopyFileVisitor;
@@ -119,13 +122,23 @@ public class ApplicationPersister {
     }
   }
 
-  private String getTargetFilePath(Path originalFilePath) {
+  private String getTargetFilePath(Path originalFilePath) throws MigrationJobException {
     if (originalFilePath.toString().contains(MuleThreeApplication.srcMainConfigurationPath)
         || originalFilePath.toString().contains(MuleFourApplication.srcMainConfigurationPath)) {
       return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
           .resolve(originalFilePath.getFileName()).toString();
     } else if (originalFilePath.toString().contains(MuleThreeDomain.srcMainConfigurationPath)
         || originalFilePath.toString().contains(MuleFourDomain.srcMainConfigurationPath)) {
+      return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
+          .resolve(originalFilePath.getFileName()).toString();
+    } else if (projectOutput instanceof MuleFourPolicy) {
+      try {
+        moveFileToDirectory(outputAppPath.resolve(originalFilePath).toFile(),
+                            ((MuleProject) projectOutput).srcMainConfiguration().toFile(), true);
+      } catch (IOException e) {
+        throw new MigrationJobException("Cannot create policy structure", e);
+      }
+
       return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
           .resolve(originalFilePath.getFileName()).toString();
     } else if (originalFilePath.toString().contains(MuleFourApplication.srcMainResourcesPath)) {
@@ -159,7 +172,7 @@ public class ApplicationPersister {
       app = project.srcMainConfiguration().toFile();
       app.mkdirs();
     }
-    if (!(project instanceof MuleFourDomain)) {
+    if (!(project instanceof MuleFourDomain || project instanceof MuleFourPolicy)) {
       if (!exists(project.srcTestConfiguration())) {
         app = project.srcTestConfiguration().toFile();
         app.mkdirs();

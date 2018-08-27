@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.secureprops;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -73,6 +74,7 @@ public class SecurePropertiesTest {
                 .get(this.getClass().getClassLoader().getResource(SECURE_PROPS_EXAMPLES_PATH.toString()).toURI()))
             .withConfigurationFiles(asList(resolvedConfigPath))
             .withMuleVersion(muleVersion)
+            .withProjectType(MULE_FOUR_APPLICATION)
             .build();
 
     Document doc = appModel.getApplicationDocuments().get(configPath.getFileName());

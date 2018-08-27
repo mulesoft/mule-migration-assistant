@@ -6,23 +6,28 @@
  */
 package com.mulesoft.tools.migration.integration;
 
-import com.mulesoft.mule.distributions.server.AbstractEeAppControl;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
-import org.mule.runtime.module.artifact.api.descriptor.BundleDescriptor;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
 import static java.lang.Boolean.parseBoolean;
+import static java.lang.Integer.MAX_VALUE;
 import static java.lang.System.getProperty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.junit.Assert.fail;
 import static org.mule.runtime.deployment.model.api.application.ApplicationDescriptor.MULE_APPLICATION_CLASSIFIER;
 import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArtifact;
+
+import org.mule.runtime.module.artifact.api.descriptor.BundleDescriptor;
+
+import com.mulesoft.mule.distributions.server.AbstractEeAppControl;
+
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tests the whole migration process, starting with a Mule 3 source config, migrating it to Mule 4, packaging and deploying it to
@@ -32,36 +37,15 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
 
   private static final String DELETE_ON_EXIT = getProperty("mule.test.deleteOnExit");
 
-  private static final String ONLY_MIGRATE = getProperty("mule.test.migratorOnly");
+  protected static final String ONLY_MIGRATE = getProperty("mule.test.migratorOnly");
 
-  private static final boolean DEBUG_RUNNER = Boolean.getBoolean("mule.test.debugRunner");
+  private static final String DEBUG_RUNNER = getProperty("mule.test.debugRunner");
 
   @Rule
   public TemporaryFolder migrationResult = new TemporaryFolder();
 
   public void simpleCase(String appName, String... muleArgs) throws Exception {
-    String projectBasePath =
-        new File(EndToEndTestCase.class.getClassLoader().getResource("e2e/" + appName).toURI()).getAbsolutePath();
-
-    String outPutPath = migrationResult.getRoot().toPath().resolve(appName).toAbsolutePath().toString();
-
-    // Run migration tool
-    final List<String> command = buildRunnerCommand(projectBasePath, outPutPath);
-    ProcessBuilder pb = new ProcessBuilder(command);
-
-    pb.redirectErrorStream(true);
-    Process p = pb.start();
-
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        System.out.println("Migrator: " + line);
-      }
-    }
-
-    if (p.waitFor() != 0) {
-      fail("Migration failed");
-    }
+    String outPutPath = migrate(appName);
 
     if (ONLY_MIGRATE != null) {
       return;
@@ -85,11 +69,54 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     }
   }
 
+  /**
+   * Runs the migration tool on the referenced project.
+   *
+   * @param projectName
+   * @return the path where the migrated project is located.
+   * @throws URISyntaxException
+   * @throws IOException
+   * @throws InterruptedException
+   */
+  protected String migrate(String projectName) throws URISyntaxException, IOException, InterruptedException {
+    String projectBasePath =
+        new File(EndToEndTestCase.class.getClassLoader().getResource("e2e/" + projectName).toURI()).getAbsolutePath();
+
+    String outPutPath = migrationResult.getRoot().toPath().resolve(projectName).toAbsolutePath().toString();
+
+    // Run migration tool
+    final List<String> command = buildRunnerCommand(projectBasePath, outPutPath);
+    ProcessBuilder pb = new ProcessBuilder(command);
+
+    pb.redirectErrorStream(true);
+    Process p = pb.start();
+
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+
+      @Override
+      public void run() {
+        p.destroy();
+      }
+    });
+
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        System.out.println("Migrator: " + line);
+      }
+    }
+
+    if (p.waitFor() != 0) {
+      fail("Migration failed");
+    }
+    return outPutPath;
+  }
+
   private List<String> buildRunnerCommand(String projectBasePath, String outPutPath) {
     final List<String> command = new ArrayList<>();
     command.add("java");
 
-    if (DEBUG_RUNNER)
+    if (DEBUG_RUNNER != null)
       command.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
 
     command.add("-jar");
@@ -106,6 +133,10 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
 
   @Override
   public int getTestTimeoutSecs() {
-    return super.getTestTimeoutSecs() * 2;
+    if (DEBUG_RUNNER == null) {
+      return super.getTestTimeoutSecs() * 2;
+    } else {
+      return MAX_VALUE / 1000;
+    }
   }
 }

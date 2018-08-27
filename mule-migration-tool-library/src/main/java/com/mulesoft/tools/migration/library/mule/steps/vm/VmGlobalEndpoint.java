@@ -20,7 +20,7 @@ import org.jdom2.Namespace;
  */
 public class VmGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
-  public static final String XPATH_SELECTOR = "/mule:mule/vm:endpoint";
+  public static final String XPATH_SELECTOR = "/*/vm:endpoint";
 
   @Override
   public String getDescription() {

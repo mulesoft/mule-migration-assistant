@@ -7,12 +7,24 @@
 package com.mulesoft.tools.migration.engine;
 
 
+import static com.google.common.base.Preconditions.checkState;
+import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
+import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_DOMAIN;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_POLICY;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionValid;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTasksDeclaredNamespaces;
+
 import com.mulesoft.tools.migration.Executable;
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
+import com.mulesoft.tools.migration.engine.project.ProjectTypeFactory;
 import com.mulesoft.tools.migration.engine.project.structure.ApplicationPersister;
 import com.mulesoft.tools.migration.engine.project.structure.mule.MuleProject;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourDomain;
+import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourPolicy;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.ProjectType;
@@ -22,20 +34,13 @@ import com.mulesoft.tools.migration.report.html.HTMLReport;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkState;
-import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
-import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
-import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionValid;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTasksDeclaredNamespaces;
 
 /**
  * It represent a migration job which is composed by one or more {@link AbstractMigrationTask}
@@ -66,21 +71,24 @@ public class MigrationJob implements Executable {
 
   @Override
   public void execute(MigrationReport report) throws Exception {
-    ApplicationModel applicationModel = generateApplicationModel(project);
+    ApplicationModel applicationModel = generateSourceApplicationModel(project);
     persistApplicationModel(applicationModel);
-    applicationModel = generateApplicationModel(outputProject, MULE_FOUR_APPLICATION);
+    ProjectType targetProjectType = applicationModel.getProjectType().getTargetType();
+    applicationModel = generateTargetApplicationModel(outputProject, targetProjectType);
     for (AbstractMigrationTask task : migrationTasks) {
-      task.setApplicationModel(applicationModel);
-      task.setExpressionMigrator(new MelToDwExpressionMigrator(report, applicationModel));
-      try {
-        task.execute(report);
-        persistApplicationModel(applicationModel);
-        // TODO support domains migration
-        applicationModel = generateApplicationModel(outputProject, MULE_FOUR_APPLICATION);
-      } catch (MigrationTaskException ex) {
-        logger.error("Failed to apply task, rolling back and continuing with the next one.", ex);
-      } catch (Exception e) {
-        throw new MigrationJobException("Failed to continue executing migration: " + e.getMessage(), e);
+      if (task.getApplicableProjectTypes().contains(targetProjectType)) {
+        task.setApplicationModel(applicationModel);
+        task.setExpressionMigrator(new MelToDwExpressionMigrator(report, applicationModel));
+        try {
+          task.execute(report);
+          persistApplicationModel(applicationModel);
+          applicationModel = generateTargetApplicationModel(outputProject, targetProjectType);
+        } catch (MigrationTaskException ex) {
+          logger.error("Failed to apply task, rolling back and continuing with the next one.", ex);
+        } catch (Exception e) {
+          throw new MigrationJobException("Failed to continue executing migration: " + e.getClass().getName() + ": "
+              + e.getMessage(), e);
+        }
       }
     }
     generateReport(report);
@@ -91,10 +99,14 @@ public class MigrationJob implements Executable {
     persister.persist();
   }
 
-  private ApplicationModel generateApplicationModel(Path project) throws Exception {
-    MuleProject muleProject = getMuleProject(project);
+  private ApplicationModel generateSourceApplicationModel(Path project) throws Exception {
+    ProjectTypeFactory projectFactory = new ProjectTypeFactory();
+    ProjectType type = projectFactory.getProjectType(project);
+
+    MuleProject muleProject = getMuleProject(project, type);
     ApplicationModelBuilder builder = new ApplicationModelBuilder()
         .withConfigurationFiles(getFiles(muleProject.srcMainConfiguration(), "xml"))
+        .withProjectType(type)
         .withMuleVersion(muleVersion)
         .withPom(muleProject.pom())
         .withProjectBasePath(muleProject.getBaseFolder())
@@ -105,24 +117,34 @@ public class MigrationJob implements Executable {
     return builder.build();
   }
 
-  private ApplicationModel generateApplicationModel(Path project, ProjectType type) throws Exception {
+  private ApplicationModel generateTargetApplicationModel(Path project, ProjectType type) throws Exception {
+    ApplicationModelBuilder appModelBuilder = new ApplicationModelBuilder()
+        .withMuleVersion(muleVersion)
+        .withSupportedNamespaces(getTasksDeclaredNamespaces(migrationTasks));
+
     if (type.equals(MULE_FOUR_APPLICATION)) {
       MuleFourApplication application = new MuleFourApplication(project);
-      return new ApplicationModelBuilder()
+      return appModelBuilder
           .withConfigurationFiles(getFiles(application.srcMainConfiguration(), "xml"))
           .withTestConfigurationFiles(getFiles(application.srcTestConfiguration(), "xml"))
           .withMuleArtifactJson(application.muleArtifactJson())
-          .withMuleVersion(muleVersion)
-          .withSupportedNamespaces(getTasksDeclaredNamespaces(migrationTasks))
           .withProjectBasePath(application.getBaseFolder())
           .withPom(application.pom()).build();
-    } else {
+    } else if (type.equals(MULE_FOUR_DOMAIN)) {
       MuleFourDomain domain = new MuleFourDomain(project);
-      return new ApplicationModelBuilder()
+      return appModelBuilder
           .withConfigurationFiles(getFiles(domain.srcMainConfiguration(), "xml"))
-          .withMuleVersion(muleVersion)
           .withProjectBasePath(domain.getBaseFolder())
           .withPom(domain.pom()).build();
+    } else if (type.equals(MULE_FOUR_POLICY)) {
+      MuleFourPolicy policy = new MuleFourPolicy(project);
+      return appModelBuilder
+          .withConfigurationFiles(getFiles(policy.srcMainConfiguration(), "xml"))
+          .withMuleArtifactJson(policy.muleArtifactJson())
+          .withProjectBasePath(policy.getBaseFolder())
+          .withPom(policy.pom()).build();
+    } else {
+      throw new MigrationJobException("Undetermined project type");
     }
   }
 
@@ -157,7 +179,6 @@ public class MigrationJob implements Executable {
 
     private Path project;
     private Path outputProject;
-    private ProjectType outputProjectType;
     private String inputVersion;
     private String outputVersion;
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
@@ -169,11 +190,6 @@ public class MigrationJob implements Executable {
 
     public MigrationJobBuilder withOutputProject(Path outputProject) {
       this.outputProject = outputProject;
-      return this;
-    }
-
-    public MigrationJobBuilder withOutputProjectType(ProjectType projectType) {
-      this.outputProjectType = projectType;
       return this;
     }
 
@@ -190,7 +206,6 @@ public class MigrationJob implements Executable {
     public MigrationJob build() throws Exception {
       checkState(project != null, "The project must not be null");
       checkState(outputProject != null, "The output project must not be null");
-      checkState(outputProjectType != null, "The output project type must not be null");
       checkState(inputVersion != null, "The input version must not be null");
 
       if (!isVersionValid(outputVersion, MIN_MULE4_VALID_VERSION)) {
@@ -202,7 +217,7 @@ public class MigrationJob implements Executable {
         throw new MigrationJobException("Destination folder already exist.");
       }
 
-      MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion, outputProjectType);
+      MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion);
       migrationTasks = migrationTaskLocator.locate();
 
       return new MigrationJob(project, outputProject, migrationTasks, outputVersion.toString());

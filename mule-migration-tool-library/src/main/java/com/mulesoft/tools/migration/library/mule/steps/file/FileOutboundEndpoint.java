@@ -14,8 +14,8 @@ import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 
@@ -30,7 +30,7 @@ import java.io.IOException;
 public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "/mule:mule//file:outbound-endpoint";
+  public static final String XPATH_SELECTOR = "//file:outbound-endpoint";
 
   private ExpressionMigrator expressionMigrator;
 

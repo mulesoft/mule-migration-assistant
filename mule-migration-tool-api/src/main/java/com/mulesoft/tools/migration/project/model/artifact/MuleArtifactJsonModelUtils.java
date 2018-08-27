@@ -6,6 +6,10 @@
  */
 package com.mulesoft.tools.migration.project.model.artifact;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.String.format;
+import static org.mule.runtime.api.deployment.meta.Product.MULE_EE;
+
 import org.mule.runtime.api.deployment.meta.MuleApplicationModel;
 import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptor;
 import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptorBuilder;
@@ -15,10 +19,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static java.lang.String.format;
-import static org.mule.runtime.api.deployment.meta.Product.MULE_EE;
 
 /**
  * Some helper functions to manage the mule artifact json model.

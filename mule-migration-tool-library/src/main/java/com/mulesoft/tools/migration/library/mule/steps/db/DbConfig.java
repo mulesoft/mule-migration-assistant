@@ -41,7 +41,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
   private static final String DB_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/db";
   private static final Namespace DB_NAMESPACE = Namespace.getNamespace(DB_NAMESPACE_PREFIX, DB_NAMESPACE_URI);
 
-  public static final String XPATH_SELECTOR = "/mule:mule/*[namespace-uri() = '" + DB_NAMESPACE_URI + "']";
+  public static final String XPATH_SELECTOR = "/*/*[namespace-uri() = '" + DB_NAMESPACE_URI + "']";
 
   private ExpressionMigrator expressionMigrator;
 
