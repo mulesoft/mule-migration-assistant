@@ -6,20 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.endpoint;
 
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-
-import com.mulesoft.tools.migration.library.mule.steps.file.FileOutboundEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.jms.JmsOutboundEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.vm.VmOutboundEndpoint;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-
 import org.jdom2.Element;
-import org.jdom2.Namespace;
+
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 
 /**
  * Migrates the generic outbound endpoints.
@@ -27,17 +20,9 @@ import org.jdom2.Namespace;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class OutboundEndpoint extends AbstractApplicationModelMigrationStep
+public class OutboundEndpoint extends AbstractEndPointMigration
     implements ExpressionMigratorAware {
 
-  private static final String HTTP_NS_PREFIX = "http";
-  private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
-  private static final String FILE_NS_PREFIX = "file";
-  private static final String FILE_NS_URI = "http://www.mulesoft.org/schema/mule/file";
-  private static final String JMS_NS_PREFIX = "jms";
-  private static final String JMS_NS_URI = "http://www.mulesoft.org/schema/mule/jms";
-  private static final String VM_NS_PREFIX = "vm";
-  private static final String VM_NS_URI = "http://www.mulesoft.org/schema/mule/vm";
   public static final String XPATH_SELECTOR = "/mule:mule//mule:outbound-endpoint";
 
   private ExpressionMigrator expressionMigrator;
@@ -61,24 +46,7 @@ public class OutboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("address") != null) {
       String address = object.getAttributeValue("address");
 
-      AbstractApplicationModelMigrationStep migrator = null;
-      // TODO MMT-132 make available migrators discoverable
-      if (address.startsWith("file://")) {
-        migrator = new FileOutboundEndpoint();
-        object.setNamespace(Namespace.getNamespace(FILE_NS_PREFIX, FILE_NS_URI));
-      } else if (address.startsWith("http://")) {
-        migrator = new HttpOutboundEndpoint();
-        object.setNamespace(Namespace.getNamespace(HTTP_NS_PREFIX, HTTP_NS_URI));
-      } else if (address.startsWith("https://")) {
-        migrator = new HttpsOutboundEndpoint();
-        object.setNamespace(Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https"));
-      } else if (address.startsWith("jms://")) {
-        migrator = new JmsOutboundEndpoint();
-        object.setNamespace(Namespace.getNamespace(JMS_NS_PREFIX, JMS_NS_URI));
-      } else if (address.startsWith("vm://")) {
-        migrator = new VmOutboundEndpoint();
-        object.setNamespace(Namespace.getNamespace(VM_NS_PREFIX, VM_NS_URI));
-      }
+      AbstractApplicationModelMigrationStep migrator = getOutboundMigrator(address, object);
 
       if (migrator != null) {
         migrator.setApplicationModel(getApplicationModel());

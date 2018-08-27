@@ -20,5 +20,4 @@
         <file:write config-ref="fileConnector" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: null, address: '${workingDirectory}/out', outputPattern: null, outputPatternConfig: 'out.txt'})]"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
-    
 </mule>
