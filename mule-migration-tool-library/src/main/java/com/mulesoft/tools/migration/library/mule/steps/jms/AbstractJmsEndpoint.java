@@ -205,7 +205,7 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
 
     if (m3Connector.getAttribute("connectionFactory-ref") != null) {
       Element connFactory =
-          appModel.getNode("/mule:mule/*[@name='" + m3Connector.getAttributeValue("connectionFactory-ref") + "']");
+          appModel.getNode("/*/*[@name='" + m3Connector.getAttributeValue("connectionFactory-ref") + "']");
       Element defaultCaching = new Element("default-caching", JMS_NAMESPACE);
       copyAttributeIfPresent(connFactory, defaultCaching, "sessionCacheSize");
       copyAttributeIfPresent(connFactory, defaultCaching, "cacheConsumers");

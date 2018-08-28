@@ -32,7 +32,7 @@ import java.util.Optional;
  */
 public class JmsInboundEndpoint extends AbstractJmsEndpoint {
 
-  public static final String XPATH_SELECTOR = "/mule:mule/mule:flow/jms:inbound-endpoint";
+  public static final String XPATH_SELECTOR = "/*/mule:flow/jms:inbound-endpoint";
 
   @Override
   public String getDescription() {
@@ -115,7 +115,7 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
             : "")).replaceAll("\\\\", "_")
         + "JmsConfig");
 
-    Optional<Element> config = getApplicationModel().getNodeOptional("mule:mule/jms:config[@name='" + configName + "']");
+    Optional<Element> config = getApplicationModel().getNodeOptional("*/jms:config[@name='" + configName + "']");
     Element jmsConfig = config.orElseGet(() -> {
       final Element jmsCfg = new Element("config", jmsConnectorNamespace);
       jmsCfg.setAttribute("name", configName);

@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.step.other;
 
-import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
@@ -29,12 +28,6 @@ public class AnotherMigrationTask extends AbstractMigrationTask {
   public String getFrom() {
     return null;
   }
-
-  @Override
-  public ProjectType getProjectType() {
-    return null;
-  }
-
 
   @Override
   public List<MigrationStep> getSteps() {

@@ -10,21 +10,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils.buildMinimalMuleArtifactJson;
 
 import org.mule.runtime.api.deployment.meta.MuleApplicationModel;
-import org.mule.runtime.api.deployment.meta.MuleApplicationModel.MuleApplicationModelBuilder;
-import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptor;
-import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptorBuilder;
 import org.mule.runtime.api.deployment.persistence.MuleApplicationModelJsonSerializer;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * The mule-artifact.json representational model.

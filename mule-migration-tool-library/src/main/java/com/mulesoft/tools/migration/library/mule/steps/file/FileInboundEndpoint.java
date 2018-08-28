@@ -41,7 +41,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
 
   private static final String FILE_NS_PREFIX = "file";
   private static final String FILE_NS_URI = "http://www.mulesoft.org/schema/mule/file";
-  public static final String XPATH_SELECTOR = "/mule:mule/mule:flow/file:inbound-endpoint[1]";
+  public static final String XPATH_SELECTOR = "/*/mule:flow/file:inbound-endpoint[1]";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -242,7 +242,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     newMatcher = new Element("matcher", fileNs);
 
     List<Element> referencedMatcher =
-        getApplicationModel().getNodes("/mule:mule/file:matcher[@name='" + object.getAttributeValue("matcher") + "']");
+        getApplicationModel().getNodes("/*/file:matcher[@name='" + object.getAttributeValue("matcher") + "']");
     if (!referencedMatcher.isEmpty()) {
       for (Attribute attribute : referencedMatcher.get(0).getAttributes()) {
         newMatcher.setAttribute(attribute.getName(), attribute.getValue());

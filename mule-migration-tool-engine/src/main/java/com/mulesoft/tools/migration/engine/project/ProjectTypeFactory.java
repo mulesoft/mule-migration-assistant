@@ -6,31 +6,41 @@
  */
 package com.mulesoft.tools.migration.engine.project;
 
+import static com.mulesoft.tools.migration.project.ProjectType.BASIC;
+import static com.mulesoft.tools.migration.project.ProjectType.JAVA;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_DOMAIN;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_APPLICATION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_DOMAIN;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_MAVEN_APPLICATION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_MAVEN_DOMAIN;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_POLICY;
+import static java.nio.file.Files.exists;
+import static org.apache.commons.io.FileUtils.listFiles;
+
 import com.mulesoft.tools.migration.engine.project.structure.JavaProject;
-import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourDomain;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeDomain;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeMavenApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeMavenDomain;
+import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreePolicy;
+import com.mulesoft.tools.migration.project.ProjectType;
+
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static com.mulesoft.tools.migration.project.ProjectType.*;
-import static java.nio.file.Files.exists;
-import static org.apache.commons.io.FileUtils.listFiles;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
- * MuleFourApplication
- * It gets the project type based on the project path
+ * MuleFourApplication It gets the project type based on the project path
  *
  * @author Mulesoft Inc.
  */
@@ -67,6 +77,8 @@ public class ProjectTypeFactory {
             .filter(f -> rootElement(f, "mule-domain"))
             .count() > 0) {
       return MULE_THREE_DOMAIN;
+    } else if (MuleThreePolicy.isPolicyInFolder(projectPath)) {
+      return MULE_THREE_POLICY;
     } else if (exists(projectPath.resolve(MuleFourApplication.srcMainConfigurationPath))) {
       return MULE_FOUR_APPLICATION;
     } else if (exists(projectPath.resolve(MuleFourDomain.srcMainConfigurationPath))) {

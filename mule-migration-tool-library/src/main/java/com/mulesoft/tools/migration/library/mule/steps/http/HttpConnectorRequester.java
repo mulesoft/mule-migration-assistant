@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
 
-  public static final String XPATH_SELECTOR = "/mule:mule//http:request";
+  public static final String XPATH_SELECTOR = "//http:request";
 
   @Override
   public String getDescription() {
@@ -238,7 +238,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
       object.removeContent(builderRef);
 
       Element builder =
-          getApplicationModel().getNode("/mule:mule/http:request-builder[@name='" + builderRef.getAttributeValue("ref") + "']");
+          getApplicationModel().getNode("/*/http:request-builder[@name='" + builderRef.getAttributeValue("ref") + "']");
 
       handleReferencedRequestBuilder(builder, httpNamespace);
       List<Element> builderContent = ImmutableList.copyOf(builder.getChildren()).asList();

@@ -79,7 +79,7 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
   protected Set<Element> getRefs(Element object) {
     Set<Element> refsToGlobal = new HashSet<>();
     refsToGlobal
-        .addAll(getApplicationModel().getNodes("/mule:mule//" + getNamespace().getPrefix() + ":endpoint[@ref='"
+        .addAll(getApplicationModel().getNodes("//" + getNamespace().getPrefix() + ":endpoint[@ref='"
             + object.getAttributeValue("name") + "']"));
     return refsToGlobal;
   }
@@ -88,9 +88,9 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
     Set<Element> inboundRefsToGlobal = new HashSet<>();
     inboundRefsToGlobal
         .addAll(getApplicationModel()
-            .getNodes("/mule:mule/mule:flow/mule:inbound-endpoint[@ref='" + object.getAttributeValue("name") + "']"));
+            .getNodes("/*/mule:flow/mule:inbound-endpoint[@ref='" + object.getAttributeValue("name") + "']"));
     inboundRefsToGlobal
-        .addAll(getApplicationModel().getNodes("/mule:mule/mule:flow/" + getNamespace().getPrefix() + ":inbound-endpoint[@ref='"
+        .addAll(getApplicationModel().getNodes("/*/mule:flow/" + getNamespace().getPrefix() + ":inbound-endpoint[@ref='"
             + object.getAttributeValue("name") + "']"));
     return inboundRefsToGlobal;
   }
@@ -98,9 +98,9 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
   protected Set<Element> getOutboundRefs(Element object) {
     Set<Element> outboundRefsToGlobal = new HashSet<>();
     outboundRefsToGlobal.addAll(getApplicationModel()
-        .getNodes("/mule:mule//mule:outbound-endpoint[@ref='" + object.getAttributeValue("name") + "']"));
+        .getNodes("//mule:outbound-endpoint[@ref='" + object.getAttributeValue("name") + "']"));
     outboundRefsToGlobal.addAll(getApplicationModel()
-        .getNodes("/mule:mule//" + getNamespace().getPrefix() + ":outbound-endpoint[@ref='"
+        .getNodes("//" + getNamespace().getPrefix() + ":outbound-endpoint[@ref='"
             + object.getAttributeValue("name") + "']"));
     return outboundRefsToGlobal;
   }

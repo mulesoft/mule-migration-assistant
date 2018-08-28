@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class SpringConfigInMuleConfig extends AbstractSpringMigratorStep {
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri()='http://www.springframework.org/schema/beans' and local-name()='beans']";
+      "/*[starts-with(namespace-uri(), 'http://www.mulesoft.org/schema/mule/')]/*[namespace-uri()='http://www.springframework.org/schema/beans' and local-name()='beans']";
 
   @Override
   public String getDescription() {

@@ -35,7 +35,7 @@ import java.util.Optional;
  */
 public class VmInboundEndpoint extends AbstractVmEndpoint {
 
-  public static final String XPATH_SELECTOR = "/mule:mule/mule:flow/vm:inbound-endpoint";
+  public static final String XPATH_SELECTOR = "/*/mule:flow/vm:inbound-endpoint";
 
   @Override
   public String getDescription() {
@@ -124,7 +124,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
             : "")).replaceAll("\\\\", "_")
         + "VmConfig");
 
-    Optional<Element> config = getApplicationModel().getNodeOptional("mule:mule/vm:config[@name='" + configName + "']");
+    Optional<Element> config = getApplicationModel().getNodeOptional("*/vm:config[@name='" + configName + "']");
     Element vmConfig = config.orElseGet(() -> {
       Element vmCfg = new Element("config", vmConnectorNamespace);
       vmCfg.setAttribute("name", configName);

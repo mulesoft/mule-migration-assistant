@@ -33,7 +33,6 @@ import com.mulesoft.tools.migration.library.mule.tasks.VMMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.ValidationMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.WscMigrationTask;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
-import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationTask;
 
@@ -51,16 +50,13 @@ public class MigrationTaskLocator {
 
   private String from;
   private String to;
-  private ProjectType projectType;
 
-  public MigrationTaskLocator(String from, String to, ProjectType projectType) {
+  public MigrationTaskLocator(String from, String to) {
     checkArgument(from != null, "From must not be null");
     checkArgument(to != null, "To must not be null");
-    checkArgument(projectType != null, "ProjectType must not be null");
 
     this.from = from;
     this.to = to;
-    this.projectType = projectType;
   }
 
   public List<AbstractMigrationTask> locate() {
@@ -81,10 +77,8 @@ public class MigrationTaskLocator {
       // TODO log;
       return FALSE;
     }
-    if (projectType.equals(migrationTask.getProjectType())) {
-      if (isVersionGreaterOrEquals(migrationTask.getFrom(), from) && isVersionGreaterOrEquals(to, migrationTask.getTo())) {
-        return TRUE;
-      }
+    if (isVersionGreaterOrEquals(migrationTask.getFrom(), from) && isVersionGreaterOrEquals(to, migrationTask.getTo())) {
+      return TRUE;
     }
     return FALSE;
   }

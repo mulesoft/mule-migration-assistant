@@ -19,7 +19,7 @@ import org.jdom2.Element;
 public class SecurityManager extends AbstractSpringMigratorStep {
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri()='http://www.mulesoft.org/schema/mule/spring-security' and (local-name()='security-manager')]";
+      "/*/*[namespace-uri()='http://www.mulesoft.org/schema/mule/spring-security' and (local-name()='security-manager')]";
 
   @Override
   public String getDescription() {

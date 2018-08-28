@@ -21,7 +21,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
-import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.MigrationStep;
@@ -224,11 +223,6 @@ public class AbstractMigrationTaskTest {
 
     @Override
     public String getFrom() {
-      return null;
-    }
-
-    @Override
-    public ProjectType getProjectType() {
       return null;
     }
 

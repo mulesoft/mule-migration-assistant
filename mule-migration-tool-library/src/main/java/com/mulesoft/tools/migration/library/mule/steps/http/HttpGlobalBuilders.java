@@ -20,7 +20,7 @@ import org.jdom2.Element;
 public class HttpGlobalBuilders extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/http' and (local-name() = 'response-builder' or local-name() = 'request-builder')]";
+      "/*/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/http' and (local-name() = 'response-builder' or local-name() = 'request-builder')]";
 
   @Override
   public String getDescription() {

@@ -27,8 +27,7 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
 
   private static final String HTTP_NS_PREFIX = "http";
   private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
-  public static final String XPATH_SELECTOR =
-      "/mule:mule//https:outbound-endpoint";
+  public static final String XPATH_SELECTOR = "//https:outbound-endpoint";
 
   @Override
   public String getDescription() {
@@ -52,7 +51,7 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
     getApplicationModel().addNameSpace(HTTP_NS_PREFIX, HTTP_NS_URI,
                                        "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
-    Element httpsRequesterConnection = getApplicationModel().getNode("/mule:mule/http:request-config[@name = '"
+    Element httpsRequesterConnection = getApplicationModel().getNode("/*/http:request-config[@name = '"
         + object.getAttributeValue("config-ref") + "']/http:request-connection");
 
     migrate(httpsRequesterConnection, httpsConnector, report, getApplicationModel(), "tls-client");
@@ -112,12 +111,12 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
 
   @Override
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/mule:mule/https:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/https:connector[@name = '" + connectorName + "']");
   }
 
   @Override
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/mule:mule/https:connector");
+    return getApplicationModel().getNodeOptional("/*/https:connector");
   }
 
 }

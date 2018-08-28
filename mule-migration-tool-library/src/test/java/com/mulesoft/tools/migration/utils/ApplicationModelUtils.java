@@ -6,19 +6,14 @@
  */
 package com.mulesoft.tools.migration.utils;
 
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
+
 import org.apache.commons.io.FileUtils;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
@@ -27,8 +22,12 @@ import java.util.stream.Collectors;
 public class ApplicationModelUtils {
 
   public static ApplicationModel generateAppModel(Path projectPath) throws Exception {
-    return new ApplicationModelBuilder().withProjectBasePath(projectPath).withPom(projectPath.resolve("pom.xml"))
-        .withConfigurationFiles(getFiles(projectPath.resolve("src").resolve("main").resolve("app"))).build();
+    return new ApplicationModelBuilder()
+        .withProjectBasePath(projectPath)
+        .withPom(projectPath.resolve("pom.xml"))
+        .withConfigurationFiles(getFiles(projectPath.resolve("src").resolve("main").resolve("app")))
+        .withProjectType(MULE_FOUR_APPLICATION)
+        .build();
   }
 
   public static List<Path> getFiles(Path path, String... extensions) throws Exception {

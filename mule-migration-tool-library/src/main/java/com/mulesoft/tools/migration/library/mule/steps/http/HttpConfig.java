@@ -6,13 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Migrates the http and https connector of the http transport
@@ -29,7 +29,7 @@ public class HttpConfig extends AbstractApplicationModelMigrationStep {
   private static final String HTTPS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/https";
   private static final Namespace HTTPS_NAMESPACE = Namespace.getNamespace(HTTPS_NAMESPACE_PREFIX, HTTPS_NAMESPACE_URI);
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[(namespace-uri() = '" + HTTP_NAMESPACE_URI + "' or namespace-uri() = '" + HTTPS_NAMESPACE_URI
+      "/*/*[(namespace-uri() = '" + HTTP_NAMESPACE_URI + "' or namespace-uri() = '" + HTTPS_NAMESPACE_URI
           + "') and local-name() = 'connector']";
 
   @Override

@@ -40,7 +40,7 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
   private static final String JMS_NS_URI = "http://www.mulesoft.org/schema/mule/jms";
   private static final String VM_NS_PREFIX = "vm";
   private static final String VM_NS_URI = "http://www.mulesoft.org/schema/mule/vm";
-  public static final String XPATH_SELECTOR = "/mule:mule//mule:inbound-endpoint";
+  public static final String XPATH_SELECTOR = "//mule:inbound-endpoint";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -92,7 +92,7 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
       }
       object.removeAttribute("address");
     } else if (object.getAttribute("ref") != null) {
-      Element globalEndpoint = getApplicationModel().getNode("/mule:mule/*[@name = '" + object.getAttributeValue("ref") + "']");
+      Element globalEndpoint = getApplicationModel().getNode("/*/*[@name = '" + object.getAttributeValue("ref") + "']");
 
       // TODO MMT-132 make available migrators discoverable
       if (globalEndpoint.getAttribute("address") != null) {

@@ -30,7 +30,7 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
   private static final Namespace TCP_NAMESPACE = Namespace.getNamespace(TCP_NAMESPACE_PREFIX, TCP_NAMESPACE_URI);
 
   public static final String XPATH_SELECTOR = ""
-      + "/mule:mule/http:*["
+      + "/*/http:*["
       + " local-name()='request-config' or"
       + " local-name()='proxy' or"
       + " local-name()='ntlm-proxy'"

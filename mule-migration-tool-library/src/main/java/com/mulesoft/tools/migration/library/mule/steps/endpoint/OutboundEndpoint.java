@@ -38,7 +38,7 @@ public class OutboundEndpoint extends AbstractApplicationModelMigrationStep
   private static final String JMS_NS_URI = "http://www.mulesoft.org/schema/mule/jms";
   private static final String VM_NS_PREFIX = "vm";
   private static final String VM_NS_URI = "http://www.mulesoft.org/schema/mule/vm";
-  public static final String XPATH_SELECTOR = "/mule:mule//mule:outbound-endpoint";
+  public static final String XPATH_SELECTOR = "//mule:outbound-endpoint";
 
   private ExpressionMigrator expressionMigrator;
 

@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class WsConsumerConfig extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "/mule:mule/ws:consumer-config";
+  public static final String XPATH_SELECTOR = "/*/ws:consumer-config";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -106,11 +106,11 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
 
       connection.setAttribute("address", address);
 
-      Element connector = getApplicationModel().getNode("/mule:mule/http:connector[@name='" + transportConnectorName + "']");
+      Element connector = getApplicationModel().getNode("/*/http:connector[@name='" + transportConnectorName + "']");
       if (connector != null) {
         handleConnector(connector, requestConnection, report, wscNamespace, getApplicationModel());
       } else {
-        connector = getApplicationModel().getNode("/mule:mule/https:connector[@name='" + transportConnectorName + "']");
+        connector = getApplicationModel().getNode("/*/https:connector[@name='" + transportConnectorName + "']");
 
         if (connector != null) {
           handleConnector(connector, requestConnection, report, wscNamespace, getApplicationModel());
@@ -130,7 +130,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
 
       processAddress(connection, report).ifPresent(a -> {
         if ("https".equals(a.getProtocol())) {
-          List<Element> connectors = getApplicationModel().getNodes("/mule:mule/https:connector");
+          List<Element> connectors = getApplicationModel().getNodes("/*/https:connector");
           if (connectors.isEmpty()) {
             return;
           }
@@ -188,7 +188,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         sign.removeAttribute("tlsContext-ref");
 
         // TODO signatureKeyIdentifier?
-        Element tlsContext = getApplicationModel().getNode("/mule:mule/tls:context[@name='" + tlsContextName + "']");
+        Element tlsContext = getApplicationModel().getNode("/*/tls:context[@name='" + tlsContextName + "']");
         Element keyStoreConfig = new Element("key-store-configuration", wscNamespace);
         Element keyStore = tlsContext.getChild("key-store", tlsNamespace);
 
@@ -215,7 +215,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         String tlsContextName = verifySignature.getAttributeValue("tlsContext-ref");
         verifySignature.removeAttribute("tlsContext-ref");
 
-        Element tlsContext = getApplicationModel().getNode("/mule:mule/tls:context[@name='" + tlsContextName + "']");
+        Element tlsContext = getApplicationModel().getNode("/*/tls:context[@name='" + tlsContextName + "']");
         Element keyStoreConfig = new Element("trust-store-configuration", wscNamespace);
         Element trustStore = tlsContext.getChild("trust-store", tlsNamespace);
 
@@ -263,7 +263,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         String tlsContextName = decrypt.getAttributeValue("tlsContext-ref");
         decrypt.removeAttribute("tlsContext-ref");
 
-        Element tlsContext = getApplicationModel().getNode("/mule:mule/tls:context[@name='" + tlsContextName + "']");
+        Element tlsContext = getApplicationModel().getNode("/*/tls:context[@name='" + tlsContextName + "']");
         Element keyStoreConfig = new Element("key-store-configuration", wscNamespace);
         Element keyStore = tlsContext.getChild("key-store", tlsNamespace);
 
@@ -295,7 +295,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         String tlsContextName = encrypt.getAttributeValue("tlsContext-ref");
         encrypt.removeAttribute("tlsContext-ref");
 
-        Element tlsContext = getApplicationModel().getNode("/mule:mule/tls:context[@name='" + tlsContextName + "']");
+        Element tlsContext = getApplicationModel().getNode("/*/tls:context[@name='" + tlsContextName + "']");
         Element keyStoreConfig = new Element("key-store-configuration", wscNamespace);
         Element trustStore = tlsContext.getChild("trust-store", tlsNamespace);
 

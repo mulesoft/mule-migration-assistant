@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.project.model;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_APPLICATION;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
@@ -64,6 +65,7 @@ public class ApplicationModelTest {
         .withConfigurationFiles(getFiles(originalProjectPath.resolve("src").resolve("main").resolve("app")))
         .withMuleVersion(MULE_VERSION)
         .withSupportedNamespaces(newArrayList())
+        .withProjectType(MULE_THREE_APPLICATION)
         .withPom(originalProjectPath.resolve("pom.xml")).build();
 
     applicationModel.removeNameSpace("mock", "http://www.mulesoft.org/schema/mule/mock",

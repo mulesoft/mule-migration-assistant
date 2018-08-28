@@ -344,6 +344,7 @@ public class PomModel {
     private final MavenXpp3Reader mavenReader = new MavenXpp3Reader();
     private Path pomPath;
     private String artifactId = "migrated-project";
+    private String packaging = "mule-application";
 
     public PomModelBuilder withPom(Path pomPath) {
       this.pomPath = pomPath;
@@ -352,6 +353,11 @@ public class PomModel {
 
     public PomModelBuilder withArtifactId(String artifactId) {
       this.artifactId = artifactId;
+      return this;
+    }
+
+    public PomModelBuilder withPackaging(String packaging) {
+      this.packaging = packaging;
       return this;
     }
 
@@ -365,7 +371,7 @@ public class PomModel {
     public PomModel build() throws IOException, XmlPullParserException {
       if (pomPath == null || !pomPath.toFile().exists()) {
         // TODO: NEED TO DEFINE HOW TO COME UP WITH THE POM GAV COORDINATES
-        return buildMinimalMule4ApplicationPom("org.mule.migrated", artifactId, "1.0.0-SNAPSHOT");
+        return buildMinimalMule4ApplicationPom("org.mule.migrated", artifactId, "1.0.0-SNAPSHOT", packaging);
       }
       Model model = getModel(pomPath);
       return new PomModel(model);

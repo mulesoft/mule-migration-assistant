@@ -26,7 +26,7 @@ public class JmsConnector extends AbstractApplicationModelMigrationStep {
   private static final String JMS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/jms";
   private static final Namespace JMS_NAMESPACE = Namespace.getNamespace(JMS_NAMESPACE_PREFIX, JMS_NAMESPACE_URI);
 
-  public static final String XPATH_SELECTOR = "/mule:mule/jms:*["
+  public static final String XPATH_SELECTOR = "/*/jms:*["
       + "(local-name() = 'activemq-connector' or "
       + "local-name() = 'activemq-xa-connector' or "
       + "local-name() = 'weblogic-connector' or "

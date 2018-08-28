@@ -16,7 +16,7 @@ import org.jdom2.Element;
  */
 public class ${mainTaskClassName}ApplicationModelContribution extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "xpath query to select the element to migrate"; // Example: "/mule:mule/http:listener-config"
+  public static final String XPATH_SELECTOR = "xpath query to select the element to migrate"; // Example: "/*/http:listener-config"
 
   @Override
   public String getDescription() {

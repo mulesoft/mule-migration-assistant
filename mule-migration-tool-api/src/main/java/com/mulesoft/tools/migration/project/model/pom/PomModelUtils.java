@@ -28,19 +28,21 @@ public class PomModelUtils {
   private static final String DEFAULT_LAYOUT = "default";
 
   /**
-   * Builds a minimal {@link PomModel} for a Mule 4 Application. This means that the packaging type is of type mule-application, the mule-maven-plugin is declared and the required repositories are also declared in there
+   * Builds a minimal {@link PomModel} for a Mule 4 Application. This means that the packaging type is of type mule-application,
+   * the mule-maven-plugin is declared and the required repositories are also declared in there
    *
    * @param groupId
    * @param artifactId
    * @param version
+   * @param packaging
    * @return a {@link PomModel}
    */
-  public static PomModel buildMinimalMule4ApplicationPom(String groupId, String artifactId, String version) {
+  public static PomModel buildMinimalMule4ApplicationPom(String groupId, String artifactId, String version, String packaging) {
     PomModel model = new PomModel();
     model.setGroupId(groupId);
     model.setArtifactId(artifactId);
     model.setVersion(version);
-    model.setPackaging(MULE_APPLICATION_4_PACKAGING_TYPE);
+    model.setPackaging(packaging);
     model.setModelVersion(DEFAULT_MODEL_VERSION);
 
     Plugin muleMavenPlugin = buildMule4MuleMavenPluginConfiguration();

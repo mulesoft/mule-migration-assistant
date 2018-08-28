@@ -13,6 +13,7 @@ import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -31,7 +32,7 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
   public static final String BATCH_NAMESPACE_PREFIX = "batch";
   public static final String BATCH_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/batch";
   private static final Namespace BATCH_NAMESPACE = Namespace.getNamespace(BATCH_NAMESPACE_PREFIX, BATCH_NAMESPACE_URI);
-  public static final String XPATH_SELECTOR = "/mule:mule/batch:job";
+  public static final String XPATH_SELECTOR = "/*/batch:job";
 
   private ExpressionMigrator expressionMigrator;
 

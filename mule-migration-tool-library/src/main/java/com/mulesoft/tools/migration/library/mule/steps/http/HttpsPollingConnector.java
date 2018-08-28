@@ -24,7 +24,7 @@ public class HttpsPollingConnector extends HttpPollingConnector {
 
   private static final String HTTP_NS_PREFIX = "http";
   private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
-  public static final String XPATH_SELECTOR = "/mule:mule/https:polling-connector";
+  public static final String XPATH_SELECTOR = "/*/https:polling-connector";
 
   @Override
   public String getDescription() {
@@ -41,7 +41,7 @@ public class HttpsPollingConnector extends HttpPollingConnector {
     getApplicationModel().addNameSpace(HTTP_NS_PREFIX, HTTP_NS_URI,
                                        "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
-    Element httpsRequesterConnection = getApplicationModel().getNode("/mule:mule/http:request-config[@name = '"
+    Element httpsRequesterConnection = getApplicationModel().getNode("/*/http:request-config[@name = '"
         + object.getAttributeValue("name") + "Config']/http:request-connection");
 
     HttpsOutboundEndpoint httpRequesterMigrator = new HttpsOutboundEndpoint();

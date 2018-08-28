@@ -7,9 +7,9 @@
 package com.mulesoft.tools.migration.library.munit.tasks;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
 import com.mulesoft.tools.migration.library.munit.steps.AssertEquals;
 import com.mulesoft.tools.migration.library.munit.steps.AssertFalse;
@@ -50,7 +50,6 @@ public class MunitMigrationTask extends AbstractMigrationTask {
   public ProjectType getProjectType() {
     return MULE_FOUR_APPLICATION;
   }
-
 
   @Override
   public List<MigrationStep> getSteps() {

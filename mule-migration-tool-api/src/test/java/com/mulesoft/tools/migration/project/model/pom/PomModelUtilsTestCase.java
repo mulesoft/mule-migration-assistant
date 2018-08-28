@@ -6,21 +6,26 @@
  */
 package com.mulesoft.tools.migration.project.model.pom;
 
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.ARTIFACT_ID;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.GROUP_ID;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.VERSION;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.DEFAULT_MODEL_VERSION;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_APPLICATION_4_PACKAGING_TYPE;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_ARTIFACT_ID;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_GROUP_ID;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.MULE_MAVEN_PLUGIN_VERSION;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import org.junit.Test;
 
 import java.util.List;
 
-import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.ARTIFACT_ID;
-import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.GROUP_ID;
-import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.VERSION;
-import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.*;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class PomModelUtilsTestCase {
 
   private static final PomModel MINIMAL_MULE_4_POM_MODEL =
-      PomModelUtils.buildMinimalMule4ApplicationPom(GROUP_ID, ARTIFACT_ID, VERSION);
+      PomModelUtils.buildMinimalMule4ApplicationPom(GROUP_ID, ARTIFACT_ID, VERSION, MULE_FOUR_APPLICATION.getPackaging());
 
   @Test
   public void getGroupId() {

@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -76,6 +77,7 @@ public class SpringSecurityTest {
             .withProjectBasePath(Paths
                 .get(this.getClass().getClassLoader().getResource(SPRING_SECURITY_EXAMPLES_PATH.toString()).toURI()))
             .withConfigurationFiles(asList(resolvedConfigPath))
+            .withProjectType(MULE_FOUR_APPLICATION)
             .build();
 
     Document doc = appModel.getApplicationDocuments().get(configPath.getFileName());

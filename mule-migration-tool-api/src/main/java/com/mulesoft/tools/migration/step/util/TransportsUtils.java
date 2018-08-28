@@ -230,7 +230,7 @@ public final class TransportsUtils {
       String[] transformerNames = outbound.getAttributeValue("transformer-refs").split(",");
 
       for (String transformerName : transformerNames) {
-        Element transformer = appModel.getNode("/mule:mule/*[@name = '" + transformerName + "']");
+        Element transformer = appModel.getNode("/*/*[@name = '" + transformerName + "']");
         if ("message-properties-transformer".equals(transformer.getName())) {
           Element clonedMpt = transformer.clone();
           clonedMpt.removeAttribute("name");
@@ -263,7 +263,7 @@ public final class TransportsUtils {
       String[] transformerNames = endpoint.getAttributeValue("responseTransformer-refs").split(",");
 
       for (String transformerName : transformerNames) {
-        Element transformer = appModel.getNode("/mule:mule/*[@name = '" + transformerName + "']");
+        Element transformer = appModel.getNode("/*/*[@name = '" + transformerName + "']");
         if ("message-properties-transformer".equals(transformer.getName())) {
           Element clonedMpt = transformer.clone();
           clonedMpt.removeAttribute("name");

@@ -6,13 +6,18 @@
  */
 package com.mulesoft.tools.migration;
 
-import com.google.common.base.Stopwatch;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationError;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
+import static java.lang.System.exit;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
-import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -20,14 +25,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import java.nio.file.Paths;
+import com.google.common.base.Stopwatch;
 
-import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
-import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationError;
-import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static java.lang.System.exit;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import java.nio.file.Paths;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
@@ -44,7 +44,6 @@ public class MigrationRunner {
   private final static String MULE_VERSION = "muleVersion";
   private final static String REPORT_HOME = "summary.html";
   public static final String MULE_3_VERSION = "3.*.*";
-  public static final ProjectType OUTPUT_PROJECT_TYPE = MULE_FOUR_APPLICATION;
 
   private String projectBasePath;
   private String destinationProjectBasePath;
@@ -73,8 +72,7 @@ public class MigrationRunner {
         .withProject(Paths.get(projectBasePath))
         .withOutputProject(Paths.get(destinationProjectBasePath))
         .withInputVersion(MULE_3_VERSION)
-        .withOuputVersion(muleVersion)
-        .withOutputProjectType(OUTPUT_PROJECT_TYPE);
+        .withOuputVersion(muleVersion);
     return builder.build();
   }
 

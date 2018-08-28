@@ -17,7 +17,7 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 public class HttpsStaticResource extends HttpStaticResource
     implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "/mule:mule//https:static-resource-handler";
+  public static final String XPATH_SELECTOR = "//https:static-resource-handler";
 
   @Override
   public String getDescription() {

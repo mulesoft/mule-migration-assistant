@@ -6,11 +6,24 @@
  */
 package com.mulesoft.tools.migration.engine;
 
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.singleton;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,17 +38,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 /**
  * @author Mulesoft Inc.
@@ -121,13 +123,14 @@ public class MigrationJobTest {
         .withOutputProject(migratedProjectPath)
         .withInputVersion(MULE_380_VERSION)
         .withOuputVersion(MULE_413_VERSION)
-        .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
 
     AbstractMigrationTask migrationTask = mock(AbstractMigrationTask.class);
     doThrow(MigrationTaskException.class)
         .when(migrationTask)
         .execute(any(MigrationReport.class));
+    when(migrationTask.getApplicableProjectTypes()).thenReturn(singleton(MULE_FOUR_APPLICATION));
+
     migrationTasks.add(migrationTask);
     Whitebox.setInternalState(migrationJob, "migrationTasks", migrationTasks);
     migrationJob.execute(new DefaultMigrationReport());
@@ -141,7 +144,6 @@ public class MigrationJobTest {
         .withOutputProject(migratedProjectPath)
         .withInputVersion(MULE_370_VERSION)
         .withOuputVersion(MULE_413_VERSION)
-        .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
     migrationJob.execute(new DefaultMigrationReport());
   }
@@ -153,7 +155,6 @@ public class MigrationJobTest {
         .withOutputProject(migratedProjectPath)
         .withInputVersion(MULE_380_VERSION)
         .withOuputVersion(MULE_413_VERSION)
-        .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
 
     migrationJob.execute(new DefaultMigrationReport());
@@ -166,7 +167,6 @@ public class MigrationJobTest {
         .withOutputProject(migratedProjectPath)
         .withInputVersion(MULE_380_VERSION)
         .withOuputVersion(MULE_413_VERSION)
-        .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
 
     MunitMigrationTask migrationTask = new MunitMigrationTask();

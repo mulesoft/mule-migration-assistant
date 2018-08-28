@@ -20,7 +20,7 @@ import org.jdom2.Namespace;
  */
 public class FileGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
-  public static final String XPATH_SELECTOR = "/mule:mule/file:endpoint";
+  public static final String XPATH_SELECTOR = "/*/file:endpoint";
 
   @Override
   public String getDescription() {

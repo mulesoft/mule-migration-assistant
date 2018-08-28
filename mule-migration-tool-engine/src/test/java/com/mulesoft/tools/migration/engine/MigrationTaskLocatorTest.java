@@ -6,16 +6,6 @@
  */
 package com.mulesoft.tools.migration.engine;
 
-import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
-import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
-import com.mulesoft.tools.migration.project.ProjectType;
-import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import com.mulesoft.tools.migration.task.MigrationTask;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -23,6 +13,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
+
+import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
+import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
+import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import com.mulesoft.tools.migration.task.MigrationTask;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
 
 public class MigrationTaskLocatorTest {
 
@@ -42,7 +43,7 @@ public class MigrationTaskLocatorTest {
 
   @Test
   public void locate() {
-    MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(from, to, projectType);
+    MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(from, to);
     List<AbstractMigrationTask> migrationTaskList = migrationTaskLocator.locate();
 
     assertThat("The number of migration task is wrong", migrationTaskList.size(), greaterThan(0));
@@ -55,7 +56,7 @@ public class MigrationTaskLocatorTest {
 
   @Test
   public void locateFromAnyToAny() {
-    MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(ANY_VERSION_3, ANY_VERSION_4, projectType);
+    MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(ANY_VERSION_3, ANY_VERSION_4);
     List<AbstractMigrationTask> migrationTaskList = migrationTaskLocator.locate();
 
     assertThat("The number of migration task is wrong", migrationTaskList.size(), greaterThanOrEqualTo(9));

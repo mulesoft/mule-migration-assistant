@@ -15,7 +15,43 @@ package com.mulesoft.tools.migration.project;
 public enum ProjectType {
   BASIC, JAVA,
 
-  MULE_THREE_APPLICATION, MULE_THREE_MAVEN_APPLICATION, MULE_FOUR_APPLICATION,
+  MULE_FOUR_APPLICATION("mule-application"),
 
-  MULE_THREE_DOMAIN, MULE_THREE_MAVEN_DOMAIN, MULE_FOUR_DOMAIN;
+  MULE_THREE_APPLICATION(MULE_FOUR_APPLICATION, "mule-application"),
+
+  MULE_THREE_MAVEN_APPLICATION(MULE_FOUR_APPLICATION, "mule-application"),
+
+  MULE_FOUR_DOMAIN("mule-domain"),
+
+  MULE_THREE_DOMAIN(MULE_FOUR_DOMAIN, "mule-domain"),
+
+  MULE_THREE_MAVEN_DOMAIN(MULE_FOUR_DOMAIN, "mule-domain"),
+
+  MULE_FOUR_POLICY("mule-policy"),
+
+  MULE_THREE_POLICY(MULE_FOUR_POLICY, "mule-policy");
+
+  private ProjectType targetType;
+  private String packaging;
+
+  private ProjectType() {
+    this.targetType = null;
+  }
+
+  private ProjectType(String packaging) {
+    this.packaging = packaging;
+  }
+
+  private ProjectType(ProjectType targetType, String packaging) {
+    this.targetType = targetType;
+    this.packaging = packaging;
+  }
+
+  public ProjectType getTargetType() {
+    return targetType;
+  }
+
+  public String getPackaging() {
+    return packaging;
+  }
 }

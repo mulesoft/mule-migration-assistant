@@ -21,7 +21,7 @@ import org.jdom2.Namespace;
  */
 public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationStep {
 
-  public static final String XPATH_SELECTOR = "/mule:mule/http:listener-config";
+  public static final String XPATH_SELECTOR = "/*/http:listener-config";
 
   @Override
   public String getDescription() {

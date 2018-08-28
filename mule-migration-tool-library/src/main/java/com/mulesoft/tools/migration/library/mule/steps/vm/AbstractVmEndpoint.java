@@ -90,11 +90,11 @@ public abstract class AbstractVmEndpoint extends AbstractApplicationModelMigrati
   }
 
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/mule:mule/vm:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/vm:connector[@name = '" + connectorName + "']");
   }
 
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/mule:mule/vm:connector");
+    return getApplicationModel().getNodeOptional("/*/vm:connector");
   }
 
   @Override

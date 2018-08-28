@@ -20,7 +20,7 @@ import org.jdom2.Element;
 public class HttpMuleConfig extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/mule:configuration/http:config";
+      "/*/mule:configuration/http:config";
 
   @Override
   public String getDescription() {

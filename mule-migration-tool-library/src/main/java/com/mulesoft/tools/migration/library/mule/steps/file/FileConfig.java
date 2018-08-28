@@ -35,7 +35,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
   private static final String FILE_NAMESPACE_PREFIX = "file";
   private static final String FILE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/file";
   private static final Namespace FILE_NAMESPACE = Namespace.getNamespace(FILE_NAMESPACE_PREFIX, FILE_NAMESPACE_URI);
-  public static final String XPATH_SELECTOR = "/mule:mule/file:connector";
+  public static final String XPATH_SELECTOR = "/*/file:connector";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -116,20 +116,20 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   private void handleInputImplicitConnectorRef(Element object, MigrationReport report) {
     makeImplicitConnectorRefsExplicit(object, report, getApplicationModel()
-        .getNodes("/mule:mule/mule:flow/file:inbound-endpoint[not(@connector-ref)]"));
+        .getNodes("/*/mule:flow/file:inbound-endpoint[not(@connector-ref)]"));
     makeImplicitConnectorRefsExplicit(object, report, getApplicationModel()
-        .getNodes("/mule:mule//mule:inbound-endpoint[not(@connector-ref) and starts-with(@address, 'file://')]"));
+        .getNodes("//mule:inbound-endpoint[not(@connector-ref) and starts-with(@address, 'file://')]"));
   }
 
   private void handleOutputImplicitConnectorRef(Element object, MigrationReport report) {
     makeImplicitConnectorRefsExplicit(object, report,
-                                      getApplicationModel().getNodes("/mule:mule//file:outbound-endpoint[not(@connector-ref)]"));
+                                      getApplicationModel().getNodes("//file:outbound-endpoint[not(@connector-ref)]"));
     makeImplicitConnectorRefsExplicit(object, report, getApplicationModel()
-        .getNodes("/mule:mule//mule:outbound-endpoint[not(@connector-ref) and starts-with(@address, 'file://')]"));
+        .getNodes("//mule:outbound-endpoint[not(@connector-ref) and starts-with(@address, 'file://')]"));
   }
 
   private void makeImplicitConnectorRefsExplicit(Element object, MigrationReport report, List<Element> implicitConnectorRefs) {
-    List<Element> availableConfigs = getApplicationModel().getNodes("/mule:mule/file:config");
+    List<Element> availableConfigs = getApplicationModel().getNodes("/*/file:config");
     if (implicitConnectorRefs.size() > 0 && availableConfigs.size() > 1) {
       for (Element implicitConnectorRef : implicitConnectorRefs) {
         // This situation would have caused the app to not start in Mule 3. As it is not a migration issue per se, there's no
@@ -178,10 +178,10 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   private void handleInputSpecificAttributes(Element object, boolean matcherUsed, String fileAge, MigrationReport report) {
     Stream.concat(getApplicationModel()
-        .getNodes("/mule:mule//file:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
+        .getNodes("//file:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
         .stream(),
                   getApplicationModel()
-                      .getNodes("/mule:mule//mule:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
+                      .getNodes("//mule:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
                       .stream())
         .forEach(e -> passConnectorConfigToInboundEnpoint(object, matcherUsed, fileAge, e));
 
@@ -196,10 +196,10 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   private void handleOutputSpecificAttributes(Element object, MigrationReport report) {
     Stream.concat(getApplicationModel()
-        .getNodes("/mule:mule//file:outbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
+        .getNodes("//file:outbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
         .stream(),
                   getApplicationModel()
-                      .getNodes("/mule:mule//mule:outbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
+                      .getNodes("//mule:outbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
                       .stream())
         .forEach(e -> passConnectorConfigToOutboundEndpoint(object, e));
 

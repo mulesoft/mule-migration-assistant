@@ -10,8 +10,8 @@ import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpC
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -25,7 +25,7 @@ import org.jdom2.Namespace;
 public class HttpBasicSecurity extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "/mule:mule//http:basic-security-filter";
+  public static final String XPATH_SELECTOR = "//http:basic-security-filter";
 
   private ExpressionMigrator expressionMigrator;
 

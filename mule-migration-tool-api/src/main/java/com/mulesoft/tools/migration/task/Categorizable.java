@@ -7,7 +7,14 @@
 package com.mulesoft.tools.migration.task;
 
 
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_DOMAIN;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_POLICY;
+
 import com.mulesoft.tools.migration.project.ProjectType;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Defines information to categorize e task
@@ -22,5 +29,16 @@ public interface Categorizable {
 
   String getFrom();
 
-  ProjectType getProjectType();
+  default Set<ProjectType> getApplicableProjectTypes() {
+    Set<ProjectType> types = new HashSet<>();
+    types.add(MULE_FOUR_APPLICATION);
+    types.add(MULE_FOUR_DOMAIN);
+    types.add(MULE_FOUR_POLICY);
+    return types;
+  }
+
+  @Deprecated
+  default ProjectType getProjectType() {
+    return MULE_FOUR_APPLICATION;
+  }
 }

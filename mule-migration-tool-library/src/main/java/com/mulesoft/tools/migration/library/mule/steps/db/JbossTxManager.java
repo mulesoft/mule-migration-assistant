@@ -22,7 +22,7 @@ import org.jdom2.Element;
 public class JbossTxManager extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/jbossts' and local-name() = 'transaction-manager']";
+      "/*/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/jbossts' and local-name() = 'transaction-manager']";
 
   @Override
   public String getDescription() {

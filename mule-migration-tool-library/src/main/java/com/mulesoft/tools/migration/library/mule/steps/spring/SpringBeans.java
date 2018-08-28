@@ -6,12 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Migrates the spring beans form the mule config to its own file.
@@ -25,7 +26,8 @@ public class SpringBeans extends AbstractSpringMigratorStep {
   private static final String SPRING_BEANS_NS_URI = "http://www.springframework.org/schema/beans";
   private static final Namespace SPRING_BEANS_NS = Namespace.getNamespace(SPRING_BEANS_NS_PREFIX, SPRING_BEANS_NS_URI);
   public static final String XPATH_SELECTOR =
-      "/mule:mule/*[namespace-uri()='" + SPRING_BEANS_NS_URI + "' and local-name()!='beans']";
+      "/*[starts-with(namespace-uri(), 'http://www.mulesoft.org/schema/mule/')]/*[namespace-uri() = '" + SPRING_BEANS_NS_URI
+          + "' and local-name() != 'beans']";
 
   @Override
   public String getDescription() {

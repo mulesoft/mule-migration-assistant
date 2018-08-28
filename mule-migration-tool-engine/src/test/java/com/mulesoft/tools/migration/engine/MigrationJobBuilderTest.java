@@ -6,17 +6,14 @@
  */
 package com.mulesoft.tools.migration.engine;
 
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.nio.file.Path;
-
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static org.mockito.Mockito.mock;
 
 /**
  * @author Mulesoft Inc.
@@ -55,7 +52,7 @@ public class MigrationJobBuilderTest {
   @Test(expected = IllegalStateException.class)
   public void setOutputProjectTypeNull() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
-        .withOutputProjectType(null).build();
+        .build();
   }
 
   @Test(expected = IllegalStateException.class)
@@ -77,7 +74,6 @@ public class MigrationJobBuilderTest {
         .withOutputProject(migratedProjectPath)
         .withInputVersion(MULE_3_VERSION)
         .withOuputVersion(MULE4_VERSION)
-        .withOutputProjectType(MULE_FOUR_APPLICATION)
         .build();
   }
 }

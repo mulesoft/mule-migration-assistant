@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class HttpPollingConnector extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "/mule:mule/http:polling-connector";
+  public static final String XPATH_SELECTOR = "/*/http:polling-connector";
 
   private ExpressionMigrator expressionMigrator;
 

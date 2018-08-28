@@ -6,8 +6,19 @@
  */
 package com.mulesoft.tools.migration.project.model;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.generateDocument;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
+import static java.lang.String.format;
+import static java.util.Collections.emptyList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -28,15 +39,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.generateDocument;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
-import static java.lang.String.format;
-import static java.util.Collections.emptyList;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 /**
  * Represent the application to be migrated
  *
@@ -46,6 +48,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 public class ApplicationModel {
 
   private Map<Path, Document> applicationDocuments;
+  private ProjectType projectType;
   private String muleVersion;
   private PomModel pomModel;
   private Path projectBasePath;
@@ -249,6 +252,14 @@ public class ApplicationModel {
     return Optional.ofNullable(pomModel);
   }
 
+  public void setProjectType(ProjectType projectType) {
+    this.projectType = projectType;
+  }
+
+  public ProjectType getProjectType() {
+    return projectType;
+  }
+
   public void setMuleVersion(String muleVersion) {
     this.muleVersion = muleVersion;
   }
@@ -323,6 +334,7 @@ public class ApplicationModel {
     private Path muleArtifactJson;
     private Path pom;
     private Path projectBasePath;
+    private ProjectType projectType;
     private String muleVersion;
     private List<Namespace> supportedNamespaces;
 
@@ -378,6 +390,17 @@ public class ApplicationModel {
      */
     public ApplicationModelBuilder withProjectBasePath(Path projectBasePath) {
       this.projectBasePath = projectBasePath;
+      return this;
+    }
+
+    /**
+     * The type of project in the folder
+     *
+     * @param type
+     * @return the builder
+     */
+    public ApplicationModelBuilder withProjectType(ProjectType type) {
+      this.projectType = type;
       return this;
     }
 
@@ -438,10 +461,16 @@ public class ApplicationModel {
       }
       PomModel pomModel;
       if (pom != null && pom.toFile().exists()) {
-        pomModel = new PomModel.PomModelBuilder().withPom(pom).build();
+        pomModel = new PomModel.PomModelBuilder()
+            .withPom(pom)
+            .build();
       } else {
-        pomModel = new PomModel.PomModelBuilder().withArtifactId(projectBasePath.getFileName().toString()).build();
+        pomModel = new PomModel.PomModelBuilder()
+            .withArtifactId(projectBasePath.getFileName().toString())
+            .withPackaging(projectType.getPackaging())
+            .build();
       }
+      applicationModel.setProjectType(projectType);
       applicationModel.setMuleVersion(muleVersion);
       applicationModel.setPomModel(pomModel);
       applicationModel.setProjectBasePath(projectBasePath);
@@ -449,6 +478,7 @@ public class ApplicationModel {
 
       return applicationModel;
     }
+
   }
 
 }
