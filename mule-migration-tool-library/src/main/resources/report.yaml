@@ -40,7 +40,7 @@ message:
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments
   springBeanDefinitionInsideMuleObject:
-    type: ERORR
+    type: ERROR
     message: Spring beans definition inside mule components is not allowed. This inner definition must be moved to its own spring config file, and it may be referenced by an 'ee:transform' component or in an expression in the operation/listener directly.
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-module-spring
@@ -168,7 +168,7 @@ jms:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker
   websphereMqConnector:
     type: ERROR
-    message: IBM MQ Connector should be used to connecto to an IBM MQ broker.
+    message: IBM MQ Connector should be used to connect to an IBM MQ broker.
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker
   xaConnectionCache:
@@ -279,7 +279,7 @@ db:
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#reconnection_strategies
   source:
-    type: ERORR
+    type: ERROR
     message: \'source\' attribute does not exist in Mule 4. Update the query accordingly.
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#database_dynamic_queries
@@ -300,7 +300,7 @@ validation:
     message: Exception Factory is no longer supported.
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation
-  customValidatros:
+  customValidators:
     type: ERROR
     message: Custom Validators were replaced with the Extension Validators.
     docLinks:
@@ -360,7 +360,7 @@ configProperties:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties#properties-files
   springAttributes:
     type: ERROR
-    message: Spring specific attributes are no loger available. The default behavior cannot be changed in Mule 4.
+    message: Spring specific attributes are no longer available. The default behavior cannot be changed in Mule 4.
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties
   securePrefix:

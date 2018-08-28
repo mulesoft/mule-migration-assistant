@@ -183,7 +183,7 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
         break;
       case "websphere-connector":
         // TODO MMT-202
-        report.report(ERROR, m3Connector, m4JmsConfig, "IBM MQ Connector should be used to connecto to an IBM MQ broker.",
+        report.report(ERROR, m3Connector, m4JmsConfig, "IBM MQ Connector should be used to connect to an IBM MQ broker.",
                       "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker");
 
         connection = new Element("generic-connection", JMS_NAMESPACE);
