@@ -29,7 +29,7 @@ public class JmsConnectorPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-jms-connector")
-        .withVersion("1.3.0-SNAPSHOT")
+        .withVersion("1.3.0")
         .withClassifier("mule-plugin")
         .build());
   }
