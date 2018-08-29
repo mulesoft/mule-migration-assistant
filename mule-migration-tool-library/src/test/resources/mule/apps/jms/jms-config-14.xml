@@ -29,7 +29,8 @@
 
     <flow name="flowIn">
         <jms:listener config-ref="jmsConnector" destination="in">
-            <jms:response persistentDelivery="true" correlationId="#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]">
+            <jms:response persistentDelivery="true" correlationId="#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]"
+                          sendCorrelationId="#[migration::JmsTransport::jmsSendCorrelationId(vars)]">
                 <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
             </jms:response>
         </jms:listener>

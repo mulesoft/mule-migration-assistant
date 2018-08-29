@@ -185,8 +185,7 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       outboundBuilder.addContent(compatibilityProperties(getApplicationModel()));
 
       outboundBuilder.setAttribute("correlationId", "#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]");
-      // TODO MMT-196 uncomment this
-      // response.setAttribute("sendCorrelationId", "#[migration::JmsTransport::jmsSendCorrelationId(vars)]");
+      outboundBuilder.setAttribute("sendCorrelationId", "#[migration::JmsTransport::jmsSendCorrelationId(vars)]");
 
       report.report(WARN, object, object, "Avoid using properties to set the JMS response properties and headers",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#ListeningForNewMessages",

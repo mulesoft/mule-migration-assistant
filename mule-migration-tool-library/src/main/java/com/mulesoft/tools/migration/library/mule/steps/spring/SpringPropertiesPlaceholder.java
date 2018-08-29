@@ -65,7 +65,7 @@ public class SpringPropertiesPlaceholder extends AbstractSpringMigratorStep {
         || parseBoolean(object.getAttributeValue("local-override", "false"))
         || parseBoolean(object.getAttributeValue("system-properties-mode", "false"))) {
       report.report(ERROR, object, object,
-                    "Spring specific attributes are no loger available. The default behavior cannot be changed in Mule 4.",
+                    "Spring specific attributes are no longer available. The default behavior cannot be changed in Mule 4.",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties");
     }
 
