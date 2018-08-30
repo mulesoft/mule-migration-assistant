@@ -11,8 +11,7 @@
 
     <flow name="flow">
         <jms:listener config-ref="JmsConfig" destination="in">
-            <jms:response correlationId="#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]"
-                          sendCorrelationId="#[migration::JmsTransport::jmsSendCorrelationId(vars)]">
+            <jms:response correlationId="#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]">
                 <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
             </jms:response>
         </jms:listener>
