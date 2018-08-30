@@ -51,6 +51,7 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
   public static void addAttributesToInboundProperties(Element object, ApplicationModel appModel, MigrationReport report) {
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("JMSCorrelationID", "message.attributes.headers.correlationId");
+    expressionsPerProperty.put("MULE_CORRELATION_ID", "message.attributes.headers.correlationId");
     expressionsPerProperty.put("JMSDeliveryMode", "message.attributes.headers.deliveryMode");
     expressionsPerProperty.put("JMSDestination", "message.attributes.headers.destination");
     expressionsPerProperty.put("JMSExpiration", "message.attributes.headers.expiration");
