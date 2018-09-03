@@ -282,6 +282,11 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
       connector.removeAttribute("serverSoTimeout");
       connector.removeAttribute("reuseAddress");
     }
+
+    if (connector.getDocument().getRootElement().getName().equals("domain")) {
+      report.report(ERROR, connector, connector,
+                    "The configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.");
+    }
   }
 
   protected Element getConnector(String connectorName) {

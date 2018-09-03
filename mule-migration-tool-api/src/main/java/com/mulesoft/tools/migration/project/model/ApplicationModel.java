@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.generateDocumen
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -19,6 +20,7 @@ import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 
+import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -28,6 +30,8 @@ import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -48,15 +52,22 @@ import java.util.Set;
 public class ApplicationModel {
 
   private Map<Path, Document> applicationDocuments;
+  private Map<Path, Document> domainDocuments;
   private ProjectType projectType;
   private String muleVersion;
   private PomModel pomModel;
+  private Path sourceProjectBasePath;
   private Path projectBasePath;
   private MuleArtifactJsonModel muleArtifactJsonModel;
   private List<Namespace> supportedNamespaces;
 
   protected ApplicationModel(Map<Path, Document> applicationDocuments) {
+    this(applicationDocuments, emptyMap());
+  }
+
+  protected ApplicationModel(Map<Path, Document> applicationDocuments, Map<Path, Document> domainDocuments) {
     this.applicationDocuments = applicationDocuments;
+    this.domainDocuments = domainDocuments;
   }
 
   /**
@@ -64,6 +75,15 @@ public class ApplicationModel {
    */
   public Map<Path, Document> getApplicationDocuments() {
     return applicationDocuments;
+  }
+
+  /**
+   * The key of the map is relative to the source of the target project.
+   * <p>
+   * This is just for the domain referenced by an application, this is not used when migrating the domain itself.
+   */
+  public Map<Path, Document> getDomainDocuments() {
+    return domainDocuments;
   }
 
   /**
@@ -119,6 +139,9 @@ public class ApplicationModel {
     for (Document doc : getApplicationDocuments().values()) {
       nodes.addAll(getElementsFromDocument(xpathExpression, doc));
     }
+    for (Document doc : getDomainDocuments().values()) {
+      nodes.addAll(getElementsFromDocument(xpathExpression, doc));
+    }
     return nodes;
   }
 
@@ -148,6 +171,9 @@ public class ApplicationModel {
   public void addNameSpace(String prefix, String uri, String schemaLocation) {
     Namespace namespace = Namespace.getNamespace(prefix, uri);
     for (Document doc : applicationDocuments.values()) {
+      addNameSpace(namespace, schemaLocation, doc);
+    }
+    for (Document doc : domainDocuments.values()) {
       addNameSpace(namespace, schemaLocation, doc);
     }
   }
@@ -273,6 +299,22 @@ public class ApplicationModel {
    *
    * @param projectBasePath
    */
+  private void setSourceProjectBasePath(Path sourceProjectBasePath) {
+    this.sourceProjectBasePath = sourceProjectBasePath;
+  }
+
+  /**
+   * Retrieves the root path of the project represented by the application model instance
+   */
+  public Path getSourceProjectBasePath() {
+    return this.sourceProjectBasePath;
+  }
+
+  /**
+   * The path to the root of the project represented by the application model instance
+   *
+   * @param projectBasePath
+   */
   private void setProjectBasePath(Path projectBasePath) {
     this.projectBasePath = projectBasePath;
   }
@@ -333,7 +375,9 @@ public class ApplicationModel {
     private Collection<Path> testConfigurationFiles;
     private Path muleArtifactJson;
     private Path pom;
+    private Path sourceProjectBasePath;
     private Path projectBasePath;
+    private Path parentDomainBasePath;
     private ProjectType projectType;
     private String muleVersion;
     private List<Namespace> supportedNamespaces;
@@ -383,6 +427,17 @@ public class ApplicationModel {
     }
 
     /**
+     * Path to source project base folder
+     *
+     * @param sourceProjectBasePath
+     * @return the builder
+     */
+    public ApplicationModelBuilder withSourceProjectBasePath(Path sourceProjectBasePath) {
+      this.sourceProjectBasePath = sourceProjectBasePath;
+      return this;
+    }
+
+    /**
      * Path to project base folder
      *
      * @param projectBasePath
@@ -390,6 +445,17 @@ public class ApplicationModel {
      */
     public ApplicationModelBuilder withProjectBasePath(Path projectBasePath) {
       this.projectBasePath = projectBasePath;
+      return this;
+    }
+
+    /**
+     * Path to the parent domain of the app being migrated
+     *
+     * @param projectBasePath
+     * @return the builder
+     */
+    public ApplicationModelBuilder withParentDomainBasePath(Path parentDomainBasePath) {
+      this.parentDomainBasePath = parentDomainBasePath;
       return this;
     }
 
@@ -451,7 +517,28 @@ public class ApplicationModel {
           throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + afp, e);
         }
       }
-      ApplicationModel applicationModel = new ApplicationModel(applicationDocuments);
+
+      ApplicationModel applicationModel;
+      if (parentDomainBasePath != null) {
+        Set<Path> domainFilePaths = new HashSet<>();
+        for (File domainXmlFile : parentDomainBasePath.resolve("src/main/domain").toFile()
+            .listFiles((FilenameFilter) new SuffixFileFilter(".xml"))) {
+          domainFilePaths.add(domainXmlFile.toPath());
+        }
+        Map<Path, Document> domainDocuments = new HashMap<>();
+        for (Path dfp : domainFilePaths) {
+          try {
+            domainDocuments.put(parentDomainBasePath.relativize(dfp), generateDocument(dfp));
+          } catch (JDOMException | IOException e) {
+            throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + dfp, e);
+          }
+        }
+        applicationModel = new ApplicationModel(applicationDocuments, domainDocuments);
+      } else {
+        applicationModel = new ApplicationModel(applicationDocuments);
+      }
+
+
       if (muleArtifactJson != null) {
         MuleArtifactJsonModel muleArtifactJsonModel = new MuleArtifactJsonModel.MuleApplicationJsonModelBuilder()
             .withMuleArtifactJson(muleArtifactJson)
@@ -473,6 +560,7 @@ public class ApplicationModel {
       applicationModel.setProjectType(projectType);
       applicationModel.setMuleVersion(muleVersion);
       applicationModel.setPomModel(pomModel);
+      applicationModel.setSourceProjectBasePath(sourceProjectBasePath);
       applicationModel.setProjectBasePath(projectBasePath);
       applicationModel.setSupportedNamespaces(supportedNamespaces);
 

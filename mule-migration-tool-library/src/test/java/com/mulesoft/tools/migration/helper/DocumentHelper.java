@@ -8,9 +8,7 @@ package com.mulesoft.tools.migration.helper;
 
 import static java.util.Collections.emptyList;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -43,8 +41,37 @@ public class DocumentHelper {
   }
 
   public static List<Element> getElementsFromDocument(Document doc, String xPathExpression) {
+    return getElementsFromDocument(doc, xPathExpression, "mule");
+  }
+
+  public static List<Element> getElementsFromDocuments(String xPathExpression, Document... docs) {
+    List<Element> elements = new ArrayList<>();
+
+    for (Document doc : docs) {
+      elements.addAll(getElementsFromDocument(doc, xPathExpression));
+    }
+
+    return elements;
+  }
+
+  public static List<Element> getElementsFromDocument(Document doc, String xPathExpression, String defaultNamespacePrefix) {
     try {
-      return getElementsFromDocument(doc, xPathExpression, "mule");
+      List<Namespace> namespaces = new ArrayList<>();
+      namespaces.addAll(doc.getRootElement().getAdditionalNamespaces());
+
+      if (namespaces.stream().noneMatch(n -> defaultNamespacePrefix.equals(n.getPrefix()))) {
+        namespaces.add(Namespace.getNamespace(defaultNamespacePrefix, doc.getRootElement().getNamespace().getURI()));
+      }
+
+      if (namespaces.stream().anyMatch(n -> "".equals(n.getPrefix()))) {
+        Namespace coreNs = namespaces.stream().filter(n -> "".equals(n.getPrefix())).findFirst().get();
+        namespaces.remove(coreNs);
+        namespaces.add(Namespace.getNamespace("mule", coreNs.getURI()));
+      }
+
+      XPathExpression<Element> xpath = XPathFactory.instance().compile(xPathExpression, Filters.element(), null, namespaces);
+      List<Element> nodes = xpath.evaluate(doc);
+      return nodes;
     } catch (IllegalArgumentException e) {
       if (e.getMessage().matches("Namespace with prefix '\\w+' has not been declared.")) {
         return emptyList();
@@ -52,19 +79,6 @@ public class DocumentHelper {
         throw e;
       }
     }
-  }
-
-  public static List<Element> getElementsFromDocument(Document doc, String xPathExpression, String defaultNamespacePrefix) {
-    List<Namespace> namespaces = new ArrayList<>();
-    namespaces.addAll(doc.getRootElement().getAdditionalNamespaces());
-
-    if (namespaces.stream().noneMatch(n -> defaultNamespacePrefix.equals(n.getPrefix()))) {
-      namespaces.add(Namespace.getNamespace(defaultNamespacePrefix, doc.getRootElement().getNamespace().getURI()));
-    }
-
-    XPathExpression<Element> xpath = XPathFactory.instance().compile(xPathExpression, Filters.element(), null, namespaces);
-    List<Element> nodes = xpath.evaluate(doc);
-    return nodes;
   }
 
   public static void getNodesFromFile(String Xpath, AbstractApplicationModelMigrationStep step, String filePath)

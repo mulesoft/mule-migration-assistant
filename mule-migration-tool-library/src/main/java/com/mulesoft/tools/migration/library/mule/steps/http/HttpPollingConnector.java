@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.addAttributesToInboundProperties;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_POLICY;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -62,6 +63,11 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
     if (object.getAttribute("reuseAddress") != null) {
       report.report(ERROR, object, object, "'reuseAddress' attribute is only applicable to HTTP listeners, not requesters.");
       object.removeAttribute("reuseAddress");
+    }
+
+    if (MULE_FOUR_POLICY.equals(getApplicationModel().getProjectType())) {
+      report.report(ERROR, requestConnection, object,
+                    "The configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.");
     }
 
     List<Element> pollingEndpoints =

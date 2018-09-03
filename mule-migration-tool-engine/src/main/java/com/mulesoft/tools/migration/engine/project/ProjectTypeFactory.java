@@ -74,7 +74,7 @@ public class ProjectTypeFactory {
       return MULE_THREE_APPLICATION;
     } else if (exists(projectPath.resolve(MuleThreeDomain.srcMainConfigurationPath))
         && listFiles(projectPath.resolve(MuleThreeDomain.srcMainConfigurationPath).toFile(), new String[] {"xml"}, false).stream()
-            .filter(f -> rootElement(f, "mule-domain"))
+            .filter(f -> rootElement(f, "domain:mule-domain"))
             .count() > 0) {
       return MULE_THREE_DOMAIN;
     } else if (MuleThreePolicy.isPolicyInFolder(projectPath)) {

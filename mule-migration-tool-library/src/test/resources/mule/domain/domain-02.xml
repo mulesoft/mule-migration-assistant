@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain:mule-domain
+        xmlns="http://www.mulesoft.org/schema/mule/core"
+        xmlns:domain="http://www.mulesoft.org/schema/mule/ee/domain"
+        xmlns:http="http://www.mulesoft.org/schema/mule/http"
+        xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+        xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+               http://www.mulesoft.org/schema/mule/ee/domain http://www.mulesoft.org/schema/mule/ee/domain/current/mule-domain-ee.xsd">
+
+    <http:request-config name="pollingConnectorConfig">
+        <http:request-connection protocol="HTTPS">
+        <!-- the host and port are pulled up from the app, so they won't be available when just the domain is migrated -->
+<!--         <http:request-connection protocol="HTTPS" host="localhost" port="${port1}"> -->
+            <tls:context>
+                <tls:trust-store path="trustStore" password="mulepassword"/>
+            </tls:context>
+        </http:request-connection>
+    </http:request-config>
+
+</domain:mule-domain>

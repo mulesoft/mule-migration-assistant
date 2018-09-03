@@ -12,7 +12,7 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 import static java.util.Collections.singleton;
 
-import com.mulesoft.tools.migration.library.mule.steps.core.AttributesToInboundPropertiesScriptGenerator;
+import com.mulesoft.tools.migration.library.mule.steps.domain.DomainReferencePomContribution;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -21,16 +21,16 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Postprocess Mule Application Migration Task
+ * Add the reference to the domain on the app
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class PostprocessMuleApplication extends AbstractMigrationTask {
+public class DomainAppMigrationTask extends AbstractMigrationTask {
 
   @Override
   public String getDescription() {
-    return "Postprocess the application";
+    return "Add the reference to the domain on the app";
   }
 
   @Override
@@ -50,7 +50,7 @@ public class PostprocessMuleApplication extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new AttributesToInboundPropertiesScriptGenerator());
+    return newArrayList(new DomainReferencePomContribution());
   }
 
 }

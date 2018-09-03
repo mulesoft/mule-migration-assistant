@@ -31,7 +31,6 @@ public class MuleThreeDomain extends MuleProject {
 
   @Override
   public Path srcTestConfiguration() {
-    // TODO throw a better exception
-    throw new RuntimeException("No test configuration folder");
+    return baseFolder.resolve("./test");
   }
 }

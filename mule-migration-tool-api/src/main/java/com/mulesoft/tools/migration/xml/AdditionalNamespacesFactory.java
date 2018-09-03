@@ -6,9 +6,13 @@
  */
 package com.mulesoft.tools.migration.xml;
 
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
+
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationStepSelector;
 import com.mulesoft.tools.migration.task.MigrationTask;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Document;
 import org.jdom2.Namespace;
@@ -18,9 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyList;
-import static java.util.Optional.ofNullable;
 
 /**
  * Generates a {@link List<Namespace>}
@@ -33,7 +34,11 @@ public class AdditionalNamespacesFactory {
   public static List<Namespace> getDocumentNamespaces(Document document, List<Namespace> tasksSupportedNamespaces) {
     Map<String, String> namespaces = new HashMap<>();
     List<Namespace> documentNamespaces = new ArrayList<>();
-    document.getRootElement().getAdditionalNamespaces().forEach(n -> namespaces.computeIfAbsent(n.getURI(), k -> n.getPrefix()));
+    document.getRootElement().getAdditionalNamespaces().forEach(n -> {
+      if (!StringUtils.isEmpty(n.getPrefix())) {
+        namespaces.computeIfAbsent(n.getURI(), k -> n.getPrefix());
+      }
+    });
 
     if (tasksSupportedNamespaces != null) {
       tasksSupportedNamespaces.stream()

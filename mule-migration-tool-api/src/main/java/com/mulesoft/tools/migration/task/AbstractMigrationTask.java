@@ -10,6 +10,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.System.lineSeparator;
 
+import com.mulesoft.tools.migration.exception.MigrationAbortException;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -77,10 +78,15 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
               .forEach(s -> s.execute(applicationModel.getProjectBasePath(), report));
 
           stepSelector.getPomContributionSteps()
-              .forEach(s -> s.execute(applicationModel.getPomModel().orElse(new PomModel()), report));
+              .forEach(s -> {
+                s.setApplicationModel(applicationModel);
+                s.execute(applicationModel.getPomModel().orElse(new PomModel()), report);
+              });
         }
       }
 
+    } catch (MigrationAbortException e) {
+      throw e;
     } catch (Exception e) {
       throw new MigrationTaskException("Task execution exception. " + e.getMessage(), e);
     }

@@ -7,30 +7,26 @@
 package com.mulesoft.tools.migration.library.mule.tasks;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
-import static java.util.Collections.singleton;
 
-import com.mulesoft.tools.migration.library.mule.steps.core.AttributesToInboundPropertiesScriptGenerator;
-import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.library.mule.steps.core.CleanNamespaces;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import java.util.List;
-import java.util.Set;
 
 /**
- * Postprocess Mule Application Migration Task
+ * Postprocess steps general to all artifacts
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class PostprocessMuleApplication extends AbstractMigrationTask {
+public class PostprocessGeneral extends AbstractMigrationTask {
 
   @Override
   public String getDescription() {
-    return "Postprocess the application";
+    return "Postprocess steps general to all artifacts";
   }
 
   @Override
@@ -44,13 +40,8 @@ public class PostprocessMuleApplication extends AbstractMigrationTask {
   }
 
   @Override
-  public Set<ProjectType> getApplicableProjectTypes() {
-    return singleton(MULE_FOUR_APPLICATION);
-  }
-
-  @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new AttributesToInboundPropertiesScriptGenerator());
+    return newArrayList(new CleanNamespaces());
   }
 
 }

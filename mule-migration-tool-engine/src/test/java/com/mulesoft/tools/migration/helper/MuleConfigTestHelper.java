@@ -28,12 +28,15 @@ public final class MuleConfigTestHelper {
     return "" +
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
         "\n" +
-        "<mule-domain xmlns=\"http://www.mulesoft.org/schema/mule/domain\"\n" +
+        "<domain:mule-domain xmlns:domain=\"http://www.mulesoft.org/schema/mule/domain\"\n" +
+        "      xmlns=\"http://www.mulesoft.org/schema/mule/core\"\n" +
         "      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-        "      xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/domain http://www.mulesoft.org/schema/mule/domain/current/mule-domain.xsd\">\n"
+        "      xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd\n"
+        +
+        "                          http://www.mulesoft.org/schema/mule/domain http://www.mulesoft.org/schema/mule/domain/current/mule-domain.xsd\">\n"
         +
         "\n" +
-        "</mule-domain>";
+        "</domain:mule-domain>";
   }
 
 }
