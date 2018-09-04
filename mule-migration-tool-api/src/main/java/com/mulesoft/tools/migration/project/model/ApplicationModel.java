@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.project.model;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.generateDocument;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
+import static java.io.File.separator;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -521,7 +522,8 @@ public class ApplicationModel {
       ApplicationModel applicationModel;
       if (parentDomainBasePath != null) {
         Set<Path> domainFilePaths = new HashSet<>();
-        for (File domainXmlFile : parentDomainBasePath.resolve("src/main/domain").toFile()
+        for (File domainXmlFile : parentDomainBasePath.resolve("src" + separator + "main" + separator + "domain")
+            .toFile()
             .listFiles((FilenameFilter) new SuffixFileFilter(".xml"))) {
           domainFilePaths.add(domainXmlFile.toPath());
         }

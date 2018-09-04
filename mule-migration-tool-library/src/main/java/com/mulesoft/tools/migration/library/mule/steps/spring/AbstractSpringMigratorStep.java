@@ -59,22 +59,22 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
     return springDocument;
   }
 
-  protected Document resolveSpringFile(Document currentDoc, Document springDocument, final Map<Path, Document> arifactDocs) {
+  protected Document resolveSpringFile(Document currentDoc, Document springDocument, final Map<Path, Document> artifactDocs) {
     Path beansPath = null;
 
     // Check if a spring file already exists for this mule config
-    for (Entry<Path, Document> entry : arifactDocs.entrySet()) {
+    for (Entry<Path, Document> entry : artifactDocs.entrySet()) {
       if (currentDoc.equals(entry.getValue())) {
         beansPath = resolveSpringBeansPath(entry);
 
-        if (arifactDocs.containsKey(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()))) {
-          return arifactDocs.get(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()));
+        if (artifactDocs.containsKey(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()))) {
+          return artifactDocs.get(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()));
         }
       }
     }
 
     // If not, create it and link it
-    for (Entry<Path, Document> entry : arifactDocs.entrySet()) {
+    for (Entry<Path, Document> entry : artifactDocs.entrySet()) {
       if (currentDoc.equals(entry.getValue())) {
         beansPath = resolveSpringBeansPath(entry);
 
@@ -95,7 +95,7 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
       return null;
     }
 
-    arifactDocs.put(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()), springDocument);
+    artifactDocs.put(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()), springDocument);
 
     return springDocument;
   }

@@ -6,16 +6,15 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.domain;
 
+import static java.io.File.separator;
+import static java.lang.String.format;
+
 import com.mulesoft.tools.migration.exception.MigrationAbortException;
-import com.mulesoft.tools.migration.exception.MigrationException;
-import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
-
-import static java.lang.String.format;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +39,9 @@ public class DomainReferencePomContribution implements PomContribution {
   @Override
   public void execute(PomModel object, MigrationReport report) throws RuntimeException {
     Properties properties = new Properties();
-    File file = getApplicationModel().getSourceProjectBasePath().resolve("src/main/app/mule-deploy.properties").toFile();
+    File file =
+        getApplicationModel().getSourceProjectBasePath()
+            .resolve("src" + separator + "main" + separator + "app" + separator + "mule-deploy.properties").toFile();
     if (!file.exists()) {
       return;
     }
