@@ -150,8 +150,8 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
     return expressionMigrator;
   }
 
-  public void addConnectionToConfig(final Element m4JmsConfig, final Element m3Connector, ApplicationModel appModel,
-                                    MigrationReport report) {
+  public static void addConnectionToConfig(final Element m4JmsConfig, final Element m3Connector, ApplicationModel appModel,
+                                           MigrationReport report) {
     Element connection;
     switch (m3Connector.getName()) {
       case "activemq-connector":
@@ -273,13 +273,13 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
     }
   }
 
-  private void processProviderProperties(final Element m3Connector, ApplicationModel appModel,
-                                         Element nameResolverBuilder) {
+  private static void processProviderProperties(final Element m3Connector, ApplicationModel appModel,
+                                                Element nameResolverBuilder) {
     processProviderPropertiesRef(m3Connector.getAttributeValue("jndiProviderProperties-ref"), appModel, nameResolverBuilder);
   }
 
-  private void processProviderPropertiesRef(String jndiProviderPropertiesRef, ApplicationModel appModel,
-                                            Element nameResolverBuilder) {
+  private static void processProviderPropertiesRef(String jndiProviderPropertiesRef, ApplicationModel appModel,
+                                                   Element nameResolverBuilder) {
     if (jndiProviderPropertiesRef != null) {
       Element providerProperties = new Element("provider-properties", JMS_NAMESPACE);
       nameResolverBuilder.addContent(providerProperties);
@@ -292,7 +292,7 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
     }
   }
 
-  private Element addActiveMqConnection(final Element m4JmsConfig, final Element m3Connector, ApplicationModel appModel) {
+  private static Element addActiveMqConnection(final Element m4JmsConfig, final Element m3Connector, ApplicationModel appModel) {
     Dependency activeMqClient = new DependencyBuilder()
         .withGroupId("org.apache.activemq")
         .withArtifactId("activemq-client")

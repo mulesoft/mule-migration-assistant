@@ -41,10 +41,10 @@ public class PoliciesMigrationTestCase extends EndToEndTestCase {
       return;
     }
 
-    BundleDescriptor migratedAppDescriptor = new BundleDescriptor.Builder().setGroupId("org.mule.migrated")
+    BundleDescriptor migratedPolicyDescriptor = new BundleDescriptor.Builder().setGroupId("org.mule.migrated")
         .setArtifactId(policyToMigrate).setVersion("1.0.0-M4-SNAPSHOT").setClassifier("mule-policy").build();
 
-    File migratedAppArtifact = installMavenArtifact(outPutPath, migratedAppDescriptor);
+    File migratedAppArtifact = installMavenArtifact(outPutPath, migratedPolicyDescriptor);
   }
 
 }

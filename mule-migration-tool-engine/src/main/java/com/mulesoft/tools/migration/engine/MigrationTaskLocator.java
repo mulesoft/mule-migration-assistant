@@ -12,16 +12,24 @@ import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGr
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.stream.Collectors;
+
 import com.mulesoft.tools.migration.library.mule.tasks.BatchMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.DomainAppMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.HTTPCleanupTask;
 import com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.JmsDomainMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.JmsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MigrationCleanTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MuleDeprecatedCoreComponentsMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.PostprocessGeneral;
 import com.mulesoft.tools.migration.library.mule.tasks.PostprocessMuleApplication;
 import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
 import com.mulesoft.tools.migration.library.mule.tasks.PropertiesMigrationTask;
@@ -31,15 +39,11 @@ import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SpringMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.VMMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.ValidationMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.VmDomainMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.WscMigrationTask;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationTask;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.stream.Collectors;
 
 /**
  * The goal of this class is to locate migration tasks
@@ -105,9 +109,12 @@ public class MigrationTaskLocator {
 
     coreMigrationTasks.add(new FileMigrationTask());
     coreMigrationTasks.add(new EndpointsMigrationTask());
+    coreMigrationTasks.add(new JmsDomainMigrationTask());
     coreMigrationTasks.add(new JmsMigrationTask());
+    coreMigrationTasks.add(new VmDomainMigrationTask());
     coreMigrationTasks.add(new VMMigrationTask());
     coreMigrationTasks.add(new ScriptingMigrationTask());
+    coreMigrationTasks.add(new DomainAppMigrationTask());
     coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask());
     coreMigrationTasks.add(new MunitMigrationTask());
     // Spring has to run after MUnit, since MUnit in Mule 3 has some custom spring components that are removed by the migrator
@@ -121,8 +128,9 @@ public class MigrationTaskLocator {
     // Spring has to run after MUnit, since MUnit in Mule 3 has some custom spring components that are removed by the migrator
     coreMigrationTasks.add(new SpringMigrationTask());
     coreMigrationTasks.add(new HTTPCleanupTask());
-    coreMigrationTasks.add(new PostprocessMuleApplication());
     coreMigrationTasks.add(new MigrationCleanTask());
+    coreMigrationTasks.add(new PostprocessGeneral());
+    coreMigrationTasks.add(new PostprocessMuleApplication());
     return coreMigrationTasks;
   }
 }

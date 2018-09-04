@@ -43,27 +43,38 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
   protected static final String SPRING_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/spring";
   protected static final Namespace SPRING_NAMESPACE = getNamespace(SPRING_NAMESPACE_PREFIX, SPRING_NAMESPACE_URI);
   protected static final Namespace SPRING_SECURITY_NAMESPACE =
-      Namespace.getNamespace("http://www.mulesoft.org/schema/mule/spring-security");
+      getNamespace("http://www.mulesoft.org/schema/mule/spring-security");
 
   protected Document resolveSpringDocument(Document currentDoc) {
-    Path beansPath = null;
     Document springDocument = null;
 
+    springDocument = resolveSpringFile(currentDoc, springDocument, getApplicationModel().getApplicationDocuments());
+    if (springDocument == null) {
+      springDocument = resolveSpringFile(currentDoc, springDocument, getApplicationModel().getDomainDocuments());
+      if (springDocument == null) {
+        throw new MigrationStepException("The document of the passed element was not present in the application model");
+      }
+    }
+
+    return springDocument;
+  }
+
+  protected Document resolveSpringFile(Document currentDoc, Document springDocument, final Map<Path, Document> artifactDocs) {
+    Path beansPath = null;
+
     // Check if a spring file already exists for this mule config
-    for (Entry<Path, Document> entry : getApplicationModel().getApplicationDocuments().entrySet()) {
+    for (Entry<Path, Document> entry : artifactDocs.entrySet()) {
       if (currentDoc.equals(entry.getValue())) {
         beansPath = resolveSpringBeansPath(entry);
 
-        if (getApplicationModel().getApplicationDocuments()
-            .containsKey(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()))) {
-          return getApplicationModel().getApplicationDocuments()
-              .get(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()));
+        if (artifactDocs.containsKey(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()))) {
+          return artifactDocs.get(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()));
         }
       }
     }
 
     // If not, create it and link it
-    for (Entry<Path, Document> entry : getApplicationModel().getApplicationDocuments().entrySet()) {
+    for (Entry<Path, Document> entry : artifactDocs.entrySet()) {
       if (currentDoc.equals(entry.getValue())) {
         beansPath = resolveSpringBeansPath(entry);
 
@@ -81,11 +92,10 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
     }
 
     if (beansPath == null) {
-      throw new MigrationStepException("The document of the passed element was not present in the application model");
+      return null;
     }
 
-    getApplicationModel().getApplicationDocuments()
-        .put(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()), springDocument);
+    artifactDocs.put(Paths.get(SPRING_FOLDER + beansPath.getFileName().toString()), springDocument);
 
     return springDocument;
   }
@@ -98,8 +108,8 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
 
     if (schemaLocationAttribute != null) {
       Map<String, String> locations = new HashMap<>();
-      String[] splitLocations = stream(schemaLocationAttribute.getValue().split("\\s")).filter(s -> !StringUtils.isEmpty(s))
-          .toArray(String[]::new);
+      String[] splitLocations =
+          stream(schemaLocationAttribute.getValue().split("\\s")).filter(s -> !StringUtils.isEmpty(s)).toArray(String[]::new);
 
       for (int i = 0; i < splitLocations.length; i += 2) {
         locations.put(splitLocations[i], splitLocations[i + 1]);

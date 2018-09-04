@@ -6,8 +6,9 @@
  */
 package com.mulesoft.tools.migration.step.category;
 
-import com.mulesoft.tools.migration.step.MigrationStep;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.MigrationStep;
 
 /**
  * Migration Step that contributes to the pom model. It should be used if dependencies, plugins or repositories should be added/removed to/from the pom.
@@ -16,5 +17,23 @@ import com.mulesoft.tools.migration.project.model.pom.PomModel;
  * @since 1.0.0
  */
 public interface PomContribution extends MigrationStep<PomModel> {
+
+  /**
+   * Retrieves the application model that this contribution step is working over.
+   *
+   * @return a {@link ApplicationModel}
+   */
+  default ApplicationModel getApplicationModel() {
+    return null;
+  }
+
+  /**
+   * Sets the application model on which this contribution step should work over.
+   *
+   * @return a {@link ApplicationModel}
+   */
+  default void setApplicationModel(ApplicationModel appModel) {
+    // Nothing to do by default
+  }
 
 }

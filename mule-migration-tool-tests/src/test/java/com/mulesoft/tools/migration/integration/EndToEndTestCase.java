@@ -56,10 +56,14 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
 
     File migratedAppArtifact = installMavenArtifact(outPutPath, migratedAppDescriptor);
 
+    startStopMule(migratedAppDescriptor, migratedAppArtifact, muleArgs);
+  }
+
+  protected void startStopMule(BundleDescriptor migratedAppDescriptor, File migratedAppArtifact, String... muleArgs) {
     try {
       getMule().start(muleArgs);
       assertAppNotDeployed(migratedAppDescriptor.getArtifactFileName());
-      getMule().deploy(migratedAppArtifact.getAbsolutePath());
+      deployArtifactsToMule(migratedAppArtifact);
       assertAppIsDeployed(migratedAppDescriptor.getArtifactFileName());
     } finally {
       getMule().stop();
@@ -67,6 +71,10 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
         getMule().undeployAll();
       }
     }
+  }
+
+  protected void deployArtifactsToMule(File migratedAppArtifact) {
+    getMule().deploy(migratedAppArtifact.getAbsolutePath());
   }
 
   /**
@@ -78,7 +86,8 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
    * @throws IOException
    * @throws InterruptedException
    */
-  protected String migrate(String projectName) throws URISyntaxException, IOException, InterruptedException {
+  protected String migrate(String projectName, String... additionalParams)
+      throws URISyntaxException, IOException, InterruptedException {
     String projectBasePath =
         new File(EndToEndTestCase.class.getClassLoader().getResource("e2e/" + projectName).toURI()).getAbsolutePath();
 
@@ -86,6 +95,9 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
 
     // Run migration tool
     final List<String> command = buildRunnerCommand(projectBasePath, outPutPath);
+    for (String additionalParam : additionalParams) {
+      command.add(additionalParam);
+    }
     ProcessBuilder pb = new ProcessBuilder(command);
 
     pb.redirectErrorStream(true);

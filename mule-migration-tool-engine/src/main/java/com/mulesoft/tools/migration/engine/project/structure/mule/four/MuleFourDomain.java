@@ -19,6 +19,7 @@ import java.nio.file.Path;
 public class MuleFourDomain extends MuleProject {
 
   public static final String srcMainConfigurationPath = "src" + File.separator + "main" + File.separator + "mule";
+  private static final String MULE_ARTIFACT_JSON = "mule-artifact.json";
 
   public MuleFourDomain(Path baseFolder) {
     super(baseFolder);
@@ -33,5 +34,9 @@ public class MuleFourDomain extends MuleProject {
   public Path srcTestConfiguration() {
     // TODO throw a better exception
     throw new RuntimeException("No test configuration folder");
+  }
+
+  public Path muleArtifactJson() {
+    return baseFolder.resolve(MULE_ARTIFACT_JSON);
   }
 }

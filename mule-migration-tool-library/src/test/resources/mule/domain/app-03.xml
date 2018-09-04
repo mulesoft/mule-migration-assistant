@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+               http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <flow name="flowOut">
+        <compatibility:outbound-properties-to-var/>
+        <jms:publish config-ref="jmsConnector" persistentDelivery="true" destination="out"
+            sendCorrelationId="#[migration::JmsTransport::jmsSendCorrelationId(vars)]">
+            <jms:message correlationId="#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]">
+                <jms:reply-to destination="#[migration::JmsTransport::jmsPublishReplyTo(vars)]" />
+                <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
+            </jms:message>
+        </jms:publish>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+
+    <flow name="flowIn">
+        <jms:listener config-ref="jmsConnector" destination="in">
+            <jms:response persistentDelivery="true" correlationId="#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]">
+                <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
+            </jms:response>
+        </jms:listener>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger />
+        <compatibility:outbound-properties-to-var/>
+    </flow>
+
+</mule>

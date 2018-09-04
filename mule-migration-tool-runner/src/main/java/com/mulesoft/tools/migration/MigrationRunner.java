@@ -40,12 +40,14 @@ public class MigrationRunner {
   private final static String HELP = "help";
 
   private final static String PROJECT_BASE_PATH = "projectBasePath";
+  private final static String PARENT_DOMAIN_BASE_PATH = "parentDomainBasePath";
   private final static String DESTINATION_PROJECT_BASE_PATH = "destinationProjectBasePath";
   private final static String MULE_VERSION = "muleVersion";
   private final static String REPORT_HOME = "summary.html";
   public static final String MULE_3_VERSION = "3.*.*";
 
   private String projectBasePath;
+  private String parentDomainProjectBasePath;
   private String destinationProjectBasePath;
   private String muleVersion;
 
@@ -70,6 +72,7 @@ public class MigrationRunner {
   private MigrationJob buildMigrationJob() throws Exception {
     MigrationJobBuilder builder = new MigrationJobBuilder()
         .withProject(Paths.get(projectBasePath))
+        .withParentDomainProject(parentDomainProjectBasePath != null ? Paths.get(parentDomainProjectBasePath) : null)
         .withOutputProject(Paths.get(destinationProjectBasePath))
         .withInputVersion(MULE_3_VERSION)
         .withOuputVersion(muleVersion);
@@ -86,7 +89,8 @@ public class MigrationRunner {
     Options options = new Options();
 
     options.addOption(HELP, false, "Shows the help");
-    options.addOption(PROJECT_BASE_PATH, true, "Base directory of the project  to be migrated");
+    options.addOption(PROJECT_BASE_PATH, true, "Base directory of the project to be migrated");
+    options.addOption(PARENT_DOMAIN_BASE_PATH, true, "Base directory of the parent domain of the project to be migrated, if any");
     options.addOption(DESTINATION_PROJECT_BASE_PATH, true, "Base directory of the migrated project");
     options.addOption(MULE_VERSION, true, "Mule version where to migrate project");
 
@@ -98,6 +102,10 @@ public class MigrationRunner {
         this.projectBasePath = line.getOptionValue(PROJECT_BASE_PATH);
       } else {
         throw new ConsoleOptionsException("You must specify a project base path of the files to be migrated");
+      }
+
+      if (line.hasOption(PARENT_DOMAIN_BASE_PATH)) {
+        this.parentDomainProjectBasePath = line.getOptionValue(PARENT_DOMAIN_BASE_PATH);
       }
 
       if (line.hasOption(DESTINATION_PROJECT_BASE_PATH)) {

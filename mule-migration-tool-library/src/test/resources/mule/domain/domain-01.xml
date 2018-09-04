@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<domain:mule-domain
+        xmlns="http://www.mulesoft.org/schema/mule/core"
+        xmlns:domain="http://www.mulesoft.org/schema/mule/ee/domain"
+        xmlns:db="http://www.mulesoft.org/schema/mule/db"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+        xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+               http://www.mulesoft.org/schema/mule/ee/domain http://www.mulesoft.org/schema/mule/ee/domain/current/mule-domain-ee.xsd">
+
+    <db:config name="beanJdbcConfig">
+        <db:data-source-connection dataSourceRef="jdbcDataSource">
+            <db:connection-properties>
+                <db:property key="foo" value="bar"/>
+            </db:connection-properties>
+            <reconnection failsDeployment="true"/>
+        </db:data-source-connection>
+    </db:config>
+
+</domain:mule-domain>
