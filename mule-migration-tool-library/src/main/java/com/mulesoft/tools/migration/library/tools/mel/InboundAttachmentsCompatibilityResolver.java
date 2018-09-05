@@ -33,7 +33,7 @@ public class InboundAttachmentsCompatibilityResolver implements CompatibilityRes
                         ExpressionMigrator expressionMigrator) {
     report.report(ERROR, element, element,
                   "Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments");
+                  "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments");
 
     return "mel:" + original;
   }

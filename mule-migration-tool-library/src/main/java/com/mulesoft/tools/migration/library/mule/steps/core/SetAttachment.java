@@ -42,7 +42,7 @@ public class SetAttachment extends AbstractApplicationModelMigrationStep {
     report
         .report(ERROR, element, element,
                 "Refer to the documentation of the connectors/operations in the flow or the source to know how attachments are sent.",
-                "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#outbound_attachments");
+                "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#outbound_attachments");
 
     try {
       changeNodeName("", "set-variable")

@@ -3,7 +3,7 @@ message:
     type: WARN
     message: Instead of using session variables in the flow, use variables.
     docLinks:
-      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables
+      - https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables
   outboundProperties:
     type: WARN
     message: Instead of using outbound properties in the flow, its values must be set explicitly in the operation/listener.
@@ -28,17 +28,17 @@ message:
     type: WARN
     message: Identify the received attachments and set them as variables.
     docLinks:
-      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments
+      - https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments
   outboundAttachments:
     type: ERROR
     message: Refer to the documentation of the connectors/operations in the flow or the source to know how attachments are sent.
     docLinks:
-      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#outbound_attachments
+      - https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#outbound_attachments
   expressionsAttachments:
     type: ERROR
     message: Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.
     docLinks:
-      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments
+      - https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments
   springBeanDefinitionInsideMuleObject:
     type: ERROR
     message: Spring beans definition inside mule components is not allowed. This inner definition must be moved to its own spring config file, and it may be referenced by an 'ee:transform' component or in an expression in the operation/listener directly.
@@ -61,13 +61,13 @@ expressions:
     message: MEL expression could not be migrated to a DataWeave expression.
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-mel
-      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#mel_expressions
+      - https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#mel_expressions
       - https://blogs.mulesoft.com/dev/mule-dev/why-dataweave-main-expression-language-mule-4
   inboundAttachments:
     type: ERROR
     message: Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.
     docLinks:
-      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments
+      - https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments
   encodeBase64:
     type: ERROR
     message: Cannot migrate encodeBase64 method. Please consider using the toBase64 function from DataWeave.
@@ -330,7 +330,7 @@ vm:
     type: WARN
     message: You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.
     docLinks:
-      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables
+      - https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables
 
 transports:
   cantParseAddress:
@@ -342,7 +342,7 @@ transform:
     type: WARN
     message: Instead of setting session variables in the flow, you msut set Variables.
     docLinks:
-      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables
+      - https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables
   outboundProperties:
     type: WARN
     message: Instead of setting outbound properties in the flow, you must set Variables.
