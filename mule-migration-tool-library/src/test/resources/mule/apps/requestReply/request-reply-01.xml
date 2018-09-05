@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+
+    <flow name="flow">
+        <jms:publish-consume config-ref="myJmsConnector" destination="${outbound.destination}">
+            <jms:message>
+                <jms:reply-to destination="${inbound.destination}" destinationType="QUEUE"/>
+            </jms:message>
+            <jms:consume-configuration maximumWait="5001"/>
+        </jms:publish-consume>
+    </flow>
+</mule>

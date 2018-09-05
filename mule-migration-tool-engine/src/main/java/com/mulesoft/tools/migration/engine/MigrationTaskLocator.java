@@ -12,11 +12,6 @@ import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGr
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.stream.Collectors;
-
 import com.mulesoft.tools.migration.library.mule.tasks.BatchMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.DomainAppMigrationTask;
@@ -33,6 +28,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.PostprocessGeneral;
 import com.mulesoft.tools.migration.library.mule.tasks.PostprocessMuleApplication;
 import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
 import com.mulesoft.tools.migration.library.mule.tasks.PropertiesMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.RequestReplyMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.ScriptingMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SecurePropertiesMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
@@ -44,6 +40,11 @@ import com.mulesoft.tools.migration.library.mule.tasks.WscMigrationTask;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationTask;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 /**
  * The goal of this class is to locate migration tasks
@@ -102,6 +103,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
     coreMigrationTasks.add(new BatchMigrationTask());
     coreMigrationTasks.add(new ValidationMigrationTask());
+    coreMigrationTasks.add(new RequestReplyMigrationTask());
     coreMigrationTasks.add(new HTTPMigrationTask());
     coreMigrationTasks.add(new SocketsMigrationTask());
     coreMigrationTasks.add(new WscMigrationTask());
