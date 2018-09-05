@@ -109,7 +109,7 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
 
     report.report(WARN, sessionVar, sessionVar,
                   "Instead of setting session variables in the flow, you must set Variables.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
+                  "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
   }
 
   private void addOutboundProperty(Element element, MigrationReport report) {

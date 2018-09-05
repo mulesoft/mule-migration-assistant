@@ -72,7 +72,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     if (migratedExpression.contains("message.inboundAttachments")) {
       report.report(ERROR, element, element,
                     "Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments");
+                    "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments");
     }
 
     migratedExpression = resolveServerContext(migratedExpression);

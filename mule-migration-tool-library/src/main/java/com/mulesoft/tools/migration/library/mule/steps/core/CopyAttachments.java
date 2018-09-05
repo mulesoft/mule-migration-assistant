@@ -36,7 +36,7 @@ public class CopyAttachments extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     report.report(WARN, element, element, "Identify the received attachments and set them as variables.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments");
+                  "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments");
     element.setName("multipart-to-vars");
     element.setNamespace(COMPATIBILITY_NAMESPACE);
     element.getAttribute("attachmentName").setName("partName");

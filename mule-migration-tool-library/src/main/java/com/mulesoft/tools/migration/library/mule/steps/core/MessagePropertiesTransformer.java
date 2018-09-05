@@ -55,7 +55,7 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
     }
     if ("session".equals(element.getAttributeValue("scope"))) {
       report.report(WARN, element, element, "Instead of using session variables in the flow, use variables.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
+                    "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
     }
 
     boolean notOverwrite = false;
