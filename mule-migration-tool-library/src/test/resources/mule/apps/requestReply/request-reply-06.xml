@@ -19,7 +19,7 @@
         <jms:publish-consume config-ref="jms-connector" destination="request"
                              sendCorrelationId="#[migration::JmsTransport::jmsSendCorrelationId(vars)]">
             <jms:message correlationId="#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]">
-                <jms:reply-to destination="reply" destinationType="QUEUE"/>
+                <jms:reply-to destination="reply"/>
                 <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
             </jms:message>
         </jms:publish-consume>

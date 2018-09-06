@@ -108,8 +108,8 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
       replyTo.setAttribute("destination", destination);
 
       if (object.getAttribute("timeout") != null) {
-        request.addContent(new Element("consume-configuration", JMS_NAMESPACE).setAttribute("maximumWait",
-                                                                                            object.getAttributeValue("timeout")));
+        request.addContent(new Element("consume-configuration", JMS_NAMESPACE)
+            .setAttribute("maximumWait", object.getAttributeValue("timeout")));
       }
     } else if (RequestReplyMigrableConnector.VM.equals(resolveEndpointConnector(request))
         && RequestReplyMigrableConnector.VM.equals(resolveEndpointConnector(reply))) {
