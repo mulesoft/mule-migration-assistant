@@ -93,41 +93,14 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       object.removeChild("xa-transaction", CORE_NAMESPACE);
     }
 
-    final Namespace jmsConnectorNamespace = Namespace.getNamespace("jms", "http://www.mulesoft.org/schema/mule/jms");
-    getApplicationModel().addNameSpace(jmsConnectorNamespace, "http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd",
+    getApplicationModel().addNameSpace(JMS_NAMESPACE, "http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd",
                                        object.getDocument());
 
-    object.setNamespace(jmsConnectorNamespace);
+    object.setNamespace(JMS_NAMESPACE);
     object.setName("listener");
 
-    Optional<Element> connector;
-    if (object.getAttribute("connector-ref") != null) {
-      connector = of(getConnector(object.getAttributeValue("connector-ref")));
-      object.removeAttribute("connector-ref");
-    } else {
-      connector = getDefaultConnector();
-    }
-
-    String configName = connector.map(conn -> conn.getAttributeValue("name")).orElse((object.getAttribute("name") != null
-        ? object.getAttributeValue("name")
-        : (object.getAttribute("ref") != null
-            ? object.getAttributeValue("ref")
-            : "")).replaceAll("\\\\", "_")
-        + "JmsConfig");
-
-    Optional<Element> config = getApplicationModel().getNodeOptional("*/jms:config[@name='" + configName + "']");
-    Element jmsConfig = config.orElseGet(() -> {
-      final Element jmsCfg = new Element("config", jmsConnectorNamespace);
-      jmsCfg.setAttribute("name", configName);
-
-      connector.ifPresent(conn -> {
-        addConnectionToConfig(jmsCfg, conn, getApplicationModel(), report);
-      });
-
-      addTopLevelElement(jmsCfg, connector.map(c -> c.getDocument()).orElse(object.getDocument()));
-
-      return jmsCfg;
-    });
+    Optional<Element> connector = resolveJmsConnector(object, getApplicationModel());
+    String configName = migrateJmsConfig(object, report, connector, getApplicationModel());
 
     connector.ifPresent(m3c -> {
       Element reconnectforever = m3c.getChild("reconnect-forever", CORE_NAMESPACE);
@@ -164,7 +137,7 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     String destination = processAddress(object, report).map(address -> {
       String path = address.getPath();
       if ("topic".equals(path)) {
-        configureTopicListener(object, jmsConnectorNamespace, connector);
+        configureTopicListener(object, JMS_NAMESPACE, connector);
         return address.getPort();
       } else {
         return path;
@@ -173,14 +146,14 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       if (object.getAttributeValue("queue") != null) {
         return object.getAttributeValue("queue");
       } else {
-        configureTopicListener(object, jmsConnectorNamespace, connector);
+        configureTopicListener(object, JMS_NAMESPACE, connector);
         return object.getAttributeValue("topic");
       }
     });
 
     if (object.getAttribute("exchange-pattern") == null
         || object.getAttributeValue("exchange-pattern").equals("request-response")) {
-      Element outboundBuilder = new Element("response", jmsConnectorNamespace);
+      Element outboundBuilder = new Element("response", JMS_NAMESPACE);
 
       outboundBuilder.addContent(compatibilityProperties(getApplicationModel()));
 
@@ -199,9 +172,9 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       object.addContent(outboundBuilder);
     }
 
-    if (object.getChild("selector", jmsConnectorNamespace) != null) {
-      object.setAttribute("selector", object.getChild("selector", jmsConnectorNamespace).getAttributeValue("expression"));
-      object.removeChild("selector", jmsConnectorNamespace);
+    if (object.getChild("selector", JMS_NAMESPACE) != null) {
+      object.setAttribute("selector", object.getChild("selector", JMS_NAMESPACE).getAttributeValue("expression"));
+      object.removeChild("selector", JMS_NAMESPACE);
     }
 
     object.setAttribute("config-ref", configName);

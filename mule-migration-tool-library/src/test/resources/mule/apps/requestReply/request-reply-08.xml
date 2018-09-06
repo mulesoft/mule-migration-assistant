@@ -12,9 +12,10 @@
         <http:outbound-endpoint path="requestHttp" host="localhost" port="${http.port}"/>
     </flow>
 
-    <flow name="flowReply">
-        <vm:inbound-endpoint path="reply"/>
-        <logger level="ERROR" message="Got to inbound endpoint: #[payload]"/>
+    <flow name="flow_reply">
+        <vm:inbound-endpoint path="reply">
+            <logger level="ERROR" message="Got to inbound endpoint: #[payload]"/>
+        </vm:inbound-endpoint>
         <logger/>
     </flow>
 </mule>

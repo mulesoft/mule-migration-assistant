@@ -6,6 +6,10 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
 
+    <vm:config name="vmConfig">
+        <vm:queues />
+    </vm:config>
+
     <flow name="flow">
         <vm:publish-consume queueName="test.external.app" timeout="2" config-ref="vmConfig"/>
     </flow>

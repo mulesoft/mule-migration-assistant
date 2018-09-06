@@ -6,10 +6,21 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
+    <jms:config name="myJmsConnector">
+        <jms:active-mq-connection
+            specification="JMS_1_0_2b">
+            <jms:caching-strategy>
+                <jms:no-caching />
+            </jms:caching-strategy>
+        </jms:active-mq-connection>
+    </jms:config>
+
     <flow name="flow">
-        <jms:publish-consume config-ref="myJmsConnector" destination="${outbound.destination}">
-            <jms:message>
-                <jms:reply-to destination="${inbound.destination}" destinationType="QUEUE"/>
+        <jms:publish-consume config-ref="myJmsConnector" destination="${outbound.destination}"
+                             sendCorrelationId="#[migration::JmsTransport::jmsSendCorrelationId(vars)]">
+            <jms:message correlationId="#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]">
+                <jms:reply-to destination="${inbound.destination}"/>
+                <jms:properties>#[migration::JmsTransport::jmsPublishProperties(vars)]</jms:properties>
             </jms:message>
             <jms:consume-configuration maximumWait="5001"/>
         </jms:publish-consume>

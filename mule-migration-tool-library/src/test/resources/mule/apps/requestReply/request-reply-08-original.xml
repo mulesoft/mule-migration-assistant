@@ -15,5 +15,6 @@
                 <logger level="ERROR" message="Got to inbound endpoint: #[payload]"/>
             </vm:inbound-endpoint>
         </request-reply>
+        <logger/>
     </flow>
 </mule>

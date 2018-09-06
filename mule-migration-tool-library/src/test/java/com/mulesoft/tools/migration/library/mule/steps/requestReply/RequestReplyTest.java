@@ -19,6 +19,8 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
+import com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector;
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmConnector;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
@@ -76,6 +78,8 @@ public class RequestReplyTest {
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
   private RequestReply requestReply;
+  private JmsConnector jmsConfig;
+  private VmConnector vmConfig;
   private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
 
   private Document doc;
@@ -107,6 +111,11 @@ public class RequestReplyTest {
     genericGlobalEndpoint.setApplicationModel(appModel);
 
     requestReply = new RequestReply();
+    requestReply.setApplicationModel(appModel);
+    jmsConfig = new JmsConnector();
+    jmsConfig.setApplicationModel(appModel);
+    vmConfig = new VmConnector();
+    vmConfig.setApplicationModel(appModel);
     removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
   }
 
@@ -116,6 +125,10 @@ public class RequestReplyTest {
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, requestReply.getAppliedTo().getExpression())
         .forEach(node -> requestReply.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, jmsConfig.getAppliedTo().getExpression())
+        .forEach(node -> jmsConfig.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, vmConfig.getAppliedTo().getExpression())
+        .forEach(node -> vmConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
         .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 

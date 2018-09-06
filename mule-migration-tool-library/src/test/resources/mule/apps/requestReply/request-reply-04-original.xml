@@ -6,6 +6,8 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
+    <jms:activemq-connector name="jms-connector"/>    
+
     <flow name="flow">
         <request-reply>
             <jms:outbound-endpoint queue="request" connector-ref="jms-connector"/>

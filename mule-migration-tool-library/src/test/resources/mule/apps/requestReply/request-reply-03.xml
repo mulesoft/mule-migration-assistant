@@ -6,6 +6,10 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
 
+    <vm:config name="VMConnector">
+        <vm:queues />
+    </vm:config>
+
     <flow name="flow">
         <vm:publish-consume queueName="out" timeout="5" config-ref="VMConnector"/>
     </flow>

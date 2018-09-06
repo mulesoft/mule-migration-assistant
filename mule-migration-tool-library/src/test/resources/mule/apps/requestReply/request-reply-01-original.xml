@@ -6,10 +6,12 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 
+    <jms:activemq-connector name="myJmsConnector"/>    
+
     <flow name="flow">
         <request-reply timeout="5001">
-            <jms:outbound-endpoint address="${outbound.destination}" connector-ref="myJmsConnector" />
-            <jms:inbound-endpoint address="${inbound.destination}" connector-ref="myJmsConnector" />
+            <jms:outbound-endpoint address="jms://${outbound.destination}" connector-ref="myJmsConnector" />
+            <jms:inbound-endpoint address="jms://${inbound.destination}" connector-ref="myJmsConnector" />
         </request-reply>
     </flow>
 </mule>

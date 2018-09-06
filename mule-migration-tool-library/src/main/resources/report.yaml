@@ -336,6 +336,16 @@ transports:
   cantParseAddress:
     type: ERROR
     message: Unable to parse endpoint address \'{address}\'.
+  requestReplySplit:
+    type: ERROR
+    message: \'request-reply\' was split into 2 different flows. Review the migration result for correctness.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core
+  requestReplyStroePrefix:
+    type: WARN
+    message: The migratior target of \'request-reply\' doesn't need an object store
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core
 
 transform:
   sessionVars:
