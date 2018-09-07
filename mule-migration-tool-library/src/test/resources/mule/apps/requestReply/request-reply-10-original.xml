@@ -8,7 +8,7 @@
 
     <flow name="flow">
         <request-reply>
-            <vm:outbound-endpoint address="vm://request"/>
+            <vm:outbound-endpoint address="vm://request" exchange-pattern="one-way"/>
             <vm:inbound-endpoint address="vm://reply" exchange-pattern="one-way"/>
         </request-reply>
     </flow>

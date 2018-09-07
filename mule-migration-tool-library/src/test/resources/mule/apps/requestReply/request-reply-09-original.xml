@@ -6,8 +6,7 @@
 
     <flow name="flow">
         <request-reply>
-            <outbound-endpoint address="vm://getReportW10"
-                exchange-pattern="one-way">
+            <outbound-endpoint address="vm://getReportW10">
                     <message-properties-transformer scope="outbound">
                         <delete-message-property key="MULE_REPLYTO"/>
                     </message-properties-transformer>

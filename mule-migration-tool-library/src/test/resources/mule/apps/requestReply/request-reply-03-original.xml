@@ -10,7 +10,7 @@
 
     <flow name="flow">
         <request-reply timeout="5000">
-            <vm:outbound-endpoint path="out" exchange-pattern="one-way"  connector-ref="VMConnector"/>
+            <vm:outbound-endpoint path="out" connector-ref="VMConnector"/>
             <vm:inbound-endpoint path="in" exchange-pattern="one-way"  connector-ref="VMConnector"/>
         </request-reply>
     </flow>

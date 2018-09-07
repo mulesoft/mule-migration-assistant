@@ -6,7 +6,7 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
 
-    <vm:endpoint path="test.external.app" name="externalEndpoint" exchange-pattern="one-way"/>
+    <vm:endpoint path="test.external.app" name="externalEndpoint"/>
     <vm:endpoint path="test.reply" name="replyEndpoint" exchange-pattern="one-way"/>
 
     <flow name="flow">

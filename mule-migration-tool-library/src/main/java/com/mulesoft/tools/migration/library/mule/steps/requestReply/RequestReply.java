@@ -22,17 +22,22 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementBefore;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
 import java.util.Optional;
 
 import org.jdom2.Content;
 import org.jdom2.Element;
+import org.jdom2.Text;
 
 /**
  * Migrates the request-reply construct
@@ -117,6 +122,9 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     request.setName("publish-consume");
 
     String jmsConfig = migrateJmsConfig(request, report, requestConnector, getApplicationModel());
+
+    final boolean oneWayRequest = "one-way".equals(request.getAttributeValue("exchange-pattern"));
+
     migrateOutboundJmsEndpoint(request, report, requestConnector, jmsConfig, getApplicationModel());
 
     request.detach();
@@ -148,6 +156,9 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     }
 
     migrateOutboundEndpointStructure(getApplicationModel(), request, report, true);
+    if (oneWayRequest) {
+      handleOneWayRequest(request);
+    }
     extractInboundChildren(reply, request.getParentElement().indexOf(request) + 1, request.getParentElement(),
                            getApplicationModel());
     addAttributesToInboundProperties(request, getApplicationModel(), report);
@@ -163,6 +174,8 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     final String configName = getVmConfigName(object, requestConnector);
     Element vmConfig = migrateVmConfig(object, requestConnector, configName, getApplicationModel());
 
+    final boolean oneWayRequest = "one-way".equals(request.getAttributeValue("exchange-pattern"));
+
     migrateOutboundVmEndpoint(request, report, requestConnector, configName, vmConfig);
     request.removeAttribute("exchange-pattern");
 
@@ -177,8 +190,38 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     }
 
     migrateOutboundEndpointStructure(getApplicationModel(), request, report, true, true);
+    if (oneWayRequest) {
+      handleOneWayRequest(request);
+    }
     extractInboundChildren(reply, request.getParentElement().indexOf(request) + 1, request.getParentElement(),
                            getApplicationModel());
+
+  }
+
+  protected void handleOneWayRequest(final Element request) {
+    getApplicationModel().addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, request.getDocument());
+
+    final String rrPayloadVarName = "compatibility_requestReplyPayload";
+    final String rrAttributesVarName = "compatibility_requestReplyAttributes";
+
+    addElementBefore(new Element("set-variable", CORE_NAMESPACE)
+        .setAttribute("variableName", rrPayloadVarName)
+        .setAttribute("value", "#[payload]"), request);
+    addElementBefore(new Element("set-variable", CORE_NAMESPACE)
+        .setAttribute("variableName", rrAttributesVarName)
+        .setAttribute("value", "#[attributes]"), request);
+
+    addElementAfter(new Element("remove-variable", CORE_NAMESPACE)
+        .setAttribute("variableName", rrAttributesVarName), request);
+    addElementAfter(new Element("remove-variable", CORE_NAMESPACE)
+        .setAttribute("variableName", rrPayloadVarName), request);
+
+    final Element msgTranfromAfterRr = new Element("message", CORE_EE_NAMESPACE);
+    msgTranfromAfterRr.addContent(new Element("set-payload", CORE_EE_NAMESPACE)
+        .addContent(new Text("vars." + rrPayloadVarName)));
+    msgTranfromAfterRr.addContent(new Element("set-attributes", CORE_EE_NAMESPACE)
+        .addContent(new Text("vars." + rrAttributesVarName)));
+    addElementAfter(new Element("transform", CORE_EE_NAMESPACE).addContent(msgTranfromAfterRr), request);
   }
 
   protected void migrateToReplyFlow(Element object, MigrationReport report, final Element request, final Element reply) {

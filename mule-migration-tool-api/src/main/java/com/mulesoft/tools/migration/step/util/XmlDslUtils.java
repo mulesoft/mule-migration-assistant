@@ -46,6 +46,7 @@ public final class XmlDslUtils {
   public static final String EE_NAMESPACE_NAME = "ee";
   public static final String CORE_EE_NS_URI = "http://www.mulesoft.org/schema/mule/ee/core";
   public static final Namespace CORE_EE_NAMESPACE = Namespace.getNamespace(EE_NAMESPACE_NAME, CORE_EE_NS_URI);
+  public static final String EE_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd";
 
   public static final Namespace VALIDATION_NAMESPACE =
       Namespace.getNamespace("validation", "http://www.mulesoft.org/schema/mule/validation");
@@ -234,6 +235,17 @@ public final class XmlDslUtils {
     } else {
       return false;
     }
+  }
+
+  /**
+   * Add new element before some existing element.
+   *
+   * @param newElement
+   * @param element
+   */
+  public static void addElementBefore(Element newElement, Element element) {
+    Integer elementIndex = element.getParentElement().indexOf(element);
+    element.getParentElement().addContent(elementIndex, newElement);
   }
 
   /**
