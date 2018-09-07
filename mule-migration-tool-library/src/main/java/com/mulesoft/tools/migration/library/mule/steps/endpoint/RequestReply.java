@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps.requestReply;
+package com.mulesoft.tools.migration.library.mule.steps.endpoint;
 
 import static com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEndpoint.JMS_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEndpoint.addAttributesToInboundProperties;
@@ -22,22 +22,18 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementBefore;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
-
-import java.util.Optional;
 
 import org.jdom2.Content;
 import org.jdom2.Element;
-import org.jdom2.Text;
+import org.jdom2.Namespace;
+
+import java.util.Optional;
 
 /**
  * Migrates the request-reply construct
@@ -61,7 +57,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     if (object.getAttribute("storePrefix") != null) {
-      report.report(WARN, object, object, "The migratior target of 'request-reply' doesn't need an object store",
+      report.report(WARN, object, object, "The migratior target of 'request-reply' doesn't need an object store.",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core");
       object.removeAttribute("storePrefix");
     }
@@ -77,6 +73,24 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
       final Optional<Element> replyConnector = resolveJmsConnector(reply, getApplicationModel());
 
       if (!requestConnector.equals(replyConnector)) {
+        restoreConnectorRef(request, reply, requestConnector, replyConnector);
+
+        String destination = processAddress(reply, report).map(address -> {
+          String path = address.getPath();
+          if ("topic".equals(path)) {
+            return "TOPIC:" + address.getPort();
+          } else {
+            return path;
+          }
+        }).orElseGet(() -> {
+          if (reply.getAttributeValue("queue") != null) {
+            return reply.getAttributeValue("queue");
+          } else {
+            return "TOPIC:" + reply.getAttributeValue("topic");
+          }
+        });
+        request.setAttribute("reply-to", destination, Namespace.getNamespace("migration", "migration"));
+
         migrateToReplyFlow(object, report, request, reply);
         return;
       }
@@ -91,6 +105,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
       final Optional<Element> replyConnector = resolveVmConector(reply, getApplicationModel());
 
       if (!requestConnector.equals(replyConnector)) {
+        restoreConnectorRef(request, reply, requestConnector, replyConnector);
         migrateToReplyFlow(object, report, request, reply);
         return;
       }
@@ -99,6 +114,20 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     } else {
       migrateToReplyFlow(object, report, request, reply);
     }
+  }
+
+  /**
+   * Put back the {@code connector-ref} attributes so the next tasks can process it.
+   *
+   * @param request
+   * @param reply
+   * @param requestConnector
+   * @param replyConnector
+   */
+  protected void restoreConnectorRef(final Element request, final Element reply, final Optional<Element> requestConnector,
+                                     final Optional<Element> replyConnector) {
+    requestConnector.ifPresent(c -> request.setAttribute("connector-ref", c.getAttributeValue("name")));
+    replyConnector.ifPresent(c -> reply.setAttribute("connector-ref", c.getAttributeValue("name")));
   }
 
   protected void handleGlobalEndpointsRefs(final Element request, final Element reply) {
@@ -122,9 +151,6 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     request.setName("publish-consume");
 
     String jmsConfig = migrateJmsConfig(request, report, requestConnector, getApplicationModel());
-
-    final boolean oneWayRequest = "one-way".equals(request.getAttributeValue("exchange-pattern"));
-
     migrateOutboundJmsEndpoint(request, report, requestConnector, jmsConfig, getApplicationModel());
 
     request.detach();
@@ -156,10 +182,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     }
 
     migrateOutboundEndpointStructure(getApplicationModel(), request, report, true);
-    if (oneWayRequest) {
-      //      handleOneWayRequest(request);
-    }
-    extractInboundChildren(reply, request.getParentElement().indexOf(request) + 1, request.getParentElement(),
+    extractInboundChildren(reply, request.getParentElement().indexOf(request) + 2, request.getParentElement(),
                            getApplicationModel());
     addAttributesToInboundProperties(request, getApplicationModel(), report);
   }
@@ -171,13 +194,13 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     request.setNamespace(VM_NAMESPACE);
     request.setName("publish-consume");
 
+    report.report(WARN, reply, request,
+                  "The queue configuren in the VM inbound endpoint of the request-reply is not used anymore.",
+                  "https://docs.mulesoft.com/connectors/vm-publish-response");
+
     final String configName = getVmConfigName(object, requestConnector);
     Element vmConfig = migrateVmConfig(object, requestConnector, configName, getApplicationModel());
-
-    final boolean oneWayRequest = "one-way".equals(request.getAttributeValue("exchange-pattern"));
-
     migrateOutboundVmEndpoint(request, report, requestConnector, configName, vmConfig);
-    request.removeAttribute("exchange-pattern");
 
     request.detach();
     addElementAfter(request, object);
@@ -190,38 +213,9 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     }
 
     migrateOutboundEndpointStructure(getApplicationModel(), request, report, true, true);
-    if (oneWayRequest) {
-      //      handleOneWayRequest(request);
-    }
-    extractInboundChildren(reply, request.getParentElement().indexOf(request) + 1, request.getParentElement(),
+    extractInboundChildren(reply, request.getParentElement().indexOf(request) + 2, request.getParentElement(),
                            getApplicationModel());
 
-  }
-
-  protected void handleOneWayRequest(final Element request) {
-    getApplicationModel().addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, request.getDocument());
-
-    final String rrPayloadVarName = "compatibility_requestReplyPayload";
-    final String rrAttributesVarName = "compatibility_requestReplyAttributes";
-
-    addElementBefore(new Element("set-variable", CORE_NAMESPACE)
-        .setAttribute("variableName", rrPayloadVarName)
-        .setAttribute("value", "#[payload]"), request);
-    addElementBefore(new Element("set-variable", CORE_NAMESPACE)
-        .setAttribute("variableName", rrAttributesVarName)
-        .setAttribute("value", "#[attributes]"), request);
-
-    addElementAfter(new Element("remove-variable", CORE_NAMESPACE)
-        .setAttribute("variableName", rrAttributesVarName), request);
-    addElementAfter(new Element("remove-variable", CORE_NAMESPACE)
-        .setAttribute("variableName", rrPayloadVarName), request);
-
-    final Element msgTranfromAfterRr = new Element("message", CORE_EE_NAMESPACE);
-    msgTranfromAfterRr.addContent(new Element("set-payload", CORE_EE_NAMESPACE)
-        .addContent(new Text("vars." + rrPayloadVarName)));
-    msgTranfromAfterRr.addContent(new Element("set-attributes", CORE_EE_NAMESPACE)
-        .addContent(new Text("vars." + rrAttributesVarName)));
-    addElementAfter(new Element("transform", CORE_EE_NAMESPACE).addContent(msgTranfromAfterRr), request);
   }
 
   protected void migrateToReplyFlow(Element object, MigrationReport report, final Element request, final Element reply) {

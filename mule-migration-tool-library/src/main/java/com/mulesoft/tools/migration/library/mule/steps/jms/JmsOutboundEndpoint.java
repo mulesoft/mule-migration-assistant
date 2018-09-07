@@ -16,7 +16,9 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 import java.util.Optional;
 
@@ -129,8 +131,23 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
 
     Element outboundBuilder = new Element("message", JMS_NAMESPACE);
 
-    outboundBuilder.addContent(new Element("reply-to", JMS_NAMESPACE)
-        .setAttribute("destination", "#[migration::JmsTransport::jmsPublishReplyTo(vars)]"));
+    Attribute migrationReplyTo = object.getAttribute("reply-to", Namespace.getNamespace("migration", "migration"));
+    if (migrationReplyTo != null) {
+      if (migrationReplyTo.getValue().startsWith("TOPIC:")) {
+        outboundBuilder.addContent(new Element("reply-to", JMS_NAMESPACE)
+            .setAttribute("destination", migrationReplyTo.getValue())
+            .setAttribute("destinationType", "TOPIC"));
+      } else {
+        outboundBuilder.addContent(new Element("reply-to", JMS_NAMESPACE)
+            .setAttribute("destination", migrationReplyTo.getValue()));
+      }
+
+      migrationReplyTo.detach();
+    } else {
+      outboundBuilder.addContent(new Element("reply-to", JMS_NAMESPACE)
+          .setAttribute("destination", "#[migration::JmsTransport::jmsPublishReplyTo(vars)]"));
+    }
+
     outboundBuilder.addContent(compatibilityProperties(appModel));
 
     outboundBuilder.setAttribute("correlationId", "#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]");

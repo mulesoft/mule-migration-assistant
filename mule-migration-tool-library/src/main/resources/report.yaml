@@ -341,11 +341,16 @@ transports:
     message: \'request-reply\' was split into 2 different flows. Review the migration result for correctness.
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core
-  requestReplyStroePrefix:
+  requestReplyStorePrefix:
     type: WARN
-    message: The migratior target of \'request-reply\' doesn't need an object store
+    message: The migratior target of \'request-reply\' doesn't need an object store.
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core
+  requestReplyVmInbound:
+    type: WARN
+    message: ThThe queue configuren in the VM inbound endpoint of the request-reply is not used anymore.
+    docLinks:
+      - https://docs.mulesoft.com/connectors/vm-publish-response
 
 transform:
   sessionVars:

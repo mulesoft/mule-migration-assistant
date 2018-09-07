@@ -17,9 +17,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
+import com.mulesoft.tools.migration.library.mule.steps.endpoint.RequestReply;
+import com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector;
+import com.mulesoft.tools.migration.library.mule.steps.jms.JmsGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmConnector;
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmGlobalEndpoint;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -34,16 +42,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
-import com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector;
-import com.mulesoft.tools.migration.library.mule.steps.jms.JmsGlobalEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.vm.VmConnector;
-import com.mulesoft.tools.migration.library.mule.steps.vm.VmGlobalEndpoint;
-import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class RequestReplyTest {
@@ -65,7 +66,7 @@ public class RequestReplyTest {
         "request-reply-07",
         "request-reply-08",
         "request-reply-09",
-        //        "request-reply-10"
+        "request-reply-10"
     };
   }
 
