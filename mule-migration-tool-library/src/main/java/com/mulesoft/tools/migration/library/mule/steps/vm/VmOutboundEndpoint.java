@@ -12,15 +12,12 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
-import static java.util.Optional.of;
-
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-
-import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.util.Optional;
+
+import org.jdom2.Element;
+
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * Migrates the inbound endpoint of the VM Transport
@@ -86,6 +83,14 @@ public class VmOutboundEndpoint extends AbstractVmEndpoint {
     Optional<Element> connector = resolveVmConector(object, getApplicationModel());
     String configName = getVmConfigName(object, connector);
     Element vmConfig = migrateVmConfig(object, connector, configName, getApplicationModel());
+    migrateOutboundVmEndpoint(object, report, connector, configName, vmConfig);
+
+    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true, true);
+  }
+
+  public static void migrateOutboundVmEndpoint(Element object, MigrationReport report, Optional<Element> connector,
+                                               String configName,
+                                               Element vmConfig) {
     String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
 
     addQueue(VM_NAMESPACE, connector, vmConfig, path);
@@ -108,8 +113,6 @@ public class VmOutboundEndpoint extends AbstractVmEndpoint {
     report.report(WARN, content, content,
                   "You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.",
                   "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
-
-    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true, true);
   }
 
 }

@@ -162,7 +162,7 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
         + "JmsConfig");
 
     Optional<Element> config = appModel.getNodeOptional("*/jms:config[@name='" + configName + "']");
-    Element jmsConfig = config.orElseGet(() -> {
+    config.orElseGet(() -> {
       final Element jmsCfg = new Element("config", JMS_NAMESPACE);
       jmsCfg.setAttribute("name", configName);
 

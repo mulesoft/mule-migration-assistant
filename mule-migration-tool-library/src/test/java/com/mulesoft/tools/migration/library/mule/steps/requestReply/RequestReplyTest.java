@@ -17,14 +17,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
-import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
-import com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector;
-import com.mulesoft.tools.migration.library.mule.steps.vm.VmConnector;
-import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -39,9 +34,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
+import com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector;
+import com.mulesoft.tools.migration.library.mule.steps.jms.JmsGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmConnector;
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmGlobalEndpoint;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 @RunWith(Parameterized.class)
 public class RequestReplyTest {
@@ -78,7 +80,9 @@ public class RequestReplyTest {
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
   private RequestReply requestReply;
+  private JmsGlobalEndpoint jmsGlobalEndpoint;
   private JmsConnector jmsConfig;
+  private VmGlobalEndpoint vmGlobalEndpoint;
   private VmConnector vmConfig;
   private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
 
@@ -112,8 +116,12 @@ public class RequestReplyTest {
 
     requestReply = new RequestReply();
     requestReply.setApplicationModel(appModel);
+    jmsGlobalEndpoint = new JmsGlobalEndpoint();
+    jmsGlobalEndpoint.setApplicationModel(appModel);
     jmsConfig = new JmsConnector();
     jmsConfig.setApplicationModel(appModel);
+    vmGlobalEndpoint = new VmGlobalEndpoint();
+    vmGlobalEndpoint.setApplicationModel(appModel);
     vmConfig = new VmConnector();
     vmConfig.setApplicationModel(appModel);
     removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
@@ -125,8 +133,12 @@ public class RequestReplyTest {
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, requestReply.getAppliedTo().getExpression())
         .forEach(node -> requestReply.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, jmsGlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> jmsGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, jmsConfig.getAppliedTo().getExpression())
         .forEach(node -> jmsConfig.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, vmGlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> vmGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, vmConfig.getAppliedTo().getExpression())
         .forEach(node -> vmConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())

@@ -12,14 +12,11 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
-import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.util.Optional;
 
@@ -83,7 +80,6 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
         || object.getAttributeValue("exchange-pattern").equals("one-way")) {
       object.setName("publish");
     } else {
-
       Element wrappingTry = new Element("try", CORE_NAMESPACE);
 
       object.getParentElement().addContent(object.getParentElement().indexOf(object), wrappingTry);

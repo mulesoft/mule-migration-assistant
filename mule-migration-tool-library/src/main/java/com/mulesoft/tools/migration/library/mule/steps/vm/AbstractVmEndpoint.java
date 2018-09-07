@@ -35,7 +35,7 @@ public abstract class AbstractVmEndpoint extends AbstractApplicationModelMigrati
 
   private ExpressionMigrator expressionMigrator;
 
-  protected String obtainPath(Element object) {
+  protected static String obtainPath(Element object) {
     String path = object.getAttributeValue("path");
 
     if (path.contains("?")) {
@@ -58,7 +58,8 @@ public abstract class AbstractVmEndpoint extends AbstractApplicationModelMigrati
     return path;
   }
 
-  protected void addQueue(final Namespace vmConnectorNamespace, Optional<Element> connector, Element vmConfig, String path) {
+  protected static void addQueue(final Namespace vmConnectorNamespace, Optional<Element> connector, Element vmConfig,
+                                 String path) {
     Element queues = vmConfig.getChild("queues", vmConnectorNamespace);
     if (!queues.getChildren().stream().filter(e -> path.equals(e.getAttributeValue("queueName"))).findAny().isPresent()) {
       Element queue = new Element("queue", vmConnectorNamespace);
@@ -84,7 +85,7 @@ public abstract class AbstractVmEndpoint extends AbstractApplicationModelMigrati
     }
   }
 
-  protected Element buildContent(final Namespace vmConnectorNamespace) {
+  protected static Element buildContent(final Namespace vmConnectorNamespace) {
     // TODO MMT-166 Use something that includes the extra parameters in the media type, instead of ^mimeType
     // (https://github.com/mulesoft/data-weave/issues/296)
     return new Element("content", vmConnectorNamespace)
