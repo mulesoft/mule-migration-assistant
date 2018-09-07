@@ -157,7 +157,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
 
     migrateOutboundEndpointStructure(getApplicationModel(), request, report, true);
     if (oneWayRequest) {
-      handleOneWayRequest(request);
+      //      handleOneWayRequest(request);
     }
     extractInboundChildren(reply, request.getParentElement().indexOf(request) + 1, request.getParentElement(),
                            getApplicationModel());
@@ -191,7 +191,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
 
     migrateOutboundEndpointStructure(getApplicationModel(), request, report, true, true);
     if (oneWayRequest) {
-      handleOneWayRequest(request);
+      //      handleOneWayRequest(request);
     }
     extractInboundChildren(reply, request.getParentElement().indexOf(request) + 1, request.getParentElement(),
                            getApplicationModel());
