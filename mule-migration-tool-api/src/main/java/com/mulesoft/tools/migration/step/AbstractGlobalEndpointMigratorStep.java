@@ -65,10 +65,10 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
       referent.removeAttribute("ref");
     }
 
-    object.getParent().removeContent(object);
+    object.detach();
   }
 
-  private void copyAttributes(Element object, Element referent) {
+  public static void copyAttributes(Element object, Element referent) {
     for (Attribute attribute : object.getAttributes()) {
       if (!"name".equals(attribute.getName()) && referent.getAttribute(attribute.getName()) == null) {
         referent.setAttribute(attribute.getName(), attribute.getValue());

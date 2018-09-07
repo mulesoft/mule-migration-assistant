@@ -13,9 +13,11 @@ import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.X
 import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.addSharedLibs;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.lang.System.lineSeparator;
+import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
@@ -44,7 +46,7 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
 
   protected static final String JMS_NAMESPACE_PREFIX = "jms";
   protected static final String JMS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/jms";
-  protected static final Namespace JMS_NAMESPACE = Namespace.getNamespace(JMS_NAMESPACE_PREFIX, JMS_NAMESPACE_URI);
+  public static final Namespace JMS_NAMESPACE = Namespace.getNamespace(JMS_NAMESPACE_PREFIX, JMS_NAMESPACE_URI);
 
   private ExpressionMigrator expressionMigrator;
 
@@ -131,13 +133,48 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
     }
   }
 
-  protected Element getConnector(String connectorName) {
-    return getApplicationModel()
-        .getNode(StringUtils.substring(XPATH_SELECTOR, 0, -1) + " and @name = '" + connectorName + "']");
+  public static Optional<Element> resolveJmsConnector(Element object, ApplicationModel appModel) {
+    Optional<Element> connector;
+    if (object.getAttribute("connector-ref") != null) {
+      connector = of(getConnector(object.getAttributeValue("connector-ref"), appModel));
+      object.removeAttribute("connector-ref");
+    } else {
+      connector = getDefaultConnector(appModel);
+    }
+    return connector;
   }
 
-  protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional(XPATH_SELECTOR);
+  protected static Element getConnector(String connectorName, ApplicationModel appModel) {
+    return appModel.getNode(StringUtils.substring(XPATH_SELECTOR, 0, -1) + " and @name = '" + connectorName + "']");
+  }
+
+  protected static Optional<Element> getDefaultConnector(ApplicationModel appModel) {
+    return appModel.getNodeOptional(XPATH_SELECTOR);
+  }
+
+  public static String migrateJmsConfig(Element object, MigrationReport report, Optional<Element> connector,
+                                        ApplicationModel appModel) {
+    String configName = connector.map(conn -> conn.getAttributeValue("name")).orElse((object.getAttribute("name") != null
+        ? object.getAttributeValue("name")
+        : (object.getAttribute("ref") != null
+            ? object.getAttributeValue("ref")
+            : "")).replaceAll("\\\\", "_")
+        + "JmsConfig");
+
+    Optional<Element> config = appModel.getNodeOptional("*/jms:config[@name='" + configName + "']");
+    config.orElseGet(() -> {
+      final Element jmsCfg = new Element("config", JMS_NAMESPACE);
+      jmsCfg.setAttribute("name", configName);
+
+      connector.ifPresent(conn -> {
+        addConnectionToConfig(jmsCfg, conn, appModel, report);
+      });
+
+      addTopLevelElement(jmsCfg, connector.map(c -> c.getDocument()).orElse(object.getDocument()));
+
+      return jmsCfg;
+    });
+    return configName;
   }
 
   @Override

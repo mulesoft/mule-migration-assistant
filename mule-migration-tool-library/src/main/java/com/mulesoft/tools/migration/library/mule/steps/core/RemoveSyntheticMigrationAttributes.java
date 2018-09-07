@@ -6,8 +6,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static java.util.stream.Collectors.toList;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -19,7 +22,7 @@ import org.jdom2.Namespace;
  */
 public class RemoveSyntheticMigrationAttributes extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//*[@*[local-name() = 'isMessageSource' and namespace-uri() = 'migration']]";
+  public static final String XPATH_SELECTOR = "//*[@*[namespace-uri() = 'migration']]";
 
   @Override
   public String getDescription() {
@@ -32,6 +35,10 @@ public class RemoveSyntheticMigrationAttributes extends AbstractApplicationModel
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    element.removeAttribute("isMessageSource", Namespace.getNamespace("migration"));
+    element.getAttributes()
+        .stream()
+        .filter(att -> att.getNamespace().equals(Namespace.getNamespace("migration")))
+        .collect(toList())
+        .forEach(att -> att.detach());
   }
 }

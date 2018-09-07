@@ -12,15 +12,12 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
-import static java.util.Optional.of;
-
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-
-import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.util.Optional;
+
+import org.jdom2.Element;
+
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * Migrates the inbound endpoint of the VM Transport
@@ -72,10 +69,9 @@ public class VmOutboundEndpoint extends AbstractVmEndpoint {
       object.removeChild("xa-transaction", CORE_NAMESPACE);
     }
 
-    final Namespace vmConnectorNamespace = Namespace.getNamespace("vm", "http://www.mulesoft.org/schema/mule/vm");
-    getApplicationModel().addNameSpace(vmConnectorNamespace, "http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd",
+    getApplicationModel().addNameSpace(VM_NAMESPACE, "http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd",
                                        object.getDocument());
-    object.setNamespace(vmConnectorNamespace);
+    object.setNamespace(VM_NAMESPACE);
 
     if (object.getAttribute("exchange-pattern") == null
         || object.getAttributeValue("exchange-pattern").equals("one-way")) {
@@ -84,37 +80,20 @@ public class VmOutboundEndpoint extends AbstractVmEndpoint {
       object.setName("publish-consume");
     }
 
-    Optional<Element> connector;
-    if (object.getAttribute("connector-ref") != null) {
-      connector = of(getConnector(object.getAttributeValue("connector-ref")));
-      object.removeAttribute("connector-ref");
-    } else {
-      connector = getDefaultConnector();
-    }
+    Optional<Element> connector = resolveVmConector(object, getApplicationModel());
+    String configName = getVmConfigName(object, connector);
+    Element vmConfig = migrateVmConfig(object, connector, configName, getApplicationModel());
+    migrateOutboundVmEndpoint(object, report, connector, configName, vmConfig);
 
-    String configName = connector.map(conn -> conn.getAttributeValue("name")).orElse((object.getAttribute("name") != null
-        ? object.getAttributeValue("name")
-        : (object.getAttribute("ref") != null
-            ? object.getAttributeValue("ref")
-            : "")).replaceAll("\\\\", "_")
-        + "VmConfig");
+    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true, true);
+  }
 
-
-    Optional<Element> config = getApplicationModel().getNodeOptional("*/vm:config[@name='" + configName + "']");
-    Element vmConfig = config.orElseGet(() -> {
-      Element vmCfg = new Element("config", vmConnectorNamespace);
-      vmCfg.setAttribute("name", configName);
-      Element queues = new Element("queues", vmConnectorNamespace);
-      vmCfg.addContent(queues);
-
-      addTopLevelElement(vmCfg, connector.map(c -> c.getDocument()).orElse(object.getDocument()));
-
-      return vmCfg;
-    });
-
+  public static void migrateOutboundVmEndpoint(Element object, MigrationReport report, Optional<Element> connector,
+                                               String configName,
+                                               Element vmConfig) {
     String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
 
-    addQueue(vmConnectorNamespace, connector, vmConfig, path);
+    addQueue(VM_NAMESPACE, connector, vmConfig, path);
 
     if (object.getAttribute("responseTimeout") != null) {
       object.setAttribute("timeout", object.getAttributeValue("responseTimeout"));
@@ -129,13 +108,11 @@ public class VmOutboundEndpoint extends AbstractVmEndpoint {
     object.removeAttribute("mimeType");
     object.removeAttribute("disableTransportTransformer");
 
-    Element content = buildContent(vmConnectorNamespace);
+    Element content = buildContent(VM_NAMESPACE);
     object.addContent(content);
     report.report(WARN, content, content,
                   "You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.",
                   "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
-
-    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true, true);
   }
 
 }

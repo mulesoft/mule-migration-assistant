@@ -192,10 +192,15 @@ public final class TransportsUtils {
   }
 
   public static void extractInboundChildren(Element inbound, ApplicationModel appModel) {
-    inbound.getParentElement().addContent(2, fetchContent(inbound, appModel));
+    extractInboundChildren(inbound, 2, inbound.getParentElement(), appModel);
+  }
+
+  public static void extractInboundChildren(Element inbound, final int index,
+                                            final Element target, ApplicationModel appModel) {
+    target.addContent(index, fetchContent(inbound, appModel));
 
     // may be a try scope too
-    Element flow = inbound.getParentElement();
+    Element flow = target;
     Element errorHandler = getFlowExcetionHandlingElement(flow);
     if (errorHandler != null) {
       flow.addContent(flow.indexOf(errorHandler),
@@ -203,7 +208,6 @@ public final class TransportsUtils {
     } else {
       flow.addContent(fetchResponseContent(inbound, appModel));
     }
-
   }
 
   public static void extractOutboundChildren(Element outbound, ApplicationModel appModel) {
@@ -212,10 +216,10 @@ public final class TransportsUtils {
                                            fetchResponseContent(outbound, appModel));
   }
 
-  private static List<Content> fetchContent(Element outbound, ApplicationModel appModel) {
+  private static List<Content> fetchContent(Element endpoint, ApplicationModel appModel) {
     List<Content> content = new ArrayList<>();
-    if (outbound.getChild("properties", CORE_NAMESPACE) != null) {
-      for (Element element : outbound.getChild("properties", CORE_NAMESPACE).getChildren()) {
+    if (endpoint.getChild("properties", CORE_NAMESPACE) != null) {
+      for (Element element : endpoint.getChild("properties", CORE_NAMESPACE).getChildren()) {
         if ("entry".equals(element.getName())
             && "http://www.springframework.org/schema/beans".equals(element.getNamespace().getURI())) {
           content.add(new Element("set-variable", CORE_NAMESPACE)
@@ -223,11 +227,11 @@ public final class TransportsUtils {
               .setAttribute("value", element.getAttributeValue("value")));
         }
       }
-      outbound.getChild("properties", CORE_NAMESPACE).detach();
+      endpoint.getChild("properties", CORE_NAMESPACE).detach();
     }
 
-    if (outbound.getAttribute("transformer-refs") != null) {
-      String[] transformerNames = outbound.getAttributeValue("transformer-refs").split(",");
+    if (endpoint.getAttribute("transformer-refs") != null) {
+      String[] transformerNames = endpoint.getAttributeValue("transformer-refs").split(",");
 
       for (String transformerName : transformerNames) {
         Element transformer = appModel.getNode("/*/*[@name = '" + transformerName + "']");
@@ -239,12 +243,12 @@ public final class TransportsUtils {
           content.add(new Element("transformer", CORE_NAMESPACE).setAttribute("ref", transformerName));
         }
       }
-      outbound.removeAttribute("transformer-refs");
+      endpoint.removeAttribute("transformer-refs");
     }
 
-    outbound.getChildren().stream()
+    endpoint.getChildren().stream()
         .filter(c -> c.getName().contains("transformer") || c.getName().contains("filter") || "set-property".equals(c.getName())
-            || "processor".equals(c.getName()))
+            || "processor".equals(c.getName()) || "logger".equals(c.getName()))
         .collect(toList()).forEach(tc -> {
           tc.getParent().removeContent(tc);
           content.add(tc);

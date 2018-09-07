@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static org.jdom2.Namespace.getNamespace;
@@ -38,7 +39,6 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
 
   private static final String DW_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ee/dw";
   private static final String DW_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd";
-  private static final String EE_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd";
   public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + DW_NAMESPACE_URI + "'"
       + " and local-name()='transform-message']";
 

@@ -19,6 +19,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static java.lang.Integer.parseInt;
 import static java.util.Optional.of;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
@@ -102,43 +103,18 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
       object.removeChild("xa-transaction", CORE_NAMESPACE);
     }
 
-    final Namespace vmConnectorNamespace = Namespace.getNamespace("vm", "http://www.mulesoft.org/schema/mule/vm");
-    getApplicationModel().addNameSpace(vmConnectorNamespace, "http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd",
+    getApplicationModel().addNameSpace(VM_NAMESPACE, "http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd",
                                        object.getDocument());
 
-    object.setNamespace(vmConnectorNamespace);
+    object.setNamespace(VM_NAMESPACE);
     object.setName("listener");
 
-    Optional<Element> connector;
-    if (object.getAttribute("connector-ref") != null) {
-      connector = of(getConnector(object.getAttributeValue("connector-ref")));
-      object.removeAttribute("connector-ref");
-    } else {
-      connector = getDefaultConnector();
-    }
-
-    String configName = connector.map(conn -> conn.getAttributeValue("name")).orElse((object.getAttribute("name") != null
-        ? object.getAttributeValue("name")
-        : (object.getAttribute("ref") != null
-            ? object.getAttributeValue("ref")
-            : "")).replaceAll("\\\\", "_")
-        + "VmConfig");
-
-    Optional<Element> config = getApplicationModel().getNodeOptional("*/vm:config[@name='" + configName + "']");
-    Element vmConfig = config.orElseGet(() -> {
-      Element vmCfg = new Element("config", vmConnectorNamespace);
-      vmCfg.setAttribute("name", configName);
-      Element queues = new Element("queues", vmConnectorNamespace);
-      vmCfg.addContent(queues);
-
-      addTopLevelElement(vmCfg, connector.map(c -> c.getDocument()).orElse(object.getDocument()));
-
-      return vmCfg;
-    });
-
+    Optional<Element> connector = resolveVmConector(object, getApplicationModel());
+    String configName = getVmConfigName(object, connector);
+    Element vmConfig = migrateVmConfig(object, connector, configName, getApplicationModel());
     String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
 
-    addQueue(vmConnectorNamespace, connector, vmConfig, path);
+    addQueue(VM_NAMESPACE, connector, vmConfig, path);
 
     connector.ifPresent(conn -> {
       Integer consumers = null;
@@ -176,8 +152,8 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
     object.removeAttribute("name");
     object.removeAttribute("disableTransportTransformer");
 
-    Element content = buildContent(vmConnectorNamespace);
-    object.addContent(new Element("response", vmConnectorNamespace).addContent(content));
+    Element content = buildContent(VM_NAMESPACE);
+    object.addContent(new Element("response", VM_NAMESPACE).addContent(content));
     report.report(WARN, content, content,
                   "You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.",
                   "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");

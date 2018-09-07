@@ -12,11 +12,11 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
-import static java.util.Optional.of;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -74,16 +74,14 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
       object.removeChild("xa-transaction", CORE_NAMESPACE);
     }
 
-    final Namespace jmsConnectorNamespace = Namespace.getNamespace("jms", "http://www.mulesoft.org/schema/mule/jms");
-    getApplicationModel().addNameSpace(jmsConnectorNamespace, "http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd",
+    getApplicationModel().addNameSpace(JMS_NAMESPACE, "http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd",
                                        object.getDocument());
-    object.setNamespace(jmsConnectorNamespace);
+    object.setNamespace(JMS_NAMESPACE);
 
     if (object.getAttribute("exchange-pattern") == null
         || object.getAttributeValue("exchange-pattern").equals("one-way")) {
       object.setName("publish");
     } else {
-
       Element wrappingTry = new Element("try", CORE_NAMESPACE);
 
       object.getParentElement().addContent(object.getParentElement().indexOf(object), wrappingTry);
@@ -100,36 +98,17 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
       object.setName("publish-consume");
     }
 
-    Optional<Element> connector;
-    if (object.getAttribute("connector-ref") != null) {
-      connector = of(getConnector(object.getAttributeValue("connector-ref")));
-      object.removeAttribute("connector-ref");
-    } else {
-      connector = getDefaultConnector();
-    }
+    Optional<Element> connector = resolveJmsConnector(object, getApplicationModel());
+    String configName = migrateJmsConfig(object, report, connector, getApplicationModel());
 
-    String configName = connector.map(conn -> conn.getAttributeValue("name")).orElse((object.getAttribute("name") != null
-        ? object.getAttributeValue("name")
-        : (object.getAttribute("ref") != null
-            ? object.getAttributeValue("ref")
-            : "")).replaceAll("\\\\", "_")
-        + "JmsConfig");
+    migrateOutboundJmsEndpoint(object, report, connector, configName, getApplicationModel());
+    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
 
+    addAttributesToInboundProperties(object, getApplicationModel(), report);
+  }
 
-    Optional<Element> config = getApplicationModel().getNodeOptional("*/jms:config[@name='" + configName + "']");
-    Element jmsConfig = config.orElseGet(() -> {
-      Element jmsCfg = new Element("config", jmsConnectorNamespace);
-      jmsCfg.setAttribute("name", configName);
-
-      connector.ifPresent(conn -> {
-        addConnectionToConfig(jmsCfg, conn, getApplicationModel(), report);
-      });
-
-      addTopLevelElement(jmsCfg, connector.map(c -> c.getDocument()).orElse(object.getDocument()));
-
-      return jmsCfg;
-    });
-
+  public static void migrateOutboundJmsEndpoint(Element object, MigrationReport report, Optional<Element> connector,
+                                                String configName, ApplicationModel appModel) {
     String destination = processAddress(object, report).map(address -> {
       String path = address.getPath();
       if ("topic".equals(path)) {
@@ -150,11 +129,26 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     report.report(WARN, object, object, "Avoid using properties to set the JMS properties and headers",
                   "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#SendingMessages");
 
-    Element outboundBuilder = new Element("message", jmsConnectorNamespace);
+    Element outboundBuilder = new Element("message", JMS_NAMESPACE);
 
-    outboundBuilder.addContent(new Element("reply-to", jmsConnectorNamespace)
-        .setAttribute("destination", "#[migration::JmsTransport::jmsPublishReplyTo(vars)]"));
-    outboundBuilder.addContent(compatibilityProperties(getApplicationModel()));
+    Attribute migrationReplyTo = object.getAttribute("reply-to", Namespace.getNamespace("migration", "migration"));
+    if (migrationReplyTo != null) {
+      if (migrationReplyTo.getValue().startsWith("TOPIC:")) {
+        outboundBuilder.addContent(new Element("reply-to", JMS_NAMESPACE)
+            .setAttribute("destination", migrationReplyTo.getValue())
+            .setAttribute("destinationType", "TOPIC"));
+      } else {
+        outboundBuilder.addContent(new Element("reply-to", JMS_NAMESPACE)
+            .setAttribute("destination", migrationReplyTo.getValue()));
+      }
+
+      migrationReplyTo.detach();
+    } else {
+      outboundBuilder.addContent(new Element("reply-to", JMS_NAMESPACE)
+          .setAttribute("destination", "#[migration::JmsTransport::jmsPublishReplyTo(vars)]"));
+    }
+
+    outboundBuilder.addContent(compatibilityProperties(appModel));
 
     outboundBuilder.setAttribute("correlationId", "#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]");
     object.setAttribute("sendCorrelationId", "#[migration::JmsTransport::jmsSendCorrelationId(vars)]");
@@ -181,7 +175,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     });
 
     if (object.getAttribute("responseTimeout") != null) {
-      object.addContent(new Element("consume-configuration", jmsConnectorNamespace)
+      object.addContent(new Element("consume-configuration", JMS_NAMESPACE)
           .setAttribute("maximumWait", object.getAttributeValue("responseTimeout")));
     }
     object.removeAttribute("responseTimeout");
@@ -195,12 +189,9 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     object.removeAttribute("name");
 
     object.removeAttribute("exchange-pattern");
-    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
-
-    addAttributesToInboundProperties(object, getApplicationModel(), report);
   }
 
-  private void configureTopicPublisher(Element object) {
+  private static void configureTopicPublisher(Element object) {
     object.setAttribute("destinationType", "TOPIC");
   }
 
