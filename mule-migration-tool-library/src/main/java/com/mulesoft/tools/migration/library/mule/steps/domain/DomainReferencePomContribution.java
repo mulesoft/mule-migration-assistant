@@ -57,8 +57,11 @@ public class DomainReferencePomContribution implements PomContribution {
     }
 
     String domain = properties.getProperty("domain");
+    if ("default".equals(domain)) {
+      return;
+    }
 
-    if (getApplicationModel().getDomainDocuments().isEmpty()) {
+    if (getApplicationModel().getDomainDocuments() == null || getApplicationModel().getDomainDocuments().isEmpty()) {
       throw new MigrationAbortException(format("The application to migrate references a domain '%s'. "
           + "Call the migrator with the 'parentDomainBasePath' parameter indicating the Mule 3 source for that domain.", domain));
     }
