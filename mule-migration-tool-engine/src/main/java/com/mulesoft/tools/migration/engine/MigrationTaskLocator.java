@@ -24,6 +24,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.JmsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MigrationCleanTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MuleDeprecatedCoreComponentsMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.ObjectStoreMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.PostprocessGeneral;
 import com.mulesoft.tools.migration.library.mule.tasks.PostprocessMuleApplication;
 import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
@@ -119,6 +120,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new DomainAppMigrationTask());
     coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask());
     coreMigrationTasks.add(new MunitMigrationTask());
+    coreMigrationTasks.add(new ObjectStoreMigrationTask());
     // Spring has to run after MUnit, since MUnit in Mule 3 has some custom spring components that are removed by the migrator
 
     return coreMigrationTasks;
