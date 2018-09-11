@@ -446,4 +446,23 @@ cache:
     message: \'consumableFilter-ref\' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about
-  
+
+os:
+  disposeStore:
+    type: WARN
+    message: On Mule 4 the clear operation will clear the whole Object Store.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-objectstore#dispose-clear
+  dualStore:
+    type: ERROR
+    message: The Object Store dual-store operation is no longer supported in Mule 4.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-objectstore#dual-store
+  config:
+    type: WARN
+    message: On Mule 4 you no longer need to create a spring bean to declare an Object Store.
+    docLinks:
+      - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-objectstore#custom-object-store
+  store:
+    type: ERROR
+    message: The exception thrown by the Object Store have changed.

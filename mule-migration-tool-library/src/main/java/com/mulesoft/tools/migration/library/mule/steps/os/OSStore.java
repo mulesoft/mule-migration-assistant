@@ -11,6 +11,8 @@ import org.jdom2.Attribute;
 import org.jdom2.CDATA;
 import org.jdom2.Element;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+
 /**
  * Migrate OS Store Operation.
  *
@@ -32,10 +34,10 @@ public class OSStore extends AbstractOSMigrator {
 
     Attribute overwriteAtt = element.getAttribute("overwrite");
     if (overwriteAtt == null) {
-      element.setAttribute(new Attribute("failIfPresent", "true"));
+      addFailAttribute(element, report);
     } else {
       if (overwriteAtt.getValue().equals("false")) {
-        element.setAttribute(new Attribute("failIfPresent", "true"));
+        addFailAttribute(element, report);
       }
       element.removeAttribute(overwriteAtt);
     }
@@ -48,4 +50,11 @@ public class OSStore extends AbstractOSMigrator {
       element.removeAttribute(valueAtt);
     }
   }
+
+  private void addFailAttribute(Element element, MigrationReport report) {
+    element.setAttribute(new Attribute("failIfPresent", "true"));
+    //TODO MMT-226 - Add link to documentation
+    report.report(ERROR, element, element, "The exception thrown by the Object Store have changed.");
+  }
+
 }
