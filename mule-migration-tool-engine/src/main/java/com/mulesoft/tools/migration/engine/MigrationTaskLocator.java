@@ -24,6 +24,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.JmsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MigrationCleanTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MuleDeprecatedCoreComponentsMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.ObjectStoreMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.PostprocessGeneral;
 import com.mulesoft.tools.migration.library.mule.tasks.PostprocessMuleApplication;
 import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
@@ -108,6 +109,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new SocketsMigrationTask());
     coreMigrationTasks.add(new WscMigrationTask());
     coreMigrationTasks.add(new DbMigrationTask());
+    coreMigrationTasks.add(new ObjectStoreMigrationTask());
 
     coreMigrationTasks.add(new FileMigrationTask());
     coreMigrationTasks.add(new EndpointsMigrationTask());

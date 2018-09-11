@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+
+    <flow name="objStore6" >
+        <os:store key="#['pepe']" objectStore="OS_Config" failIfPresent="true">
+            <os:value><![CDATA[#[payload]]]></os:value>
+        </os:store>
+    </flow>
+
+    <flow name="objStore7" >
+        <os:store key="#['pepe2']" objectStore="OS_Config">
+            <os:value><![CDATA[#[payload]]]></os:value>
+        </os:store>
+    </flow>
+</mule>

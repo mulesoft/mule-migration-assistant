@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:objectstore="http://www.mulesoft.org/schema/mule/objectstore" xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                        http://www.mulesoft.org/schema/mule/objectstore http://www.mulesoft.org/schema/mule/objectstore/current/mule-objectstore.xsd">
+
+    <flow name="objStore4">
+        <objectstore:retrieve-all-keys config-ref="Object_store" />
+    </flow>
+
+    <flow name="objStore5">
+        <objectstore:remove config-ref="Object_store" key="#['pepe']" />
+    </flow>
+</mule>
