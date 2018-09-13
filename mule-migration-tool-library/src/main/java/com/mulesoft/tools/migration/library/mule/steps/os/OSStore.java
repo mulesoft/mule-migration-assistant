@@ -53,8 +53,8 @@ public class OSStore extends AbstractOSMigrator {
 
   private void addFailAttribute(Element element, MigrationReport report) {
     element.setAttribute(new Attribute("failIfPresent", "true"));
-    //TODO MMT-226 - Add link to documentation
-    report.report(ERROR, element, element, "The exception thrown by the Object Store have changed.");
+    report.report(ERROR, element, element, "The exception thrown by the Object Store have changed.",
+                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-objectstore#storing-values");
   }
 
 }
