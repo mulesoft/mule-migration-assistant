@@ -56,8 +56,7 @@ public class PreprocessMuleApplication extends AbstractMigrationTask {
                         new UpdateProjectVersion(),
                         new SetSecureProperties(),
                         new PreprocessNamespaces(),
-                        new MigrateDWScriptFiles(),
-                        new SetSecureProperties());
+                        new MigrateDWScriptFiles());
   }
 
 }
