@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.project.model.artifact;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mule.runtime.api.deployment.meta.Product.MULE_EE;
 
 import com.google.common.io.Files;
@@ -34,7 +35,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class MuleArtifactJsonModelUtils {
 
-  public static final Charset MULE_ARTIFACT_DEFAULT_CHARSET = Charset.defaultCharset();
+  public static final Charset MULE_ARTIFACT_DEFAULT_CHARSET = UTF_8;
   private static final String MULE_ID = "mule";
   protected static MuleApplicationModelJsonSerializer serializer = new MuleApplicationModelJsonSerializer();
 
