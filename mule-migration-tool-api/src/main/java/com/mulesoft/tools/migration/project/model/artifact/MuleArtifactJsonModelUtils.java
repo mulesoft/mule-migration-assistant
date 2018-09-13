@@ -34,6 +34,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class MuleArtifactJsonModelUtils {
 
+  public static final Charset MULE_ARTIFACT_DEFAULT_CHARSET = Charset.defaultCharset();
   private static final String MULE_ID = "mule";
   protected static MuleApplicationModelJsonSerializer serializer = new MuleApplicationModelJsonSerializer();
 
@@ -105,7 +106,7 @@ public class MuleArtifactJsonModelUtils {
    */
   public static MuleArtifactJsonModel buildMuleArtifactJson(Path muleArtifactJson) throws IOException {
     MuleApplicationModel muleApplicationModel =
-        serializer.deserialize(format(Files.toString(muleArtifactJson.toFile(), Charset.defaultCharset())));
+        serializer.deserialize(format(Files.toString(muleArtifactJson.toFile(), MULE_ARTIFACT_DEFAULT_CHARSET)));
     return new MuleArtifactJsonModel(muleApplicationModel);
   }
 

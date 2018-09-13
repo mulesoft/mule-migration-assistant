@@ -25,7 +25,8 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertThat;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
 public class SetSecurePropertiesTest {

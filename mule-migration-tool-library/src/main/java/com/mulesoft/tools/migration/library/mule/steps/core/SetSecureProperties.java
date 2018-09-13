@@ -6,25 +6,24 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
 import org.apache.commons.io.FileUtils;
-import org.mule.runtime.api.deployment.meta.MuleApplicationModel;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import static com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils.MULE_ARTIFACT_DEFAULT_CHARSET;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -49,16 +48,18 @@ public class SetSecureProperties implements ProjectStructureContribution {
   public void execute(Path projectBasePath, MigrationReport report) throws RuntimeException {
     try {
       List<String> secureProperties = resolveSecureProperties(projectBasePath);
+      if (!secureProperties.isEmpty()) {
+        MuleArtifactJsonModel currentModel =
+            MuleArtifactJsonModelUtils.buildMuleArtifactJson(projectBasePath.resolve(MULE_ARTIFACT_JSON));
 
-      MuleArtifactJsonModel currentModel =
-          MuleArtifactJsonModelUtils.buildMuleArtifactJson(projectBasePath.resolve(MULE_ARTIFACT_JSON));
+        MuleArtifactJsonModel updatedModel =
+            MuleArtifactJsonModelUtils.buildMinimalMuleArtifactJson(currentModel.getMinMuleVersion(), secureProperties);
 
-      MuleArtifactJsonModel updatedModel =
-          MuleArtifactJsonModelUtils.buildMinimalMuleArtifactJson(currentModel.getMinMuleVersion(), secureProperties);
-
-      FileUtils.write(projectBasePath.resolve(MULE_ARTIFACT_JSON).toFile(), updatedModel.toString(), Charset.defaultCharset());
+        FileUtils.write(projectBasePath.resolve(MULE_ARTIFACT_JSON).toFile(), updatedModel.toString(),
+                        MULE_ARTIFACT_DEFAULT_CHARSET);
+      }
     } catch (IOException e) {
-      // Nothing to do: mule-app.properties not necessarily needs to exist
+      throw new MigrationStepException("Could not update secureProperties based on mule-app.properties", e);
     }
   }
 

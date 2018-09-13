@@ -545,6 +545,7 @@ public class ApplicationModel {
         MuleArtifactJsonModel.MuleApplicationJsonModelBuilder builder =
             new MuleArtifactJsonModel.MuleApplicationJsonModelBuilder();
         builder.withMuleArtifactJson(muleArtifactJson);
+        // First time the project is built there is no such file, so we set the version
         if (!muleArtifactJson.toFile().exists()) {
           builder.withMuleVersion(muleVersion);
         }

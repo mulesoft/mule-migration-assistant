@@ -25,6 +25,7 @@ import java.util.List;
 
 /**
  * Preprocess Mule Application Migration Task
+ *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -53,9 +54,9 @@ public class PreprocessMuleApplication extends AbstractMigrationTask {
                         new RemoveBuildHelperMavenPlugin(),
                         new RemoveMuleDependencies(),
                         new UpdateProjectVersion(),
+                        new SetSecureProperties(),
                         new PreprocessNamespaces(),
-                        new MigrateDWScriptFiles(),
-                        new SetSecureProperties());
+                        new MigrateDWScriptFiles());
   }
 
 }
