@@ -466,3 +466,5 @@ os:
   store:
     type: ERROR
     message: The exception thrown by the Object Store have changed.
+    docLinks:
+          - https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-objectstore#storing-values
