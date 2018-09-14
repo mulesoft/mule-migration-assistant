@@ -20,6 +20,7 @@ public class MuleThreeApplication extends MuleProject {
 
   public static final String srcMainConfigurationPath = "src" + File.separator + "main" + File.separator + "app";
   public static final String srcTestsConfigurationPath = "src" + File.separator + "test" + File.separator + "munit";
+  public static final String MULE_APP_PROPERTIES = "mule-app.properties";
 
   public MuleThreeApplication(Path baseFolder) {
     super(baseFolder);
@@ -33,5 +34,9 @@ public class MuleThreeApplication extends MuleProject {
   @Override
   public Path srcTestConfiguration() {
     return baseFolder.resolve(srcTestsConfigurationPath);
+  }
+
+  public Path appProperties() {
+    return srcMainConfiguration().resolve(MULE_APP_PROPERTIES);
   }
 }

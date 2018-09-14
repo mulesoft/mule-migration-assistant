@@ -7,6 +7,8 @@
 package com.mulesoft.tools.migration.engine.project.structure;
 
 import static com.mulesoft.tools.migration.engine.project.ProjectMatcher.getProjectDestination;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_APPLICATION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_MAVEN_APPLICATION;
 import static java.lang.System.lineSeparator;
 import static java.nio.file.Files.exists;
 import static org.apache.commons.io.FileUtils.moveFileToDirectory;
@@ -87,6 +89,20 @@ public class ApplicationPersister {
       persistConfigFiles();
       persistMuleArtifactJson();
       persistPom();
+      persistMuleAppProperties();
+    }
+  }
+
+  private void persistMuleAppProperties() throws Exception {
+    projectType = projectFactory.getProjectType(appModel.getProjectBasePath());
+    if (projectType.equals(MULE_THREE_APPLICATION) || projectType.equals(MULE_THREE_MAVEN_APPLICATION)) {
+      MuleThreeApplication project = new MuleThreeApplication(appModel.getProjectBasePath());
+      Path source = project.appProperties();
+      if (source.toFile().exists()) {
+        Path resources = ((MuleProject) projectOutput).srcMainResources();
+        resources.toFile().mkdirs();
+        Files.copy(source, resources.resolve("mule-app.properties"));
+      }
     }
   }
 

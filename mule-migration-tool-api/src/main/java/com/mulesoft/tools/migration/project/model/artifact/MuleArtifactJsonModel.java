@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * The mule-artifact.json representational model.
@@ -30,6 +31,15 @@ public class MuleArtifactJsonModel {
   protected MuleArtifactJsonModel(MuleApplicationModel muleApplicationModel) {
     this.model = muleApplicationModel;
   }
+
+  public String getMinMuleVersion() {
+    return model.getMinMuleVersion();
+  }
+
+  public List<String> getSecureProperties() {
+    return model.getSecureProperties();
+  }
+
 
   @Override
   public String toString() {
@@ -47,6 +57,7 @@ public class MuleArtifactJsonModel {
     private final MuleApplicationModelJsonSerializer serializer = new MuleApplicationModelJsonSerializer();
     private Path muleArtifactJsonPath;
     private String muleVersion;
+    private List<String> secureProperties;
 
     public MuleApplicationJsonModelBuilder withMuleArtifactJson(Path muleArtifactJsonPath) {
       this.muleArtifactJsonPath = muleArtifactJsonPath;
@@ -68,7 +79,7 @@ public class MuleArtifactJsonModel {
       checkArgument(muleArtifactJsonPath != null, "mule-artifact.json path should not be null");
       if (!muleArtifactJsonPath.toAbsolutePath().toFile().exists()
           && muleArtifactJsonPath.toAbsolutePath().getParent().toFile().exists()) {
-        return buildMinimalMuleArtifactJson(muleVersion);
+        return buildMinimalMuleArtifactJson(muleVersion, secureProperties);
       }
       MuleApplicationModel model = getModel(muleArtifactJsonPath);
       return new MuleArtifactJsonModel(model);
@@ -79,6 +90,5 @@ public class MuleArtifactJsonModel {
       String muleArtifactJsonContent = FileUtils.readFileToString(muleArtifactJsonPath.toFile(), (String) null);
       return serializer.deserialize(muleArtifactJsonContent);
     }
-
   }
 }
