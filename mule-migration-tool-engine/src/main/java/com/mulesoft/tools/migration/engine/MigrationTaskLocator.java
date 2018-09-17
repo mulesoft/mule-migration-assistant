@@ -17,6 +17,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.DomainAppMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.FtpMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.HTTPCleanupTask;
 import com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.JmsDomainMigrationTask;
@@ -112,6 +113,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new ObjectStoreMigrationTask());
 
     coreMigrationTasks.add(new FileMigrationTask());
+    coreMigrationTasks.add(new FtpMigrationTask());
     coreMigrationTasks.add(new EndpointsMigrationTask());
     coreMigrationTasks.add(new JmsDomainMigrationTask());
     coreMigrationTasks.add(new JmsMigrationTask());
