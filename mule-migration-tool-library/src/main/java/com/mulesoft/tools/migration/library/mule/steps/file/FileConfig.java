@@ -10,6 +10,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static java.util.stream.Collectors.joining;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -243,16 +244,6 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
     if (matcherUsed) {
       listener.setAttribute("matcher", object.getAttributeValue("name") + "Matcher");
-    }
-  }
-
-  private String changeDefault(String oldDefaultValue, String newDefaultValue, String currentValue) {
-    if (currentValue == null) {
-      return oldDefaultValue;
-    } else if (newDefaultValue.equals(currentValue)) {
-      return null;
-    } else {
-      return currentValue;
     }
   }
 

@@ -6,15 +6,20 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.ftp;
 
+import static com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint.migrateFileFilters;
+import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpConfig.FTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
+
+import java.util.Optional;
 
 /**
  * Migrates the inbound endpoints of the ftp transport
@@ -22,14 +27,9 @@ import org.jdom2.Namespace;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class FtpInboundEndpoint extends AbstractApplicationModelMigrationStep
-    implements ExpressionMigratorAware {
+public class FtpInboundEndpoint extends AbstractFtpEndpoint {
 
-  private static final String FTP_NS_PREFIX = "ftp";
-  private static final String FTP_NS_URI = "http://www.mulesoft.org/schema/mule/ftp";
   public static final String XPATH_SELECTOR = "/*/mule:flow/ftp:inbound-endpoint[1]";
-
-  private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
@@ -42,13 +42,18 @@ public class FtpInboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace ftpNs = Namespace.getNamespace(FTP_NS_PREFIX, FTP_NS_URI);
+    object.setName("listener");
+    addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
-    // object.setName("listener");
-    // addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
-    //
+    String configName = object.getAttributeValue("connector-ref");
+    Optional<Element> config =
+        getApplicationModel().getNodeOptional("/*/ftp:config[@name = '" + configName + "']");
+
+    Element ftpConfig = migrateFtpConfig(object, configName, config);
+    Element connection = ftpConfig.getChild("connection", FTP_NAMESPACE);
+
     addAttributesToInboundProperties(object, report);
-    //
+
     // Element redelivery = object.getChild("idempotent-redelivery-policy", CORE_NAMESPACE);
     // if (redelivery != null) {
     // redelivery.setName("redelivery-policy");
@@ -62,23 +67,23 @@ public class FtpInboundEndpoint extends AbstractApplicationModelMigrationStep
     // .setValue(getExpressionMigrator().wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, object)));
     // }
     // }
-    //
-    // Element schedulingStr = object.getChild("scheduling-strategy", CORE_NAMESPACE);
-    // if (schedulingStr == null) {
-    // schedulingStr = new Element("scheduling-strategy", CORE_NAMESPACE);
-    // schedulingStr.addContent(new Element("fixed-frequency", CORE_NAMESPACE));
-    // object.addContent(schedulingStr);
-    // }
-    //
-    // Element fixedFrequency = schedulingStr.getChild("fixed-frequency", CORE_NAMESPACE);
-    //
-    // if (object.getAttribute("pollingFrequency") != null) {
-    // fixedFrequency.setAttribute("frequency", object.getAttributeValue("pollingFrequency", "1000"));
-    // } else if (fixedFrequency.getAttribute("frequency") == null) {
-    // fixedFrequency.setAttribute("frequency", "1000");
-    // }
-    // object.removeAttribute("pollingFrequency");
-    //
+
+    Element schedulingStr = object.getChild("scheduling-strategy", CORE_NAMESPACE);
+    if (schedulingStr == null) {
+      schedulingStr = new Element("scheduling-strategy", CORE_NAMESPACE);
+      schedulingStr.addContent(new Element("fixed-frequency", CORE_NAMESPACE));
+      object.addContent(schedulingStr);
+    }
+
+    Element fixedFrequency = schedulingStr.getChild("fixed-frequency", CORE_NAMESPACE);
+
+    if (object.getAttribute("pollingFrequency") != null) {
+      fixedFrequency.setAttribute("frequency", object.getAttributeValue("pollingFrequency", "1000"));
+    } else if (fixedFrequency.getAttribute("frequency") == null) {
+      fixedFrequency.setAttribute("frequency", "1000");
+    }
+    object.removeAttribute("pollingFrequency");
+
     // if (object.getAttribute("fileAge") != null && !"0".equals(object.getAttributeValue("fileAge"))) {
     // String fileAge = object.getAttributeValue("fileAge");
     // object.setAttribute("timeBetweenSizeCheck", fileAge);
@@ -98,84 +103,9 @@ public class FtpInboundEndpoint extends AbstractApplicationModelMigrationStep
     // object.removeAttribute("autoDelete");
     // }
     // }
-    //
-    // Element newMatcher = null;
-    //
-    // Element globFilterIn = object.getChild("filename-wildcard-filter", ftpNs);
-    // if (globFilterIn != null) {
-    // if (newMatcher == null) {
-    // newMatcher = buildNewMatcher(object, ftpNs);
-    // }
-    // newMatcher.setAttribute("filenamePattern", globFilterIn.getAttributeValue("pattern"));
-    //
-    // if (globFilterIn.getAttribute("caseSensitive") != null) {
-    // report.report(WARN, globFilterIn, newMatcher,
-    // "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-    // "https://docs.mulesoft.com/connectors/file-on-new-file");
-    // globFilterIn.removeAttribute("caseSensitive");
-    // }
-    //
-    // object.removeContent(globFilterIn);
-    // }
-    //
-    // Element customFilterIn = object.getChild("custom-filter", COMPATIBILITY_NAMESPACE);
-    // if (customFilterIn != null) {
-    // object.removeContent(customFilterIn);
-    // // The ERROR will be reported when all custom-filters are queried to be migrated
-    // object.getParentElement().addContent(3, customFilterIn);
-    // }
-    //
-    // Element regexFilterIn = object.getChild("filename-regex-filter", ftpNs);
-    // if (regexFilterIn != null) {
-    // if (newMatcher == null) {
-    // newMatcher = buildNewMatcher(object, ftpNs);
-    // }
-    // newMatcher.setAttribute("filenamePattern", "regex:" + regexFilterIn.getAttributeValue("pattern"));
-    //
-    // if (regexFilterIn.getAttribute("caseSensitive") != null) {
-    // report.report(WARN, regexFilterIn, newMatcher,
-    // "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-    // "https://docs.mulesoft.com/connectors/file-on-new-file");
-    // regexFilterIn.removeAttribute("caseSensitive");
-    // }
-    //
-    // object.removeContent(regexFilterIn);
-    // }
-    //
-    // Element globFilter = object.getParentElement().getChild("filename-wildcard-filter", ftpNs);
-    // if (globFilter != null) {
-    // if (newMatcher == null) {
-    // newMatcher = buildNewMatcher(object, ftpNs);
-    // }
-    // newMatcher.setAttribute("filenamePattern", globFilter.getAttributeValue("pattern"));
-    //
-    // if (globFilter.getAttribute("caseSensitive") != null) {
-    // report.report(WARN, globFilter, newMatcher,
-    // "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-    // "https://docs.mulesoft.com/connectors/file-on-new-file");
-    // globFilter.removeAttribute("caseSensitive");
-    // }
-    //
-    // object.getParentElement().removeContent(globFilter);
-    // }
-    //
-    // Element regexFilter = object.getParentElement().getChild("filename-regex-filter", ftpNs);
-    // if (regexFilter != null) {
-    // if (newMatcher == null) {
-    // newMatcher = buildNewMatcher(object, ftpNs);
-    // }
-    // newMatcher.setAttribute("filenamePattern", "regex:" + regexFilter.getAttributeValue("pattern"));
-    //
-    // if (regexFilter.getAttribute("caseSensitive") != null) {
-    // report.report(WARN, regexFilter, newMatcher,
-    // "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-    // "https://docs.mulesoft.com/connectors/file-on-new-file");
-    // regexFilter.removeAttribute("caseSensitive");
-    // }
-    //
-    // object.getParentElement().removeContent(regexFilter);
-    // }
-    //
+
+    migrateFileFilters(object, report, FTP_NAMESPACE, getApplicationModel());
+
     // object.setAttribute("applyPostActionWhenFailed", "false");
     //
     // String recursive = changeDefault("false", "true", object.getAttributeValue("recursive"));
@@ -185,31 +115,54 @@ public class FtpInboundEndpoint extends AbstractApplicationModelMigrationStep
     // object.removeAttribute("recursive");
     // }
     //
-    // processAddress(object, report).ifPresent(address -> {
-    // object.setAttribute("directory", address.getPath());
-    // });
-    // if (object.getAttribute("path") != null) {
-    // object.getAttribute("path").setName("directory");
-    // }
-    // if (object.getAttribute("connector-ref") != null) {
-    // object.getAttribute("connector-ref").setName("config-ref");
-    // } else {
-    // // Set the Mule 3 defaults since those are different in Mule 4
-    // object.setAttribute("autoDelete", "true");
-    // object.setAttribute("recursive", "false");
-    // }
-    //
-    // if (object.getAttribute("encoding") != null) {
-    // object.getParent().addContent(3, new Element("set-payload", CORE_NAMESPACE)
-    // .setAttribute("value", "#[payload]")
-    // .setAttribute("encoding", object.getAttributeValue("encoding")));
-    // object.removeAttribute("encoding");
-    // }
-    // if (object.getAttribute("responseTimeout") != null) {
-    // report.report(WARN, object, object, "'responseTimeout' was not being used by the file transport.");
-    // object.removeAttribute("responseTimeout");
-    // }
-    //
+    processAddress(object, report).ifPresent(address -> {
+      connection.setAttribute("host", address.getHost());
+      connection.setAttribute("port", address.getPort());
+
+      if (address.getCredentials() != null) {
+        String[] credsSplit = address.getCredentials().split(":");
+
+        connection.setAttribute("username", credsSplit[0]);
+        connection.setAttribute("password", credsSplit[1]);
+      }
+      object.setAttribute("directory", address.getPath() != null ? address.getPath() : "/");
+    });
+    copyAttributeIfPresent(object, connection, "host");
+    copyAttributeIfPresent(object, connection, "port");
+    copyAttributeIfPresent(object, connection, "user", "username");
+    copyAttributeIfPresent(object, connection, "password");
+
+    if (object.getAttribute("path") != null) {
+      object.getAttribute("path").setName("directory");
+    }
+    if (object.getAttribute("connector-ref") != null) {
+      object.getAttribute("connector-ref").setName("config-ref");
+    } else {
+      object.removeAttribute("name");
+      object.setAttribute("config-ref", ftpConfig.getAttributeValue("name"));
+
+      // Set the Mule 3 defaults since those are different in Mule 4
+      // object.setAttribute("autoDelete", "true");
+      // object.setAttribute("recursive", "false");
+    }
+
+    copyAttributeIfPresent(object, connection, "passive");
+    if (object.getAttribute("binary") != null) {
+      connection.setAttribute("transferMode", "true".equals(object.getAttributeValue("binary")) ? "BINARY" : "ASCII");
+      object.removeAttribute("binary");
+    }
+
+    if (object.getAttribute("encoding") != null) {
+      object.getParent().addContent(3, new Element("set-payload", CORE_NAMESPACE)
+          .setAttribute("value", "#[payload]")
+          .setAttribute("encoding", object.getAttributeValue("encoding")));
+      object.removeAttribute("encoding");
+    }
+    if (object.getAttribute("responseTimeout") != null) {
+      copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
+      connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
+    }
+
     // if (object.getAttribute("comparator") != null || object.getAttribute("reverseOrder") != null) {
     // report.report(ERROR, object, object,
     // "'comparator'/'reverseOrder' are not yet supported by the file connector listener.",
@@ -268,16 +221,6 @@ public class FtpInboundEndpoint extends AbstractApplicationModelMigrationStep
     // } catch (IOException e) {
     // throw new RuntimeException(e);
     // }
-  }
-
-  @Override
-  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
-    this.expressionMigrator = expressionMigrator;
-  }
-
-  @Override
-  public ExpressionMigrator getExpressionMigrator() {
-    return expressionMigrator;
   }
 
 }

@@ -6,15 +6,16 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.ftp;
 
+import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpConfig.FTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
+
+import java.util.Optional;
 
 /**
  * Migrates the outbound endpoints of the ftp transport
@@ -22,12 +23,9 @@ import org.jdom2.Element;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class FtpOutboundEndpoint extends AbstractApplicationModelMigrationStep
-    implements ExpressionMigratorAware {
+public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
 
   public static final String XPATH_SELECTOR = "//ftp:outbound-endpoint";
-
-  private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
@@ -41,6 +39,25 @@ public class FtpOutboundEndpoint extends AbstractApplicationModelMigrationStep
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setName("write");
+
+    String configName = object.getAttributeValue("connector-ref");
+    Optional<Element> config =
+        getApplicationModel().getNodeOptional("/*/ftp:config[@name = '" + configName + "']");
+
+    Element ftpConfig = migrateFtpConfig(object, configName, config);
+    Element connection = ftpConfig.getChild("connection", FTP_NAMESPACE);
+
+    copyAttributeIfPresent(object, connection, "host");
+    copyAttributeIfPresent(object, connection, "port");
+    copyAttributeIfPresent(object, connection, "user", "username");
+    copyAttributeIfPresent(object, connection, "password");
+
+    if (object.getAttribute("responseTimeout") != null) {
+      copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
+      connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
+    }
+
+    object.getAttribute("connector-ref").setName("config-ref");
 
     extractInboundChildren(object, getApplicationModel());
 
@@ -117,15 +134,5 @@ public class FtpOutboundEndpoint extends AbstractApplicationModelMigrationStep
   // return "null";
   // }
   // }
-
-  @Override
-  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
-    this.expressionMigrator = expressionMigrator;
-  }
-
-  @Override
-  public ExpressionMigrator getExpressionMigrator() {
-    return expressionMigrator;
-  }
 
 }

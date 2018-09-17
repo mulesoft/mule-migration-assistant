@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd
+       http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <ftp:config name="FTP">
+        <ftp:connection username="anonymous" password="password" host="localhost" port="${port1}"
+            transferMode="BINARY" passive="true">
+            <reconnection failsDeployment="true"/>
+        </ftp:connection>
+    </ftp:config>
+
+    <flow name="flow">
+        <ftp:listener config-ref="FTP" directory="/">
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000"/>
+            </scheduling-strategy>
+        </ftp:listener>
+        <compatibility:attributes-to-inbound-properties/>
+        <set-payload encoding="EUC-JP" value="#[payload]"/>
+        <logger/>
+        <compatibility:outbound-properties-to-var/>
+    </flow>
+</mule>

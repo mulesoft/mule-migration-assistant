@@ -9,6 +9,8 @@ package com.mulesoft.tools.migration.library.mule.steps.ftp;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -22,6 +24,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
+import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
@@ -34,6 +37,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class FtpOutboundTest {
@@ -77,10 +81,23 @@ public class FtpOutboundTest {
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
+    when(appModel.getNode(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
+    when(appModel.getNodeOptional(any(String.class)))
+        .thenAnswer(invocation -> {
+          List<Element> elementsFromDocument = getElementsFromDocument(doc, (String) invocation.getArguments()[0]);
+          if (elementsFromDocument.isEmpty()) {
+            return empty();
+          } else {
+            return of(elementsFromDocument.iterator().next());
+          }
+        });
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     ftpGlobalEndpoint = new FtpGlobalEndpoint();
+    ftpGlobalEndpoint.setApplicationModel(appModel);
     ftpEeGlobalEndpoint = new FtpEeGlobalEndpoint();
+    ftpEeGlobalEndpoint.setApplicationModel(appModel);
     ftpConfig = new FtpConfig();
     ftpConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
     ftpConfig.setApplicationModel(appModel);
@@ -102,16 +119,16 @@ public class FtpOutboundTest {
   public void execute() throws Exception {
     getElementsFromDocument(doc, ftpGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> ftpGlobalEndpoint.execute(node, mock(MigrationReport.class)));
-    getElementsFromDocument(doc, ftpEeGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> ftpEeGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+    // getElementsFromDocument(doc, ftpEeGlobalEndpoint.getAppliedTo().getExpression())
+    // .forEach(node -> ftpEeGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, ftpConfig.getAppliedTo().getExpression())
         .forEach(node -> ftpConfig.execute(node, mock(MigrationReport.class)));
-    getElementsFromDocument(doc, ftpEeConfig.getAppliedTo().getExpression())
-        .forEach(node -> ftpEeConfig.execute(node, mock(MigrationReport.class)));
+    // getElementsFromDocument(doc, ftpEeConfig.getAppliedTo().getExpression())
+    // .forEach(node -> ftpEeConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, ftpOutboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> ftpOutboundEndpoint.execute(node, mock(MigrationReport.class)));
-    getElementsFromDocument(doc, ftpEeOutboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> ftpEeOutboundEndpoint.execute(node, mock(MigrationReport.class)));
+    // getElementsFromDocument(doc, ftpEeOutboundEndpoint.getAppliedTo().getExpression())
+    // .forEach(node -> ftpEeOutboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
         .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 
