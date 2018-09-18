@@ -40,10 +40,11 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setName("write");
+    object.setNamespace(FTP_NAMESPACE);
 
     String configName = object.getAttributeValue("connector-ref");
     Optional<Element> config =
-        getApplicationModel().getNodeOptional("/*/ftp:config[@name = '" + configName + "']");
+        getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'config']");
 
     Element ftpConfig = migrateFtpConfig(object, configName, config);
     Element connection = ftpConfig.getChild("connection", FTP_NAMESPACE);

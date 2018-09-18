@@ -60,7 +60,8 @@ public class FtpInboundTest {
         "ftp-inbound-08",
         "ftp-inbound-09",
         "ftp-inbound-10",
-        "ftp-inbound-11"
+        "ftp-inbound-11",
+        "ftp-inbound-12"
     };
   }
 

@@ -67,7 +67,7 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
 
     if (object.getAttribute("streaming") != null && !"true".equals(object.getAttributeValue("streaming"))) {
       report.report(WARN, object, object,
-                    "'streaming' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.",
+                    "'streaming' is not needed in Mule 4 FTP Connector, since streams are now repeatable and enabled by default.",
                     "https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about");
     }
     object.removeAttribute("streaming");

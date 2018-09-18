@@ -53,7 +53,8 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     String configName = object.getAttributeValue("connector-ref");
-    Optional<Element> config = fetchConfig(configName);
+    Optional<Element> config =
+        getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'config']");
 
     Element ftpConfig = migrateFtpConfig(object, configName, config);
     Element connection = ftpConfig.getChild("connection", FTP_NAMESPACE);
