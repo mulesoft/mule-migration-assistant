@@ -15,6 +15,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddr
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateRedeliveryPolicyChildren;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -69,13 +70,17 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       redelivery.setName("redelivery-policy");
       Attribute exprAttr = redelivery.getAttribute("idExpression");
 
-      // TODO MMT-128
-      exprAttr.setValue(exprAttr.getValue().replaceAll("#\\[header\\:inbound\\:originalFilename\\]", "#[attributes.name]"));
+      if (exprAttr != null) {
+        // TODO MMT-128
+        exprAttr.setValue(exprAttr.getValue().replaceAll("#\\[header\\:inbound\\:originalFilename\\]", "#[attributes.name]"));
 
-      if (getExpressionMigrator().isWrapped(exprAttr.getValue())) {
-        exprAttr
-            .setValue(getExpressionMigrator().wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, object)));
+        if (getExpressionMigrator().isWrapped(exprAttr.getValue())) {
+          exprAttr.setValue(getExpressionMigrator()
+              .wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, object)));
+        }
       }
+
+      migrateRedeliveryPolicyChildren(redelivery, report);
     }
 
     Element schedulingStr = object.getChild("scheduling-strategy", CORE_NAMESPACE);

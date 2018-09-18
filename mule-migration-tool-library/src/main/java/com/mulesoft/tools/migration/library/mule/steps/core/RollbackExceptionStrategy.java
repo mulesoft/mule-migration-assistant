@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.c
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateRedeliveryPolicyChildren;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -73,6 +74,8 @@ public class RollbackExceptionStrategy extends AbstractExceptionsMigrationStep {
               exprAttr.setValue(getExpressionMigrator()
                   .wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, element)));
             }
+
+            migrateRedeliveryPolicyChildren(redelivery, report);
           } else {
             Element redeliveryPolicy = new Element("redelivery-policy");
             redeliveryPolicy.setNamespace(CORE_NAMESPACE);

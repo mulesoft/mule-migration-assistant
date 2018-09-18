@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.ftp;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint.migrateFileFilters;
 import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpConfig.FTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
@@ -13,12 +14,16 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddr
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateRedeliveryPolicyChildren;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -54,19 +59,23 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
 
     addAttributesToInboundProperties(object, report);
 
-    // Element redelivery = object.getChild("idempotent-redelivery-policy", CORE_NAMESPACE);
-    // if (redelivery != null) {
-    // redelivery.setName("redelivery-policy");
-    // Attribute exprAttr = redelivery.getAttribute("idExpression");
-    //
-    // // TODO MMT-128
-    // exprAttr.setValue(exprAttr.getValue().replaceAll("#\\[header\\:inbound\\:originalFilename\\]", "#[attributes.name]"));
-    //
-    // if (getExpressionMigrator().isWrapped(exprAttr.getValue())) {
-    // exprAttr
-    // .setValue(getExpressionMigrator().wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, object)));
-    // }
-    // }
+    Element redelivery = object.getChild("idempotent-redelivery-policy", CORE_NAMESPACE);
+    if (redelivery != null) {
+      redelivery.setName("redelivery-policy");
+      Attribute exprAttr = redelivery.getAttribute("idExpression");
+
+      if (exprAttr != null) {
+        // TODO MMT-128
+        exprAttr.setValue(exprAttr.getValue().replaceAll("#\\[header\\:inbound\\:originalFilename\\]", "#[attributes.name]"));
+
+        if (getExpressionMigrator().isWrapped(exprAttr.getValue())) {
+          exprAttr.setValue(getExpressionMigrator()
+              .wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, object)));
+        }
+      }
+
+      migrateRedeliveryPolicyChildren(redelivery, report);
+    }
 
     Element schedulingStr = object.getChild("scheduling-strategy", CORE_NAMESPACE);
     if (schedulingStr == null) {
@@ -176,51 +185,20 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
     // }
   }
 
-  // private Element buildNewMatcher(Element object, Namespace fileNs) {
-  // Element newMatcher;
-  // newMatcher = new Element("matcher", fileNs);
-  //
-  // List<Element> referencedMatcher =
-  // getApplicationModel().getNodes("/*/file:matcher[@name='" + object.getAttributeValue("matcher") + "']");
-  // if (!referencedMatcher.isEmpty()) {
-  // for (Attribute attribute : referencedMatcher.get(0).getAttributes()) {
-  // newMatcher.setAttribute(attribute.getName(), attribute.getValue());
-  // }
-  // }
-  //
-  // String newMatcherName =
-  // (object.getAttributeValue("connector-ref") != null ? object.getAttributeValue("connector-ref") + "-" : "")
-  // + object.getParentElement().getAttributeValue("name") + "Matcher";
-  // newMatcher.setAttribute("name", newMatcherName);
-  // object.setAttribute("matcher", newMatcherName);
-  //
-  // int idx = object.getDocument().getRootElement().indexOf(object.getParentElement());
-  // object.getDocument().getRootElement().addContent(idx, newMatcher);
-  // return newMatcher;
-  // }
-
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
     migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
 
-    // Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    // expressionsPerProperty.put("originalFilename", "message.attributes.fileName");
-    // expressionsPerProperty.put("originalDirectory",
-    // "(message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))]");
-    // expressionsPerProperty.put("sourceFileName", "message.attributes.fileName");
-    // expressionsPerProperty.put("sourceDirectory",
-    // "(message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))]");
-    // expressionsPerProperty.put("filename", "message.attributes.fileName");
-    // expressionsPerProperty.put("directory",
-    // "(message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))]");
-    // expressionsPerProperty.put("fileSize", "message.attributes.size");
-    // expressionsPerProperty.put("timestamp", "message.attributes.lastModifiedTime");
+    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
+    expressionsPerProperty.put("originalFilename", "message.attributes.name");
+    expressionsPerProperty.put("fileSize", "message.attributes.size");
+    expressionsPerProperty.put("timestamp", "message.attributes.timestamp");
     // expressionsPerProperty.put("MULE.FORCE_SYNC", "false");
-    //
-    // try {
-    // addAttributesMapping(getApplicationModel(), "org.mule.extension.file.api.LocalFileAttributes", expressionsPerProperty);
-    // } catch (IOException e) {
-    // throw new RuntimeException(e);
-    // }
+
+    try {
+      addAttributesMapping(getApplicationModel(), "org.mule.extension.ftp.api.ftp.FtpFileAttributes", expressionsPerProperty);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.ftp;
 import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpConfig.FTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -29,7 +30,12 @@ public abstract class AbstractFtpEndpoint extends AbstractApplicationModelMigrat
   protected Element migrateFtpConfig(Element object, String configName, Optional<Element> config) {
     Element ftpConfig = config.orElseGet(() -> {
       Element ftpCfg = new Element("config", FTP_NAMESPACE);
-      ftpCfg.setAttribute("name", configName != null ? configName : object.getAttributeValue("name") + "Config");
+      ftpCfg.setAttribute("name", configName != null
+          ? configName
+          : (object.getAttributeValue("name") != null
+              ? object.getAttributeValue("name")
+              : (getFlow(object).getAttributeValue("name") + "Ftp"))
+              + "Config");
       Element conn = new Element("connection", FTP_NAMESPACE);
       conn.addContent(new Element("reconnection", CORE_NAMESPACE).setAttribute("failsDeployment", "true"));
       ftpCfg.addContent(conn);

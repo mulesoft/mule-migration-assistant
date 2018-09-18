@@ -15,9 +15,12 @@ package com.mulesoft.tools.migration.library.mule.steps.ftp;
 public class FtpEeInboundEndpoint extends FtpInboundEndpoint {
 
   // private static final String FTP_NS_PREFIX = "ftp-ee";
-  // private static final String FTP_NS_URI = "http://www.mulesoft.org/schema/mule/ee/ftp";
-  public static final String XPATH_SELECTOR = "/*/mule:flow/ftp-ee:inbound-endpoint[1]";
+  private static final String FTP_EE_NS_URI = "http://www.mulesoft.org/schema/mule/ee/ftp";
+  public static final String XPATH_SELECTOR =
+      "/*/mule:flow/*[namespace-uri() = '" + FTP_EE_NS_URI + "' and local-name() = 'inbound-endpoint'][1]";
 
+
+  // namespace-uri() = '" + FTP_EE_NS_URI + "' and local-name() = 'commit'
   @Override
   public String getDescription() {
     return "Update FTP-ee inbound endpoints.";

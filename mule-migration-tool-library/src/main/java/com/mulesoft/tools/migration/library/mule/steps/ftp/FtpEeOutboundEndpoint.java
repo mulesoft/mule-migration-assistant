@@ -14,7 +14,9 @@ package com.mulesoft.tools.migration.library.mule.steps.ftp;
  */
 public class FtpEeOutboundEndpoint extends FtpOutboundEndpoint {
 
-  public static final String XPATH_SELECTOR = "//ftp-ee:outbound-endpoint";
+  private static final String FTP_EE_NS_URI = "http://www.mulesoft.org/schema/mule/ee/ftp";
+  public static final String XPATH_SELECTOR =
+      "//*[namespace-uri() = '" + FTP_EE_NS_URI + "' and local-name() = 'outbound-endpoint']";
 
   @Override
   public String getDescription() {

@@ -23,10 +23,11 @@ import java.util.stream.Stream;
  */
 public class FtpEeConfig extends FtpConfig {
 
-  private static final String FTP_NAMESPACE_PREFIX = "ftp-ee";
-  private static final String FTP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ee/ftp";
-  private static final Namespace FTP_NAMESPACE = Namespace.getNamespace(FTP_NAMESPACE_PREFIX, FTP_NAMESPACE_URI);
-  public static final String XPATH_SELECTOR = "/*/ftp-ee:connector";
+  private static final String FTP_EE_NAMESPACE_PREFIX = "ftp-ee";
+  private static final String FTP_EE_NS_URI = "http://www.mulesoft.org/schema/mule/ee/ftp";
+  private static final Namespace FTP_EE_NAMESPACE = Namespace.getNamespace(FTP_EE_NAMESPACE_PREFIX, FTP_EE_NS_URI);
+  public static final String XPATH_SELECTOR =
+      "/*/*[namespace-uri() = '" + FTP_EE_NS_URI + "' and local-name() = 'connector']";
 
   @Override
   public String getDescription() {

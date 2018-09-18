@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.step.util;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExcetionHandlingElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isErrorHanldingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
@@ -163,7 +163,7 @@ public final class TransportsUtils {
 
       // may be a try scope too
       Element flow = outboundEndpoint.getParentElement();
-      Element errorHandler = getFlowExcetionHandlingElement(flow);
+      Element errorHandler = getFlowExceptionHandlingElement(flow);
 
       if (errorHandler != null) {
         nestedAsync = new Element("try", CORE_NAMESPACE);
@@ -201,7 +201,7 @@ public final class TransportsUtils {
 
     // may be a try scope too
     Element flow = target;
-    Element errorHandler = getFlowExcetionHandlingElement(flow);
+    Element errorHandler = getFlowExceptionHandlingElement(flow);
     if (errorHandler != null) {
       flow.addContent(flow.indexOf(errorHandler),
                       fetchResponseContent(inbound, appModel));

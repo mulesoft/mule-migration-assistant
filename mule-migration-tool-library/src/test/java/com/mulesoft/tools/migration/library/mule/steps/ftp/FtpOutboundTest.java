@@ -119,16 +119,16 @@ public class FtpOutboundTest {
   public void execute() throws Exception {
     getElementsFromDocument(doc, ftpGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> ftpGlobalEndpoint.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, ftpEeGlobalEndpoint.getAppliedTo().getExpression())
-    // .forEach(node -> ftpEeGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, ftpEeGlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> ftpEeGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, ftpConfig.getAppliedTo().getExpression())
         .forEach(node -> ftpConfig.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, ftpEeConfig.getAppliedTo().getExpression())
-    // .forEach(node -> ftpEeConfig.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, ftpEeConfig.getAppliedTo().getExpression())
+        .forEach(node -> ftpEeConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, ftpOutboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> ftpOutboundEndpoint.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, ftpEeOutboundEndpoint.getAppliedTo().getExpression())
-    // .forEach(node -> ftpEeOutboundEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, ftpEeOutboundEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> ftpEeOutboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
         .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 
