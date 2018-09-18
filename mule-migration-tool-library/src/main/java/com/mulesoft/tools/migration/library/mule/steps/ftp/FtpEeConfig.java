@@ -54,7 +54,8 @@ public class FtpEeConfig extends FtpConfig {
 
   private void handleInputSpecificAttributes(Element object, String fileAge, MigrationReport report) {
     Stream.concat(getApplicationModel()
-        .getNodes("//ftp:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
+        .getNodes("//*[namespace-uri() = '" + FTP_EE_NS_URI + "' and local-name() = 'inbound-endpoint' and @connector-ref='"
+            + object.getAttributeValue("name") + "']")
         .stream(),
                   getApplicationModel()
                       .getNodes("//mule:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
@@ -66,8 +67,8 @@ public class FtpEeConfig extends FtpConfig {
     // object.removeAttribute("moveToDirectory");
     // object.removeAttribute("autoDelete");
     // object.removeAttribute("recursive");
-    // object.removeAttribute("moveToDirectory");
-    // object.removeAttribute("moveToPattern");
+    object.removeAttribute("moveToDirectory");
+    object.removeAttribute("moveToPattern");
   }
 
   private void passConnectorConfigToInboundEnpoint(Element object, String fileAge, Element listener) {
@@ -92,15 +93,15 @@ public class FtpEeConfig extends FtpConfig {
     // String recursive = changeDefault("false", "true", object.getAttributeValue("recursive"));
     // listener.setAttribute("recursive", recursive != null ? recursive : "true");
     //
-    // if (object.getAttribute("moveToDirectory") != null && listener.getAttribute("moveToDirectory") == null) {
-    // listener.setAttribute("moveToDirectory", object.getAttributeValue("moveToDirectory"));
-    // }
-    //
-    // if (object.getAttribute("moveToPattern") != null) {
-    // String moveToPattern = object.getAttributeValue("moveToPattern");
-    // listener.setAttribute("renameTo",
-    // getExpressionMigrator().migrateExpression(moveToPattern, true, listener));
-    // }
+    if (object.getAttribute("moveToDirectory") != null && listener.getAttribute("moveToDirectory") == null) {
+      listener.setAttribute("moveToDirectory", object.getAttributeValue("moveToDirectory"));
+    }
+
+    if (object.getAttribute("moveToPattern") != null) {
+      String moveToPattern = object.getAttributeValue("moveToPattern");
+      listener.setAttribute("renameTo",
+                            getExpressionMigrator().migrateExpression(moveToPattern, true, listener));
+    }
     //
     // if (matcherUsed) {
     // listener.setAttribute("matcher", object.getAttributeValue("name") + "Matcher");

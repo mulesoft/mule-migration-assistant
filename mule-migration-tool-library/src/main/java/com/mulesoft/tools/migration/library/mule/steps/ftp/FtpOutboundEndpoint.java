@@ -25,7 +25,8 @@ import java.util.Optional;
  */
 public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
 
-  public static final String XPATH_SELECTOR = "//ftp:outbound-endpoint";
+  public static final String XPATH_SELECTOR =
+      "//*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'outbound-endpoint']";
 
   @Override
   public String getDescription() {

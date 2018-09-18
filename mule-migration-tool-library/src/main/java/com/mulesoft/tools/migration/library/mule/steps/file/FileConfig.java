@@ -188,7 +188,6 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
     object.removeAttribute("pollingFrequency");
     object.removeAttribute("readFromDirectory");
-    object.removeAttribute("moveToDirectory");
     object.removeAttribute("autoDelete");
     object.removeAttribute("recursive");
     object.removeAttribute("moveToDirectory");

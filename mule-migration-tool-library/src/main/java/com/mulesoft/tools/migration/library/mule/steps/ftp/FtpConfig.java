@@ -36,7 +36,8 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
   private static final String FTP_NAMESPACE_PREFIX = "ftp";
   private static final String FTP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ftp";
   public static final Namespace FTP_NAMESPACE = Namespace.getNamespace(FTP_NAMESPACE_PREFIX, FTP_NAMESPACE_URI);
-  public static final String XPATH_SELECTOR = "/*/ftp:connector";
+  public static final String XPATH_SELECTOR =
+      "/*/*[namespace-uri() = '" + FTP_NAMESPACE_URI + "' and local-name() = 'connector']";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -58,6 +59,8 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
     handleOutputImplicitConnectorRef(object, report);
 
     object.setName("config");
+    object.setNamespace(FTP_NAMESPACE);
+
     Element connection = new Element("connection", ftpNs);
     // connection.setAttribute("workingDir", ".");
     object.addContent(connection);

@@ -34,7 +34,8 @@ import java.util.Optional;
  */
 public class FtpInboundEndpoint extends AbstractFtpEndpoint {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow/ftp:inbound-endpoint[1]";
+  public static final String XPATH_SELECTOR =
+      "/*/mule:flow/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'inbound-endpoint'][1]";
 
   @Override
   public String getDescription() {
@@ -48,11 +49,11 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setName("listener");
+    object.setNamespace(FTP_NAMESPACE);
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     String configName = object.getAttributeValue("connector-ref");
-    Optional<Element> config =
-        getApplicationModel().getNodeOptional("/*/ftp:config[@name = '" + configName + "']");
+    Optional<Element> config = fetchConfig(configName);
 
     Element ftpConfig = migrateFtpConfig(object, configName, config);
     Element connection = ftpConfig.getChild("connection", FTP_NAMESPACE);
@@ -93,25 +94,7 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
     }
     object.removeAttribute("pollingFrequency");
 
-    // if (object.getAttribute("fileAge") != null && !"0".equals(object.getAttributeValue("fileAge"))) {
-    // String fileAge = object.getAttributeValue("fileAge");
-    // object.setAttribute("timeBetweenSizeCheck", fileAge);
-    // object.removeAttribute("fileAge");
-    // }
-    //
-    // if (object.getAttribute("moveToPattern") != null) {
-    // String moveToPattern = object.getAttributeValue("moveToPattern");
-    // object.setAttribute("renameTo",
-    // getExpressionMigrator().migrateExpression(moveToPattern, true, object));
-    // object.removeAttribute("moveToPattern");
-    // }
-    //
-    // // TODO test
-    // if (object.getAttribute("moveToDirectory") != null) {
-    // if ("true".equals(object.getAttributeValue("autoDelete"))) {
-    // object.removeAttribute("autoDelete");
-    // }
-    // }
+    doExecute(object, report);
 
     migrateFileFilters(object, report, FTP_NAMESPACE, getApplicationModel());
 
@@ -183,6 +166,14 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
     // if (object.getAttribute("name") != null) {
     // object.removeAttribute("name");
     // }
+  }
+
+  protected Optional<Element> fetchConfig(String configName) {
+    return getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'config']");
+  }
+
+  protected void doExecute(Element object, MigrationReport report) {
+    // Nothing to do
   }
 
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
