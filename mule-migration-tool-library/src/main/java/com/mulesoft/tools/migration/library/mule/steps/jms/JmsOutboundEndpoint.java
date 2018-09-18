@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.jms;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -172,6 +173,8 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
                             "#[(vars.compatibility_inboundProperties.JMSDeliveryMode default " + defaultDeliveryMode + ") == 2]");
         object.setAttribute("priority", "#[vars.compatibility_inboundProperties.JMSPriority default 4]");
       }
+
+      handleConnectorChildElements(m3c, new Element("connection", CORE_NAMESPACE), report);
     });
 
     if (object.getAttribute("responseTimeout") != null) {

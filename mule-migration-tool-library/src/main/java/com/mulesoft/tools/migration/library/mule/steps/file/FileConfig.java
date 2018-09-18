@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static java.util.stream.Collectors.joining;
@@ -58,7 +59,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     handleOutputImplicitConnectorRef(object, report);
 
     object.setName("config");
-    Element connection = new Element("connection", fileNs);
+    Element connection = new Element("connection", FILE_NAMESPACE);
     connection.setAttribute("workingDir", ".");
     object.addContent(connection);
 
@@ -110,7 +111,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
       object.removeAttribute("fileAge");
     }
 
-    handleChildElements(object, report, fileNs);
+    handleChildElements(object, connection, report);
     handleInputSpecificAttributes(object, matcherUsed, fileAge, report);
     handleOutputSpecificAttributes(object, report);
   }
@@ -148,24 +149,10 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     }
   }
 
-  private void handleChildElements(Element object, MigrationReport report, Namespace fileNs) {
-    Element receiverThreadingProfile = object.getChild("receiver-threading-profile", CORE_NAMESPACE);
-    if (receiverThreadingProfile != null) {
-      report.report(WARN, receiverThreadingProfile, object,
-                    "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
-      object.removeContent(receiverThreadingProfile);
-    }
+  public static void handleChildElements(Element object, Element connection, MigrationReport report) {
+    handleConnectorChildElements(object, connection, report);
 
-    Element dispatcherThreadingProfile = object.getChild("dispatcher-threading-profile", CORE_NAMESPACE);
-    if (dispatcherThreadingProfile != null) {
-      report.report(WARN, dispatcherThreadingProfile, object,
-                    "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
-      object.removeContent(dispatcherThreadingProfile);
-    }
-
-    Element customFileNameParser = object.getChild("custom-filename-parser", fileNs);
+    Element customFileNameParser = object.getChild("custom-filename-parser", FILE_NAMESPACE);
     if (customFileNameParser != null) {
       report.report(ERROR, customFileNameParser, object,
                     "Use a DataWeave expression in <file:write> path attribute to set the filename of the file to write.",
@@ -174,7 +161,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     }
 
     // Nothing to report here since this is now the default behavior, supporting expressions
-    object.removeContent(object.getChild("expression-filename-parser", fileNs));
+    object.removeContent(object.getChild("expression-filename-parser", FILE_NAMESPACE));
   }
 
   private void handleInputSpecificAttributes(Element object, boolean matcherUsed, String fileAge, MigrationReport report) {

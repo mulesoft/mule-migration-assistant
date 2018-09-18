@@ -7,10 +7,12 @@
 package com.mulesoft.tools.migration.library.mule.steps.ftp;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.handleChildElements;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.stream.Collectors.joining;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -72,12 +74,30 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
     }
     object.removeAttribute("streaming");
 
+    if (object.getAttribute("connectionFactoryClass") != null
+        && !"true".equals(object.getAttributeValue("connectionFactoryClass"))) {
+      report.report(ERROR, object, object, "'connectionFactoryClass' cannot be changed in Mule 4 FTP Connector.",
+                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-ftp-sftp#migrating-an-ftp-connection");
+    }
+    object.removeAttribute("connectionFactoryClass");
+
     String failsDeployment = changeDefault("true", "false", object.getAttributeValue("validateConnections"));
     object.removeAttribute("validateConnections");
     if (failsDeployment != null) {
       Element reconnection = new Element("reconnection", CORE_NAMESPACE);
       reconnection.setAttribute("failsDeployment", failsDeployment);
       connection.addContent(reconnection);
+    }
+
+    copyAttributeIfPresent(object, connection, "passive");
+    if (object.getAttribute("binary") != null) {
+      connection.setAttribute("transferMode", "true".equals(object.getAttributeValue("binary")) ? "BINARY" : "ASCII");
+      object.removeAttribute("binary");
+    }
+
+    if (object.getAttribute("connectionTimeout") != null) {
+      copyAttributeIfPresent(object, connection, "connectionTimeout", "connectionTimeout");
+      connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
     }
 
     // Element matcher = new Element("matcher", FTP_NAMESPACE_URI);
@@ -90,7 +110,7 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
     // object.removeAttribute("fileAge");
     // }
 
-    handleChildElements(object, report, ftpNs);
+    handleChildElements(object, connection, report);
     handleInputSpecificAttributes(object, report);
     handleOutputSpecificAttributes(object, report);
   }
@@ -126,35 +146,6 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
         implicitConnectorRef.setAttribute("connector-ref", object.getAttributeValue("name"));
       }
     }
-  }
-
-  private void handleChildElements(Element object, MigrationReport report, Namespace fileNs) {
-    Element receiverThreadingProfile = object.getChild("receiver-threading-profile", CORE_NAMESPACE);
-    if (receiverThreadingProfile != null) {
-      report.report(WARN, receiverThreadingProfile, object,
-                    "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
-      object.removeContent(receiverThreadingProfile);
-    }
-
-    Element dispatcherThreadingProfile = object.getChild("dispatcher-threading-profile", CORE_NAMESPACE);
-    if (dispatcherThreadingProfile != null) {
-      report.report(WARN, dispatcherThreadingProfile, object,
-                    "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
-      object.removeContent(dispatcherThreadingProfile);
-    }
-
-    // Element customFileNameParser = object.getChild("custom-filename-parser", fileNs);
-    // if (customFileNameParser != null) {
-    // report.report(ERROR, customFileNameParser, object,
-    // "Use a DataWeave expression in <file:write> path attribute to set the filename of the file to write.",
-    // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-file#file_write");
-    // object.removeContent(customFileNameParser);
-    // }
-    //
-    // // Nothing to report here since this is now the default behavior, supporting expressions
-    // object.removeContent(object.getChild("expression-filename-parser", fileNs));
   }
 
   private void handleInputSpecificAttributes(Element object, MigrationReport report) {
