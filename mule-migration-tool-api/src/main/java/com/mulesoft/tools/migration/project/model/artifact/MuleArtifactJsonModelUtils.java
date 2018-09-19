@@ -12,6 +12,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mule.runtime.api.deployment.meta.Product.MULE_EE;
 
 import com.google.common.io.Files;
+import com.google.gson.JsonElement;
 import org.mule.runtime.api.deployment.meta.MuleApplicationModel;
 import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptor;
 import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptorBuilder;
@@ -37,7 +38,6 @@ public class MuleArtifactJsonModelUtils {
 
   public static final Charset MULE_ARTIFACT_DEFAULT_CHARSET = UTF_8;
   private static final String MULE_ID = "mule";
-  protected static MuleApplicationModelJsonSerializer serializer = new MuleApplicationModelJsonSerializer();
 
   /**
    * Builds a minimal mule-artifact.json representational model with the specified name.
@@ -80,8 +80,8 @@ public class MuleArtifactJsonModelUtils {
    * @return a {@link MuleArtifactJsonModel}
    */
   public static MuleArtifactJsonModel buildMinimalMuleArtifactJson(String minMuleVersion) {
-    MuleApplicationModel muleApplicationModel = serializer.deserialize(format("{ \"minMuleVersion\": \"%s\" }", minMuleVersion));
-    return new MuleArtifactJsonModel(muleApplicationModel);
+    String muleApplicationModelJson = format("{ \"minMuleVersion\": \"%s\" }", minMuleVersion);
+    return new MuleArtifactJsonModel(muleApplicationModelJson);
   }
 
   /**
@@ -95,9 +95,9 @@ public class MuleArtifactJsonModelUtils {
       return buildMinimalMuleArtifactJson(minMuleVersion);
     }
     secureProperties = secureProperties.stream().map(prop -> "\"" + prop + "\"").collect(toList());
-    MuleApplicationModel muleApplicationModel = serializer
-        .deserialize(format("{ \"minMuleVersion\": \"%s\", \"secureProperties\": %s }", minMuleVersion, secureProperties));
-    return new MuleArtifactJsonModel(muleApplicationModel);
+    String muleApplicationModelJson =
+        format("{ \"minMuleVersion\": \"%s\", \"secureProperties\": %s }", minMuleVersion, secureProperties);
+    return new MuleArtifactJsonModel(muleApplicationModelJson);
   }
 
   /**
@@ -106,9 +106,8 @@ public class MuleArtifactJsonModelUtils {
    * @return a {@link MuleArtifactJsonModel}
    */
   public static MuleArtifactJsonModel buildMuleArtifactJson(Path muleArtifactJson) throws IOException {
-    MuleApplicationModel muleApplicationModel =
-        serializer.deserialize(format(Files.toString(muleArtifactJson.toFile(), MULE_ARTIFACT_DEFAULT_CHARSET)));
-    return new MuleArtifactJsonModel(muleApplicationModel);
+    String muleApplicationModelJson = Files.toString(muleArtifactJson.toFile(), MULE_ARTIFACT_DEFAULT_CHARSET);
+    return new MuleArtifactJsonModel(muleApplicationModelJson);
   }
 
 }

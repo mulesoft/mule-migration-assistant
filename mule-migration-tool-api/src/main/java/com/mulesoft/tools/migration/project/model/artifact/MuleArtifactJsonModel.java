@@ -9,7 +9,22 @@ package com.mulesoft.tools.migration.project.model.artifact;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils.buildMinimalMuleArtifactJson;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.mule.runtime.api.deployment.meta.MuleApplicationModel;
+import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptor;
+import org.mule.runtime.api.deployment.meta.Product;
+
+import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+import static org.mule.runtime.api.deployment.meta.Product.valueOf;
+
 import org.mule.runtime.api.deployment.persistence.MuleApplicationModelJsonSerializer;
 
 import org.apache.commons.io.FileUtils;
@@ -17,6 +32,9 @@ import org.apache.commons.io.FileUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * The mule-artifact.json representational model.
@@ -26,24 +44,178 @@ import java.util.List;
  */
 public class MuleArtifactJsonModel {
 
-  private MuleApplicationModel model;
+  public static final String BUNDLE_DESCRIPTOR_LOADER = "bundleDescriptorLoader";
+  public static final String ID = "id";
+  public static final String ATTRIBUTES = "attributes";
+  public static final String CLASS_LOADER_MODEL_LOADER_DESCRIPTOR = "classLoaderModelLoaderDescriptor";
+  private Gson gson = new GsonBuilder().setPrettyPrinting().enableComplexMapKeySerialization().create();
+  private final JsonObject model;
+  public static final String NAME = "name";
+  public static final String CONFIGS = "configs";
+  public static final String MIN_MULE_VERSION_FIELD = "minMuleVersion";
+  public static final String REDEPLOYMENT_ENABLED = "redeploymentEnabled";
+  public static final String SECURE_PROPERTIES = "secureProperties";
+  public static final String REQUIRED_PRODUCT = "requiredProduct";
 
-  protected MuleArtifactJsonModel(MuleApplicationModel muleApplicationModel) {
-    this.model = muleApplicationModel;
+  public MuleArtifactJsonModel(String muleArtifactJsonContent) {
+    JsonParser parser = new JsonParser();
+    model = (JsonObject) parser.parse(muleArtifactJsonContent);
+  }
+
+  public void addProperty(String key, String value) throws IllegalArgumentException {
+    checkArgument(key != null, "Key should not be null");
+    checkArgument(value != null, "Value should not be null");
+    model.addProperty(key, value);
+  }
+
+  public Optional<Object> getProperty(String key) {
+    if (has(key)) {
+      return ofNullable(model.get(key).getAsString());
+    }
+    return empty();
+  }
+
+  public boolean has(String member) {
+    checkArgument(member != null, "Member should not be null");
+    return model.has(member);
+  }
+
+  public boolean remove(String member) {
+    checkArgument(member != null, "Member should not be null");
+    return model.remove(member) != null;
+  }
+
+  public MuleArtifactJsonModel(MuleApplicationModel model) {
+    this(new MuleApplicationModelJsonSerializer().serialize(model));
   }
 
   public String getMinMuleVersion() {
-    return model.getMinMuleVersion();
+    if (model.has(MIN_MULE_VERSION_FIELD)) {
+      return model.get(MIN_MULE_VERSION_FIELD).getAsString();
+    }
+    model.addProperty(MIN_MULE_VERSION_FIELD, MIN_MULE4_VALID_VERSION);
+    return MIN_MULE4_VALID_VERSION;
   }
 
-  public List<String> getSecureProperties() {
-    return model.getSecureProperties();
+  public void setMinMuleVersion(String minMuleVersion) {
+    checkArgument(minMuleVersion != null, "minMuleVersion should not be null");
+    model.addProperty(MIN_MULE_VERSION_FIELD, minMuleVersion);
   }
 
+  public Optional<List<String>> getSecureProperties() {
+    if (model.has(SECURE_PROPERTIES)) {
+      return ofNullable(gson.fromJson(model.getAsJsonArray(SECURE_PROPERTIES), new TypeToken<List<String>>() {}.getType()));
+    }
+    return empty();
+  }
+
+  public void setSecureProperties(List<String> secureProperties) {
+    checkArgument(secureProperties != null, "secureProperties should not be null");
+    JsonElement secureProps = gson.toJsonTree(secureProperties, new TypeToken<List<String>>() {}.getType());
+    model.add(SECURE_PROPERTIES, secureProps);
+  }
+
+  public Optional<Set<String>> getConfigs() {
+    if (model.has(CONFIGS)) {
+      return ofNullable(gson.fromJson(model.getAsJsonArray(CONFIGS), new TypeToken<Set<String>>() {}.getType()));
+    }
+    return empty();
+  }
+
+  public void setConfigs(Set<String> configs) {
+    checkArgument(configs != null, "configs should not be null");
+    JsonElement configsList = gson.toJsonTree(configs, new TypeToken<Set<String>>() {}.getType());
+    model.add(CONFIGS, configsList);
+  }
+
+  public Optional<MuleArtifactLoaderDescriptor> getBundleDescriptorLoader() {
+    MuleArtifactLoaderDescriptor descriptor = null;
+    String id = null;
+    Map<String, Object> attributes = null;
+    if (model.has(BUNDLE_DESCRIPTOR_LOADER)) {
+      JsonObject bundleDescriptorLoader = (JsonObject) model.get(BUNDLE_DESCRIPTOR_LOADER);
+      if (bundleDescriptorLoader.has(ID)) {
+        id = bundleDescriptorLoader.get(ID).getAsString();
+      }
+      if (bundleDescriptorLoader.has(ATTRIBUTES)) {
+        attributes = gson.fromJson(bundleDescriptorLoader.get(ATTRIBUTES), new TypeToken<Map<String, Object>>() {}.getType());
+      }
+      descriptor = new MuleArtifactLoaderDescriptor(id, attributes);
+    }
+    return Optional.ofNullable(descriptor);
+  }
+
+  public void setBundleDescriptorLoader(String id, Map<String, Object> attributes) {
+    checkArgument(id != null, "id should not be null");
+    checkArgument(attributes != null, "attributes should not be null");
+    JsonElement descriptor = gson.toJsonTree(new MuleArtifactLoaderDescriptor(id, attributes),
+                                             new TypeToken<MuleArtifactLoaderDescriptor>() {}.getType());
+    model.add(BUNDLE_DESCRIPTOR_LOADER, descriptor);
+  }
+
+  public Optional<MuleArtifactLoaderDescriptor> getClassLoaderModelLoaderDescriptor() {
+    MuleArtifactLoaderDescriptor descriptor = null;
+    String id = null;
+    Map<String, Object> attributes = null;
+    if (model.has(CLASS_LOADER_MODEL_LOADER_DESCRIPTOR)) {
+      JsonObject bundleDescriptorLoader = (JsonObject) model.get(CLASS_LOADER_MODEL_LOADER_DESCRIPTOR);
+      if (bundleDescriptorLoader.has(ID)) {
+        id = bundleDescriptorLoader.get(ID).getAsString();
+      }
+      if (bundleDescriptorLoader.has(ATTRIBUTES)) {
+        attributes = gson.fromJson(bundleDescriptorLoader.get(ATTRIBUTES), new TypeToken<Map<String, Object>>() {}.getType());
+      }
+      descriptor = new MuleArtifactLoaderDescriptor(id, attributes);
+    }
+    return Optional.ofNullable(descriptor);
+  }
+
+  public void setClassLoaderModelLoaderDescriptor(String id, Map<String, Object> attributes) {
+    checkArgument(id != null, "id should not be null");
+    checkArgument(attributes != null, "attributes should not be null");
+    JsonElement descriptor = gson.toJsonTree(new MuleArtifactLoaderDescriptor(id, attributes),
+                                             new TypeToken<MuleArtifactLoaderDescriptor>() {}.getType());
+    model.add(CLASS_LOADER_MODEL_LOADER_DESCRIPTOR, descriptor);
+  }
+
+  public Optional<String> getName() {
+    if (model.has(NAME)) {
+      return ofNullable(model.get(NAME).getAsString());
+    }
+    return empty();
+  }
+
+  public void setName(String name) {
+    checkArgument(name != null, "name should not be null");
+    model.addProperty(NAME, name);
+  }
+
+  public Optional<Product> getRequiredProduct() {
+    if (model.has(REQUIRED_PRODUCT)) {
+      return of(valueOf(model.get(REQUIRED_PRODUCT).getAsString()));
+    }
+    return empty();
+  }
+
+  public void setRequiredProduct(Product requiredProduct) {
+    checkArgument(requiredProduct != null, "requiredProduct should not be null");
+    model.addProperty(REQUIRED_PRODUCT, requiredProduct.toString());
+  }
+
+  public Optional<Boolean> isRedeploymentEnabled() {
+    if (model.has(REDEPLOYMENT_ENABLED)) {
+      return of(model.get(REDEPLOYMENT_ENABLED).getAsBoolean());
+    }
+    return empty();
+  }
+
+  public void setIsRedeploymentEnabled(boolean redeploymentEnabled) {
+    model.addProperty(REDEPLOYMENT_ENABLED, redeploymentEnabled);
+  }
 
   @Override
   public String toString() {
-    return new MuleApplicationModelJsonSerializer().serialize(model);
+    return gson.toJson(model);
   }
 
   /**
@@ -54,10 +226,8 @@ public class MuleArtifactJsonModel {
    */
   public static class MuleApplicationJsonModelBuilder {
 
-    private final MuleApplicationModelJsonSerializer serializer = new MuleApplicationModelJsonSerializer();
     private Path muleArtifactJsonPath;
     private String muleVersion;
-    private List<String> secureProperties;
 
     public MuleApplicationJsonModelBuilder withMuleArtifactJson(Path muleArtifactJsonPath) {
       this.muleArtifactJsonPath = muleArtifactJsonPath;
@@ -79,16 +249,11 @@ public class MuleArtifactJsonModel {
       checkArgument(muleArtifactJsonPath != null, "mule-artifact.json path should not be null");
       if (!muleArtifactJsonPath.toAbsolutePath().toFile().exists()
           && muleArtifactJsonPath.toAbsolutePath().getParent().toFile().exists()) {
-        return buildMinimalMuleArtifactJson(muleVersion, secureProperties);
+        return buildMinimalMuleArtifactJson(muleVersion);
       }
-      MuleApplicationModel model = getModel(muleArtifactJsonPath);
-      return new MuleArtifactJsonModel(model);
-    }
-
-
-    private MuleApplicationModel getModel(Path muleArtifactJsonPath) throws IOException {
       String muleArtifactJsonContent = FileUtils.readFileToString(muleArtifactJsonPath.toFile(), (String) null);
-      return serializer.deserialize(muleArtifactJsonContent);
+
+      return new MuleArtifactJsonModel(muleArtifactJsonContent);
     }
   }
 }
