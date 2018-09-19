@@ -164,7 +164,6 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
     expressionsPerProperty.put("originalFilename", "message.attributes.name");
     expressionsPerProperty.put("fileSize", "message.attributes.size");
     expressionsPerProperty.put("timestamp", "message.attributes.timestamp");
-    // expressionsPerProperty.put("MULE.FORCE_SYNC", "false");
 
     try {
       addAttributesMapping(getApplicationModel(), "org.mule.extension.ftp.api.ftp.FtpFileAttributes", expressionsPerProperty);
