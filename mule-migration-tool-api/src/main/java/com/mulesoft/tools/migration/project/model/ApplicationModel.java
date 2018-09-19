@@ -224,6 +224,7 @@ public class ApplicationModel {
    */
   public void removeNameSpace(Namespace namespace, String schemaLocation, Document document) {
     Element rootElement = document.getRootElement();
+
     rootElement.removeNamespaceDeclaration(namespace);
 
     Attribute schemaLocationAttribute = rootElement.getAttribute("schemaLocation", rootElement.getNamespace("xsi"));

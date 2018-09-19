@@ -73,7 +73,6 @@ public class JmsOutboundTest {
   }
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
-  // private VmGlobalEndpoint jmsGlobalEndpoint;
   private JmsOutboundEndpoint jmsOutboundEndpoint;
   private OutboundEndpoint outboundEndpoint;
   private JmsConnector jmsConfig;

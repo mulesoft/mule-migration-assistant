@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 
 import com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpEeInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsInboundEndpoint;
@@ -36,6 +37,8 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
   private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
   private static final String FILE_NS_PREFIX = "file";
   private static final String FILE_NS_URI = "http://www.mulesoft.org/schema/mule/file";
+  private static final String FTP_NS_PREFIX = "ftp";
+  private static final String FTP_NS_URI = "http://www.mulesoft.org/schema/mule/ee/ftp";
   private static final String JMS_NS_PREFIX = "jms";
   private static final String JMS_NS_URI = "http://www.mulesoft.org/schema/mule/jms";
   private static final String VM_NS_PREFIX = "vm";
@@ -71,9 +74,15 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
       if (address.startsWith("file://")) {
         migrator = new FileInboundEndpoint();
         object.setNamespace(Namespace.getNamespace(FILE_NS_PREFIX, FILE_NS_URI));
+      } else if (address.startsWith("ftp://")) {
+        migrator = new FtpEeInboundEndpoint();
+        object.setNamespace(Namespace.getNamespace(FTP_NS_PREFIX, FTP_NS_URI));
       } else if (address.startsWith("http://")) {
         migrator = new HttpInboundEndpoint();
         object.setNamespace(Namespace.getNamespace(HTTP_NS_PREFIX, HTTP_NS_URI));
+      } else if (address.startsWith("https://")) {
+        migrator = new HttpsInboundEndpoint();
+        object.setNamespace(Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https"));
       } else if (address.startsWith("jms://")) {
         migrator = new JmsInboundEndpoint();
         object.setNamespace(Namespace.getNamespace(JMS_NS_PREFIX, JMS_NS_URI));
@@ -100,6 +109,9 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
         if (address.startsWith("file://")) {
           migrator = new FileInboundEndpoint();
           object.setNamespace(Namespace.getNamespace(FILE_NS_PREFIX, FILE_NS_URI));
+        } else if (address.startsWith("ftp://")) {
+          migrator = new FtpEeInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace(FTP_NS_PREFIX, FTP_NS_URI));
         } else if (address.startsWith("http://")) {
           migrator = new HttpInboundEndpoint();
           object.setNamespace(Namespace.getNamespace(HTTP_NS_PREFIX, HTTP_NS_URI));

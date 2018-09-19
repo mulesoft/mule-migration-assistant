@@ -8,13 +8,12 @@ package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
-import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -132,6 +131,8 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       if (m3c.getAttributeValue("numberOfConsumers") != null) {
         object.setAttribute("numberOfConsumers", m3c.getAttributeValue("numberOfConsumers"));
       }
+
+      handleConnectorChildElements(m3c, new Element("connection", CORE_NAMESPACE), report);
     });
 
     String destination = processAddress(object, report).map(address -> {

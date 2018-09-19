@@ -39,8 +39,7 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
 
       referent.addContent(children.stream().map(e -> e.clone()).collect(toList()));
 
-      referent.setAttribute("name", referent.getAttributeValue("ref"));
-      referent.removeAttribute("ref");
+      referent.getAttribute("ref").setName("name");
     }
 
     for (Element referent : getInboundRefs(object)) {
@@ -50,8 +49,7 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
 
       referent.addContent(children.stream().map(e -> e.clone()).collect(toList()));
 
-      referent.setAttribute("name", referent.getAttributeValue("ref"));
-      referent.removeAttribute("ref");
+      referent.getAttribute("ref").setName("name");
     }
 
     for (Element referent : getOutboundRefs(object)) {
@@ -61,8 +59,7 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
 
       referent.addContent(children.stream().map(e -> e.clone()).collect(toList()));
 
-      referent.setAttribute("name", referent.getAttributeValue("ref"));
-      referent.removeAttribute("ref");
+      referent.getAttribute("ref").setName("name");
     }
 
     object.detach();

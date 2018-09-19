@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:ftp="http://www.mulesoft.org/schema/mule/ee/ftp"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/ee/ftp http://www.mulesoft.org/schema/mule/ee/ftp/current/mule-ftp-ee.xsd">
+
+    <ftp:connector name="ftpConnector" 
+                   validateConnections="false" 
+                   fileAge="5000" 
+                   moveToDirectory="/done"
+                   moveToPattern="#[message.inboundProperties['originalFilename']].processed"/>
+                   
+    <flow name="flow">
+        <ftp:inbound-endpoint address="ftp://anonymous:password@localhost:${port1}" connector-ref="ftpConnector"/>
+        <logger />
+    </flow>
+</mule>

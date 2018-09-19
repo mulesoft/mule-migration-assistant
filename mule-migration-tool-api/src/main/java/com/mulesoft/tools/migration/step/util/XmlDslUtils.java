@@ -7,9 +7,11 @@
 package com.mulesoft.tools.migration.step.util;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -31,6 +33,7 @@ import org.jdom2.located.LocatedJDOMFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * Provides reusable methods for common migration scenarios.
@@ -60,7 +63,7 @@ public final class XmlDslUtils {
   /**
    * Assuming the value of {@code attr} is an expression, migrate it and update the value.
    *
-   * @param attr         the attribute containing the expression to migrate
+   * @param attr the attribute containing the expression to migrate
    * @param exprMigrator the migrator for the expressions
    */
   public static void migrateExpression(Attribute attr, ExpressionMigrator exprMigrator) {
@@ -105,7 +108,7 @@ public final class XmlDslUtils {
     buildAttributesToInboundProperties(report, object.getParent(), index + 1);
 
     if (expectsOutboundProperties) {
-      Element errorHandlerElement = getFlowExcetionHandlingElement(object.getParentElement());
+      Element errorHandlerElement = getFlowExceptionHandlingElement(object.getParentElement());
       if (errorHandlerElement != null) {
         buildOutboundPropertiesToVar(report, object.getParent(), object.getParentElement().indexOf(errorHandlerElement) - 1,
                                      consumeStreams);
@@ -202,6 +205,34 @@ public final class XmlDslUtils {
     return op2v;
   }
 
+  public static void migrateRedeliveryPolicyChildren(Element redeliveryPolicy, MigrationReport report) {
+    Element dlq = redeliveryPolicy.getChild("dead-letter-queue", CORE_NAMESPACE);
+    if (dlq != null) {
+      Element flow = getFlow(redeliveryPolicy);
+      Element errorHandler = getFlowExceptionHandlingElement(flow);
+
+      if (errorHandler == null) {
+        errorHandler = new Element("error-handler", CORE_NAMESPACE);
+        flow.addContent(errorHandler);
+      }
+
+      Optional<Element> redeliveryExhaustedHandler =
+          errorHandler.getChildren().stream().filter(e -> "REDELIVERY_EXHAUSTED".equals(e.getAttributeValue("type"))).findFirst();
+
+      if (redeliveryExhaustedHandler.isPresent()) {
+        report.report(ERROR, dlq, redeliveryPolicy,
+                      "Flow already has a `REDELIVERY_EXHAUSTED` error handler and also has a `dead-letter-queue` in the `idempotent-redeliery-policy`");
+      } else {
+        Element handler = new Element("on-error-propagate", CORE_NAMESPACE).setAttribute("type", "REDELIVERY_EXHAUSTED");
+        errorHandler.addContent(handler);
+        handler.addContent(dlq.getChildren().stream().map(c -> c.detach()).collect(toList()));
+      }
+
+      dlq.detach();
+    }
+
+  }
+
   /**
    * Add the required compatibility namespace declaration on document.
    */
@@ -210,8 +241,8 @@ public final class XmlDslUtils {
   }
 
   /**
-   * @param source        the element to remove the attribute from
-   * @param target        the element to add the element to
+   * @param source the element to remove the attribute from
+   * @param target the element to add the element to
    * @param attributeName the name of the attribute to move from source to target
    * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
    */
@@ -220,8 +251,8 @@ public final class XmlDslUtils {
   }
 
   /**
-   * @param source              the element to remove the attribute from
-   * @param target              the element to add the element to
+   * @param source the element to remove the attribute from
+   * @param target the element to add the element to
    * @param sourceAttributeName the name of the attribute to remove from source
    * @param targetAttributeName the name of the attribute to add to target
    * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
@@ -309,7 +340,7 @@ public final class XmlDslUtils {
         .matches("choice-exception-strategy|catch-exception-strategy|rollback-exception-strategy|exception-strategy|error-handler");
   }
 
-  public static Element getFlowExcetionHandlingElement(Element flow) {
+  public static Element getFlowExceptionHandlingElement(Element flow) {
     return flow.getChildren().stream().filter(e -> isErrorHanldingElement(e)).findFirst().orElse(null);
   }
 

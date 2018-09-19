@@ -15,7 +15,9 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddr
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateRedeliveryPolicyChildren;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -68,13 +70,17 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       redelivery.setName("redelivery-policy");
       Attribute exprAttr = redelivery.getAttribute("idExpression");
 
-      // TODO MMT-128
-      exprAttr.setValue(exprAttr.getValue().replaceAll("#\\[header\\:inbound\\:originalFilename\\]", "#[attributes.name]"));
+      if (exprAttr != null) {
+        // TODO MMT-128
+        exprAttr.setValue(exprAttr.getValue().replaceAll("#\\[header\\:inbound\\:originalFilename\\]", "#[attributes.name]"));
 
-      if (getExpressionMigrator().isWrapped(exprAttr.getValue())) {
-        exprAttr
-            .setValue(getExpressionMigrator().wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, object)));
+        if (getExpressionMigrator().isWrapped(exprAttr.getValue())) {
+          exprAttr.setValue(getExpressionMigrator()
+              .wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, object)));
+        }
       }
+
+      migrateRedeliveryPolicyChildren(redelivery, report);
     }
 
     Element schedulingStr = object.getChild("scheduling-strategy", CORE_NAMESPACE);
@@ -113,82 +119,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       }
     }
 
-    Element newMatcher = null;
-
-    Element globFilterIn = object.getChild("filename-wildcard-filter", fileNs);
-    if (globFilterIn != null) {
-      if (newMatcher == null) {
-        newMatcher = buildNewMatcher(object, fileNs);
-      }
-      newMatcher.setAttribute("filenamePattern", globFilterIn.getAttributeValue("pattern"));
-
-      if (globFilterIn.getAttribute("caseSensitive") != null) {
-        report.report(WARN, globFilterIn, newMatcher,
-                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-                      "https://docs.mulesoft.com/connectors/file-on-new-file");
-        globFilterIn.removeAttribute("caseSensitive");
-      }
-
-      object.removeContent(globFilterIn);
-    }
-
-    Element customFilterIn = object.getChild("custom-filter", COMPATIBILITY_NAMESPACE);
-    if (customFilterIn != null) {
-      object.removeContent(customFilterIn);
-      // The ERROR will be reported when all custom-filters are queried to be migrated
-      object.getParentElement().addContent(3, customFilterIn);
-    }
-
-    Element regexFilterIn = object.getChild("filename-regex-filter", fileNs);
-    if (regexFilterIn != null) {
-      if (newMatcher == null) {
-        newMatcher = buildNewMatcher(object, fileNs);
-      }
-      newMatcher.setAttribute("filenamePattern", "regex:" + regexFilterIn.getAttributeValue("pattern"));
-
-      if (regexFilterIn.getAttribute("caseSensitive") != null) {
-        report.report(WARN, regexFilterIn, newMatcher,
-                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-                      "https://docs.mulesoft.com/connectors/file-on-new-file");
-        regexFilterIn.removeAttribute("caseSensitive");
-      }
-
-      object.removeContent(regexFilterIn);
-    }
-
-    Element globFilter = object.getParentElement().getChild("filename-wildcard-filter", fileNs);
-    if (globFilter != null) {
-      if (newMatcher == null) {
-        newMatcher = buildNewMatcher(object, fileNs);
-      }
-      newMatcher.setAttribute("filenamePattern", globFilter.getAttributeValue("pattern"));
-
-      if (globFilter.getAttribute("caseSensitive") != null) {
-        report.report(WARN, globFilter, newMatcher,
-                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-                      "https://docs.mulesoft.com/connectors/file-on-new-file");
-        globFilter.removeAttribute("caseSensitive");
-      }
-
-      object.getParentElement().removeContent(globFilter);
-    }
-
-    Element regexFilter = object.getParentElement().getChild("filename-regex-filter", fileNs);
-    if (regexFilter != null) {
-      if (newMatcher == null) {
-        newMatcher = buildNewMatcher(object, fileNs);
-      }
-      newMatcher.setAttribute("filenamePattern", "regex:" + regexFilter.getAttributeValue("pattern"));
-
-      if (regexFilter.getAttribute("caseSensitive") != null) {
-        report.report(WARN, regexFilter, newMatcher,
-                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-                      "https://docs.mulesoft.com/connectors/file-on-new-file");
-        regexFilter.removeAttribute("caseSensitive");
-      }
-
-      object.getParentElement().removeContent(regexFilter);
-    }
+    migrateFileFilters(object, report, fileNs, getApplicationModel());
 
     object.setAttribute("applyPostActionWhenFailed", "false");
 
@@ -237,12 +168,93 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     }
   }
 
-  private Element buildNewMatcher(Element object, Namespace fileNs) {
+  public static void migrateFileFilters(Element object, MigrationReport report, Namespace ns, ApplicationModel appModel) {
+    Element newMatcher = null;
+
+    Namespace fileNs = Namespace.getNamespace(FILE_NS_PREFIX, FILE_NS_URI);
+
+    Element globFilterIn = object.getChild("filename-wildcard-filter", fileNs);
+    if (globFilterIn != null) {
+      if (newMatcher == null) {
+        newMatcher = buildNewMatcher(object, ns, appModel);
+      }
+      newMatcher.setAttribute("filenamePattern", globFilterIn.getAttributeValue("pattern"));
+
+      if (globFilterIn.getAttribute("caseSensitive") != null) {
+        report.report(WARN, globFilterIn, newMatcher,
+                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
+                      "https://docs.mulesoft.com/connectors/file-on-new-file");
+        globFilterIn.removeAttribute("caseSensitive");
+      }
+
+      object.removeContent(globFilterIn);
+    }
+
+    Element customFilterIn = object.getChild("custom-filter", COMPATIBILITY_NAMESPACE);
+    if (customFilterIn != null) {
+      object.removeContent(customFilterIn);
+      // The ERROR will be reported when all custom-filters are queried to be migrated
+      object.getParentElement().addContent(3, customFilterIn);
+    }
+
+    Element regexFilterIn = object.getChild("filename-regex-filter", fileNs);
+    if (regexFilterIn != null) {
+      if (newMatcher == null) {
+        newMatcher = buildNewMatcher(object, ns, appModel);
+      }
+      newMatcher.setAttribute("filenamePattern", "regex:" + regexFilterIn.getAttributeValue("pattern"));
+
+      if (regexFilterIn.getAttribute("caseSensitive") != null) {
+        report.report(WARN, regexFilterIn, newMatcher,
+                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
+                      "https://docs.mulesoft.com/connectors/file-on-new-file");
+        regexFilterIn.removeAttribute("caseSensitive");
+      }
+
+      object.removeContent(regexFilterIn);
+    }
+
+    Element globFilter = object.getParentElement().getChild("filename-wildcard-filter", fileNs);
+    if (globFilter != null) {
+      if (newMatcher == null) {
+        newMatcher = buildNewMatcher(object, ns, appModel);
+      }
+      newMatcher.setAttribute("filenamePattern", globFilter.getAttributeValue("pattern"));
+
+      if (globFilter.getAttribute("caseSensitive") != null) {
+        report.report(WARN, globFilter, newMatcher,
+                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
+                      "https://docs.mulesoft.com/connectors/file-on-new-file");
+        globFilter.removeAttribute("caseSensitive");
+      }
+
+      object.getParentElement().removeContent(globFilter);
+    }
+
+    Element regexFilter = object.getParentElement().getChild("filename-regex-filter", fileNs);
+    if (regexFilter != null) {
+      if (newMatcher == null) {
+        newMatcher = buildNewMatcher(object, ns, appModel);
+      }
+      newMatcher.setAttribute("filenamePattern", "regex:" + regexFilter.getAttributeValue("pattern"));
+
+      if (regexFilter.getAttribute("caseSensitive") != null) {
+        report.report(WARN, regexFilter, newMatcher,
+                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
+                      "https://docs.mulesoft.com/connectors/file-on-new-file");
+        regexFilter.removeAttribute("caseSensitive");
+      }
+
+      object.getParentElement().removeContent(regexFilter);
+    }
+  }
+
+  private static Element buildNewMatcher(Element object, Namespace ns, ApplicationModel appModel) {
     Element newMatcher;
-    newMatcher = new Element("matcher", fileNs);
+    newMatcher = new Element("matcher", ns);
 
     List<Element> referencedMatcher =
-        getApplicationModel().getNodes("/*/file:matcher[@name='" + object.getAttributeValue("matcher") + "']");
+        appModel.getNodes("/*/" + ns.getPrefix() + ":matcher[@name='" + object.getAttributeValue("matcher") + "']");
     if (!referencedMatcher.isEmpty()) {
       for (Attribute attribute : referencedMatcher.get(0).getAttributes()) {
         newMatcher.setAttribute(attribute.getName(), attribute.getValue());
