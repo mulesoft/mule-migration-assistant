@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.ftp;
 
 import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpConfig.FTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 
@@ -49,17 +50,34 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
     Element ftpConfig = migrateFtpConfig(object, configName, config);
     Element connection = ftpConfig.getChild("connection", FTP_NAMESPACE);
 
+    processAddress(object, report).ifPresent(address -> {
+      connection.setAttribute("host", address.getHost());
+      connection.setAttribute("port", address.getPort());
+
+      if (address.getCredentials() != null) {
+        String[] credsSplit = address.getCredentials().split(":");
+
+        connection.setAttribute("username", credsSplit[0]);
+        connection.setAttribute("password", credsSplit[1]);
+      }
+      object.setAttribute("path", address.getPath() != null ? address.getPath() : "/");
+    });
     copyAttributeIfPresent(object, connection, "host");
     copyAttributeIfPresent(object, connection, "port");
     copyAttributeIfPresent(object, connection, "user", "username");
     copyAttributeIfPresent(object, connection, "password");
 
+    if (object.getAttribute("connector-ref") != null) {
+      object.getAttribute("connector-ref").setName("config-ref");
+    } else {
+      object.removeAttribute("name");
+      object.setAttribute("config-ref", ftpConfig.getAttributeValue("name"));
+    }
+
     if (object.getAttribute("responseTimeout") != null) {
       copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
       connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
     }
-
-    object.getAttribute("connector-ref").setName("config-ref");
 
     extractInboundChildren(object, getApplicationModel());
 

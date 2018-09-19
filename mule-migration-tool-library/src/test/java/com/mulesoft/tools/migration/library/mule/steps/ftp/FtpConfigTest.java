@@ -55,8 +55,7 @@ public class FtpConfigTest {
         "ftp-config-03",
         "ftp-config-04",
         "ftp-config-05",
-        "ftp-config-06",
-        "ftp-config-07"
+        "ftp-config-06"
     };
   }
 

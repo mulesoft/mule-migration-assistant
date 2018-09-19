@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd
+       http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <ftp:config name="flowFtpConfig">
+        <ftp:connection username="mule-test" password="mule-test" host="localhost" port="${port}">
+            <reconnection failsDeployment="true"/>
+        </ftp:connection>
+    </ftp:config>
+
+    <flow name="flow">
+        <compatibility:outbound-properties-to-var/>
+        <ftp:write config-ref="flowFtpConfig" path="/~"/>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+</mule>

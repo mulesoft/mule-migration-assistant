@@ -155,7 +155,7 @@ public final class TransportsUtils {
 
       reconnect.removeAttribute("blocking");
 
-      Element reconnection = object.getChild("reconnection", CORE_NAMESPACE);
+      Element reconnection = connection.getChild("reconnection", CORE_NAMESPACE);
       if (reconnection == null) {
         reconnection = new Element("reconnection", CORE_NAMESPACE);
         connection.addContent(reconnection);

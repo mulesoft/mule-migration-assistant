@@ -5,10 +5,10 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd">
 
-    <ftp:config name="FTP">
-        <ftp:connection>
-            <reconnection frequency="${pollingFrequency}" count="${count}" failsDeployment="true"/>
-        </ftp:connection>
-    </ftp:config>
+    <endpoint name="globalFtpEndpoint" address="ftp://anonymous:password@localhost:${port1}/lostConnection" />
 
+    <flow name="flow">
+        <inbound-endpoint ref="globalFtpEndpoint" />
+        <logger />
+    </flow>
 </mule>

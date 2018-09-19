@@ -17,7 +17,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
+import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
+import com.mulesoft.tools.migration.library.mule.steps.endpoint.OutboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -51,7 +53,9 @@ public class FtpOutboundTest {
   public static Object[] params() {
     return new Object[] {
         "ftp-outbound-01",
-        "ftp-outbound-02"
+        "ftp-outbound-02",
+        "ftp-outbound-03",
+        "ftp-outbound-04"
     };
   }
 
@@ -63,12 +67,14 @@ public class FtpOutboundTest {
     targetPath = FTP_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
   }
 
+  private GenericGlobalEndpoint genericGlobalEndpoint;
   private FtpGlobalEndpoint ftpGlobalEndpoint;
   private FtpEeGlobalEndpoint ftpEeGlobalEndpoint;
   private FtpConfig ftpConfig;
   private FtpEeConfig ftpEeConfig;
   private FtpOutboundEndpoint ftpOutboundEndpoint;
   private FtpEeOutboundEndpoint ftpEeOutboundEndpoint;
+  private OutboundEndpoint outboundEndpoint;
   private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
 
   private Document doc;
@@ -94,6 +100,9 @@ public class FtpOutboundTest {
         });
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
+    genericGlobalEndpoint = new GenericGlobalEndpoint();
+    genericGlobalEndpoint.setApplicationModel(appModel);
+
     ftpGlobalEndpoint = new FtpGlobalEndpoint();
     ftpGlobalEndpoint.setApplicationModel(appModel);
     ftpEeGlobalEndpoint = new FtpEeGlobalEndpoint();
@@ -112,11 +121,16 @@ public class FtpOutboundTest {
     ftpEeOutboundEndpoint.setApplicationModel(appModel);
     ftpEeOutboundEndpoint
         .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+    outboundEndpoint = new OutboundEndpoint();
+    // inboundEndpoint.setExpressionMigrator(expressionMigrator);
+    outboundEndpoint.setApplicationModel(appModel);
     removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
   }
 
   @Test
   public void execute() throws Exception {
+    getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, ftpGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> ftpGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, ftpEeGlobalEndpoint.getAppliedTo().getExpression())
@@ -129,6 +143,8 @@ public class FtpOutboundTest {
         .forEach(node -> ftpOutboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, ftpEeOutboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> ftpEeOutboundEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, outboundEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> outboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
         .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 

@@ -133,10 +133,6 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
     } else {
       object.removeAttribute("name");
       object.setAttribute("config-ref", ftpConfig.getAttributeValue("name"));
-
-      // Set the Mule 3 defaults since those are different in Mule 4
-      // object.setAttribute("autoDelete", "true");
-      // object.setAttribute("recursive", "false");
     }
 
     copyAttributeIfPresent(object, connection, "passive");
