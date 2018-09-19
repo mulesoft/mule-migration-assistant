@@ -58,7 +58,7 @@ public class SetSecurePropertiesTest {
     setSecureProperties.execute(projectBasePath, mock(MigrationReport.class));
     MuleArtifactJsonModel model = MuleArtifactJsonModelUtils.buildMuleArtifactJson(muleArtifactJsonFile.toPath());
 
-    assertThat("Secure properties were not created successfully", model.getSecureProperties(),
+    assertThat("Secure properties were not created successfully", model.getSecureProperties().get(),
                equalTo(newArrayList("lala", "pepe")));
 
     Properties properties = new Properties();
