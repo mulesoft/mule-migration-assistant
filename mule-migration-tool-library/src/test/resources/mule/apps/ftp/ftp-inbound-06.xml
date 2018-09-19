@@ -26,7 +26,7 @@
         <compatibility:outbound-properties-to-var/>
         <error-handler>
             <on-error-propagate type="REDELIVERY_EXHAUSTED">
-                <logger messgae="I'm dead! :("/>
+                <logger message="I'm dead! :("/>
             </on-error-propagate>
         </error-handler>
     </flow>

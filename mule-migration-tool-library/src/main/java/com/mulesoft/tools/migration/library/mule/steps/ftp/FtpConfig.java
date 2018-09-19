@@ -100,16 +100,6 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
       connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
     }
 
-    // Element matcher = new Element("matcher", FTP_NAMESPACE_URI);
-    // matcher.setAttribute("name", object.getAttributeValue("name") + "Matcher");
-    // boolean matcherUsed = false;
-    //
-    // String fileAge = null;
-    // if (object.getAttribute("fileAge") != null) {
-    // fileAge = object.getAttributeValue("fileAge");
-    // object.removeAttribute("fileAge");
-    // }
-
     handleChildElements(object, connection, report);
     handleInputSpecificAttributes(object, report);
     handleOutputSpecificAttributes(object, report);
@@ -158,12 +148,6 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
         .forEach(e -> passConnectorConfigToInboundEnpoint(object, e));
 
     object.removeAttribute("pollingFrequency");
-    // object.removeAttribute("readFromDirectory");
-    // object.removeAttribute("moveToDirectory");
-    // object.removeAttribute("autoDelete");
-    // object.removeAttribute("recursive");
-    // object.removeAttribute("moveToDirectory");
-    // object.removeAttribute("moveToPattern");
   }
 
   private void handleOutputSpecificAttributes(Element object, MigrationReport report) {
@@ -185,35 +169,6 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
     Element fixedFrequency = new Element("fixed-frequency", CORE_NAMESPACE);
     fixedFrequency.setAttribute("frequency", object.getAttributeValue("pollingFrequency", "1000"));
     schedulingStr.addContent(fixedFrequency);
-
-    // if (object.getAttribute("readFromDirectory") != null) {
-    // listener.setAttribute("directory", object.getAttributeValue("readFromDirectory"));
-    // }
-    // if (fileAge != null && !"0".equals(fileAge)) {
-    // listener.setAttribute("timeBetweenSizeCheck", fileAge);
-    // }
-    //
-    // String autoDelete = changeDefault("true", "false", object.getAttributeValue("autoDelete"));
-    // if (autoDelete != null) {
-    // listener.setAttribute("autoDelete", autoDelete);
-    // }
-    //
-    // String recursive = changeDefault("false", "true", object.getAttributeValue("recursive"));
-    // listener.setAttribute("recursive", recursive != null ? recursive : "true");
-    //
-    // if (object.getAttribute("moveToDirectory") != null && listener.getAttribute("moveToDirectory") == null) {
-    // listener.setAttribute("moveToDirectory", object.getAttributeValue("moveToDirectory"));
-    // }
-    //
-    // if (object.getAttribute("moveToPattern") != null) {
-    // String moveToPattern = object.getAttributeValue("moveToPattern");
-    // listener.setAttribute("renameTo",
-    // getExpressionMigrator().migrateExpression(moveToPattern, true, listener));
-    // }
-    //
-    // if (matcherUsed) {
-    // listener.setAttribute("matcher", object.getAttributeValue("name") + "Matcher");
-    // }
   }
 
   private void passConnectorConfigToOutboundEndpoint(Element object, Element write) {

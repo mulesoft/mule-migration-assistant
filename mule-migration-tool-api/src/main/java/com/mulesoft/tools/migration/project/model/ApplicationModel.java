@@ -221,9 +221,12 @@ public class ApplicationModel {
    * @param namespace
    * @param schemaLocation
    * @param document
+   *
+   * @return true if a namespace declaration was found and removed
    */
   public void removeNameSpace(Namespace namespace, String schemaLocation, Document document) {
     Element rootElement = document.getRootElement();
+
     rootElement.removeNamespaceDeclaration(namespace);
 
     Attribute schemaLocationAttribute = rootElement.getAttribute("schemaLocation", rootElement.getNamespace("xsi"));

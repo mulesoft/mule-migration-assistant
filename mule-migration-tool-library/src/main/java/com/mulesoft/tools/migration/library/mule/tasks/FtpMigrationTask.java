@@ -18,6 +18,7 @@ import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpEeInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpEeOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpNamespaceHandler;
 import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpOutboundEndpoint;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -53,8 +54,7 @@ public class FtpMigrationTask extends AbstractMigrationTask {
                         new FtpGlobalEndpoint(), new FtpEeGlobalEndpoint(),
                         new FtpConfig(), new FtpEeConfig(),
                         new FtpInboundEndpoint(), new FtpEeInboundEndpoint(),
-                        new FtpOutboundEndpoint(), new FtpEeOutboundEndpoint()
-    //                        new FileTransformers()
-    );
+                        new FtpOutboundEndpoint(), new FtpEeOutboundEndpoint(),
+                        new FtpNamespaceHandler());
   }
 }

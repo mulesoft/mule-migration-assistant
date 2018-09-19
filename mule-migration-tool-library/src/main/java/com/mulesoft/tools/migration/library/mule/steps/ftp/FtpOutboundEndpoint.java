@@ -44,8 +44,13 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
     object.setNamespace(FTP_NAMESPACE);
 
     String configName = object.getAttributeValue("connector-ref");
-    Optional<Element> config =
-        getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'config']");
+    Optional<Element> config;
+    if (configName != null) {
+      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI
+          + "' and local-name() = 'config' and @name = '" + configName + "']");
+    } else {
+      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'config']");
+    }
 
     Element ftpConfig = migrateFtpConfig(object, configName, config);
     Element connection = ftpConfig.getChild("connection", FTP_NAMESPACE);
@@ -82,77 +87,6 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
     extractInboundChildren(object, getApplicationModel());
 
     migrateOperationStructure(getApplicationModel(), object, report);
-
-    // object.setAttribute("path", compatibilityOutputFile("{"
-    // + " writeToDirectory: "
-    // + (object.getAttribute("path") == null ? propToDwExpr(object, "writeToDirectory")
-    // : "'" + object.getAttributeValue("path") + "'")
-    // + ","
-    // + " address: "
-    // + (object.getAttribute("address") != null
-    // ? ("'" + object.getAttributeValue("address").substring("file://".length()) + "'")
-    // : "null")
-    // + ","
-    // + " outputPattern: " + propToDwExpr(object, "outputPattern") + ","
-    // + " outputPatternConfig: " + getExpressionMigrator().unwrap(propToDwExpr(object, "outputPatternConfig"))
-    // + "}"));
-    //
-    // if (object.getAttribute("connector-ref") != null) {
-    // object.getAttribute("connector-ref").setName("config-ref");
-    // }
-    //
-    // if (object.getAttribute("outputAppend") != null && !"false".equals(object.getAttributeValue("outputAppend"))) {
-    // object.setAttribute("mode", "APPEND");
-    // }
-    //
-    // object.removeAttribute("writeToDirectory");
-    // object.removeAttribute("outputPattern");
-    // object.removeAttribute("outputPatternConfig");
-    // object.removeAttribute("outputAppend");
-    //
-    // if (object.getAttribute("name") != null) {
-    // object.removeAttribute("name");
-    // }
   }
-
-  // private String compatibilityOutputFile(String pathDslParams) {
-  // try {
-  // // Replicates logic from org.mule.transport.file.FileConnector.getOutputStream(OutboundEndpoint, MuleEvent)
-  // library(getMigrationScriptFolder(getApplicationModel().getProjectBasePath()), "FileWriteOutputFile.dwl",
-  // "" +
-  // "/**" + lineSeparator() +
-  // " * Emulates the outbound endpoint logic for determining the output filename of the Mule 3.x File transport."
-  // + lineSeparator() +
-  // " */" + lineSeparator() +
-  // "fun fileWriteOutputfile(vars: {}, pathDslParams: {}) = do {" + lineSeparator() +
-  // " ((vars.compatibility_outboundProperties['writeToDirectoryName']" + lineSeparator() +
-  // " default pathDslParams.writeToDirectory)" + lineSeparator() +
-  // " default pathDslParams.address)" + lineSeparator() +
-  // " ++ '/' ++" + lineSeparator() +
-  // " ((((pathDslParams.outputPattern" + lineSeparator() +
-  // " default vars.compatibility_outboundProperties.outputPattern)" + lineSeparator() +
-  // " default pathDslParams.outputPatternConfig)" + lineSeparator() +
-  // " default vars.compatibility_inboundProperties.filename)" + lineSeparator() +
-  // " default (uuid() ++ '.dat'))" + lineSeparator() +
-  // "}" + lineSeparator() +
-  // lineSeparator());
-  // } catch (IOException e) {
-  // throw new RuntimeException(e);
-  // }
-  //
-  // return "#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, " + pathDslParams + ")]";
-  // }
-  //
-  // private String propToDwExpr(Element object, String propName) {
-  // if (object.getAttribute(propName) != null) {
-  // if (getExpressionMigrator().isWrapped(object.getAttributeValue(propName))) {
-  // return getExpressionMigrator().migrateExpression(object.getAttributeValue(propName), true, object);
-  // } else {
-  // return "'" + object.getAttributeValue(propName) + "'";
-  // }
-  // } else {
-  // return "null";
-  // }
-  // }
 
 }

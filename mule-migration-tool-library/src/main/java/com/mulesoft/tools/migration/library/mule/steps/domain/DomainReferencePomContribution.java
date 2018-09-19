@@ -34,7 +34,7 @@ public class DomainReferencePomContribution implements PomContribution {
     return "Add Domain dependency.";
   }
 
-  private ApplicationModel getApplicationModel;
+  private ApplicationModel applicationModel;
 
   @Override
   public void execute(PomModel object, MigrationReport report) throws RuntimeException {
@@ -77,11 +77,11 @@ public class DomainReferencePomContribution implements PomContribution {
 
   @Override
   public ApplicationModel getApplicationModel() {
-    return getApplicationModel;
+    return applicationModel;
   }
 
   @Override
   public void setApplicationModel(ApplicationModel appModel) {
-    this.getApplicationModel = appModel;
+    this.applicationModel = appModel;
   }
 }

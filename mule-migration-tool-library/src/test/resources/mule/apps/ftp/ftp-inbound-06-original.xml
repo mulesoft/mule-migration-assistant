@@ -11,7 +11,7 @@
         <ftp:inbound-endpoint address="ftp://anonymous:password@localhost:${port1}">
             <idempotent-redelivery-policy maxRedeliveryCount="${maxRedeliveryAttempts}">
                 <dead-letter-queue>
-                    <logger messgae="I'm dead! :("/>
+                    <logger message="I'm dead! :("/>
                 </dead-letter-queue>
             </idempotent-redelivery-policy>
         </ftp:inbound-endpoint>

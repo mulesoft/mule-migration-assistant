@@ -53,8 +53,13 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     String configName = object.getAttributeValue("connector-ref");
-    Optional<Element> config =
-        getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'config']");
+    Optional<Element> config;
+    if (configName != null) {
+      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI
+          + "' and local-name() = 'config' and @name = '" + configName + "']");
+    } else {
+      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'config']");
+    }
 
     Element ftpConfig = migrateFtpConfig(object, configName, config);
     Element connection = ftpConfig.getChild("connection", FTP_NAMESPACE);
@@ -99,15 +104,6 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
 
     migrateFileFilters(object, report, FTP_NAMESPACE, getApplicationModel());
 
-    // object.setAttribute("applyPostActionWhenFailed", "false");
-    //
-    // String recursive = changeDefault("false", "true", object.getAttributeValue("recursive"));
-    // if (recursive != null) {
-    // object.setAttribute("recursive", recursive);
-    // } else {
-    // object.removeAttribute("recursive");
-    // }
-    //
     processAddress(object, report).ifPresent(address -> {
       connection.setAttribute("host", address.getHost());
       connection.setAttribute("port", address.getPort());
@@ -151,18 +147,6 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
       copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
       connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
     }
-
-    // if (object.getAttribute("comparator") != null || object.getAttribute("reverseOrder") != null) {
-    // report.report(ERROR, object, object,
-    // "'comparator'/'reverseOrder' are not yet supported by the file connector listener.",
-    // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-file#file_listener");
-    // object.removeAttribute("comparator");
-    // object.removeAttribute("reverseOrder");
-    // }
-    //
-    // if (object.getAttribute("name") != null) {
-    // object.removeAttribute("name");
-    // }
   }
 
   protected Optional<Element> fetchConfig(String configName) {
