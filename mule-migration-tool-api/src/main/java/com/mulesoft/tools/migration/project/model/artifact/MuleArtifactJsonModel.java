@@ -202,7 +202,7 @@ public class MuleArtifactJsonModel {
     model.addProperty(REQUIRED_PRODUCT, requiredProduct.toString());
   }
 
-  public Optional<Boolean> isRedeploymentEnabled() {
+  public Optional<Boolean> getIsRedeploymentEnabled() {
     if (model.has(REDEPLOYMENT_ENABLED)) {
       return of(model.get(REDEPLOYMENT_ENABLED).getAsBoolean());
     }

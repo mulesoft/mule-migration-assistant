@@ -337,17 +337,17 @@ public class MuleArtifactJsonModelTest {
 
   @Test
   public void isRedeploymentEnabled() {
-    assertThat("redeploymentEnabled should not be present", !model.isRedeploymentEnabled().isPresent());
+    assertThat("redeploymentEnabled should not be present", !model.getIsRedeploymentEnabled().isPresent());
     model = new MuleArtifactJsonModel(format("{ \"%s\": %s }", REDEPLOYMENT_ENABLED, true));
-    assertThat("redeploymentEnabled should be present", model.isRedeploymentEnabled().isPresent());
-    assertThat("redeploymentEnabled should be true", model.isRedeploymentEnabled().get());
+    assertThat("redeploymentEnabled should be present", model.getIsRedeploymentEnabled().isPresent());
+    assertThat("redeploymentEnabled should be true", model.getIsRedeploymentEnabled().get());
   }
 
   @Test
   public void setIsRedeploymentEnabled() {
     model = new MuleArtifactJsonModel(format("{ \"%s\": %s }", REDEPLOYMENT_ENABLED, true));
-    assertThat("redeploymentEnabled should be true", model.isRedeploymentEnabled().get());
+    assertThat("redeploymentEnabled should be true", model.getIsRedeploymentEnabled().get());
     model.setIsRedeploymentEnabled(false);
-    assertThat("redeploymentEnabled should be false", !model.isRedeploymentEnabled().get());
+    assertThat("redeploymentEnabled should be false", !model.getIsRedeploymentEnabled().get());
   }
 }
