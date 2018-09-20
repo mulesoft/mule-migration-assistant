@@ -83,6 +83,24 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
       } else if (address.startsWith("https://")) {
         migrator = new HttpsInboundEndpoint();
         object.setNamespace(Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https"));
+      } else if (address.startsWith("imap://")) {
+        migrator = new ImapInboundEndpoint();
+        object.setNamespace(Namespace.getNamespace("imap", "http://www.mulesoft.org/schema/mule/imap"));
+      } else if (address.startsWith("imaps://")) {
+        migrator = new ImapsInboundEndpoint();
+        object.setNamespace(Namespace.getNamespace("imaps", "http://www.mulesoft.org/schema/mule/imaps"));
+      } else if (address.startsWith("pop3://")) {
+        migrator = new Pop3InboundEndpoint();
+        object.setNamespace(Namespace.getNamespace("pop3", "http://www.mulesoft.org/schema/mule/pop3"));
+      } else if (address.startsWith("pop3s://")) {
+        migrator = new Pop3sInboundEndpoint();
+        object.setNamespace(Namespace.getNamespace("pop3s", "http://www.mulesoft.org/schema/mule/pop3s"));
+      } else if (address.startsWith("smtp://")) {
+        migrator = new SmtpInboundEndpoint();
+        object.setNamespace(Namespace.getNamespace("smtp", "http://www.mulesoft.org/schema/mule/smtp"));
+      } else if (address.startsWith("smtps://")) {
+        migrator = new SmtpsInboundEndpoint();
+        object.setNamespace(Namespace.getNamespace("smtps", "http://www.mulesoft.org/schema/mule/smtps"));
       } else if (address.startsWith("jms://")) {
         migrator = new JmsInboundEndpoint();
         object.setNamespace(Namespace.getNamespace(JMS_NS_PREFIX, JMS_NS_URI));
@@ -118,6 +136,24 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
         } else if (address.startsWith("https://")) {
           migrator = new HttpsInboundEndpoint();
           object.setNamespace(Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https"));
+        } else if (address.startsWith("imap://")) {
+          migrator = new ImapInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace("imap", "http://www.mulesoft.org/schema/mule/imap"));
+        } else if (address.startsWith("imaps://")) {
+          migrator = new ImapsInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace("imaps", "http://www.mulesoft.org/schema/mule/imaps"));
+        } else if (address.startsWith("pop3://")) {
+          migrator = new Pop3InboundEndpoint();
+          object.setNamespace(Namespace.getNamespace("pop3", "http://www.mulesoft.org/schema/mule/pop3"));
+        } else if (address.startsWith("pop3s://")) {
+          migrator = new Pop3sInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace("pop3s", "http://www.mulesoft.org/schema/mule/pop3s"));
+        } else if (address.startsWith("smtp://")) {
+          migrator = new SmtpInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace("smtp", "http://www.mulesoft.org/schema/mule/smtp"));
+        } else if (address.startsWith("smtps://")) {
+          migrator = new SmtpsInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace("smtps", "http://www.mulesoft.org/schema/mule/smtps"));
         } else if (address.startsWith("jms://")) {
           migrator = new JmsInboundEndpoint();
           object.setNamespace(Namespace.getNamespace(JMS_NS_PREFIX, JMS_NS_URI));

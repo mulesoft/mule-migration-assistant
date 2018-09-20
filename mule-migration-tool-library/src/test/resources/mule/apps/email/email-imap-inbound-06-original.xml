@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:imaps="http://www.mulesoft.org/schema/mule/imaps"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/imaps http://www.mulesoft.org/schema/mule/imaps/current/mule-imaps.xsd">
+
+    <imaps:connector name="imapsConnector" backupEnabled="false" backupFolder="newBackup" checkFrequency="1234"
+                     mailboxFolder="newMailbox" deleteReadMessages="false" defaultProcessMessageAction="NONE">
+        <imaps:tls-client path="empty.jks" storePassword="password"/>
+        <imaps:tls-trust-store path="empty.jks" storePassword="password"/>
+    </imaps:connector>
+
+    <imaps:endpoint name="global1s" host="localhost" password="secret" port="123" user="bob"/>
+    <imaps:endpoint name="global2s" address="imaps://bob:secret@localhost:123"/>
+    
+    <flow name="flow1">
+        <inbound-endpoint ref="global1s"/>
+        <logger/>
+    </flow>
+
+    <flow name="flow2">
+        <inbound-endpoint ref="global2s"/>
+        <logger/>
+    </flow>
+</mule>
