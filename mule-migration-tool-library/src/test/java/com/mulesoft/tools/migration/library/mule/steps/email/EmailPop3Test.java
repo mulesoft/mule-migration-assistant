@@ -75,8 +75,8 @@ public class EmailPop3Test {
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
   private CustomFilter customFilter;
-  // private FileGlobalEndpoint pop3GlobalEndpoint;
-  // private FileGlobalEndpoint pop3sGlobalEndpoint;
+  private Pop3GlobalEndpoint pop3GlobalEndpoint;
+  private Pop3sGlobalEndpoint pop3sGlobalEndpoint;
   private Pop3InboundEndpoint pop3InboundEndpoint;
   private Pop3sInboundEndpoint pop3sInboundEndpoint;
   // private FileTransformers emailTransformers;
@@ -113,10 +113,10 @@ public class EmailPop3Test {
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
 
-    // pop3GlobalEndpoint = new FileGlobalEndpoint();
-    // pop3GlobalEndpoint.setApplicationModel(appModel);
-    // pop3sGlobalEndpoint = new FileGlobalEndpoint();
-    // pop3sGlobalEndpoint.setApplicationModel(appModel);
+    pop3GlobalEndpoint = new Pop3GlobalEndpoint();
+    pop3GlobalEndpoint.setApplicationModel(appModel);
+    pop3sGlobalEndpoint = new Pop3sGlobalEndpoint();
+    pop3sGlobalEndpoint.setApplicationModel(appModel);
     pop3InboundEndpoint = new Pop3InboundEndpoint();
     pop3InboundEndpoint.setExpressionMigrator(expressionMigrator);
     pop3InboundEndpoint.setApplicationModel(appModel);
@@ -138,10 +138,10 @@ public class EmailPop3Test {
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
         .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, imapGlobalEndpoint.getAppliedTo().getExpression())
-    // .forEach(node -> imapGlobalEndpoint.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, imapsGlobalEndpoint.getAppliedTo().getExpression())
-    // .forEach(node -> imapsGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, pop3GlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> pop3GlobalEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, pop3sGlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> pop3sGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, pop3InboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> pop3InboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, pop3sInboundEndpoint.getAppliedTo().getExpression())

@@ -15,7 +15,7 @@
     <flow name="flow">
         <email:listener-imap config-ref="imapConnector" deleteAfterRetrieve="false">
             <scheduling-strategy>
-                <fixed-frequency frequency="200"/>
+                <fixed-frequency frequency="500"/>
             </scheduling-strategy>
         </email:listener-imap>
         <compatibility:attributes-to-inbound-properties/>

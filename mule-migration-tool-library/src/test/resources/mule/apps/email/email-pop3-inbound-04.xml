@@ -8,16 +8,12 @@
        http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
        http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <email:imap-config name="imapConnector">
-        <email:imap-connection host="localhost" port="${port1}" password="password" user="bob"/>
-    </email:imap-config>
+    <email:pop3-config name="pop3Connector">
+        <email:pop3-connection host="localhost" port="${port1}" password="password" user="bob"/>
+    </email:pop3-config>
 
     <flow name="flow">
-        <email:listener-imap config-ref="imapConnector" deleteAfterRetrieve="false">
-            <scheduling-strategy>
-                <fixed-frequency frequency="200"/>
-            </scheduling-strategy>
-        </email:listener-imap>
+        <email:listener-pop3 config-ref="pop3Connector"/>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
     </flow>

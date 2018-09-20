@@ -15,7 +15,7 @@
         <pop3s:tls-trust-store path="greenmail.jks" storePassword="changeit"/>
     </pop3s:connector>
     
-    <flow name="flow2">
+    <flow name="flow">
         <pop3s:inbound-endpoint user="bob" password="password" host="localhost" port="${port1}"/>
         <logger/>
     </flow>

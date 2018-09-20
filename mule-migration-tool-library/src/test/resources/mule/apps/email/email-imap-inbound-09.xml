@@ -9,15 +9,11 @@
        http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <email:imap-config name="imapConnector">
-        <email:imap-connection host="localhost" port="${port1}" password="password" user="bob"/>
+        <email:imap-connection host="localhost" port="${port1}" password="password" user="%21%23bob%23%25"/>
     </email:imap-config>
 
     <flow name="flow">
-        <email:listener-imap config-ref="imapConnector" deleteAfterRetrieve="false">
-            <scheduling-strategy>
-                <fixed-frequency frequency="200"/>
-            </scheduling-strategy>
-        </email:listener-imap>
+        <email:listener-imap config-ref="imapConnector"/>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
     </flow>

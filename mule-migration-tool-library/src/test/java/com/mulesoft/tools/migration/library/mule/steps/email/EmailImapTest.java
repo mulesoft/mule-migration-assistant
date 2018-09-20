@@ -79,8 +79,8 @@ public class EmailImapTest {
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
   private CustomFilter customFilter;
-  // private ImapGlobalEndpoint imapGlobalEndpoint;
-  // private ImapsGlobalEndpoint imapsGlobalEndpoint;
+  private ImapGlobalEndpoint imapGlobalEndpoint;
+  private ImapsGlobalEndpoint imapsGlobalEndpoint;
   private ImapInboundEndpoint imapInboundEndpoint;
   private ImapsInboundEndpoint imapsInboundEndpoint;
   // private FileTransformers emailTransformers;
@@ -117,10 +117,10 @@ public class EmailImapTest {
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
 
-    // imapGlobalEndpoint = new FileGlobalEndpoint();
-    // imapGlobalEndpoint.setApplicationModel(appModel);
-    // imapsGlobalEndpoint = new FileGlobalEndpoint();
-    // imapsGlobalEndpoint.setApplicationModel(appModel);
+    imapGlobalEndpoint = new ImapGlobalEndpoint();
+    imapGlobalEndpoint.setApplicationModel(appModel);
+    imapsGlobalEndpoint = new ImapsGlobalEndpoint();
+    imapsGlobalEndpoint.setApplicationModel(appModel);
     imapInboundEndpoint = new ImapInboundEndpoint();
     imapInboundEndpoint.setExpressionMigrator(expressionMigrator);
     imapInboundEndpoint.setApplicationModel(appModel);
@@ -142,10 +142,10 @@ public class EmailImapTest {
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
         .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, imapGlobalEndpoint.getAppliedTo().getExpression())
-    // .forEach(node -> imapGlobalEndpoint.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, imapsGlobalEndpoint.getAppliedTo().getExpression())
-    // .forEach(node -> imapsGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, imapGlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> imapGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, imapsGlobalEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> imapsGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, imapInboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> imapInboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, imapsInboundEndpoint.getAppliedTo().getExpression())

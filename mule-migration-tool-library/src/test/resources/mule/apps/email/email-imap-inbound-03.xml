@@ -13,12 +13,9 @@
     </email:imap-config>
 
     <flow name="flow">
-        <email:listener-imap config-ref="imapConnector" deleteAfterRetrieve="false">
-            <scheduling-strategy>
-                <fixed-frequency frequency="200"/>
-            </scheduling-strategy>
-        </email:listener-imap>
+        <email:listener-imap config-ref="imapConnector" deleteAfterRetrieve="false"/>
         <compatibility:attributes-to-inbound-properties/>
+        <message-property-filter pattern="to=barney@mule.org" scope="inbound"/>
         <logger/>
     </flow>
 </mule>

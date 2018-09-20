@@ -2,22 +2,25 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:email="http://www.mulesoft.org/schema/mule/email"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
       xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
       xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
        http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <email:imap-config name="imapConnector">
-        <email:imap-connection host="localhost" port="${port1}" password="password" user="bob"/>
+    <email:imap-config name="imapsConnector">
+        <email:imaps-connection host="localhost" port="${port1}" password="password" user="bob">
+            <tls:context>
+        		<tls:key-store path="clientKeystore" password="mulepassword"/>
+        		<tls:trust-store path="greenmail.jks" password="changeit" />
+            </tls:context>
+        </email:imaps-connection>
     </email:imap-config>
 
     <flow name="flow">
-        <email:listener-imap config-ref="imapConnector" deleteAfterRetrieve="false">
-            <scheduling-strategy>
-                <fixed-frequency frequency="200"/>
-            </scheduling-strategy>
-        </email:listener-imap>
+        <email:listener-imap config-ref="imapsConnector"/>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
     </flow>
