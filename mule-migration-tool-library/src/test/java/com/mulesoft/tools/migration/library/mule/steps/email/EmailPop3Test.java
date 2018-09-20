@@ -9,6 +9,8 @@ package com.mulesoft.tools.migration.library.mule.steps.email;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -25,6 +27,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
+import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
@@ -37,6 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class EmailPop3Test {
@@ -73,11 +77,10 @@ public class EmailPop3Test {
   private CustomFilter customFilter;
   // private FileGlobalEndpoint pop3GlobalEndpoint;
   // private FileGlobalEndpoint pop3sGlobalEndpoint;
-  // private FileConfig pop3Config;
-  // private FileConfig pop3sConfig;
-  // private FileInboundEndpoint pop3InboundEndpoint;
-  // private FileInboundEndpoint pop3sInboundEndpoint;
+  private Pop3InboundEndpoint pop3InboundEndpoint;
+  private Pop3sInboundEndpoint pop3sInboundEndpoint;
   // private FileTransformers emailTransformers;
+  private EmailConnectorConfig emailConfig;
   private InboundEndpoint inboundEndpoint;
   private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
 
@@ -94,6 +97,17 @@ public class EmailPop3Test {
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
+    when(appModel.getNode(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
+    when(appModel.getNodeOptional(any(String.class)))
+        .thenAnswer(invocation -> {
+          List<Element> elementsFromDocument = getElementsFromDocument(doc, (String) invocation.getArguments()[0]);
+          if (elementsFromDocument.isEmpty()) {
+            return empty();
+          } else {
+            return of(elementsFromDocument.iterator().next());
+          }
+        });
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
@@ -103,19 +117,15 @@ public class EmailPop3Test {
     // pop3GlobalEndpoint.setApplicationModel(appModel);
     // pop3sGlobalEndpoint = new FileGlobalEndpoint();
     // pop3sGlobalEndpoint.setApplicationModel(appModel);
-    // pop3Config = new FileConfig();
-    // pop3Config.setExpressionMigrator(expressionMigrator);
-    // pop3Config.setApplicationModel(appModel);
-    // pop3sConfig = new FileConfig();
-    // pop3sConfig.setExpressionMigrator(expressionMigrator);
-    // pop3sConfig.setApplicationModel(appModel);
-    // pop3InboundEndpoint = new FileInboundEndpoint();
-    // pop3InboundEndpoint.setExpressionMigrator(expressionMigrator);
-    // pop3InboundEndpoint.setApplicationModel(appModel);
-    // pop3sInboundEndpoint = new FileInboundEndpoint();
-    // pop3sInboundEndpoint.setExpressionMigrator(expressionMigrator);
-    // pop3sInboundEndpoint.setApplicationModel(appModel);
+    pop3InboundEndpoint = new Pop3InboundEndpoint();
+    pop3InboundEndpoint.setExpressionMigrator(expressionMigrator);
+    pop3InboundEndpoint.setApplicationModel(appModel);
+    pop3sInboundEndpoint = new Pop3sInboundEndpoint();
+    pop3sInboundEndpoint.setExpressionMigrator(expressionMigrator);
+    pop3sInboundEndpoint.setApplicationModel(appModel);
     // emailTransformers = new FileTransformers();
+    emailConfig = new EmailConnectorConfig();
+    emailConfig.setApplicationModel(appModel);
     inboundEndpoint = new InboundEndpoint();
     inboundEndpoint.setExpressionMigrator(expressionMigrator);
     inboundEndpoint.setApplicationModel(appModel);
@@ -132,18 +142,16 @@ public class EmailPop3Test {
     // .forEach(node -> imapGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     // getElementsFromDocument(doc, imapsGlobalEndpoint.getAppliedTo().getExpression())
     // .forEach(node -> imapsGlobalEndpoint.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, imapConfig.getAppliedTo().getExpression())
-    // .forEach(node -> imapConfig.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, imapsConfig.getAppliedTo().getExpression())
-    // .forEach(node -> imapsConfig.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, imapInboundEndpoint.getAppliedTo().getExpression())
-    // .forEach(node -> imapInboundEndpoint.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, imapsInboundEndpoint.getAppliedTo().getExpression())
-    // .forEach(node -> imapsInboundEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, pop3InboundEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> pop3InboundEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, pop3sInboundEndpoint.getAppliedTo().getExpression())
+        .forEach(node -> pop3sInboundEndpoint.execute(node, mock(MigrationReport.class)));
     // getElementsFromDocument(doc, emailTransformers.getAppliedTo().getExpression())
     // .forEach(node -> emailTransformers.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, emailConfig.getAppliedTo().getExpression())
+        .forEach(node -> emailConfig.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
         .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 

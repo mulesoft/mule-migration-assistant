@@ -22,6 +22,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -71,7 +72,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
 
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
-    String flowName = object.getParentElement().getAttributeValue("name");
+    String flowName = getFlow(object).getAttributeValue("name");
     String configName = (object.getAttribute("name") != null
         ? object.getAttributeValue("name")
         : (object.getAttribute("ref") != null
