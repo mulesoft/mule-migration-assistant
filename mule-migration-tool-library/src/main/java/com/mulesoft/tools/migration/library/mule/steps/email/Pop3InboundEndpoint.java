@@ -28,8 +28,7 @@ import java.util.Optional;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class Pop3InboundEndpoint extends AbstractEmailMigrator
-    implements ExpressionMigratorAware {
+public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements ExpressionMigratorAware {
 
   public static final String XPATH_SELECTOR = "/*/mule:flow/pop3:inbound-endpoint[1]";
 

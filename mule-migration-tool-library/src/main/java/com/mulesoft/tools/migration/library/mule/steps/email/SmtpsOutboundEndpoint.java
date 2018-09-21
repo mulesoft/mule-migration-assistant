@@ -11,6 +11,8 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 
+import java.util.Optional;
+
 /**
  * Migrates the outbound smtps endpoint of the email Transport
  *
@@ -37,4 +39,23 @@ public class SmtpsOutboundEndpoint extends SmtpOutboundEndpoint {
     super.execute(object, report);
   }
 
+  // @Override
+  // protected Element createConnection() {
+  // return new Element("smtps-connection", EMAIL_NAMESPACE);
+  // }
+
+  @Override
+  protected Element getConnection(Element m4Config) {
+    return m4Config.getChild("smtps-connection", EMAIL_NAMESPACE);
+  }
+
+  @Override
+  protected Element getConnector(String connectorName) {
+    return getApplicationModel().getNode("/*/smtps:connector[@name = '" + connectorName + "']");
+  }
+
+  @Override
+  protected Optional<Element> getDefaultConnector() {
+    return getApplicationModel().getNodeOptional("/*/smtps:connector");
+  }
 }
