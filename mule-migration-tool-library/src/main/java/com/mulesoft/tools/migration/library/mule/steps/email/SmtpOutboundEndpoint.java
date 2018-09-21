@@ -58,11 +58,41 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
 
     Optional<Element> smtpConnector = resolveConnector(object, getApplicationModel());
 
+    smtpConnector.ifPresent(c -> {
+      if (c.getAttribute("toAddresses") != null) {
+        object.setAttribute("tc", c.getAttributeValue("toAddresses"));
+      }
+      if (c.getAttribute("ccAddresses") != null) {
+        object.setAttribute("cc", c.getAttributeValue("ccAddresses"));
+      }
+      if (c.getAttribute("bccAddresses") != null) {
+        object.setAttribute("bcc", c.getAttributeValue("bccAddresses"));
+      }
+
+      if (c.getAttribute("fromAddress") != null) {
+        object.setAttribute("fromAddress", c.getAttributeValue("fromAddress"));
+      }
+      if (c.getAttribute("replyToAddresses") != null) {
+        object.setAttribute("replyTo", c.getAttributeValue("replyToAddresses"));
+      }
+      if (c.getAttribute("subject") != null) {
+        object.setAttribute("subject", c.getAttributeValue("subject"));
+      }
+    });
+
     getApplicationModel().addNameSpace(EMAIL_NAMESPACE.getPrefix(), EMAIL_NAMESPACE.getURI(),
                                        "http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd");
 
     Element m4Config = migrateSmtpConfig(object, report, smtpConnector);
     Element connection = getConnection(m4Config);
+
+    if (object.getAttribute("host") != null) {
+      object.setAttribute("host", expressionMigrator.migrateExpression(object.getAttributeValue("host"), false, object));
+    }
+    copyAttributeIfPresent(object, connection, "host");
+    copyAttributeIfPresent(object, connection, "port");
+    copyAttributeIfPresent(object, connection, "user");
+    copyAttributeIfPresent(object, connection, "password");
 
     processAddress(object, report).ifPresent(address -> {
       connection.setAttribute("host", address.getHost());
@@ -76,12 +106,6 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
       }
     });
 
-    object.setAttribute("host", expressionMigrator.migrateExpression(object.getAttributeValue("host"), false, object));
-    copyAttributeIfPresent(object, connection, "host");
-    copyAttributeIfPresent(object, connection, "port");
-    copyAttributeIfPresent(object, connection, "user");
-    copyAttributeIfPresent(object, connection, "password");
-
     if (object.getAttribute("connector-ref") != null) {
       object.getAttribute("connector-ref").setName("config-ref");
     } else {
@@ -90,9 +114,14 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
     }
 
     report.report(ERROR, object, object,
-                  "Remove any unneeded children and add any missing ones, based on the properties set prevous to this operation.");
+                  "Remove any unneeded children and add any missing ones, based on the properties set prevous to this operation.",
+                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-email#migrating-an-smtp-outbound-endpoint");
+    object.setAttribute("fromAddress",
+                        smtpAttributeExpr("#[vars.compatibility_outboundProperties.fromAddress]",
+                                          object.getAttribute("fromAddress")));
     object.setAttribute("subject",
-                        smtpAttributeExpr("#[vars.compatibility_outboundProperties.subject]", object.getAttribute("subject")));
+                        smtpAttributeExpr("#[vars.compatibility_outboundProperties.subject]",
+                                          object.getAttribute("subject")));
     object.addContent(new Element("to-addresses", EMAIL_NAMESPACE)
         .addContent(new Element("to-address", EMAIL_NAMESPACE)
             .setAttribute("value",
@@ -107,13 +136,19 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
                           smtpAttributeExpr("#[migration::SmtpTransport::smptBccAddress(vars)]", object.getAttribute("bcc")))));
     object.addContent(new Element("reply-to-addresses", EMAIL_NAMESPACE)
         .addContent(new Element("reply-to-address", EMAIL_NAMESPACE)
-            .setAttribute("value", smtpAttributeExpr("#[migration::SmtpTransport::smptReplyToAddress(vars)]",
-                                                     object.getAttribute("replyTo")))));
+            .setAttribute("value",
+                          smtpAttributeExpr("#[migration::SmtpTransport::smptReplyToAddress(vars)]",
+                                            object.getAttribute("replyTo")))));
     object.addContent(new Element("headers", EMAIL_NAMESPACE)
         .addContent(new Text("#[vars.compatibility_outboundProperties.customHeaders]")));
     object.addContent(new Element("body", EMAIL_NAMESPACE)
         .setAttribute("contentType", "#[payload.^mimeType]")
         .addContent(new Element("content", EMAIL_NAMESPACE).addContent(new Text("#[payload]"))));
+
+    object.removeAttribute("to");
+    object.removeAttribute("cc");
+    object.removeAttribute("bcc");
+    object.removeAttribute("replyTo");
 
     migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
   }

@@ -68,7 +68,7 @@ public class ImapsInboundEndpoint extends ImapInboundEndpoint {
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
         if (tlsKeyStore.getAttribute("class") != null) {
           report.report(ERROR, tlsKeyStore, tlsKeyStore,
-                        "'class' attribute of 'https:tls-key-store' was deprecated in 3.x. Use 'type' instead.",
+                        "'class' attribute of 'imaps:tls-key-store' was deprecated in 3.x. Use 'type' instead.",
                         "https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration");
         }
         copyAttributeIfPresent(tlsKeyStore, keyStore, "type", "type");
@@ -84,7 +84,7 @@ public class ImapsInboundEndpoint extends ImapInboundEndpoint {
         copyAttributeIfPresent(tlsClient, keyStore, "storePassword", "password");
         if (tlsClient.getAttribute("class") != null) {
           report.report(ERROR, tlsClient, tlsClient,
-                        "'class' attribute of 'https:tls-client' was deprecated in 3.x. Use 'type' instead.",
+                        "'class' attribute of 'imaps:tls-client' was deprecated in 3.x. Use 'type' instead.",
                         "https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration");
         }
         copyAttributeIfPresent(tlsClient, keyStore, "type", "type");

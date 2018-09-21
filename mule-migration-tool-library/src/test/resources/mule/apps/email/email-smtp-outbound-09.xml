@@ -2,21 +2,30 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:email="http://www.mulesoft.org/schema/mule/email"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
       xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
       xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
        http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <email:smtp-config name="smtpConnector">
-        <email:smtp-connection host="#[vars.compatibility_outboundProperties.host]" port="${port1}"/>
+    <email:smtp-config name="smtpsConnector">
+        <email:smtps-connection host="localhost" port="${port1}">
+            <tls:context>
+                <tls:key-store path="clientKeystore" password="mulepassword"/>
+                <tls:trust-store path="greenmail.jks" password="changeit" />
+            </tls:context>
+        </email:smtps-connection>
     </email:smtp-config>
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <email:send config-ref="smtpConnector" fromAddress="#[vars.compatibility_outboundProperties.fromAddress]" subject="#[vars.compatibility_outboundProperties.subject default payload]">
+        <email:send config-ref="smtpsConnector"
+                    fromAddress="#[vars.compatibility_outboundProperties.fromAddress]"
+                    subject="#[vars.compatibility_outboundProperties.subject]">
             <email:to-addresses>
-                <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars) default vars.compatibility_outboundProperties.to]"/>
+                <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars) default 'bob@example.com']"/>
             </email:to-addresses>
             <email:cc-addresses>
                 <email:cc-address value="#[migration::SmtpTransport::smptCcAddress(vars)]"/>
@@ -34,4 +43,5 @@
          </email:send>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
+
 </mule>

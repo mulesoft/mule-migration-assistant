@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:email="http://www.mulesoft.org/schema/mule/email"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+       http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <email:smtp-config name="smtpConnector">
+        <email:smtp-connection host="localhost" port="123" password="secret" user="bob"/>
+    </email:smtp-config>
+
+    <flow name="flow1">
+        <compatibility:outbound-properties-to-var/>
+        <email:send config-ref="smtpConnector"
+                    fromAddress="#[vars.compatibility_outboundProperties.fromAddress default 'cde@example.com']"
+                    subject="#[vars.compatibility_outboundProperties.subject default 'subject']">
+            <email:to-addresses>
+                <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars)]"/>
+            </email:to-addresses>
+            <email:cc-addresses>
+                <email:cc-address value="#[migration::SmtpTransport::smptCcAddress(vars) default 'bcd@example.com']"/>
+            </email:cc-addresses>
+            <email:bcc-addresses>
+                <email:bcc-address value="#[migration::SmtpTransport::smptBccAddress(vars) default 'abc@example.com']"/>
+            </email:bcc-addresses>
+            <email:reply-to-addresses>
+                <email:reply-to-address value="#[migration::SmtpTransport::smptReplyToAddress(vars) default 'def@example.com']"/>
+            </email:reply-to-addresses>
+            <email:headers>#[vars.compatibility_outboundProperties.customHeaders]</email:headers>
+            <email:body contentType="#[payload.^mimeType]">
+                <email:content>#[payload]</email:content>
+            </email:body>
+         </email:send>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+
+    <flow name="flow2">
+        <compatibility:outbound-properties-to-var/>
+        <email:send config-ref="smtpConnector"
+                    fromAddress="#[vars.compatibility_outboundProperties.fromAddress default 'cde@example.com']"
+                    subject="#[vars.compatibility_outboundProperties.subject default 'subject']">
+            <email:to-addresses>
+                <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars)]"/>
+            </email:to-addresses>
+            <email:cc-addresses>
+                <email:cc-address value="#[migration::SmtpTransport::smptCcAddress(vars) default 'bcd@example.com']"/>
+            </email:cc-addresses>
+            <email:bcc-addresses>
+                <email:bcc-address value="#[migration::SmtpTransport::smptBccAddress(vars) default 'abc@example.com']"/>
+            </email:bcc-addresses>
+            <email:reply-to-addresses>
+                <email:reply-to-address value="#[migration::SmtpTransport::smptReplyToAddress(vars) default 'def@example.com']"/>
+            </email:reply-to-addresses>
+            <email:headers>#[vars.compatibility_outboundProperties.customHeaders]</email:headers>
+            <email:body contentType="#[payload.^mimeType]">
+                <email:content>#[payload]</email:content>
+            </email:body>
+         </email:send>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+</mule>
