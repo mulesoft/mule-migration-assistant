@@ -157,7 +157,7 @@ public final class XmlDslUtils {
                                       MigrationReport report) {
     String targetValue = object.getAttributeValue("target");
     if (isNotBlank(targetValue)) {
-      String migratedExpression = expressionMigrator.migrateExpression(targetValue, true, object);
+      String migratedExpression = expressionMigrator.migrateExpression(targetValue, true, object, true);
       object.setAttribute("target", expressionMigrator.unwrap(migratedExpression));
       if (resolver.canResolve(expressionMigrator.unwrap(targetValue))) {
         addOutboundPropertySetter(expressionMigrator.unwrap(migratedExpression), object, model, object);

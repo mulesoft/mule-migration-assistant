@@ -6,12 +6,14 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import org.jdom2.Element;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Resolver for outbound properties message enrichers
@@ -31,7 +33,22 @@ public class OutboundPropertiesCompatibilityResolver implements CompatibilityRes
   @Override
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
                         ExpressionMigrator expressionMigrator) {
-    String propertyName = original.trim().replaceFirst("(?i)^(header:outbound:|header:)", EMPTY);
-    return propertyName;
+    return doResolve(original);
   }
+
+  @Override
+  public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
+                        ExpressionMigrator expressionMigrator, boolean enricher) {
+    String propertyName = doResolve(original);
+    if (enricher) {
+      return propertyName;
+    } else {
+      return "vars.compatibility_outboundProperties." + propertyName;
+    }
+  }
+
+  private String doResolve(String original) {
+    return original.trim().replaceFirst("(?i)^(header:outbound:|header:)", EMPTY);
+  }
+
 }

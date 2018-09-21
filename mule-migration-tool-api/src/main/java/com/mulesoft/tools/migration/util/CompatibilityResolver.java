@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.util;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Element;
 
 /**
@@ -23,4 +24,9 @@ public interface CompatibilityResolver<T> {
 
   T resolve(String original, Element element, MigrationReport report, ApplicationModel model,
             ExpressionMigrator expressionMigrator);
+
+  default T resolve(String original, Element element, MigrationReport report, ApplicationModel model,
+                    ExpressionMigrator expressionMigrator, boolean enricher) {
+    return resolve(original, element, report, model, expressionMigrator);
+  }
 }

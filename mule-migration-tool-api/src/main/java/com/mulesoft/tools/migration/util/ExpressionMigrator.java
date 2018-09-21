@@ -24,6 +24,15 @@ public interface ExpressionMigrator {
   String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly, Element element);
 
   /**
+   * Converts a Mule 3 expression to its Mule 4 equivalent.
+   *
+   * @return an expression that works in Mule 4
+   */
+  default String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly, Element element, boolean enricher) {
+    return migrateExpression(originalExpression, dataWeaveBodyOnly, element);
+  }
+
+  /**
    * Removes the '#[' prefix and ']' suffix from an expression.
    * <p>
    * If the expression is not wrapped, it is returned unchanged,

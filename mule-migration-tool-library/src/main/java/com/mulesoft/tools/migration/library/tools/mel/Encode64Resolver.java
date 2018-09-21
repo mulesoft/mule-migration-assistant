@@ -11,6 +11,7 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import org.jdom2.Element;
 
 import java.util.regex.Matcher;
@@ -42,7 +43,7 @@ public class Encode64Resolver implements CompatibilityResolver<String> {
       if (base64MethodMatcher.group().equals(original)) {
         String innerExpression = base64MethodMatcher.group(1).replace(".getBytes()", "");
         innerExpression =
-            ((MelToDwExpressionMigrator) expressionMigrator).translateSingleExpression(innerExpression, true, element);
+            ((MelToDwExpressionMigrator) expressionMigrator).translateSingleExpression(innerExpression, true, element, false);
         if (!innerExpression.startsWith("mel:")) {
           return "dw::core::Binaries::toBase64(" + innerExpression + ")";
         }

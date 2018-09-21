@@ -11,12 +11,12 @@
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <http:request-config name="clientEndpointRequestConfig">
-        <http:request-connection host="localhost" port="#[vars.port]"/>
+        <http:request-connection host="localhost" port="#[vars.compatibility_outboundProperties.port]"/>
     </http:request-config>
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <http:request config-ref="clientEndpointRequestConfig" method="#[migration::HttpRequester::httpRequesterMethod(vars)]" path="#[&quot;/$(path)&quot;]" sendBodyMode="#[if (migration::HttpRequester::httpRequesterMethod(vars) == 'DELETE') 'NEVER' else 'AUTO']">
+        <http:request config-ref="clientEndpointRequestConfig" method="#[migration::HttpRequester::httpRequesterMethod(vars)]" path="#[&quot;/$(vars.compatibility_outboundProperties.path)&quot;]" sendBodyMode="#[if (migration::HttpRequester::httpRequesterMethod(vars) == 'DELETE') 'NEVER' else 'AUTO']">
             <http:headers>
                 #[migration::HttpRequester::httpRequesterTransportHeaders(vars)]
             </http:headers>
