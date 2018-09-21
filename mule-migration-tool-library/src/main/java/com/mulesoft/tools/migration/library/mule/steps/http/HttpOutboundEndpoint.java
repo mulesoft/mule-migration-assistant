@@ -88,6 +88,11 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     requestConfig.addContent(requestConnection);
     addTopLevelElement(requestConfig, nodeOptional.map(n -> n.getDocument()).orElse(object.getDocument()));
 
+    copyAttributeIfPresent(object, requestConnection, "host");
+    migrateExpression(requestConnection.getAttribute("host"), expressionMigrator);
+    copyAttributeIfPresent(object, requestConnection, "port");
+    migrateExpression(requestConnection.getAttribute("port"), expressionMigrator);
+
     processAddress(object, report).ifPresent(address -> {
       requestConnection.setAttribute("host", getExpressionMigrator().migrateExpression(address.getHost(), true, object));
       if (address.getPort() != null) {
@@ -97,11 +102,6 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
         object.setAttribute("path", getExpressionMigrator().migrateExpression(address.getPath(), true, object));
       }
     });
-    copyAttributeIfPresent(object, requestConnection, "host");
-    migrateExpression(requestConnection.getAttribute("host"), expressionMigrator);
-    copyAttributeIfPresent(object, requestConnection, "port");
-    migrateExpression(requestConnection.getAttribute("port"), expressionMigrator);
-
     if (object.getAttribute("keepAlive") != null || object.getAttribute("keep-alive") != null) {
       copyAttributeIfPresent(object, requestConnection, "keep-alive", "usePersistentConnections");
       copyAttributeIfPresent(object, requestConnection, "keepAlive", "usePersistentConnections");

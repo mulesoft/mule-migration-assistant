@@ -43,31 +43,37 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
 
   @Override
   public String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly, Element element) {
+    return migrateExpression(originalExpression, dataWeaveBodyOnly, element, false);
+  }
+
+  @Override
+  public String migrateExpression(String originalExpression, boolean dataWeaveBodyOnly, Element element, boolean enricher) {
     if (!isWrapped(originalExpression) && !originalExpression.contains("#[")) {
       return originalExpression;
     }
     String unwrapped = unwrap(originalExpression);
     unwrapped = unwrapped.replaceAll("mel:", "");
     if (!unwrapped.contains("#[")) {
-      return wrap(translateSingleExpression(unwrapped, dataWeaveBodyOnly, element));
+      return wrap(translateSingleExpression(unwrapped, dataWeaveBodyOnly, element, enricher));
     }
     // Probably an interpolation
     TemplateParser muleStyleParser = TemplateParser.createMuleStyleParser();
     String migratedExpression = muleStyleParser.translate(originalExpression,
                                                           (script) -> translateSingleExpression(script, dataWeaveBodyOnly,
-                                                                                                element));
+                                                                                                element, enricher));
     if (migratedExpression.startsWith("#[mel:")) {
       addCompatibilityNamespace(element.getDocument());
     }
     return migratedExpression;
   }
 
-  public String translateSingleExpression(String unwrappedExpression, boolean dataWeaveBodyOnly, Element element) {
+  public String translateSingleExpression(String unwrappedExpression, boolean dataWeaveBodyOnly, Element element,
+                                          boolean enricher) {
     String migratedExpression;
     try {
       migratedExpression = Migrator.migrate(unwrappedExpression);
     } catch (Exception e) {
-      return compatibilityResolver.resolve(unwrappedExpression, element, report, model, this);
+      return compatibilityResolver.resolve(unwrappedExpression, element, report, model, this, enricher);
     }
     if (migratedExpression.contains("message.inboundAttachments")) {
       report.report(ERROR, element, element,

@@ -10,6 +10,7 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import org.jdom2.Element;
 
 import java.util.ArrayList;
@@ -39,11 +40,20 @@ public class MelCompatibilityResolver implements CompatibilityResolver<String> {
   @Override
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
                         ExpressionMigrator expressionMigrator) {
+    return lookupResolver(original).resolve(original, element, report, model, expressionMigrator);
+  }
+
+  @Override
+  public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
+                        ExpressionMigrator expressionMigrator, boolean enricher) {
+    return lookupResolver(original).resolve(original, element, report, model, expressionMigrator, enricher);
+  }
+
+  protected CompatibilityResolver<String> lookupResolver(String original) {
     CompatibilityResolver<String> resolver = resolvers.stream()
         .filter(r -> r.canResolve(original))
         .findFirst()
         .orElse(new DefaultMelCompatibilityResolver());
-
-    return resolver.resolve(original, element, report, model, expressionMigrator);
+    return resolver;
   }
 }
