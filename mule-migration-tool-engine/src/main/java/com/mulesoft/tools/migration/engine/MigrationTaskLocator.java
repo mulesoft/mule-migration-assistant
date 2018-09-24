@@ -15,6 +15,7 @@ import static java.lang.Boolean.TRUE;
 import com.mulesoft.tools.migration.library.mule.tasks.BatchMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.DomainAppMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.EmailMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.FtpMigrationTask;
@@ -107,6 +108,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new ValidationMigrationTask());
     coreMigrationTasks.add(new RequestReplyMigrationTask());
     coreMigrationTasks.add(new HTTPMigrationTask());
+    coreMigrationTasks.add(new EmailMigrationTask());
     coreMigrationTasks.add(new SocketsMigrationTask());
     coreMigrationTasks.add(new WscMigrationTask());
     coreMigrationTasks.add(new DbMigrationTask());

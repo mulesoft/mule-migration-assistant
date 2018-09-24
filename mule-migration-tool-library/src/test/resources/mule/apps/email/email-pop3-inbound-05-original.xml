@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:pop3="http://www.mulesoft.org/schema/mule/pop3"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/pop3 http://www.mulesoft.org/schema/mule/pop3/current/mule-pop3.xsd">
+
+    <pop3:connector name="pop3Connector" backupEnabled="true" backupFolder="newBackup" checkFrequency="1234"
+                    mailboxFolder="newMailbox" deleteReadMessages="false"/>
+
+    <pop3:endpoint name="global1" host="localhost" password="secret" port="123" user="bob"/>
+    <pop3:endpoint name="global2" address="pop3://bob:secret@localhost:123"/>
+    
+    <flow name="flow1">
+        <inbound-endpoint ref="global2"/>
+        <logger/>
+    </flow>
+
+    <flow name="flow2">
+        <inbound-endpoint ref="global1"/>
+        <logger/>
+    </flow>
+</mule>

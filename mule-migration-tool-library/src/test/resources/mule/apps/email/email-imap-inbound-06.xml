@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:email="http://www.mulesoft.org/schema/mule/email"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+       http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <email:imap-config name="imapsConnector">
+        <email:imaps-connection host="localhost" port="123" password="secret" user="bob">
+            <tls:context>
+        		<tls:key-store path="empty.jks" password="password" />
+        		<tls:trust-store path="empty.jks" password="password" />
+            </tls:context>
+        </email:imaps-connection>
+    </email:imap-config>
+
+    <flow name="flow1">
+        <email:listener-imap config-ref="imapsConnector" deleteAfterRetrieve="false" folder="newMailbox">
+            <scheduling-strategy>
+                <fixed-frequency frequency="1234"/>
+            </scheduling-strategy>
+        </email:listener-imap>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger/>
+    </flow>
+
+    <flow name="flow2">
+        <email:listener-imap config-ref="imapsConnector" deleteAfterRetrieve="false" folder="newMailbox">
+            <scheduling-strategy>
+                <fixed-frequency frequency="1234"/>
+            </scheduling-strategy>
+        </email:listener-imap>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger/>
+    </flow>
+</mule>

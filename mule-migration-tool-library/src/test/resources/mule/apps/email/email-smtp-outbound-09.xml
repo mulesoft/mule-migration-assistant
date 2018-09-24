@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:email="http://www.mulesoft.org/schema/mule/email"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+       http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <email:smtp-config name="smtpsConnector">
+        <email:smtps-connection host="localhost" port="${port1}">
+            <tls:context>
+                <tls:key-store path="clientKeystore" password="mulepassword"/>
+                <tls:trust-store path="greenmail.jks" password="changeit" />
+            </tls:context>
+        </email:smtps-connection>
+    </email:smtp-config>
+
+    <flow name="flow">
+        <compatibility:outbound-properties-to-var/>
+        <email:send config-ref="smtpsConnector"
+                    fromAddress="#[vars.compatibility_outboundProperties.fromAddress]"
+                    subject="#[vars.compatibility_outboundProperties.subject]">
+            <email:to-addresses>
+                <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars) default 'bob@example.com']"/>
+            </email:to-addresses>
+            <email:cc-addresses>
+                <email:cc-address value="#[migration::SmtpTransport::smptCcAddress(vars)]"/>
+            </email:cc-addresses>
+            <email:bcc-addresses>
+                <email:bcc-address value="#[migration::SmtpTransport::smptBccAddress(vars)]"/>
+            </email:bcc-addresses>
+            <email:reply-to-addresses>
+                <email:reply-to-address value="#[migration::SmtpTransport::smptReplyToAddress(vars)]"/>
+            </email:reply-to-addresses>
+            <email:headers>#[vars.compatibility_outboundProperties.customHeaders]</email:headers>
+            <email:body contentType="#[payload.^mimeType]">
+                <email:content>#[payload]</email:content>
+            </email:body>
+            <email:attachments>#[vars filterObject ((value,key) -> ((key as String) startsWith 'att_')) pluck ((value, key, index) -> value)]</email:attachments>
+         </email:send>
+    </flow>
+
+</mule>

@@ -8,6 +8,8 @@ package com.mulesoft.tools.migration.library.mule.steps.endpoint;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 
+import com.mulesoft.tools.migration.library.mule.steps.email.SmtpOutboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.email.SmtpsOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.file.FileOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpEeOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint;
@@ -78,6 +80,12 @@ public class OutboundEndpoint extends AbstractApplicationModelMigrationStep
       } else if (address.startsWith("https://")) {
         migrator = new HttpsOutboundEndpoint();
         object.setNamespace(Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https"));
+      } else if (address.startsWith("smtp://")) {
+        migrator = new SmtpOutboundEndpoint();
+        object.setNamespace(Namespace.getNamespace("smtp", "http://www.mulesoft.org/schema/mule/smtp"));
+      } else if (address.startsWith("smtps://")) {
+        migrator = new SmtpsOutboundEndpoint();
+        object.setNamespace(Namespace.getNamespace("smtps", "http://www.mulesoft.org/schema/mule/smtps"));
       } else if (address.startsWith("jms://")) {
         migrator = new JmsOutboundEndpoint();
         object.setNamespace(Namespace.getNamespace(JMS_NS_PREFIX, JMS_NS_URI));

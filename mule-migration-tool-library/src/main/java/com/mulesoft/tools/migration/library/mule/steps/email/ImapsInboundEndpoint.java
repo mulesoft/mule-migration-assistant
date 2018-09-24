@@ -1,0 +1,124 @@
+/*
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
+ */
+package com.mulesoft.tools.migration.library.mule.steps.email;
+
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
+import static org.jdom2.Namespace.getNamespace;
+
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+
+import java.util.Optional;
+
+/**
+ * Migrates the imaps inbound endpoint of the Email Transport
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
+public class ImapsInboundEndpoint extends ImapInboundEndpoint {
+
+  public static final String XPATH_SELECTOR = "/*/mule:flow/imaps:inbound-endpoint[1]";
+
+  @Override
+  public String getDescription() {
+    return "Update IMaps transport inbound endpoint.";
+  }
+
+  public ImapsInboundEndpoint() {
+    this.setAppliedTo(XPATH_SELECTOR);
+  }
+
+  @Override
+  public void execute(Element object, MigrationReport report) throws RuntimeException {
+    Optional<Element> imapsConnector;
+    if (object.getAttribute("connector-ref") != null) {
+      imapsConnector = Optional.of(getConnector(object.getAttributeValue("connector-ref")));
+    } else {
+      imapsConnector = getDefaultConnector();
+    }
+
+    super.execute(object, report);
+
+    Element imapsConnection = getApplicationModel()
+        .getNode("/*/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'imap-config' and @name = '"
+            + object.getAttributeValue("config-ref")
+            + "']/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'imaps-connection']");
+
+    Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
+
+    if (imapsConnector.isPresent() && imapsConnection.getChild("context", tlsNamespace) == null) {
+
+      Element tlsContext = new Element("context", tlsNamespace);
+      boolean tlsConfigured = false;
+
+      Namespace imapsNamespace = getNamespace("imaps", "http://www.mulesoft.org/schema/mule/imaps");
+      Element tlsKeyStore = imapsConnector.get().getChild("tls-client", imapsNamespace);
+      if (tlsKeyStore != null) {
+        Element keyStore = new Element("key-store", tlsNamespace);
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "path");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "storePassword", "password");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
+        if (tlsKeyStore.getAttribute("class") != null) {
+          report.report(ERROR, tlsKeyStore, tlsKeyStore,
+                        "'class' attribute of 'imaps:tls-key-store' was deprecated in 3.x. Use 'type' instead.",
+                        "https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration");
+        }
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "type", "type");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "keyAlias", "alias");
+        copyAttributeIfPresent(tlsKeyStore, keyStore, "algorithm");
+        tlsContext.addContent(keyStore);
+        tlsConfigured = true;
+      }
+      Element tlsClient = imapsConnector.get().getChild("tls-trust-store", imapsNamespace);
+      if (tlsClient != null) {
+        Element keyStore = new Element("trust-store", tlsNamespace);
+        copyAttributeIfPresent(tlsClient, keyStore, "path");
+        copyAttributeIfPresent(tlsClient, keyStore, "storePassword", "password");
+        if (tlsClient.getAttribute("class") != null) {
+          report.report(ERROR, tlsClient, tlsClient,
+                        "'class' attribute of 'imaps:tls-client' was deprecated in 3.x. Use 'type' instead.",
+                        "https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration");
+        }
+        copyAttributeIfPresent(tlsClient, keyStore, "type", "type");
+        tlsContext.addContent(keyStore);
+        tlsConfigured = true;
+      }
+
+      if (tlsConfigured) {
+        getApplicationModel().addNameSpace(tlsNamespace.getPrefix(), tlsNamespace.getURI(),
+                                           "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
+
+        imapsConnection.addContent(tlsContext);
+      }
+    }
+  }
+
+  @Override
+  protected Element createConnection() {
+    return new Element("imaps-connection", EMAIL_NAMESPACE);
+  }
+
+  @Override
+  protected Element getConnection(Element m4Config) {
+    return m4Config.getChild("imaps-connection", EMAIL_NAMESPACE);
+  }
+
+  @Override
+  protected Element getConnector(String connectorName) {
+    return getApplicationModel().getNode("/*/imaps:connector[@name = '" + connectorName + "']");
+  }
+
+  @Override
+  protected Optional<Element> getDefaultConnector() {
+    return getApplicationModel().getNodeOptional("/*/imaps:connector");
+  }
+
+}

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:email="http://www.mulesoft.org/schema/mule/email"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+       http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <email:smtp-config name="smtpConnector">
+        <email:smtp-connection host="#[vars.compatibility_outboundProperties.host]" port="${port1}"/>
+    </email:smtp-config>
+
+    <flow name="flow">
+        <compatibility:outbound-properties-to-var/>
+        <email:send config-ref="smtpConnector" fromAddress="#[vars.compatibility_outboundProperties.fromAddress]" subject="#[vars.compatibility_outboundProperties.subject default payload]">
+            <email:to-addresses>
+                <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars) default vars.compatibility_outboundProperties.to]"/>
+            </email:to-addresses>
+            <email:cc-addresses>
+                <email:cc-address value="#[migration::SmtpTransport::smptCcAddress(vars)]"/>
+            </email:cc-addresses>
+            <email:bcc-addresses>
+                <email:bcc-address value="#[migration::SmtpTransport::smptBccAddress(vars)]"/>
+            </email:bcc-addresses>
+            <email:reply-to-addresses>
+                <email:reply-to-address value="#[migration::SmtpTransport::smptReplyToAddress(vars)]"/>
+            </email:reply-to-addresses>
+            <email:headers>#[vars.compatibility_outboundProperties.customHeaders]</email:headers>
+            <email:body contentType="#[payload.^mimeType]">
+                <email:content>#[payload]</email:content>
+            </email:body>
+            <email:attachments>#[vars filterObject ((value,key) -> ((key as String) startsWith 'att_')) pluck ((value, key, index) -> value)]</email:attachments>
+         </email:send>
+    </flow>
+</mule>

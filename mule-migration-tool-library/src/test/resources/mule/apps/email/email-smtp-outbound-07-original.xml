@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp"
+      xmlns:email="http://www.mulesoft.org/schema/mule/email"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd
+       http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+
+    <smtp:connector name="smtpConnector"
+                   bccAddresses="abc@example.com"
+                   ccAddresses="bcd@example.com"
+                   contentType="foo/bar"
+                   fromAddress="cde@example.com"
+                   replyToAddresses="def@example.com"
+                   subject="subject">
+        <smtp:header key="foo" value="bar"/>
+        <smtp:header key="baz" value="boz"/>
+    </smtp:connector>
+    
+    <smtp:endpoint name="global1" host="localhost" password="secret" port="123" user="bob"/>
+    <smtp:endpoint name="global2" address="smtp://bob:secret@localhost:123"/>
+
+    <flow name="flow1">
+        <outbound-endpoint ref="global1"/>
+    </flow>
+
+    <flow name="flow2">
+        <outbound-endpoint ref="global2"/>
+    </flow>
+</mule>

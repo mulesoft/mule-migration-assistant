@@ -14,6 +14,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.CompatibilityPomCont
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyAttachments;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyProperties;
 import com.mulesoft.tools.migration.library.mule.steps.core.DataMapper;
+import com.mulesoft.tools.migration.library.mule.steps.core.MessageAttachmentsListExpressionEvaluator;
 import com.mulesoft.tools.migration.library.mule.steps.core.MessagePropertiesTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveAttachment;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveJsonTransformerNamespace;
@@ -64,6 +65,7 @@ public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigration
                         new SetProperty(),
                         new SetSessionVariable(),
                         new CopyAttachments(),
+                        new MessageAttachmentsListExpressionEvaluator(),
                         new CopyProperties(),
                         new RemoveAttachment(),
                         new RemoveProperty(),

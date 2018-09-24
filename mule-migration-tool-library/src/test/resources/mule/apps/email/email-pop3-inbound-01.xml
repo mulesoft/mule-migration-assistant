@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:email="http://www.mulesoft.org/schema/mule/email"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+       http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <email:pop3-config name="Pop3Config">
+        <email:pop3-connection host="localhost" port="${port1}" password="secret" user="bob"/>
+    </email:pop3-config>
+
+    <flow name="flow">
+        <email:listener-pop3 config-ref="Pop3Config">
+            <scheduling-strategy>
+                <fixed-frequency/>
+            </scheduling-strategy>
+        </email:listener-pop3>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger/>
+    </flow>
+</mule>

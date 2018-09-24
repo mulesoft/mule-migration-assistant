@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd">
+
+    <custom-transformer name="rfc822-mime" class="org.mule.transport.email.transformers.Rfc822ByteArraytoMimeMessage"/>
+
+    <flow name="flow">
+        <smtp:outbound-endpoint user="alice" password="secret" host="localhost" port="${port2}"
+            disableTransportTransformer="true">
+            <transformer ref="rfc822-mime"/>
+        </smtp:outbound-endpoint>
+    </flow>
+</mule>
