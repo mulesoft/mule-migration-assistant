@@ -29,6 +29,7 @@ public class EmailPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-email-connector")
+        // TODO MMT-231
         .withVersion("1.1.0-SNAPSHOT")
         .withClassifier("mule-plugin")
         .build());
