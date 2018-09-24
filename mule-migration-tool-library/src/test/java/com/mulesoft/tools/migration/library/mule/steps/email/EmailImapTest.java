@@ -18,6 +18,8 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.core.MessageAttachmentsListExpressionEvaluator;
+import com.mulesoft.tools.migration.library.mule.steps.core.ReferencedTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
@@ -77,15 +79,17 @@ public class EmailImapTest {
     reportMock = mock(MigrationReport.class);
   }
 
+  private ReferencedTransformer referencedTransformer;
   private GenericGlobalEndpoint genericGlobalEndpoint;
   private CustomFilter customFilter;
   private ImapGlobalEndpoint imapGlobalEndpoint;
   private ImapsGlobalEndpoint imapsGlobalEndpoint;
   private ImapInboundEndpoint imapInboundEndpoint;
   private ImapsInboundEndpoint imapsInboundEndpoint;
-  // private FileTransformers emailTransformers;
+  private EmailTransformers emailTransformers;
   private EmailConnectorConfig emailConfig;
   private InboundEndpoint inboundEndpoint;
+  private MessageAttachmentsListExpressionEvaluator messageAttachmentsListExpressionEvaluator;
   private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
 
   private Document doc;
@@ -114,6 +118,8 @@ public class EmailImapTest {
         });
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
+    referencedTransformer = new ReferencedTransformer();
+    referencedTransformer.setApplicationModel(appModel);
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
 
@@ -127,17 +133,21 @@ public class EmailImapTest {
     imapsInboundEndpoint = new ImapsInboundEndpoint();
     imapsInboundEndpoint.setExpressionMigrator(expressionMigrator);
     imapsInboundEndpoint.setApplicationModel(appModel);
-    // emailTransformers = new FileTransformers();
+    emailTransformers = new EmailTransformers();
     emailConfig = new EmailConnectorConfig();
     emailConfig.setApplicationModel(appModel);
     inboundEndpoint = new InboundEndpoint();
     inboundEndpoint.setExpressionMigrator(expressionMigrator);
     inboundEndpoint.setApplicationModel(appModel);
+    messageAttachmentsListExpressionEvaluator = new MessageAttachmentsListExpressionEvaluator();
+    messageAttachmentsListExpressionEvaluator.setApplicationModel(appModel);
     removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
   }
 
   @Test
   public void execute() throws Exception {
+    getElementsFromDocument(doc, referencedTransformer.getAppliedTo().getExpression())
+        .forEach(node -> referencedTransformer.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
@@ -150,12 +160,14 @@ public class EmailImapTest {
         .forEach(node -> imapInboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, imapsInboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> imapsInboundEndpoint.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, emailTransformers.getAppliedTo().getExpression())
-    // .forEach(node -> emailTransformers.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, emailTransformers.getAppliedTo().getExpression())
+        .forEach(node -> emailTransformers.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, emailConfig.getAppliedTo().getExpression())
         .forEach(node -> emailConfig.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, messageAttachmentsListExpressionEvaluator.getAppliedTo().getExpression())
+        .forEach(node -> messageAttachmentsListExpressionEvaluator.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
         .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 

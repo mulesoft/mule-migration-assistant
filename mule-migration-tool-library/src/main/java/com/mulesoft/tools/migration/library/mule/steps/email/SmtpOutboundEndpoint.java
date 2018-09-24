@@ -114,7 +114,7 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
     }
 
     report.report(ERROR, object, object,
-                  "Remove any unneeded children and add any missing ones, based on the properties set prevous to this operation.",
+                  "Remove any unneeded children and add any missing ones, based on the properties set previous to this operation.",
                   "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-email#migrating-an-smtp-outbound-endpoint");
     object.setAttribute("fromAddress",
                         smtpAttributeExpr("#[vars.compatibility_outboundProperties.fromAddress]",
@@ -144,13 +144,15 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
     object.addContent(new Element("body", EMAIL_NAMESPACE)
         .setAttribute("contentType", "#[payload.^mimeType]")
         .addContent(new Element("content", EMAIL_NAMESPACE).addContent(new Text("#[payload]"))));
+    object.addContent(new Element("attachments", EMAIL_NAMESPACE)
+        .addContent(new Text("#[vars filterObject ((value,key) -> ((key as String) startsWith 'att_')) pluck ((value, key, index) -> value)]")));
 
     object.removeAttribute("to");
     object.removeAttribute("cc");
     object.removeAttribute("bcc");
     object.removeAttribute("replyTo");
 
-    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
+    migrateOutboundEndpointStructure(getApplicationModel(), object, report, false);
   }
 
 

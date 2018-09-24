@@ -17,7 +17,7 @@
 
     <flow name="sink">
         <vm:inbound-endpoint exchange-pattern="one-way" path="sink"/>
-        <log-component/>
+        <logger/>
         <all>
             <vm:outbound-endpoint path="rfc822" exchange-pattern="one-way"/>
             <smtp:outbound-endpoint user="alice" password="secret" host="localhost" port="${smtpPort}"/>

@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.core.ReferencedTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
@@ -75,13 +76,14 @@ public class EmailSmtpTest {
     reportMock = mock(MigrationReport.class);
   }
 
+  private ReferencedTransformer referencedTransformer;
   private GenericGlobalEndpoint genericGlobalEndpoint;
   private CustomFilter customFilter;
   private SmtpGlobalEndpoint smtpGlobalEndpoint;
   private SmtpsGlobalEndpoint smtpsGlobalEndpoint;
   private SmtpOutboundEndpoint smtpOutboundEndpoint;
   private SmtpsOutboundEndpoint smtpsOutboundEndpoint;
-  // private FileTransformers emailTransformers;
+  private EmailTransformers emailTransformers;
   private EmailConnectorConfig emailConfig;
   private InboundEndpoint inboundEndpoint;
   private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
@@ -112,6 +114,8 @@ public class EmailSmtpTest {
         });
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
+    referencedTransformer = new ReferencedTransformer();
+    referencedTransformer.setApplicationModel(appModel);
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
 
@@ -125,7 +129,7 @@ public class EmailSmtpTest {
     smtpsOutboundEndpoint = new SmtpsOutboundEndpoint();
     smtpsOutboundEndpoint.setExpressionMigrator(expressionMigrator);
     smtpsOutboundEndpoint.setApplicationModel(appModel);
-    // emailTransformers = new FileTransformers();
+    emailTransformers = new EmailTransformers();
     emailConfig = new EmailConnectorConfig();
     emailConfig.setApplicationModel(appModel);
     inboundEndpoint = new InboundEndpoint();
@@ -136,6 +140,8 @@ public class EmailSmtpTest {
 
   @Test
   public void execute() throws Exception {
+    getElementsFromDocument(doc, referencedTransformer.getAppliedTo().getExpression())
+        .forEach(node -> referencedTransformer.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
@@ -148,8 +154,8 @@ public class EmailSmtpTest {
         .forEach(node -> smtpOutboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, smtpsOutboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> smtpsOutboundEndpoint.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, emailTransformers.getAppliedTo().getExpression())
-    // .forEach(node -> emailTransformers.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, emailTransformers.getAppliedTo().getExpression())
+        .forEach(node -> emailTransformers.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, emailConfig.getAppliedTo().getExpression())

@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.core.ReferencedTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
@@ -73,13 +74,14 @@ public class EmailPop3Test {
     reportMock = mock(MigrationReport.class);
   }
 
+  private ReferencedTransformer referencedTransformer;
   private GenericGlobalEndpoint genericGlobalEndpoint;
   private CustomFilter customFilter;
   private Pop3GlobalEndpoint pop3GlobalEndpoint;
   private Pop3sGlobalEndpoint pop3sGlobalEndpoint;
   private Pop3InboundEndpoint pop3InboundEndpoint;
   private Pop3sInboundEndpoint pop3sInboundEndpoint;
-  // private FileTransformers emailTransformers;
+  private EmailTransformers emailTransformers;
   private EmailConnectorConfig emailConfig;
   private InboundEndpoint inboundEndpoint;
   private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
@@ -110,6 +112,8 @@ public class EmailPop3Test {
         });
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
+    referencedTransformer = new ReferencedTransformer();
+    referencedTransformer.setApplicationModel(appModel);
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
 
@@ -123,7 +127,7 @@ public class EmailPop3Test {
     pop3sInboundEndpoint = new Pop3sInboundEndpoint();
     pop3sInboundEndpoint.setExpressionMigrator(expressionMigrator);
     pop3sInboundEndpoint.setApplicationModel(appModel);
-    // emailTransformers = new FileTransformers();
+    emailTransformers = new EmailTransformers();
     emailConfig = new EmailConnectorConfig();
     emailConfig.setApplicationModel(appModel);
     inboundEndpoint = new InboundEndpoint();
@@ -134,6 +138,8 @@ public class EmailPop3Test {
 
   @Test
   public void execute() throws Exception {
+    getElementsFromDocument(doc, referencedTransformer.getAppliedTo().getExpression())
+        .forEach(node -> referencedTransformer.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
@@ -146,8 +152,8 @@ public class EmailPop3Test {
         .forEach(node -> pop3InboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, pop3sInboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> pop3sInboundEndpoint.execute(node, mock(MigrationReport.class)));
-    // getElementsFromDocument(doc, emailTransformers.getAppliedTo().getExpression())
-    // .forEach(node -> emailTransformers.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, emailTransformers.getAppliedTo().getExpression())
+        .forEach(node -> emailTransformers.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, emailConfig.getAppliedTo().getExpression())

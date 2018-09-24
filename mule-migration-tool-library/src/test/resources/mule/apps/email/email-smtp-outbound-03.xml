@@ -15,7 +15,7 @@
     <flow name="flow">
         <custom-transformer class="org.mule.transport.email.transformers.AddOutboundAttachments"/>
         <compatibility:outbound-properties-to-var/>
-        <email:send config-ref="smtpConnector" fromAddress="#[vars.compatibility_outboundProperties.fromAddress]" subject="#[vars.compatibility_outboundProperties.subject default 'first-subject']">
+        <email:send config-ref="smtpConnector" fromAddress="#[vars.compatibility_outboundProperties.fromAddress]" subject="#[vars.compatibility_outboundProperties.subject]">
             <email:to-addresses>
                 <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars) default 'bob@example.com']"/>
             </email:to-addresses>
@@ -32,7 +32,7 @@
             <email:body contentType="#[payload.^mimeType]">
                 <email:content>#[payload]</email:content>
             </email:body>
+            <email:attachments>#[vars filterObject ((value,key) -> ((key as String) startsWith 'att_')) pluck ((value, key, index) -> value)]</email:attachments>
          </email:send>
-        <compatibility:attributes-to-inbound-properties/>
     </flow>
 </mule>

@@ -33,8 +33,8 @@
             <email:body contentType="#[payload.^mimeType]">
                 <email:content>#[payload]</email:content>
             </email:body>
+            <email:attachments>#[vars filterObject ((value,key) -> ((key as String) startsWith 'att_')) pluck ((value, key, index) -> value)]</email:attachments>
          </email:send>
-        <compatibility:attributes-to-inbound-properties/>
     </flow>
 
     <flow name="flow2">
@@ -58,7 +58,7 @@
             <email:body contentType="#[payload.^mimeType]">
                 <email:content>#[payload]</email:content>
             </email:body>
+            <email:attachments>#[vars filterObject ((value,key) -> ((key as String) startsWith 'att_')) pluck ((value, key, index) -> value)]</email:attachments>
          </email:send>
-        <compatibility:attributes-to-inbound-properties/>
     </flow>
 </mule>

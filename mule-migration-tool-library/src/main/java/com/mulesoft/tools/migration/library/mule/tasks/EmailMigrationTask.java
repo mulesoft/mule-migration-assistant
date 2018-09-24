@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 import com.mulesoft.tools.migration.library.mule.steps.email.EmailConnectorConfig;
 import com.mulesoft.tools.migration.library.mule.steps.email.EmailPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.email.EmailTransformers;
 import com.mulesoft.tools.migration.library.mule.steps.email.ImapInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.email.ImapsInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.email.Pop3InboundEndpoint;
@@ -49,32 +50,14 @@ public class EmailMigrationTask extends AbstractMigrationTask {
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new EmailPomContribution(),
-                        // new HttpConnectorPomContribution(),
-                        // // Connector, introduced in Mule 3.6
-                        // new HttpConnectorListenerConfig(),
-                        // new HttpConnectorRequestConfig(),
-                        // new HttpConnectorListener(),
-                        // new HttpConnectorRequester(),
-                        // // Transport, deprecated in Mule 3.6
-                        // new HttpPollingConnector(),
-                        // new HttpsPollingConnector(),
-                        // new HttpGlobalEndpoint(),
-                        // new HttpsGlobalEndpoint(),
                         new ImapInboundEndpoint(),
                         new ImapsInboundEndpoint(),
                         new Pop3InboundEndpoint(),
                         new Pop3sInboundEndpoint(),
                         new SmtpOutboundEndpoint(),
                         new SmtpsOutboundEndpoint(),
-                        // new HttpTransformers(),
-                        // // The rest
-                        new EmailConnectorConfig()
-    // new HttpConnectorHeaders(),
-    // new HttpConnectorQueryParams(),
-    // new HttpConnectorUriParams(),
-    // new HttpBasicSecurity(),
-    // new HttpStaticResource(),
-    // new HttpsStaticResource()
-    );
+                        new EmailTransformers(),
+                        // The rest
+                        new EmailConnectorConfig());
   }
 }

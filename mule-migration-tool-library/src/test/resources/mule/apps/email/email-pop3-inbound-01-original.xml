@@ -2,13 +2,15 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:pop3="http://www.mulesoft.org/schema/mule/pop3"
+      xmlns:email="http://www.mulesoft.org/schema/mule/email"
       xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-       http://www.mulesoft.org/schema/mule/pop3 http://www.mulesoft.org/schema/mule/pop3/current/mule-pop3.xsd">
+       http://www.mulesoft.org/schema/mule/pop3 http://www.mulesoft.org/schema/mule/pop3/current/mule-pop3.xsd
+       http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
 
     <flow name="flow">
         <pop3:inbound-endpoint user="bob" password="secret" host="localhost" port="${port1}">
-            <mime-to-bytes-transformer/>
+            <email:mime-to-bytes-transformer/>
         </pop3:inbound-endpoint>
         <logger/>
     </flow>

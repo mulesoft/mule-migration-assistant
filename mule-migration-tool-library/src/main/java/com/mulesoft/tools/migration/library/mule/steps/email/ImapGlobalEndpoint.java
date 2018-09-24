@@ -29,7 +29,6 @@ public class ImapGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
   public ImapGlobalEndpoint() {
     this.setAppliedTo(XPATH_SELECTOR);
-
   }
 
   @Override
