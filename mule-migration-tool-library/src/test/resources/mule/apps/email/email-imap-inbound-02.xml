@@ -13,7 +13,11 @@
     </email:imap-config>
 
     <flow name="flow">
-        <email:listener-imap config-ref="ImapConfig"/>
+        <email:listener-imap config-ref="ImapConfig">
+            <scheduling-strategy>
+                <fixed-frequency/>
+            </scheduling-strategy>
+        </email:listener-imap>
         <compatibility:attributes-to-inbound-properties/>
         <set-payload value="#[payload.attachments pluck ((value, key, index) -> value)]"/>
         <collection-splitter />

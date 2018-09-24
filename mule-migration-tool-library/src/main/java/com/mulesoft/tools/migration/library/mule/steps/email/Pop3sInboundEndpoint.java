@@ -51,9 +51,9 @@ public class Pop3sInboundEndpoint extends Pop3InboundEndpoint {
     super.execute(object, report);
 
     Element pop3sConnection = getApplicationModel()
-        .getNode("/*/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/email' and local-name() = 'pop3-config' and @name = '"
+        .getNode("/*/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'pop3-config' and @name = '"
             + object.getAttributeValue("config-ref")
-            + "']/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/email' and local-name() = 'pop3s-connection']");
+            + "']/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'pop3s-connection']");
 
     Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
 

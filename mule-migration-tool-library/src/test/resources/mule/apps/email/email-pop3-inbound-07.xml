@@ -19,7 +19,11 @@
     </email:pop3-config>
 
     <flow name="flow">
-        <email:listener-pop3 config-ref="pop3sConnector"/>
+        <email:listener-pop3 config-ref="pop3sConnector">
+            <scheduling-strategy>
+                <fixed-frequency/>
+            </scheduling-strategy>
+        </email:listener-pop3>
         <compatibility:attributes-to-inbound-properties />
         <logger />
     </flow>

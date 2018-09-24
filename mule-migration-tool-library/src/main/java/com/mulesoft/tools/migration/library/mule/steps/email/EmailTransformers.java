@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.email;
 
+import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.EMAIL_NAMESPACE;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -21,7 +22,7 @@ import org.jdom2.Element;
  */
 public class EmailTransformers extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//*[(namespace-uri() = 'http://www.mulesoft.org/schema/mule/email' and ("
+  public static final String XPATH_SELECTOR = "//*[(namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and ("
       + "local-name() = 'email-to-string-transformer' or "
       + "local-name() = 'string-to-email-transformer' or "
       + "local-name() = 'object-to-mime-transformer' or "
@@ -49,6 +50,11 @@ public class EmailTransformers extends AbstractApplicationModelMigrationStep {
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     report.report(WARN, object, object, "Email transformers are no longer needed. The payload already has the type information.",
                   "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-transformations#data-types-and-object-to-string-byte-inputstream-transformers");
+
+    for (Element ref : getApplicationModel().getNodes("//*[@ref = '" + object.getAttributeValue("name") + "']")) {
+      ref.detach();
+    }
+
     object.detach();
   }
 }

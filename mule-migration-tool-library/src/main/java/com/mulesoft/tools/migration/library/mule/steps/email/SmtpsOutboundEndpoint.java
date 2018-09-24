@@ -51,9 +51,9 @@ public class SmtpsOutboundEndpoint extends SmtpOutboundEndpoint {
     super.execute(object, report);
 
     Element smtpsConnection = getApplicationModel()
-        .getNode("/*/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/email' and local-name() = 'smtp-config' and @name = '"
+        .getNode("/*/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'smtp-config' and @name = '"
             + object.getAttributeValue("config-ref")
-            + "']/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/email' and local-name() = 'smtps-connection']");
+            + "']/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'smtps-connection']");
 
     Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
 

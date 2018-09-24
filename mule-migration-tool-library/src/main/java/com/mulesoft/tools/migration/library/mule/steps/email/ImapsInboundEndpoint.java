@@ -48,9 +48,9 @@ public class ImapsInboundEndpoint extends ImapInboundEndpoint {
     super.execute(object, report);
 
     Element imapsConnection = getApplicationModel()
-        .getNode("/*/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/email' and local-name() = 'imap-config' and @name = '"
+        .getNode("/*/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'imap-config' and @name = '"
             + object.getAttributeValue("config-ref")
-            + "']/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/email' and local-name() = 'imaps-connection']");
+            + "']/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'imaps-connection']");
 
     Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
 

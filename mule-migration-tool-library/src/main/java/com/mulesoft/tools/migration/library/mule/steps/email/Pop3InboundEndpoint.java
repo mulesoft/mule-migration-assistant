@@ -53,8 +53,10 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
 
     Optional<Element> pop3Connector = resolveConnector(object, getApplicationModel());
 
-    getApplicationModel().addNameSpace(EMAIL_NAMESPACE.getPrefix(), EMAIL_NAMESPACE.getURI(),
-                                       "http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd");
+    getApplicationModel().addNameSpace(EMAIL_NAMESPACE.getPrefix(), EMAIL_NAMESPACE.getURI(), EMAIL_SCHEMA_LOC);
+
+    Element fixedFrequency = new Element("fixed-frequency", CORE_NAMESPACE);
+    object.addContent(new Element("scheduling-strategy", CORE_NAMESPACE).addContent(fixedFrequency));
 
     pop3Connector.ifPresent(c -> {
       if (c.getAttribute("moveToFolder") != null) {
@@ -80,9 +82,7 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
       }
 
       if (c.getAttribute("checkFrequency") != null) {
-        object.addContent(new Element("scheduling-strategy", CORE_NAMESPACE)
-            .addContent(new Element("fixed-frequency", CORE_NAMESPACE)
-                .setAttribute("frequency", c.getAttributeValue("checkFrequency"))));
+        fixedFrequency.setAttribute("frequency", c.getAttributeValue("checkFrequency"));
       }
     });
 
@@ -143,7 +143,7 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
         + "Pop3Config");
 
     Optional<Element> config = getApplicationModel()
-        .getNodeOptional("*/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/email' and local-name() = 'pop3-config' and @name='"
+        .getNodeOptional("*/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'pop3-config' and @name='"
             + configName + "']");
     return config.orElseGet(() -> {
       final Element imapCfg = new Element("pop3-config", EMAIL_NAMESPACE);

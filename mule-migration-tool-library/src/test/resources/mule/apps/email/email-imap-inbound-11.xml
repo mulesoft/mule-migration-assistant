@@ -20,7 +20,11 @@
     </email:imap-config>
 
     <flow name="flow">
-        <email:listener-imap config-ref="imapsConnector"/>
+        <email:listener-imap config-ref="imapsConnector">
+            <scheduling-strategy>
+                <fixed-frequency/>
+            </scheduling-strategy>
+        </email:listener-imap>
         <compatibility:attributes-to-inbound-properties/>
         <logger/>
     </flow>

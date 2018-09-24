@@ -80,8 +80,7 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
       }
     });
 
-    getApplicationModel().addNameSpace(EMAIL_NAMESPACE.getPrefix(), EMAIL_NAMESPACE.getURI(),
-                                       "http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd");
+    getApplicationModel().addNameSpace(EMAIL_NAMESPACE.getPrefix(), EMAIL_NAMESPACE.getURI(), EMAIL_SCHEMA_LOC);
 
     Element m4Config = migrateSmtpConfig(object, report, smtpConnector);
     Element connection = getConnection(m4Config);
@@ -181,7 +180,7 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
         + "SmtpConfig");
 
     Optional<Element> config = getApplicationModel()
-        .getNodeOptional("*/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/email' and local-name() = 'smtp-config' and @name='"
+        .getNodeOptional("*/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'smtp-config' and @name='"
             + configName + "']");
     return config.orElseGet(() -> {
       final Element smtpCfg = new Element("smtp-config", EMAIL_NAMESPACE);
