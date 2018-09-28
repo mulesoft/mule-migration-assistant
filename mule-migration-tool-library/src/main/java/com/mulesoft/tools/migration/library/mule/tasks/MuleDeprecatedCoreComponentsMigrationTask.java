@@ -26,8 +26,6 @@ import com.mulesoft.tools.migration.library.mule.steps.core.RemovedElements;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetAttachment;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetProperty;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetSessionVariable;
-import com.mulesoft.tools.migration.library.mule.steps.core.filter.CompositeFilter;
-import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
@@ -73,8 +71,6 @@ public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigration
                         new RemoveJsonTransformerNamespace(),
                         new MessagePropertiesTransformer(),
                         new RemoveSchedulersNamespace(),
-                        new CompositeFilter(),
-                        new DataMapper(),
-                        new CustomFilter());
+                        new DataMapper());
   }
 }

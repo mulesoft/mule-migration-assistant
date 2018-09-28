@@ -139,8 +139,6 @@ public class EmailSmtpTest {
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
-    getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
-        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, smtpGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> smtpGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, smtpsGlobalEndpoint.getAppliedTo().getExpression())
@@ -155,6 +153,9 @@ public class EmailSmtpTest {
         .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, emailConfig.getAppliedTo().getExpression())
         .forEach(node -> emailConfig.execute(node, mock(MigrationReport.class)));
+
+    getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
+        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
         .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 

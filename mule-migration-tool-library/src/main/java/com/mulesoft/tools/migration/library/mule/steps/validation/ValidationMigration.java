@@ -6,15 +6,19 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.validation;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationPomContribution.addValidationDependency;
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
+import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 
 /**
  * Migrate Validation Module
@@ -25,6 +29,8 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpressi
 public class ValidationMigration extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
   private static final String VALIDATION_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/validation";
+  public static final Namespace VALIDATION_NAMESPACE = Namespace.getNamespace("validation", VALIDATION_NAMESPACE_URI);
+
   public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + VALIDATION_NAMESPACE_URI + "']";
   private ExpressionMigrator expressionMigrator;
 
@@ -45,7 +51,7 @@ public class ValidationMigration extends AbstractApplicationModelMigrationStep i
 
   public ValidationMigration() {
     this.setAppliedTo(XPATH_SELECTOR);
-    this.setNamespacesContributions(newArrayList(Namespace.getNamespace("validation", VALIDATION_NAMESPACE_URI)));
+    this.setNamespacesContributions(newArrayList(VALIDATION_NAMESPACE));
   }
 
   @Override
@@ -71,5 +77,11 @@ public class ValidationMigration extends AbstractApplicationModelMigrationStep i
     } else if (element.getName().equals("is-not-empty")) {
       element.setName("is-not-empty-collection");
     }
+  }
+
+  protected void addValidationsModule(Document document) {
+    addNameSpace(VALIDATION_NAMESPACE, "http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd",
+                 document);
+    addValidationDependency(getApplicationModel().getPomModel().get());
   }
 }

@@ -315,7 +315,7 @@ public final class XmlDslUtils {
 
   public static void createErrorHandlerParent(Element element) {
     Element parent = element.getParentElement();
-    parent.removeContent(element);
+    element.detach();
 
     Element errorHandler = new Element("error-handler");
     errorHandler.setNamespace(CORE_NAMESPACE);

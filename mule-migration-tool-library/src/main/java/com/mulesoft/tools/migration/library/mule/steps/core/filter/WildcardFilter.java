@@ -6,43 +6,37 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 
 /**
- * Migrate Custom Filter to the a validation stub
+ * Migrate Wildcard Filter to the a validation
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class CustomFilter extends AbstractFilterMigrator {
+public class WildcardFilter extends AbstractFilterMigrator {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='custom-filter']";
+  public static final String XPATH_SELECTOR = "//*[local-name()='wildcard-filter']";
 
   @Override
   public String getDescription() {
-    return "Update Custom Filter to a validation stub.";
+    return "Update Wildcard filter to a validation.";
   }
 
-  public CustomFilter() {
+  public WildcardFilter() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, element, element,
-                  "Filters are replaced with the validations module",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation");
-
     addValidationsModule(element.getDocument());
 
-    element.setAttribute("expression",
-                         "#[true /* replicate the logic of '" + element.getAttributeValue("class") + "' in DataWeave */]");
-    element.removeAttribute("class");
-    element.setName("is-true");
+    element.setAttribute("regex", "^" + element.getAttributeValue("pattern").replaceAll("\\*", ".*") + "$");
+    element.removeAttribute("pattern");
+    element.setAttribute("value", "#[payload]");
+    element.setName("matches-regex");
     element.setNamespace(VALIDATION_NAMESPACE);
 
     handleFilter(element);

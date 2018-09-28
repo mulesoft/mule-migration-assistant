@@ -26,6 +26,10 @@ public class ValidationPomContribution implements PomContribution {
 
   @Override
   public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
+    addValidationDependency(pomModel);
+  }
+
+  public static void addValidationDependency(PomModel pomModel) {
     pomModel.addDependency(new Dependency.DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-validation-module")
