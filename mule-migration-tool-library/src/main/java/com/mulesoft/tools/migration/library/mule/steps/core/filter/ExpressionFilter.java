@@ -7,7 +7,9 @@
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 
 /**
@@ -35,6 +37,11 @@ public class ExpressionFilter extends AbstractFilterMigrator {
 
     element.setName("is-true");
     element.setNamespace(VALIDATION_NAMESPACE);
+
+    final Attribute expression = element.getAttribute("expression");
+    expression.setValue(getExpressionMigrator()
+        .migrateExpression(getExpressionMigrator().isWrapped(expression.getValue()) ? expression.getValue()
+            : getExpressionMigrator().wrap(expression.getValue()), true, element));
 
     handleFilter(element);
   }
