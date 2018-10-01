@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementsAfter;
@@ -41,7 +42,10 @@ public class MessageFilter extends AbstractFilterMigrator {
     }
 
     if (element.getAttribute("throwOnUnaccepted") != null) {
-      // TODO report
+      element.removeAttribute("throwOnUnaccepted");
+      report.report(WARN, element, element,
+                    "Validations always raise an error when the condition is not met.",
+                    "https://docs.mulesoft.com/mule-runtime/4.1/migration-filters");
     }
 
     if (element.getAttribute("onUnaccepted") != null) {
