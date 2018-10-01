@@ -21,6 +21,8 @@ import com.mulesoft.tools.migration.library.mule.steps.core.filter.AndFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.ExpressionFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.FilterReference;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.MessageFilter;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.MessageFilterReference;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.NotFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.OrFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.PayloadTypeFilter;
@@ -72,7 +74,8 @@ public class FiltersTest {
         "filter-11",
         "filter-12",
         "filter-13",
-        "filter-14"
+        "filter-14",
+        "filter-15",
     };
   }
 
@@ -87,6 +90,8 @@ public class FiltersTest {
   }
 
   private FilterReference filterReference;
+  private MessageFilterReference messageFilterReference;
+  private MessageFilter messageFilter;
   private ExpressionFilter expressionFilter;
   private RegexFilter regexFilter;
   private WildcardFilter wildcardFilter;
@@ -130,6 +135,12 @@ public class FiltersTest {
     filterReference = new FilterReference();
     filterReference.setExpressionMigrator(expressionMigrator);
     filterReference.setApplicationModel(appModel);
+    messageFilterReference = new MessageFilterReference();
+    messageFilterReference.setExpressionMigrator(expressionMigrator);
+    messageFilterReference.setApplicationModel(appModel);
+    messageFilter = new MessageFilter();
+    messageFilter.setExpressionMigrator(expressionMigrator);
+    messageFilter.setApplicationModel(appModel);
     expressionFilter = new ExpressionFilter();
     expressionFilter.setExpressionMigrator(expressionMigrator);
     expressionFilter.setApplicationModel(appModel);
@@ -162,6 +173,10 @@ public class FiltersTest {
   public void execute() throws Exception {
     getElementsFromDocument(doc, filterReference.getAppliedTo().getExpression())
         .forEach(node -> filterReference.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, messageFilterReference.getAppliedTo().getExpression())
+        .forEach(node -> messageFilterReference.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, messageFilter.getAppliedTo().getExpression())
+        .forEach(node -> messageFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
         .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, expressionFilter.getAppliedTo().getExpression())

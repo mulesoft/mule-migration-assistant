@@ -14,14 +14,15 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILI
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.CompatibilityResolver;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Attribute;
+import org.jdom2.Content;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -30,10 +31,11 @@ import org.jdom2.Parent;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Optional;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.CompatibilityResolver;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 /**
  * Provides reusable methods for common migration scenarios.
@@ -288,6 +290,17 @@ public final class XmlDslUtils {
   public static void addElementAfter(Element newElement, Element element) {
     Integer elementIndex = element.getParentElement().indexOf(element);
     element.getParentElement().addContent(elementIndex + 1, newElement);
+  }
+
+  /**
+   * Add new element after some existing element.
+   *
+   * @param newElement
+   * @param element
+   */
+  public static void addElementsAfter(Collection<? extends Content> newElements, Element element) {
+    Integer elementIndex = element.getParentElement().indexOf(element);
+    element.getParentElement().addContent(elementIndex + 1, newElements);
   }
 
   public static Element getFlow(Element processor) {

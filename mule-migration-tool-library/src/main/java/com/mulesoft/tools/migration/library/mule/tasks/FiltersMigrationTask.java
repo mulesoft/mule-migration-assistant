@@ -14,6 +14,8 @@ import com.mulesoft.tools.migration.library.mule.steps.core.filter.AndFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.ExpressionFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.FilterReference;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.MessageFilter;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.MessageFilterReference;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.NotFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.OrFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.PayloadTypeFilter;
@@ -50,6 +52,8 @@ public class FiltersMigrationTask extends AbstractMigrationTask {
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new FilterReference(),
+                        new MessageFilterReference(),
+                        new MessageFilter(),
                         new CustomFilter(),
                         new ExpressionFilter(),
                         new RegexFilter(),

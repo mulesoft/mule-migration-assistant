@@ -1,8 +1,8 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
@@ -23,21 +23,21 @@ import org.jdom2.Element;
 public class AbstractFilterMigrator extends ValidationMigration {
 
   protected void handleFilter(Element filter) {
-    if (!(filter.getParentElement().getNamespace().equals(VALIDATION_NAMESPACE)
-        && filter.getParentElement().getName().endsWith("filter"))) {
-      Element flow = getFlow(filter);
-
-      if (flow != null) {
-        Element errorHandler = getFlowExceptionHandlingElement(flow);
-
-        if (errorHandler == null) {
-          errorHandler = new Element("error-handler", CORE_NAMESPACE);
-          flow.addContent(errorHandler);
-        }
-
-        resolveValidationHandler(errorHandler);
-      }
-    }
+    //    if (!(filter.getParentElement().getNamespace().equals(VALIDATION_NAMESPACE)
+    //        && filter.getParentElement().getName().endsWith("filter"))) {
+    //      Element flow = getFlow(filter);
+    //
+    //      if (flow != null) {
+    //        Element errorHandler = getFlowExceptionHandlingElement(flow);
+    //
+    //        if (errorHandler == null) {
+    //          errorHandler = new Element("error-handler", CORE_NAMESPACE);
+    //          flow.addContent(errorHandler);
+    //        }
+    //
+    //        resolveValidationHandler(errorHandler);
+    //      }
+    //    }
   }
 
   protected Element resolveValidationHandler(Element errorHandler) {

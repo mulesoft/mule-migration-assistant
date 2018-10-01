@@ -34,7 +34,7 @@ public class PayloadTypeFilter extends AbstractFilterMigrator {
     addValidationsModule(element.getDocument());
 
     element.setAttribute("expression",
-                         "#[payload.^class = '" + element.getAttributeValue("expectedType") + "']");
+                         "#[payload.^class == '" + element.getAttributeValue("expectedType") + "']");
     element.removeAttribute("expectedType");
     element.setName("is-true");
     element.setNamespace(VALIDATION_NAMESPACE);
