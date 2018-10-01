@@ -58,7 +58,7 @@ public class IdempotentSecureHashMessageFilter extends AbstractFilterMigrator {
           Element validationHandler = new Element("on-error-propagate", CORE_NAMESPACE)
               .setAttribute("type", "DUPLICATE_MESSAGE")
               .setAttribute("logException", "false");
-          errorHandler.addContent(validationHandler);
+          errorHandler.addContent(0, validationHandler);
           validationHandler.addContent(new Element("set-variable", CORE_NAMESPACE)
               .setAttribute("variableName", "filtered")
               .setAttribute("value", "#[true]"));

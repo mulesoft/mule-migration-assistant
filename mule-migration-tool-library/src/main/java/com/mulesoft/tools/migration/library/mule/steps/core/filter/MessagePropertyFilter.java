@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -33,10 +31,6 @@ public class MessagePropertyFilter extends AbstractFilterMigrator {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, element, element,
-                  "Filters are replaced with the validations module",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation");
-
     addValidationsModule(element.getDocument());
 
     String pattern = element.getAttributeValue("pattern");

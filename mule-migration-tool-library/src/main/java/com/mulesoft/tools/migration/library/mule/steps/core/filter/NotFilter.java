@@ -79,7 +79,8 @@ public class NotFilter extends AbstractFilterMigrator {
       validator.setName("any");
       validator.getChildren().forEach(c -> negateValidator(c, report, original));
     } else {
-      report.report(ERROR, original, validator, "Inner filter cannot be migrated to its negated version.");
+      report.report(ERROR, original, validator, "Inner filter cannot be migrated to its negated version.",
+                    "https://docs.mulesoft.com/mule-runtime/4.1/migration-filters");
     }
 
     return validator;
