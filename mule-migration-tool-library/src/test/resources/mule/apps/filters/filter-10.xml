@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+
+    <flow name="flow1">
+        <validation:is-true expression="#[vars.compatibility_inboundProperties['AcquirerCountry'] == 'MyCountry']"/>
+    </flow>
+
+    <flow name="flow2">
+        <validation:is-true expression="#[vars.compatibility_outboundProperties['AcquirerCountry'] == 'MyCountry']"/>
+    </flow>
+    
+    <flow name="flow3">
+        <validation:is-true expression="#[vars.compatibility_outboundProperties['AcquirerCountry'] != 'MyCountry']"/>
+    </flow>
+    
+    <flow name="flow4">
+        <validation:matches-regex regex="^My.*$" value="#[vars.compatibility_outboundProperties['AcquirerCountry']]"/>
+    </flow>
+    
+    <flow name="flow5">
+        <validation:matches-regex regex="(?!^My.*$)" value="#[vars.compatibility_outboundProperties['AcquirerCountry']]"/>
+    </flow>
+    
+</mule>

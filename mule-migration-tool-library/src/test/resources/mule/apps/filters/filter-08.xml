@@ -8,11 +8,6 @@
 
     <flow name="flow">
         <validation:is-true expression="#[false]"/>
-        <error-handler>
-            <on-error-continue type="MULE:VALIDATION">
-                <logger level="DEBUG" message="Message filtered"/>
-            </on-error-continue>
-        </error-handler>
     </flow>
     
 </mule>

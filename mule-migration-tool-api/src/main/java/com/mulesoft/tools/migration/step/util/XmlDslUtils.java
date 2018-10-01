@@ -14,11 +14,11 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILI
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Optional;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.CompatibilityResolver;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Attribute;
@@ -31,11 +31,11 @@ import org.jdom2.Parent;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.CompatibilityResolver;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Provides reusable methods for common migration scenarios.
@@ -315,7 +315,7 @@ public final class XmlDslUtils {
     applicationModel.getPomModel().ifPresent(pom -> pom.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-validation-module")
-        .withVersion("1.2.2")
+        .withVersion("1.3.0-SNAPSHOT")
         .withClassifier("mule-plugin")
         .build()));
 

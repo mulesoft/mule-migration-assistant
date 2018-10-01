@@ -7,12 +7,7 @@
                http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 
     <flow name="flow">
-        <validation:matches-regex regex="(\w)* with the mules" value="#[payload]"/>
-        <error-handler>
-            <on-error-continue type="MULE:VALIDATION">
-                <logger level="DEBUG" message="Message filtered"/>
-            </on-error-continue>
-        </error-handler>
+        <validation:matches-regex regex=".*(\w)* with the mules.*" value="#[payload]"/>
     </flow>
     
 </mule>

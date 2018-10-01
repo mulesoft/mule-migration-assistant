@@ -7,14 +7,14 @@
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementsAfter;
+import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Attribute;
 import org.jdom2.Element;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Migrate not-filter to validations
@@ -42,37 +42,39 @@ public class NotFilter extends AbstractFilterMigrator {
     } else {
       addValidationsModule(element.getDocument());
 
-      element.setNamespace(VALIDATION_NAMESPACE);
-
-      boolean concatenableChildren = true;
-      Collection<String> childrenExpressions = new ArrayList<>();
-      for (Element childFilter : element.getChildren()) {
-        if ("is-true".equals(childFilter.getName()) && VALIDATION_NAMESPACE.equals(childFilter.getNamespace())) {
-          childrenExpressions.add(childFilter.getAttributeValue("expression"));
-        } else {
-          concatenableChildren = false;
-          break;
-        }
-      }
-
-      if (concatenableChildren && childrenExpressions.size() == 1) {
-        report.report(WARN, element, element,
-                      "Filters are replaced with the validations module",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation");
-
-        String uberExpr = childrenExpressions.stream().findFirst().get();
-        new ArrayList<>(element.getChildren()).forEach(c -> c.detach());
-
-        element.setAttribute("expression", uberExpr);
-        element.setName("is-false");
-        element.setNamespace(VALIDATION_NAMESPACE);
-      } else {
-        report.report(ERROR, element, element,
-                      "Replace 'not-filter with a single expression on a validator'",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation");
-      }
+      addElementsAfter(element.cloneContent()
+          .stream()
+          .map(e -> e instanceof Element ? negateValidator((Element) e, report, element) : e)
+          .collect(toList()), element);
+      element.detach();
 
       handleFilter(element);
     }
+  }
+
+  public Element negateValidator(Element validator, MigrationReport report, Element original) {
+    if ("is-true".equals(validator.getName())) {
+      validator.setName("is-false");
+    } else if ("is-false".equals(validator.getName())) {
+      validator.setName("is-true");
+    } else if ("matches-regex".equals(validator.getName())) {
+      Attribute regexAttr = validator.getAttribute("regex");
+
+      if (regexAttr.getValue().startsWith("(?!") && regexAttr.getValue().endsWith(")")) {
+        regexAttr.setValue(StringUtils.substring(regexAttr.getValue(), 3, -1));
+      } else {
+        regexAttr.setValue("(?!" + regexAttr.getValue() + ")");
+      }
+    } else if ("any".equals(validator.getName())) {
+      validator.setName("all");
+      validator.getChildren().forEach(c -> negateValidator(c, report, original));
+    } else if ("all".equals(validator.getName())) {
+      validator.setName("any");
+      validator.getChildren().forEach(c -> negateValidator(c, report, original));
+    } else {
+      report.report(ERROR, original, validator, "Inner filter cannot be migrated to its negated version.");
+    }
+
+    return validator;
   }
 }

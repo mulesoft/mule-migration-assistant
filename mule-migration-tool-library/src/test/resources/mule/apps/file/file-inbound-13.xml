@@ -20,11 +20,6 @@
         <validation:is-true expression="#[true /* replicate the logic of 'org.mule.transport.file.FileRecursiveFileFilterTestCase$TxtFileFilter' in DataWeave */]"/>
         <logger/>
         <compatibility:outbound-properties-to-var/>
-        <error-handler>
-            <on-error-continue type="MULE:VALIDATION">
-                <logger level="DEBUG" message="Message filtered" />
-            </on-error-continue>
-        </error-handler>
     </flow>
     
 </mule>

@@ -7,12 +7,10 @@
                http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 
     <flow name="flow">
-        <validation:is-true expression="#[payload.^class = 'java.lang.String' || payload.^class = 'java.lang.Number']"/>
-        <error-handler>
-            <on-error-continue type="MULE:VALIDATION">
-                <logger level="DEBUG" message="Message filtered"/>
-            </on-error-continue>
-        </error-handler>
+        <validation:any>
+            <validation:is-true expression="#[payload.^class == 'java.lang.String']" />
+            <validation:is-true expression="#[payload.^class == 'java.lang.Number']" />
+        </validation:any>
     </flow>
     
 </mule>

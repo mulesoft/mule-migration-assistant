@@ -14,8 +14,11 @@ import com.mulesoft.tools.migration.library.mule.steps.core.filter.AndFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.ExpressionFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.FilterReference;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.IdempotentMessageFilter;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.IdempotentSecureHashMessageFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.MessageFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.MessageFilterReference;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.MessagePropertyFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.NotFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.OrFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.PayloadTypeFilter;
@@ -59,8 +62,12 @@ public class FiltersMigrationTask extends AbstractMigrationTask {
                         new RegexFilter(),
                         new WildcardFilter(),
                         new PayloadTypeFilter(),
+                        new MessagePropertyFilter(),
                         new AndFilter(),
                         new OrFilter(),
-                        new NotFilter());
+                        new NotFilter(),
+
+                        new IdempotentMessageFilter(),
+                        new IdempotentSecureHashMessageFilter());
   }
 }

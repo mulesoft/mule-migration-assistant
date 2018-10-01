@@ -7,7 +7,7 @@
                http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 
     <flow name="flow">
-        <validation:is-true expression="#[true /* replicate the logic of 'org.mule.migration.CustomFilter' in DataWeave */]"/>
+        <idempotent-message-validator/>
     </flow>
     
 </mule>

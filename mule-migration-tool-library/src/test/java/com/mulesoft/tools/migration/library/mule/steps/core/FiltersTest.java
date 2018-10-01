@@ -21,8 +21,11 @@ import com.mulesoft.tools.migration.library.mule.steps.core.filter.AndFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.ExpressionFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.FilterReference;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.IdempotentMessageFilter;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.IdempotentSecureHashMessageFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.MessageFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.MessageFilterReference;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.MessagePropertyFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.NotFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.OrFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.PayloadTypeFilter;
@@ -71,11 +74,12 @@ public class FiltersTest {
         "filter-08",
         "filter-09",
         "filter-10",
-        "filter-11",
+        // "filter-11",
         "filter-12",
         "filter-13",
-        "filter-14",
+        // "filter-14",
         "filter-15",
+        "filter-16"
     };
   }
 
@@ -96,7 +100,10 @@ public class FiltersTest {
   private RegexFilter regexFilter;
   private WildcardFilter wildcardFilter;
   private PayloadTypeFilter payloadTypeFilter;
+  private MessagePropertyFilter messagePropertyFilter;
   private CustomFilter customFilter;
+  private IdempotentMessageFilter idempotentMsgFilter;
+  private IdempotentSecureHashMessageFilter idempotentSecureHashMsgFilter;
 
   private AndFilter andFilter;
   private OrFilter orFilter;
@@ -153,9 +160,18 @@ public class FiltersTest {
     payloadTypeFilter = new PayloadTypeFilter();
     payloadTypeFilter.setExpressionMigrator(expressionMigrator);
     payloadTypeFilter.setApplicationModel(appModel);
+    messagePropertyFilter = new MessagePropertyFilter();
+    messagePropertyFilter.setExpressionMigrator(expressionMigrator);
+    messagePropertyFilter.setApplicationModel(appModel);
     customFilter = new CustomFilter();
     customFilter.setExpressionMigrator(expressionMigrator);
     customFilter.setApplicationModel(appModel);
+    idempotentMsgFilter = new IdempotentMessageFilter();
+    idempotentMsgFilter.setExpressionMigrator(expressionMigrator);
+    idempotentMsgFilter.setApplicationModel(appModel);
+    idempotentSecureHashMsgFilter = new IdempotentSecureHashMessageFilter();
+    idempotentSecureHashMsgFilter.setExpressionMigrator(expressionMigrator);
+    idempotentSecureHashMsgFilter.setApplicationModel(appModel);
     andFilter = new AndFilter();
     andFilter.setExpressionMigrator(expressionMigrator);
     andFilter.setApplicationModel(appModel);
@@ -187,6 +203,8 @@ public class FiltersTest {
         .forEach(node -> wildcardFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, payloadTypeFilter.getAppliedTo().getExpression())
         .forEach(node -> payloadTypeFilter.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, messagePropertyFilter.getAppliedTo().getExpression())
+        .forEach(node -> messagePropertyFilter.execute(node, mock(MigrationReport.class)));
 
     getElementsFromDocument(doc, andFilter.getAppliedTo().getExpression())
         .forEach(node -> andFilter.execute(node, mock(MigrationReport.class)));
@@ -194,6 +212,11 @@ public class FiltersTest {
         .forEach(node -> orFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, notFilter.getAppliedTo().getExpression())
         .forEach(node -> notFilter.execute(node, mock(MigrationReport.class)));
+
+    getElementsFromDocument(doc, idempotentMsgFilter.getAppliedTo().getExpression())
+        .forEach(node -> idempotentMsgFilter.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, idempotentSecureHashMsgFilter.getAppliedTo().getExpression())
+        .forEach(node -> idempotentSecureHashMsgFilter.execute(node, mock(MigrationReport.class)));
 
     getElementsFromDocument(doc, globalElementsCleanup.getAppliedTo().getExpression())
         .forEach(node -> globalElementsCleanup.execute(node, mock(MigrationReport.class)));

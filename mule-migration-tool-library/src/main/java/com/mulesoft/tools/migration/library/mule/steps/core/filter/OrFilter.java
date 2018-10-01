@@ -6,16 +6,9 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-import static java.util.stream.Collectors.joining;
-
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Migrate or-filter to validations
@@ -43,38 +36,49 @@ public class OrFilter extends AbstractFilterMigrator {
     } else {
       addValidationsModule(element.getDocument());
 
+      element.setName("any");
       element.setNamespace(VALIDATION_NAMESPACE);
-
-      boolean concatenableChildren = true;
-      Collection<String> childrenExpressions = new ArrayList<>();
-      for (Element childFilter : element.getChildren()) {
-        if ("is-true".equals(childFilter.getName()) && VALIDATION_NAMESPACE.equals(childFilter.getNamespace())) {
-          childrenExpressions.add(childFilter.getAttributeValue("expression"));
-        } else {
-          concatenableChildren = false;
-          break;
-        }
-      }
-
-      if (concatenableChildren) {
-        report.report(WARN, element, element,
-                      "Filters are replaced with the validations module",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation");
-
-        String uberExpr =
-            childrenExpressions.stream().map(expr -> getExpressionMigrator().unwrap(expr)).collect(joining(" || ", "#[", "]"));
-        new ArrayList<>(element.getChildren()).forEach(c -> c.detach());
-
-        element.setAttribute("expression", uberExpr);
-        element.setName("is-true");
-        element.setNamespace(VALIDATION_NAMESPACE);
-      } else {
-        report.report(ERROR, element, element,
-                      "Replace 'or-filter with a single expression on a validator'",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation");
-      }
 
       handleFilter(element);
     }
+
+    // if (element.getChildren().isEmpty()) {
+    // element.detach();
+    // } else {
+    // addValidationsModule(element.getDocument());
+    //
+    // element.setNamespace(VALIDATION_NAMESPACE);
+    //
+    // boolean concatenableChildren = true;
+    // Collection<String> childrenExpressions = new ArrayList<>();
+    // for (Element childFilter : element.getChildren()) {
+    // if ("is-true".equals(childFilter.getName()) && VALIDATION_NAMESPACE.equals(childFilter.getNamespace())) {
+    // childrenExpressions.add(childFilter.getAttributeValue("expression"));
+    // } else {
+    // concatenableChildren = false;
+    // break;
+    // }
+    // }
+    //
+    // if (concatenableChildren) {
+    // report.report(WARN, element, element,
+    // "Filters are replaced with the validations module",
+    // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation");
+    //
+    // String uberExpr =
+    // childrenExpressions.stream().map(expr -> getExpressionMigrator().unwrap(expr)).collect(joining(" || ", "#[", "]"));
+    // new ArrayList<>(element.getChildren()).forEach(c -> c.detach());
+    //
+    // element.setAttribute("expression", uberExpr);
+    // element.setName("is-true");
+    // element.setNamespace(VALIDATION_NAMESPACE);
+    // } else {
+    // report.report(ERROR, element, element,
+    // "Replace 'or-filter with a single expression on a validator'",
+    // "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation");
+    // }
+    //
+    // handleFilter(element);
+    // }
   }
 }

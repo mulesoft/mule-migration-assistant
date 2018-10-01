@@ -8,14 +8,9 @@
 
     <flow name="flow">
         <validation:all>
-            <validation:is-true expression="#[payload.^class = 'java.lang.String']"/>
+            <validation:is-true expression="#[payload.^class == 'java.lang.String']"/>
             <validation:matches-regex regex="^.*:service1$" value="#[payload]"/>
         </validation:all>
-        <error-handler>
-            <on-error-continue type="MULE:VALIDATION">
-                <logger level="DEBUG" message="Message filtered"/>
-            </on-error-continue>
-        </error-handler>
     </flow>
     
 </mule>

@@ -4,8 +4,24 @@
       xsi:schemaLocation="
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <flow name="flow">
+    <flow name="flow1">
         <message-property-filter scope="inbound" pattern="AcquirerCountry=MyCountry"/>
+    </flow>
+    
+    <flow name="flow2">
+        <message-property-filter pattern="outbound:AcquirerCountry=MyCountry"/>
+    </flow>
+    
+    <flow name="flow3">
+        <message-property-filter pattern="AcquirerCountry!=MyCountry"/>
+    </flow>
+    
+    <flow name="flow4">
+        <message-property-filter pattern="AcquirerCountry=My*"/>
+    </flow>
+    
+    <flow name="flow5">
+        <message-property-filter pattern="AcquirerCountry!=My*"/>
     </flow>
     
 </mule>
