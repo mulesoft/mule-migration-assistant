@@ -6,10 +6,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.VALIDATION_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.addValidationNamespace;
+import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationPomContribution.addValidationDependency;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.VALIDATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addValidationModule;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -50,7 +51,8 @@ public class HttpTransformers extends AbstractApplicationModelMigrationStep
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     if ("request-wildcard-filter".equals(object.getName())) {
-      addValidationModule(getApplicationModel(), object.getDocument());
+      addValidationDependency(getApplicationModel().getPomModel().get());
+      addValidationNamespace(object.getDocument());
 
       Element wildcardFilterTryScope = new Element("try", CORE_NAMESPACE);
 

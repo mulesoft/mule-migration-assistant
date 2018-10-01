@@ -85,7 +85,6 @@ public class MessagePropertyFilter extends AbstractFilterMigrator {
       element.setNamespace(VALIDATION_NAMESPACE);
     }
 
-
     handleFilter(element);
   }
 

@@ -8,6 +8,11 @@
 
     <flow name="flow">
         <idempotent-message-validator/>
+        <error-handler>
+            <on-error-propagate type="DUPLICATE_MESSAGE" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     
 </mule>

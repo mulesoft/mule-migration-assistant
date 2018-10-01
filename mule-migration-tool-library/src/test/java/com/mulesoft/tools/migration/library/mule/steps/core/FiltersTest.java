@@ -19,6 +19,7 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.AndFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.ExceptionTypeFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.ExpressionFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.FilterReference;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.IdempotentMessageFilter;
@@ -31,6 +32,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.filter.OrFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.PayloadTypeFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.RegexFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.WildcardFilter;
+import com.mulesoft.tools.migration.library.mule.steps.scripting.ScriptingFilterMigration;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
@@ -74,10 +76,10 @@ public class FiltersTest {
         "filter-08",
         "filter-09",
         "filter-10",
-        // "filter-11",
+        "filter-11",
         "filter-12",
         "filter-13",
-        // "filter-14",
+        "filter-14",
         "filter-15",
         "filter-16"
     };
@@ -93,6 +95,7 @@ public class FiltersTest {
     reportMock = mock(MigrationReport.class);
   }
 
+  private ScriptingFilterMigration scriptingFilterMigration;
   private FilterReference filterReference;
   private MessageFilterReference messageFilterReference;
   private MessageFilter messageFilter;
@@ -100,6 +103,7 @@ public class FiltersTest {
   private RegexFilter regexFilter;
   private WildcardFilter wildcardFilter;
   private PayloadTypeFilter payloadTypeFilter;
+  private ExceptionTypeFilter exceptionTypeFilter;
   private MessagePropertyFilter messagePropertyFilter;
   private CustomFilter customFilter;
   private IdempotentMessageFilter idempotentMsgFilter;
@@ -139,6 +143,8 @@ public class FiltersTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
 
+    scriptingFilterMigration = new ScriptingFilterMigration();
+    scriptingFilterMigration.setApplicationModel(appModel);
     filterReference = new FilterReference();
     filterReference.setExpressionMigrator(expressionMigrator);
     filterReference.setApplicationModel(appModel);
@@ -160,6 +166,9 @@ public class FiltersTest {
     payloadTypeFilter = new PayloadTypeFilter();
     payloadTypeFilter.setExpressionMigrator(expressionMigrator);
     payloadTypeFilter.setApplicationModel(appModel);
+    exceptionTypeFilter = new ExceptionTypeFilter();
+    exceptionTypeFilter.setExpressionMigrator(expressionMigrator);
+    exceptionTypeFilter.setApplicationModel(appModel);
     messagePropertyFilter = new MessagePropertyFilter();
     messagePropertyFilter.setExpressionMigrator(expressionMigrator);
     messagePropertyFilter.setApplicationModel(appModel);
@@ -187,6 +196,9 @@ public class FiltersTest {
 
   @Test
   public void execute() throws Exception {
+    getElementsFromDocument(doc, scriptingFilterMigration.getAppliedTo().getExpression())
+        .forEach(node -> scriptingFilterMigration.execute(node, mock(MigrationReport.class)));
+
     getElementsFromDocument(doc, filterReference.getAppliedTo().getExpression())
         .forEach(node -> filterReference.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, messageFilterReference.getAppliedTo().getExpression())
@@ -203,6 +215,8 @@ public class FiltersTest {
         .forEach(node -> wildcardFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, payloadTypeFilter.getAppliedTo().getExpression())
         .forEach(node -> payloadTypeFilter.execute(node, mock(MigrationReport.class)));
+    getElementsFromDocument(doc, exceptionTypeFilter.getAppliedTo().getExpression())
+        .forEach(node -> exceptionTypeFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, messagePropertyFilter.getAppliedTo().getExpression())
         .forEach(node -> messagePropertyFilter.execute(node, mock(MigrationReport.class)));
 

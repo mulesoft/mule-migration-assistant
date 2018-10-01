@@ -8,22 +8,47 @@
 
     <flow name="flow1">
         <validation:is-true expression="#[vars.compatibility_inboundProperties['AcquirerCountry'] == 'MyCountry']"/>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
 
     <flow name="flow2">
         <validation:is-true expression="#[vars.compatibility_outboundProperties['AcquirerCountry'] == 'MyCountry']"/>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     
     <flow name="flow3">
         <validation:is-true expression="#[vars.compatibility_outboundProperties['AcquirerCountry'] != 'MyCountry']"/>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     
     <flow name="flow4">
         <validation:matches-regex regex="^My.*$" value="#[vars.compatibility_outboundProperties['AcquirerCountry']]"/>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     
     <flow name="flow5">
         <validation:matches-regex regex="(?!^My.*$)" value="#[vars.compatibility_outboundProperties['AcquirerCountry']]"/>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     
 </mule>

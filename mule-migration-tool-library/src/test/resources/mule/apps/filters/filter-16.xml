@@ -12,6 +12,11 @@
             import dw::Crypto
             ---
             Crypto::hashWith(correlationId, 'SHA-256')"/>
+        <error-handler>
+            <on-error-propagate type="DUPLICATE_MESSAGE" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     
 </mule>

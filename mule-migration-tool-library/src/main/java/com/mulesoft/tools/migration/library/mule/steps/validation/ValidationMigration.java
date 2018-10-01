@@ -80,8 +80,12 @@ public class ValidationMigration extends AbstractApplicationModelMigrationStep i
   }
 
   protected void addValidationsModule(Document document) {
+    addValidationNamespace(document);
+    addValidationDependency(getApplicationModel().getPomModel().get());
+  }
+
+  public static void addValidationNamespace(Document document) {
     addNameSpace(VALIDATION_NAMESPACE, "http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd",
                  document);
-    addValidationDependency(getApplicationModel().getPomModel().get());
   }
 }

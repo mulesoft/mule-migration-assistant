@@ -15,7 +15,6 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
@@ -52,11 +51,6 @@ public final class XmlDslUtils {
   public static final String CORE_EE_NS_URI = "http://www.mulesoft.org/schema/mule/ee/core";
   public static final Namespace CORE_EE_NAMESPACE = Namespace.getNamespace(EE_NAMESPACE_NAME, CORE_EE_NS_URI);
   public static final String EE_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd";
-
-  public static final Namespace VALIDATION_NAMESPACE =
-      Namespace.getNamespace("validation", "http://www.mulesoft.org/schema/mule/validation");
-  public static final String VALIDATION_NS_SCHEMA_LOC =
-      "http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd";
 
   private XmlDslUtils() {
     // Nothing to do
@@ -309,17 +303,6 @@ public final class XmlDslUtils {
     }
 
     return processor;
-  }
-
-  public static void addValidationModule(ApplicationModel applicationModel, Document document) {
-    applicationModel.getPomModel().ifPresent(pom -> pom.addDependency(new DependencyBuilder()
-        .withGroupId("org.mule.modules")
-        .withArtifactId("mule-validation-module")
-        .withVersion("1.3.0-SNAPSHOT")
-        .withClassifier("mule-plugin")
-        .build()));
-
-    addNameSpace(VALIDATION_NAMESPACE, VALIDATION_NS_SCHEMA_LOC, document);
   }
 
   public static boolean isTopLevelElement(Element element) {

@@ -14,7 +14,10 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
+import org.jdom2.Content;
 import org.jdom2.Element;
+
+import java.util.List;
 
 /**
  * Migrate not-filter to validations
@@ -42,13 +45,17 @@ public class NotFilter extends AbstractFilterMigrator {
     } else {
       addValidationsModule(element.getDocument());
 
-      addElementsAfter(element.cloneContent()
+      List<Content> negated = element.cloneContent()
           .stream()
           .map(e -> e instanceof Element ? negateValidator((Element) e, report, element) : e)
-          .collect(toList()), element);
+          .collect(toList());
+      addElementsAfter(negated, element);
+      negated.forEach(e -> {
+        if (e instanceof Element) {
+          handleFilter((Element) e);
+        }
+      });
       element.detach();
-
-      handleFilter(element);
     }
   }
 

@@ -8,6 +8,11 @@
 
     <flow name="flow">
         <validation:is-false expression="#[payload.^class == 'java.lang.String']"/>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     
 </mule>

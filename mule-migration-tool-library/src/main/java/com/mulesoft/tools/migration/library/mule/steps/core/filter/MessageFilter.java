@@ -10,11 +10,9 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementsAfter;
 
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
+
+import org.jdom2.Element;
 
 /**
  * Migrate message filters
@@ -56,6 +54,7 @@ public class MessageFilter extends AbstractFilterMigrator {
       wrappingTry.addContent(new Element("error-handler", CORE_NAMESPACE)
           .addContent(new Element("on-error-propagate", CORE_NAMESPACE)
               .setAttribute("type", "MULE:VALIDATION")
+              .setAttribute("logException", "false")
               .addContent(new Element("flow-ref", CORE_NAMESPACE)
                   .setAttribute("name", element.getAttributeValue("onUnaccepted")))));
 

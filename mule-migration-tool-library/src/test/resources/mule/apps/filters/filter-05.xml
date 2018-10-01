@@ -11,6 +11,11 @@
             <validation:is-true expression="#[payload.^class == 'java.lang.String']"/>
             <validation:matches-regex regex="^.*:service1$" value="#[payload]"/>
         </validation:all>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     
 </mule>

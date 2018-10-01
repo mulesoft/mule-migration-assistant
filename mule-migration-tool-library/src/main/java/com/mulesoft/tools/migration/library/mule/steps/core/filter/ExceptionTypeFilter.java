@@ -8,25 +8,24 @@ package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Attribute;
 import org.jdom2.Element;
 
 /**
- * Migrate Expression Filter to the a validation
+ * Migrate ExceptionType Filter to the a validation
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class ExpressionFilter extends AbstractFilterMigrator {
+public class ExceptionTypeFilter extends AbstractFilterMigrator {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='expression-filter']";
+  public static final String XPATH_SELECTOR = "//*[local-name()='exception-type-filter']";
 
   @Override
   public String getDescription() {
-    return "Update Expression filter to a validation.";
+    return "Update ExceptionType to a validation.";
   }
 
-  public ExpressionFilter() {
+  public ExceptionTypeFilter() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
@@ -34,13 +33,11 @@ public class ExpressionFilter extends AbstractFilterMigrator {
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     addValidationsModule(element.getDocument());
 
+    element.setAttribute("expression",
+                         "#[error.cause.^class == '" + element.getAttributeValue("expectedType") + "']");
+    element.removeAttribute("expectedType");
     element.setName("is-true");
     element.setNamespace(VALIDATION_NAMESPACE);
-
-    final Attribute expression = element.getAttribute("expression");
-    expression.setValue(getExpressionMigrator()
-        .migrateExpression(getExpressionMigrator().isWrapped(expression.getValue()) ? expression.getValue()
-            : getExpressionMigrator().wrap(expression.getValue()), true, element));
 
     handleFilter(element);
   }

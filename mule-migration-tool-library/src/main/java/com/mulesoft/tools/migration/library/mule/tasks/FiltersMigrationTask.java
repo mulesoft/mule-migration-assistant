@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.AndFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.ExceptionTypeFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.ExpressionFilter;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.FilterReference;
 import com.mulesoft.tools.migration.library.mule.steps.core.filter.IdempotentMessageFilter;
@@ -62,6 +63,7 @@ public class FiltersMigrationTask extends AbstractMigrationTask {
                         new RegexFilter(),
                         new WildcardFilter(),
                         new PayloadTypeFilter(),
+                        new ExceptionTypeFilter(),
                         new MessagePropertyFilter(),
                         new AndFilter(),
                         new OrFilter(),

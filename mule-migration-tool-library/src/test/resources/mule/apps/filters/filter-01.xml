@@ -10,11 +10,16 @@
         <try>
             <validation:is-true expression="#[payload.^class == 'java.lang.String']"/>
             <error-handler>
-                <on-error-propagate type="MULE:VALIDATION">
+                <on-error-propagate type="MULE:VALIDATION" logException="false">
                     <flow-ref name="unacceptedSubFlow"/>
                 </on-error-propagate>
             </error-handler>
         </try>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
 
     <sub-flow name="unacceptedSubFlow">

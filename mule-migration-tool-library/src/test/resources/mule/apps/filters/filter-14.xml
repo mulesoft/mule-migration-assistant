@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
       xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
       xsi:schemaLocation="
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-               http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+               http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+               http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
 
     <flow name="flow">
-        <validation:any>
-            <validation:is-true expression="#[payload.^class == 'java.lang.String']" />
-            <validation:is-true expression="#[payload.^class == 'java.lang.Number']" />
-        </validation:any>
+        <scripting:execute engine="groovy" target="filterAccepted">
+            <scripting:code>
+                return !payload.toString().equals("1")
+            </scripting:code>
+        </scripting:execute>
+        <validation:is-true expression="#[vars.filterAccepted]"/>
         <error-handler>
             <on-error-propagate type="MULE:VALIDATION" logException="false">
                 <set-variable variableName="filtered" value="#[true]"/>

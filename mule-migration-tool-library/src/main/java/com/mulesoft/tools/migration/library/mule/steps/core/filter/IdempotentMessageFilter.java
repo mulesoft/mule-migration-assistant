@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -32,6 +34,23 @@ public class IdempotentMessageFilter extends AbstractFilterMigrator {
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     element.setName("idempotent-message-validator");
+    handleFilter(element);
+  }
+
+  @Override
+  protected Element resolveValidationHandler(Element errorHandler) {
+    return errorHandler.getChildren().stream()
+        .filter(c -> "on-error-propagate".equals(c.getName()) && "DUPLICATE_MESSAGE".equals(c.getAttributeValue("type")))
+        .findFirst().orElseGet(() -> {
+          Element validationHandler = new Element("on-error-propagate", CORE_NAMESPACE)
+              .setAttribute("type", "DUPLICATE_MESSAGE")
+              .setAttribute("logException", "false");
+          errorHandler.addContent(validationHandler);
+          validationHandler.addContent(new Element("set-variable", CORE_NAMESPACE)
+              .setAttribute("variableName", "filtered")
+              .setAttribute("value", "#[true]"));
+          return validationHandler;
+        });
   }
 
 }

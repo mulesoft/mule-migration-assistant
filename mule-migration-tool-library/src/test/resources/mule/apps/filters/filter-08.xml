@@ -8,6 +8,11 @@
 
     <flow name="flow">
         <validation:is-true expression="#[false]"/>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     
 </mule>
