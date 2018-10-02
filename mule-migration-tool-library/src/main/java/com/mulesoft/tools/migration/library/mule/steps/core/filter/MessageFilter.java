@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementsAfter;
@@ -41,12 +41,12 @@ public class MessageFilter extends AbstractFilterMigrator {
       return;
     }
 
-    if (element.getAttribute("throwOnUnaccepted") != null) {
-      element.removeAttribute("throwOnUnaccepted");
-      report.report(WARN, element, element,
+    if (element.getAttribute("throwOnUnaccepted") == null || element.getAttributeValue("throwOnUnaccepted").equals("false")) {
+      report.report(ERROR, element, element,
                     "Validations always raise an error when the condition is not met.",
-                    "https://docs.mulesoft.com/mule-runtime/4.1/migration-filters");
+                    "https://docs.mulesoft.com/mule-runtime/4.1/migration-filters#applying_filters");
     }
+    element.removeAttribute("throwOnUnaccepted");
 
     if (element.getAttribute("onUnaccepted") != null) {
       Element wrappingTry = new Element("try", CORE_NAMESPACE);

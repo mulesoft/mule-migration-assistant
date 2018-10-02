@@ -35,7 +35,7 @@ public class CustomFilter extends AbstractFilterMigrator {
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     report.report(ERROR, element, element,
                   "Filters are replaced with the validations module",
-                  "https://docs.mulesoft.com/mule-runtime/4.1/migration-filters");
+                  "https://docs.mulesoft.com/mule-runtime/4.1/migration-filters#migrating_custom_or_complex_filters");
 
     addValidationsModule(element.getDocument());
 
