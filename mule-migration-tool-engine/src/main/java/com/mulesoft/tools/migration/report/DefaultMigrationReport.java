@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.report;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -29,6 +31,8 @@ public class DefaultMigrationReport implements MigrationReport {
   private XMLOutputter outp = new XMLOutputter();
   private Set<ReportEntryModel> reportEntries = new HashSet<>();
 
+  private int processedElements;
+
   @Override
   public void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks) {
     int i = 0;
@@ -51,8 +55,24 @@ public class DefaultMigrationReport implements MigrationReport {
   }
 
   @Override
+  public void addProcessedElements(int processedElements) {
+    this.processedElements += processedElements;
+  }
+
+  @Override
   public List<ReportEntryModel> getReportEntries() {
     return new ArrayList<>(this.reportEntries);
   }
 
+  public double successfulMigrationRatio() {
+    return (1.0 * (processedElements - reportEntries.stream()
+        .filter(re -> !"compatibility".equals(re.getElement().getNamespacePrefix()))
+        .map(re -> re.getElement()).distinct().count())) / processedElements;
+  }
+
+  public double errorMigrationRatio() {
+    return (1.0 * reportEntries.stream()
+        .filter(re -> ERROR.equals(re.getLevel()))
+        .map(re -> re.getElement()).distinct().count()) / processedElements;
+  }
 }

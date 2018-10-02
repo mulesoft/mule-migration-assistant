@@ -62,7 +62,7 @@ public class MigrationRunner {
       log("Executing migrator " + job.getRunnerVersion() + "...");
       job.execute(report);
       printMigrationSummary(job.getReportPath().resolve(REPORT_HOME).toAbsolutePath().toString(),
-                            stopwatch.stop().elapsed(MILLISECONDS));
+                            stopwatch.stop().elapsed(MILLISECONDS), report);
     } catch (Exception ex) {
       printMigrationError(ex, stopwatch.stop().elapsed(MILLISECONDS));
       exit(-1);

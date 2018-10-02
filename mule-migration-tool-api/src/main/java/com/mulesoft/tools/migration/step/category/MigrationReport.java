@@ -49,6 +49,15 @@ public interface MigrationReport<T> {
   void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks);
 
   /**
+   * Adds the passed value to the counter of processed elements.
+   * <p>
+   * This value is later used as the denominator to calculate the migration ratio.
+   * 
+   * @param processedElements
+   */
+  void addProcessedElements(int processedElements);
+
+  /**
    * Returns the report entries.
    */
   List<T> getReportEntries();

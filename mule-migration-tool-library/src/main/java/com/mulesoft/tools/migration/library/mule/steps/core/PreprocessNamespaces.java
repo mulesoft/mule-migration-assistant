@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.project.model.ApplicationModel.getEle
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.containsNamespace;
 import static java.lang.System.lineSeparator;
+import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -20,7 +21,7 @@ import org.jdom2.Document;
 import org.jdom2.Namespace;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Check for component with no defined migration task yet.
@@ -37,7 +38,7 @@ public class PreprocessNamespaces implements NamespaceContribution {
 
   @Override
   public void execute(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
-    List<Document> documents = applicationModel.getApplicationDocuments().values().stream().collect(Collectors.toList());
+    List<Document> documents = applicationModel.getApplicationDocuments().values().stream().collect(toList());
     documents.forEach(d -> addReportEntries(d, report, applicationModel));
   }
 
@@ -46,25 +47,34 @@ public class PreprocessNamespaces implements NamespaceContribution {
         document.getRootElement().getAdditionalNamespaces().stream()
             .filter(n -> !getElementsWithNamespace(document, n, applicationModel).isEmpty()
                 && !containsNamespace(n, applicationModel.getSupportedNamespaces()))
-            .collect(Collectors.toList());
+            .collect(toList());
 
+    AtomicInteger processedElements = new AtomicInteger(0);
 
-    unsupportedNamespaces.forEach(n -> {
-      if (n.getURI().startsWith("http://www.mulesoft.org")) {
-        report.report(ERROR, document.getRootElement(), document.getRootElement(),
-                      "The migration of " + n.getPrefix() + " is not supported.",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-tool#unsupported_connectors");
-      } else {
-        report.report(ERROR, document.getRootElement(), document.getRootElement(),
-                      "Didn't find migration rules for the following component: " + n.getPrefix()
-                          + "." + lineSeparator()
-                          + "If that component is defined in a Spring namespace handler of an app dependency, include its uri ("
-                          + n.getURI() + ") in the '" + ADDITIONAL_SPRING_NAMESPACES_PROP
-                          + "' so it is handled by the Spring Module.",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors",
-                      "https://docs.mulesoft.com/connectors/spring-module");
-      }
+    unsupportedNamespaces.forEach(ns -> {
+      // Ignore nested elements of the same pass to not distort statistics or clutter the report
+      applicationModel.getNodes("//*[namespace-uri() = '" + ns.getURI() + "' and namespace-uri(..) != '" + ns.getURI() + "']")
+          .forEach(node -> {
+            processedElements.incrementAndGet();
+
+            if (ns.getURI().startsWith("http://www.mulesoft.org")) {
+              report.report(ERROR, node, node,
+                            "The migration of " + ns.getPrefix() + " is not supported.",
+                            "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors",
+                            "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-tool#unsupported_connectors");
+            } else {
+              report.report(ERROR, node, node,
+                            "Didn't find migration rules for the following component: " + ns.getPrefix()
+                                + "." + lineSeparator()
+                                + "If that component is defined in a Spring namespace handler of an app dependency, include its uri ("
+                                + ns.getURI() + ") in the '" + ADDITIONAL_SPRING_NAMESPACES_PROP
+                                + "' so it is handled by the Spring Module.",
+                            "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors",
+                            "https://docs.mulesoft.com/connectors/spring-module");
+            }
+          });
     });
+
+    report.addProcessedElements(processedElements.get());
   }
 }
