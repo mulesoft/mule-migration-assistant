@@ -9,8 +9,15 @@ package com.mulesoft.tools.migration;
 import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
 import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationError;
 import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
+import static java.lang.Boolean.getBoolean;
+import static java.lang.String.format;
 import static java.lang.System.exit;
+import static java.lang.System.getProperty;
+import static java.net.URLEncoder.encode;
+import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.apache.http.HttpVersion.HTTP_1_1;
+import static org.apache.http.client.fluent.Executor.newInstance;
 
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
@@ -24,10 +31,17 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.http.client.fluent.Executor;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.HttpClients;
 
 import com.google.common.base.Stopwatch;
+import com.google.gson.Gson;
 
+import java.io.InputStream;
 import java.nio.file.Paths;
+import java.security.KeyStore;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
@@ -53,6 +67,28 @@ public class MigrationRunner {
 
   public static void main(String args[]) throws Exception {
     Stopwatch stopwatch = Stopwatch.createStarted();
+
+    Gson gson = new Gson();
+
+    //    SSLContext sslContext = SSLContexts.custom()
+    //        .loadKeyMaterial(readStore(), null) // use null as second param if you don't have a separate key
+    //        // password
+    //        .build();
+
+    // SSLContextBuilder builder = new SSLContextBuilder();
+    // builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+    // SSLContext lalala = builder.build();
+
+    Executor httpExecutor =
+        newInstance(HttpClients.custom()/* .setSSLSocketFactory(new SSLConnectionSocketFactory(lalala)) */.build());
+    //    Executor httpExecutor = newInstance(HttpClients.custom()/* .setSSLContext(sslContext) */.build());
+
+    Request statisticsPost = Request.Post("https://localhost:8082/api/v1/migrated" +
+        format("?%s&status=%d&userId=%s&mmtVersion=%s&osName=%s&osVersion=%s",
+               getBoolean("mmt.uploadReport") ? "_" : "dryRun", 0, randomUUID().toString(), "0.3.0-SNAPSHOT",
+               encode(getProperty("os.name"), "UTF-8"), encode(getProperty("os.version"), "UTF-8")))
+        .version(HTTP_1_1);
+
     try {
       MigrationRunner migrationRunner = new MigrationRunner();
       migrationRunner.initializeOptions(args);
@@ -61,11 +97,29 @@ public class MigrationRunner {
       DefaultMigrationReport report = new DefaultMigrationReport();
       log("Executing migrator " + job.getRunnerVersion() + "...");
       job.execute(report);
+
+      httpExecutor
+          .execute(statisticsPost.bodyString(gson.toJson(report), ContentType.APPLICATION_JSON))
+          .discardContent();
+
       printMigrationSummary(job.getReportPath().resolve(REPORT_HOME).toAbsolutePath().toString(),
                             stopwatch.stop().elapsed(MILLISECONDS), report);
+      exit(0);
     } catch (Exception ex) {
+      httpExecutor
+          .execute(statisticsPost.bodyString(gson.toJson(ex), ContentType.APPLICATION_JSON))
+          .discardContent();
+
       printMigrationError(ex, stopwatch.stop().elapsed(MILLISECONDS));
       exit(-1);
+    }
+  }
+
+  private static KeyStore readStore() throws Exception {
+    try (InputStream keyStoreStream = MigrationRunner.class.getResourceAsStream("keystore.jks")) {
+      KeyStore keyStore = KeyStore.getInstance("JKS");
+      keyStore.load(keyStoreStream, "mulemanishere".toCharArray());
+      return keyStore;
     }
   }
 

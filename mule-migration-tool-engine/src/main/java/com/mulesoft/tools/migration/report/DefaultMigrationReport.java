@@ -28,10 +28,12 @@ import java.util.Set;
  */
 public class DefaultMigrationReport implements MigrationReport {
 
-  private XMLOutputter outp = new XMLOutputter();
+  private transient XMLOutputter outp = new XMLOutputter();
   private Set<ReportEntryModel> reportEntries = new HashSet<>();
 
-  private int processedElements;
+  private double successfulMigrationRatio;
+  private double errorMigrationRatio;
+  private transient int processedElements;
 
   @Override
   public void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks) {
@@ -57,6 +59,12 @@ public class DefaultMigrationReport implements MigrationReport {
   @Override
   public void addProcessedElements(int processedElements) {
     this.processedElements += processedElements;
+    this.successfulMigrationRatio = (1.0 * (this.processedElements - reportEntries.stream()
+        .filter(re -> !"compatibility".equals(re.getElement().getNamespacePrefix()))
+        .map(re -> re.getElement()).distinct().count())) / this.processedElements;
+    this.errorMigrationRatio = (1.0 * reportEntries.stream()
+        .filter(re -> ERROR.equals(re.getLevel()))
+        .map(re -> re.getElement()).distinct().count()) / this.processedElements;
   }
 
   @Override
@@ -64,15 +72,11 @@ public class DefaultMigrationReport implements MigrationReport {
     return new ArrayList<>(this.reportEntries);
   }
 
-  public double successfulMigrationRatio() {
-    return (1.0 * (processedElements - reportEntries.stream()
-        .filter(re -> !"compatibility".equals(re.getElement().getNamespacePrefix()))
-        .map(re -> re.getElement()).distinct().count())) / processedElements;
+  public double getSuccessfulMigrationRatio() {
+    return successfulMigrationRatio;
   }
 
-  public double errorMigrationRatio() {
-    return (1.0 * reportEntries.stream()
-        .filter(re -> ERROR.equals(re.getLevel()))
-        .map(re -> re.getElement()).distinct().count()) / processedElements;
+  public double getErrorMigrationRatio() {
+    return errorMigrationRatio;
   }
 }

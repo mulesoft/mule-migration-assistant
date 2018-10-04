@@ -6,7 +6,12 @@
  */
 package com.mulesoft.tools.migration.report.html.model;
 
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringEscapeUtils.escapeXml;
+
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
+import com.mulesoft.tools.migration.step.category.MigrationReport.Level;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -32,9 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level;
-import static org.apache.commons.lang3.StringEscapeUtils.escapeXml;
-
 /**
  * Model for the HTML Report
  *
@@ -45,7 +47,7 @@ public class ReportEntryModel {
 
   private Level level;
   private String elementContent;
-  private Element element;
+  private transient Element element;
   private Integer lineNumber = 0;
   private Integer columnNumber = 0;
   private String message;
@@ -63,9 +65,7 @@ public class ReportEntryModel {
     } catch (URISyntaxException e) {
       throw new RuntimeException("Report Generation Error - Fail to get file: " + element.getDocument().getBaseURI(), e);
     }
-    for (String link : documentationLinks) {
-      this.getDocumentationLinks().add(link);
-    }
+    this.documentationLinks.addAll(asList(documentationLinks));
   }
 
   public void setElementLocation() throws Exception {

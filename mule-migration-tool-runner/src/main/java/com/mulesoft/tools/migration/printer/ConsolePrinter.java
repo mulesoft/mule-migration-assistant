@@ -27,8 +27,8 @@ public class ConsolePrinter {
     log("===============================================================================");
     log("MIGRATION TOOL RUN SUCCESSFULLY");
     log("===============================================================================");
-    log("Components migrated successfully: " + leftPad("" + (int) (report.successfulMigrationRatio() * 100) + " %", 5));
-    log("Components migrated with errors:  " + leftPad("" + (int) (report.errorMigrationRatio() * 100) + " %", 5));
+    log("Components migrated successfully: " + leftPad("" + (int) (report.getSuccessfulMigrationRatio() * 100) + " %", 5));
+    log("Components migrated with errors:  " + leftPad("" + (int) (report.getErrorMigrationRatio() * 100) + " %", 5));
     log("Total time: " + format("%.3f", elapsedTime.floatValue() / 1000) + " s");
     log("Migration report: " + reportPath);
   }
