@@ -26,13 +26,13 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<ee:set-payload >payload</ee:set-payload>
 			</ee:message>
 			<ee:variables>
-				<ee:set-variable variableName="dryRun" ><![CDATA[attributes.queryParams pluck $$ as String contains ('dryRun') ]]></ee:set-variable>
+<!-- 				<ee:set-variable variableName="dryRun" ><![CDATA[attributes.queryParams pluck $$ as String contains ('dryRun') ]]></ee:set-variable> -->
 				<ee:set-variable variableName="status" ><![CDATA[attributes.queryParams.status]]></ee:set-variable>
 				<ee:set-variable variableName="userId" ><![CDATA[attributes.queryParams.userId]]></ee:set-variable>
 				<ee:set-variable variableName="mmtVersion" ><![CDATA[attributes.queryParams.mmtVersion]]></ee:set-variable>
 				<ee:set-variable variableName="osName" ><![CDATA[attributes.queryParams.osName]]></ee:set-variable>
 				<ee:set-variable variableName="osVersion" ><![CDATA[attributes.queryParams.osVersion]]></ee:set-variable>
-				<ee:set-variable variableName="sessionId" ><![CDATA['111111111']]></ee:set-variable>
+				<ee:set-variable variableName="sessionId" ><![CDATA[attributes.queryParams.sessionId]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<ee:transform doc:name="Transform Message" doc:id="2daad47f-79a7-4ad6-978e-7beff7e152af" >
@@ -48,15 +48,14 @@ output application/json
 	    	}
   	},
 	"userId" : vars.userId,
-	"properties" : {
+	"properties" : ({
 	    "id": if (vars.status == '0') "MIGRATION_TOOL_RUN_SUCCESSFULLY" else "MIGRATION_FAILED",
 	    "productName": "MigrationTool",
 	    "productVersion": vars.mmtVersion,
 	    "osName": vars.osName,
 	    "osVersion": vars.osVersion,
-	    "timestamp": now(),
-	    "report": payload
-    	},
+	    "timestamp": now()})
+        ++ payload,
 	"integrations": {
 	    "Amplitude": {
 	       "session_id": vars.sessionId
@@ -64,19 +63,19 @@ output application/json
   	}
 }]]></ee:set-payload>
 			</ee:message>
-			<ee:variables>
-				<ee:set-variable variableName="dryRun" ><![CDATA[vars.dryRun]]></ee:set-variable>
-			</ee:variables>
+<!-- 			<ee:variables> -->
+<!-- 				<ee:set-variable variableName="dryRun" ><![CDATA[vars.dryRun]]></ee:set-variable> -->
+<!-- 			</ee:variables> -->
 		</ee:transform>
-		<choice doc:name="Choice" doc:id="44b016b0-2793-49b5-ad77-4332d2ca33bc" >
-			<when expression="#[vars.dryRun]" >
-				<logger level="INFO" message="#[payload]" doc:name="Logger" doc:id="7ae5bb24-c6b0-479c-99c7-b0c83496015d" />
-			</when>
-			<otherwise >
+<!-- 		<choice doc:name="Choice" doc:id="44b016b0-2793-49b5-ad77-4332d2ca33bc" > -->
+<!-- 			<when expression="#[vars.dryRun]" > -->
+<!-- 				<logger level="INFO" message="#[payload]" doc:name="Logger" doc:id="7ae5bb24-c6b0-479c-99c7-b0c83496015d" /> -->
+<!-- 			</when> -->
+<!-- 			<otherwise > -->
 				<http:request method="POST" doc:name="Segment_Request" doc:id="cad7d329-c551-4a6b-9338-4c7f8ab519a8" config-ref="HTTP_Segment_Request_configuration" path="/v1/track" sendCorrelationId="NEVER">
 					<http:headers><![CDATA[#[{ "Authorization" : "Basic WUdGSHhubkZHMUk5amtSeEJNdE04Q2xnQmRkVks5RWw6" }]]]></http:headers>
 				</http:request>
-			</otherwise>
-		</choice>
+<!-- 			</otherwise> -->
+<!-- 		</choice> -->
 	</flow>
 </mule>

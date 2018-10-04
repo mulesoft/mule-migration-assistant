@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
 import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationError;
 import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
 import static java.lang.Boolean.getBoolean;
+import static java.lang.Integer.parseInt;
 import static java.lang.String.format;
 import static java.lang.System.exit;
 import static java.lang.System.getProperty;
@@ -18,6 +19,7 @@ import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.apache.http.HttpVersion.HTTP_1_1;
 import static org.apache.http.client.fluent.Executor.newInstance;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
@@ -31,17 +33,15 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.http.HttpHost;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClients;
 
 import com.google.common.base.Stopwatch;
 import com.google.gson.Gson;
 
-import java.io.InputStream;
 import java.nio.file.Paths;
-import java.security.KeyStore;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
@@ -65,62 +65,42 @@ public class MigrationRunner {
   private String destinationProjectBasePath;
   private String muleVersion;
 
+  private String userId;
+  private String sessionId;
+  private String proxyHost;
+  private Integer proxyPort;
+  private String proxyUser;
+  private String proxyPass;
+
   public static void main(String args[]) throws Exception {
     Stopwatch stopwatch = Stopwatch.createStarted();
 
-    Gson gson = new Gson();
-
-    //    SSLContext sslContext = SSLContexts.custom()
-    //        .loadKeyMaterial(readStore(), null) // use null as second param if you don't have a separate key
-    //        // password
-    //        .build();
-
-    // SSLContextBuilder builder = new SSLContextBuilder();
-    // builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
-    // SSLContext lalala = builder.build();
-
-    Executor httpExecutor =
-        newInstance(HttpClients.custom()/* .setSSLSocketFactory(new SSLConnectionSocketFactory(lalala)) */.build());
-    //    Executor httpExecutor = newInstance(HttpClients.custom()/* .setSSLContext(sslContext) */.build());
-
-    Request statisticsPost = Request.Post("https://localhost:8082/api/v1/migrated" +
-        format("?%s&status=%d&userId=%s&mmtVersion=%s&osName=%s&osVersion=%s",
-               getBoolean("mmt.uploadReport") ? "_" : "dryRun", 0, randomUUID().toString(), "0.3.0-SNAPSHOT",
-               encode(getProperty("os.name"), "UTF-8"), encode(getProperty("os.version"), "UTF-8")))
-        .version(HTTP_1_1);
+    MigrationRunner migrationRunner = buildRunner(args);
+    MigrationJob job = migrationRunner.buildMigrationJob();
 
     try {
-      MigrationRunner migrationRunner = new MigrationRunner();
-      migrationRunner.initializeOptions(args);
-
-      MigrationJob job = migrationRunner.buildMigrationJob();
       DefaultMigrationReport report = new DefaultMigrationReport();
       log("Executing migrator " + job.getRunnerVersion() + "...");
       job.execute(report);
 
-      httpExecutor
-          .execute(statisticsPost.bodyString(gson.toJson(report), ContentType.APPLICATION_JSON))
-          .discardContent();
+      migrationRunner.sendUsageStatistics(job, report);
 
       printMigrationSummary(job.getReportPath().resolve(REPORT_HOME).toAbsolutePath().toString(),
                             stopwatch.stop().elapsed(MILLISECONDS), report);
       exit(0);
     } catch (Exception ex) {
-      httpExecutor
-          .execute(statisticsPost.bodyString(gson.toJson(ex), ContentType.APPLICATION_JSON))
-          .discardContent();
+      migrationRunner.sendUsageStatistics(job, ex);
 
       printMigrationError(ex, stopwatch.stop().elapsed(MILLISECONDS));
       exit(-1);
     }
   }
 
-  private static KeyStore readStore() throws Exception {
-    try (InputStream keyStoreStream = MigrationRunner.class.getResourceAsStream("keystore.jks")) {
-      KeyStore keyStore = KeyStore.getInstance("JKS");
-      keyStore.load(keyStoreStream, "mulemanishere".toCharArray());
-      return keyStore;
-    }
+  protected static MigrationRunner buildRunner(String[] args) throws Exception {
+    MigrationRunner migrationRunner = new MigrationRunner();
+    migrationRunner.initializeOptions(args);
+
+    return migrationRunner;
   }
 
   private MigrationJob buildMigrationJob() throws Exception {
@@ -147,6 +127,13 @@ public class MigrationRunner {
     options.addOption(PARENT_DOMAIN_BASE_PATH, true, "Base directory of the parent domain of the project to be migrated, if any");
     options.addOption(DESTINATION_PROJECT_BASE_PATH, true, "Base directory of the migrated project");
     options.addOption(MULE_VERSION, true, "Mule version where to migrate project");
+
+    options.addOption("userId", true, "The userId to send for the usage statistics");
+    options.addOption("sessionId", true, "The sessionId to send for the usage statistics");
+    options.addOption("proxyHost", true, "The host of the proxy to use when sending usage statistics");
+    options.addOption("proxyPort", true, "The port of the proxy to use when sending usage statistics");
+    options.addOption("proxyUser", true, "The username of the proxy to use when sending usage statistics");
+    options.addOption("proxyPass", true, "The password of the proxy to use when sending usage statistics");
 
     try {
       CommandLineParser parser = new DefaultParser();
@@ -177,6 +164,29 @@ public class MigrationRunner {
       if (line.hasOption(HELP)) {
         printHelp(options);
       }
+
+      if (line.hasOption("userId")) {
+        this.userId = line.getOptionValue("userId");
+      } else {
+        this.userId = randomUUID().toString();
+      }
+      if (line.hasOption("sessionId")) {
+        this.sessionId = line.getOptionValue("sessionId");
+      } else {
+        this.sessionId = "111111111";
+      }
+      if (line.hasOption("proxyHost")) {
+        this.proxyHost = line.getOptionValue("proxyHost");
+      }
+      if (line.hasOption("proxyPort")) {
+        this.proxyPort = parseInt(line.getOptionValue("proxyPort"));
+      }
+      if (line.hasOption("proxyUser")) {
+        this.proxyUser = line.getOptionValue("proxyUser");
+      }
+      if (line.hasOption("proxyPass")) {
+        this.proxyPass = line.getOptionValue("proxyPass");
+      }
     } catch (ParseException e) {
       e.printStackTrace();
       System.exit(-1);
@@ -189,6 +199,38 @@ public class MigrationRunner {
   private void printHelp(Options options) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.printHelp("migration-tool - Help", options);
+  }
+
+  protected void sendUsageStatistics(MigrationJob job, Object body) {
+    if (getBoolean("mmt.uploadReport")) {
+      try {
+        Gson gson = new Gson();
+
+        Executor httpExecutor = newInstance(HttpClients.custom().build());
+
+        if (proxyUser != null && proxyPass != null) {
+          httpExecutor = httpExecutor.auth(new HttpHost(proxyHost, proxyPort), proxyUser, proxyPass);
+        }
+
+        Request request = Request.Post("https://mmt-stats-gatherer.us-e1.cloudhub.io/api/v1/migrated" +
+            format("?status=%d&userId=%s&sessionId=%s&mmtVersion=%s&osName=%s&osVersion=%s",
+                   0, userId, sessionId, job.getRunnerVersion(),
+                   encode(getProperty("os.name"), "UTF-8"), encode(getProperty("os.version"), "UTF-8")))
+            .version(HTTP_1_1)
+            .bodyString(gson.toJson(body), APPLICATION_JSON);
+
+        if (proxyHost != null) {
+          request = request.viaProxy(new HttpHost(proxyHost, proxyPort));
+        }
+
+        httpExecutor.execute(request).handleResponse(response -> {
+          System.out.println(response.getStatusLine());
+          return response;
+        });
+      } catch (Exception e) {
+        // Nothing to do, do not fail the migration just for being unable to send the statistics.
+      }
+    }
   }
 
 }

@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.report;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 
+import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -29,11 +30,20 @@ import java.util.Set;
 public class DefaultMigrationReport implements MigrationReport {
 
   private transient XMLOutputter outp = new XMLOutputter();
-  private Set<ReportEntryModel> reportEntries = new HashSet<>();
+  private transient Set<ReportEntryModel> reportEntries = new HashSet<>();
+
+  private String projectType;
+  private String projectName;
 
   private double successfulMigrationRatio;
   private double errorMigrationRatio;
-  private transient int processedElements;
+  private int processedElements;
+
+  @Override
+  public void initialize(ProjectType projectType, String projectName) {
+    this.projectType = projectType.name();
+    this.projectName = projectName;
+  }
 
   @Override
   public void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks) {
@@ -65,6 +75,14 @@ public class DefaultMigrationReport implements MigrationReport {
     this.errorMigrationRatio = (1.0 * reportEntries.stream()
         .filter(re -> ERROR.equals(re.getLevel()))
         .map(re -> re.getElement()).distinct().count()) / this.processedElements;
+  }
+
+  public String getProjectType() {
+    return projectType;
+  }
+
+  public String getProjectName() {
+    return projectName;
   }
 
   @Override

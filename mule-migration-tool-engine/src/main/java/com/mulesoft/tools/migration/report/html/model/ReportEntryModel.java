@@ -7,7 +7,8 @@
 package com.mulesoft.tools.migration.report.html.model;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringEscapeUtils.escapeXml;
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+import static org.apache.commons.text.StringEscapeUtils.escapeXml11;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.step.category.MigrationReport.Level;
@@ -57,7 +58,7 @@ public class ReportEntryModel {
 
   public ReportEntryModel(Level level, Element element, String message, String... documentationLinks) {
     this.level = level;
-    this.elementContent = escapeXml(domElementToString(element));
+    this.elementContent = escapeXml11(domElementToString(element));
     this.element = element;
     this.message = message;
     try {
@@ -99,7 +100,24 @@ public class ReportEntryModel {
 
     XMLOutputter xmlOut = new XMLOutputter(noNamespaces);
     xmlOut.setFormat(format);
-    return xmlOut.outputString(element);
+    return xmlOut.outputString(maskAttributesRecursively(element.clone()));
+  }
+
+  protected Element maskAttributesRecursively(Element element) {
+    maskAttributes(element);
+    element.getChildren().forEach(c -> {
+      maskAttributes(c);
+      maskAttributesRecursively(c);
+    });
+    return element;
+  }
+
+  protected void maskAttributes(Element element) {
+    element.getAttributes().forEach(att -> {
+      if (containsIgnoreCase(att.getName(), "password") || containsIgnoreCase(att.getName(), "secret")) {
+        att.setValue("****");
+      }
+    });
   }
 
   private static final XMLOutputProcessor noNamespaces = new AbstractXMLOutputProcessor() {
