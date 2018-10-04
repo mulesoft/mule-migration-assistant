@@ -6,6 +6,9 @@
  */
 package com.mulesoft.tools.migration.report;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+
+import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -26,8 +29,21 @@ import java.util.Set;
  */
 public class DefaultMigrationReport implements MigrationReport {
 
-  private XMLOutputter outp = new XMLOutputter();
-  private Set<ReportEntryModel> reportEntries = new HashSet<>();
+  private transient XMLOutputter outp = new XMLOutputter();
+  private transient Set<ReportEntryModel> reportEntries = new HashSet<>();
+
+  private String projectType;
+  private String projectName;
+
+  private double successfulMigrationRatio;
+  private double errorMigrationRatio;
+  private int processedElements;
+
+  @Override
+  public void initialize(ProjectType projectType, String projectName) {
+    this.projectType = projectType.name();
+    this.projectName = projectName;
+  }
 
   @Override
   public void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks) {
@@ -51,8 +67,34 @@ public class DefaultMigrationReport implements MigrationReport {
   }
 
   @Override
+  public void addProcessedElements(int processedElements) {
+    this.processedElements += processedElements;
+    this.successfulMigrationRatio = (1.0 * (this.processedElements - reportEntries.stream()
+        .filter(re -> !"compatibility".equals(re.getElement().getNamespacePrefix()))
+        .map(re -> re.getElement()).distinct().count())) / this.processedElements;
+    this.errorMigrationRatio = (1.0 * reportEntries.stream()
+        .filter(re -> ERROR.equals(re.getLevel()))
+        .map(re -> re.getElement()).distinct().count()) / this.processedElements;
+  }
+
+  public String getProjectType() {
+    return projectType;
+  }
+
+  public String getProjectName() {
+    return projectName;
+  }
+
+  @Override
   public List<ReportEntryModel> getReportEntries() {
     return new ArrayList<>(this.reportEntries);
   }
 
+  public double getSuccessfulMigrationRatio() {
+    return successfulMigrationRatio;
+  }
+
+  public double getErrorMigrationRatio() {
+    return errorMigrationRatio;
+  }
 }

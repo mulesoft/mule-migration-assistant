@@ -41,6 +41,8 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
 
   private static final String DEBUG_RUNNER = getProperty("mule.test.debugRunner");
 
+  private static final String MMT_UPLOAD_REPORT = getProperty("mule.test.mmtUploadReport");
+
   @Rule
   public TemporaryFolder migrationResult = new TemporaryFolder();
 
@@ -128,9 +130,11 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     final List<String> command = new ArrayList<>();
     command.add("java");
 
-    if (DEBUG_RUNNER != null)
+    if (DEBUG_RUNNER != null) {
       command.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
+    }
 
+    command.add("-Dmmt.uploadReport=" + MMT_UPLOAD_REPORT);
     command.add("-jar");
     command.add(getProperty("migrator.runner"));
     command.add("-projectBasePath");

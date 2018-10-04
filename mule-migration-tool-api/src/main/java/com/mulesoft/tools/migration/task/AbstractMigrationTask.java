@@ -26,6 +26,7 @@ import org.jdom2.output.XMLOutputter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A task is composed by one or more steps
@@ -93,9 +94,12 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
   }
 
   private void fetchAndProcessNodes(MigrationReport report, ApplicationModelContribution s, List<Element> alreadyProcessed) {
+    AtomicInteger processedElements = new AtomicInteger(0);
+
     List<Element> nodes = applicationModel.getNodes(s.getAppliedTo());
     nodes.stream().filter(n -> !alreadyProcessed.contains(n)).forEach(n -> {
       try {
+        processedElements.incrementAndGet();
         s.execute(n, report);
       } catch (Exception e) {
         throw new MigrationStepException("Task execution exception (" + e.getMessage() + ") migrating node:" + lineSeparator()
@@ -113,6 +117,8 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
       // loop.
       fetchAndProcessNodes(report, s, alreadyProcessed);
     }
+
+    report.addProcessedElements(processedElements.get());
   }
 
   protected boolean shouldExecuteAllSteps(MigrationStepSelector stepSelector) {

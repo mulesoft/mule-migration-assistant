@@ -20,6 +20,7 @@
         <module>mule-migration-tool-expression</module>
         <module>migration-contribution-archetype</module>
         <module>mule-migration-tool-contribution</module>
+        <module>mule-migration-tool-stats-gatherer</module>
     </modules>
 
     <properties>
@@ -53,6 +54,7 @@
         <jaxen.version>1.1.6</jaxen.version>
         <jdom2.version>2.0.5</jdom2.version>
         <commons.io.version>2.5</commons.io.version>
+        <commons.text.version>1.4</commons.text.version>
         <commons.cli.version>1.3.1</commons.cli.version>
         <commons.lang3.version>3.7</commons.lang3.version>
         <log4j.version>2.9.1</log4j.version>
@@ -377,6 +379,11 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons.io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons.text.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

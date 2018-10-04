@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.step.category;
 
+import com.mulesoft.tools.migration.project.ProjectType;
+
 import org.jdom2.Element;
 
 import java.util.List;
@@ -37,6 +39,14 @@ public interface MigrationReport<T> {
   }
 
   /**
+   * Sets some basic metadata about the project to be populated into the report.
+   * 
+   * @param projectType
+   * @param projectName
+   */
+  void initialize(ProjectType projectType, String projectName);
+
+  /**
    * Adds the report entry to the target report, and as a comment on the element being processed.
    *
    * @param level
@@ -47,6 +57,15 @@ public interface MigrationReport<T> {
    *        migrated app.
    */
   void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks);
+
+  /**
+   * Adds the passed value to the counter of processed elements.
+   * <p>
+   * This value is later used as the denominator to calculate the migration ratio.
+   *
+   * @param processedElements
+   */
+  void addProcessedElements(int processedElements);
 
   /**
    * Returns the report entries.

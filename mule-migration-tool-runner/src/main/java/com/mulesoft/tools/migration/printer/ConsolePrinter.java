@@ -6,6 +6,11 @@
  */
 package com.mulesoft.tools.migration.printer;
 
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.leftPad;
+
+import com.mulesoft.tools.migration.report.DefaultMigrationReport;
+
 /**
  * Prints output messages on console.
  *
@@ -18,11 +23,13 @@ public class ConsolePrinter {
     System.out.println(message);
   }
 
-  public static void printMigrationSummary(String reportPath, Long elapsedTime) {
+  public static void printMigrationSummary(String reportPath, Long elapsedTime, DefaultMigrationReport report) {
     log("===============================================================================");
     log("MIGRATION TOOL RUN SUCCESSFULLY");
     log("===============================================================================");
-    log("Total time: " + String.format("%.3f", elapsedTime.floatValue() / 1000) + " s");
+    log("Components migrated successfully: " + leftPad("" + (int) (report.getSuccessfulMigrationRatio() * 100) + " %", 5));
+    log("Components migrated with errors:  " + leftPad("" + (int) (report.getErrorMigrationRatio() * 100) + " %", 5));
+    log("Total time: " + format("%.3f", elapsedTime.floatValue() / 1000) + " s");
     log("Migration report: " + reportPath);
   }
 
@@ -30,7 +37,7 @@ public class ConsolePrinter {
     log("===============================================================================");
     log("MIGRATION FAILED");
     log("===============================================================================");
-    log("Total time: " + String.format("%.3f", elapsedTime.floatValue() / 1000) + " s");
+    log("Total time: " + format("%.3f", elapsedTime.floatValue() / 1000) + " s");
     log("Exception: " + exception.getMessage());
   }
 }

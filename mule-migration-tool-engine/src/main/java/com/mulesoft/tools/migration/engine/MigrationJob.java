@@ -75,6 +75,9 @@ public class MigrationJob implements Executable {
   @Override
   public void execute(MigrationReport report) throws Exception {
     ApplicationModel applicationModel = generateSourceApplicationModel(project);
+
+    report.initialize(applicationModel.getProjectType(), project.getFileName().toString());
+
     Path sourceProjectBasePath = applicationModel.getProjectBasePath();
     persistApplicationModel(applicationModel);
     ProjectType targetProjectType = applicationModel.getProjectType().getTargetType();
