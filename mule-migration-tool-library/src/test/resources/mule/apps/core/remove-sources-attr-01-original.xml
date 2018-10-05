@@ -11,7 +11,7 @@
                http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 
     <flow name="Test">
-        <file:listener config-ref="fileConnector" recursive="false" applyPostActionWhenFailed="false">
+        <file:listener xmlns:migration="migration" migration:isMessageSource="true" config-ref="fileConnector" recursive="false" applyPostActionWhenFailed="false">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>
@@ -19,7 +19,7 @@
     </flow>
 
     <flow name="Test2">
-        <http:listener config-ref="inStreamingListenerConfig" path="/streaming/*">
+        <http:listener xmlns:migration="migration" migration:isMessageSource="true" config-ref="inStreamingListenerConfig" path="/streaming/*">
             <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
                 <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:response>
@@ -38,7 +38,7 @@
     </flow>
 
     <flow name="Test4">
-        <vm:listener queueName="test" config-ref="VM_Config"/>
+        <vm:listener xmlns:migration="migration" migration:isMessageSource="true" queueName="test" config-ref="VM_Config"/>
     </flow>
 
 </mule>
