@@ -53,8 +53,14 @@ public class CleanNamespacesTest {
 
   @Test
   public void execute() throws Exception {
-    cleanNamespaces.execute(applicationModel, mock(MigrationReport.class));
     Document document = Iterables.get(applicationModel.getApplicationDocuments().values(), 0);
+    assertThat("The namespace wasn't removed.", document.getRootElement().getAdditionalNamespaces().size(), is(5));
+    assertThat("The schemas weren't removed.", document.getRootElement()
+        .getAttribute("schemaLocation", document.getRootElement().getNamespace("xsi")).getValue().split("\\s+").length, is(8));
+    cleanNamespaces.execute(applicationModel, mock(MigrationReport.class));
+    document = Iterables.get(applicationModel.getApplicationDocuments().values(), 0);
     assertThat("The namespace wasn't removed.", document.getRootElement().getAdditionalNamespaces().size(), is(2));
+    assertThat("The schemas weren't removed.", document.getRootElement()
+        .getAttribute("schemaLocation", document.getRootElement().getNamespace("xsi")).getValue().split("\\s+").length, is(2));
   }
 }
