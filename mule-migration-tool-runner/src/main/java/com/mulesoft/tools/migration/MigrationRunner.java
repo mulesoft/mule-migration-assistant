@@ -222,7 +222,6 @@ public class MigrationRunner {
       }
 
       httpExecutor.execute(request).handleResponse(response -> {
-        System.out.println(response.getStatusLine());
         return response;
       });
     } catch (Exception e) {
