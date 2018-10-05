@@ -132,14 +132,15 @@ public class JmsInboundTest {
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
-    getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
-        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, jmsInboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> jmsInboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
         .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, jmsConfig.getAppliedTo().getExpression())
         .forEach(node -> jmsConfig.execute(node, mock(MigrationReport.class)));
+
+    getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
+        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
         .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 

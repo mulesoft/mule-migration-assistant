@@ -136,8 +136,6 @@ public class VmInboundTest {
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
-    getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
-        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, vmGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> vmGlobalEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, vmInboundEndpoint.getAppliedTo().getExpression())
@@ -146,6 +144,9 @@ public class VmInboundTest {
         .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, vmConfig.getAppliedTo().getExpression())
         .forEach(node -> vmConfig.execute(node, mock(MigrationReport.class)));
+
+    getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
+        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
         .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
 

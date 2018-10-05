@@ -48,7 +48,7 @@ public class MessageAttachmentsListExpressionEvaluator extends AbstractApplicati
     if ("*".equals(expression)) {
       object.setAttribute("value", "#[payload.attachments pluck ((value, key, index) -> value)]");
     } else {
-      String asRegex = "^" + expression.replaceAll("*", ".*") + "$";
+      String asRegex = "^" + expression.replaceAll("\\*", ".*") + "$";
       object.setAttribute("value", "#[payload.attachments filterObject ((value,key) -> ((key as String) matches /" + asRegex
           + "/)) pluck ((value, key, index) -> value)]");
     }

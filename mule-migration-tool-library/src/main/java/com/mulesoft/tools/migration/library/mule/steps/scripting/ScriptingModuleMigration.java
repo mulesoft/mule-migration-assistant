@@ -35,7 +35,7 @@ public class ScriptingModuleMigration extends AbstractApplicationModelMigrationS
 
   private static final String SCRIPT_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/scripting";
   private static final String SCRIPT_NAMESPACE_PREFIX = "scripting";
-  private static final Namespace SCRIPT_NAMESPACE = Namespace.getNamespace(SCRIPT_NAMESPACE_PREFIX, SCRIPT_NAMESPACE_URI);
+  protected static final Namespace SCRIPT_NAMESPACE = Namespace.getNamespace(SCRIPT_NAMESPACE_PREFIX, SCRIPT_NAMESPACE_URI);
 
   public static final String XPATH_SELECTOR = "//scripting:*[local-name()='component']";
 
@@ -70,14 +70,23 @@ public class ScriptingModuleMigration extends AbstractApplicationModelMigrationS
       if (attribute != null) {
         scriptNode.addContent("${file::" + attribute.getValue() + "}");
         scriptNode.removeAttribute(attribute);
+      } else {
+        handleCode(scriptNode);
       }
       movePropertiesToMap(scriptNode);
     }
+
+    element.removeAttribute("name");
+
     report
         .report(ERROR, element, element,
                 "The message format in Mule 4 has changed. Change any usages of the message to match the new bindings in Mule 4.",
                 "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message",
                 "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-scripting");
+  }
+
+  protected void handleCode(Element scriptNode) {
+    // Nothing to do
   }
 
   private String updateEngineValue(String engine) {

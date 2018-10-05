@@ -10,6 +10,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
+import com.mulesoft.tools.migration.library.mule.steps.scripting.ScriptingFilterMigration;
 import com.mulesoft.tools.migration.library.mule.steps.scripting.ScriptingModuleMigration;
 import com.mulesoft.tools.migration.library.mule.steps.scripting.ScriptingPomContribution;
 import com.mulesoft.tools.migration.step.MigrationStep;
@@ -42,6 +43,6 @@ public class ScriptingMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new ScriptingPomContribution(), new ScriptingModuleMigration());
+    return newArrayList(new ScriptingPomContribution(), new ScriptingModuleMigration(), new ScriptingFilterMigration());
   }
 }

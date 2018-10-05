@@ -7,14 +7,15 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.addAttributesToInboundProperties;
+import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.VALIDATION_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.addValidationNamespace;
+import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationPomContribution.addValidationDependency;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_POLICY;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.VALIDATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addValidationModule;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.Arrays.asList;
@@ -121,7 +122,8 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
                       "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-patterns-watermark");
       }
       if (object.getAttribute("discardEmptyContent") == null || "true".equals(object.getAttributeValue("discardEmptyContent"))) {
-        addValidationModule(getApplicationModel(), object.getDocument());
+        addValidationDependency(getApplicationModel().getPomModel().get());
+        addValidationNamespace(object.getDocument());
         addElementAfter(new Element("is-true", VALIDATION_NAMESPACE)
             .setAttribute("expression", "#[(message.attributes.headers['Content-Length'] as Number default -1) != 0]"),
                         pollingEndpoint);

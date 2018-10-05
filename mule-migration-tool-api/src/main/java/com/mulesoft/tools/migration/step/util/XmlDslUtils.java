@@ -15,13 +15,13 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Attribute;
+import org.jdom2.Content;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -33,6 +33,7 @@ import org.jdom2.located.LocatedJDOMFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -50,11 +51,6 @@ public final class XmlDslUtils {
   public static final String CORE_EE_NS_URI = "http://www.mulesoft.org/schema/mule/ee/core";
   public static final Namespace CORE_EE_NAMESPACE = Namespace.getNamespace(EE_NAMESPACE_NAME, CORE_EE_NS_URI);
   public static final String EE_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd";
-
-  public static final Namespace VALIDATION_NAMESPACE =
-      Namespace.getNamespace("validation", "http://www.mulesoft.org/schema/mule/validation");
-  public static final String VALIDATION_NS_SCHEMA_LOC =
-      "http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd";
 
   private XmlDslUtils() {
     // Nothing to do
@@ -290,6 +286,17 @@ public final class XmlDslUtils {
     element.getParentElement().addContent(elementIndex + 1, newElement);
   }
 
+  /**
+   * Add new element after some existing element.
+   *
+   * @param newElement
+   * @param element
+   */
+  public static void addElementsAfter(Collection<? extends Content> newElements, Element element) {
+    Integer elementIndex = element.getParentElement().indexOf(element);
+    element.getParentElement().addContent(elementIndex + 1, newElements);
+  }
+
   public static Element getFlow(Element processor) {
     while (processor != null && !"flow".equals(processor.getName()) && !"sub-flow".equals(processor.getName())) {
       processor = processor.getParentElement();
@@ -298,24 +305,13 @@ public final class XmlDslUtils {
     return processor;
   }
 
-  public static void addValidationModule(ApplicationModel applicationModel, Document document) {
-    applicationModel.getPomModel().ifPresent(pom -> pom.addDependency(new DependencyBuilder()
-        .withGroupId("org.mule.modules")
-        .withArtifactId("mule-validation-module")
-        .withVersion("1.2.2")
-        .withClassifier("mule-plugin")
-        .build()));
-
-    addNameSpace(VALIDATION_NAMESPACE, VALIDATION_NS_SCHEMA_LOC, document);
-  }
-
   public static boolean isTopLevelElement(Element element) {
     return (element.getParentElement().equals(element.getDocument().getRootElement()));
   }
 
   public static void createErrorHandlerParent(Element element) {
     Element parent = element.getParentElement();
-    parent.removeContent(element);
+    element.detach();
 
     Element errorHandler = new Element("error-handler");
     errorHandler.setNamespace(CORE_NAMESPACE);

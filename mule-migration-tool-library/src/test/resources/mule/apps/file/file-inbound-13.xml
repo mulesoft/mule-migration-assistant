@@ -2,10 +2,12 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:file="http://www.mulesoft.org/schema/mule/file"
+      xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
       xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
       xsi:schemaLocation="
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+               http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <flow name="Test">
@@ -15,9 +17,14 @@
             </scheduling-strategy>
         </file:listener>
         <compatibility:attributes-to-inbound-properties/>
-        <compatibility:custom-filter class="org.mule.transport.file.FileRecursiveFileFilterTestCase$TxtFileFilter"/>
+        <validation:is-true expression="#[true /* replicate the logic of 'org.mule.transport.file.FileRecursiveFileFilterTestCase$TxtFileFilter' in DataWeave */]"/>
         <logger/>
         <compatibility:outbound-properties-to-var/>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
     
 </mule>

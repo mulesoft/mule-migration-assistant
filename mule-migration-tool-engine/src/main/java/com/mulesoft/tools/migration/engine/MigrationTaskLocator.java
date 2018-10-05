@@ -18,6 +18,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.DomainAppMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.EmailMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.FiltersMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.FtpMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.HTTPCleanupTask;
 import com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask;
@@ -132,6 +133,8 @@ public class MigrationTaskLocator {
 
   public List<AbstractMigrationTask> getCoreAfterMigrationTasks() {
     List<AbstractMigrationTask> coreMigrationTasks = new ArrayList<>();
+
+    coreMigrationTasks.add(new FiltersMigrationTask());
 
     // Spring has to run after MUnit, since MUnit in Mule 3 has some custom spring components that are removed by the migrator
     coreMigrationTasks.add(new SpringMigrationTask());
