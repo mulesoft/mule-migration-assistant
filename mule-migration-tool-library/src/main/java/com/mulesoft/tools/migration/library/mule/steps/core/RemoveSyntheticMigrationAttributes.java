@@ -23,6 +23,7 @@ import org.jdom2.Namespace;
 public class RemoveSyntheticMigrationAttributes extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR = "//*[@*[namespace-uri() = 'migration']]";
+  public static final Namespace MIGRATION_NAMESPACE = Namespace.getNamespace("migration");
 
   @Override
   public String getDescription() {
@@ -37,8 +38,9 @@ public class RemoveSyntheticMigrationAttributes extends AbstractApplicationModel
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     element.getAttributes()
         .stream()
-        .filter(att -> att.getNamespace().equals(Namespace.getNamespace("migration")))
+        .filter(att -> att.getNamespace().equals(MIGRATION_NAMESPACE))
         .collect(toList())
         .forEach(att -> att.detach());
+    element.removeNamespaceDeclaration(MIGRATION_NAMESPACE);
   }
 }
