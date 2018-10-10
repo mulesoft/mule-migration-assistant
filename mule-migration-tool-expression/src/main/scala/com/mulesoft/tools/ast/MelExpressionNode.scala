@@ -40,6 +40,11 @@ object OperatorType {
   val dot = 2
   val and = 3
   val or = 4
-  val subscript = 4
-
+  val subscript = 5
+  val equals = 6
+  val notEquals = 7
+  val lessThanOrEqual = 8
+  val greaterThanOrEqual = 9
+  val lessThan = 10
+  val greaterThan = 11
 }

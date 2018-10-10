@@ -7,7 +7,7 @@
             http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
     <flow name="flow">
-        <ee:cache filterExpression="#[mel:cache == true]">
+        <ee:cache filterExpression="#[vars.cache == true]">
             <logger/>
         </ee:cache>
     </flow>
