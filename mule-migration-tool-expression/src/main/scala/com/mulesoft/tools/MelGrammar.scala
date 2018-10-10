@@ -59,16 +59,47 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def expression: Rule1[MelExpressionNode] = rule {
-    sum ~ ws
+    comparableExpression ~ ws
+  }
+
+  def comparableExpression = rule {
+    sum ~ optional(comparableToken ~ root ~> createBinaryOp)
   }
 
   def sum = rule {
     simpleExpressions ~ optional((plusToken ~ push(OperatorType.plus) | minusToken ~ push(OperatorType.minus)) ~ root ~> createBinaryOp)
   }
 
+  def comparableToken = rule {
+    equalsToken | notEqualsToken | lessThanOrEqualToken | greaterThanOrEqualToken | lessThanToken | greaterThanToken
+  }
 
   def plusToken = rule {
     ws ~ ch('+')
+  }
+
+  def equalsToken = rule {
+    ws ~ "==" ~ push(OperatorType.equals)
+  }
+
+  def notEqualsToken = rule {
+    ws ~ "!=" ~ push(OperatorType.notEquals)
+  }
+
+  def lessThanOrEqualToken = rule {
+    ws ~ "<=" ~ push(OperatorType.lessThanOrEqual)
+  }
+
+  def greaterThanOrEqualToken = rule {
+    ws ~ ">=" ~ push(OperatorType.greaterThanOrEqual)
+  }
+
+  def lessThanToken = rule {
+    ws ~ ch('<') ~ push(OperatorType.lessThan)
+  }
+
+  def greaterThanToken = rule {
+    ws ~ ch('>') ~ push(OperatorType.greaterThan)
   }
 
   def minusToken = rule {

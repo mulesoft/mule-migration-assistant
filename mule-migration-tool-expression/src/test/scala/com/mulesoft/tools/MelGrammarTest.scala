@@ -74,10 +74,14 @@ class MelGrammarTest extends FlatSpec with Matchers {
   }
 
   it should "parse an expression with subscript selector" in {
-    MelParserHelper.parse("a[3]") shouldBe BinaryOperatorNode(VariableReferenceNode("a"),NumberNode("3"),4)
+    MelParserHelper.parse("a[3]") shouldBe BinaryOperatorNode(VariableReferenceNode("a"),NumberNode("3"),5)
   }
 
   it should "parse an enclosed expression" in {
     MelParserHelper.parse("(payload)") shouldBe EnclosedExpression(VariableReferenceNode("payload"))
+  }
+
+  it should "parse a comparison expression" in {
+    MelParserHelper.parse("5 < 3 + 2") shouldBe BinaryOperatorNode(NumberNode("5"), BinaryOperatorNode(NumberNode("3"), NumberNode("2"),0),10)
   }
 }

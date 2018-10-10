@@ -1,9 +1,9 @@
-|BinaryOperatorNode(4)
+|BinaryOperatorNode(5)
 |--ListNode
 |----NumberNode(1)
 |----NumberNode(2)
 |----NumberNode(3)
-|--BinaryOperatorNode(4)
+|--BinaryOperatorNode(5)
 |----BinaryOperatorNode(2)
 |------VariableReferenceNode(payload)
 |------IdentifierNode(foo)

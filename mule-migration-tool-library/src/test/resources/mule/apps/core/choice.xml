@@ -6,7 +6,7 @@
     <flow name="choice2Flow">
         <set-variable variableName="testVar" value="#[2]" doc:name="Variable"/>
         <choice doc:name="Choice">
-            <when expression="#[mel:flowVars.testVar == 2]">
+            <when expression="#[vars.testVar == 2]">
                 <logger message="#['Var equal to 2']" level="INFO" doc:name="Logger"/>
             </when>
             <otherwise>

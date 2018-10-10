@@ -27,6 +27,12 @@ object Migrator {
           case mel.OperatorType.dot => dw.operators.BinaryOpNode(ValueSelectorOpId, toDataweaveAst(left), toDataweaveAst(right))
           case mel.OperatorType.subscript => dw.operators.BinaryOpNode(DynamicSelectorOpId, toDataweaveAst(left), toDataweaveAst(right))
           case mel.OperatorType.plus => dw.operators.BinaryOpNode(AdditionOpId, toDataweaveAst(left), toDataweaveAst(right))
+          case mel.OperatorType.equals => dw.operators.BinaryOpNode(EqOpId, toDataweaveAst(left), toDataweaveAst(right))
+          case mel.OperatorType.notEquals => dw.operators.BinaryOpNode(NotEqOpId, toDataweaveAst(left), toDataweaveAst(right))
+          case mel.OperatorType.lessThanOrEqual => dw.operators.BinaryOpNode(LessOrEqualThanOpId, toDataweaveAst(left), toDataweaveAst(right))
+          case mel.OperatorType.greaterThanOrEqual => dw.operators.BinaryOpNode(GreaterOrEqualThanOpId, toDataweaveAst(left), toDataweaveAst(right))
+          case mel.OperatorType.lessThan => dw.operators.BinaryOpNode(LessThanOpId, toDataweaveAst(left), toDataweaveAst(right))
+          case mel.OperatorType.greaterThan => dw.operators.BinaryOpNode(GreaterThanOpId, toDataweaveAst(left), toDataweaveAst(right))
         }
       }
       case mel.MapNode(elements) => {
@@ -72,8 +78,12 @@ object Migrator {
     return expressionNode
   }
 
+  def removeNullPayload(melScript: String): String = {
+    melScript.replaceAll("NullPayload\\.getInstance\\(\\)", "null")
+  }
+
   def migrate(melScript: String): String = {
-    val expressionNode = MelParserHelper.parse(melScript)
+    val expressionNode = MelParserHelper.parse(removeNullPayload(melScript))
     val bodyNode = resolveStringConcatenation(toDataweaveAst(expressionNode))
     val documentNode = dw.structure.DocumentNode(HeaderNode(Seq()), bodyNode)
     CodeGenerator.generate(documentNode)

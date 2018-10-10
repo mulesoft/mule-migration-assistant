@@ -38,4 +38,31 @@ class MigratorTest extends FlatSpec with Matchers {
   it should "migrate a subscript expression without binding context" in {
     Migrator.migrate("lala.pepe") shouldBe "---\nvars.lala.pepe"
   }
+
+  it should "migrate a not equals expression" in {
+    Migrator.migrate("payload != null") shouldBe "---\npayload != null"
+  }
+
+  it should "migrate a equals expression" in {
+    Migrator.migrate("payload == null") shouldBe "---\npayload == null"
+  }
+
+  it should "migrate a less than expression" in {
+    Migrator.migrate("payload.bla < 5 + 3") shouldBe "---\npayload.bla < 5 + 3"
+  }
+
+  it should "migrate a greater than expression" in {
+    Migrator.migrate("4 + 7 > 5 + 3") shouldBe "---\n4 + 7 > 5 + 3"
+  }
+
+  it should "migrate a greater than or equals expression" in {
+    Migrator.migrate("4 >= 2 + 2") shouldBe "---\n4 >= 2 + 2"
+  }
+
+  it should "migrate a smaller than or equals expression" in {
+    Migrator.migrate("2 + 2 <= 4") shouldBe "---\n2 + 2 <= 4"
+  }
+  it should "migrate an expression containing NullPayload.getInstance()" in {
+    Migrator.migrate("payload != NullPayload.getInstance()") shouldBe "---\npayload != null"
+  }
 }
