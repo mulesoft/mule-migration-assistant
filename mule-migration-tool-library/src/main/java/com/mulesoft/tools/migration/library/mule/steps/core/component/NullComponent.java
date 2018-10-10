@@ -4,9 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps.core;
-
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+package com.mulesoft.tools.migration.library.mule.steps.core.component;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -14,34 +12,31 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 
 /**
- * Remove elements from 3.x that have no replacement in 4.x.
+ * Migrate null-component to a raise-error
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class RemovedElements extends AbstractApplicationModelMigrationStep {
+public class NullComponent extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = ""
-      + "//*["
-      + "local-name()='static-component' or "
-      + "local-name()='dynamic-all' or "
-      + "local-name()='interceptor-stack'"
-      + "]";
+  public static final String XPATH_SELECTOR = "//*[local-name()='null-component']";
 
   @Override
   public String getDescription() {
-    return "Remove elements from 3.x that have no replacement in 4.x.";
+    return "Migrate null-component to a raise-error.";
   }
 
-  public RemovedElements() {
+  public NullComponent() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, object, object, "Element '" + object.getName()
-        + "' no longer exists in Mule 4. Replace its usages with a new Mule 4 feature.");
+    object.setName("raise-error");
+    object.removeContent();
+    object.setAttribute("type", "COMPATIBILITY:UNSUPPORTED");
+    object.setAttribute("description", "This service cannot receive messages");
   }
 
 }

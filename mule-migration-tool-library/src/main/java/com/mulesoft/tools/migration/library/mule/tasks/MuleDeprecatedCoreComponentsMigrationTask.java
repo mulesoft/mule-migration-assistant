@@ -14,6 +14,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.CompatibilityPomCont
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyAttachments;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyProperties;
 import com.mulesoft.tools.migration.library.mule.steps.core.DataMapper;
+import com.mulesoft.tools.migration.library.mule.steps.core.JavaReferenceElements;
 import com.mulesoft.tools.migration.library.mule.steps.core.MessageAttachmentsListExpressionEvaluator;
 import com.mulesoft.tools.migration.library.mule.steps.core.MessagePropertiesTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveAttachment;
@@ -26,6 +27,9 @@ import com.mulesoft.tools.migration.library.mule.steps.core.RemovedElements;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetAttachment;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetProperty;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetSessionVariable;
+import com.mulesoft.tools.migration.library.mule.steps.core.component.EchoComponent;
+import com.mulesoft.tools.migration.library.mule.steps.core.component.LogComponent;
+import com.mulesoft.tools.migration.library.mule.steps.core.component.NullComponent;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
@@ -57,7 +61,11 @@ public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigration
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new CompatibilityPomContribution(),
+                        new EchoComponent(),
+                        new LogComponent(),
+                        new NullComponent(),
                         new RemovedElements(),
+                        new JavaReferenceElements(),
                         new RemoveObjectToStringTransformer(),
                         new SetAttachment(),
                         new SetProperty(),
