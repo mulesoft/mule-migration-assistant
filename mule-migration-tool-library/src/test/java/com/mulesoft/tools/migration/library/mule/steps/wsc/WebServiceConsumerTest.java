@@ -55,6 +55,7 @@ public class WebServiceConsumerTest {
         "wsc-config-01",
         "wsc-config-02",
         "wsc-config-03",
+        "wsc-config-03b",
         "wsc-config-04",
         "wsc-config-05",
         "wsc-config-06",
