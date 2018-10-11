@@ -192,11 +192,11 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         Element keyStoreConfig = new Element("key-store-configuration", wscNamespace);
         Element keyStore = tlsContext.getChild("key-store", tlsNamespace);
 
-        copyAttributeIfPresent(keyStore, keyStoreConfig, "path", "keyStorePath");
-        copyAttributeIfPresent(keyStore, keyStoreConfig, "keyPassword");
-        copyAttributeIfPresent(keyStore, keyStoreConfig, "password");
-        copyAttributeIfPresent(keyStore, keyStoreConfig, "alias");
-        copyAttributeIfPresent(keyStore, keyStoreConfig, "type");
+        copyAttributeIfPresent(keyStore, keyStoreConfig, "path", "keyStorePath", false);
+        copyAttributeIfPresent(keyStore, keyStoreConfig, "keyPassword", false);
+        copyAttributeIfPresent(keyStore, keyStoreConfig, "password", false);
+        copyAttributeIfPresent(keyStore, keyStoreConfig, "alias", false);
+        copyAttributeIfPresent(keyStore, keyStoreConfig, "type", false);
         sign.addContent(keyStoreConfig);
 
         if (!getApplicationModel().getNodeOptional("//*[@tlsContext-ref='" + tlsContextName + "']").isPresent()) {
@@ -219,10 +219,10 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         Element keyStoreConfig = new Element("trust-store-configuration", wscNamespace);
         Element trustStore = tlsContext.getChild("trust-store", tlsNamespace);
 
-        copyAttributeIfPresent(trustStore, keyStoreConfig, "path", "trustStorePath");
-        copyAttributeIfPresent(trustStore, keyStoreConfig, "password");
-        copyAttributeIfPresent(trustStore, keyStoreConfig, "alias");
-        copyAttributeIfPresent(trustStore, keyStoreConfig, "type");
+        copyAttributeIfPresent(trustStore, keyStoreConfig, "path", "trustStorePath", false);
+        copyAttributeIfPresent(trustStore, keyStoreConfig, "password", false);
+        copyAttributeIfPresent(trustStore, keyStoreConfig, "alias", false);
+        copyAttributeIfPresent(trustStore, keyStoreConfig, "type", false);
         verifySignature.addContent(keyStoreConfig);
 
         if (!getApplicationModel().getNodeOptional("//*[@tlsContext-ref='" + tlsContextName + "']").isPresent()) {
@@ -267,11 +267,11 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         Element keyStoreConfig = new Element("key-store-configuration", wscNamespace);
         Element keyStore = tlsContext.getChild("key-store", tlsNamespace);
 
-        copyAttributeIfPresent(keyStore, keyStoreConfig, "path", "keyStorePath");
-        copyAttributeIfPresent(keyStore, keyStoreConfig, "keyPassword");
-        copyAttributeIfPresent(keyStore, keyStoreConfig, "password");
-        copyAttributeIfPresent(keyStore, keyStoreConfig, "alias");
-        copyAttributeIfPresent(keyStore, keyStoreConfig, "type");
+        copyAttributeIfPresent(keyStore, keyStoreConfig, "path", "keyStorePath", false);
+        copyAttributeIfPresent(keyStore, keyStoreConfig, "keyPassword", false);
+        copyAttributeIfPresent(keyStore, keyStoreConfig, "password", false);
+        copyAttributeIfPresent(keyStore, keyStoreConfig, "alias", false);
+        copyAttributeIfPresent(keyStore, keyStoreConfig, "type", false);
         decrypt.addContent(keyStoreConfig);
 
         if (decrypt.getAttribute("alias") != null) {
@@ -299,10 +299,10 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         Element keyStoreConfig = new Element("key-store-configuration", wscNamespace);
         Element trustStore = tlsContext.getChild("trust-store", tlsNamespace);
 
-        copyAttributeIfPresent(trustStore, keyStoreConfig, "path", "keyStorePath");
-        copyAttributeIfPresent(trustStore, keyStoreConfig, "password");
-        copyAttributeIfPresent(trustStore, keyStoreConfig, "alias");
-        copyAttributeIfPresent(trustStore, keyStoreConfig, "type");
+        copyAttributeIfPresent(trustStore, keyStoreConfig, "path", "keyStorePath", false);
+        copyAttributeIfPresent(trustStore, keyStoreConfig, "password", false);
+        copyAttributeIfPresent(trustStore, keyStoreConfig, "alias", false);
+        copyAttributeIfPresent(trustStore, keyStoreConfig, "type", false);
         encrypt.addContent(keyStoreConfig);
 
         if (encrypt.getAttribute("alias") != null) {
