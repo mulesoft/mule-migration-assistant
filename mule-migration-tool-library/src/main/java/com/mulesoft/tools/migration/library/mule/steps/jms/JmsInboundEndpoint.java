@@ -11,11 +11,13 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -90,6 +92,12 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
       object.setAttribute("transactionalAction", txAction);
       object.setAttribute("transactionType", "XA");
       object.removeChild("xa-transaction", CORE_NAMESPACE);
+    }
+    while (object.getChild("multi-transaction", CORE_EE_NAMESPACE) != null) {
+      Element multiTx = object.getChild("multi-transaction", CORE_EE_NAMESPACE);
+      String txAction = mapTransactionalAction(multiTx.getAttributeValue("action"), report, multiTx, object);
+      object.setAttribute("transactionalAction", txAction);
+      object.removeChild("multi-transaction", CORE_EE_NAMESPACE);
     }
 
     getApplicationModel().addNameSpace(JMS_NAMESPACE, "http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd",

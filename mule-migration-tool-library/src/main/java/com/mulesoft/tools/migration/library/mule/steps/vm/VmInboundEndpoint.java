@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
@@ -19,6 +20,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static java.lang.Integer.parseInt;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -98,6 +100,18 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
       }
 
       object.removeChild("xa-transaction", CORE_NAMESPACE);
+    }
+    while (object.getChild("multi-transaction", CORE_EE_NAMESPACE) != null) {
+      Element multiTx = object.getChild("multi-transaction", CORE_EE_NAMESPACE);
+      String txAction = mapTransactionalAction(multiTx.getAttributeValue("action"), report, multiTx, object);
+      object.setAttribute("transactionalAction", txAction);
+      if (!"NONE".equals(txAction)) {
+        if (object.getChild("redelivery-policy", CORE_NAMESPACE) == null) {
+          object.addContent(new Element("redelivery-policy", CORE_NAMESPACE));
+        }
+      }
+
+      object.removeChild("multi-transaction", CORE_EE_NAMESPACE);
     }
 
     getApplicationModel().addNameSpace(VM_NAMESPACE, "http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd",

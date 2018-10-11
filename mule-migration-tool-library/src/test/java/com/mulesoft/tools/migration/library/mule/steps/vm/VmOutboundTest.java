@@ -64,6 +64,7 @@ public class VmOutboundTest {
         "vm-outbound-11",
         "vm-outbound-12",
         "vm-outbound-13",
+        "vm-outbound-13b",
         "vm-outbound-14",
         "vm-outbound-15"
     };

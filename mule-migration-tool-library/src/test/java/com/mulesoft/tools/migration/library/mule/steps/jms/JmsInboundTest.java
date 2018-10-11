@@ -58,6 +58,7 @@ public class JmsInboundTest {
         "jms-inbound-02",
         "jms-inbound-03",
         "jms-inbound-04",
+        "jms-inbound-04b",
         "jms-inbound-05",
         "jms-inbound-06",
         "jms-inbound-07",
