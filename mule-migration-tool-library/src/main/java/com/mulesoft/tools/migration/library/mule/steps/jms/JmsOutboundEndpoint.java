@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.W
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -73,6 +74,13 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
       object.setAttribute("transactionalAction", mapTransactionalAction(xaTx.getAttributeValue("action"), report, xaTx, object));
 
       object.removeChild("xa-transaction", CORE_NAMESPACE);
+    }
+    while (object.getChild("multi-transaction", CORE_EE_NAMESPACE) != null) {
+      Element multiTx = object.getChild("multi-transaction", CORE_EE_NAMESPACE);
+      object.setAttribute("transactionalAction",
+                          mapTransactionalAction(multiTx.getAttributeValue("action"), report, multiTx, object));
+
+      object.removeChild("multi-transaction", CORE_EE_NAMESPACE);
     }
 
     getApplicationModel().addNameSpace(JMS_NAMESPACE, "http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd",

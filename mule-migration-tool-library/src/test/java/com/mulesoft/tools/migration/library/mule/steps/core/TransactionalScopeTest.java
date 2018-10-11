@@ -19,15 +19,32 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@RunWith(Parameterized.class)
 public class TransactionalScopeTest {
 
-  private static final String FILE_SAMPLE_XML = "transactionalScope.xml";
   private static final Path FILE_EXAMPLES_PATH = Paths.get("mule/examples/core");
-  private static final Path FILE_SAMPLE_PATH = FILE_EXAMPLES_PATH.resolve(FILE_SAMPLE_XML);
+
+  @Parameters(name = "{0}")
+  public static Object[] params() {
+    return new Object[] {
+        "transactionalScope.xml",
+        "xaTransactionalScope.xml",
+        "multiTransactionalScope.xml"
+    };
+  }
+
+  private final Path configPath;
+
+  public TransactionalScopeTest(String fileSampleXml) {
+    configPath = FILE_EXAMPLES_PATH.resolve(fileSampleXml);
+  }
 
   private TransactionalScope transactionalScope;
   private Element node;
@@ -44,7 +61,7 @@ public class TransactionalScopeTest {
 
   @Test
   public void execute() throws Exception {
-    Document doc = getDocument(this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString()).toURI().getPath());
+    Document doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, transactionalScope.getAppliedTo().getExpression()).get(0);
     transactionalScope.execute(node, mock(MigrationReport.class));
 

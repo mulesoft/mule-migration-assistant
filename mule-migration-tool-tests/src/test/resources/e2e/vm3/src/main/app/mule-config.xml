@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+        http://www.mulesoft.org/schema/mule/ee/jdbc http://www.mulesoft.org/schema/mule/ee/jdbc/current/mule-jdbc-ee.xsd">
+
+    <vm:connector name="vm-normal" />
+    <vm:connector name="vm-queue" />
+
+    <vm:endpoint name="queue" path="foo" connector-ref="vm-queue" exchange-pattern="request-response">
+        <ee:multi-transaction action="ALWAYS_JOIN"/>
+    </vm:endpoint>
+    <vm:endpoint name="entry" path="entry" connector-ref="vm-normal" exchange-pattern="request-response"/>
+
+    <flow name="testService">
+        <vm:inbound-endpoint path="entry" connector-ref="vm-normal" exchange-pattern="one-way"/>
+        <logger/>
+        <outbound-endpoint ref="queue"/>
+    </flow>
+</mule>

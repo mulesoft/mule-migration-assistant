@@ -18,7 +18,8 @@ public class VmMigrationTestCase extends EndToEndTestCase {
   public static Object[] params() {
     return new Object[] {
         "vm1",
-        "vm2"
+        "vm2",
+        "vm3"
     };
   }
 
