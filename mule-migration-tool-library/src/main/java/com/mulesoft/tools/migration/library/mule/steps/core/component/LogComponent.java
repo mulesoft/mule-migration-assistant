@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.component;
 
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -34,7 +36,11 @@ public class LogComponent extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setName("logger");
-    object.removeContent();
+    if (!object.getChildren().isEmpty()) {
+      report.report(ERROR, object, object, "Interceptos have been replaced by custom policies in Mule 4.",
+                    "https://docs.mulesoft.com/api-manager/2.x/custom-policy-index-latest");
+      object.removeContent();
+    }
     object.setAttribute("message", "#[payload]");
   }
 
