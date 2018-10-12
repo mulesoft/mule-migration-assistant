@@ -19,6 +19,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.MessageAttachmentsLi
 import com.mulesoft.tools.migration.library.mule.steps.core.MessagePropertiesTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveAttachment;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveJsonTransformerNamespace;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveMetadataAttributes;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveObjectToStringTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveProperty;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSchedulersNamespace;
@@ -77,6 +78,7 @@ public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigration
                         new RemoveProperty(),
                         new RemoveSessionVariable(),
                         new RemoveJsonTransformerNamespace(),
+                        new RemoveMetadataAttributes(),
                         new MessagePropertiesTransformer(),
                         new RemoveSchedulersNamespace(),
                         new DataMapper());
