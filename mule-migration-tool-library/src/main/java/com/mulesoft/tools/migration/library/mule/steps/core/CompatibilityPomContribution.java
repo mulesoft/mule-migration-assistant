@@ -30,7 +30,7 @@ public class CompatibilityPomContribution implements PomContribution {
         .withGroupId("com.mulesoft.mule.modules")
         .withArtifactId("mule-compatibility-module")
         // TODO MMT-171
-        .withVersion("1.2.0")
+        .withVersion("1.3.1")
         .withClassifier("mule-plugin")
         .build());
   }
