@@ -37,7 +37,7 @@ public class NullComponent extends AbstractApplicationModelMigrationStep {
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setName("raise-error");
     if (!object.getChildren().isEmpty()) {
-      report.report(ERROR, object, object, "Interceptos have been replaced by custom policies in Mule 4.",
+      report.report(ERROR, object, object, "Interceptors have been replaced by custom policies in Mule 4.",
                     "https://docs.mulesoft.com/api-manager/2.x/custom-policy-index-latest");
       object.removeContent();
     }
