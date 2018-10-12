@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+      xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+
+    <flow name="flow">
+        <dw:transform-message doc:name="Transform Message" metadata:id="c9140f50-cf1e-45c5-82ea-4fab7819115f">
+            <dw:set-payload>
+                <![CDATA[%dw 1.0
+                %output application/java
+                ---
+                {
+                    value: "aValue"
+                }
+                ]]>
+            </dw:set-payload>
+        </dw:transform-message>
+    </flow>
+
+</mule>
