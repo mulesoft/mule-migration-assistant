@@ -4,7 +4,7 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps.core;
+package com.mulesoft.tools.migration.library.mule.steps.core.component;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 
@@ -14,34 +14,32 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 
 /**
- * Remove elements from 3.x that have no replacement in 4.x.
+ * Remove echo-component
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class RemovedElements extends AbstractApplicationModelMigrationStep {
+public class EchoComponent extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = ""
-      + "//*["
-      + "local-name()='static-component' or "
-      + "local-name()='dynamic-all' or "
-      + "local-name()='interceptor-stack'"
-      + "]";
+  public static final String XPATH_SELECTOR = "//*[local-name()='echo-component']";
 
   @Override
   public String getDescription() {
-    return "Remove elements from 3.x that have no replacement in 4.x.";
+    return "Remove echo-component";
   }
 
-  public RemovedElements() {
+  public EchoComponent() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, object, object, "Element '" + object.getName()
-        + "' no longer exists in Mule 4. Replace its usages with a new Mule 4 feature.");
+    if (!object.getChildren().isEmpty()) {
+      report.report(ERROR, object, object, "Interceptors have been replaced by custom policies in Mule 4.",
+                    "https://docs.mulesoft.com/api-manager/2.x/custom-policy-index-latest");
+    }
+    object.detach();
   }
 
 }
