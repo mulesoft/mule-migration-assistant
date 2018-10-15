@@ -75,8 +75,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
 
     // TODO useConnectorToRetrieveWsdl?
     if (object.getAttribute("useConnectorToRetrieveWsdl") != null) {
-      report.report(WARN, object, object,
-                    "A connector will be used for retrieving the wsdl only if a connector is referenced from this config.");
+      report.report("wsc.wsdl", object, object);
       object.removeAttribute("useConnectorToRetrieveWsdl");
     }
 
@@ -159,7 +158,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         } else if ("jms".equals(a.getProtocol())) {
           // TODO MMT-24
         } else {
-          report.report(ERROR, object, object, "WebService consumer only supports HTTP or JMS transports");
+          report.report("wsc.unsupportedProtocol", object, object);
         }
       });
 

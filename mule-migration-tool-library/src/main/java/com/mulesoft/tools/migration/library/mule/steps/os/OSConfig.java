@@ -6,11 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.os;
 
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * Migrates OS Configuration
@@ -38,8 +37,7 @@ public class OSConfig extends AbstractOSMigrator {
 
     Attribute config = element.getAttribute("objectStore-ref");
     if (config != null) {
-      report.report(WARN, element, element, "On Mule 4 you no longer need to create a spring bean to declare an Object Store.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-objectstore#custom-object-store");
+      report.report("os.config", element, element);
       element.removeAttribute(config);
     }
   }

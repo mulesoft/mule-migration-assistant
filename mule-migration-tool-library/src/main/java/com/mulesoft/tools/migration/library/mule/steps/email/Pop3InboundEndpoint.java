@@ -61,15 +61,14 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
     pop3Connector.ifPresent(c -> {
       if (c.getAttribute("moveToFolder") != null) {
         // TODO https://www.mulesoft.org/jira/browse/MULE-15721
-        report.report(ERROR, object, c, "'moveToFolder' is not yet supported in Email Connector");
+        report.report("email.moveToFolder", object, c);
       }
 
       if (c.getAttribute("mailboxFolder") != null) {
         object.setAttribute("folder", c.getAttributeValue("mailboxFolder"));
       }
       if (c.getAttribute("backupEnabled") != null || c.getAttribute("backupFolder") != null) {
-        report.report(ERROR, object, c, "'backupEnabled' and 'backupFolder' are no longer supported in Email Connector",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-email#migrating-a-pop3-inbound-endpoint");
+        report.report("email.pop3Backup", object, c);
       }
 
       if (c.getAttribute("deleteReadMessages") != null) {
@@ -77,8 +76,7 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
       }
       if (c.getAttribute("defaultProcessMessageAction") != null) {
         object.removeAttribute("defaultProcessMessageAction");
-        report.report(ERROR, object, c, "'defaultProcessMessageAction' is no longer supported in Email Connector",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-email#migrating-a-pop3-inbound-endpoint");
+        report.report("email.pop3DefaultProcessMessageAction", object, c);
       }
 
       if (c.getAttribute("checkFrequency") != null) {

@@ -69,8 +69,7 @@ public class JavaReferenceElements extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, object, object, "Element '" + object.getName()
-        + "' which relied on Java no longer exists in Mule 4. Replace its usages with a new Mule 4 feature.");
+    report.report("components.java", object, object, object.getName());
   }
 
 }

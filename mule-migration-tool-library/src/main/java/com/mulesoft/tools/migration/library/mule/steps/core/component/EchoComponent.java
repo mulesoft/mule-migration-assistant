@@ -36,8 +36,7 @@ public class EchoComponent extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     if (!object.getChildren().isEmpty()) {
-      report.report(ERROR, object, object, "Interceptors have been replaced by custom policies in Mule 4.",
-                    "https://docs.mulesoft.com/api-manager/2.x/custom-policy-index-latest");
+      report.report("components.interceptors", object, object);
     }
     object.detach();
   }

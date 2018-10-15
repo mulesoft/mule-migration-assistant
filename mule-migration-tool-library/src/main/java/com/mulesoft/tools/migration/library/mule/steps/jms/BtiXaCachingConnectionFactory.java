@@ -35,7 +35,7 @@ public class BtiXaCachingConnectionFactory extends AbstractApplicationModelMigra
     if (object.getAttribute("minPoolSize") != null
         || object.getAttribute("maxPoolSize") != null
         || object.getAttribute("maxIdleTime") != null) {
-      report.report(ERROR, object, object.getParentElement(), "Cannot configure the connection cache for XA in JMS");
+      report.report("jms.xaConnectionCache", object, object.getParentElement());
     }
 
     object.detach();

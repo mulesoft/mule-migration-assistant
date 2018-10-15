@@ -37,7 +37,6 @@ public class VmDomainConnector extends VmConnector {
 
     addTopLevelElement(vmCfg, object.getDocument());
 
-    report.report(ERROR, vmCfg, vmCfg,
-                  "The queues configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.");
+    report.report("vm.domainConnector", vmCfg, vmCfg);
   }
 }

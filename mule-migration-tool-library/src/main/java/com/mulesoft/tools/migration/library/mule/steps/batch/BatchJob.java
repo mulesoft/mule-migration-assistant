@@ -61,9 +61,7 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
       if (maxThreadsActive != null) {
         batchJob.setAttribute("maxConcurrency", maxThreadsActive);
       }
-      report.report(WARN, originalBatchJob, originalBatchJob,
-                    "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' attribute in the batch job.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
+      report.report("flow.threading", originalBatchJob, originalBatchJob);
     });
 
     List<Element> children = new ArrayList<>(originalBatchJob.getChildren());

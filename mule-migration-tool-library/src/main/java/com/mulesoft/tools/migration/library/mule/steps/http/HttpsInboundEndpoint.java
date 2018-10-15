@@ -76,9 +76,7 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
         Element trustStore = new Element("trust-store", tlsNamespace);
         copyAttributeIfPresent(tlsServer, trustStore, "path");
         if (tlsServer.getAttribute("class") != null) {
-          report.report(ERROR, trustStore, tlsServer,
-                        "'class' attribute of 'https:tls-server' was deprecated in 3.x. Use 'type' instead.",
-                        "https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration");
+          report.report("http.tlsServerClass", trustStore, tlsServer);
         }
         copyAttributeIfPresent(tlsServer, trustStore, "type", "type");
         copyAttributeIfPresent(tlsServer, trustStore, "storePassword", "password");
@@ -93,9 +91,7 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
         copyAttributeIfPresent(tlsKeyStore, keyStore, "storePassword", "password");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
         if (tlsKeyStore.getAttribute("class") != null) {
-          report.report(ERROR, tlsKeyStore, tlsKeyStore,
-                        "'class' attribute of 'https:tls-key-store' was deprecated in 3.x. Use 'type' instead.",
-                        "https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration");
+          report.report("http.tlsKeyStoreClass", tlsKeyStore, tlsKeyStore);
         }
         copyAttributeIfPresent(tlsKeyStore, keyStore, "type", "type");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyAlias", "alias");

@@ -135,7 +135,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
 
           if (response.getAttribute("statusCode") == null) {
             response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
-            report.report(WARN, response, response, "Avoid using an outbound property to determine the status code.");
+            report.report("http.statusCode", response, response);
           }
 
           // if (rb.getAttribute("disablePropertiesAsHeaders") == null
@@ -157,7 +157,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
             errorResponse
                 .setAttribute("statusCode",
                               "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
-            report.report(WARN, errorResponse, errorResponse, "Avoid using an outbound property to determine the status code.");
+            report.report("http.statusCode", errorResponse, errorResponse);
           }
 
           // if (rb.getAttribute("disablePropertiesAsHeaders") == null
@@ -172,7 +172,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
           .setAttribute("headerName", "Content-Type")
           .setAttribute("value", object.getAttributeValue("contentType")));
       response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
-      report.report(WARN, response, response, "Avoid using an outbound property to determine the status code.");
+      report.report("http.statusCode", response, response);
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
       response.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
@@ -183,7 +183,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     if (response == null) {
       response = getResponse(object, httpNamespace);
       response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
-      report.report(WARN, response, response, "Avoid using an outbound property to determine the status code.");
+      report.report("http.statusCode", response, response);
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
       response.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
@@ -194,7 +194,8 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
       errorResponse = getErrorResponse(object, httpNamespace);
       errorResponse.setAttribute("statusCode",
                                  "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
-      report.report(WARN, errorResponse, errorResponse, "Avoid using an outbound property to determine the status code.");
+      report.report("http.statusCode", errorResponse, errorResponse,
+                    "Avoid using an outbound property to determine the status code.");
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
       errorResponse.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
@@ -212,7 +213,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
             .addContent(new Element("set-payload", CORE_NAMESPACE).setAttribute("value", "#[message.attributes.requestUri]")));
 
     addElementAfter(checkPayload, object);
-    report.report(WARN, checkPayload, checkPayload, "This replicates logic from the http transport. Remove if not needed.");
+    report.report("http.checkPayload", checkPayload, checkPayload);
 
     if (object.getAttribute("name") != null) {
       object.removeAttribute("name");
@@ -279,14 +280,13 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     if (connector.getAttribute("serverSoTimeout") != null
         || connector.getAttribute("reuseAddress") != null) {
       // TODO MULE-14960, MULE-15135
-      report.report(ERROR, connector, connector, "The server socket properties have to be configured at the runtime level.");
+      report.report("http.socketProperties", connector, connector);
       connector.removeAttribute("serverSoTimeout");
       connector.removeAttribute("reuseAddress");
     }
 
     if (connector.getDocument().getRootElement().getName().equals("domain")) {
-      report.report(ERROR, connector, connector,
-                    "The configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.");
+      report.report("http.domainConnector", connector, connector);
     }
   }
 

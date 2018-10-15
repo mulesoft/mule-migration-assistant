@@ -36,8 +36,7 @@ public class CustomValidationMigration extends AbstractApplicationModelMigration
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, element, element, "Custom Validators were replaced with the Extension Validators.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation#custom_validator");
+    report.report("validation.customValidators", element, element);
   }
 
 

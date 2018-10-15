@@ -7,19 +7,31 @@
 package com.mulesoft.tools.migration.report;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.list;
 
-import com.mulesoft.tools.migration.project.ProjectType;
-import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.jdom2.Comment;
 import org.jdom2.Element;
 import org.jdom2.output.XMLOutputter;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.Lists;
+import com.mulesoft.tools.migration.exception.MigrationAbortException;
+import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * Default implementation of a {@link MigrationReport}.
@@ -28,6 +40,8 @@ import java.util.Set;
  * @since 1.0.0
  */
 public class DefaultMigrationReport implements MigrationReport {
+
+  private transient Map<String, Map<String, Map<String, Object>>> possibleEntries;
 
   private transient XMLOutputter outp = new XMLOutputter();
   private transient Set<ReportEntryModel> reportEntries = new HashSet<>();
@@ -39,10 +53,38 @@ public class DefaultMigrationReport implements MigrationReport {
   private double errorMigrationRatio;
   private int processedElements;
 
+
+  public DefaultMigrationReport() {
+    possibleEntries = new HashMap<>();
+    try {
+      for (URL reportYamlUrl : list(DefaultMigrationReport.class.getClassLoader().getResources("report.yaml"))) {
+        possibleEntries.putAll(new Yaml().loadAs(reportYamlUrl.openStream(), Map.class));
+      }
+    } catch (IOException e) {
+      throw new MigrationAbortException("Couldn't load report entries definitions.", e);
+    }
+  }
+
   @Override
   public void initialize(ProjectType projectType, String projectName) {
     this.projectType = projectType.name();
     this.projectName = projectName;
+  }
+
+  @Override
+  public void report(String entryKey, Element element, Element elementToComment, String... messageParams) {
+    final String[] splitEntryKey = entryKey.split("\\.");
+
+    final Map<String, Object> entryData = possibleEntries.get(splitEntryKey[0]).get(splitEntryKey[1]);
+
+    final Level level = Level.valueOf((String) entryData.get("type"));
+    String message = (String) entryData.get("message");
+    for (String messageParam : messageParams) {
+      message = message.replaceFirst("\\{\\w*\\}", messageParam);
+    }
+
+    final List<String> docLinks = entryData.get("docLinks") != null ? (List<String>) entryData.get("docLinks") : emptyList();
+    report(level, element, elementToComment, message, docLinks.toArray(new String[docLinks.size()]));
   }
 
   @Override

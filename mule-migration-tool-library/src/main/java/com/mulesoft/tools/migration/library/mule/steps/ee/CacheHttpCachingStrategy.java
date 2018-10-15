@@ -48,9 +48,7 @@ public class CacheHttpCachingStrategy extends AbstractApplicationModelMigrationS
 
     if (element.getAttribute("consumableFilter-ref") != null) {
       element.removeAttribute("consumableFilter-ref");
-      report.report(ERROR, element, element,
-                    "'consumableFilter-ref' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about");
+      report.report("cache.consumableFilter", element, element);
     }
   }
 

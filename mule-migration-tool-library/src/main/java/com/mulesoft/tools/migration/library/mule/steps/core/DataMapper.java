@@ -6,12 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import static com.google.common.collect.Lists.newArrayList;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import static com.google.common.collect.Lists.newArrayList;
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * Migrate references of DataMapper
@@ -31,10 +32,6 @@ public class DataMapper extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report
-        .report(MigrationReport.Level.ERROR, object, object,
-                "DataMapper migration is not supported. Please migrate the DataMapper usage using the Studio DataWeave migration tool.",
-                "https://docs.mulesoft.com/mule-user-guide/v/3.8/dataweave-migrator",
-                "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-tool#datamapper");
+    report.report("expressions.datamapper", object, object);
   }
 }

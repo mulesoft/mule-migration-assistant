@@ -107,18 +107,14 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
 
     addElementAfter(sessionVar, element.getParentElement());
 
-    report.report(WARN, sessionVar, sessionVar,
-                  "Instead of setting session variables in the flow, you must set Variables.",
-                  "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
+    report.report("transform.sessionVars", sessionVar, sessionVar);
   }
 
   private void addOutboundProperty(Element element, MigrationReport report) {
     Attribute propName = element.getAttribute("variableName");
     Element setProperty =
         XmlDslUtils.addOutboundPropertySetter(propName.getValue(), element, getApplicationModel(), element.getParentElement());
-    report.report(WARN, setProperty, setProperty,
-                  "Instead of setting outbound properties in the flow, you must set Variables.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
+    report.report("transform.outboundProperties", setProperty, setProperty);
   }
 
   private void migrateDWScript(Element element) {

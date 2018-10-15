@@ -38,7 +38,7 @@ public class RemoveMetadataAttributes extends AbstractApplicationModelMigrationS
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, element, element, "Custom types defined in Studio 6 are not migrated to Studio 7.");
+    report.report("transform.studioCustomTypes", element, element);
     element.getAttributes()
         .stream()
         .filter(att -> att.getNamespace().equals(METADATA_NAMESPACE))

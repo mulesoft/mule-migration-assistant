@@ -58,19 +58,9 @@ public class PreprocessNamespaces implements NamespaceContribution {
             processedElements.incrementAndGet();
 
             if (ns.getURI().startsWith("http://www.mulesoft.org")) {
-              report.report(ERROR, node, node,
-                            "The migration of " + ns.getPrefix() + " is not supported.",
-                            "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors",
-                            "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-tool#unsupported_connectors");
+              report.report("components.unsupported", node, node, ns.getPrefix());
             } else {
-              report.report(ERROR, node, node,
-                            "Didn't find migration rules for the following component: " + ns.getPrefix()
-                                + "." + lineSeparator()
-                                + "If that component is defined in a Spring namespace handler of an app dependency, include its uri ("
-                                + ns.getURI() + ") in the '" + ADDITIONAL_SPRING_NAMESPACES_PROP
-                                + "' so it is handled by the Spring Module.",
-                            "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors",
-                            "https://docs.mulesoft.com/connectors/spring-module");
+              report.report("components.unknown", node, node, ns.getPrefix(), ns.getURI(), ADDITIONAL_SPRING_NAMESPACES_PROP);
             }
           });
     });

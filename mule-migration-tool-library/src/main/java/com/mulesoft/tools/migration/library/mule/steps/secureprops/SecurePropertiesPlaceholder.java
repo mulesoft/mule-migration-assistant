@@ -51,8 +51,7 @@ public class SecurePropertiesPlaceholder extends AbstractApplicationModelMigrati
         if (isVersionGreaterOrEquals(getApplicationModel().getMuleVersion(), "4.2.0")) {
           confProp.setAttribute("encoding", object.getAttributeValue("fileEncoding"));
         } else {
-          report.report(ERROR, object, object,
-                        "'encoding' is not available in Mule 4.1.x. It will be included in 4.2.0 or higher.");
+          report.report("configProperties.encoding", object, object);
         }
       }
 
@@ -66,28 +65,19 @@ public class SecurePropertiesPlaceholder extends AbstractApplicationModelMigrati
       confProp.addContent(encryptProp);
       object.getDocument().getRootElement().addContent(idx, confProp);
 
-      report.report(ERROR, confProp, confProp,
-                    "Review usages of properties defined in the referenced file and add the 'secure::' prefix to those.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-secure-properties-placeholder",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/secure-configuration-properties#usage");
+      report.report("configProperties.securePrefix", confProp, confProp);
 
       ++j;
     }
 
     if (parseBoolean(object.getAttributeValue("ignoreResourceNotFound", "false"))) {
-      report.report(ERROR, object, object,
-                    "'ignoreResourceNotFound' is no longer available. The deployment will fail if a referenced file does not exist.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties#properties-files");
+      report.report("configProperties.ignoreResourceNotFound", object, object);
     }
     if (parseBoolean(object.getAttributeValue("ignoreUnresolvablePlaceholders", "false"))) {
-      report.report(ERROR, object, object,
-                    "'ignoreUnresolvablePlaceholders' is no longer available. The deployment will fail if a referenced property is not defined.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties");
+      report.report("configProperties.ignoreUnresolvablePlaceholders", object, object);
     }
     if (!"FALLBACK".equals(object.getAttributeValue("systemPropertiesMode", "FALLBACK"))) {
-      report.report(ERROR, object, object,
-                    "'systemPropertiesMode' is no longer available. The default behavior cannot be changed in Mule 4.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties#properties-hierarchy");
+      report.report("configProperties.systemPropertiesMode", object, object);
     }
 
     object.detach();

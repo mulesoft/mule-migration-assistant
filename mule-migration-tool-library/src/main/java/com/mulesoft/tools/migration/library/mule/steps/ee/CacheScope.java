@@ -49,8 +49,7 @@ public class CacheScope extends AbstractApplicationModelMigrationStep implements
     if (element.getAttribute("filter-ref") != null) {
       element.removeAttribute("filter-ref");
       element.setAttribute("filterExpression", "#[false]");
-      report.report(ERROR, element, element,
-                    "Rewrite the logic of the referenced filter as a DataWeave expression in the 'filterExpression' attribute.");
+      report.report("cache.filterExpression", element, element);
     }
   }
 

@@ -70,6 +70,9 @@ public class MigrationJob implements Executable {
     this.parentDomainProject = parentDomainProject;
     this.reportPath = outputProject.resolve(HTML_REPORT_FOLDER);
     this.runnerVersion = this.getClass().getPackage().getImplementationVersion();
+    if (this.runnerVersion == null) {
+      this.runnerVersion = "n/a";
+    }
   }
 
   @Override

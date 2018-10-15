@@ -7,19 +7,18 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateRedeliveryPolicyChildren;
 
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * Migration step to update Rollback Exception Strategy
@@ -85,10 +84,7 @@ public class RollbackExceptionStrategy extends AbstractExceptionsMigrationStep {
           }
         }
       } else {
-        report
-            .report(ERROR, element, element,
-                    "'maxRedeliveryAttempts' is not supported anymore in the error handler. A <redelivery-policy> element must be created on the message source.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core-exception-strategies#with-redelivery");
+        report.report("errorHandling.redelivery", element, element);
       }
     }
 

@@ -64,32 +64,24 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     object.addContent(connection);
 
     if (object.getAttribute("streaming") != null && !"true".equals(object.getAttributeValue("streaming"))) {
-      report.report(WARN, object, object,
-                    "'streaming' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about");
+      report.report("file.streaming", object, object);
     }
     object.removeAttribute("streaming");
 
     if (object.getAttribute("serialiseObjects") != null && !"false".equals(object.getAttributeValue("serializeObjects"))) {
-      report.report(ERROR, object, object,
-                    "'serialiseObjects' is not needed in Mule 4 File Connector, you may process the payload with DataWeave directly without the need to convert it to a Java object.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/transform-component-about");
+      report.report("file.serialiseObjects", object, object);
     }
     object.removeAttribute("serialiseObjects");
 
     // Not to be confused with Mule 3 workDirectory and Mule 4 workingDir, they may sound similar but have completely different
     // meaning.
     if (object.getAttribute("workDirectory") != null) {
-      report.report(WARN, object, object,
-                    "'workDirectory' is not needed in Mule 4 File Connector. The source file is locked, so there is no need to move it to a temporary location.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-file#file_configs");
+      report.report("file.workDirectory", object, object);
     }
     object.removeAttribute("workDirectory");
 
     if (object.getAttribute("workFileNamePattern") != null) {
-      report.report(WARN, object, object,
-                    "'workFileNamePattern' is not needed in Mule 4 File Connector. The source file is locked, so there is no need to move it to a temporary location.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-file#file_configs");
+      report.report("file.workFileNamePattern", object, object);
     }
     object.removeAttribute("workFileNamePattern");
 
@@ -136,11 +128,8 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
       for (Element implicitConnectorRef : implicitConnectorRefs) {
         // This situation would have caused the app to not start in Mule 3. As it is not a migration issue per se, there's no
         // linked docs
-        report.report(ERROR, implicitConnectorRef, implicitConnectorRef,
-                      "There are at least 2 connectors matching protocol \"file\","
-                          + " so the connector to use must be specified on the endpoint using the 'connector' property/attribute."
-                          + " Connectors in your configuration that support \"file\" are: "
-                          + availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
+        report.report("file.manyConnectors", implicitConnectorRef, implicitConnectorRef,
+                      availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
       }
     } else {
       for (Element implicitConnectorRef : implicitConnectorRefs) {
@@ -154,9 +143,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
     Element customFileNameParser = object.getChild("custom-filename-parser", FILE_NAMESPACE);
     if (customFileNameParser != null) {
-      report.report(ERROR, customFileNameParser, object,
-                    "Use a DataWeave expression in <file:write> path attribute to set the filename of the file to write.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-file#file_write");
+      report.report("file.filePath", customFileNameParser, object);
       object.removeContent(customFileNameParser);
     }
 

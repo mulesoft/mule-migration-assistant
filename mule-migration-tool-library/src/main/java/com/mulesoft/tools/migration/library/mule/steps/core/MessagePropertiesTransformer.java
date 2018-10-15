@@ -49,13 +49,10 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     addCompatibilityNamespace(element.getDocument());
     if (element.getAttribute("scope") == null) {
-      report.report(WARN, element, element,
-                    "Instead of using properties in the flow, its values must be set explicitly in the operation/listener.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
+      report.report("message.outboundProperties", element, element);
     }
     if ("session".equals(element.getAttributeValue("scope"))) {
-      report.report(WARN, element, element, "Instead of using session variables in the flow, use variables.",
-                    "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
+      report.report("message.sessionVars", element, element);
     }
 
     boolean notOverwrite = false;
@@ -154,9 +151,7 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
         }
       } else if ("add-message-properties".equals(child.getName())) {
         // TODO Migrate to spring module
-        report.report(ERROR, child, element,
-                      "Spring beans definition inside mule components is not allowed. This inner definition must be moved to its own spring config file, and it may be referenced by an 'ee:transform' component or in an expression in the operation/listener directly.",
-                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-module-spring");
+        report.report("message.springBeanDefinitionInsideMuleObject", child, element);
       }
     }
 

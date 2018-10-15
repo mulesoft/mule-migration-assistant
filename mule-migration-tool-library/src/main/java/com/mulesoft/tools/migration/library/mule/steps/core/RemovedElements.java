@@ -40,8 +40,7 @@ public class RemovedElements extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, object, object, "Element '" + object.getName()
-        + "' no longer exists in Mule 4. Replace its usages with a new Mule 4 feature.");
+    report.report("components.removed", object, object, object.getName());
   }
 
 }

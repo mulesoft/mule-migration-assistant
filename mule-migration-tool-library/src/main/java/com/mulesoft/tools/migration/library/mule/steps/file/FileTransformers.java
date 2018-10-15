@@ -45,10 +45,7 @@ public class FileTransformers extends AbstractApplicationModelMigrationStep
           .forEach(t -> t.detach());
     }
 
-    report.report(WARN, object, object.getParentElement(),
-                  "'" + object.getName()
-                      + "' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about");
+    report.report("file.notNeeded", object, object.getParentElement(), object.getName());
 
     object.detach();
   }

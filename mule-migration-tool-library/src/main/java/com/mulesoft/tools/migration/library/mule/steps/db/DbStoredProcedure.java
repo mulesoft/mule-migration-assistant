@@ -67,14 +67,12 @@ public class DbStoredProcedure extends AbstractDbOperationMigrator {
     object.removeChildren("inout-param", DB_NAMESPACE);
 
     if (object.getAttribute("streaming") == null || "false".equals(object.getAttributeValue("streaming"))) {
-      report.report(WARN, object, object, "Streaming is enabled by default in Mule 4",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#database_streaming");
+      report.report("db.streaming", object, object);
     }
     object.removeAttribute("streaming");
 
     if (object.getAttribute("source") != null) {
-      report.report(ERROR, object, object, "'source' attribute does not exist in Mule 4. Update the query accordingly.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#database_dynamic_queries");
+      report.report("db.source", object, object);
       object.removeAttribute("source");
     }
 

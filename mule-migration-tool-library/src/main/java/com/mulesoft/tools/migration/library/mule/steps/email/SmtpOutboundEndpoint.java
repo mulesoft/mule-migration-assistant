@@ -8,24 +8,23 @@ package com.mulesoft.tools.migration.library.mule.steps.email;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.lang.System.lineSeparator;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
+import java.io.IOException;
+import java.util.Optional;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Text;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 /**
  * Migrates the outbound smtp endpoint of the email Transport
@@ -112,9 +111,7 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
       object.setAttribute("config-ref", m4Config.getAttributeValue("name"));
     }
 
-    report.report(ERROR, object, object,
-                  "Remove any unneeded children and add any missing ones, based on the properties set previous to this operation.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-email#migrating-an-smtp-outbound-endpoint");
+    report.report("email.outbound", object, object);
     object.setAttribute("fromAddress",
                         smtpAttributeExpr("#[vars.compatibility_outboundProperties.fromAddress]",
                                           object.getAttribute("fromAddress")));

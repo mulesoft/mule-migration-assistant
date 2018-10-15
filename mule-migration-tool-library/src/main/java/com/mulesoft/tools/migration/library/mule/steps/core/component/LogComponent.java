@@ -37,8 +37,7 @@ public class LogComponent extends AbstractApplicationModelMigrationStep {
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setName("logger");
     if (!object.getChildren().isEmpty()) {
-      report.report(ERROR, object, object, "Interceptors have been replaced by custom policies in Mule 4.",
-                    "https://docs.mulesoft.com/api-manager/2.x/custom-policy-index-latest");
+      report.report("components.interceptors", object, object);
       object.removeContent();
     }
     object.setAttribute("message", "#[payload]");

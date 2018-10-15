@@ -28,7 +28,6 @@ public class OSDualStore extends AbstractOSMigrator {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, element, element, "The Object Store dual-store operation is no longer supported in Mule 4.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-objectstore#dual-store");
+    report.report("os.dualStore", element, element);
   }
 }

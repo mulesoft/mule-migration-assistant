@@ -41,8 +41,7 @@ public class DbDdlExecute extends AbstractDbOperationMigrator {
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     migrateSql(object);
     if (object.getAttribute("source") != null) {
-      report.report(ERROR, object, object, "'source' attribute does not exist in Mule 4. Update the query accordingly.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#database_dynamic_queries");
+      report.report("db.source", object, object);
       object.removeAttribute("source");
     }
 

@@ -39,9 +39,7 @@ public class CopyProperties extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     addCompatibilityNamespace(element.getDocument());
-    report.report(WARN, element, element,
-                  "Instead of copying properties in the flow, use the 'attributes' of the message directly.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes");
+    report.report("message.copyProperties", element, element);
     element.setNamespace(COMPATIBILITY_NAMESPACE);
   }
 }

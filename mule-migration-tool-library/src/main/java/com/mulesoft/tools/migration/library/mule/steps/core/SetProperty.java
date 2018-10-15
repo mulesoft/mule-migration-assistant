@@ -44,9 +44,7 @@ public class SetProperty extends AbstractApplicationModelMigrationStep implement
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     addCompatibilityNamespace(element.getDocument());
     migrateExpression(element.getAttribute("value"), getExpressionMigrator());
-    report.report(WARN, element, element,
-                  "Instead of using outbound properties in the flow, its values must be set explicitly in the operation/listener.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
+    report.report("message.outboundProperties", element, element);
     element.setNamespace(COMPATIBILITY_NAMESPACE);
   }
 

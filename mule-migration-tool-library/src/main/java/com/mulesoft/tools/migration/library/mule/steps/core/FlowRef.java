@@ -49,8 +49,7 @@ public class FlowRef extends AbstractApplicationModelMigrationStep implements Ex
             + ") replace '/' with '\\\\' replace /\\[|\\{/ with '(' replace /\\]|\\}/ with ')' replace '#' with '_'"));
       }
 
-      report.report(WARN, element, element,
-                    "Make sure the expression used in the flow-ref already has the correct flow name and remove the replacements from this expression.");
+      report.report("flow.dynamicFlowRefName", element, element);
     } else {
       element.setAttribute("name", element.getAttributeValue("name")
           .replaceAll("/", "\\\\")

@@ -54,8 +54,7 @@ public class Flow extends AbstractApplicationModelMigrationStep {
       }
 
       element.removeAttribute("processingStrategy");
-      report.report(WARN, element, element, "'flow' no longer has a 'processingStrategy' attribute.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
+      report.report("flow.processingStrategy", element, element);
     }
 
     List<Element> responses = new ArrayList<>(element.getChildren("response", CORE_NAMESPACE));

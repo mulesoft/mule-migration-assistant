@@ -48,8 +48,7 @@ public class EmailTransformers extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report.report(WARN, object, object, "Email transformers are no longer needed. The payload already has the type information.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-transformations#data-types-and-object-to-string-byte-inputstream-transformers");
+    report.report("email.transformers", object, object);
 
     for (Element ref : getApplicationModel().getNodes("//*[@ref = '" + object.getAttributeValue("name") + "']")) {
       ref.detach();

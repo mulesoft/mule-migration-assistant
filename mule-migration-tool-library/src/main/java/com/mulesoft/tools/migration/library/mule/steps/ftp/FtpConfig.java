@@ -68,16 +68,13 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
     object.addContent(connection);
 
     if (object.getAttribute("streaming") != null && !"true".equals(object.getAttributeValue("streaming"))) {
-      report.report(WARN, object, object,
-                    "'streaming' is not needed in Mule 4 FTP Connector, since streams are now repeatable and enabled by default.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/streaming-about");
+      report.report("ftp.streaming", object, object);
     }
     object.removeAttribute("streaming");
 
     if (object.getAttribute("connectionFactoryClass") != null
         && !"true".equals(object.getAttributeValue("connectionFactoryClass"))) {
-      report.report(ERROR, object, object, "'connectionFactoryClass' cannot be changed in Mule 4 FTP Connector.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-ftp-sftp#migrating-an-ftp-connection");
+      report.report("ftp.connectionFactoryClass", object, object);
     }
     object.removeAttribute("connectionFactoryClass");
 
@@ -125,11 +122,8 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
       for (Element implicitConnectorRef : implicitConnectorRefs) {
         // This situation would have caused the app to not start in Mule 3. As it is not a migration issue per se, there's no
         // linked docs
-        report.report(ERROR, implicitConnectorRef, implicitConnectorRef,
-                      "There are at least 2 connectors matching protocol \"ftp\","
-                          + " so the connector to use must be specified on the endpoint using the 'connector' property/attribute."
-                          + " Connectors in your configuration that support \"ftp\" are: "
-                          + availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
+        report.report("ftp.manyConnectors", implicitConnectorRef, implicitConnectorRef,
+                      availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
       }
     } else {
       for (Element implicitConnectorRef : implicitConnectorRefs) {

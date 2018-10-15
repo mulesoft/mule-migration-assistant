@@ -35,8 +35,7 @@ public class JbossTxManager extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, object, object.getParentElement(),
-                  "JBoss Transaction manager must be replaced by Bitronix Transaction Manager provided by Mule.", null);
+    report.report("db.jbossTxManager", object, object.getParentElement());
     object.detach();
   }
 }

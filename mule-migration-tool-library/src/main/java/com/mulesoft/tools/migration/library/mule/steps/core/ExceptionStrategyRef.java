@@ -39,8 +39,7 @@ public class ExceptionStrategyRef extends AbstractApplicationModelMigrationStep 
         .apply(element);
 
     if (element.getParentElement().getName().equals("error-handler")) {
-      report.report(ERROR, element, element, "The way to reuse on-error scopes have changed.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/on-error-scope-concept#reusing-on-error-scopes");
+      report.report("errorHandling.reuse", element, element);
     }
   }
 }

@@ -125,7 +125,7 @@ public class TransportUtilsAddressTest {
     doAnswer(invocation -> {
       fail("Couldn't parse address");
       return null;
-    }).when(report).report(eq(ERROR), any(), any(), anyString());
+    }).when(report).report(eq("transports.cantParseAddress"), any(), any());
     return processAddress(new Element("endpoint", COMPATIBILITY_NAMESPACE).setAttribute("address", address),
                           report).get();
   }
