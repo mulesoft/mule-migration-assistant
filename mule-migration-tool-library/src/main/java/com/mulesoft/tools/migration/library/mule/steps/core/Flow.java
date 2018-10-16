@@ -6,15 +6,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-<<<<<<< Upstream, based on origin/master
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isErrorHanldingElement;
 import static java.util.Collections.reverse;
 
-=======
->>>>>>> f93e430 organize imports
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
