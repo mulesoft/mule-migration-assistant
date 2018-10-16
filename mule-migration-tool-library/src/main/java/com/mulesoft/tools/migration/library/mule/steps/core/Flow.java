@@ -7,11 +7,19 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isErrorHanldingElement;
+import static java.util.Collections.reverse;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Content;
 import org.jdom2.Element;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Migrate flow definitions
@@ -49,7 +57,26 @@ public class Flow extends AbstractApplicationModelMigrationStep {
       report.report(WARN, element, element, "'flow' no longer has a 'processingStrategy' attribute.",
                     "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
     }
-  }
 
+    List<Element> responses = new ArrayList<>(element.getChildren("response", CORE_NAMESPACE));
+    reverse(responses);
+
+    for (Element response : responses) {
+      Element wrappingTry = new Element("try", CORE_NAMESPACE);
+
+      new ArrayList<>(element.getContent().subList(element.indexOf(response) + 1, element.getContentSize())).forEach(c -> {
+        if (c instanceof Element && !isErrorHanldingElement((Element) c)) {
+          c.detach();
+          wrappingTry.addContent(c);
+        }
+      });
+
+      addElementAfter(wrappingTry, response);
+
+      List<Content> content = response.cloneContent();
+      response.detach();
+      element.addContent(content);
+    }
+  }
 
 }
