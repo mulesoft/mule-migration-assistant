@@ -95,10 +95,13 @@ public class DefaultMigrationReport implements MigrationReport {
     if (reportEntries.add(reportEntry)) {
 
       elementToComment.addContent(i++, new Comment("Migration " + level.name() + ": " + message));
-      elementToComment.addContent(i++, new Comment("    For more information refer to:"));
 
-      for (String link : documentationLinks) {
-        elementToComment.addContent(i++, new Comment("        * " + link));
+      if (documentationLinks.length > 0) {
+        elementToComment.addContent(i++, new Comment("    For more information refer to:"));
+
+        for (String link : documentationLinks) {
+          elementToComment.addContent(i++, new Comment("        * " + link));
+        }
       }
 
       if (element != elementToComment) {

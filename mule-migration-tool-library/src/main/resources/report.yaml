@@ -3,12 +3,12 @@ message:
     type: WARN
     message: Instead of using session variables in the flow, use variables.
     docLinks:
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#session_variables
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#session_variables
   outboundProperties:
     type: WARN
     message: Instead of using outbound properties in the flow, its values must be set explicitly in the operation/listener.
     docLinks:
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#outbound_properties
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   copyProperties:
     type: WARN
     message: Instead of copying properties in the flow, use the 'attributes' of the message directly.
@@ -23,22 +23,22 @@ message:
     type: WARN
     message: Setting outbound property as variable.
     docLinks:
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#outbound_properties
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   inboundAttachments:
     type: WARN
     message: Identify the received attachments and set them as variables.
     docLinks:
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#inbound_attachments
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#inbound_attachments
   outboundAttachments:
     type: ERROR
     message: Refer to the documentation of the connectors/operations in the flow or the source to know how attachments are sent.
     docLinks:
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#outbound_attachments
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_attachments
   expressionsAttachments:
     type: ERROR
     message: Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.
     docLinks:
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#inbound_attachments
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#inbound_attachments
   springBeanDefinitionInsideMuleObject:
     type: ERROR
     message: "Spring beans definition inside mule components is not allowed. This inner definition must be moved to its own spring config file, and it may be referenced by an 'ee:transform' component or in an expression in the operation/listener directly."
@@ -69,13 +69,13 @@ expressions:
     message: MEL expression could not be migrated to a DataWeave expression.
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/4.1/migration-mel
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#mel_expressions
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#mel_expressions
       - https://blogs.mulesoft.com/dev/mule-dev/why-dataweave-main-expression-language-mule-4
   inboundAttachments:
     type: ERROR
     message: Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.
     docLinks:
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#inbound_attachments
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#inbound_attachments
   encodeBase64:
     type: ERROR
     message: "Cannot migrate 'encodeBase64' method. Please consider using the 'toBase64' function from DataWeave."
@@ -86,14 +86,14 @@ expressions:
     message: DataMapper migration is not supported. Please migrate the DataMapper usage using the Studio DataWeave migration tool.
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/3.8/dataweave-migrator
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-tool#datamapper
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool.html#datamapper
 
 http:
   mapExpression:
     type: WARN
     message: "Build the '{tagName}' map with a single DW expression."
     docLinks:
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#outbound_properties
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   parseRequest:
     type: WARN
     message: "'parseRequest' is not needed in Mule 4, since the InputStream of the multipart payload is provided at it is read."
@@ -103,9 +103,13 @@ http:
   statusCode:
     type: WARN
     message: Avoid using an outbound property to determine the status code.
+    docLinks:
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   method:
     type: WARN
     message: Avoid using an outbound property to determine the method.
+    docLinks:
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   restConnect:
     type: ERROR
     message: For consuming an API described by a RAML file, Rest-Connect is a more appropriate tool than using the HTTP Connector directly.
@@ -423,7 +427,7 @@ vm:
     type: WARN
     message: You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.
     docLinks:
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#session_variables
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#session_variables
   requestReplyInbound:
     type: WARN
     message: The queue configured in the VM inbound endpoint of the 'request-reply' is not used anymore.
@@ -459,7 +463,7 @@ components:
     message: "The migration of '{prefix}' is not supported."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-tool#unsupported_connectors
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool.html#unsupported_connectors
   unknown:
     type: ERROR
     message: "Didn't find migration rules for the following component: '{prefix}'. If that component is defined in a Spring namespace handler of an app dependency, include its uri ('{uri}') in the '{ADDITIONAL_SPRING_NAMESPACES_PROP}' so it is handled by the Spring Module."
@@ -483,12 +487,12 @@ transform:
     type: WARN
     message: Instead of setting session variables in the flow, you must set Variables.
     docLinks:
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#session_variables
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#session_variables
   outboundProperties:
     type: WARN
     message: Instead of setting outbound properties in the flow, you must set Variables.
     docLinks:
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/v/4.1/migration-manual#outbound_properties
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   studioCustomTypes:
     type: ERROR
     message: Custom types defined in Studio 6 are not migrated to Studio 7.
