@@ -9,10 +9,8 @@ package com.mulesoft.tools.migration.library.mule.steps.scripting;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -20,8 +18,11 @@ import org.jdom2.Namespace;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Update scripting module.

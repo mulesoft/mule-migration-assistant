@@ -8,9 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.library.mule.steps.spring.SpringContributions.ADDITIONAL_SPRING_NAMESPACES_PROP;
 import static com.mulesoft.tools.migration.project.model.ApplicationModel.getElementsWithNamespace;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.containsNamespace;
-import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;

@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.ee;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NS_URI;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;

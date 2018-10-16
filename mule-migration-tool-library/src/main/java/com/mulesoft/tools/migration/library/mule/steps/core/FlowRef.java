@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;

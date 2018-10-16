@@ -14,17 +14,17 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElem
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.lang.System.lineSeparator;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Text;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Migrates the outbound smtp endpoint of the email Transport

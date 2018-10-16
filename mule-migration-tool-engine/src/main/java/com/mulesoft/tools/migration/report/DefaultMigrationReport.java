@@ -10,28 +10,24 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.E
 import static java.util.Collections.emptyList;
 import static java.util.Collections.list;
 
+import com.mulesoft.tools.migration.exception.MigrationAbortException;
+import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Comment;
+import org.jdom2.Element;
+import org.jdom2.output.XMLOutputter;
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.jdom2.Comment;
-import org.jdom2.Element;
-import org.jdom2.output.XMLOutputter;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
-
-import com.google.common.collect.Lists;
-import com.mulesoft.tools.migration.exception.MigrationAbortException;
-import com.mulesoft.tools.migration.project.ProjectType;
-import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * Default implementation of a {@link MigrationReport}.

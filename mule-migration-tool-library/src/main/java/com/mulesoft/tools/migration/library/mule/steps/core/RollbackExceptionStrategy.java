@@ -11,14 +11,14 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateRedeliveryPolicyChildren;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Migration step to update Rollback Exception Strategy

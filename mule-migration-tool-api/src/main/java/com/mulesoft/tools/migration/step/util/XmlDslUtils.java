@@ -7,8 +7,6 @@
 package com.mulesoft.tools.migration.step.util;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
 import static java.util.stream.Collectors.toList;

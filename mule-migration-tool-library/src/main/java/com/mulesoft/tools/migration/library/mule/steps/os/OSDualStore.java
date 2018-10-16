@@ -7,9 +7,8 @@
 package com.mulesoft.tools.migration.library.mule.steps.os;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.jdom2.Element;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import org.jdom2.Element;
 
 /**
  * Migration of Dual Store Operation.

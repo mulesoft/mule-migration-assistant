@@ -7,18 +7,16 @@
 package com.mulesoft.tools.migration.library.mule.steps.vm;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 
-import java.util.Optional;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import java.util.Optional;
 
 /**
  * Migrates the inbound endpoint of the VM Transport

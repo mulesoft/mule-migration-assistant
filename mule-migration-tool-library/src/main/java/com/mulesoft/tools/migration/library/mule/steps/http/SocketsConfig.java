@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -13,8 +15,6 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Migrates the configuration of the TCP/UDP Transport

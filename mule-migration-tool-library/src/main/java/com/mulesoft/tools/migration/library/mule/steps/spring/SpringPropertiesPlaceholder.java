@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
 import static java.lang.Boolean.parseBoolean;

@@ -7,8 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.vm;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -20,7 +18,6 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static java.lang.Integer.parseInt;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;

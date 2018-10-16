@@ -16,7 +16,6 @@ import static java.util.Optional.of;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
 import org.jdom2.Element;
 

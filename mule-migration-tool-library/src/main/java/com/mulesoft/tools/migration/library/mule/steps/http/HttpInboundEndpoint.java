@@ -13,8 +13,6 @@ import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnector
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.compatibilityHeaders;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.handleReferencedResponseBuilder;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.httpListenerLib;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;

@@ -6,17 +6,12 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
-import com.mulesoft.tools.migration.library.tools.mel.HeaderSyntaxCompatibilityResolver;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.jdom2.Element;
 
 import java.util.List;

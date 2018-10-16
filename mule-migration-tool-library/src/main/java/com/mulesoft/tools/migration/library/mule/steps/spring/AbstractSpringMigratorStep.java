@@ -6,8 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
+import static java.util.Arrays.stream;
+import static org.jdom2.Namespace.getNamespace;
+
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
@@ -24,10 +29,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
-import static java.util.Arrays.stream;
-import static org.jdom2.Namespace.getNamespace;
 
 /**
  * Common stuff for migrators of Spring elements

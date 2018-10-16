@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;

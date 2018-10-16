@@ -6,12 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.vm;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
+import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
-import static org.jdom2.Namespace.getNamespace;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;

@@ -17,8 +17,6 @@ import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpo
 import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.resolveVmConector;
 import static com.mulesoft.tools.migration.library.mule.steps.vm.VmOutboundEndpoint.migrateOutboundVmEndpoint;
 import static com.mulesoft.tools.migration.step.AbstractGlobalEndpointMigratorStep.copyAttributes;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;

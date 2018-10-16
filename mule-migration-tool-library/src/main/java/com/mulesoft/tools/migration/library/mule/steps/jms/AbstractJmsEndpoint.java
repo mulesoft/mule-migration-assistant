@@ -11,7 +11,6 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.XPATH_SELECTOR;
 import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.addSharedLibs;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;

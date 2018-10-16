@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;

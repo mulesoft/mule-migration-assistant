@@ -11,11 +11,11 @@ import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.c
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
-import org.jdom2.Element;
-
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Element;
 
 /**
  * Migrate Set Attachment component to Set Variable

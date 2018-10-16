@@ -6,16 +6,17 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.ee;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.migrateDWToV2;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-
-import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.migrateDWToV2;
 
 /**
  * Search for all .dwl files on app and migrate them to DW v2.0

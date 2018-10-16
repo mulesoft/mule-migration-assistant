@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.email;
 
 import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.EMAIL_NAMESPACE;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;

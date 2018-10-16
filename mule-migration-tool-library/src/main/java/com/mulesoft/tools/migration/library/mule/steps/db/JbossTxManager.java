@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 

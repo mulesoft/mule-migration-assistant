@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.batch;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;

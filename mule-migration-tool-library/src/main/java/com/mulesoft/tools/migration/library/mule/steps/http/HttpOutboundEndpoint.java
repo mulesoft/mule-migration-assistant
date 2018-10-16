@@ -11,8 +11,6 @@ import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnector
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.httpRequesterLib;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.SOCKETS_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.addSocketsModule;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
