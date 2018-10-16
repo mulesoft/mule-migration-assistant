@@ -21,6 +21,7 @@ import org.jdom2.output.XMLOutputter;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +55,9 @@ public class DefaultMigrationReport implements MigrationReport {
     possibleEntries = new HashMap<>();
     try {
       for (URL reportYamlUrl : list(DefaultMigrationReport.class.getClassLoader().getResources("report.yaml"))) {
-        possibleEntries.putAll(new Yaml().loadAs(reportYamlUrl.openStream(), Map.class));
+        try (InputStream yamlStream = reportYamlUrl.openStream()) {
+          possibleEntries.putAll(new Yaml().loadAs(yamlStream, Map.class));
+        }
       }
     } catch (IOException e) {
       throw new MigrationAbortException("Couldn't load report entries definitions.", e);
