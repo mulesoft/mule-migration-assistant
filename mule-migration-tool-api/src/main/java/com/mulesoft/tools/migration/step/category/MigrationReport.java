@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * An interface to feed the migration report.
+ * 
  * @param <T>
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -49,13 +50,26 @@ public interface MigrationReport<T> {
   /**
    * Adds the report entry to the target report, and as a comment on the element being processed.
    *
+   * @param entryKey the key of the report entry to generate, as defined in a {@code report.yaml} file.
+   * @param element the XML element that generated this report entry.
+   * @param elementToComment the XML element inside of which the report entry will be.
+   * @param messageParams the strings to use to replace value placeholders in report entry message.
+   */
+  void report(String entryKey, Element element, Element elementToComment, String... messageParams);
+
+  /**
+   * Adds the report entry to the target report, and as a comment on the element being processed.
+   *
    * @param level
    * @param element the XML element that generated this report entry.
    * @param elementToComment the XML element inside of which the report entry will be.
    * @param message
    * @param documentationLinks the links to the Mule documentation that contain the explanation of any changes needed in the
    *        migrated app.
+   * 
+   * @deprecated Use {@link #report(String, Element, Element)} instead.
    */
+  @Deprecated
   void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks);
 
   /**

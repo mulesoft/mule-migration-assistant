@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.email;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
@@ -61,15 +60,14 @@ public class ImapInboundEndpoint extends AbstractEmailSourceMigrator implements 
     imapConnector.ifPresent(c -> {
       if (c.getAttribute("moveToFolder") != null) {
         // TODO https://www.mulesoft.org/jira/browse/MULE-15721
-        report.report(ERROR, object, c, "'moveToFolder' is not yet supported in Email Connector");
+        report.report("email.moveToFolder", object, c);
       }
 
       if (c.getAttribute("mailboxFolder") != null) {
         object.setAttribute("folder", c.getAttributeValue("mailboxFolder"));
       }
       if (c.getAttribute("backupEnabled") != null || c.getAttribute("backupFolder") != null) {
-        report.report(ERROR, object, c, "'backupEnabled' and 'backupFolder' are no longer supported in Email Connector",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-email#migrating-an-imap-inbound-endpoint");
+        report.report("email.imapBackup", object, c);
       }
 
       if (c.getAttribute("deleteReadMessages") != null) {
@@ -77,8 +75,7 @@ public class ImapInboundEndpoint extends AbstractEmailSourceMigrator implements 
       }
       if (c.getAttribute("defaultProcessMessageAction") != null) {
         object.removeAttribute("defaultProcessMessageAction");
-        report.report(ERROR, object, c, "'defaultProcessMessageAction' is no longer supported in Email Connector",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-email#migrating-an-imap-inbound-endpoint");
+        report.report("email.imapDefaultProcessMessageAction", object, c);
       }
 
       if (c.getAttribute("checkFrequency") != null) {

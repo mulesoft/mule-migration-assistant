@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -39,8 +38,7 @@ public class ExceptionStrategyRef extends AbstractApplicationModelMigrationStep 
         .apply(element);
 
     if (element.getParentElement().getName().equals("error-handler")) {
-      report.report(ERROR, element, element, "The way to reuse on-error scopes have changed.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/on-error-scope-concept#reusing-on-error-scopes");
+      report.report("errorHandling.reuse", element, element);
     }
   }
 }

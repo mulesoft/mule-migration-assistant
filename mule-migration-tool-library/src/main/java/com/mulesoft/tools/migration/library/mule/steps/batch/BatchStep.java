@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.batch;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -51,10 +49,7 @@ public class BatchStep extends AbstractApplicationModelMigrationStep implements 
     }
     Attribute filterExpression = object.getAttribute("filter-expression");
     if (filterExpression != null) {
-      report
-          .report(WARN, object, object,
-                  "'filter-expression' does not exist in Mule 4. This may be replaced with 'acceptExpression' attribute in the batch step.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core-batch#xml_changes");
+      report.report("batch.filterExpression", object, object);
     }
   }
 

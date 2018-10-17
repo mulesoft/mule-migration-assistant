@@ -17,8 +17,6 @@ import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpo
 import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.resolveVmConector;
 import static com.mulesoft.tools.migration.library.mule.steps.vm.VmOutboundEndpoint.migrateOutboundVmEndpoint;
 import static com.mulesoft.tools.migration.step.AbstractGlobalEndpointMigratorStep.copyAttributes;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -57,8 +55,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     if (object.getAttribute("storePrefix") != null) {
-      report.report(WARN, object, object, "The migratior target of 'request-reply' doesn't need an object store.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core");
+      report.report("transports.requestReplyStorePrefix", object, object);
       object.removeAttribute("storePrefix");
     }
 
@@ -194,9 +191,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     request.setNamespace(VM_NAMESPACE);
     request.setName("publish-consume");
 
-    report.report(WARN, reply, request,
-                  "The queue configuren in the VM inbound endpoint of the request-reply is not used anymore.",
-                  "https://docs.mulesoft.com/connectors/vm-publish-response");
+    report.report("vm.requestReplyInbound", reply, request);
 
     final String configName = getVmConfigName(object, requestConnector);
     Element vmConfig = migrateVmConfig(object, requestConnector, configName, getApplicationModel());
@@ -225,9 +220,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
 
     addElementAfter(replyFlow, flow);
 
-    report.report(ERROR, object, request,
-                  "request-reply was split into 2 different flows. Review the migration result for correctness.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core");
+    report.report("transports.requestReplySplit", object, request);
 
     request.detach();
     addElementAfter(request, object);

@@ -7,18 +7,16 @@
 package com.mulesoft.tools.migration.library.mule.steps.vm;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 
-import java.util.Optional;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import java.util.Optional;
 
 /**
  * Migrates the inbound endpoint of the VM Transport
@@ -45,8 +43,7 @@ public class VmOutboundEndpoint extends AbstractVmEndpoint {
     if ("NONE".equals(action)) {
       return "NOT_SUPPORTED";
     } else if ("ALWAYS_BEGIN".equals(action)) {
-      report.report(ERROR, tx, object, "Use a <try> scope to begin a nested transaction.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/try-scope-xml-reference#properties-of-try");
+      report.report("vm.nestedTx", tx, object);
       return "ALWAYS_JOIN";
     } else if ("BEGIN_OR_JOIN".equals(action)) {
       return "JOIN_IF_POSSIBLE";
@@ -118,9 +115,7 @@ public class VmOutboundEndpoint extends AbstractVmEndpoint {
 
     Element content = buildContent(VM_NAMESPACE);
     object.addContent(content);
-    report.report(WARN, content, content,
-                  "You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.",
-                  "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
+    report.report("vm.sessionVars", content, content);
   }
 
 }

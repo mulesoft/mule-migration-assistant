@@ -11,8 +11,6 @@ import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnector
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.httpRequesterLib;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.SOCKETS_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.addSocketsModule;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -132,16 +130,16 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
       object.setAttribute("method", "#[migration::HttpRequester::httpRequesterMethod(vars)]");
       object.setAttribute("sendBodyMode", getExpressionMigrator()
           .wrap("if (migration::HttpRequester::httpRequesterMethod(vars) == 'DELETE') 'NEVER' else 'AUTO'"));
-      report.report(WARN, object, object, "Avoid using an outbound property to determine the method.");
-      report.report(WARN, object, object, "'sendBodyMode' added for compatibility. This may not be needed in this app.");
+      report.report("http.method", object, object);
+      report.report("http.sendBodyMode", object, object);
     } else {
       if ("DELETE".equals(object.getAttributeValue("method"))) {
         object.setAttribute("sendBodyMode", "NEVER");
-        report.report(WARN, object, object, "'sendBodyMode' added for compatibility. This may not be needed in this app.");
+        report.report("http.sendBodyMode", object, object);
       } else if (getExpressionMigrator().isWrapped(object.getAttributeValue("method"))) {
         object.setAttribute("sendBodyMode", getExpressionMigrator().wrap("if ("
             + getExpressionMigrator().unwrap(object.getAttributeValue("method")) + " == 'DELETE') 'NEVER' else 'AUTO'"));
-        report.report(WARN, object, object, "'sendBodyMode' added for compatibility. This may not be needed in this app.");
+        report.report("http.sendBodyMode", object, object);
       }
     }
 
@@ -248,15 +246,12 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     }
 
     if (connector.getAttribute("enableCookies") != null) {
-      report.report(WARN, connector, reqConnection,
-                    "Cookie support in Mule 4 is limited to resending any cookie received by the server before.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-http");
+      report.report("http.cookies", connector, reqConnection);
       copyAttributeIfPresent(connector, reqConnection.getParentElement(), "enableCookies");
     }
 
     if (connector.getDocument().getRootElement().getName().equals("domain")) {
-      report.report(ERROR, connector, connector,
-                    "The configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.");
+      report.report("http.domainConnector", connector, connector);
     }
   }
 

@@ -6,12 +6,12 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Migrates the spring configuration from the mule config to its own file.

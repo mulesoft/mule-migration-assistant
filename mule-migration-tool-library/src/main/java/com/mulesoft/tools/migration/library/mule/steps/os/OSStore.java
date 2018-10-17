@@ -7,11 +7,10 @@
 package com.mulesoft.tools.migration.library.mule.steps.os;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
 import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 
 /**
  * Migrate OS Store Operation.
@@ -53,8 +52,7 @@ public class OSStore extends AbstractOSMigrator {
 
   private void addFailAttribute(Element element, MigrationReport report) {
     element.setAttribute(new Attribute("failIfPresent", "true"));
-    report.report(ERROR, element, element, "The exception thrown by the Object Store have changed.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-objectstore#storing-values");
+    report.report("os.store", element, element);
   }
 
 }

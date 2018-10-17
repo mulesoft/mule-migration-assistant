@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.batch;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Element;
 
 /**

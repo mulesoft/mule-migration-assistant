@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.email;
 
 import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.EMAIL_NAMESPACE;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -48,8 +47,7 @@ public class EmailTransformers extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report.report(WARN, object, object, "Email transformers are no longer needed. The payload already has the type information.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-transformations#data-types-and-object-to-string-byte-inputstream-transformers");
+    report.report("email.transformers", object, object);
 
     for (Element ref : getApplicationModel().getNodes("//*[@ref = '" + object.getAttributeValue("name") + "']")) {
       ref.detach();

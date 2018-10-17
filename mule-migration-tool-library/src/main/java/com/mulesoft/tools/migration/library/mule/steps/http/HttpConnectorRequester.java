@@ -9,10 +9,8 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
-import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -60,19 +58,11 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     object.setNamespace(httpNamespace);
 
     if (object.getAttribute("port") != null) {
-      report.report(ERROR, object, object,
-                    "'port' cannot be overridden at the HTTP request operation. You may use an expression in the config to make it dynamic."
-                        + System.lineSeparator() +
-                        format("Original value was '%s=\"%s\"'", "port", object.getAttributeValue("port")),
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request");
+      report.report("http.port", object, object, object.getAttributeValue("port"));
       object.removeAttribute("port");
     }
     if (object.getAttribute("host") != null) {
-      report.report(ERROR, object, object,
-                    "'host' cannot be overridden at the HTTP request operation. You may use an expression in the config to make it dynamic."
-                        + System.lineSeparator() +
-                        format("Original value was '%s=\"%s\"'", "host", object.getAttributeValue("host")),
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request");
+      report.report("http.host", object, object, object.getAttributeValue("host"));
       object.removeAttribute("host");
     }
 

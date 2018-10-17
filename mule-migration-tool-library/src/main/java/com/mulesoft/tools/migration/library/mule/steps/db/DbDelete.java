@@ -6,16 +6,12 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
-import com.mulesoft.tools.migration.library.tools.mel.HeaderSyntaxCompatibilityResolver;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.jdom2.Element;
 
 import java.util.List;
@@ -61,8 +57,7 @@ public class DbDelete extends AbstractDbOperationMigrator {
     }
 
     if (object.getAttribute("source") != null) {
-      report.report(ERROR, object, object, "'source' attribute does not exist in Mule 4. Update the query accordingly.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#database_dynamic_queries");
+      report.report("db.source", object, object);
       object.removeAttribute("source");
     }
 

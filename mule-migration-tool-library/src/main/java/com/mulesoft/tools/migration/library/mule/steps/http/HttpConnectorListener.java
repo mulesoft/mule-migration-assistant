@@ -9,7 +9,6 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
 import static java.lang.System.lineSeparator;
@@ -58,10 +57,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     object.setNamespace(httpNamespace);
 
     if (object.getAttribute("parseRequest") != null && !"false".equals(object.getAttributeValue("parseRequest"))) {
-      report.report(WARN, object, object,
-                    "'parseRequest' is not needed in Mule 4, since the InputStream of the multipart payload is provided at it is read.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-mime-types",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/dataweave-formats#format_form_data");
+      report.report("http.parseRequest", object, object);
     }
     object.removeAttribute("parseRequest");
 
@@ -84,7 +80,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     Element response = object.getChild("response", httpNamespace);
     if (response.getAttribute("statusCode") == null) {
       response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
-      report.report(WARN, response, response, "Avoid using an outbound property to determine the status code.");
+      report.report("http.statusCode", response, response);
     }
     if (object.getChild("error-response", httpNamespace) == null) {
       Element errorResponse = new Element("error-response", httpNamespace);
@@ -97,7 +93,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     if (errorResponse.getAttribute("statusCode") == null) {
       errorResponse.setAttribute("statusCode",
                                  "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
-      report.report(WARN, errorResponse, errorResponse, "Avoid using an outbound property to determine the status code.");
+      report.report("http.statusCode", errorResponse, errorResponse);
     }
   }
 

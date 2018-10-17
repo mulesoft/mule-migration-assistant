@@ -8,9 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.library.mule.steps.spring.SpringContributions.ADDITIONAL_SPRING_NAMESPACES_PROP;
 import static com.mulesoft.tools.migration.project.model.ApplicationModel.getElementsWithNamespace;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.containsNamespace;
-import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -58,19 +56,9 @@ public class PreprocessNamespaces implements NamespaceContribution {
             processedElements.incrementAndGet();
 
             if (ns.getURI().startsWith("http://www.mulesoft.org")) {
-              report.report(ERROR, node, node,
-                            "The migration of " + ns.getPrefix() + " is not supported.",
-                            "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors",
-                            "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-tool#unsupported_connectors");
+              report.report("components.unsupported", node, node, ns.getPrefix());
             } else {
-              report.report(ERROR, node, node,
-                            "Didn't find migration rules for the following component: " + ns.getPrefix()
-                                + "." + lineSeparator()
-                                + "If that component is defined in a Spring namespace handler of an app dependency, include its uri ("
-                                + ns.getURI() + ") in the '" + ADDITIONAL_SPRING_NAMESPACES_PROP
-                                + "' so it is handled by the Spring Module.",
-                            "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors",
-                            "https://docs.mulesoft.com/connectors/spring-module");
+              report.report("components.unknown", node, node, ns.getPrefix(), ns.getURI(), ADDITIONAL_SPRING_NAMESPACES_PROP);
             }
           });
     });

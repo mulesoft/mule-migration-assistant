@@ -6,16 +6,16 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jdom2.Element;
+
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-
-import org.jdom2.Element;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Resolver for encodeBase64 method
@@ -49,9 +49,7 @@ public class Encode64Resolver implements CompatibilityResolver<String> {
         }
       }
     }
-    report.report(MigrationReport.Level.ERROR, element, element,
-                  "Cannot migrate encodeBase64 method. Please consider using the toBase64 function from DataWeave.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/dw-binaries-functions-tobase64");
+    report.report("expressions.encodeBase64", element, element);
     return original;
   }
 }

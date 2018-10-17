@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.ee;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NS_URI;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
@@ -49,8 +48,7 @@ public class CacheScope extends AbstractApplicationModelMigrationStep implements
     if (element.getAttribute("filter-ref") != null) {
       element.removeAttribute("filter-ref");
       element.setAttribute("filterExpression", "#[false]");
-      report.report(ERROR, element, element,
-                    "Rewrite the logic of the referenced filter as a DataWeave expression in the 'filterExpression' attribute.");
+      report.report("cache.filterExpression", element, element);
     }
   }
 

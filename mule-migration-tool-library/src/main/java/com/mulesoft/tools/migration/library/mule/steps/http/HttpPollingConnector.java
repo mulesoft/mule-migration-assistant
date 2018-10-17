@@ -11,7 +11,6 @@ import static com.mulesoft.tools.migration.library.mule.steps.validation.Validat
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.addValidationNamespace;
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationPomContribution.addValidationDependency;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_POLICY;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -62,13 +61,12 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
         .addContent(requestConnection));
 
     if (object.getAttribute("reuseAddress") != null) {
-      report.report(ERROR, object, object, "'reuseAddress' attribute is only applicable to HTTP listeners, not requesters.");
+      report.report("http.reuseAddress", object, object);
       object.removeAttribute("reuseAddress");
     }
 
     if (MULE_FOUR_POLICY.equals(getApplicationModel().getProjectType())) {
-      report.report(ERROR, requestConnection, object,
-                    "The configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.");
+      report.report("http.domainConnector", requestConnection, object);
     }
 
     List<Element> pollingEndpoints =
@@ -118,8 +116,7 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
                 .setAttribute("idExpression", "#[message.attributes.headers.ETag]")));
 
         addElementAfter(etagValidator, pollingEndpoint);
-        report.report(ERROR, etagValidator, etagValidator, "Consider using a watermark for checking ETag",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-patterns-watermark");
+        report.report("http.eTag", etagValidator, etagValidator);
       }
       if (object.getAttribute("discardEmptyContent") == null || "true".equals(object.getAttributeValue("discardEmptyContent"))) {
         addValidationDependency(getApplicationModel().getPomModel().get());

@@ -6,14 +6,15 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.createErrorHandlerParent;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isTopLevelElement;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.createErrorHandlerParent;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isTopLevelElement;
 
 /**
  * Common stuff for migrators of Exception Handling elements

@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
 import static java.lang.Boolean.parseBoolean;
@@ -46,8 +45,7 @@ public class SpringPropertiesPlaceholder extends AbstractSpringMigratorStep {
         if (isVersionGreaterOrEquals(getApplicationModel().getMuleVersion(), "4.2.0")) {
           confProp.setAttribute("encoding", object.getAttributeValue("file-encoding"));
         } else {
-          report.report(ERROR, object, object,
-                        "'encoding' is not available in Mule 4.1.x. It will be included in 4.2.0 or higher.");
+          report.report("configProperties.encoding", object, object);
         }
       }
 
@@ -55,18 +53,14 @@ public class SpringPropertiesPlaceholder extends AbstractSpringMigratorStep {
     }
 
     if (object.getAttribute("order") != null) {
-      report.report(ERROR, object, object,
-                    "'order' is no longer available. The properties are resolved in the order they were declared.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties#properties-files");
+      report.report("configProperties.order", object, object);
     }
     if (object.getAttributeValue("properties-ref") != null
         || parseBoolean(object.getAttributeValue("ignore-resource-not-found", "false"))
         || parseBoolean(object.getAttributeValue("ignore-unresolvable", "false"))
         || parseBoolean(object.getAttributeValue("local-override", "false"))
         || parseBoolean(object.getAttributeValue("system-properties-mode", "false"))) {
-      report.report(ERROR, object, object,
-                    "Spring specific attributes are no longer available. The default behavior cannot be changed in Mule 4.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/configuring-properties");
+      report.report("configProperties.springAttributes", object, object);
     }
 
     object.detach();

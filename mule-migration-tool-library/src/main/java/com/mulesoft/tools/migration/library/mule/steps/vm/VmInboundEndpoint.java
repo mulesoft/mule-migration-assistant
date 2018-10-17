@@ -7,8 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.vm;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -20,7 +18,6 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static java.lang.Integer.parseInt;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -50,16 +47,13 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
   private String mapTransactionalAction(String action, MigrationReport report, Element tx, Element object) {
     // Values defined in org.mule.runtime.extension.api.tx.SourceTransactionalAction
     if ("BEGIN_OR_JOIN".equals(action)) {
-      report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.");
+      report.report("vm.listenerTx", tx, object);
       return "ALWAYS_BEGIN";
     } else if ("ALWAYS_JOIN".equals(action)) {
-      report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.");
+      report.report("vm.listenerTx", tx, object);
       return "NONE";
     } else if ("JOIN_IF_POSSIBLE".equals(action)) {
-      report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.");
+      report.report("vm.listenerTx", tx, object);
       return "NONE";
     } else if ("NOT_SUPPORTED".equals(action)) {
       return "NONE";
@@ -96,7 +90,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
       }
 
       if ("true".equals(xaTx.getAttributeValue("interactWithExternal"))) {
-        report.report(ERROR, xaTx, object, "Mule 4 does not support joining with external transactions.");
+        report.report("vm.externalTx", xaTx, object);
       }
 
       object.removeChild("xa-transaction", CORE_NAMESPACE);
@@ -167,9 +161,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
 
     Element content = buildContent(VM_NAMESPACE);
     object.addContent(new Element("response", VM_NAMESPACE).addContent(content));
-    report.report(WARN, content, content,
-                  "You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.",
-                  "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
+    report.report("vm.sessionVars", content, content);
 
     if (object.getAttribute("exchange-pattern") == null
         || object.getAttributeValue("exchange-pattern").equals("one-way")) {

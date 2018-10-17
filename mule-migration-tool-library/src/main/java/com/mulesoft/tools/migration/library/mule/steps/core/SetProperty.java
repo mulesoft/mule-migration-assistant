@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
@@ -44,9 +43,7 @@ public class SetProperty extends AbstractApplicationModelMigrationStep implement
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     addCompatibilityNamespace(element.getDocument());
     migrateExpression(element.getAttribute("value"), getExpressionMigrator());
-    report.report(WARN, element, element,
-                  "Instead of using outbound properties in the flow, its values must be set explicitly in the operation/listener.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
+    report.report("message.outboundProperties", element, element);
     element.setNamespace(COMPATIBILITY_NAMESPACE);
   }
 

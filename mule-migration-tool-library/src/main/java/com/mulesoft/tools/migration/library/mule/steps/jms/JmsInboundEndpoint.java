@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -17,7 +16,6 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAtt
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -52,19 +50,13 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     } else if ("ALWAYS_BEGIN".equals(action)) {
       return "ALWAYS_BEGIN";
     } else if ("BEGIN_OR_JOIN".equals(action)) {
-      report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#UsingTransactions");
+      report.report("jms.listenerTx", tx, object);
       return "ALWAYS_BEGIN";
     } else if ("ALWAYS_JOIN".equals(action)) {
-      report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#UsingTransactions");
+      report.report("jms.listenerTx", tx, object);
       return "NONE";
     } else if ("JOIN_IF_POSSIBLE".equals(action)) {
-      report.report(WARN, tx, object,
-                    "There can be no transaction active before the listener, so JOIN is not supported at this point.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#UsingTransactions");
+      report.report("jms.listenerTx", tx, object);
       return "NONE";
     } else if ("NOT_SUPPORTED".equals(action)) {
       return "NONE";
@@ -168,9 +160,7 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
 
       outboundBuilder.setAttribute("correlationId", "#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]");
 
-      report.report(WARN, object, object, "Avoid using properties to set the JMS response properties and headers",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#ListeningForNewMessages",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#RespondingToIncommingMessages");
+      report.report("jms.propertiesListener", object, object);
 
       connector.ifPresent(m3c -> {
         if (m3c.getAttributeValue("persistentDelivery") != null) {

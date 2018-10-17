@@ -7,8 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.stream.Collectors.toList;
@@ -92,10 +90,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
 
     Element connection = null;
     if (object.getAttribute("dataSource-ref") != null) {
-      report.report(WARN, object, object,
-                    "Mule 3 config has a '" + object.getName()
-                        + "' with a dataSource-ref. It was converted to a 'db:data-source-connection'.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_data_source_db");
+      report.report("db.referencedDataSource", object, object, object.getName());
 
       connection = new Element("data-source-connection", DB_NAMESPACE);
       object.addContent(connection);
@@ -104,10 +99,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
       List<Attribute> otherAttributes =
           object.getAttributes().stream().filter(att -> !"name".equals(att.getName())).collect(toList());
       if (!otherAttributes.isEmpty()) {
-        report.report(WARN, connection, connection,
-                      "The attributes " + otherAttributes.toString()
-                          + " overlap with properties of the referenced DataSource and were removed.",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_data_source_db");
+        report.report("db.configAttributesOverlap", connection, connection, otherAttributes.toString());
       }
     } else if (object.getAttribute("url") != null) {
       connection = new Element("generic-connection", DB_NAMESPACE);
@@ -125,26 +117,18 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
         } else if ("mysql-config".equals(object.getName())) {
           connection.setAttribute("driverClassName", "com.mysql.jdbc.Driver");
 
-          report.report(ERROR, connection, connection,
-                        "Add a suitable jdbc driver dependency for this connection.",
-                        "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
+          report.report("db.jdbcDriverDependency", connection, connection);
         } else if ("oracle-config".equals(object.getName())) {
           connection.setAttribute("driverClassName", "oracle.jdbc.driver.OracleDriver");
 
-          report.report(ERROR, connection, connection,
-                        "Add a suitable jdbc driver dependency for this connection.",
-                        "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
+          report.report("db.jdbcDriverDependency", connection, connection);
         } else {
-          report.report(ERROR, connection, connection,
-                        "Add a suitable jdbc driver dependency for this connection.",
-                        "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
+          report.report("db.jdbcDriverDependency", connection, connection);
 
         }
       }
 
-      report.report(WARN, connection, connection,
-                    "The config in Mule 3 is specific for an engine, but it contained an 'url' attribute. It will be made generic in order to keep the url.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#example_generic_db");
+      report.report("db.jdbcUrlForSpecificEngine", connection, connection);
 
       Element connectionProps = object.getChild("connection-properties", DB_NAMESPACE);
       if (connectionProps != null) {
@@ -180,9 +164,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
       copyAttributeIfPresent(object, connection, "useXaTransactions");
       copyAttributeIfPresent(object, connection, "transactionIsolation");
 
-      report.report(ERROR, connection, connection,
-                    "Add a suitable jdbc driver dependency for this connection.",
-                    "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
+      report.report("db.jdbcDriverDependency", connection, connection);
     } else if ("oracle-config".equals(object.getName())) {
       connection = new Element("oracle-connection", DB_NAMESPACE);
       object.addContent(connection);
@@ -194,9 +176,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
       copyAttributeIfPresent(object, connection, "useXaTransactions");
       copyAttributeIfPresent(object, connection, "transactionIsolation");
 
-      report.report(ERROR, connection, connection,
-                    "Add a suitable jdbc driver dependency for this connection.",
-                    "https://docs.mulesoft.com/connectors/db-configure-connection#setting-the-jdbc-driver");
+      report.report("db.jdbcDriverDependency", connection, connection);
     }
 
     for (Element element : new ArrayList<>(object.getChildren())) {
@@ -209,9 +189,7 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
     Element reconnect = connection.getChild("reconnect", CORE_NAMESPACE);
     if (reconnect != null) {
       // TODO migrate reconnections
-      report.report(ERROR, reconnect, connection,
-                    "Reconnection notifiers cannot be configured on the 'reconnect' element.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-database#reconnection_strategies");
+      report.report("db.reconnectNotifiers", reconnect, connection);
       connection.removeContent(reconnect);
     }
 

@@ -7,10 +7,9 @@
 package com.mulesoft.tools.migration.library.mule.steps.os;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 
 /**
  * Migrate OS Dispose Operation.
@@ -37,7 +36,6 @@ public class OSDisposeStore extends AbstractOSMigrator {
       element.removeAttribute(partition);
     }
 
-    report.report(WARN, element, element, "On Mule 4 the clear operation will clear the whole Object Store.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-objectstore#dispose-clear");
+    report.report("os.disposeStore", element, element);
   }
 }

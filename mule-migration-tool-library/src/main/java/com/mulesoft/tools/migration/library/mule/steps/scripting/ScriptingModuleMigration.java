@@ -8,7 +8,6 @@ package com.mulesoft.tools.migration.library.mule.steps.scripting;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -78,11 +77,7 @@ public class ScriptingModuleMigration extends AbstractApplicationModelMigrationS
 
     element.removeAttribute("name");
 
-    report
-        .report(ERROR, element, element,
-                "The message format in Mule 4 has changed. Change any usages of the message to match the new bindings in Mule 4.",
-                "https://docs.mulesoft.com/mule4-user-guide/v/4.1/intro-mule-message",
-                "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-scripting");
+    report.report("scripting.messageFormat", element, element);
   }
 
   protected void handleCode(Element scriptNode) {

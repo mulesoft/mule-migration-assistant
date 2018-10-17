@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -74,9 +73,7 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
         copyAttributeIfPresent(tlsClient, keyStore, "path");
         copyAttributeIfPresent(tlsClient, keyStore, "storePassword", "password");
         if (tlsClient.getAttribute("class") != null) {
-          report.report(ERROR, tlsClient, tlsClient,
-                        "'class' attribute of 'https:tls-client' was deprecated in 3.x. Use 'type' instead.",
-                        "https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration");
+          report.report("http.tlsClientClass", tlsClient, tlsClient);
         }
         copyAttributeIfPresent(tlsClient, keyStore, "type", "type");
         tlsContext.addContent(keyStore);
@@ -89,9 +86,7 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
         copyAttributeIfPresent(tlsKeyStore, keyStore, "storePassword", "password");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
         if (tlsKeyStore.getAttribute("class") != null) {
-          report.report(ERROR, tlsKeyStore, tlsKeyStore,
-                        "'class' attribute of 'https:tls-key-store' was deprecated in 3.x. Use 'type' instead.",
-                        "https://docs.mulesoft.com/mule4-user-guide/v/4.1/tls-configuration");
+          report.report("http.tlsKeyStoreClass", tlsKeyStore, tlsKeyStore);
         }
         copyAttributeIfPresent(tlsKeyStore, keyStore, "type", "type");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyAlias", "alias");

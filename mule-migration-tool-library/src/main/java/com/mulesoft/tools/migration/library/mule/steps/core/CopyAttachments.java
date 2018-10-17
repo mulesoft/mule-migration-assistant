@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -35,8 +34,7 @@ public class CopyAttachments extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    report.report(WARN, element, element, "Identify the received attachments and set them as variables.",
-                  "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#inbound_attachments");
+    report.report("message.inboundAttachments", element, element);
     element.setName("multipart-to-vars");
     element.setNamespace(COMPATIBILITY_NAMESPACE);
     element.getAttribute("attachmentName").setName("partName");

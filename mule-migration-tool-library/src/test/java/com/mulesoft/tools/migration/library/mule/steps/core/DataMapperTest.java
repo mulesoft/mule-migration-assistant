@@ -34,6 +34,6 @@ public class DataMapperTest {
   @Test
   public void execute() {
     dataMapperStep.execute(elementMock, reportSpy);
-    verify(reportSpy).report(eq(ERROR), eq(elementMock), eq(elementMock), anyString(), anyString(), anyString());
+    verify(reportSpy).report(eq("expressions.datamapper"), eq(elementMock), eq(elementMock));
   }
 }

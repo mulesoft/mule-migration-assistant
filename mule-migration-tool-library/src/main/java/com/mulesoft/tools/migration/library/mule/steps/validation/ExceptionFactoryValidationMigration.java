@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.validation;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -36,9 +34,7 @@ public class ExceptionFactoryValidationMigration extends AbstractApplicationMode
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, element, element,
-                  "Exception Factory is no longer supported.",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-module-validation");
+    report.report("validation.exceptionFactory", element, element);
   }
 
 

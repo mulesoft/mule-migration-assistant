@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.step.util;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
@@ -78,7 +76,7 @@ public final class TransportsUtils {
         return of(new EndpointAddress(protocol, credentials, host, port, path));
       }
     } else {
-      report.report(ERROR, endpoint, endpoint, "Unable to parse endpoint address '" + address + "'.");
+      report.report("transports.cantParseAddress", endpoint, endpoint, address);
       return empty();
     }
   }
@@ -129,17 +127,13 @@ public final class TransportsUtils {
   public static void handleConnectorChildElements(Element object, Element connection, MigrationReport report) {
     Element receiverThreadingProfile = object.getChild("receiver-threading-profile", CORE_NAMESPACE);
     if (receiverThreadingProfile != null) {
-      report.report(WARN, receiverThreadingProfile, object,
-                    "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
+      report.report("flow.threading", receiverThreadingProfile, object);
       object.removeContent(receiverThreadingProfile);
     }
 
     Element dispatcherThreadingProfile = object.getChild("dispatcher-threading-profile", CORE_NAMESPACE);
     if (dispatcherThreadingProfile != null) {
-      report.report(WARN, dispatcherThreadingProfile, object,
-                    "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
+      report.report("flow.threading", receiverThreadingProfile, object);
       object.removeContent(dispatcherThreadingProfile);
     }
 
@@ -148,8 +142,7 @@ public final class TransportsUtils {
     if (reconnect != null) {
       Element reconnectNotification = reconnect.getChild("reconnect-custom-notifier", CORE_NAMESPACE);
       if (reconnectNotification != null) {
-        report.report(ERROR, dispatcherThreadingProfile, object, "'reconnect-custom-notifier' is not supported in Mule 4.",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-patterns-reconnection-strategies");
+        report.report("transports.reconnectCustomNotifier", dispatcherThreadingProfile, object);
         reconnectNotification.detach();
       }
 

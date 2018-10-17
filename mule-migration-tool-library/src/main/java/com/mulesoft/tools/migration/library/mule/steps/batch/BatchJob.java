@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.batch;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -61,9 +60,7 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
       if (maxThreadsActive != null) {
         batchJob.setAttribute("maxConcurrency", maxThreadsActive);
       }
-      report.report(WARN, originalBatchJob, originalBatchJob,
-                    "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' attribute in the batch job.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
+      report.report("flow.threading", originalBatchJob, originalBatchJob);
     });
 
     List<Element> children = new ArrayList<>(originalBatchJob.getChildren());

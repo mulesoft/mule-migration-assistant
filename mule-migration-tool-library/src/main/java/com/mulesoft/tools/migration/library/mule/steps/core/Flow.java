@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isErrorHanldingElement;
@@ -54,8 +53,7 @@ public class Flow extends AbstractApplicationModelMigrationStep {
       }
 
       element.removeAttribute("processingStrategy");
-      report.report(WARN, element, element, "'flow' no longer has a 'processingStrategy' attribute.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
+      report.report("flow.processingStrategy", element, element);
     }
 
     List<Element> responses = new ArrayList<>(element.getChildren("response", CORE_NAMESPACE));

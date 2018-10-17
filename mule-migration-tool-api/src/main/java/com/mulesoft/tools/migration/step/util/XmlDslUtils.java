@@ -7,8 +7,6 @@
 package com.mulesoft.tools.migration.step.util;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
 import static java.util.stream.Collectors.toList;
@@ -157,8 +155,7 @@ public final class XmlDslUtils {
       object.setAttribute("target", expressionMigrator.unwrap(migratedExpression));
       if (resolver.canResolve(expressionMigrator.unwrap(targetValue))) {
         addOutboundPropertySetter(expressionMigrator.unwrap(migratedExpression), object, model, object);
-        report.report(WARN, object, object, "Setting outbound property as variable.",
-                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
+        report.report("message.outboundPropertyEnricher", object, object);
       }
     }
   }
@@ -178,10 +175,7 @@ public final class XmlDslUtils {
     Element a2ip = new Element("attributes-to-inbound-properties", COMPATIBILITY_NAMESPACE);
     parent.addContent(index, a2ip);
 
-    report.report(WARN, a2ip, a2ip,
-                  "Expressions that query inboundProperties from the message should instead query the attributes of the message. "
-                      + "Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as copy-properties).",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes");
+    report.report("message.attributesToInboundProperties", a2ip, a2ip);
     return a2ip;
   }
 
@@ -194,9 +188,7 @@ public final class XmlDslUtils {
 
     parent.addContent(index, op2v);
 
-    report.report(WARN, op2v, op2v,
-                  "Instead of using outbound properties in the flow, its values must be set explicitly in the operation/listener.",
-                  "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
+    report.report("message.outboundProperties", op2v, op2v);
 
     return op2v;
   }
@@ -216,8 +208,7 @@ public final class XmlDslUtils {
           errorHandler.getChildren().stream().filter(e -> "REDELIVERY_EXHAUSTED".equals(e.getAttributeValue("type"))).findFirst();
 
       if (redeliveryExhaustedHandler.isPresent()) {
-        report.report(ERROR, dlq, redeliveryPolicy,
-                      "Flow already has a `REDELIVERY_EXHAUSTED` error handler and also has a `dead-letter-queue` in the `idempotent-redeliery-policy`");
+        report.report("flow.redeliveryExhausted", dlq, redeliveryPolicy);
       } else {
         Element handler = new Element("on-error-propagate", CORE_NAMESPACE).setAttribute("type", "REDELIVERY_EXHAUSTED");
         errorHandler.addContent(handler);

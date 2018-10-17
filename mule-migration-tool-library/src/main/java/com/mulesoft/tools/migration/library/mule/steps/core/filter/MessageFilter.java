@@ -42,9 +42,7 @@ public class MessageFilter extends AbstractFilterMigrator {
     }
 
     if (element.getAttribute("throwOnUnaccepted") == null || element.getAttributeValue("throwOnUnaccepted").equals("false")) {
-      report.report(ERROR, element, element,
-                    "Validations always raise an error when the condition is not met.",
-                    "https://docs.mulesoft.com/mule-runtime/4.1/migration-filters#applying_filters");
+      report.report("filters.validationsRaiseError", element, element);
     }
     element.removeAttribute("throwOnUnaccepted");
 

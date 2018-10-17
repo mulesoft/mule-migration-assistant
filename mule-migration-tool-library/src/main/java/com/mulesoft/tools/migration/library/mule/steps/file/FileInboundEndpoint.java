@@ -7,8 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.file;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -151,14 +149,12 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.removeAttribute("encoding");
     }
     if (object.getAttribute("responseTimeout") != null) {
-      report.report(WARN, object, object, "'responseTimeout' was not being used by the file transport.");
+      report.report("file.responseTimeout", object, object);
       object.removeAttribute("responseTimeout");
     }
 
     if (object.getAttribute("comparator") != null || object.getAttribute("reverseOrder") != null) {
-      report.report(ERROR, object, object,
-                    "'comparator'/'reverseOrder' are not yet supported by the file connector listener.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-file#file_listener");
+      report.report("file.comparator", object, object);
       object.removeAttribute("comparator");
       object.removeAttribute("reverseOrder");
     }
@@ -181,9 +177,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       newMatcher.setAttribute("filenamePattern", globFilterIn.getAttributeValue("pattern"));
 
       if (globFilterIn.getAttribute("caseSensitive") != null) {
-        report.report(WARN, globFilterIn, newMatcher,
-                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-                      "https://docs.mulesoft.com/connectors/file-on-new-file");
+        report.report("file.caseSensitive", globFilterIn, newMatcher);
         globFilterIn.removeAttribute("caseSensitive");
       }
 
@@ -205,9 +199,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       newMatcher.setAttribute("filenamePattern", "regex:" + regexFilterIn.getAttributeValue("pattern"));
 
       if (regexFilterIn.getAttribute("caseSensitive") != null) {
-        report.report(WARN, regexFilterIn, newMatcher,
-                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-                      "https://docs.mulesoft.com/connectors/file-on-new-file");
+        report.report("file.caseSensitive", regexFilterIn, newMatcher);
         regexFilterIn.removeAttribute("caseSensitive");
       }
 
@@ -222,9 +214,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       newMatcher.setAttribute("filenamePattern", globFilter.getAttributeValue("pattern"));
 
       if (globFilter.getAttribute("caseSensitive") != null) {
-        report.report(WARN, globFilter, newMatcher,
-                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-                      "https://docs.mulesoft.com/connectors/file-on-new-file");
+        report.report("file.caseSensitive", globFilter, newMatcher);
         globFilter.removeAttribute("caseSensitive");
       }
 
@@ -239,9 +229,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       newMatcher.setAttribute("filenamePattern", "regex:" + regexFilter.getAttributeValue("pattern"));
 
       if (regexFilter.getAttribute("caseSensitive") != null) {
-        report.report(WARN, regexFilter, newMatcher,
-                      "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system.",
-                      "https://docs.mulesoft.com/connectors/file-on-new-file");
+        report.report("file.caseSensitive", regexFilter, newMatcher);
         regexFilter.removeAttribute("caseSensitive");
       }
 

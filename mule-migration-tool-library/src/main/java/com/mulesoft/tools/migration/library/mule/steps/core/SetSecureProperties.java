@@ -6,11 +6,15 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils.MULE_ARTIFACT_DEFAULT_CHARSET;
+import static java.util.stream.Collectors.toList;
+
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -22,9 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-
-import static com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils.MULE_ARTIFACT_DEFAULT_CHARSET;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Add secureProperties to mule-artifact.json based on the mule-app.properties file

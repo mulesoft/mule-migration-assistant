@@ -11,7 +11,6 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.XPATH_SELECTOR;
 import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.addSharedLibs;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
@@ -207,22 +206,19 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
         break;
       case "connector":
       case "custom-connector":
-        report.report(ERROR, m3Connector, m4JmsConfig, "Cannot automatically migrate JMS custom-connector",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker");
+        report.report("jms.customConnector", m3Connector, m4JmsConfig);
         connection = new Element("generic-connection", JMS_NAMESPACE);
         m4JmsConfig.addContent(connection);
         break;
       case "weblogic-connector":
-        report.report(ERROR, m3Connector, m4JmsConfig, "Add the client library of the Weblogic MQ as a shared library.",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker");
+        report.report("jms.weblogicMqConnector", m3Connector, m4JmsConfig);
 
         connection = new Element("generic-connection", JMS_NAMESPACE);
         m4JmsConfig.addContent(connection);
         break;
       case "websphere-connector":
         // TODO MMT-202
-        report.report(ERROR, m3Connector, m4JmsConfig, "IBM MQ Connector should be used to connect to an IBM MQ broker.",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#using-a-different-broker");
+        report.report("jms.,websphereMqConnector", m3Connector, m4JmsConfig);
 
         connection = new Element("generic-connection", JMS_NAMESPACE);
         m4JmsConfig.addContent(connection);

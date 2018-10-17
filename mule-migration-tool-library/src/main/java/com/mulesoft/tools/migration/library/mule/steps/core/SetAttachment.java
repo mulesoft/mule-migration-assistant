@@ -8,7 +8,6 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
@@ -39,10 +38,7 @@ public class SetAttachment extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    report
-        .report(ERROR, element, element,
-                "Refer to the documentation of the connectors/operations in the flow or the source to know how attachments are sent.",
-                "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#outbound_attachments");
+    report.report("message.outboundAttachments", element, element);
 
     try {
       changeNodeName("", "set-variable")

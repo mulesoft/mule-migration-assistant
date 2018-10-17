@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -47,10 +46,7 @@ public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationS
       copyAttributeIfPresent(object, listenerConnection, "tlsContext-ref", "tlsContext");
 
       if (object.getAttribute("parseRequest") != null && !"false".equals(object.getAttributeValue("parseRequest"))) {
-        report.report(WARN, object, object,
-                      "'parseRequest' is not needed in Mule 4, since the InputStream of the multipart payload is provided at it is read.",
-                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-mime-types",
-                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/dataweave-formats#format_form_data");
+        report.report("http.parseRequest", object, object);
       }
       object.addContent(listenerConnection);
     }
@@ -67,9 +63,7 @@ public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationS
     });
 
     if ("worker-threading-profile".equals(object.getName())) {
-      report.report(WARN, object, object.getParentElement(),
-                    "Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.",
-                    "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
+      report.report("flow.threading", object, object.getParentElement());
       object.getParentElement().removeContent(object);
     }
   }

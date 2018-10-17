@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.validation;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Element;
 
 import java.util.ArrayList;

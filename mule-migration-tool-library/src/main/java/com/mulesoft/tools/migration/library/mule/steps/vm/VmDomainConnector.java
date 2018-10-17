@@ -6,12 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.vm;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
+import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
-import static org.jdom2.Namespace.getNamespace;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -37,7 +35,6 @@ public class VmDomainConnector extends VmConnector {
 
     addTopLevelElement(vmCfg, object.getDocument());
 
-    report.report(ERROR, vmCfg, vmCfg,
-                  "The queues configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.");
+    report.report("vm.domainConnector", vmCfg, vmCfg);
   }
 }

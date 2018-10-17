@@ -6,9 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -48,13 +45,10 @@ public class ScatterGather extends AbstractApplicationModelMigrationStep {
       if (c.getName().equals("processor-chain")) {
         c.setName("route");
       } else if (c.getName().equals("threading-profile")) {
-        report.report(WARN, c, c, "Threading Profile is no longer needed in Mule 4.",
-                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine");
+        report.report("scatterGather.threading", c, c);
         c.detach();
       } else if (c.getName().equals("custom-aggregation-strategy")) {
-        report.report(ERROR, c, c,
-                      "Custom Aggregations are no longer supported. Add an 'ee:transform' after the 'scatter-gather' to perfrom the aggregation.",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-core-scatter-gather");
+        report.report("scatterGather.customAggregation", c, c);
       } else {
         Element newRouteElement = new Element("route", element.getNamespace());
         Integer childIndex = element.indexOf(c);

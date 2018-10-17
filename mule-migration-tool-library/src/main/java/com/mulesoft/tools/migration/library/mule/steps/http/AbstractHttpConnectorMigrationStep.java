@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -55,9 +53,7 @@ public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplica
         .orElseGet(() -> {
           final Element mapBuilderElement = new Element(tagName, httpNamespace);
 
-          report.report(WARN, mapBuilderElement, parentTag,
-                        "Build the '" + tagName + "' map with a single DW expression",
-                        "https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-manual#outbound_properties");
+          report.report("http.mapExpression", mapBuilderElement, parentTag, tagName);
           parentTag.addContent(idx, mapBuilderElement);
 
           return mapBuilderElement;

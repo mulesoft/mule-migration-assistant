@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -35,8 +33,7 @@ public class JbossTxManager extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report.report(ERROR, object, object.getParentElement(),
-                  "JBoss Transaction manager must be replaced by Bitronix Transaction Manager provided by Mule.", null);
+    report.report("db.jbossTxManager", object, object.getParentElement());
     object.detach();
   }
 }

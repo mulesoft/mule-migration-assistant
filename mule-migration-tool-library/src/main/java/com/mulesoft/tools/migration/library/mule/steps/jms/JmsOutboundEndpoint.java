@@ -7,8 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -49,8 +47,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     if ("NONE".equals(action)) {
       return "NOT_SUPPORTED";
     } else if ("ALWAYS_BEGIN".equals(action)) {
-      report.report(ERROR, tx, object, "Use a <try> scope to begin a nested transaction.",
-                    "https://docs.mulesoft.com/mule4-user-guide/v/4.1/try-scope-xml-reference#properties-of-try");
+      report.report("jms.nestedTx", tx, object);
       return "ALWAYS_JOIN";
     } else if ("BEGIN_OR_JOIN".equals(action)) {
       return "JOIN_IF_POSSIBLE";
@@ -135,8 +132,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
       }
     });
 
-    report.report(WARN, object, object, "Avoid using properties to set the JMS properties and headers",
-                  "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#SendingMessages");
+    report.report("jms.propertiesPublish", object, object);
 
     Element outboundBuilder = new Element("message", JMS_NAMESPACE);
 
@@ -171,10 +167,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
 
       // This logic comes from JmsMessageDispatcher#dispatchMessage in Mule 3
       if ("true".equals(m3c.getAttributeValue("honorQosHeaders"))) {
-        report.report(WARN, m3c, object,
-                      "Store the attributes of the source in a variable instead of using the inbound properties",
-                      "https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes",
-                      "https://docs.mulesoft.com/mule4-user-guide/v/4.1/migration-connectors-jms#sending-messages");
+        report.report("jms.inboundProperties", m3c, object);
         String defaultDeliveryMode = "true".equals(m3c.getAttributeValue("persistentDelivery")) ? "2" : "1";
 
         object.setAttribute("persistentDelivery",

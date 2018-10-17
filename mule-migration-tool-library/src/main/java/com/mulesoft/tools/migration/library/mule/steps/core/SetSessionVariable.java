@@ -7,7 +7,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
@@ -44,9 +43,7 @@ public class SetSessionVariable extends AbstractApplicationModelMigrationStep im
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     addCompatibilityNamespace(element.getDocument());
     migrateExpression(element.getAttribute("value"), getExpressionMigrator());
-    report.report(WARN, element, element,
-                  "Instead of using session variables in the flow, use variables.",
-                  "https://beta-migrator.docs-stgx.mulesoft.com/mule4-user-guide/v/4.1/migration-manual#session_variables");
+    report.report("message.sessionVars", element, element);
     element.setNamespace(COMPATIBILITY_NAMESPACE);
   }
 
