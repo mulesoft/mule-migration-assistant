@@ -32,6 +32,7 @@ import com.mulesoft.tools.migration.library.mule.steps.ee.CacheInvalidateKey;
 import com.mulesoft.tools.migration.library.mule.steps.ee.CacheObjectStoreCachingStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.ee.CacheScope;
 import com.mulesoft.tools.migration.library.mule.steps.ee.EETransform;
+import com.mulesoft.tools.migration.library.mule.steps.ee.Tracking;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
@@ -82,6 +83,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new CacheInvalidateKey(),
                         new CacheObjectStoreCachingStrategy(),
                         new CacheHttpCachingStrategy(),
+                        new Tracking(),
                         new GenericGlobalEndpoint(),
                         new SpringImport());
   }
