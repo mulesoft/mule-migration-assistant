@@ -7,6 +7,6 @@
        http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
 
     <flow name="flow">
-        <tracking:transaction id="#[context:serviceName]" />
+        <tracking:transaction id="#[flow.name]" />
     </flow>
 </mule>
