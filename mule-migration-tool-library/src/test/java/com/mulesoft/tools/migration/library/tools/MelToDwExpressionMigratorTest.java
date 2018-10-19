@@ -141,6 +141,29 @@ public class MelToDwExpressionMigratorTest {
   }
 
   @Test
+  public void migrateMelSubscript1() {
+    String script = "#[message.inboundProperties['http.query.params'].lastname]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[vars.compatibility_inboundProperties['http.query.params'].lastname]"));
+  }
+
+  @Test
+  public void migrateMelInterpolation1() {
+    String script = "Hello \"#[message.inboundProperties['http.query.params'].lastname]\" Max";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[\"Hello '$(vars.compatibility_inboundProperties['http.query.params'].lastname)' Max\"]"));
+  }
+
+  @Test
+  public void migrateMelInterpolation3() {
+    String script = "Hello '#[message.inboundProperties['http.query.params'].lastname]' Max";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[\"Hello '$(vars.compatibility_inboundProperties['http.query.params'].lastname)' Max\"]"));
+  }
+
+
+
+  @Test
   public void migrateMelInterpolationWithMelPrefix2() {
     String script = "#[mel:message.outboundProperties.name]_#[message.id]";
     String result = expressionMigrator.migrateExpression(script, true, null);

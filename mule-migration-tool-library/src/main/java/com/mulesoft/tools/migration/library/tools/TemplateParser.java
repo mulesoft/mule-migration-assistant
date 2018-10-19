@@ -52,7 +52,7 @@ public final class TemplateParser {
     if (!validateBalanceMuleStyle(template)) {
       return template;
     }
-
+    template = template.replaceAll("\\\"", "'");
     boolean lastIsBackSlash = false;
     boolean lastStartedExpression = false;
     boolean openDoubleQuotes = false;
