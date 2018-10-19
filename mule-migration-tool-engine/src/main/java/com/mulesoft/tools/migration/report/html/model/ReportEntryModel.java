@@ -83,6 +83,13 @@ public class ReportEntryModel {
     String xpathExpression = "";
     Element currentElement = element;
 
+    if (element.getDocument() == null) {
+      // This shouldn't happen, but we still have to validate in unit tests that the steps don't cause this.
+      this.lineNumber = -1;
+      this.columnNumber = -1;
+      return;
+    }
+
     while (currentElement != element.getDocument().getRootElement()) {
       xpathExpression =
           "/*[" + (1 + currentElement.getParentElement().getChildren().indexOf(currentElement)) + "]" + xpathExpression;
