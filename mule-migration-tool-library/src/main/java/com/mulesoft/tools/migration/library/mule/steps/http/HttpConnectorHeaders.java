@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +54,7 @@ public class HttpConnectorHeaders extends AbstractHttpConnectorMigrationStep {
 
 
       object.getParent().removeContent(object);
-      object.setText(getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(headersExpr), true, object));
+      setText(object, getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(headersExpr), true, object));
     }
     if ("header".equals(object.getName())) {
       String headerName = object.getAttributeValue("headerName");

@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -39,7 +41,7 @@ public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplica
                                            MigrationReport report, Supplier<String> paramsExprCreate,
                                            Function<String, String> paramsExprAppend) {
     final Element mule4MapBuilderTag = lookupMule4MapBuilderTag(idx, tagName, parentTag, httpNamespace, report);
-    mule4MapBuilderTag.setText(getExpressionMigrator().wrap(StringUtils.isEmpty(mule4MapBuilderTag.getText())
+    setText(mule4MapBuilderTag, getExpressionMigrator().wrap(StringUtils.isEmpty(mule4MapBuilderTag.getText())
         ? paramsExprCreate.get()
         : paramsExprAppend.apply(mule4MapBuilderTag.getText())));
 

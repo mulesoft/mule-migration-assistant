@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -86,9 +87,8 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
 
     if (object.getAttribute("source") != null) {
       if (!"#[payload]".equals(object.getAttributeValue("source"))) {
-        object.addContent(new Element("body", httpNamespace)
-            .setText(getExpressionMigrator()
-                .wrap(getExpressionMigrator().migrateExpression(object.getAttributeValue("source"), true, object))));
+        object.addContent(setText(new Element("body", httpNamespace), getExpressionMigrator()
+            .wrap(getExpressionMigrator().migrateExpression(object.getAttributeValue("source"), true, object))));
       }
       object.removeAttribute("source");
     }
@@ -169,8 +169,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
   }
 
   private Element compatibilityHeaders(Namespace httpNamespace) {
-    return new Element("headers", httpNamespace)
-        .setText("#[migration::HttpRequester::httpRequesterHeaders(vars)]");
+    return setText(new Element("headers", httpNamespace), "#[migration::HttpRequester::httpRequesterHeaders(vars)]");
   }
 
   public static void httpRequesterLib(ApplicationModel appModel) {

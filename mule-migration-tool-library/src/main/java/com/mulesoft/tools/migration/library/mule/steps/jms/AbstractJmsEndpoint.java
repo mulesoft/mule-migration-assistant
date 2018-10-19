@@ -15,6 +15,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.lang.System.lineSeparator;
 import static java.util.Optional.of;
 
@@ -72,8 +73,7 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
   }
 
   public static Element compatibilityProperties(ApplicationModel appModel) {
-    return new Element("properties", JMS_NAMESPACE)
-        .setText("#[migration::JmsTransport::jmsPublishProperties(vars)]");
+    return setText(new Element("properties", JMS_NAMESPACE), "#[migration::JmsTransport::jmsPublishProperties(vars)]");
   }
 
   public static void jmsTransportLib(ApplicationModel appModel) {

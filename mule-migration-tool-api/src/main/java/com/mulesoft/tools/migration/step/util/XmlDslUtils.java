@@ -19,6 +19,7 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Attribute;
+import org.jdom2.CDATA;
 import org.jdom2.Content;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -52,6 +53,24 @@ public final class XmlDslUtils {
 
   private XmlDslUtils() {
     // Nothing to do
+  }
+
+  /**
+   * Sets the given {@code text} on the given {@code element}, wrapping it in a {@code CDATA} for readability if it contains
+   * special characters.
+   *
+   * @param element
+   * @param text
+   * @return
+   */
+  public static Element setText(Element element, String text) {
+    if (text.contains("<") || text.contains(">") || text.contains("&") || text.contains("'") || text.contains("\"")) {
+      element.setContent(new CDATA(text));
+    } else {
+      element.setText(text);
+    }
+
+    return element;
   }
 
   /**

@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 
@@ -150,8 +151,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
   }
 
   public static Element compatibilityHeaders(ApplicationModel appModel, Namespace httpNamespace) {
-    return new Element("headers", httpNamespace)
-        .setText("#[migration::HttpListener::httpListenerResponseHeaders(vars)]");
+    return setText(new Element("headers", httpNamespace), "#[migration::HttpListener::httpListenerResponseHeaders(vars)]");
   }
 
   public static void httpListenerLib(ApplicationModel appModel) {
