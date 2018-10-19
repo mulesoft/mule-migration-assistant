@@ -61,7 +61,7 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
         .addContent(requestConnection));
 
     if (object.getAttribute("reuseAddress") != null) {
-      report.report("http.reuseAddress", object, object);
+      report.report("http.reuseAddress", object, object.getParentElement());
       object.removeAttribute("reuseAddress");
     }
 

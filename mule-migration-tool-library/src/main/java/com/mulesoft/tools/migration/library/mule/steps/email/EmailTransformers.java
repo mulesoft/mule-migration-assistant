@@ -47,7 +47,7 @@ public class EmailTransformers extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report.report("email.transformers", object, object);
+    report.report("email.transformers", object, object.getParentElement());
 
     for (Element ref : getApplicationModel().getNodes("//*[@ref = '" + object.getAttributeValue("name") + "']")) {
       ref.detach();
