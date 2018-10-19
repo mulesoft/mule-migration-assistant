@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.lang.String.format;
 import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.joining;
@@ -119,18 +120,18 @@ public abstract class AbstractDbOperationMigrator extends AbstractApplicationMod
       inParam.detach();
     }
     if (!emptyParamsExpr.equals(inputParametersExpr)) {
-      object.addContent(new Element(inParamsElementName, DB_NAMESPACE).setText(inputParametersExpr));
+      object.addContent(setText(new Element(inParamsElementName, DB_NAMESPACE), inputParametersExpr));
     }
   }
 
   protected void migrateSql(Element object) {
     object.getChildren("parameterized-query", DB_NAMESPACE).forEach(pq -> {
       pq.setName("sql");
-      pq.setText(getExpressionMigrator().migrateExpression(pq.getText(), true, pq));
+      setText(pq, getExpressionMigrator().migrateExpression(pq.getText(), true, pq));
     });
     object.getChildren("dynamic-query", DB_NAMESPACE).forEach(dq -> {
       dq.setName("sql");
-      dq.setText(getExpressionMigrator().migrateExpression(dq.getText(), true, dq));
+      setText(dq, getExpressionMigrator().migrateExpression(dq.getText(), true, dq));
     });
   }
 

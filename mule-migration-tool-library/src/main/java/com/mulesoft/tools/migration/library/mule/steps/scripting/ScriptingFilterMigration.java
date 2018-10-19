@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -47,7 +48,7 @@ public class ScriptingFilterMigration extends ScriptingModuleMigration {
 
   @Override
   protected void handleCode(Element scriptNode) {
-    scriptNode.setText(scriptNode.getChild("text", SCRIPT_NAMESPACE).getText());
+    setText(scriptNode, scriptNode.getChild("text", SCRIPT_NAMESPACE).getText());
   }
 
   protected void handleFilter(Element filter) {

@@ -58,6 +58,7 @@ public class DbInsertTest {
         "db-insert-10",
         "db-insert-11",
         "db-insert-12",
+        "db-insert-12b",
         "db-insert-13",
         "db-insert-14",
         "db-insert-15",

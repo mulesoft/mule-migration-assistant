@@ -18,6 +18,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElem
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.util.Collections.emptyList;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -310,8 +311,7 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   private Element compatibilityHeaders(Namespace httpNamespace) {
-    return new Element("headers", httpNamespace)
-        .setText("#[migration::HttpRequester::httpRequesterTransportHeaders(vars)]");
+    return setText(new Element("headers", httpNamespace), "#[migration::HttpRequester::httpRequesterTransportHeaders(vars)]");
   }
 
   private void handleReferencedRequestBuilder(Element object, final Namespace httpNamespace) {

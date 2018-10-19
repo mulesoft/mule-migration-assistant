@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -39,8 +40,7 @@ public class DbExecute extends AbstractDbOperationMigrator {
     if (object.getAttribute("file") == null) {
       String sql = getExpressionMigrator().migrateExpression(object.getText(), true, object);
       object.removeContent();
-      object.addContent(new Element("sql", DB_NAMESPACE)
-          .setText(getExpressionMigrator().migrateExpression(sql, true, object)));
+      object.addContent(setText(new Element("sql", DB_NAMESPACE), getExpressionMigrator().migrateExpression(sql, true, object)));
     }
 
     if (object.getAttribute("source") != null) {

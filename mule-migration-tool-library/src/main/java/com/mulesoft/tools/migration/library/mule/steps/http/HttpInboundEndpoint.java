@@ -21,6 +21,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAtt
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -238,8 +239,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
       throw new RuntimeException(e);
     }
 
-    return new Element("headers", httpNamespace)
-        .setText("#[migration::HttpListener::httpListenerResponseHeaders(vars)]");
+    return setText(new Element("headers", httpNamespace), "#[migration::HttpListener::httpListenerResponseHeaders(vars)]");
   }
 
   private void extractListenerConfig(Element object, final Namespace httpNamespace, String configName, String host, String port) {

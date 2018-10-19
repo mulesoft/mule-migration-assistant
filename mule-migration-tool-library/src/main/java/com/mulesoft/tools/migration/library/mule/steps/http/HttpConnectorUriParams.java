@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -50,7 +52,7 @@ public class HttpConnectorUriParams extends AbstractHttpConnectorMigrationStep {
                                             .migrateExpression(getExpressionMigrator().wrap(paramsExpr), true, object))));
 
       object.getParent().removeContent(object);
-      object.setText(getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(paramsExpr), true, object));
+      setText(object, getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(paramsExpr), true, object));
     }
     if ("uri-param".equals(object.getName())) {
       String paramName = object.getAttributeValue("paramName");

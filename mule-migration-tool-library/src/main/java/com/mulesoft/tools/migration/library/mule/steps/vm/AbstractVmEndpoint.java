@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.vm;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
@@ -88,8 +89,8 @@ public abstract class AbstractVmEndpoint extends AbstractApplicationModelMigrati
   protected static Element buildContent(final Namespace vmConnectorNamespace) {
     // TODO MMT-166 Use something that includes the extra parameters in the media type, instead of ^mimeType
     // (https://github.com/mulesoft/data-weave/issues/296)
-    return new Element("content", vmConnectorNamespace)
-        .setText("#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType, 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]");
+    return setText(new Element("content", vmConnectorNamespace),
+                   "#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType, 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]");
   }
 
   public static Optional<Element> resolveVmConector(Element object, ApplicationModel appModel) {
