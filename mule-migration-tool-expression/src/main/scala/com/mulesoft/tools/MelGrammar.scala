@@ -31,7 +31,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def map = rule {
-    map1 | map2
+      map1 | map2
   }
 
   def map1: Rule1[MapNode] = rule {
@@ -151,7 +151,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def values = rule {
-    (stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(dot) ~ zeroOrMore(subscript)
+    (stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(dot) ~ zeroOrMore(subscript) ~ zeroOrMore(dot)
   }
 
   def dot = rule {
