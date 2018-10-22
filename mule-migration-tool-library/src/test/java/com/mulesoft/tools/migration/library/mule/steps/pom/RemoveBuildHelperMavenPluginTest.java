@@ -9,15 +9,15 @@ package com.mulesoft.tools.migration.library.mule.steps.pom;
 import static java.util.Arrays.stream;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -31,6 +31,10 @@ public class RemoveBuildHelperMavenPluginTest {
   private static final String POM_WITH_CHANGED_HELPER_MAVEN_PLUGIN = "/pommodel/buildHelperMavenPluginChanged/pom.xml";
   private static final String POM_WITH_ADDED_HELPER_MAVEN_PLUGIN = "/pommodel/buildHelperMavenPluginAdded/pom.xml";
   private static final String POM_WITHOUT_HELPER_MAVEN_PLUGIN = "/pommodel/simple-pom/pom.xml";
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private PomModel model;
   private RemoveBuildHelperMavenPlugin removeBuildHelperMavenPlugin;
 
@@ -44,7 +48,7 @@ public class RemoveBuildHelperMavenPluginTest {
     Path pomPath = Paths.get(getClass().getResource(POM_WITH_HELPER_MAVEN_PLUGIN).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     assertThat("build-helper-maven-plugin should be present in pom", isPluginInModel(), is(true));
-    removeBuildHelperMavenPlugin.execute(model, mock(MigrationReport.class));
+    removeBuildHelperMavenPlugin.execute(model, report.getReport());
     assertThat("build-helper-maven-plugin should not be present in pom", isPluginInModel(), is(false));
   }
 
@@ -57,7 +61,7 @@ public class RemoveBuildHelperMavenPluginTest {
     Path pomPath = Paths.get(getClass().getResource(POM_WITH_CHANGED_HELPER_MAVEN_PLUGIN).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     assertThat("build-helper-maven-plugin should be present in pom", isPluginInModel(), is(true));
-    removeBuildHelperMavenPlugin.execute(model, mock(MigrationReport.class));
+    removeBuildHelperMavenPlugin.execute(model, report.getReport());
 
     Xpp3Dom addResourcesConfiguration = getAddResourcesConfig();
     stream(addResourcesConfiguration.getChild("resources").getChildren("resource"))
@@ -74,7 +78,7 @@ public class RemoveBuildHelperMavenPluginTest {
     Path pomPath = Paths.get(getClass().getResource(POM_WITH_ADDED_HELPER_MAVEN_PLUGIN).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     assertThat("build-helper-maven-plugin should be present in pom", isPluginInModel(), is(true));
-    removeBuildHelperMavenPlugin.execute(model, mock(MigrationReport.class));
+    removeBuildHelperMavenPlugin.execute(model, report.getReport());
 
     Xpp3Dom addResourcesConfiguration = getAddResourcesConfig();
     stream(addResourcesConfiguration.getChild("resources").getChildren("resource"))
@@ -94,7 +98,7 @@ public class RemoveBuildHelperMavenPluginTest {
     Path pomPath = Paths.get(getClass().getResource(POM_WITHOUT_HELPER_MAVEN_PLUGIN).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     assertThat("build-helper-maven-plugin should not be present in pom", isPluginInModel(), is(false));
-    removeBuildHelperMavenPlugin.execute(model, mock(MigrationReport.class));
+    removeBuildHelperMavenPlugin.execute(model, report.getReport());
     assertThat("build-helper-maven-plugin should not be present in pom", isPluginInModel(), is(false));
   }
 

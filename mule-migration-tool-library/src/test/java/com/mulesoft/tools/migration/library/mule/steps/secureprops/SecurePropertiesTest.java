@@ -11,18 +11,18 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICA
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -36,6 +36,9 @@ import java.util.Collection;
 public class SecurePropertiesTest {
 
   private static final Path SECURE_PROPS_EXAMPLES_PATH = Paths.get("mule/apps/secureprops");
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameters(name = "{0}, {1}")
   public static Collection<Object[]> data() {
@@ -82,7 +85,7 @@ public class SecurePropertiesTest {
     securePropertiesPlaceholder.setApplicationModel(appModel);
 
     getElementsFromDocument(doc, securePropertiesPlaceholder.getAppliedTo().getExpression())
-        .forEach(node -> securePropertiesPlaceholder.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> securePropertiesPlaceholder.execute(node, report.getReport()));
 
     XMLOutputter muleOutputter = new XMLOutputter(Format.getPrettyFormat());
     String muleXmlString = muleOutputter.outputString(doc);

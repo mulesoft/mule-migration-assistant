@@ -16,7 +16,7 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -41,6 +41,9 @@ public class OutboundPropertiesTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameters(name = "{0}")
   public static Object[] params() {
@@ -70,16 +73,16 @@ public class OutboundPropertiesTest {
   @Before
   public void setUp() throws Exception {
     setProperty = new SetProperty();
-    setProperty.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+    setProperty.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     copyProperties = new CopyProperties();
     mpt = new MessagePropertiesTransformer();
-    mpt.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+    mpt.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
   }
 
   @Ignore
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    setProperty.execute(null, mock(MigrationReport.class));
+    setProperty.execute(null, report.getReport());
   }
 
   @Test
@@ -87,11 +90,11 @@ public class OutboundPropertiesTest {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, setProperty.getAppliedTo().getExpression())
-        .forEach(node -> setProperty.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> setProperty.execute(node, report.getReport()));
     getElementsFromDocument(doc, copyProperties.getAppliedTo().getExpression())
-        .forEach(node -> copyProperties.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> copyProperties.execute(node, report.getReport()));
     getElementsFromDocument(doc, mpt.getAppliedTo().getExpression())
-        .forEach(node -> mpt.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> mpt.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

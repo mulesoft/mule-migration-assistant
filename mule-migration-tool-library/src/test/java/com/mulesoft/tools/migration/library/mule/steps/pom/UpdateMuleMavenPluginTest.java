@@ -18,19 +18,19 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.mulesoft.tools.migration.project.model.pom.Plugin;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -53,6 +53,8 @@ public class UpdateMuleMavenPluginTest {
   private String POM_WITH_MULE_MAVEN_PLUGIN = "/pommodel/muleMavenPlugin/pom.xml";
   private PomModel model;
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Before
   public void setUp() {
@@ -68,7 +70,7 @@ public class UpdateMuleMavenPluginTest {
   public void execute() throws IOException, XmlPullParserException, URISyntaxException {
     Path pomPath = Paths.get(getClass().getResource(POM_WITH_MULE_MAVEN_PLUGIN).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
-    updateMuleMavenPlugin.execute(model, mock(MigrationReport.class));
+    updateMuleMavenPlugin.execute(model, report.getReport());
 
     Plugin muleMavenPlugin =
         model.getPlugins().stream().filter(p -> p.getArtifactId().equals(MULE_MAVEN_PLUGIN_ARTIFACT_ID)).findFirst().get();

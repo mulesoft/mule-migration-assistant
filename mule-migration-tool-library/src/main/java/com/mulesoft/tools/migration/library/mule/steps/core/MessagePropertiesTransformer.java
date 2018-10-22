@@ -47,10 +47,10 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     addCompatibilityNamespace(element.getDocument());
     if (element.getAttribute("scope") == null) {
-      report.report("message.outboundProperties", element, element);
+      report.report("message.outboundProperties", element, element.getParentElement());
     }
     if ("session".equals(element.getAttributeValue("scope"))) {
-      report.report("message.sessionVars", element, element);
+      report.report("message.sessionVars", element, element.getParentElement());
     }
 
     boolean notOverwrite = false;
@@ -149,7 +149,7 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
         }
       } else if ("add-message-properties".equals(child.getName())) {
         // TODO Migrate to spring module
-        report.report("message.springBeanDefinitionInsideMuleObject", child, element);
+        report.report("message.springBeanDefinitionInsideMuleObject", child, element.getParentElement());
       }
     }
 
@@ -158,7 +158,7 @@ public class MessagePropertiesTransformer extends AbstractApplicationModelMigrat
     }
 
     element.getParent().addContent(index, children);
-    element.getParent().removeContent(element);
+    element.detach();
   }
 
   private void setMelExpressionValue(Element child, String value, String binding) {

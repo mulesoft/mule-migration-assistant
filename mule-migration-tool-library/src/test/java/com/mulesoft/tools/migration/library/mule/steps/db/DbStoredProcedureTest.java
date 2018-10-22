@@ -18,7 +18,7 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 import com.mulesoft.tools.migration.library.mule.steps.core.TransactionalScope;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -40,6 +40,9 @@ public class DbStoredProcedureTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path DB_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/db");
 
@@ -86,15 +89,15 @@ public class DbStoredProcedureTest {
 
     dbStoredProcedure.setApplicationModel(appModel);
     dbStoredProcedure
-        .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+        .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
   }
 
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, txScope.getAppliedTo().getExpression())
-        .forEach(node -> txScope.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> txScope.execute(node, report.getReport()));
     getElementsFromDocument(doc, dbStoredProcedure.getAppliedTo().getExpression())
-        .forEach(node -> dbStoredProcedure.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> dbStoredProcedure.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

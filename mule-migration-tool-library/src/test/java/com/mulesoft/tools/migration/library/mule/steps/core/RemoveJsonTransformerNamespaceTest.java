@@ -6,10 +6,15 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.google.common.collect.Iterables;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.utils.ApplicationModelUtils.generateAppModel;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Document;
 import org.junit.Before;
@@ -17,17 +22,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.google.common.collect.Iterables;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.utils.ApplicationModelUtils.generateAppModel;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 
 public class RemoveJsonTransformerNamespaceTest {
 
@@ -35,6 +36,9 @@ public class RemoveJsonTransformerNamespaceTest {
   private static final Path FILE_EXAMPLES_PATH = Paths.get("mule/examples/core");
   private static final Path FILE_SAMPLE_PATH = FILE_EXAMPLES_PATH.resolve(FILE_SAMPLE_XML);
   private static final String APP_NAME = "transformers";
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private ApplicationModel applicationModel;
   private RemoveJsonTransformerNamespace removeJsonTransformerNamespace;
@@ -62,12 +66,12 @@ public class RemoveJsonTransformerNamespaceTest {
 
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    removeJsonTransformerNamespace.execute(null, mock(MigrationReport.class));
+    removeJsonTransformerNamespace.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
-    removeJsonTransformerNamespace.execute(applicationModel, mock(MigrationReport.class));
+    removeJsonTransformerNamespace.execute(applicationModel, report.getReport());
     Document document = Iterables.get(applicationModel.getApplicationDocuments().values(), 0);
     assertThat("The namespace wasn't removed.", document.getRootElement().getAdditionalNamespaces().size(), is(2));
   }

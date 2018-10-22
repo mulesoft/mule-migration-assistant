@@ -23,6 +23,7 @@ import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -45,6 +46,9 @@ public class HttpInboundTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path HTTP_REQUESTER_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/http");
 
@@ -94,12 +98,10 @@ public class HttpInboundTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
 
   public HttpInboundTest(String filePrefix) {
     configPath = HTTP_REQUESTER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = HTTP_REQUESTER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
@@ -134,7 +136,8 @@ public class HttpInboundTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
@@ -180,33 +183,33 @@ public class HttpInboundTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> genericGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpPollingConnector.getAppliedTo().getExpression())
-        .forEach(node -> httpPollingConnector.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpPollingConnector.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpsPollingConnector.getAppliedTo().getExpression())
-        .forEach(node -> httpsPollingConnector.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpsPollingConnector.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> httpGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpsGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> httpsGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpsGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpInbound.getAppliedTo().getExpression())
-        .forEach(node -> httpInbound.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpInbound.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpsInbound.getAppliedTo().getExpression())
-        .forEach(node -> httpsInbound.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpsInbound.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpConfig.getAppliedTo().getExpression())
-        .forEach(node -> httpConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpTransformers.getAppliedTo().getExpression())
-        .forEach(node -> httpTransformers.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpTransformers.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpHeaders.getAppliedTo().getExpression())
-        .forEach(node -> httpHeaders.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpHeaders.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpStaticResource.getAppliedTo().getExpression())
-        .forEach(node -> httpStaticResource.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpStaticResource.execute(node, report.getReport()));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> inboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpGlobalBuilders.getAppliedTo().getExpression())
-        .forEach(node -> httpGlobalBuilders.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpGlobalBuilders.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
-        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

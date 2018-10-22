@@ -99,12 +99,12 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("connector-ref") != null) {
       Element connector = getConnector(object.getAttributeValue("connector-ref"));
 
-      handleConnector(connector, report);
+      handleConnector(connector, object, report);
 
       object.removeAttribute("connector-ref");
     } else {
       getDefaultConnector().ifPresent(connector -> {
-        handleConnector(connector, report);
+        handleConnector(connector, object, report);
       });
     }
 
@@ -274,11 +274,11 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     }
   }
 
-  private void handleConnector(Element connector, MigrationReport report) {
+  private void handleConnector(Element connector, Element listener, MigrationReport report) {
     if (connector.getAttribute("serverSoTimeout") != null
         || connector.getAttribute("reuseAddress") != null) {
       // TODO MULE-14960, MULE-15135
-      report.report("http.socketProperties", connector, connector);
+      report.report("http.socketProperties", connector, listener);
       connector.removeAttribute("serverSoTimeout");
       connector.removeAttribute("reuseAddress");
     }

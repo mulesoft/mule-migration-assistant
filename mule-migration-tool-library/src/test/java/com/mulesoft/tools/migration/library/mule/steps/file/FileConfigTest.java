@@ -19,7 +19,7 @@ import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -42,6 +42,9 @@ public class FileConfigTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path FILE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/file");
 
@@ -89,35 +92,35 @@ public class FileConfigTest {
 
     fileGlobalEndpoint = new FileGlobalEndpoint();
     fileConfig = new FileConfig();
-    fileConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+    fileConfig.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     fileConfig.setApplicationModel(appModel);
     fileInboundEndpoint = new FileInboundEndpoint();
     fileInboundEndpoint.setApplicationModel(appModel);
     fileOutboundEndpoint = new FileOutboundEndpoint();
     fileOutboundEndpoint.setApplicationModel(appModel);
     fileOutboundEndpoint
-        .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+        .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
   }
 
   @Ignore
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    fileConfig.execute(null, mock(MigrationReport.class));
+    fileConfig.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, fileGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> fileGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> fileGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, fileConfig.getAppliedTo().getExpression())
-        .forEach(node -> fileConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> fileConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, fileInboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> fileInboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> fileInboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, fileOutboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> fileOutboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> fileOutboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
-        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

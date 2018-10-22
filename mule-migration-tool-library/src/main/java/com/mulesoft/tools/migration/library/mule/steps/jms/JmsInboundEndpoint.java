@@ -132,7 +132,8 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
         object.setAttribute("numberOfConsumers", m3c.getAttributeValue("numberOfConsumers"));
       }
 
-      handleConnectorChildElements(m3c, new Element("connection", CORE_NAMESPACE), report);
+      handleConnectorChildElements(m3c, getApplicationModel().getNode("*/jms:config[@name='" + configName + "']"),
+                                   new Element("connection", CORE_NAMESPACE), report);
     });
 
     String destination = processAddress(object, report).map(address -> {

@@ -22,7 +22,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigra
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -46,6 +46,9 @@ public class FtpInboundTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path FTP_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/ftp");
 
@@ -118,10 +121,10 @@ public class FtpInboundTest {
     ftpEeGlobalEndpoint = new FtpEeGlobalEndpoint();
     ftpEeGlobalEndpoint.setApplicationModel(appModel);
     ftpConfig = new FtpConfig();
-    ftpConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+    ftpConfig.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     ftpConfig.setApplicationModel(appModel);
     ftpEeConfig = new FtpEeConfig();
-    ftpEeConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+    ftpEeConfig.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     ftpEeConfig.setApplicationModel(appModel);
     ftpInboundEndpoint = new FtpInboundEndpoint();
     ftpInboundEndpoint.setApplicationModel(appModel);
@@ -136,23 +139,23 @@ public class FtpInboundTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> genericGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, ftpGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> ftpGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> ftpGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, ftpEeGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> ftpEeGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> ftpEeGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, ftpConfig.getAppliedTo().getExpression())
-        .forEach(node -> ftpConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> ftpConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, ftpEeConfig.getAppliedTo().getExpression())
-        .forEach(node -> ftpEeConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> ftpEeConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, ftpInboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> ftpInboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> ftpInboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, ftpEeInboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> ftpEeInboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> ftpEeInboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> inboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
-        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

@@ -67,7 +67,7 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
         object.setAttribute("folder", c.getAttributeValue("mailboxFolder"));
       }
       if (c.getAttribute("backupEnabled") != null || c.getAttribute("backupFolder") != null) {
-        report.report("email.pop3Backup", object, c);
+        report.report("email.pop3Backup", object, object);
       }
 
       if (c.getAttribute("deleteReadMessages") != null) {
@@ -75,7 +75,7 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
       }
       if (c.getAttribute("defaultProcessMessageAction") != null) {
         object.removeAttribute("defaultProcessMessageAction");
-        report.report("email.pop3DefaultProcessMessageAction", object, c);
+        report.report("email.pop3DefaultProcessMessageAction", object, object);
       }
 
       if (c.getAttribute("checkFrequency") != null) {

@@ -19,6 +19,7 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -41,6 +42,9 @@ public class CacheTest {
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private static final Path CACHE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/ee");
 
   @Parameters(name = "{0}")
@@ -57,12 +61,10 @@ public class CacheTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
 
   public CacheTest(String filePrefix) {
     configPath = CACHE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = CACHE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   private CacheScope cacheScope;
@@ -86,7 +88,8 @@ public class CacheTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     when(appModel.getPomModel()).thenReturn(empty());
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
 
     cacheScope = new CacheScope();
     cacheScope.setExpressionMigrator(expressionMigrator);
@@ -108,13 +111,13 @@ public class CacheTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, cacheScope.getAppliedTo().getExpression())
-        .forEach(node -> cacheScope.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> cacheScope.execute(node, report.getReport()));
     getElementsFromDocument(doc, cacheInvalidateKey.getAppliedTo().getExpression())
-        .forEach(node -> cacheInvalidateKey.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> cacheInvalidateKey.execute(node, report.getReport()));
     getElementsFromDocument(doc, cacheObjectStoreCachingStrategy.getAppliedTo().getExpression())
-        .forEach(node -> cacheObjectStoreCachingStrategy.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> cacheObjectStoreCachingStrategy.execute(node, report.getReport()));
     getElementsFromDocument(doc, cacheHttpCachingStrategy.getAppliedTo().getExpression())
-        .forEach(node -> cacheHttpCachingStrategy.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> cacheHttpCachingStrategy.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

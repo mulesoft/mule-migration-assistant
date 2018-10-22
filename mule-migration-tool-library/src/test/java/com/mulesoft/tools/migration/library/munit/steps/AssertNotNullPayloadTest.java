@@ -11,20 +11,22 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFrom
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.mock;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class AssertNotNullPayloadTest {
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final String MUNIT_SAMPLE_XML = "munit-processors.xml";
   private static final Path MUNIT_EXAMPLES_PATH = Paths.get("munit/examples");
@@ -40,14 +42,14 @@ public class AssertNotNullPayloadTest {
 
   @Test
   public void executeWithNullElement() throws Exception {
-    assertNotNullPayload.execute(null, mock(MigrationReport.class));
+    assertNotNullPayload.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(MUNIT_SAMPLE_PATH.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, assertNotNullPayload.getAppliedTo().getExpression()).get(0);
-    assertNotNullPayload.execute(node, mock(MigrationReport.class));
+    assertNotNullPayload.execute(node, report.getReport());
 
     assertThat("The node didn't change", node.getName(), is("assert-that"));
     assertThat("The attribute didn't change", node.getAttribute("is"), is(notNullValue()));

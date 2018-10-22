@@ -137,7 +137,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
   }
 
   public static void handleChildElements(Element object, Element connection, MigrationReport report) {
-    handleConnectorChildElements(object, connection, report);
+    handleConnectorChildElements(object, object, connection, report);
 
     Element customFileNameParser = object.getChild("custom-filename-parser", FILE_NAMESPACE);
     if (customFileNameParser != null) {

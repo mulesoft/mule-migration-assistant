@@ -22,7 +22,7 @@ import com.mulesoft.tools.migration.library.mule.steps.endpoint.OutboundEndpoint
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -46,6 +46,9 @@ public class JmsOutboundTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path JMS_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/jms");
 
@@ -103,7 +106,7 @@ public class JmsOutboundTest {
     when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
 
     MelToDwExpressionMigrator expressionMigrator =
-        new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class));
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
@@ -121,13 +124,13 @@ public class JmsOutboundTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> genericGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, jmsOutboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> jmsOutboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> jmsOutboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, outboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> outboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> outboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, jmsConfig.getAppliedTo().getExpression())
-        .forEach(node -> jmsConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> jmsConfig.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

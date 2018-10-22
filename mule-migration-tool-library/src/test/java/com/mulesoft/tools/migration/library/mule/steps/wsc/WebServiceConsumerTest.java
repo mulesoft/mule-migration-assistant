@@ -24,6 +24,7 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoin
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -46,6 +47,9 @@ public class WebServiceConsumerTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path WSC_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/wsc");
 
@@ -80,12 +84,10 @@ public class WebServiceConsumerTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
 
   public WebServiceConsumerTest(String filePrefix) {
     configPath = WSC_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = WSC_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   private HttpOutboundEndpoint httpOutbound;
@@ -116,25 +118,25 @@ public class WebServiceConsumerTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     httpOutbound = new HttpOutboundEndpoint();
-    httpOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
+    httpOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
     httpOutbound.setApplicationModel(appModel);
 
     httpsOutbound = new HttpsOutboundEndpoint();
-    httpsOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
+    httpsOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
     httpsOutbound.setApplicationModel(appModel);
 
     httpRequesterConfig = new HttpConnectorRequestConfig();
-    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
+    httpRequesterConfig.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
 
     httpRequester = new HttpConnectorRequester();
-    httpRequester.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
+    httpRequester.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
     httpRequester.setApplicationModel(appModel);
 
     httpHeaders = new HttpConnectorHeaders();
-    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
+    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
 
     wsConsumerConfig = new WsConsumerConfig();
-    wsConsumerConfig.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
+    wsConsumerConfig.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
     wsConsumerConfig.setApplicationModel(appModel);
 
     wsConsumer = new WsConsumer();
@@ -147,23 +149,23 @@ public class WebServiceConsumerTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, httpOutbound.getAppliedTo().getExpression())
-        .forEach(node -> httpOutbound.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpOutbound.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpsOutbound.getAppliedTo().getExpression())
-        .forEach(node -> httpsOutbound.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpsOutbound.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, httpRequesterConfig.getAppliedTo().getExpression())
-        .forEach(node -> httpRequesterConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpRequesterConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpRequester.getAppliedTo().getExpression())
-        .forEach(node -> httpRequester.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpRequester.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpHeaders.getAppliedTo().getExpression())
-        .forEach(node -> httpHeaders.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpHeaders.execute(node, report.getReport()));
     getElementsFromDocument(doc, wsConsumerConfig.getAppliedTo().getExpression())
-        .forEach(node -> wsConsumerConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> wsConsumerConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, wsConsumer.getAppliedTo().getExpression())
-        .forEach(node -> wsConsumer.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> wsConsumer.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, httpConfig.getAppliedTo().getExpression())
-        .forEach(node -> httpConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpConfig.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

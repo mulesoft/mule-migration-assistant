@@ -6,26 +6,28 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.apache.commons.io.IOUtils;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
+
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
+import org.apache.commons.io.IOUtils;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ForEachExpressionsTest {
 
@@ -35,6 +37,9 @@ public class ForEachExpressionsTest {
   private static final Path FOREACH_SAMPLE_PATH = FOREACH_EXAMPLES_PATH.resolve(FOREACH_SAMPLE_XML);
   private static final Path FOREACH_EXPECTED_PATH = FOREACH_EXAMPLES_PATH.resolve(FOREACH_EXPECTED_XML);
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private ForEachExpressions forEachExpressions;
   private Element node;
 
@@ -42,7 +47,7 @@ public class ForEachExpressionsTest {
   public void setUp() throws Exception {
     forEachExpressions = new ForEachExpressions();
     forEachExpressions
-        .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+        .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
   }
 
 
@@ -50,7 +55,7 @@ public class ForEachExpressionsTest {
   public void execute() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(FOREACH_SAMPLE_PATH.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, forEachExpressions.getAppliedTo().getExpression()).get(0);
-    forEachExpressions.execute(node, mock(MigrationReport.class));
+    forEachExpressions.execute(node, report.getReport());
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

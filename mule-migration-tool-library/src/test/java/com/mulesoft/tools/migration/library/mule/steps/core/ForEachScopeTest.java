@@ -11,14 +11,14 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFrom
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -32,6 +32,9 @@ public class ForEachScopeTest {
   private static final Path FILE_EXAMPLES_PATH = Paths.get("mule/examples/core");
   private static final Path FILE_SAMPLE_PATH = FILE_EXAMPLES_PATH.resolve(FILE_SAMPLE_XML);
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private ForEachScope forEachScope;
   private Element node;
 
@@ -42,14 +45,14 @@ public class ForEachScopeTest {
 
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    forEachScope.execute(null, mock(MigrationReport.class));
+    forEachScope.execute(null, report.getReport());
   }
 
   @Test
   public void executeWithJsonTransFormer() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, forEachScope.getAppliedTo().getExpression()).get(0);
-    forEachScope.execute(node, mock(MigrationReport.class));
+    forEachScope.execute(node, report.getReport());
 
     Element parent = node.getParentElement();
     assertThat("The node didn't change", parent.getChildren(REMOVE_JSON_TRANSFORMER_NAME), is(empty()));
@@ -59,7 +62,7 @@ public class ForEachScopeTest {
   public void executeWithByteArrayTransFormer() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, forEachScope.getAppliedTo().getExpression()).get(2);
-    forEachScope.execute(node, mock(MigrationReport.class));
+    forEachScope.execute(node, report.getReport());
 
     Element parent = node.getParentElement();
     assertThat("The node didn't change", parent.getChildren(REMOVE_BYTE_ARRAY_TRANSFORMER_NAME), is(empty()));
@@ -69,7 +72,7 @@ public class ForEachScopeTest {
   public void executeWithNoTransformerToRemoveNotFail() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, forEachScope.getAppliedTo().getExpression()).get(1);
-    forEachScope.execute(node, mock(MigrationReport.class));
+    forEachScope.execute(node, report.getReport());
   }
 
 }

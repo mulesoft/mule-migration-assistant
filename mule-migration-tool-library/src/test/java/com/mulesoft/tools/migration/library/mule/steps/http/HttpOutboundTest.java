@@ -6,10 +6,23 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
+
 import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -28,22 +41,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
-
 @RunWith(Parameterized.class)
 public class HttpOutboundTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path HTTP_REQUESTER_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/http");
 
@@ -83,12 +88,10 @@ public class HttpOutboundTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
 
   public HttpOutboundTest(String filePrefix) {
     configPath = HTTP_REQUESTER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = HTTP_REQUESTER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
@@ -119,7 +122,8 @@ public class HttpOutboundTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     when(appModel.getPomModel()).thenReturn(empty());
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
@@ -130,11 +134,11 @@ public class HttpOutboundTest {
     httpsGlobalEndpoint.setApplicationModel(appModel);
 
     httpOutbound = new HttpOutboundEndpoint();
-    httpOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class)));
+    httpOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     httpOutbound.setApplicationModel(appModel);
 
     httpsOutbound = new HttpsOutboundEndpoint();
-    httpsOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class)));
+    httpsOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     httpsOutbound.setApplicationModel(appModel);
 
     httpConfig = new HttpConfig();
@@ -147,19 +151,19 @@ public class HttpOutboundTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> genericGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> httpGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpsGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> httpsGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpsGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpOutbound.getAppliedTo().getExpression())
-        .forEach(node -> httpOutbound.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpOutbound.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpsOutbound.getAppliedTo().getExpression())
-        .forEach(node -> httpsOutbound.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpsOutbound.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpConfig.getAppliedTo().getExpression())
-        .forEach(node -> httpConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpHeaders.getAppliedTo().getExpression())
-        .forEach(node -> httpHeaders.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpHeaders.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

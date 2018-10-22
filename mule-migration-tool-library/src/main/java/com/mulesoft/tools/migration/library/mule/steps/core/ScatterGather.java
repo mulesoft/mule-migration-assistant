@@ -45,10 +45,10 @@ public class ScatterGather extends AbstractApplicationModelMigrationStep {
       if (c.getName().equals("processor-chain")) {
         c.setName("route");
       } else if (c.getName().equals("threading-profile")) {
-        report.report("scatterGather.threading", c, c);
+        report.report("scatterGather.threading", c, element);
         c.detach();
       } else if (c.getName().equals("custom-aggregation-strategy")) {
-        report.report("scatterGather.customAggregation", c, c);
+        report.report("scatterGather.customAggregation", c, element);
       } else {
         Element newRouteElement = new Element("route", element.getNamespace());
         Integer childIndex = element.indexOf(c);

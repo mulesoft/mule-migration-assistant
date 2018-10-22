@@ -135,7 +135,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
         object.setAttribute("numberOfConsumers", "" + consumers);
       }
 
-      handleConnectorChildElements(conn, new Element("connection", CORE_NAMESPACE), report);
+      handleConnectorChildElements(conn, vmConfig, new Element("connection", CORE_NAMESPACE), report);
     });
 
     if (object.getAttribute("mimeType") != null) {

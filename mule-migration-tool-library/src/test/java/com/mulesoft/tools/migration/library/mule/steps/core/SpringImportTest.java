@@ -6,9 +6,19 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
+
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -27,15 +37,6 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(XmlDslUtils.class)
 @PowerMockRunnerDelegate(Parameterized.class)
@@ -45,6 +46,9 @@ public class SpringImportTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
@@ -79,7 +83,7 @@ public class SpringImportTest {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, springImport.getAppliedTo().getExpression())
-        .forEach(node -> springImport.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> springImport.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

@@ -16,7 +16,7 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 import com.mulesoft.tools.migration.library.mule.steps.ee.EETransform;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -40,6 +40,9 @@ public class MetadataTest {
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
@@ -47,8 +50,6 @@ public class MetadataTest {
         "metadata-02"
     };
   }
-
-  private MigrationReport report;
 
   private final Path configPath;
   private final Path targetPath;
@@ -65,10 +66,9 @@ public class MetadataTest {
   @Before
   public void setUp() throws Exception {
     ApplicationModel appModel = mock(ApplicationModel.class);
-    report = mock(MigrationReport.class);
 
     setPayload = new SetPayload();
-    setPayload.setExpressionMigrator(new MelToDwExpressionMigrator(report, appModel));
+    setPayload.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
     dwTransform = new EETransform();
     dwTransform.setApplicationModel(appModel);
     metadata = new RemoveMetadataAttributes();
@@ -79,11 +79,11 @@ public class MetadataTest {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, setPayload.getAppliedTo().getExpression())
-        .forEach(node -> setPayload.execute(node, report));
+        .forEach(node -> setPayload.execute(node, report.getReport()));
     getElementsFromDocument(doc, dwTransform.getAppliedTo().getExpression())
-        .forEach(node -> dwTransform.execute(node, report));
+        .forEach(node -> dwTransform.execute(node, report.getReport()));
     getElementsFromDocument(doc, metadata.getAppliedTo().getExpression())
-        .forEach(node -> metadata.execute(node, report));
+        .forEach(node -> metadata.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

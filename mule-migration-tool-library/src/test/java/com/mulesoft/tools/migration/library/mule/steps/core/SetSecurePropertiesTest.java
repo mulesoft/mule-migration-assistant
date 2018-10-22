@@ -6,9 +6,16 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
+
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,18 +28,14 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Properties;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-
-import static org.junit.Assert.assertThat;
-import static org.powermock.api.mockito.PowerMockito.mock;
-
 public class SetSecurePropertiesTest {
 
   @Rule
   public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private Path projectBasePath;
   private SetSecureProperties setSecureProperties;
   private File muleArtifactJsonFile;
@@ -55,7 +58,7 @@ public class SetSecurePropertiesTest {
 
   @Test
   public void execute() throws IOException {
-    setSecureProperties.execute(projectBasePath, mock(MigrationReport.class));
+    setSecureProperties.execute(projectBasePath, report.getReport());
     MuleArtifactJsonModel model = MuleArtifactJsonModelUtils.buildMuleArtifactJson(muleArtifactJsonFile.toPath());
 
     assertThat("Secure properties were not created successfully", model.getSecureProperties().get(),

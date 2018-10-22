@@ -6,10 +6,14 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.google.common.collect.Iterables;
+import static com.mulesoft.tools.migration.utils.ApplicationModelUtils.generateAppModel;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Document;
 import org.junit.Before;
@@ -17,16 +21,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.google.common.collect.Iterables;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static com.mulesoft.tools.migration.utils.ApplicationModelUtils.generateAppModel;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 
 public class RemoveSchedulersNamespaceTest {
 
@@ -41,6 +42,9 @@ public class RemoveSchedulersNamespaceTest {
 
   @Rule
   public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Before
   public void setUp() throws Exception {
@@ -60,12 +64,12 @@ public class RemoveSchedulersNamespaceTest {
 
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    removeSchedulersNamespace.execute(null, mock(MigrationReport.class));
+    removeSchedulersNamespace.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
-    removeSchedulersNamespace.execute(applicationModel, mock(MigrationReport.class));
+    removeSchedulersNamespace.execute(applicationModel, report.getReport());
     Document document = Iterables.get(applicationModel.getApplicationDocuments().values(), 0);
     assertThat("The namespace wasn't removed.", document.getRootElement().getAdditionalNamespaces().size(), is(2));
   }

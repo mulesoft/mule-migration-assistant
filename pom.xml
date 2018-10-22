@@ -13,6 +13,7 @@
 
     <modules>
         <module>mule-migration-tool-api</module>
+        <module>mule-migration-tool-tck</module>
         <module>mule-migration-tool-engine</module>
         <module>mule-migration-tool-library</module>
         <module>mule-migration-tool-runner</module>

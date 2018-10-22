@@ -26,6 +26,7 @@ import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -49,6 +50,9 @@ public class JmsConfigTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path JMS_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/jms");
 
@@ -74,12 +78,10 @@ public class JmsConfigTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
 
   public JmsConfigTest(String jmsPrefix) {
     configPath = JMS_CONFIG_EXAMPLES_PATH.resolve(jmsPrefix + "-original.xml");
     targetPath = JMS_CONFIG_EXAMPLES_PATH.resolve(jmsPrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
@@ -100,7 +102,8 @@ public class JmsConfigTest {
 
     customFilter = new CustomFilter();
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
@@ -141,22 +144,22 @@ public class JmsConfigTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> genericGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, jmsInboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> jmsInboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> jmsInboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> inboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, jmsOutboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> jmsOutboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> jmsOutboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, outboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> outboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> outboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, jmsConfig.getAppliedTo().getExpression())
-        .forEach(node -> jmsConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> jmsConfig.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
-        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> customFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
-        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

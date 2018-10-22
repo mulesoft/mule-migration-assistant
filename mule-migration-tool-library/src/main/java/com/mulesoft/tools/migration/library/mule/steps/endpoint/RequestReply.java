@@ -54,13 +54,13 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    if (object.getAttribute("storePrefix") != null) {
-      report.report("transports.requestReplyStorePrefix", object, object);
-      object.removeAttribute("storePrefix");
-    }
-
     final Element request = object.getChildren().get(0);
     final Element reply = object.getChildren().get(1);
+
+    if (object.getAttribute("storePrefix") != null) {
+      report.report("transports.requestReplyStorePrefix", object, request);
+      object.removeAttribute("storePrefix");
+    }
 
     if (RequestReplyMigrableConnector.JMS.equals(resolveEndpointConnector(request))
         && RequestReplyMigrableConnector.JMS.equals(resolveEndpointConnector(reply))) {

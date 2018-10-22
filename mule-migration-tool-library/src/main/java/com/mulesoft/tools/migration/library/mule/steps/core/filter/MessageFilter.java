@@ -6,14 +6,16 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementsAfter;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Content;
 import org.jdom2.Element;
+
+import java.util.List;
 
 /**
  * Migrate message filters
@@ -41,13 +43,13 @@ public class MessageFilter extends AbstractFilterMigrator {
       return;
     }
 
-    if (element.getAttribute("throwOnUnaccepted") == null || element.getAttributeValue("throwOnUnaccepted").equals("false")) {
-      report.report("filters.validationsRaiseError", element, element);
-    }
-    element.removeAttribute("throwOnUnaccepted");
-
     if (element.getAttribute("onUnaccepted") != null) {
       Element wrappingTry = new Element("try", CORE_NAMESPACE);
+
+      if (element.getAttribute("throwOnUnaccepted") == null || element.getAttributeValue("throwOnUnaccepted").equals("false")) {
+        report.report("filters.validationsRaiseError", element, wrappingTry);
+      }
+      element.removeAttribute("throwOnUnaccepted");
 
       addElementAfter(wrappingTry, element);
       wrappingTry.addContent(element.cloneContent());
@@ -61,7 +63,15 @@ public class MessageFilter extends AbstractFilterMigrator {
                   .setAttribute("name", element.getAttributeValue("onUnaccepted")))));
 
     } else {
-      addElementsAfter(element.cloneContent(), element);
+      List<Content> clonedContent = element.cloneContent();
+
+      if (element.getAttribute("throwOnUnaccepted") == null || element.getAttributeValue("throwOnUnaccepted").equals("false")) {
+        report.report("filters.validationsRaiseError", element,
+                      (Element) clonedContent.stream().filter(c -> c instanceof Element).findFirst().get());
+      }
+      element.removeAttribute("throwOnUnaccepted");
+
+      addElementsAfter(clonedContent, element);
       element.detach();
     }
 

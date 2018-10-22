@@ -11,14 +11,14 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFrom
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -30,6 +30,9 @@ public class RemoveObjectToStringTransformerTest {
   private static final Path FILE_EXAMPLES_PATH = Paths.get("mule/examples/core");
   private static final Path FILE_SAMPLE_PATH = FILE_EXAMPLES_PATH.resolve(FILE_SAMPLE_XML);
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private RemoveObjectToStringTransformer removeObjectToStringTransformer;
   private Element node;
 
@@ -40,14 +43,14 @@ public class RemoveObjectToStringTransformerTest {
 
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    removeObjectToStringTransformer.execute(null, mock(MigrationReport.class));
+    removeObjectToStringTransformer.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, removeObjectToStringTransformer.getAppliedTo().getExpression()).get(0);
-    removeObjectToStringTransformer.execute(node, mock(MigrationReport.class));
+    removeObjectToStringTransformer.execute(node, report.getReport());
 
     assertThat("The node wasn't remove.", node.getParent(), is(nullValue()));
   }
