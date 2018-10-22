@@ -8,13 +8,13 @@ package com.mulesoft.tools.migration.library.mule.steps.pom;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -26,6 +26,10 @@ public class UpdateProjectVersionTest {
 
   private static final String POM = "/pommodel/simple-pom/pom.xml";
   private static final String POM_SNAPSHOT = "/pommodel/simple-pom/snapshot-pom.xml";
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private PomModel model;
   private UpdateProjectVersion updateProjectVersion;
 
@@ -39,7 +43,7 @@ public class UpdateProjectVersionTest {
     Path pomPath = Paths.get(getClass().getResource(POM).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     assertThat("version must not be updated in pom", model.getVersion(), is("1.0.0"));
-    updateProjectVersion.execute(model, mock(MigrationReport.class));
+    updateProjectVersion.execute(model, report.getReport());
     assertThat("version must be updated in pom", model.getVersion(), is("1.0.0-M4"));
   }
 
@@ -48,7 +52,7 @@ public class UpdateProjectVersionTest {
     Path pomPath = Paths.get(getClass().getResource(POM_SNAPSHOT).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     assertThat("version must not be updated in pom", model.getVersion(), is("1.0.0-SNAPSHOT"));
-    updateProjectVersion.execute(model, mock(MigrationReport.class));
+    updateProjectVersion.execute(model, report.getReport());
     assertThat("version must be updated in pom", model.getVersion(), is("1.0.0-M4-SNAPSHOT"));
   }
 

@@ -17,12 +17,14 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -34,6 +36,9 @@ import java.nio.file.Paths;
 public class ObjectStoreMigrationTest {
 
   private static final Path EE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/os");
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
@@ -69,7 +74,7 @@ public class ObjectStoreMigrationTest {
   public void setUp() throws Exception {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     MelToDwExpressionMigrator expressionMigrator =
-        new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class));
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
 
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
@@ -97,19 +102,19 @@ public class ObjectStoreMigrationTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, osBasicOperations.getAppliedTo().getExpression())
-        .forEach(node -> osBasicOperations.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> osBasicOperations.execute(node, report.getReport()));
     getElementsFromDocument(doc, osConfig.getAppliedTo().getExpression())
-        .forEach(node -> osConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> osConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, osDisposeStore.getAppliedTo().getExpression())
-        .forEach(node -> osDisposeStore.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> osDisposeStore.execute(node, report.getReport()));
     getElementsFromDocument(doc, osDualStore.getAppliedTo().getExpression())
-        .forEach(node -> osDualStore.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> osDualStore.execute(node, report.getReport()));
     getElementsFromDocument(doc, osRetrieveStore.getAppliedTo().getExpression())
-        .forEach(node -> osRetrieveStore.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> osRetrieveStore.execute(node, report.getReport()));
     getElementsFromDocument(doc, osStore.getAppliedTo().getExpression())
-        .forEach(node -> osStore.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> osStore.execute(node, report.getReport()));
     getElementsFromDocument(doc, osRetrieve.getAppliedTo().getExpression())
-        .forEach(node -> osRetrieve.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> osRetrieve.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

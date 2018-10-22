@@ -15,7 +15,7 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -39,6 +39,9 @@ public class SessionVariablesTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameters(name = "{0}")
   public static Object[] params() {
@@ -67,10 +70,10 @@ public class SessionVariablesTest {
   @Before
   public void setUp() throws Exception {
     setSessionVar = new SetSessionVariable();
-    setSessionVar.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+    setSessionVar.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     removeSessionVars = new RemoveSessionVariable();
     mpt = new MessagePropertiesTransformer();
-    mpt.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+    mpt.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
   }
 
   @Test
@@ -78,11 +81,11 @@ public class SessionVariablesTest {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, setSessionVar.getAppliedTo().getExpression())
-        .forEach(node -> setSessionVar.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> setSessionVar.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeSessionVars.getAppliedTo().getExpression())
-        .forEach(node -> removeSessionVars.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeSessionVars.execute(node, report.getReport()));
     getElementsFromDocument(doc, mpt.getAppliedTo().getExpression())
-        .forEach(node -> mpt.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> mpt.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

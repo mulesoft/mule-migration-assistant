@@ -22,27 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
 import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.DomainAppMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
@@ -62,12 +41,37 @@ import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
+import org.apache.commons.io.IOUtils;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(Parameterized.class)
 public class DomainTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path DOMAIN_AND_APP_CONFIG_EXAMPLES_PATH = Paths.get("mule/domain");
 
@@ -85,14 +89,12 @@ public class DomainTest {
   private final Path domainTargetPath;
   private final Path appConfigPath;
   private final Path appTargetPath;
-  private final MigrationReport reportMock;
 
   public DomainTest(String domainPrefix, String appPrefix) {
     domainConfigPath = DOMAIN_AND_APP_CONFIG_EXAMPLES_PATH.resolve(domainPrefix + "-original.xml");
     domainTargetPath = DOMAIN_AND_APP_CONFIG_EXAMPLES_PATH.resolve(domainPrefix + ".xml");
     appConfigPath = DOMAIN_AND_APP_CONFIG_EXAMPLES_PATH.resolve(appPrefix + "-original.xml");
     appTargetPath = DOMAIN_AND_APP_CONFIG_EXAMPLES_PATH.resolve(appPrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   private List<MigrationStep> appSteps;
@@ -119,7 +121,8 @@ public class DomainTest {
     domainDoc = getDocument(this.getClass().getClassLoader().getResource(domainConfigPath.toString()).toURI().getPath());
     appDoc = getDocument(this.getClass().getClassLoader().getResource(appConfigPath.toString()).toURI().getPath());
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
     domainModel = mock(ApplicationModel.class);
     when(domainModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(domainDoc, (String) invocation.getArguments()[0], "domain"));
@@ -240,7 +243,7 @@ public class DomainTest {
     for (MigrationStep domainStep : domainSteps) {
       if (domainStep instanceof ApplicationModelContribution) {
         getElementsFromDocument(domainDoc, ((ApplicationModelContribution) domainStep).getAppliedTo().getExpression(), "domain")
-            .forEach(node -> domainStep.execute(node, mock(MigrationReport.class)));
+            .forEach(node -> domainStep.execute(node, report.getReport()));
       }
     }
 
@@ -248,9 +251,9 @@ public class DomainTest {
       if (appStep instanceof ApplicationModelContribution) {
         getElementsFromDocument(originalDomainDoc, ((ApplicationModelContribution) appStep).getAppliedTo().getExpression(),
                                 "domain")
-                                    .forEach(node -> appStep.execute(node, mock(MigrationReport.class)));
+                                    .forEach(node -> appStep.execute(node, report.getReport()));
         getElementsFromDocument(appDoc, ((ApplicationModelContribution) appStep).getAppliedTo().getExpression())
-            .forEach(node -> appStep.execute(node, mock(MigrationReport.class)));
+            .forEach(node -> appStep.execute(node, report.getReport()));
       }
     }
 

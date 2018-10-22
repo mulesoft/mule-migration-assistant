@@ -6,11 +6,22 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
+
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListenerConfig;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -26,15 +37,6 @@ import org.junit.runners.Parameterized.Parameters;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
-
 @RunWith(Parameterized.class)
 public class ExceptionStrategyTest {
 
@@ -42,6 +44,9 @@ public class ExceptionStrategyTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameters(name = "{0}")
   public static Object[] params() {
@@ -56,14 +61,12 @@ public class ExceptionStrategyTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
   private final ApplicationModel appModel;
   private Document doc;
 
   public ExceptionStrategyTest(String filePrefix) {
     configPath = CORE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = CORE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
     appModel = mock(ApplicationModel.class);
   }
 
@@ -86,14 +89,14 @@ public class ExceptionStrategyTest {
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     httpListener.setApplicationModel(appModel);
-    httpListener.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
+    httpListener.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
 
     catchExceptionStrategy = new CatchExceptionStrategy();
-    catchExceptionStrategy.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
+    catchExceptionStrategy.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
     choiceExceptionStrategy = new ChoiceExceptionStrategy();
     exceptionStrategyRef = new ExceptionStrategyRef();
     rollbackExceptionStrategy = new RollbackExceptionStrategy();
-    rollbackExceptionStrategy.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
+    rollbackExceptionStrategy.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
     removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
   }
 
@@ -102,19 +105,19 @@ public class ExceptionStrategyTest {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, httpListenerConfig.getAppliedTo().getExpression())
-        .forEach(node -> httpListenerConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpListenerConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpListener.getAppliedTo().getExpression())
-        .forEach(node -> httpListener.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpListener.execute(node, report.getReport()));
     getElementsFromDocument(doc, choiceExceptionStrategy.getAppliedTo().getExpression())
-        .forEach(node -> choiceExceptionStrategy.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> choiceExceptionStrategy.execute(node, report.getReport()));
     getElementsFromDocument(doc, catchExceptionStrategy.getAppliedTo().getExpression())
-        .forEach(node -> catchExceptionStrategy.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> catchExceptionStrategy.execute(node, report.getReport()));
     getElementsFromDocument(doc, exceptionStrategyRef.getAppliedTo().getExpression())
-        .forEach(node -> exceptionStrategyRef.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> exceptionStrategyRef.execute(node, report.getReport()));
     getElementsFromDocument(doc, rollbackExceptionStrategy.getAppliedTo().getExpression())
-        .forEach(node -> rollbackExceptionStrategy.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> rollbackExceptionStrategy.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
-        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

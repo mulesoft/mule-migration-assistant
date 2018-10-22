@@ -10,17 +10,17 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -32,6 +32,9 @@ public class AssertPayloadTest {
   private static final Path MUNIT_EXAMPLES_PATH = Paths.get("munit/examples");
   private static final Path MUNIT_SAMPLE_PATH = MUNIT_EXAMPLES_PATH.resolve(MUNIT_SAMPLE_XML);
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private AssertPayload assertPayloadEquals;
   private Element node;
 
@@ -39,19 +42,19 @@ public class AssertPayloadTest {
   public void setUp() throws Exception {
     assertPayloadEquals = new AssertPayload();
     assertPayloadEquals
-        .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+        .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
   }
 
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    assertPayloadEquals.execute(null, mock(MigrationReport.class));
+    assertPayloadEquals.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(MUNIT_SAMPLE_PATH.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, assertPayloadEquals.getAppliedTo().getExpression()).get(0);
-    assertPayloadEquals.execute(node, mock(MigrationReport.class));
+    assertPayloadEquals.execute(node, report.getReport());
 
     assertThat("The node didn't change", node.getName(), is("assert-that"));
     assertThat("The attribute didn't change", node.getAttribute("expression").getValue(), is("#[payload]"));

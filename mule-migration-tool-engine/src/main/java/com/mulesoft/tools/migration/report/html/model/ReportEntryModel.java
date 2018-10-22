@@ -26,7 +26,6 @@ import org.jdom2.output.support.AbstractXMLOutputProcessor;
 import org.jdom2.output.support.FormatStack;
 import org.jdom2.output.support.XMLOutputProcessor;
 import org.jdom2.xpath.XPathFactory;
-import org.jdom2.xpath.XPathHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,10 +80,28 @@ public class ReportEntryModel {
   }
 
   private void setElementLocation(Document document) {
-    String xpathExpression = XPathHelper.getAbsolutePath(element);
+    String xpathExpression = "";
+    Element currentElement = element;
+
+    if (element.getDocument() == null) {
+      // This shouldn't happen, but we still have to validate in unit tests that the steps don't cause this.
+      this.lineNumber = -1;
+      this.columnNumber = -1;
+      return;
+    }
+
+    while (currentElement != element.getDocument().getRootElement()) {
+      xpathExpression =
+          "/*[" + (1 + currentElement.getParentElement().getChildren().indexOf(currentElement)) + "]" + xpathExpression;
+      currentElement = currentElement.getParentElement();
+    }
+
+    xpathExpression = "/*" + xpathExpression;
+
     List<Element> elements =
         XPathFactory.instance()
-            .compile(xpathExpression, Filters.element(), null, document.getRootElement().getAdditionalNamespaces())
+            .compile(xpathExpression, Filters.element(), null,
+                     document.getRootElement().getAdditionalNamespaces())
             .evaluate(document);
     if (elements.size() > 0) {
       this.lineNumber = ((LocatedElement) elements.get(0)).getLine();

@@ -16,7 +16,7 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -24,6 +24,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -37,6 +38,8 @@ public class HttpRequesterConfigTest {
 
   private static final Path HTTP_REQUESTER_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/http");
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameters(name = "{0}")
   public static Object[] params() {
@@ -69,14 +72,14 @@ public class HttpRequesterConfigTest {
   public void setUp() throws Exception {
     httpRequesterConfig = new HttpConnectorRequestConfig();
     httpRequesterConfig
-        .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+        .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     socketsConfig = new SocketsConfig();
   }
 
   @Ignore
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    httpRequesterConfig.execute(null, mock(MigrationReport.class));
+    httpRequesterConfig.execute(null, report.getReport());
   }
 
   @Test
@@ -84,9 +87,9 @@ public class HttpRequesterConfigTest {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, httpRequesterConfig.getAppliedTo().getExpression())
-        .forEach(node -> httpRequesterConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpRequesterConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, socketsConfig.getAppliedTo().getExpression())
-        .forEach(node -> socketsConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> socketsConfig.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

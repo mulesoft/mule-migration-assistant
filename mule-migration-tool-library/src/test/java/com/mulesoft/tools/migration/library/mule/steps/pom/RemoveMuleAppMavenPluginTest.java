@@ -8,14 +8,14 @@ package com.mulesoft.tools.migration.library.mule.steps.pom;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -31,6 +31,9 @@ public class RemoveMuleAppMavenPluginTest {
   private PomModel model;
   private RemoveMuleAppMavenPlugin removeMuleAppMavenPlugin;
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   @Before
   public void setUp() {
     removeMuleAppMavenPlugin = new RemoveMuleAppMavenPlugin();
@@ -41,7 +44,7 @@ public class RemoveMuleAppMavenPluginTest {
     Path pomPath = Paths.get(getClass().getResource(POM_WITH_MULE_APP_MAVEN_PLUGIN).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     assertThat("mule-app-maven-plugin should be present in pom", isPluginInModel(), is(true));
-    removeMuleAppMavenPlugin.execute(model, mock(MigrationReport.class));
+    removeMuleAppMavenPlugin.execute(model, report.getReport());
     assertThat("mule-app-maven-plugin should not be present in pom", isPluginInModel(), is(false));
   }
 
@@ -50,7 +53,7 @@ public class RemoveMuleAppMavenPluginTest {
     Path pomPath = Paths.get(getClass().getResource(POM_WITH_MULE_APP_MAVEN_PLUGIN_IN_PROFILE).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     assertThat("mule-app-maven-plugin should be present in pom", isPluginInModel(), is(true));
-    removeMuleAppMavenPlugin.execute(model, mock(MigrationReport.class));
+    removeMuleAppMavenPlugin.execute(model, report.getReport());
     assertThat("mule-app-maven-plugin should not be present in pom", isPluginInModel(), is(false));
   }
 
@@ -59,7 +62,7 @@ public class RemoveMuleAppMavenPluginTest {
     Path pomPath = Paths.get(getClass().getResource(POM_WITHOUT_MULE_APP_MAVEN_PLUGIN).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     assertThat("mule-app-maven-plugin should not be present in pom", isPluginInModel(), is(false));
-    removeMuleAppMavenPlugin.execute(model, mock(MigrationReport.class));
+    removeMuleAppMavenPlugin.execute(model, report.getReport());
     assertThat("mule-app-maven-plugin should not be present in pom", isPluginInModel(), is(false));
   }
 

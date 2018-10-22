@@ -10,19 +10,19 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.component.EchoComponent;
 import com.mulesoft.tools.migration.library.mule.steps.core.component.LogComponent;
 import com.mulesoft.tools.migration.library.mule.steps.core.component.NullComponent;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -35,6 +35,9 @@ import java.nio.file.Paths;
 public class ComponentTest {
 
   private static final Path FLOW_EXAMPLES_PATH = Paths.get("mule/apps/core");
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameters(name = "{0}")
   public static Object[] params() {
@@ -80,15 +83,15 @@ public class ComponentTest {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
 
     getElementsFromDocument(doc, echoComp.getAppliedTo().getExpression())
-        .forEach(node -> echoComp.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> echoComp.execute(node, report.getReport()));
     getElementsFromDocument(doc, logComp.getAppliedTo().getExpression())
-        .forEach(node -> logComp.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> logComp.execute(node, report.getReport()));
     getElementsFromDocument(doc, nullComp.getAppliedTo().getExpression())
-        .forEach(node -> nullComp.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> nullComp.execute(node, report.getReport()));
     getElementsFromDocument(doc, removed.getAppliedTo().getExpression())
-        .forEach(node -> removed.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removed.execute(node, report.getReport()));
     getElementsFromDocument(doc, javaRef.getAppliedTo().getExpression())
-        .forEach(node -> javaRef.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> javaRef.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

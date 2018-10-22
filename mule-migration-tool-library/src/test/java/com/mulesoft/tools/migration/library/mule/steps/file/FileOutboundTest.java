@@ -20,7 +20,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoin
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.OutboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -43,6 +43,9 @@ public class FileOutboundTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path FILE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/file");
 
@@ -85,7 +88,7 @@ public class FileOutboundTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
     MelToDwExpressionMigrator expressionMigrator =
-        new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class));
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
@@ -93,7 +96,7 @@ public class FileOutboundTest {
     fileGlobalEndpoint = new FileGlobalEndpoint();
     fileGlobalEndpoint.setApplicationModel(appModel);
     fileConfig = new FileConfig();
-    fileConfig.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+    fileConfig.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     fileConfig.setApplicationModel(appModel);
 
     fileOutboundEndpoint = new FileOutboundEndpoint();
@@ -107,21 +110,21 @@ public class FileOutboundTest {
   @Ignore
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    fileConfig.execute(null, mock(MigrationReport.class));
+    fileConfig.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> genericGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, fileGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> fileGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> fileGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, fileConfig.getAppliedTo().getExpression())
-        .forEach(node -> fileConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> fileConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, fileOutboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> fileOutboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> fileOutboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, outboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> outboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> outboundEndpoint.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

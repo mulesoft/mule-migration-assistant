@@ -6,20 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.ee;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.apache.commons.io.IOUtils;
-import org.jdom2.Document;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -27,11 +13,29 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
+import org.apache.commons.io.IOUtils;
+import org.jdom2.Document;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @RunWith(Parameterized.class)
 public class EETransformTest {
 
   private static final Path EE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/ee");
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
@@ -65,7 +69,7 @@ public class EETransformTest {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, eeTransform.getAppliedTo().getExpression())
-        .forEach(node -> eeTransform.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> eeTransform.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

@@ -8,13 +8,13 @@ package com.mulesoft.tools.migration.library.munit.steps;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.codehaus.plexus.util.StringUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -27,6 +27,9 @@ public class MUnitPomContributionTest {
 
   private MUnitPomContribution munitPomContribution;
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   @Before
   public void setUp() throws Exception {
     munitPomContribution = new MUnitPomContribution();
@@ -36,7 +39,7 @@ public class MUnitPomContributionTest {
   public void execute() throws Exception {
     Path pomPath = Paths.get(getClass().getResource(SIMPLE_POM).toURI());
     model = new PomModel.PomModelBuilder().withPom(pomPath).build();
-    munitPomContribution.execute(model, mock(MigrationReport.class));
+    munitPomContribution.execute(model, report.getReport());
 
     assertThat("munit-maven-plugin should be present in pom", isPluginInModel(), is(true));
     assertThat("munit-runner dependency should be present in pom", isDependencyInModel("munit-runner"), is(true));

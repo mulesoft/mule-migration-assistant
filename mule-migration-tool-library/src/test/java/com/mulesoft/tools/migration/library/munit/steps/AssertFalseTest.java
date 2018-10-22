@@ -16,11 +16,12 @@ import static org.mockito.Mockito.mock;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -32,25 +33,28 @@ public class AssertFalseTest {
   private static final Path MUNIT_EXAMPLES_PATH = Paths.get("munit/examples");
   private static final Path MUNIT_SAMPLE_PATH = MUNIT_EXAMPLES_PATH.resolve(MUNIT_SAMPLE_XML);
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private AssertFalse assertFalse;
   private Element node;
 
   @Before
   public void setUp() throws Exception {
     assertFalse = new AssertFalse();
-    assertFalse.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+    assertFalse.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
   }
 
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    assertFalse.execute(null, mock(MigrationReport.class));
+    assertFalse.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(MUNIT_SAMPLE_PATH.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, assertFalse.getAppliedTo().getExpression()).get(0);
-    assertFalse.execute(node, mock(MigrationReport.class));
+    assertFalse.execute(node, report.getReport());
 
     assertThat("The node didn't change", node.getName(), is("assert-that"));
     assertThat("The attribute didn't change", node.getAttribute("is"), is(notNullValue()));

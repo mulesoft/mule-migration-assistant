@@ -10,14 +10,13 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -30,6 +29,9 @@ import java.nio.file.Paths;
 public class TransactionalScopeTest {
 
   private static final Path FILE_EXAMPLES_PATH = Paths.get("mule/examples/core");
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameters(name = "{0}")
   public static Object[] params() {
@@ -56,14 +58,14 @@ public class TransactionalScopeTest {
 
   @Test
   public void executeWithNullElement() throws Exception {
-    transactionalScope.execute(null, mock(MigrationReport.class));
+    transactionalScope.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, transactionalScope.getAppliedTo().getExpression()).get(0);
-    transactionalScope.execute(node, mock(MigrationReport.class));
+    transactionalScope.execute(node, report.getReport());
 
     assertThat("The node didn't change", node.getName(), is("try"));
   }

@@ -6,26 +6,28 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.apache.commons.io.IOUtils;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
+
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
+import org.apache.commons.io.IOUtils;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ChoiceExpressionsTest {
 
@@ -34,6 +36,10 @@ public class ChoiceExpressionsTest {
   private static final Path CHOICE_EXAMPLES_PATH = Paths.get("mule/apps/core");
   private static final Path CHOICE_SAMPLE_PATH = CHOICE_EXAMPLES_PATH.resolve(CHOICE_SAMPLE_XML);
   private static final Path CHOICE_EXPECTED_PATH = CHOICE_EXAMPLES_PATH.resolve(CHOICE_EXPECTED_XML);
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private ApplicationModel appModel;
 
   private ChoiceExpressions choiceExpressions;
@@ -45,7 +51,7 @@ public class ChoiceExpressionsTest {
 
     choiceExpressions = new ChoiceExpressions();
     choiceExpressions
-        .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+        .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     choiceExpressions.setApplicationModel(appModel);
   }
 
@@ -54,7 +60,7 @@ public class ChoiceExpressionsTest {
   public void execute() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(CHOICE_SAMPLE_PATH.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, choiceExpressions.getAppliedTo().getExpression()).get(0);
-    choiceExpressions.execute(node, mock(MigrationReport.class));
+    choiceExpressions.execute(node, report.getReport());
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

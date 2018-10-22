@@ -175,7 +175,8 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
         object.setAttribute("priority", "#[vars.compatibility_inboundProperties.JMSPriority default 4]");
       }
 
-      handleConnectorChildElements(m3c, new Element("connection", CORE_NAMESPACE), report);
+      handleConnectorChildElements(m3c, appModel.getNode("*/jms:config[@name='" + configName + "']"),
+                                   new Element("connection", CORE_NAMESPACE), report);
     });
 
     if (object.getAttribute("responseTimeout") != null) {

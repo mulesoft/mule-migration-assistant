@@ -25,6 +25,7 @@ import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -47,6 +48,9 @@ public class FileInboundTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path FILE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/file");
 
@@ -77,12 +81,10 @@ public class FileInboundTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
 
   public FileInboundTest(String filePrefix) {
     configPath = FILE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = FILE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
@@ -102,7 +104,8 @@ public class FileInboundTest {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
 
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
@@ -132,28 +135,28 @@ public class FileInboundTest {
   @Ignore
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    fileConfig.execute(null, mock(MigrationReport.class));
+    fileConfig.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> genericGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, fileGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> fileGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> fileGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, fileConfig.getAppliedTo().getExpression())
-        .forEach(node -> fileConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> fileConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, fileInboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> fileInboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> fileInboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, fileTransformers.getAppliedTo().getExpression())
-        .forEach(node -> fileTransformers.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> fileTransformers.execute(node, report.getReport()));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> inboundEndpoint.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
-        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> customFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
-        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

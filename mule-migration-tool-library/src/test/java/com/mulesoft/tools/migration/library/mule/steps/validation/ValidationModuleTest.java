@@ -6,12 +6,17 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.validation;
 
-import com.mulesoft.tools.migration.library.mule.steps.validation.ValidationAllProcessorMigration;
-import com.mulesoft.tools.migration.library.mule.steps.validation.ValidationI18NMigration;
-import com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration;
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
+
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -26,13 +31,6 @@ import org.junit.runners.Parameterized;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
-
 @RunWith(Parameterized.class)
 public class ValidationModuleTest {
 
@@ -40,6 +38,9 @@ public class ValidationModuleTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
@@ -73,7 +74,7 @@ public class ValidationModuleTest {
 
     validationModule = new ValidationMigration();
     validationModule
-        .setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+        .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
 
     validationAllProcessorMigration = new ValidationAllProcessorMigration();
     validationI18NMigration = new ValidationI18NMigration();
@@ -84,19 +85,19 @@ public class ValidationModuleTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, validationModule.getAppliedTo().getExpression())
-        .forEach(node -> validationModule.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> validationModule.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, validationAllProcessorMigration.getAppliedTo().getExpression())
-        .forEach(node -> validationAllProcessorMigration.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> validationAllProcessorMigration.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, validationI18NMigration.getAppliedTo().getExpression())
-        .forEach(node -> validationI18NMigration.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> validationI18NMigration.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, customValidationMigration.getAppliedTo().getExpression())
-        .forEach(node -> customValidationMigration.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> customValidationMigration.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, exceptionFactoryValidationMigration.getAppliedTo().getExpression())
-        .forEach(node -> exceptionFactoryValidationMigration.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> exceptionFactoryValidationMigration.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

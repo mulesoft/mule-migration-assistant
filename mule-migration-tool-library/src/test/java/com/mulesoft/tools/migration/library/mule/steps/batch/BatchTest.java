@@ -15,22 +15,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
-import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
-import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -46,6 +40,9 @@ public class BatchTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path BATCH_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/batch");
 
@@ -70,7 +67,6 @@ public class BatchTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
   private BatchJob batchJob;
   private BatchExecute batchExecute;
   private BatchSetRecordVariable batchSetRecordVariable;
@@ -83,7 +79,6 @@ public class BatchTest {
   public BatchTest(String filePrefix) {
     configPath = BATCH_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = BATCH_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   @Before
@@ -97,7 +92,8 @@ public class BatchTest {
     batchStep = new BatchStep();
     batchHistoryExpiration = new BatchHistoryExpiration();
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
     batchSetRecordVariable.setExpressionMigrator(expressionMigrator);
     batchExecute.setExpressionMigrator(expressionMigrator);
     batchStep.setExpressionMigrator(expressionMigrator);
@@ -112,7 +108,7 @@ public class BatchTest {
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
     getElementsFromDocument(doc, migrationStep.getAppliedTo().getExpression())
-        .forEach(node -> migrationStep.execute(node, reportMock));
+        .forEach(node -> migrationStep.execute(node, report.getReport()));
   }
 
   @Test

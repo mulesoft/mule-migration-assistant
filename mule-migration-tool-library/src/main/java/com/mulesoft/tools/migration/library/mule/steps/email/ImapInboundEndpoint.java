@@ -60,14 +60,14 @@ public class ImapInboundEndpoint extends AbstractEmailSourceMigrator implements 
     imapConnector.ifPresent(c -> {
       if (c.getAttribute("moveToFolder") != null) {
         // TODO https://www.mulesoft.org/jira/browse/MULE-15721
-        report.report("email.moveToFolder", object, c);
+        report.report("email.moveToFolder", c, object);
       }
 
       if (c.getAttribute("mailboxFolder") != null) {
         object.setAttribute("folder", c.getAttributeValue("mailboxFolder"));
       }
       if (c.getAttribute("backupEnabled") != null || c.getAttribute("backupFolder") != null) {
-        report.report("email.imapBackup", object, c);
+        report.report("email.imapBackup", c, object);
       }
 
       if (c.getAttribute("deleteReadMessages") != null) {
@@ -75,7 +75,7 @@ public class ImapInboundEndpoint extends AbstractEmailSourceMigrator implements 
       }
       if (c.getAttribute("defaultProcessMessageAction") != null) {
         object.removeAttribute("defaultProcessMessageAction");
-        report.report("email.imapDefaultProcessMessageAction", object, c);
+        report.report("email.imapDefaultProcessMessageAction", c, object);
       }
 
       if (c.getAttribute("checkFrequency") != null) {

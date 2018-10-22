@@ -6,31 +6,36 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.google.common.collect.Iterables;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.jdom2.Document;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
+import org.jdom2.Document;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import com.google.common.collect.Iterables;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
 public class CleanNamespacesTest {
 
   private static final String FILE_SAMPLE_XML = "unused-namespace.xml";
   private static final Path FILE_EXAMPLES_PATH = Paths.get("mule/examples/core/namespaces");
   private static final Path FILE_SAMPLE_PATH = FILE_EXAMPLES_PATH.resolve(FILE_SAMPLE_XML);
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private CleanNamespaces cleanNamespaces;
   private ApplicationModel applicationModel;
@@ -57,7 +62,7 @@ public class CleanNamespacesTest {
     assertThat("The namespace wasn't removed.", document.getRootElement().getAdditionalNamespaces().size(), is(5));
     assertThat("The schemas weren't removed.", document.getRootElement()
         .getAttribute("schemaLocation", document.getRootElement().getNamespace("xsi")).getValue().split("\\s+").length, is(8));
-    cleanNamespaces.execute(applicationModel, mock(MigrationReport.class));
+    cleanNamespaces.execute(applicationModel, report.getReport());
     document = Iterables.get(applicationModel.getApplicationDocuments().values(), 0);
     assertThat("The namespace wasn't removed.", document.getRootElement().getAdditionalNamespaces().size(), is(2));
     assertThat("The schemas weren't removed.", document.getRootElement()

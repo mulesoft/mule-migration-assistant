@@ -15,13 +15,14 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -34,6 +35,8 @@ public class TrackingTest {
 
   private static final Path EE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/ee");
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
@@ -66,7 +69,7 @@ public class TrackingTest {
   public void setUp() throws Exception {
     tracking = new Tracking();
     ApplicationModel appModel = mock(ApplicationModel.class);
-    tracking.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), appModel));
+    tracking.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
     tracking.setApplicationModel(appModel);
   }
 
@@ -75,7 +78,7 @@ public class TrackingTest {
     Document doc =
         getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     getElementsFromDocument(doc, tracking.getAppliedTo().getExpression())
-        .forEach(node -> tracking.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> tracking.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

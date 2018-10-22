@@ -15,13 +15,14 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -34,6 +35,9 @@ import java.nio.file.Paths;
 public class FlowTest {
 
   private static final Path FLOW_EXAMPLES_PATH = Paths.get("mule/apps/core");
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameters(name = "{0}")
   public static Object[] params() {
@@ -70,7 +74,7 @@ public class FlowTest {
     flow = new Flow();
     subFlow = new SubFlow();
     flowRef = new FlowRef();
-    flowRef.setExpressionMigrator(new MelToDwExpressionMigrator(mock(MigrationReport.class), mock(ApplicationModel.class)));
+    flowRef.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
   }
 
 
@@ -79,11 +83,11 @@ public class FlowTest {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
 
     getElementsFromDocument(doc, flow.getAppliedTo().getExpression())
-        .forEach(node -> flow.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> flow.execute(node, report.getReport()));
     getElementsFromDocument(doc, subFlow.getAppliedTo().getExpression())
-        .forEach(node -> subFlow.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> subFlow.execute(node, report.getReport()));
     getElementsFromDocument(doc, flowRef.getAppliedTo().getExpression())
-        .forEach(node -> flowRef.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> flowRef.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

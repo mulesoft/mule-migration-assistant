@@ -10,14 +10,14 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -29,6 +29,9 @@ public class MoveMUnitProcessorsToSectionsTest {
   private static final Path MUNIT_EXAMPLES_PATH = Paths.get("munit/examples");
   private static final Path MUNIT_SAMPLE_PATH = MUNIT_EXAMPLES_PATH.resolve(MUNIT_SAMPLE_XML);
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private MoveMUnitProcessorsToSections moveMUnitProcessorsToSections;
   private Element node;
 
@@ -39,14 +42,14 @@ public class MoveMUnitProcessorsToSectionsTest {
 
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    moveMUnitProcessorsToSections.execute(null, mock(MigrationReport.class));
+    moveMUnitProcessorsToSections.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(MUNIT_SAMPLE_PATH.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, moveMUnitProcessorsToSections.getAppliedTo().getExpression()).get(0);
-    moveMUnitProcessorsToSections.execute(node, mock(MigrationReport.class));
+    moveMUnitProcessorsToSections.execute(node, report.getReport());
 
     assertThat("The munit test not contains sections.", node.getChildren().size(), is(3));
     assertThat("The munit test not contains sections.", node.getChildren().get(0).getName(), is("behavior"));

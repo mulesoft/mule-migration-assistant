@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -40,6 +40,9 @@ public class AttachmentsTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Parameters(name = "{0}")
   public static Object[] params() {
@@ -84,11 +87,11 @@ public class AttachmentsTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, setAttachment.getAppliedTo().getExpression())
-        .forEach(node -> setAttachment.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> setAttachment.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeAttachment.getAppliedTo().getExpression())
-        .forEach(node -> removeAttachment.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeAttachment.execute(node, report.getReport()));
     getElementsFromDocument(doc, copyAttachments.getAppliedTo().getExpression())
-        .forEach(node -> copyAttachments.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> copyAttachments.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

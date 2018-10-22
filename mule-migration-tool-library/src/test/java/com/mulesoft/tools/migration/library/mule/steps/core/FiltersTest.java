@@ -37,6 +37,7 @@ import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -60,6 +61,9 @@ public class FiltersTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path FILTERS_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/filters");
 
@@ -88,12 +92,10 @@ public class FiltersTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
 
   public FiltersTest(String filterPrefix) {
     configPath = FILTERS_CONFIG_EXAMPLES_PATH.resolve(filterPrefix + "-original.xml");
     targetPath = FILTERS_CONFIG_EXAMPLES_PATH.resolve(filterPrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   private ScriptingFilterMigration scriptingFilterMigration;
@@ -126,7 +128,8 @@ public class FiltersTest {
 
     customFilter = new CustomFilter();
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
@@ -198,45 +201,45 @@ public class FiltersTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, scriptingFilterMigration.getAppliedTo().getExpression())
-        .forEach(node -> scriptingFilterMigration.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> scriptingFilterMigration.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, filterReference.getAppliedTo().getExpression())
-        .forEach(node -> filterReference.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> filterReference.execute(node, report.getReport()));
     getElementsFromDocument(doc, messageFilterReference.getAppliedTo().getExpression())
-        .forEach(node -> messageFilterReference.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> messageFilterReference.execute(node, report.getReport()));
     getElementsFromDocument(doc, messageFilter.getAppliedTo().getExpression())
-        .forEach(node -> messageFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> messageFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
-        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> customFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, expressionFilter.getAppliedTo().getExpression())
-        .forEach(node -> expressionFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> expressionFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, regexFilter.getAppliedTo().getExpression())
-        .forEach(node -> regexFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> regexFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, wildcardFilter.getAppliedTo().getExpression())
-        .forEach(node -> wildcardFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> wildcardFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, payloadTypeFilter.getAppliedTo().getExpression())
-        .forEach(node -> payloadTypeFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> payloadTypeFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, exceptionTypeFilter.getAppliedTo().getExpression())
-        .forEach(node -> exceptionTypeFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> exceptionTypeFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, messagePropertyFilter.getAppliedTo().getExpression())
-        .forEach(node -> messagePropertyFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> messagePropertyFilter.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, andFilter.getAppliedTo().getExpression())
-        .forEach(node -> andFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> andFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, orFilter.getAppliedTo().getExpression())
-        .forEach(node -> orFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> orFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, notFilter.getAppliedTo().getExpression())
-        .forEach(node -> notFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> notFilter.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, idempotentMsgFilter.getAppliedTo().getExpression())
-        .forEach(node -> idempotentMsgFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> idempotentMsgFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, idempotentSecureHashMsgFilter.getAppliedTo().getExpression())
-        .forEach(node -> idempotentSecureHashMsgFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> idempotentSecureHashMsgFilter.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, globalElementsCleanup.getAppliedTo().getExpression())
-        .forEach(node -> globalElementsCleanup.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> globalElementsCleanup.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
-        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

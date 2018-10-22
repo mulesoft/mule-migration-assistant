@@ -6,26 +6,28 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.google.common.collect.Iterables;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.jdom2.Document;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.tck.ReportVerification;
+
+import org.jdom2.Document;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import com.google.common.collect.Iterables;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PreprocessNamespacesTest {
 
@@ -39,6 +41,9 @@ public class PreprocessNamespacesTest {
 
   @Rule
   public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   @Before
   public void setUp() throws Exception {
@@ -54,7 +59,7 @@ public class PreprocessNamespacesTest {
 
   @Test
   public void execute() throws Exception {
-    preprocessNamespaces.execute(applicationModel, mock(MigrationReport.class));
+    preprocessNamespaces.execute(applicationModel, report.getReport());
     Document document = Iterables.get(applicationModel.getApplicationDocuments().values(), 0);
     assertThat("The namespace was removed.", document.getRootElement().getAdditionalNamespaces().size(), is(3));
   }

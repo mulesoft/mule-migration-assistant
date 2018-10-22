@@ -25,6 +25,7 @@ import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -49,6 +50,9 @@ public class EmailImapTest {
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
 
+  @Rule
+  public ReportVerification report = new ReportVerification();
+
   private static final Path EMAIL_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/email");
 
   @Parameters(name = "{0}")
@@ -70,12 +74,10 @@ public class EmailImapTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
 
   public EmailImapTest(String filePrefix) {
     configPath = EMAIL_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = EMAIL_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
@@ -99,7 +101,8 @@ public class EmailImapTest {
 
     customFilter = new CustomFilter();
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
@@ -144,28 +147,28 @@ public class EmailImapTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> genericGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, imapGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> imapGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> imapGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, imapsGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> imapsGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> imapsGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, imapInboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> imapInboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> imapInboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, imapsInboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> imapsInboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> imapsInboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, emailTransformers.getAppliedTo().getExpression())
-        .forEach(node -> emailTransformers.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> emailTransformers.execute(node, report.getReport()));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> inboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, emailConfig.getAppliedTo().getExpression())
-        .forEach(node -> emailConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> emailConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, messageAttachmentsListExpressionEvaluator.getAppliedTo().getExpression())
-        .forEach(node -> messageAttachmentsListExpressionEvaluator.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> messageAttachmentsListExpressionEvaluator.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
-        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> customFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
-        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

@@ -19,7 +19,7 @@ import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -42,6 +42,9 @@ public class HttpListenerTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path HTTP_LISTENER_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/http");
 
@@ -70,12 +73,10 @@ public class HttpListenerTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
 
   public HttpListenerTest(String filePrefix) {
     configPath = HTTP_LISTENER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = HTTP_LISTENER_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   private HttpConnectorListenerConfig httpListenerConfig;
@@ -99,10 +100,10 @@ public class HttpListenerTest {
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     httpListener.setApplicationModel(appModel);
-    httpListener.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
+    httpListener.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
 
     httpHeaders = new HttpConnectorHeaders();
-    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(reportMock, appModel));
+    httpHeaders.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
 
     httpGlobalBuilders = new HttpGlobalBuilders();
     removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
@@ -111,21 +112,21 @@ public class HttpListenerTest {
   @Ignore
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    httpListenerConfig.execute(null, mock(MigrationReport.class));
+    httpListenerConfig.execute(null, report.getReport());
   }
 
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, httpListenerConfig.getAppliedTo().getExpression())
-        .forEach(node -> httpListenerConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpListenerConfig.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpListener.getAppliedTo().getExpression())
-        .forEach(node -> httpListener.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpListener.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpHeaders.getAppliedTo().getExpression())
-        .forEach(node -> httpHeaders.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpHeaders.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpGlobalBuilders.getAppliedTo().getExpression())
-        .forEach(node -> httpGlobalBuilders.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpGlobalBuilders.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
-        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

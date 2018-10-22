@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.AttributesToInboundPropertiesScriptGenerator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -37,6 +37,9 @@ public class HttpListenerAttributesMappingTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path HTTP_LISTENER_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/http");
 
@@ -64,9 +67,9 @@ public class HttpListenerAttributesMappingTest {
 
 
     getElementsFromDocument(doc, httpListener.getAppliedTo().getExpression())
-        .forEach(node -> httpListener.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> httpListener.execute(node, report.getReport()));
 
-    a2ipScriptGenerator.execute(appModel.getProjectBasePath(), mock(MigrationReport.class));
+    a2ipScriptGenerator.execute(appModel.getProjectBasePath(), report.getReport());
 
     File migrationFolder = new File(appModel.getProjectBasePath().toFile(), "src/main/resources/migration");
 

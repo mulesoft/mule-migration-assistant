@@ -124,16 +124,16 @@ public final class TransportsUtils {
     }
   }
 
-  public static void handleConnectorChildElements(Element object, Element connection, MigrationReport report) {
+  public static void handleConnectorChildElements(Element object, Element m4Config, Element connection, MigrationReport report) {
     Element receiverThreadingProfile = object.getChild("receiver-threading-profile", CORE_NAMESPACE);
     if (receiverThreadingProfile != null) {
-      report.report("flow.threading", receiverThreadingProfile, object);
+      report.report("flow.threading", receiverThreadingProfile, m4Config);
       object.removeContent(receiverThreadingProfile);
     }
 
     Element dispatcherThreadingProfile = object.getChild("dispatcher-threading-profile", CORE_NAMESPACE);
     if (dispatcherThreadingProfile != null) {
-      report.report("flow.threading", receiverThreadingProfile, object);
+      report.report("flow.threading", receiverThreadingProfile, m4Config);
       object.removeContent(dispatcherThreadingProfile);
     }
 
@@ -142,7 +142,7 @@ public final class TransportsUtils {
     if (reconnect != null) {
       Element reconnectNotification = reconnect.getChild("reconnect-custom-notifier", CORE_NAMESPACE);
       if (reconnectNotification != null) {
-        report.report("transports.reconnectCustomNotifier", dispatcherThreadingProfile, object);
+        report.report("transports.reconnectCustomNotifier", dispatcherThreadingProfile, m4Config);
         reconnectNotification.detach();
       }
 

@@ -6,8 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.component;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -37,8 +35,12 @@ public class EchoComponent extends AbstractApplicationModelMigrationStep {
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     if (!object.getChildren().isEmpty()) {
       report.report("components.interceptors", object, object);
+      object.setName("set-payload");
+      object.setAttribute("value", "#[payload]");
+      object.removeContent();
+    } else {
+      object.detach();
     }
-    object.detach();
   }
 
 }

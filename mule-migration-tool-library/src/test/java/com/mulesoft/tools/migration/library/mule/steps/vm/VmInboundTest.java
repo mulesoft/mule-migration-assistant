@@ -24,6 +24,7 @@ import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -47,6 +48,9 @@ public class VmInboundTest {
 
   @Rule
   public TemporaryFolder temp = new TemporaryFolder();
+
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
   private static final Path VM_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/vm");
 
@@ -75,12 +79,10 @@ public class VmInboundTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final MigrationReport reportMock;
 
   public VmInboundTest(String vmPrefix) {
     configPath = VM_CONFIG_EXAMPLES_PATH.resolve(vmPrefix + "-original.xml");
     targetPath = VM_CONFIG_EXAMPLES_PATH.resolve(vmPrefix + ".xml");
-    reportMock = mock(MigrationReport.class);
   }
 
   private GenericGlobalEndpoint genericGlobalEndpoint;
@@ -100,7 +102,8 @@ public class VmInboundTest {
 
     customFilter = new CustomFilter();
 
-    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(reportMock, mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
@@ -136,20 +139,20 @@ public class VmInboundTest {
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> genericGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> genericGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, vmGlobalEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> vmGlobalEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> vmGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, vmInboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> vmInboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> vmInboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, inboundEndpoint.getAppliedTo().getExpression())
-        .forEach(node -> inboundEndpoint.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> inboundEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, vmConfig.getAppliedTo().getExpression())
-        .forEach(node -> vmConfig.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> vmConfig.execute(node, report.getReport()));
 
     getElementsFromDocument(doc, customFilter.getAppliedTo().getExpression())
-        .forEach(node -> customFilter.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> customFilter.execute(node, report.getReport()));
     getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
-        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, mock(MigrationReport.class)));
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
