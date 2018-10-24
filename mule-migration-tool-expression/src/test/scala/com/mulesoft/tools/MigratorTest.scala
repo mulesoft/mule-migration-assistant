@@ -62,6 +62,27 @@ class MigratorTest extends FlatSpec with Matchers {
   it should "migrate a smaller than or equals expression" in {
     Migrator.migrate("2 + 2 <= 4") shouldBe "---\n2 + 2 <= 4"
   }
+
+  it should "migrate an and expression" in {
+    Migrator.migrate("true && true == true") shouldBe "---\ntrue and true == true"
+  }
+
+  it should "migrate an or expression" in {
+    Migrator.migrate("true || true == true") shouldBe "---\ntrue or true == true"
+  }
+
+  it should "migrate a logical expression" in {
+    Migrator.migrate("true || false && true == true") shouldBe "---\ntrue or false and true == true"
+  }
+
+  it should "migrate a logical complex expression" in {
+    Migrator.migrate("1+1 == 2 || true == true") shouldBe "---\n1 + 1 == 2 or true == true"
+  }
+
+  it should "migrate a logical complex expression with identifier" in {
+    Migrator.migrate("payload.foo == 2 || true == true") shouldBe "---\npayload.foo == 2 or true == true"
+  }
+
   it should "migrate an expression containing NullPayload.getInstance()" in {
     Migrator.migrate("payload != NullPayload.getInstance()") shouldBe "---\npayload != null"
   }

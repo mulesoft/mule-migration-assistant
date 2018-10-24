@@ -4,6 +4,7 @@ import com.mulesoft.tools.ast.{EnclosedExpression, MelExpressionNode, StringNode
 import com.mulesoft.tools.{ast => mel}
 import org.mule.weave.v2.codegen.CodeGenerator
 import org.mule.weave.v2.grammar._
+import org.mule.weave.v2.parser.ast.logical.{AndNode, OrNode}
 import org.mule.weave.v2.parser.annotation.{EnclosedMarkAnnotation, InfixNotationFunctionCallAnnotation, QuotedStringAnnotation}
 import org.mule.weave.v2.parser.ast.functions.FunctionCallParametersNode
 import org.mule.weave.v2.parser.ast.header.HeaderNode
@@ -33,6 +34,8 @@ object Migrator {
           case mel.OperatorType.greaterThanOrEqual => dw.operators.BinaryOpNode(GreaterOrEqualThanOpId, toDataweaveAst(left), toDataweaveAst(right))
           case mel.OperatorType.lessThan => dw.operators.BinaryOpNode(LessThanOpId, toDataweaveAst(left), toDataweaveAst(right))
           case mel.OperatorType.greaterThan => dw.operators.BinaryOpNode(GreaterThanOpId, toDataweaveAst(left), toDataweaveAst(right))
+          case mel.OperatorType.and => AndNode(toDataweaveAst(left), toDataweaveAst(right))
+          case mel.OperatorType.or => OrNode(toDataweaveAst(left), toDataweaveAst(right))
         }
       }
       case mel.MapNode(elements) => {

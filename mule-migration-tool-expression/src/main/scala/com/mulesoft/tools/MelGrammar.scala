@@ -22,6 +22,26 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   private val newLineChar = CharPredicate("\r\n")
   val whiteSpaceOrNewLineChar = whiteSpaceChar ++ newLineChar
 
+  def root: Rule1[MelExpressionNode] = rule {
+    ws ~  expression ~ ws ~ EOI
+  }
+
+  def expression: Rule1[MelExpressionNode] = rule {
+    logicalExpression ~ ws
+  }
+
+  def logicalExpression = rule {
+    comparableExpression ~ optional((orToken | andToken) ~ root ~> createBinaryOp)
+  }
+
+  def comparableExpression = rule {
+    sum ~ optional(comparableToken ~ root ~> createBinaryOp)
+  }
+
+  def sum = rule {
+    simpleExpressions ~ optional((plusToken ~ push(OperatorType.plus) | minusToken ~ push(OperatorType.minus)) ~ root ~> createBinaryOp)
+  }
+
   def ws: Rule0 = rule {
     quiet(zeroOrMore(whiteSpaceOrNewLineChar))
   }
@@ -50,28 +70,20 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
     ws ~ (stringNode | stringNodeSimple) ~ ws ~ ch(':') ~ ws ~ simpleExpressions ~ ws ~> createKeyValuePairNode
   }
 
-  def root: Rule1[MelExpressionNode] = rule {
-    ws ~  expression ~ ws ~ EOI
-  }
-
   def enclosedExpression: Rule1[MelExpressionNode] = rule {
     ws ~ "(" ~ ws ~ expression ~ ws ~ ")" ~> createEnclosedExpression
   }
 
-  def expression: Rule1[MelExpressionNode] = rule {
-    comparableExpression ~ ws
-  }
-
-  def comparableExpression = rule {
-    sum ~ optional(comparableToken ~ root ~> createBinaryOp)
-  }
-
-  def sum = rule {
-    simpleExpressions ~ optional((plusToken ~ push(OperatorType.plus) | minusToken ~ push(OperatorType.minus)) ~ root ~> createBinaryOp)
-  }
-
   def comparableToken = rule {
     equalsToken | notEqualsToken | lessThanOrEqualToken | greaterThanOrEqualToken | lessThanToken | greaterThanToken
+  }
+
+  def andToken = rule {
+    ws ~ "&&" ~ push(OperatorType.and)
+  }
+
+  def orToken = rule {
+    ws ~ "||" ~ push(OperatorType.or)
   }
 
   def plusToken = rule {
