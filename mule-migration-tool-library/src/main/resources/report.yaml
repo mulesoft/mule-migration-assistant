@@ -573,7 +573,17 @@ scatterGather:
     message: "Custom Aggregations are no longer supported. Add an 'ee:transform' after the 'scatter-gather' to perform the aggregation."
     docLinks:
       - https://docs.mulesoft.com/mule4-user-guide/4.1/migration-core-scatter-gather
-  
+
+enricher:
+  multipleEnrichments:
+    type: ERROR
+    message: Only the first enrichment pair is migrated. You should use a temporary structure to make multiple enrichments.
+  outboundProperty:
+    type: WARN
+    message: "Enrichment of outbound property was migrated to enrich a variable. Remove the following 'compatibility:outbound-properties-to-var' and 'compatibility:set-property' when usages of the set property have been migrated."
+    docLinks:
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
+
 batch:
   filterExpression:
     type: WARN

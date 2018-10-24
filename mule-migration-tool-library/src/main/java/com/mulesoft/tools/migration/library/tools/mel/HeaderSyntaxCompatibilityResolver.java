@@ -32,6 +32,7 @@ public class HeaderSyntaxCompatibilityResolver implements CompatibilityResolver<
     resolvers.add(new OutboundPropertiesCompatibilityResolver());
     resolvers.add(new InvocationPropertiesCompatibilityResolver());
     resolvers.add(new SessionVariablesCompatibilityResolver());
+    resolvers.add(new VariablesCompatibilityResolver());
     resolvers.add(new Encode64Resolver());
   }
 
