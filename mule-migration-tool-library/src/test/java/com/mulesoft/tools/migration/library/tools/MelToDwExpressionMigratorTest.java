@@ -314,4 +314,18 @@ public class MelToDwExpressionMigratorTest {
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result, is("#[dw::core::Binaries::toBase64(vars['your_variable'])]"));
   }
+
+  @Test
+  public void migrateAndExpression() {
+    String script = "#[a && b] ";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[vars.a and vars.b]"));
+  }
+
+  @Test
+  public void migrateOrExpression() {
+    String script = "#[a || b] ";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[vars.a or vars.b]"));
+  }
 }
