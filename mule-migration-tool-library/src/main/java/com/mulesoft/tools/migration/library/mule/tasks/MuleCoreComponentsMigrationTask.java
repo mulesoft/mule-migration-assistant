@@ -14,6 +14,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.CatchExceptionStrate
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExpressions;
 import com.mulesoft.tools.migration.library.mule.steps.core.CompatibilityPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.core.Enricher;
 import com.mulesoft.tools.migration.library.mule.steps.core.ExceptionStrategyRef;
 import com.mulesoft.tools.migration.library.mule.steps.core.Flow;
 import com.mulesoft.tools.migration.library.mule.steps.core.ForEachExpressions;
@@ -72,6 +73,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new ExceptionStrategyRef(),
                         new ForEachScope(),
                         new ScatterGather(),
+                        new Enricher(),
                         new Flow(),
                         new Poll(),
                         new ChoiceExpressions(),

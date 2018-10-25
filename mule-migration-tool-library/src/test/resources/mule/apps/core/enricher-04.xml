@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <flow name="flow">
+        <flow-ref name="flow_Enricher_0" target="attach" targetValue="#[vars.enricherAttachment]"/>
+    </flow>
+
+    <sub-flow name="flow_Enricher_0">
+        <set-variable variableName="enricherAttachment" value="some text"/>
+    </sub-flow>
+</mule>
