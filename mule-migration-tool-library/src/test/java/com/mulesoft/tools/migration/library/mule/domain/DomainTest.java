@@ -30,6 +30,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.JmsDomainMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.JmsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MigrationCleanTask;
+import com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.PostprocessGeneral;
 import com.mulesoft.tools.migration.library.mule.tasks.PostprocessMuleApplication;
 import com.mulesoft.tools.migration.library.mule.tasks.SpringMigrationTask;
@@ -39,7 +40,6 @@ import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
@@ -192,6 +192,8 @@ public class DomainTest {
     }).when(appModel).addNameSpace(anyString(), anyString(), anyString());
 
     List<AbstractMigrationTask> coreMigrationTasks = new ArrayList<>();
+
+    coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
 
     coreMigrationTasks.add(new HTTPMigrationTask());
     coreMigrationTasks.add(new DbMigrationTask());

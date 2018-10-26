@@ -21,6 +21,8 @@ import com.mulesoft.tools.migration.library.mule.steps.core.ForEachExpressions;
 import com.mulesoft.tools.migration.library.mule.steps.core.ForEachScope;
 import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.core.Logger;
+import com.mulesoft.tools.migration.library.mule.steps.core.MuleApp;
+import com.mulesoft.tools.migration.library.mule.steps.core.MuleDomain;
 import com.mulesoft.tools.migration.library.mule.steps.core.Poll;
 import com.mulesoft.tools.migration.library.mule.steps.core.RollbackExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ScatterGather;
@@ -65,6 +67,8 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new CompatibilityPomContribution(),
+                        new MuleApp(),
+                        new MuleDomain(),
                         new Logger(),
                         new ChoiceExceptionStrategy(),
                         new CatchExceptionStrategy(),
