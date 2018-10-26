@@ -25,11 +25,14 @@ public class ApplicationReport {
 
   private Map<String, Map<String, List<ReportEntryModel>>> errorEntries = new HashMap<>();
   private Map<String, Map<String, List<ReportEntryModel>>> warningEntries = new HashMap<>();
+  private Map<String, Map<String, List<ReportEntryModel>>> infoEntries = new HashMap<>();
 
   protected ApplicationReport(Map<String, Map<String, List<ReportEntryModel>>> errorEntries,
-                              Map<String, Map<String, List<ReportEntryModel>>> warningEntries) {
+                              Map<String, Map<String, List<ReportEntryModel>>> warningEntries,
+                              Map<String, Map<String, List<ReportEntryModel>>> infoEntries) {
     this.errorEntries = errorEntries;
     this.warningEntries = warningEntries;
+    this.infoEntries = infoEntries;
   }
 
   public Map<String, Map<String, List<ReportEntryModel>>> getErrorEntries() {
@@ -38,6 +41,10 @@ public class ApplicationReport {
 
   public Map<String, Map<String, List<ReportEntryModel>>> getWarningEntries() {
     return this.warningEntries;
+  }
+
+  public Map<String, Map<String, List<ReportEntryModel>>> getInfoEntries() {
+    return this.infoEntries;
   }
 
   public Map<String, Integer> getSummaryErrorEntries() {
@@ -68,6 +75,20 @@ public class ApplicationReport {
     return summaryWarningEntries;
   }
 
+  public Map<String, Integer> getSummaryInfoEntries() {
+    Map<String, Integer> summaryWarningEntries = new HashMap<>();
+    Integer issuesCount = 0;
+
+    for (Map.Entry<String, Map<String, List<ReportEntryModel>>> entry : infoEntries.entrySet()) {
+      for (Map.Entry<String, List<ReportEntryModel>> e : entry.getValue().entrySet()) {
+        issuesCount = issuesCount + e.getValue().size();
+      }
+      summaryWarningEntries.put(entry.getKey(), issuesCount);
+      issuesCount = 0;
+    }
+    return summaryWarningEntries;
+  }
+
   /**
    * It represent the builder to obtain a {@link ApplicationReport}
    *
@@ -86,7 +107,8 @@ public class ApplicationReport {
     public ApplicationReport build() {
       Map<String, Map<String, List<ReportEntryModel>>> errorEntries = getEntries(Level.ERROR);
       Map<String, Map<String, List<ReportEntryModel>>> warningEntries = getEntries(Level.WARN);
-      return new ApplicationReport(errorEntries, warningEntries);
+      Map<String, Map<String, List<ReportEntryModel>>> infoEntries = getEntries(Level.INFO);
+      return new ApplicationReport(errorEntries, warningEntries, infoEntries);
     }
 
     private Map<String, Map<String, List<ReportEntryModel>>> getEntries(Level level) {

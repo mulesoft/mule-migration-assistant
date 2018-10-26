@@ -88,8 +88,10 @@ public class HTMLReport {
       data.put("version", runnerVersion);
       data.put("applicationErrors", applicationReport.getErrorEntries());
       data.put("applicationWarnings", applicationReport.getWarningEntries());
+      data.put("applicationInfo", applicationReport.getInfoEntries());
       data.put("applicationSummaryErrors", applicationReport.getSummaryErrorEntries());
       data.put("applicationSummaryWarnings", applicationReport.getSummaryWarningEntries());
+      data.put("applicationSummaryInfo", applicationReport.getSummaryInfoEntries());
 
       writer = new StringWriter();
       summaryTemplate.process(data, writer);
@@ -104,6 +106,7 @@ public class HTMLReport {
   private void printResources() throws IOException {
     generateResourceFiles(applicationReport.getErrorEntries(), ERROR);
     generateResourceFiles(applicationReport.getWarningEntries(), WARN);
+    generateResourceFiles(applicationReport.getInfoEntries(), INFO);
   }
 
   private void generateResourceFiles(Map<String, Map<String, List<ReportEntryModel>>> entries, Level level) throws IOException {
