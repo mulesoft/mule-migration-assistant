@@ -96,6 +96,46 @@
                 </tbody>
             </table>
     </div>
+    <div class="col-md-8 col-md-offset-1">
+            <h2 class="text-bold">Info:</h2>
+            <table id="resources_table" class="table table-featured table-hover sortable">
+                    <thead>
+                    <tr>
+                        <th colspan="2" data-tsorter="link">Resource</th>
+                        <th data-tsorter="numeric"># Issues</th>
+                    </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <#list applicationSummaryInfo as path, issuesCount>
+                            <tbody class="labels">
+                                <tr>
+                                    <td colspan="2">
+                                        <a><label for="info-${path}">${path}</label></a>
+                                        <input type="checkbox" name="warn-${path}" id="info-${path}" data-toggle="toggle">
+                                    </td>
+                                    <td>${issuesCount}</td>
+                                </tr>
+                            </tbody>
+                            <tbody class="hide" style="display: none">
+                                <#assign count = 0>
+                                <#list applicationInfo[path] as message, entries>
+                                        <tr>
+                                            <td colspan="2">
+                                                <a href=${"resources/info-" + path?remove_ending(".xml") + "-" + count + ".html"}>${ "- " + message}</a>
+                                            </td>
+                                            <td>${entries?size}</td>
+                                        </tr>
+                                    <#assign count = count + 1>
+                                </#list>
+                            </tbody>
+                        <#else>
+                            <tr>
+                                <td colspan="2">No info entries found during migration.</td>
+                            </tr>
+                        </#list>
+                    </tbody>
+                </table>
+        </div>
 
     <script type="text/javascript" src="assets/js/jquery-3.3.1.js"></script>
     <script type="text/javascript">
