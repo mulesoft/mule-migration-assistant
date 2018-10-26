@@ -21,7 +21,7 @@ message:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes
   outboundPropertyEnricher:
     type: WARN
-    message: Setting outbound property as variable.
+    message: Set this value as a variable instead of setting a property.
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   inboundAttachments:
@@ -50,7 +50,7 @@ flow:
     type: WARN
     message: Make sure the expression used in the 'flow-ref' already has the correct flow name and remove the replacements from this expression.
   processingStrategy:
-    type: WARN
+    type: INFO
     message: "'flow' no longer has a 'processingStrategy' attribute."
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
@@ -95,7 +95,7 @@ http:
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   parseRequest:
-    type: WARN
+    type: INFO
     message: "'parseRequest' is not needed in Mule 4, since the InputStream of the multipart payload is provided at it is read."
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-mime-types
@@ -217,7 +217,7 @@ jms:
 
 file:
   streaming:
-    type: WARN
+    type: INFO
     message: "'streaming' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/streaming-about
@@ -232,7 +232,7 @@ file:
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-file#file_configs
   workFileNamePattern:
-    type: WARN
+    type: INFO
     message: "'workFileNamePattern' is not needed in Mule 4 File Connector. The source file is locked, so there is no need to move it to a temporary location."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-file#file_configs
@@ -245,12 +245,12 @@ file:
     type: ERROR
     message: "There are at least 2 connectors matching protocol 'file', so the connector to use must be specified on the endpoint using the 'connector' property/attribute. Connectors in your configuration that support 'file' are {connectors}"
   caseSensitive:
-    type: WARN
+    type: INFO
     message: "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system."
     docLinks:
       - https://docs.mulesoft.com/connectors/file/file-on-new-file
   responseTimeout:
-    type: WARN
+    type: INFO
     message: "'responseTimeout' was not being used by the file transport."
   comparator:
     type: ERROR
@@ -258,14 +258,14 @@ file:
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-file#file_listener
   notNeeded:
-    type: WARN
+    type: INFO
     message: "'{attribute}' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/streaming-about
 
 ftp:
   streaming:
-    type: WARN
+    type: INFO
     message: "'streaming' is not needed in Mule 4 FTP Connector, since streams are now repeatable and enabled by default."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/streaming-about
@@ -280,12 +280,12 @@ ftp:
 
 db:
   referencedDataSource:
-    type: WARN
+    type: INFO
     message: "Mule 3 config has a '{referencer}' with a 'dataSource-ref'. It was converted to a 'db:data-source-connection'."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-database#example_data_source_db
   configAttributesOverlap:
-    type: WARN
+    type: INFO
     message: "The attributes '{otherAttributes}' overlap with properties of the referenced DataSource and were removed."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-database#example_data_source_db
@@ -295,7 +295,7 @@ db:
     docLinks:
       - https://docs.mulesoft.com/connectors/db/db-configure-connection#setting-the-jdbc-driver
   jdbcUrlForSpecificEngine:
-    type: WARN
+    type: INFO
     message: "The config in Mule 3 is specific for an engine, but it contained an 'url' attribute. It will be made generic in order to keep the url."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-database#example_generic_db
@@ -313,14 +313,14 @@ db:
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-database#database_dynamic_queries
   streaming:
-    type: WARN
+    type: INFO
     message: Streaming is enabled by default in Mule 4
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-database#database_streaming
 
 email:
   transformers:
-    type: WARN
+    type: INFO
     message: Email transformers are no longer needed. The payload already has the type information.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/intro-transformations#data-types-and-object-to-string-byte-inputstream-transformers
@@ -429,7 +429,7 @@ vm:
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#session_variables
   requestReplyInbound:
-    type: WARN
+    type: INFO
     message: The queue configured in the VM inbound endpoint of the 'request-reply' is not used anymore.
     docLinks:
       - https://docs.mulesoft.com/connectors/vm/vm-publish-response
@@ -447,7 +447,7 @@ transports:
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-core
   requestReplyStorePrefix:
-    type: WARN
+    type: INFO
     message: "The migration target of 'request-reply' doesn't need an object store."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-core
@@ -564,7 +564,7 @@ errorHandling:
 
 scatterGather:
   threading:
-    type: WARN
+    type: INFO
     message: Threading Profile is no longer needed in Mule 4.
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
@@ -613,7 +613,7 @@ os:
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-objectstore#dual-store
   config:
-    type: WARN
+    type: INFO
     message: On Mule 4 you no longer need to create a spring bean to declare an Object Store.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-objectstore#custom-object-store

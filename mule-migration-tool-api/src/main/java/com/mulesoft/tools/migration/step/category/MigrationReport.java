@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * An interface to feed the migration report.
- * 
+ *
  * @param <T>
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -35,13 +35,21 @@ public interface MigrationReport<T> {
      * Represents a migration step that has to be done manually by the app developer, but the application would work as intended
      * even if this item is not assessed.
      */
-    WARN
+    WARN,
+
+    /**
+     * Represents a change in Mule 4 that will not affect the app behavior. Used when something from the original app had to be
+     * removed/changed because it is no longer needed.
+     * <p>
+     * This is just information to better understand the new features of Mule 4.
+     */
+    INFO
 
   }
 
   /**
    * Sets some basic metadata about the project to be populated into the report.
-   * 
+   *
    * @param projectType
    * @param projectName
    */
@@ -66,7 +74,7 @@ public interface MigrationReport<T> {
    * @param message
    * @param documentationLinks the links to the Mule documentation that contain the explanation of any changes needed in the
    *        migrated app.
-   * 
+   *
    * @deprecated Use {@link #report(String, Element, Element)} instead.
    */
   @Deprecated
