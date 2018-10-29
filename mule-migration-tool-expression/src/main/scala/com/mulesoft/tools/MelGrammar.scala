@@ -23,7 +23,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   val whiteSpaceOrNewLineChar = whiteSpaceChar ++ newLineChar
 
   def root: Rule1[MelExpressionNode] = rule {
-    ws ~  expression ~ ws ~ EOI
+    ws ~ expression ~ ws ~ EOI
   }
 
   def expression: Rule1[MelExpressionNode] = rule {
@@ -35,11 +35,40 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def comparableExpression = rule {
+
     sum ~ optional(comparableToken ~ root ~> createBinaryOp)
   }
 
-  def sum = rule {
-    simpleExpressions ~ optional((plusToken ~ push(OperatorType.plus) | minusToken ~ push(OperatorType.minus)) ~ root ~> createBinaryOp)
+  def sum: Rule1[MelExpressionNode] = namedRule("Math Operator") {
+    multiplicativeExpr ~ optional(ws ~ oneOrMore(plusSubExpr | minusSubExpr | rightShiftSubExpr | leftShiftSubExpr).separatedBy(ws))
+  }
+
+  def plusSubExpr = namedRule("+") {
+    plusToken ~ ws ~ push(OperatorType.plus) ~!~ multiplicativeExpr ~> createBinaryOp
+  }
+
+  def minusSubExpr = namedRule("-") {
+    minusToken ~ push(OperatorType.minus) ~!~ multiplicativeExpr ~> createBinaryOp
+  }
+
+  def rightShiftSubExpr = namedRule(">>") {
+    rightShiftToken ~ push(OperatorType.rightShift) ~!~ multiplicativeExpr ~> createBinaryOp
+  }
+
+  def leftShiftSubExpr = namedRule("<<") {
+    leftShiftToken ~ push(OperatorType.leftShift) ~!~ multiplicativeExpr ~> createBinaryOp
+  }
+
+  def multiplicationSubExpr = namedRule("*") {
+    multiplicationToken ~ push(OperatorType.multiplication) ~!~ simpleExpressions ~> createBinaryOp
+  }
+
+  def divisionSubExpr = namedRule("/") {
+    divisionToken ~ push(OperatorType.division) ~!~ simpleExpressions ~> createBinaryOp
+  }
+
+  def multiplicativeExpr: Rule1[MelExpressionNode] = namedRule("Math Operator") {
+    simpleExpressions ~ optional(ws ~ oneOrMore(multiplicationSubExpr | divisionSubExpr).separatedBy(ws))
   }
 
   def ws: Rule0 = rule {
@@ -51,7 +80,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def map = rule {
-      map1 | map2
+    map1 | map2
   }
 
   def map1: Rule1[MapNode] = rule {
@@ -90,6 +119,14 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
     ws ~ ch('+')
   }
 
+  def multiplicationToken = rule {
+    ws ~ ch('*')
+  }
+
+  def divisionToken = rule {
+    ws ~ ch('/')
+  }
+
   def equalsToken = rule {
     ws ~ "==" ~ push(OperatorType.equals)
   }
@@ -116,6 +153,14 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
 
   def minusToken = rule {
     ws ~ ch('-')
+  }
+
+  def leftShiftToken = rule {
+    ws ~ str("<<")
+  }
+
+  def rightShiftToken = rule {
+    ws ~ str(">>")
   }
 
   def numberNode: Rule1[NumberNode] = rule {
@@ -151,11 +196,11 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def identifierNode: Rule1[IdentifierNode] = rule {
-    clearSB() ~ legalIdentifierName ~ push(sb.toString) ~> createIdentifierNode
+    clearSB() ~ ws ~ legalIdentifierName ~ push(sb.toString) ~> createIdentifierNode
   }
 
   def varReference: Rule1[VariableReferenceNode] = rule {
-    clearSB() ~ legalIdentifierName ~ push(sb.toString) ~> createVariableReferenceNode
+    clearSB() ~ ws ~ legalIdentifierName ~ push(sb.toString) ~> createVariableReferenceNode
   }
 
   def simpleExpressions: Rule1[MelExpressionNode] = rule {
@@ -163,7 +208,11 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def values = rule {
-    (stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(dot) ~ zeroOrMore(subscript) ~ zeroOrMore(dot)
+    (stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(selector)
+  }
+
+  def selector = rule {
+    dot | subscript
   }
 
   def dot = rule {
@@ -173,5 +222,4 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   def subscript = rule {
     ws ~ ch('[') ~ ws ~ push(OperatorType.subscript) ~ simpleExpressions ~ ws ~ ch(']') ~ ws ~> createBinaryOp
   }
-
 }
