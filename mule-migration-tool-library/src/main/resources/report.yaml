@@ -41,9 +41,9 @@ message:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#inbound_attachments
   springBeanDefinitionInsideMuleObject:
     type: ERROR
-    message: "Spring beans definition inside mule components is not allowed. This inner definition must be moved to its own spring config file, and it may be referenced by an 'ee:transform' component or in an expression in the operation/listener directly."
+    message: "Spring beans definition inside mule components is not allowed. Rewrite the logic of the nested spring bean as a DataWeave transformation in an 'ee:transform' component."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-module-spring
+      - https://docs.mulesoft.com/mule-runtime/4.1/transform-component-about
 
 flow:
   dynamicFlowRefName:
@@ -56,7 +56,7 @@ flow:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
   redeliveryExhausted:
     type: ERROR
-    message: Flow already has a 'REDELIVERY_EXHAUSTED' error handler and also has a 'dead-letter-queue' in the 'idempotent-redeliery-policy'
+    message: Flow already has a 'REDELIVERY_EXHAUSTED' error handler and also has a 'dead-letter-queue' in the 'idempotent-redeliery-policy'. Add the publish to the DLQ as part of the 'REDELIVERY_EXHAUSTED' error handler.
   threading:
     type: WARN
     message: Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.
