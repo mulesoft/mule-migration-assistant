@@ -91,12 +91,12 @@ expressions:
 http:
   mapExpression:
     type: WARN
-    message: "Build the '{tagName}' map (of the 'propertyName' and 'value') with a single DataWeave expression."
+    message: "Build the '{tagName}' map (of headers, queryParams, or UriPArams) with a single DataWeave expression."
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   parseRequest:
     type: INFO
-    message: "A 'parseRequest' is not needed in Mule 4 because the 'InputStream' of the multipart payload is provided at it is read."
+    message: "A 'parseRequest' is not needed in Mule 4 because the 'InputStream' of the multipart payload is provided as it is read."
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-mime-types
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/dataweave-formats#format_form_data
