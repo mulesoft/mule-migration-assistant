@@ -58,7 +58,7 @@ flow:
     type: ERROR
     message: Flow already has a 'REDELIVERY_EXHAUSTED' error handler and also has a 'dead-letter-queue' in the 'idempotent-redeliery-policy'. Add the publish to the DLQ as part of the 'REDELIVERY_EXHAUSTED' error handler.
     docLinks:
-      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-exception-strategies
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-exception-strategies#with-redelivery
   threading:
     type: WARN
     message: Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.
