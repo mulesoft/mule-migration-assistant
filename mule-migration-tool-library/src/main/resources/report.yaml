@@ -13,12 +13,12 @@ message:
     type: WARN
     message: Instead of copying properties in the flow, use the 'attributes' of the message directly.
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-mule-message#inbound-properties-are-now-attributes
   attributesToInboundProperties:
     type: WARN
     message: Expressions that query inboundProperties from the message should instead query the attributes of the message. Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as 'copy-properties').
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-mule-message#inbound-properties-are-now-attributes
   outboundPropertyEnricher:
     type: WARN
     message: Set this value as a variable instead of setting a property.
@@ -53,15 +53,17 @@ flow:
     type: INFO
     message: "'flow' no longer has a 'processingStrategy' attribute."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-engine
   redeliveryExhausted:
     type: ERROR
     message: Flow already has a 'REDELIVERY_EXHAUSTED' error handler and also has a 'dead-letter-queue' in the 'idempotent-redeliery-policy'. Add the publish to the DLQ as part of the 'REDELIVERY_EXHAUSTED' error handler.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-exception-strategies
   threading:
     type: WARN
     message: Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-engine
 
 expressions:
   melToDw:
@@ -98,8 +100,8 @@ http:
     type: INFO
     message: "'parseRequest' is not needed in Mule 4, since the InputStream of the multipart payload is provided at it is read."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-mime-types
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/dataweave-formats#format_form_data
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http#http-mime-types
+      - https://docs.mulesoft.com/mule-runtime/4.1/dataweave-formats#format_form_data
   statusCode:
     type: WARN
     message: Avoid using an outbound property to determine the status code.
@@ -120,12 +122,12 @@ http:
     type: ERROR
     message: "'port' cannot be overridden at the HTTP request operation. You may use an expression in the config to make it dynamic. Original value was port=\"{portNumber}\"." 
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http#http-request
   host:
     type: ERROR
     message: "'host' cannot be overridden at the HTTP request operation. You may use an expression in the config to make it dynamic. Original value was host=\"{host}\"."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http#http-request
   socketProperties:
     type: ERROR
     message: The server socket properties may be configured at the runtime level in Mule 4.2.0 or higher.
@@ -212,7 +214,7 @@ jms:
     type: WARN
     message: "Store the attributes of the source in a variable instead of using the inbound properties."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-mule-message#inbound-properties-are-now-attributes
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-jms#sending-messages
 
 file:
@@ -567,7 +569,7 @@ scatterGather:
     type: INFO
     message: Threading Profile is no longer needed in Mule 4.
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-engine
   customAggregation:
     type: ERROR
     message: "Custom Aggregations are no longer supported. Add an 'ee:transform' after the 'scatter-gather' to perform the aggregation."
