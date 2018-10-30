@@ -6,97 +6,97 @@ message:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#session_variables
   outboundProperties:
     type: WARN
-    message: Instead of using outbound properties in the flow, its values must be set explicitly in the operation/listener.
+    message: "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression."
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   copyProperties:
     type: WARN
-    message: Instead of copying properties in the flow, use the 'attributes' of the message directly.
+    message: "Instead of copying inbound properties in the flow, use the 'attributes' of the message directly."
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes
   attributesToInboundProperties:
     type: WARN
-    message: Expressions that query inboundProperties from the message should instead query the attributes of the message. Remove this component when there are no remaining usages of inboundProperties in expressions or components that rely on inboundProperties (such as 'copy-properties').
+    message: "Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties')."
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes
   outboundPropertyEnricher:
     type: WARN
-    message: Set this value as a variable instead of setting a property.
+    message: Set this value as a variable instead of setting an outbound property.
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   inboundAttachments:
     type: WARN
-    message: Identify the received attachments and set them as variables.
+    message: "Identify the received (inbound) attachments, and set them as variables."
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#inbound_attachments
   outboundAttachments:
     type: ERROR
-    message: Refer to the documentation of the connectors/operations in the flow or the source to know how attachments are sent.
+    message: Refer to the documentation for the specific connector or operation to learn how to send attachments.
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_attachments
   expressionsAttachments:
     type: ERROR
-    message: Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.
+    message: "Replace expressions that use 'inboundAttachments' with DataWeave selectors for handling multipart formats."
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#inbound_attachments
   springBeanDefinitionInsideMuleObject:
     type: ERROR
-    message: "Spring beans definition inside mule components is not allowed. This inner definition must be moved to its own spring config file, and it may be referenced by an 'ee:transform' component or in an expression in the operation/listener directly."
+    message: "Spring bean definitions inside Mule components are not allowed. Rewrite the logic of the nested Spring bean as a DataWeave transformation in an 'ee:transform' component."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-module-spring
+      - https://docs.mulesoft.com/mule-runtime/4.1/transform-component-about
 
 flow:
   dynamicFlowRefName:
     type: WARN
-    message: Make sure the expression used in the 'flow-ref' already has the correct flow name and remove the replacements from this expression.
+    message: "Make sure the expression used in the 'flow-ref' has the correct flow name, and remove the replacements from this expression."
   processingStrategy:
     type: INFO
-    message: "'flow' no longer has a 'processingStrategy' attribute."
+    message: "The 'flow' element no longer has a 'processingStrategy' attribute."
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
   redeliveryExhausted:
     type: ERROR
-    message: Flow already has a 'REDELIVERY_EXHAUSTED' error handler and also has a 'dead-letter-queue' in the 'idempotent-redeliery-policy'
+    message: "Flow already has a 'REDELIVERY_EXHAUSTED' error handler and a 'dead-letter-queue' (DLQ) in the 'idempotent-redeliery-policy'. Any outbound operation performed to publish to the DLQ must be done as part of handling the 'REDELIVERY_EXHAUSTED'."
   threading:
     type: WARN
-    message: Threading profiles do not exist in Mule 4. This may be replaced by a 'maxConcurrency' value in the flow.
+    message: "Threading profiles do not exist in Mule 4. You can replace them with a 'maxConcurrency' value in the flow."
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
 
 expressions:
   melToDw:
     type: WARN
-    message: MEL expression could not be migrated to a DataWeave expression.
+    message: The MEL expression could not be migrated to a DataWeave expression.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-mel
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#mel_expressions
       - https://blogs.mulesoft.com/dev/mule-dev/why-dataweave-main-expression-language-mule-4
   inboundAttachments:
     type: ERROR
-    message: Expressions that use inbound attachments, now should directly use the DataWeave features for handling multipart.
+    message: "Replace expressions that use 'inboundAttachments' with DataWeave selectors for handling multipart formats."
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#inbound_attachments
   encodeBase64:
     type: ERROR
-    message: "Cannot migrate 'encodeBase64' method. Please consider using the 'toBase64' function from DataWeave."
+    message: "Cannot migrate 'encodeBase64' method. Please consider using the 'toBase64' DataWeave function."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/dw-binaries-functions-tobase64
   datamapper:
     type: ERROR
-    message: DataMapper migration is not supported. Please migrate the DataMapper usage using the Studio DataWeave migration tool.
+    message: DataMapper migration is not supported. Please migrate the DataMapper usage using the DataWeave Migrator tool.
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/3.8/dataweave-migrator
-      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool.html#datamapper
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-procedure#datamapper
 
 http:
   mapExpression:
     type: WARN
-    message: "Build the '{tagName}' map with a single DW expression."
+    message: "Build the '{tagName}' map (of the 'propertyName' and 'value') with a single DataWeave expression."
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   parseRequest:
     type: INFO
-    message: "'parseRequest' is not needed in Mule 4, since the InputStream of the multipart payload is provided at it is read."
+    message: "A 'parseRequest' is not needed in Mule 4 because the 'InputStream' of the multipart payload is provided at it is read."
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-mime-types
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/dataweave-formats#format_form_data
@@ -112,41 +112,41 @@ http:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   restConnect:
     type: ERROR
-    message: For consuming an API described by a RAML file, Rest-Connect is a more appropriate tool than using the HTTP Connector directly.
+    message: To consume an API described by a RAML file, REST Connect is a more appropriate tool than using the HTTP connector directly.
     docLinks:
       - https://docs.mulesoft.com/anypoint-exchange/to-deploy-using-rest-connect
       - https://blogs.mulesoft.com/dev/anypoint-platform-dev/building-reusable-components-with-rest-connect-and-mule-4
   port:
     type: ERROR
-    message: "'port' cannot be overridden at the HTTP request operation. You may use an expression in the config to make it dynamic. Original value was port=\"{portNumber}\"." 
+    message: "'port' cannot be overridden by the HTTP Request operation. You can use an expression in the config to make it dynamic. Original value was port=\"{portNumber}\"."
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request
   host:
     type: ERROR
-    message: "'host' cannot be overridden at the HTTP request operation. You may use an expression in the config to make it dynamic. Original value was host=\"{host}\"."
+    message: "'host' cannot be overridden by the HTTP Request operation. You can use an expression in the config to make it dynamic. Original value was host=\"{host}\"."
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request
   socketProperties:
     type: ERROR
-    message: The server socket properties may be configured at the runtime level in Mule 4.2.0 or higher.
+    message: The server socket properties can be configured at the runtime level in Mule 4.2.0 or higher.
     # TODO MULE-15135
   sendBodyMode:
     type: WARN
-    message: "'sendBodyMode' added for compatibility. This may not be needed in this app."
+    message: "The 'sendBodyMode' was added for compatibility. It might not be needed in this app."
   cookies:
     type: ERROR
-    message: Cookie support in Mule 4 is limited to resending any cookie received by the server before.
+    message: Cookie support in Mule 4 is limited to resending any cookie received by the server. before.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http
   reuseAddress:
     type: ERROR
-    message: "'reuseAddress' attribute is only applicable to HTTP listeners, not requesters."
+    message: "The 'reuseAddress' attribute is only applicable to HTTP listeners, not requesters."
   checkPayload:
     type: WARN
-    message: This replicates logic from the http transport. Remove if not needed.
+    message: This replicates logic from the HTTP transport. Remove if not needed.
   eTag:
     type: ERROR
-    message: Consider using a watermark for checking ETag.
+    message: Consider using a watermark for checking 'ETag'.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-patterns-watermark
   domainConnector:
