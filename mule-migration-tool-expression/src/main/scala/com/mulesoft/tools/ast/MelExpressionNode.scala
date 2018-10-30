@@ -47,4 +47,8 @@ object OperatorType {
   val greaterThanOrEqual = 9
   val lessThan = 10
   val greaterThan = 11
+  val multiplication = 12
+  val division = 13
+  val leftShift = 14
+  val rightShift = 15
 }
