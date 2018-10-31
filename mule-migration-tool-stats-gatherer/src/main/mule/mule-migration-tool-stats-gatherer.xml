@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+    xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	xmlns:s3="http://www.mulesoft.org/schema/mule/s3"
+    xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/current/mule-s3.xsd
 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+
+	<global-property name="env" value="dev"/>
+	<global-property name="securePropsEncryptionKey" value="1234"/>
+    <secure-properties:config key="${securePropsEncryptionKey}" file="${env}-properties.yaml" name="props">
+        <secure-properties:encrypt/>
+    </secure-properties:config>
+
 	<http:listener-config name="HTTP_MMT_Listener_config" doc:name="HTTP Listener config" doc:id="0a44997c-dc4b-4d89-bc33-93532558715f" basePath="/api" >
 		<http:listener-connection protocol="HTTPS" host="0.0.0.0" port="8082" >
 			<tls:context >
@@ -18,12 +33,16 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<http:request-connection protocol="HTTPS" host="api.segment.io" port="443" />
 	</http:request-config>
 
+	<s3:config name="Amazon_S3_Configuration" doc:name="Amazon S3 Configuration" doc:id="c6cb68f4-449d-4ab8-b310-e7de8762dec7" >
+		<s3:basic-connection accessKey="${secure::s3.access_key}" secretKey="${secure::s3.access_key_secret}"/>
+	</s3:config>
+
 	<flow name="mule-migration-tool-stats-gathererFlow" doc:id="6f63c5a9-5654-4971-8283-505945b85bf6" >
 		<http:listener doc:name="MMT_Listener" doc:id="4b08cf00-7fe7-4da3-b79d-6206d317249f" config-ref="HTTP_MMT_Listener_config" path="/v1/migrated" allowedMethods="POST"/>
 
 		<ee:transform doc:name="Transform Message" doc:id="5583c102-8e9e-4f0f-853e-970d97611a11" >
 			<ee:message >
-				<ee:set-payload >payload</ee:set-payload>
+				<ee:set-payload>payload</ee:set-payload>
 			</ee:message>
 			<ee:variables>
 <!-- 				<ee:set-variable variableName="dryRun" ><![CDATA[attributes.queryParams pluck $$ as String contains ('dryRun') ]]></ee:set-variable> -->
@@ -50,12 +69,13 @@ output application/json
 	"userId" : vars.userId,
 	"properties" : ({
 	    "id": if (vars.status == '0') "MIGRATION_TOOL_RUN_SUCCESSFULLY" else "MIGRATION_FAILED",
+	    "reportKey": payload.projectName ++ "_" ++ payload.projectType ++ "_" ++ random(),
 	    "productName": "MigrationTool",
 	    "productVersion": vars.mmtVersion,
 	    "osName": vars.osName,
 	    "osVersion": vars.osVersion,
 	    "timestamp": now()})
-        ++ payload,
+        ++ (payload - 'reportEntries'),
 	"integrations": {
 	    "Amplitude": {
 	       "session_id": vars.sessionId
@@ -63,10 +83,21 @@ output application/json
   	}
 }]]></ee:set-payload>
 			</ee:message>
-<!-- 			<ee:variables> -->
-<!-- 				<ee:set-variable variableName="dryRun" ><![CDATA[vars.dryRun]]></ee:set-variable> -->
-<!-- 			</ee:variables> -->
+			<ee:variables>
+				<ee:set-variable variableName="report"><![CDATA[%dw 2.0
+output application/json
+---
+{ report: payload.reportEntries }]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
+
+		<s3:create-object doc:name="Create object" doc:id="ce4e8e1a-e6b7-4e91-a15b-3041e4d625d9"
+        		          config-ref="Amazon_S3_Configuration"
+        		          bucketName="${secure::s3.bucket}" key="#[payload.properties.reportKey]"
+        		          target="s3ObjectCreated">
+			<s3:object-content ><![CDATA[#[vars.report]]]></s3:object-content>
+		</s3:create-object>
+
 <!-- 		<choice doc:name="Choice" doc:id="44b016b0-2793-49b5-ad77-4332d2ca33bc" > -->
 <!-- 			<when expression="#[vars.dryRun]" > -->
 <!-- 				<logger level="INFO" message="#[payload]" doc:name="Logger" doc:id="7ae5bb24-c6b0-479c-99c7-b0c83496015d" /> -->
