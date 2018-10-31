@@ -15,14 +15,15 @@ http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
 
+    <global-property name="https.port" value="8082"/>
 	<global-property name="env" value="dev"/>
 	<global-property name="securePropsEncryptionKey" value="1234"/>
     <secure-properties:config key="${securePropsEncryptionKey}" file="${env}-properties.yaml" name="props">
-        <secure-properties:encrypt/>
+        <secure-properties:encrypt algorithm="Blowfish"/>
     </secure-properties:config>
 
 	<http:listener-config name="HTTP_MMT_Listener_config" doc:name="HTTP Listener config" doc:id="0a44997c-dc4b-4d89-bc33-93532558715f" basePath="/api" >
-		<http:listener-connection protocol="HTTPS" host="0.0.0.0" port="8082" >
+		<http:listener-connection protocol="HTTPS" host="0.0.0.0" port="${https.port}" >
 			<tls:context >
 				<tls:key-store type="jks" path="server.jks" keyPassword="mulemanishere" password="mulemanishere" />
 			</tls:context>
