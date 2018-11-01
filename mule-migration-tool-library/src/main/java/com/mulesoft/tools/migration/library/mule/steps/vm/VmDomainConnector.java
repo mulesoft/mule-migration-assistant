@@ -35,6 +35,6 @@ public class VmDomainConnector extends VmConnector {
 
     addTopLevelElement(vmCfg, object.getDocument());
 
-    report.report("vm.domainConnector", vmCfg, vmCfg);
+    report.report("transports.domainConnector", vmCfg, vmCfg);
   }
 }
