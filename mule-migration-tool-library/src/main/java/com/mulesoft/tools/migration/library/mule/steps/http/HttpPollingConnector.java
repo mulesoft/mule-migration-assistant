@@ -66,7 +66,7 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
     }
 
     if (MULE_FOUR_POLICY.equals(getApplicationModel().getProjectType())) {
-      report.report("http.domainConnector", requestConnection, object);
+      report.report("transports.domainConnector", requestConnection, object);
     }
 
     List<Element> pollingEndpoints =

@@ -284,7 +284,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     }
 
     if (connector.getDocument().getRootElement().getName().equals("domain")) {
-      report.report("http.domainConnector", connector, connector);
+      report.report("transports.domainConnector", connector, connector);
     }
   }
 
