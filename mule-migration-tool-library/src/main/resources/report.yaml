@@ -151,9 +151,6 @@ http:
     message: Consider using a watermark for checking ETag.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-patterns-watermark
-  domainConnector:
-    type: ERROR
-    message: The configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.
   tlsClientClass:
     type: ERROR
     message: "'class' attribute of 'https:tls-client' was deprecated in 3.x. Use 'type' instead."
@@ -351,7 +348,7 @@ email:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-email#migrating-an-imap-inbound-endpoint
   outbound:
     type: ERROR
-    message: "Remove any unneeded children and add any missing ones, based on the properties set previous to this operation."
+    message: "Use the inline configuration of the operation instead of relying on properties set before this endpoint."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-email#migrating-an-smtp-outbound-endpoint
   imapTlsClientClass:
@@ -435,9 +432,6 @@ vm:
     message: The queue configured in the VM inbound endpoint of the 'request-reply' is not used anymore.
     docLinks:
       - https://docs.mulesoft.com/connectors/vm/vm-publish-response
-  domainConnector:
-    type: ERROR
-    message: The queues configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.
 
 transports:
   cantParseAddress:
@@ -458,6 +452,11 @@ transports:
     message: "'reconnect-custom-notifier' is not supported in Mule 4."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-patterns-reconnection-strategies
+  domainConnector:
+    type: ERROR
+    message: The configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.
+    docLinks:
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#domain_connectors
 
 components:
   unsupported:
