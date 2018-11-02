@@ -298,7 +298,7 @@ db:
       - https://docs.mulesoft.com/connectors/db/db-configure-connection#setting-the-jdbc-driver
   jdbcUrlForSpecificEngine:
     type: INFO
-    message: "The config in Mule 3 is specific for an engine, but it contained a  'url' attribute. It will be made generic to keep the URL."
+    message: "The config in Mule 3 is specific for an engine, but it contained a 'url' attribute. It will be made generic to keep the URL."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-database#example_generic_db
   jbossTxManager:
