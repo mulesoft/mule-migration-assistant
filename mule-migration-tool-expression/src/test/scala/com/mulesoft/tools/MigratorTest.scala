@@ -86,4 +86,32 @@ class MigratorTest extends FlatSpec with Matchers {
   it should "migrate an expression containing NullPayload.getInstance()" in {
     Migrator.migrate("payload != NullPayload.getInstance()") shouldBe "---\npayload != null"
   }
+
+  it should "migrate a simple addition/subtraction expression" in {
+    Migrator.migrate("-2 - 3 + 1") shouldBe "---\n-2 - 3 + 1"
+  }
+
+  it should "migrate multiplication" in {
+    Migrator.migrate("1*2") shouldBe "---\n1 * 2"
+  }
+
+  it should "migrate multiple multiplication" in {
+    Migrator.migrate("1*2*3") shouldBe "---\n1 * 2 * 3"
+  }
+
+  it should "migrate multiplication and addition" in {
+    Migrator.migrate("1*2+3") shouldBe "---\n1 * 2 + 3"
+  }
+
+  it should "migrate addition and multiplication and division" in {
+    Migrator.migrate("1+2*3/4 + 5") shouldBe "---\n1 + 2 * 3 / 4 + 5"
+  }
+
+  it should "migrate arithmetic with comparison 1" in {
+    Migrator.migrate("1+2*3/4 + 5 ==7.5") shouldBe "---\n1 + 2 * 3 / 4 + 5 == 7.5"
+  }
+
+  it should "migrate arithmetic with comparison 2" in {
+    Migrator.migrate("1+2*3/4 + 5 ==15/2") shouldBe "---\n1 + 2 * 3 / 4 + 5 == 15 / 2"
+  }
 }

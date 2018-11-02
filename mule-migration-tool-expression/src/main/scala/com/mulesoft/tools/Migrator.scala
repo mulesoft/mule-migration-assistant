@@ -36,6 +36,8 @@ object Migrator {
           case mel.OperatorType.greaterThan => dw.operators.BinaryOpNode(GreaterThanOpId, toDataweaveAst(left), toDataweaveAst(right))
           case mel.OperatorType.and => AndNode(toDataweaveAst(left), toDataweaveAst(right))
           case mel.OperatorType.or => OrNode(toDataweaveAst(left), toDataweaveAst(right))
+          case mel.OperatorType.multiplication => dw.operators.BinaryOpNode(MultiplicationOpId, toDataweaveAst(left), toDataweaveAst(right))
+          case mel.OperatorType.division => dw.operators.BinaryOpNode(DivisionOpId, toDataweaveAst(left), toDataweaveAst(right))
         }
       }
       case mel.MapNode(elements) => {

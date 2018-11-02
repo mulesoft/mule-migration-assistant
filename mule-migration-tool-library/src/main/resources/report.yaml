@@ -13,12 +13,12 @@ message:
     type: WARN
     message: "Instead of copying inbound properties in the flow, use the 'attributes' of the message directly."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-mule-message#inbound-properties-are-now-attributes
   attributesToInboundProperties:
     type: WARN
     message: "Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties')."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-mule-message#inbound-properties-are-now-attributes
   outboundPropertyEnricher:
     type: WARN
     message: Set this value as a variable instead of setting an outbound property.
@@ -53,15 +53,17 @@ flow:
     type: INFO
     message: "The 'flow' element no longer has a 'processingStrategy' attribute."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-engine
   redeliveryExhausted:
     type: ERROR
-    message: "Flow already has a 'REDELIVERY_EXHAUSTED' error handler and a 'dead-letter-queue' (DLQ) in the 'idempotent-redeliery-policy'. Any outbound operation performed to publish to the DLQ must be done as part of handling the 'REDELIVERY_EXHAUSTED'."
+    message: "Flow already has a 'REDELIVERY_EXHAUSTED' error handler and a 'dead-letter-queue' (DLQ) in the 'idempotent-redeliery-policy'. Any outbound operation performed to publish to the DLQ must take place as part of handling the 'REDELIVERY_EXHAUSTED'."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-exception-strategies#with-redelivery
   threading:
     type: WARN
     message: "Threading profiles do not exist in Mule 4. You can replace them with a 'maxConcurrency' value in the flow."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-engine
 
 expressions:
   melToDw:
@@ -78,12 +80,12 @@ expressions:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#inbound_attachments
   encodeBase64:
     type: ERROR
-    message: "Cannot migrate 'encodeBase64' method. Please consider using the 'toBase64' DataWeave function."
+    message: "Cannot migrate 'encodeBase64' method. Consider using the 'toBase64' DataWeave function."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/dw-binaries-functions-tobase64
   datamapper:
     type: ERROR
-    message: DataMapper migration is not supported. Please migrate the DataMapper usage using the DataWeave Migrator tool.
+    message: DataMapper migration is not supported. Use the DataWeave Migrator tool  to migrate uses of DataMapper.
     docLinks:
       - https://docs.mulesoft.com/mule-user-guide/v/3.8/dataweave-migrator
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-procedure#datamapper
@@ -91,15 +93,15 @@ expressions:
 http:
   mapExpression:
     type: WARN
-    message: "Build the '{tagName}' map (of headers, queryParams, or UriPArams) with a single DataWeave expression."
+    message: "Build the '{tagName}' map with a single DataWeave expression."
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties
   parseRequest:
     type: INFO
     message: "A 'parseRequest' is not needed in Mule 4 because the 'InputStream' of the multipart payload is provided as it is read."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-mime-types
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/dataweave-formats#format_form_data
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http#http-mime-types
+      - https://docs.mulesoft.com/mule-runtime/4.1/dataweave-formats#format_form_data
   statusCode:
     type: WARN
     message: Avoid using an outbound property to determine the status code.
@@ -120,12 +122,12 @@ http:
     type: ERROR
     message: "'port' cannot be overridden by the HTTP Request operation. You can use an expression in the config to make it dynamic. Original value was port=\"{portNumber}\"."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http#http-request
   host:
     type: ERROR
     message: "'host' cannot be overridden by the HTTP Request operation. You can use an expression in the config to make it dynamic. Original value was host=\"{host}\"."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/migration-connectors-http#http-request
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http#http-request
   socketProperties:
     type: ERROR
     message: The server socket properties can be configured at the runtime level in Mule 4.2.0 or higher.
@@ -135,7 +137,7 @@ http:
     message: "The 'sendBodyMode' was added for compatibility. It might not be needed in this app."
   cookies:
     type: ERROR
-    message: Cookie support in Mule 4 is limited to resending any cookie received by the server. before.
+    message: Cookie support in Mule 4 is limited to resending any cookie received by the server.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http
   reuseAddress:
@@ -143,7 +145,7 @@ http:
     message: "The 'reuseAddress' attribute is only applicable to HTTP listeners, not requesters."
   checkPayload:
     type: WARN
-    message: This replicates logic from the HTTP transport. Remove if not needed.
+    message: This replicates logic from the HTTP transport. Remove it if it is not needed.
   eTag:
     type: ERROR
     message: Consider using a watermark for checking 'ETag'.
@@ -151,7 +153,7 @@ http:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-patterns-watermark
   domainConnector:
     type: ERROR
-    message: The configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.
+    message: This connector configuration was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.
   tlsClientClass:
     type: ERROR
     message: "'class' attribute of 'https:tls-client' was deprecated in 3.x. Use 'type' instead."
@@ -181,7 +183,7 @@ jms:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-jms#using-a-different-broker
   websphereMqConnector:
     type: ERROR
-    message: IBM MQ Connector should be used to connect to an IBM MQ broker.
+    message: IBM MQ connector should be used to connect to an IBM MQ broker.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-jms#using-a-different-broker
   xaConnectionCache:
@@ -212,28 +214,28 @@ jms:
     type: WARN
     message: "Store the attributes of the source in a variable instead of using the inbound properties."
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-mule-message#inbound-properties-are-now-attributes
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-mule-message#inbound-properties-are-now-attributes
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-jms#sending-messages
 
 file:
   streaming:
     type: INFO
-    message: "'streaming' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default."
+    message: "'streaming' is not needed in the Mule 4 File connector because streams are now repeatable and enabled by default."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/streaming-about
   serialiseObjects:
     type: ERROR
-    message: "'serialiseObjects' is not needed in Mule 4 File Connector, you may process the payload with DataWeave directly without the need to convert it to a Java object."
+    message: "'serialiseObjects' is not needed in Mule 4 File connector. You can process the payload with DataWeave directly without the need to convert it to a Java object."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/transform-component-about
   workDirectory:
     type: ERROR
-    message: "'workDirectory' is not needed in Mule 4 File Connector. The source file is locked, so there is no need to move it to a temporary location."
+    message: "'workDirectory' is not needed in Mule 4 File connector. The source file is locked, so there is no need to move it to a temporary location."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-file#file_configs
   workFileNamePattern:
     type: INFO
-    message: "'workFileNamePattern' is not needed in Mule 4 File Connector. The source file is locked, so there is no need to move it to a temporary location."
+    message: "'workFileNamePattern' is not needed in Mule 4 File connector. The source file is locked, so there is no need to move it to a temporary location."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-file#file_configs
   filePath:
@@ -243,10 +245,10 @@ file:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-file#file_write
   manyConnectors:
     type: ERROR
-    message: "There are at least 2 connectors matching protocol 'file', so the connector to use must be specified on the endpoint using the 'connector' property/attribute. Connectors in your configuration that support 'file' are {connectors}"
+    message: "There are at least 2 connectors matching protocol 'file', so the connector to use must be specified on the endpoint using the 'connector' property or attribute. Connectors in your configuration that support 'file' are {connectors}"
   caseSensitive:
     type: INFO
-    message: "'caseSensitive' is not supported in Mule 4 File Connector. The case sensitivity is delegated to the file system."
+    message: "'caseSensitive' is not supported in Mule 4 File connector. The case sensitivity is delegated to the file system."
     docLinks:
       - https://docs.mulesoft.com/connectors/file/file-on-new-file
   responseTimeout:
@@ -254,29 +256,29 @@ file:
     message: "'responseTimeout' was not being used by the file transport."
   comparator:
     type: ERROR
-    message: "'comparator'/'reverseOrder' are not yet supported by the file connector listener."
+    message: "'comparator'/'reverseOrder' are not yet supported by the File connector listener."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-file#file_listener
   notNeeded:
     type: INFO
-    message: "'{attribute}' is not needed in Mule 4 File Connector, since streams are now repeatable and enabled by default."
+    message: "'{attribute}' is not needed in Mule 4 File connector because streams are now repeatable and enabled by default."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/streaming-about
 
 ftp:
   streaming:
     type: INFO
-    message: "'streaming' is not needed in Mule 4 FTP Connector, since streams are now repeatable and enabled by default."
+    message: "'streaming' is not needed in Mule 4 FTP connector because streams are now repeatable and enabled by default."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/streaming-about
   connectionFactoryClass:
     type: ERROR
-    message: "'connectionFactoryClass' cannot be changed in Mule 4 FTP Connector."
+    message: "'connectionFactoryClass' cannot be changed in Mule 4 FTP connector."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-ftp-sftp#migrating-an-ftp-connection
   manyConnectors:
     type: ERROR
-    message: "There are at least 2 connectors matching protocol 'ftp', so the connector to use must be specified on the endpoint using the 'connector' property/attribute. Connectors in your configuration that support 'ftp' are {connectors}"
+    message: "There are at least 2 connectors matching protocol 'ftp', so the connector to use must be specified on the endpoint using the 'connector' property or attribute. Connectors in your configuration that support 'ftp' are {connectors}"
 
 db:
   referencedDataSource:
@@ -291,17 +293,17 @@ db:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-database#example_data_source_db
   jdbcDriverDependency:
     type: ERROR
-    message: Add a suitable jdbc driver dependency for this connection.
+    message: Add a suitable JDBC driver dependency for this connection.
     docLinks:
       - https://docs.mulesoft.com/connectors/db/db-configure-connection#setting-the-jdbc-driver
   jdbcUrlForSpecificEngine:
     type: INFO
-    message: "The config in Mule 3 is specific for an engine, but it contained an 'url' attribute. It will be made generic in order to keep the url."
+    message: "The config in Mule 3 is specific for an engine, but it contained a  'url' attribute. It will be made generic to keep the URL."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-database#example_generic_db
   jbossTxManager:
     type: ERROR
-    message: JBoss Transaction manager must be replaced by Bitronix Transaction Manager provided by Mule.
+    message: JBoss Transaction manager must be replaced by the Bitronix Transaction Manager provided by Mule.
   reconnectNotifiers:
     type: ERROR
     message: "Reconnection notifiers cannot be configured on the 'reconnect' element."
@@ -334,24 +336,29 @@ email:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-email#migrating-a-pop3-inbound-endpoint
   pop3DefaultProcessMessageAction:
     type: ERROR
-    message: "'defaultProcessMessageAction' is no longer supported in Email Connector."
+    message: "'defaultProcessMessageAction' is no longer supported by the Email connector."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-email#migrating-a-pop3-inbound-endpoint
   imapBackup:
     type: ERROR
-    message: "'backupEnabled' and 'backupFolder' are no longer supported in Email Connector."
+    message: "'backupEnabled' and 'backupFolder' are no longer supported by the Email connector."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-email#migrating-an-imap-inbound-endpoint
   imapDefaultProcessMessageAction:
     type: ERROR
-    message: "'defaultProcessMessageAction' is no longer supported in Email Connector."
+    message: "'defaultProcessMessageAction' is no longer supported by the Email connector."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-email#migrating-an-imap-inbound-endpoint
   outbound:
     type: ERROR
-    message: "Remove any unneeded children and add any missing ones, based on the properties set previous to this operation."
+    message: "Use the inline configuration of the operation instead of relying on properties set before this endpoint."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-email#migrating-an-smtp-outbound-endpoint
+  domainConnector:
+    type: ERROR
+    message: The Mule 3 configuration for this connector was located in the endpoints. Complete this connection provider in the domain with the appropriate configuration.
+    docLinks:
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#domain_connectors
   imapTlsClientClass:
     type: ERROR
     message: "'class' attribute of 'imaps:tls-client' was deprecated in 3.x. Use 'type' instead."
@@ -386,10 +393,10 @@ email:
 wsc:
   unsupportedProtocol:
     type: ERROR
-    message: WebService consumer only supports HTTP or JMS transports.
+    message: Web Service Consumer only supports HTTP or JMS transports.
   wsdl:
     type: WARN
-    message: "A connector will be used for retrieving the wsdl only if a connector is referenced from this config."
+    message: "A connector will be used for retrieving the WSDL only if a connector is referenced from this config."
 
 validation:
   exceptionFactory:
@@ -406,7 +413,7 @@ validation:
 scripting:
   messageFormat:
     type: ERROR
-    message: The message format in Mule 4 has changed. Change any usages of the message to match the new bindings in Mule 4.
+    message: The message format in Mule 4 has changed. Change any uses of the message to match the new bindings in Mule 4.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/intro-mule-message
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-module-scripting
@@ -417,7 +424,7 @@ vm:
     message: Mule 4 does not support joining with external transactions.
   listenerTx:
     type: WARN
-    message: There can be no transaction active before the listener, so JOIN is not supported at this point.
+    message: No transaction can be active before the listener, so JOIN is not supported at this point.
   nestedTx:
     type: ERROR
     message: Use a 'try' scope to begin a nested transaction.
@@ -425,7 +432,7 @@ vm:
       - https://docs.mulesoft.com/mule-runtime/4.1/try-scope-xml-reference#properties-of-try
   sessionVars:
     type: WARN
-    message: You may remove this if this flow is not using sessionVariables, or after those are migrated to variables.
+    message: You can remove this if this flow is not using 'sessionVariables' or after migrating them to variables.
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#session_variables
   requestReplyInbound:
@@ -567,7 +574,7 @@ scatterGather:
     type: INFO
     message: Threading Profile is no longer needed in Mule 4.
     docLinks:
-      - https://docs.mulesoft.com/mule-user-guide/v/4.1/intro-engine
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-engine
   customAggregation:
     type: ERROR
     message: "Custom Aggregations are no longer supported. Add an 'ee:transform' after the 'scatter-gather' to perform the aggregation."
