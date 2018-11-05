@@ -46,7 +46,7 @@
         <maven.dependency.version>2.8</maven.dependency.version>
         <maven.site.plugin.version>3.3</maven.site.plugin.version>
 
-        <jacoco.maven.plugin.version>0.7.9</jacoco.maven.plugin.version>
+        <jacoco.maven.plugin.version>0.8.2</jacoco.maven.plugin.version>
         <jacoco.report.location>${session.executionRootDirectory}/target/jacoco.exec</jacoco.report.location>
 
         <!-- Dependencies -->
@@ -62,9 +62,9 @@
 
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <mockito.version>1.10.19</mockito.version>
+        <mockito.version>2.23.0</mockito.version>
         <xmlunit.version>2.5.1</xmlunit.version>
-        <powermock.module.junit4>1.7.3</powermock.module.junit4>
+        <powermock.module.junit4>2.0.0-beta.5</powermock.module.junit4>
 
         <maven.model.version>3.5.0</maven.model.version>
 
@@ -98,7 +98,7 @@
         <scalatest.maven.plugin.version>2.0.0</scalatest.maven.plugin.version>
 
         <java.version>1.8</java.version>
-        <scala.version>2.12.5</scala.version>
+        <scala.version>2.12.7</scala.version>
         <parboiled.version>2.1.4</parboiled.version>
         <scalatest.version>3.0.1</scalatest.version>
 
@@ -423,7 +423,7 @@
             </dependency>
             <dependency>
                 <groupId>org.powermock</groupId>
-                <artifactId>powermock-api-mockito</artifactId>
+                <artifactId>powermock-api-mockito2</artifactId>
                 <version>${powermock.module.junit4}</version>
                 <scope>test</scope>
             </dependency>

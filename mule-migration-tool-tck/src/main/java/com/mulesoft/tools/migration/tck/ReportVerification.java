@@ -16,9 +16,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyVararg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyVararg;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
@@ -64,13 +64,13 @@ public class ReportVerification extends ExternalResource {
 
     report = mock(MigrationReport.class);
     Answer<Void> elementRegisterAnswer = inv -> {
-      Element element = inv.getArgumentAt(1, Element.class);
-      Element elementToComment = inv.getArgumentAt(2, Element.class);
+      Element element = inv.getArgument(1);
+      Element elementToComment = inv.getArgument(2);
 
       assertThat(elementToComment, not(nullValue()));
 
       if (inv.getArguments()[0] instanceof String) {
-        String entryKey = inv.getArgumentAt(0, String.class);
+        String entryKey = inv.getArgument(0);
         String[] messageParams = copyOfRange(inv.getArguments(), 3, inv.getArguments().length, String[].class);
 
         reportedElements

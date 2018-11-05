@@ -9,9 +9,10 @@ package com.mulesoft.tools.migration.task;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -38,7 +39,6 @@ import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -121,11 +121,11 @@ public class AbstractMigrationTaskTest {
     migrationTask.execute(mock(MigrationReport.class));
     verify(namespaceContributionMock, times(1)).execute(any(ApplicationModel.class), any(MigrationReport.class));
     verify(applicationModelContributionMock, times(2)).getAppliedTo();
-    verify(projectStructureContributionMock, times(1)).execute(any(Path.class), any(MigrationReport.class));
+    verify(projectStructureContributionMock, times(1)).execute(isNull(), any(MigrationReport.class));
     verify(pomContributionMock, times(1)).execute(any(PomModel.class), any(MigrationReport.class));
 
     inOrder.verify(namespaceContributionMock).execute(any(ApplicationModel.class), any(MigrationReport.class));
-    inOrder.verify(projectStructureContributionMock).execute(any(Path.class), any(MigrationReport.class));
+    inOrder.verify(projectStructureContributionMock).execute(isNull(), any(MigrationReport.class));
     inOrder.verify(pomContributionMock).execute(any(PomModel.class), any(MigrationReport.class));
 
   }
@@ -150,7 +150,9 @@ public class AbstractMigrationTaskTest {
     doReturn(newArrayList(mock(Element.class))).when(applicationModelMock).getNodes(any(XPathExpression.class));
 
     MigrationStepSelector selectorMock = mock(MigrationStepSelector.class);
-    doReturn(newArrayList(mock(ApplicationModelContribution.class))).when(selectorMock).getApplicationModelContributionSteps();
+    ApplicationModelContribution contrib = mock(ApplicationModelContribution.class);
+    doReturn(mock(XPathExpression.class)).when(contrib).getAppliedTo();
+    doReturn(newArrayList(contrib)).when(selectorMock).getApplicationModelContributionSteps();
 
     AbstractMigrationTask taskSpy = spy(AbstractMigrationTask.class);
     taskSpy.setApplicationModel(applicationModelMock);

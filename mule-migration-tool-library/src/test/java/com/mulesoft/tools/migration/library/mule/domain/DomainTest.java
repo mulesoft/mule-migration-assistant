@@ -15,8 +15,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -147,9 +147,9 @@ public class DomainTest {
     when(domainModel.getApplicationDocuments()).thenReturn(domainModelDocs);
 
     doAnswer(invocation -> {
-      String prefix = invocation.getArgumentAt(0, String.class);
-      String uri = invocation.getArgumentAt(1, String.class);
-      String schemaLocation = invocation.getArgumentAt(2, String.class);
+      String prefix = invocation.getArgument(0);
+      String uri = invocation.getArgument(1);
+      String schemaLocation = invocation.getArgument(2);
 
       Namespace namespace = Namespace.getNamespace(prefix, uri);
       addNameSpace(namespace, schemaLocation, domainDoc);
@@ -180,9 +180,9 @@ public class DomainTest {
     when(appModel.getDomainDocuments()).thenReturn(appDomainModelDocs);
 
     doAnswer(invocation -> {
-      String prefix = invocation.getArgumentAt(0, String.class);
-      String uri = invocation.getArgumentAt(1, String.class);
-      String schemaLocation = invocation.getArgumentAt(2, String.class);
+      String prefix = invocation.getArgument(0);
+      String uri = invocation.getArgument(1);
+      String schemaLocation = invocation.getArgument(2);
 
       Namespace namespace = Namespace.getNamespace(prefix, uri);
       addNameSpace(namespace, schemaLocation, originalDomainDoc);
