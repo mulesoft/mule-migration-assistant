@@ -8,8 +8,8 @@
     xsi:schemaLocation="
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
-               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
-               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-current.xsd">
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <spring:beans>
         <util:properties id="providerProperties">
