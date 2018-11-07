@@ -21,6 +21,10 @@ class MelGrammarTest extends FlatSpec with Matchers {
     MelParserHelper.parse("\"\"") shouldBe StringNode("")
   }
 
+  it should "parse a constructor invocation" in {
+    MelParserHelper.parse("new Object(\"a\")") shouldBe ConstructorNode(CanonicalNameNode("Object"),List(StringNode("a")))
+  }
+
   it should "parse a positive integer number" in {
     List("1", "100", "12345678987654321", "000000", "+100").foreach(n => MelParserHelper.parse(n) shouldBe NumberNode(n))
   }

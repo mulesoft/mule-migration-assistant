@@ -82,7 +82,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     migratedExpression = resolveServerContext(migratedExpression);
     migratedExpression = resolveIdentifiers(migratedExpression);
 
-    return dataWeaveBodyOnly ? migratedExpression.replaceFirst("---", "").trim() : migratedExpression;
+    return dataWeaveBodyOnly ? migratedExpression.replaceFirst("%dw 2\\.0\n---", "").trim() : migratedExpression;
   }
 
   private String resolveServerContext(String expression) {

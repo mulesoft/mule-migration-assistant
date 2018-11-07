@@ -34,6 +34,14 @@ case class ListNode(elements: Seq[MelExpressionNode]) extends MelExpressionNode 
   override def children: Seq[MelExpressionNode] = elements
 }
 
+case class ConstructorNode(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) extends MelExpressionNode {
+  override def children: Seq[MelExpressionNode] = arguments
+}
+
+case class CanonicalNameNode(name: String) extends MelExpressionNode {
+}
+
+
 object OperatorType {
   val plus = 0
   val minus = 1

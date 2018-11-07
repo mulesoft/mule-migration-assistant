@@ -3,6 +3,7 @@ package com.mulesoft.tools
 import com.mulesoft.tools.ast._
 import org.parboiled2.{Parser, Rule1, _}
 import org.parboiled2.Parser.DeliveryScheme.Either
+import shapeless.HNil
 
 class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
 
@@ -16,6 +17,8 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   private val createKeyValuePairNode = (key: StringNode, value: MelExpressionNode) => KeyValuePairNode(key, value)
   private val createMapNode = (elements: Seq[KeyValuePairNode]) => MapNode(elements)
   private val createListNode = (elements: Seq[MelExpressionNode]) => ListNode(elements)
+  private val createConstructorNode = (canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) => ConstructorNode(canonicalName, arguments)
+  private val createCanonicalNameNode = (name: String) => CanonicalNameNode(name)
 
 
   private val whiteSpaceChar = CharPredicate(" \f\t")
@@ -203,12 +206,24 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
     clearSB() ~ ws ~ legalIdentifierName ~ push(sb.toString) ~> createVariableReferenceNode
   }
 
+  def legalCanonicalName: Rule0 = rule {
+    zeroOrMore((CharPredicate.AlphaNum | ch('.')) ~ appendSB())
+  }
+
+  def canonicalNameNode: Rule1[CanonicalNameNode] = rule {
+    clearSB() ~ ws ~ legalCanonicalName ~ push(sb.toString) ~> createCanonicalNameNode
+  }
+
   def simpleExpressions: Rule1[MelExpressionNode] = rule {
     booleanNode | numberNode | values
   }
 
   def values = rule {
-    (stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(selector)
+    (constructor | stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(selector)
+  }
+
+  def constructor: Rule1[ConstructorNode] = rule {
+    (ws ~ str("new") ~ ws ~ canonicalNameNode ~ ws ~ ch('(') ~ ws ~ ((ch(')') ~ push(Seq())) | oneOrMore(simpleExpressions).separatedBy(',') ~ ws ~ ch(')'))) ~> createConstructorNode
   }
 
   def selector = rule {
