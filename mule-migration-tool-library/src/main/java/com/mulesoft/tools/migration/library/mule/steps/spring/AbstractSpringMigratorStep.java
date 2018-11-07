@@ -10,8 +10,14 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElem
 import static java.util.Arrays.stream;
 import static org.jdom2.Namespace.getNamespace;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
@@ -21,14 +27,8 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
+import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 
 /**
  * Common stuff for migrators of Spring elements
@@ -118,9 +118,18 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
 
       for (Namespace namespace : declaredNamespaces) {
         if (!StringUtils.isEmpty(namespace.getURI())) {
-          getApplicationModel().addNameSpace(namespace, locations.get(namespace.getURI()), springDocument.getDocument());
+          getApplicationModel().addNameSpace(namespace, fixSpringSchemaLocationVersion(locations.get(namespace.getURI())),
+                                             springDocument.getDocument());
         }
       }
+    }
+  }
+
+  private String fixSpringSchemaLocationVersion(String schemaLocation) {
+    if (schemaLocation.startsWith("http://www.springframework.org/schema/") && schemaLocation.endsWith("-current.xsd")) {
+      return schemaLocation.replace("-current.xsd", ".xsd");
+    } else {
+      return schemaLocation;
     }
   }
 

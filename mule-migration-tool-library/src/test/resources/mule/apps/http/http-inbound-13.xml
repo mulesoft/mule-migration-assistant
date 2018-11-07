@@ -8,7 +8,7 @@
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd
-               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <http:listener-config name="flowListenerConfig">
         <http:listener-connection host="localhost" port="${port1}"/>
