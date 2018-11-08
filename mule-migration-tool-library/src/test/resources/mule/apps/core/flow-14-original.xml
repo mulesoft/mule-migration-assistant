@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <asynchronous-processing-strategy name="Asynchronous_Processing_Strategy" maxThreads="3"/>
+
+    <flow name="simpleFlow" processingStrategy="Asynchronous_Processing_Strategy">
+        <logger message="response"/>
+    </flow>
+</mule>

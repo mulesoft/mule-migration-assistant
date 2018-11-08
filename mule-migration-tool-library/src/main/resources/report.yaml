@@ -631,3 +631,17 @@ os:
     message: The exception thrown by the Object Store has changed.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-objectstore#storing-values
+
+async:
+  processingStrategy:
+    type: INFO
+    message: "In Mule 4, Async processing strategies are no longer needed with the non-blocking execution engine."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core
+
+untilSuccessful:
+  threading:
+    type: INFO
+    message: Threading Profile is no longer needed in Mule 4.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-engine
