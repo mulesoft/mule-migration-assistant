@@ -42,7 +42,9 @@ public class UntilSuccessfulTest {
   public static Object[] params() {
     return new Object[] {
         "until-successful-01",
-        "until-successful-02"
+        "until-successful-02",
+        "until-successful-03",
+        "until-successful-04"
     };
   }
 

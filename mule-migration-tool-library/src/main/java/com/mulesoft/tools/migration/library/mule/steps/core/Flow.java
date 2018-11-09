@@ -58,6 +58,10 @@ public class Flow extends AbstractApplicationModelMigrationStep {
       Element processingStrategyConfig = getApplicationModel().getNode("//*[@name = '" + processingStrategy.getValue() + "']");
       if (processingStrategyConfig != null) {
         processingStrategyConfig.detach();
+
+        if (processingStrategyConfig.getAttribute("maxThreads") != null) {
+          element.setAttribute("maxConcurrency", processingStrategyConfig.getAttribute("maxThreads").getValue());
+        }
       }
       report.report("flow.processingStrategy", element, element);
     }

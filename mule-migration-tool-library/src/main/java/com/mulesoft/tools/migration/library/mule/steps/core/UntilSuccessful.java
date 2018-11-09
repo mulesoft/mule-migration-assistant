@@ -13,6 +13,8 @@ import org.jdom2.Element;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.removeAttribute;
+
 /**
  * Migrate Until Successful
  *
@@ -47,21 +49,12 @@ public class UntilSuccessful extends AbstractApplicationModelMigrationStep {
       }
     });
 
-    if (element.getAttribute("ackExpression") != null) {
-      element.removeAttribute("ackExpression");
-    }
-
-    if (element.getAttribute("deadLetterQueue-ref") != null) {
-      element.removeAttribute("deadLetterQueue-ref");
-    }
-
-    if (element.getAttribute("failureExpression") != null) {
-      element.removeAttribute("failureExpression");
-    }
-
-    if (element.getAttribute("objectStore-ref") != null) {
-      element.removeAttribute("objectStore-ref");
-    }
-
+    removeAttribute(element, "ackExpression");
+    removeAttribute(element, "deadLetterQueue-ref");
+    removeAttribute(element, "failureExpression");
+    removeAttribute(element, "objectStore-ref");
+    removeAttribute(element, "secondsBetweenRetries");
+    removeAttribute(element, "synchronous");
   }
+
 }
