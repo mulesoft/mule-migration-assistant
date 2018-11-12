@@ -11,7 +11,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -29,7 +29,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.internal.util.reflection.Whitebox;
+import org.powermock.reflect.Whitebox;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class MigrationJobTest {
   public static final String MULE_380_VERSION = "3.8.0";
   public static final String MULE_370_VERSION = "3.7.0";
 
-  private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
+  private final List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
   private MigrationJob migrationJob;
   private Path originalProjectPath;
   private Path migratedProjectPath;

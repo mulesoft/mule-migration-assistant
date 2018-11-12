@@ -76,13 +76,30 @@
         </plugins>
     </build>
     
+    <profiles>
+        <profile>
+            <id>mule_4_2</id>
+            <activation>
+                <property>
+                    <name>testMuleVersion</name>
+                    <value>4.2</value>
+                </property>
+            </activation>
+            
+            <properties>
+                <mule.runtime.version>4.2.0-SNAPSHOT</mule.runtime.version>
+                <mule.api.version>1.2.0-SNAPSHOT</mule.api.version>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>com.mulesoft.tools</groupId>
             <artifactId>mule-migration-tool-runner</artifactId>
             <version>${project.version}</version>
         </dependency>
-    
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>
@@ -90,6 +107,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-api</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-module-deployment-model</artifactId>

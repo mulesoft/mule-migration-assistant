@@ -15,6 +15,7 @@ import static org.mule.runtime.deployment.model.api.application.ApplicationDescr
 import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArtifact;
 
 import org.mule.runtime.module.artifact.api.descriptor.BundleDescriptor;
+import org.mule.test.infrastructure.maven.MavenTestUtils;
 
 import com.mulesoft.mule.distributions.server.AbstractEeAppControl;
 
@@ -28,6 +29,7 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Tests the whole migration process, starting with a Mule 3 source config, migrating it to Mule 4, packaging and deploying it to
@@ -38,6 +40,8 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
   private static final String DELETE_ON_EXIT = getProperty("mule.test.deleteOnExit");
 
   protected static final String ONLY_MIGRATE = getProperty("mule.test.migratorOnly");
+
+  private static final String RUNTIME_VERSION = getProperty("mule.version");
 
   private static final String DEBUG_RUNNER = getProperty("mule.test.debugRunner");
 
@@ -56,7 +60,19 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     BundleDescriptor migratedAppDescriptor = new BundleDescriptor.Builder().setGroupId("org.mule.migrated")
         .setArtifactId(appName).setVersion("1.0.0-M4-SNAPSHOT").setClassifier(MULE_APPLICATION_CLASSIFIER).build();
 
-    File migratedAppArtifact = installMavenArtifact(outPutPath, migratedAppDescriptor);
+    Properties props = new Properties();
+    // We do this so that the tests that run MUnit tests use the intended runtime
+    props.put("runtimeVersion", RUNTIME_VERSION);
+
+    File migratedAppArtifact = null;
+    try {
+      // This method exists only from 4.1.5
+      migratedAppArtifact = (File) MavenTestUtils.class
+          .getDeclaredMethod("installMavenArtifact", String.class, BundleDescriptor.class, Properties.class)
+          .invoke(null, outPutPath, migratedAppDescriptor, props);
+    } catch (NoSuchMethodException e) {
+      migratedAppArtifact = installMavenArtifact(outPutPath, migratedAppDescriptor);
+    }
 
     startStopMule(migratedAppDescriptor, migratedAppArtifact, muleArgs);
   }
@@ -142,7 +158,7 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     command.add("-destinationProjectBasePath");
     command.add(outPutPath);
     command.add("-muleVersion");
-    command.add(getProperty("mule.version"));
+    command.add(RUNTIME_VERSION);
 
     return command;
   }

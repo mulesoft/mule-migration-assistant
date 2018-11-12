@@ -9,14 +9,13 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.io.FileUtils.write;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
@@ -29,17 +28,12 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(XmlDslUtils.class)
-@PowerMockRunnerDelegate(Parameterized.class)
+@RunWith(Parameterized.class)
 public class SpringImportTest {
 
   private static final Path CORE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/core");
@@ -73,9 +67,20 @@ public class SpringImportTest {
     ApplicationModel appModel = mock(ApplicationModel.class);
     springImport = new SpringImport();
     springImport.setApplicationModel(appModel);
-    PowerMockito.mockStatic(XmlDslUtils.class);
-    when(XmlDslUtils.isMuleConfigFile("import.xml", appModel.getProjectBasePath())).thenReturn(true);
-    when(XmlDslUtils.class, "addTopLevelElement", anyObject(), anyObject()).thenCallRealMethod();
+
+    File projectBaseFolder = temp.newFolder();
+
+    write(new File(projectBaseFolder, "import.xml"),
+          "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+              "<mule xmlns=\"http://www.mulesoft.org/schema/mule/core\"\n" +
+              "      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+              "      xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd\">\n"
+              +
+              "</mule>\n" +
+              "",
+          UTF_8);
+
+    when(appModel.getProjectBasePath()).thenReturn(projectBaseFolder.toPath());
   }
 
   @Test
