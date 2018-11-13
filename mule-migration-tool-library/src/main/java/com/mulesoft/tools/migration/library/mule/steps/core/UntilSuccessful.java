@@ -73,7 +73,9 @@ public class UntilSuccessful extends AbstractApplicationModelMigrationStep
 
     if (element.getAttribute("ackExpression") != null) {
       Element setPayload = new Element("set-payload", element.getNamespace());
-      setPayload.setAttribute("value", getExpressionMigrator().migrateExpression(element.getAttributeValue("ackExpression"), true, element) );
+      setPayload
+          .setAttribute("value",
+                        getExpressionMigrator().migrateExpression(element.getAttributeValue("ackExpression"), true, element));
       addElementAfter(setPayload, element);
       removeAttribute(element, "ackExpression");
     }

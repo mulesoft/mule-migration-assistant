@@ -32,7 +32,7 @@ public class Async extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-//    TODO Migrate to maxConcurrency when mule version is equal or higher to 4.2.0
+    //    TODO Migrate to maxConcurrency when mule version is equal or higher to 4.2.0
     Attribute processingStrategy = element.getAttribute("processingStrategy");
     if (processingStrategy != null) {
       element.removeAttribute(processingStrategy);
