@@ -131,6 +131,7 @@ class MigratorTest extends FlatSpec with Matchers {
     Migrator.migrate("new com.lala.tools.Pepe()") shouldBe "%dw 2.0\n---\njava!com::lala::tools::Pepe::new()"
   }
 
+
   it should "migrate a generic constructor with an argument" in {
     Migrator.migrate("new com.lala.tools.Pepe('a')") shouldBe "%dw 2.0\n---\njava!com::lala::tools::Pepe::new('a')"
   }

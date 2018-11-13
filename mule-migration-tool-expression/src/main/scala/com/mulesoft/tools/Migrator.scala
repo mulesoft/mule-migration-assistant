@@ -12,6 +12,7 @@ import org.mule.weave.v2.parser.annotation.{EnclosedMarkAnnotation, InfixNotatio
 import org.mule.weave.v2.parser.ast.functions.FunctionCallParametersNode
 import org.mule.weave.v2.parser.ast.header.HeaderNode
 import org.mule.weave.v2.parser.ast.header.directives.{VersionDirective, VersionMajor, VersionMinor}
+import org.mule.weave.v2.parser.ast.structure.ArrayNode
 import org.mule.weave.v2.parser.ast.structure.schema.{SchemaNode, SchemaPropertyNode}
 import org.mule.weave.v2.parser.ast.types.TypeReferenceNode
 import org.mule.weave.v2.parser.ast.variables.{NameIdentifier, VariableReferenceNode}
@@ -25,7 +26,7 @@ object Migrator {
 
   def bindingContextVariable: List[String] = List("message", "exception", "payload", "flowVars", "sessionVars", "recordVars", "null");
 
-  def toDataweaveAst(expressionNode: mel.MelExpressionNode): dw.AstNode = {
+  def toDataweaveAst(expressionNode: mel.MelExpressionNode): MigrationResult = {
     expressionNode match {
       case mel.StringNode(literal) => toDataweaveStringNode(literal)
       case mel.NumberNode(literal) => toDataweaveNumberNode(literal)
@@ -42,58 +43,89 @@ object Migrator {
   }
 
   private def toDataweaveStringNode(literal: String) = {
-    dw.structure.StringNode(literal).annotate(QuotedStringAnnotation('''))
+    new MigrationResult(dw.structure.StringNode(literal).annotate(QuotedStringAnnotation(''')))
   }
 
   private def toDataweaveNumberNode(literal: String) = {
-    dw.structure.NumberNode(literal)
+    new MigrationResult(dw.structure.NumberNode(literal))
   }
 
   private def toDataweaveBooleanNode(literal: Boolean) = {
-    dw.structure.BooleanNode(literal.toString)
+    new MigrationResult(dw.structure.BooleanNode(literal.toString))
   }
 
   private def toDataweaveNameIdentifierNode(literal: String) = {
-    dw.variables.NameIdentifier(literal)
+    new MigrationResult(dw.variables.NameIdentifier(literal))
   }
 
-  private def toDataweaveBinaryOperatorNode(left: MelExpressionNode, right: MelExpressionNode, operatorType: Int) = {
+  def toInstanceOf(left: MelExpressionNode, right: MelExpressionNode): MigrationResult = {
+    val lRes = toDataweaveAst(left)
+    val rRes = toDataweaveAst(right)
+    val variableReferenceNode = VariableReferenceNode(NameIdentifier("Java::isInstanceOf"))
+    val metadata = lRes.metadata.children ++ rRes.metadata.children
+    new MigrationResult(dw.functions.FunctionCallNode(variableReferenceNode, FunctionCallParametersNode(Seq(lRes.dwAstNode, rRes.dwAstNode))), DefaultMigrationMetadata(JavaModuleRequired() +: metadata))
+  }
+
+  private def toDataweaveBinaryOperatorNode(left: MelExpressionNode, right: MelExpressionNode, operatorType: Int): MigrationResult = {
     operatorType match {
-      case mel.OperatorType.minus => dw.operators.BinaryOpNode(SubtractionOpId, toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.dot => dw.operators.BinaryOpNode(ValueSelectorOpId, toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.subscript => dw.operators.BinaryOpNode(DynamicSelectorOpId, toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.plus => dw.operators.BinaryOpNode(AdditionOpId, toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.equals => dw.operators.BinaryOpNode(EqOpId, toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.notEquals => dw.operators.BinaryOpNode(NotEqOpId, toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.lessThanOrEqual => dw.operators.BinaryOpNode(LessOrEqualThanOpId, toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.greaterThanOrEqual => dw.operators.BinaryOpNode(GreaterOrEqualThanOpId, toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.lessThan => dw.operators.BinaryOpNode(LessThanOpId, toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.greaterThan => dw.operators.BinaryOpNode(GreaterThanOpId, toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.and => AndNode(toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.or => OrNode(toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.multiplication => dw.operators.BinaryOpNode(MultiplicationOpId, toDataweaveAst(left), toDataweaveAst(right))
-      case mel.OperatorType.division => dw.operators.BinaryOpNode(DivisionOpId, toDataweaveAst(left), toDataweaveAst(right))
+      case mel.OperatorType.minus => toDataweaveBinaryOpNode(SubtractionOpId, left, right)
+      case mel.OperatorType.dot => toDataweaveBinaryOpNode(ValueSelectorOpId, left, right)
+      case mel.OperatorType.subscript => toDataweaveBinaryOpNode(DynamicSelectorOpId, left, right)
+      case mel.OperatorType.plus => toDataweaveBinaryOpNode(AdditionOpId, left, right)
+      case mel.OperatorType.equals => toDataweaveBinaryOpNode(EqOpId, left, right)
+      case mel.OperatorType.notEquals => toDataweaveBinaryOpNode(NotEqOpId, left, right)
+      case mel.OperatorType.lessThanOrEqual => toDataweaveBinaryOpNode(LessOrEqualThanOpId, left, right)
+      case mel.OperatorType.greaterThanOrEqual => toDataweaveBinaryOpNode(GreaterOrEqualThanOpId, left, right)
+      case mel.OperatorType.lessThan => toDataweaveBinaryOpNode(LessThanOpId, left, right)
+      case mel.OperatorType.greaterThan => toDataweaveBinaryOpNode(GreaterThanOpId, left, right)
+      case mel.OperatorType.and => toDataweaveAndNode(left, right)
+      case mel.OperatorType.or => toDataweaveOrNode(left, right)
+      case mel.OperatorType.multiplication => toDataweaveBinaryOpNode(MultiplicationOpId, left, right)
+      case mel.OperatorType.division => toDataweaveBinaryOpNode(DivisionOpId, left, right)
+      case mel.OperatorType.instanceOf => toInstanceOf(left, right)
     }
   }
 
-  private def toDataweaveMapNode(elements: Seq[KeyValuePairNode]) = {
-    dw.structure.ObjectNode(elements.map(toDataweaveAst))
+  private def toDataweaveOrNode(left: MelExpressionNode, right: MelExpressionNode): MigrationResult = {
+    val lRes = toDataweaveAst(left)
+    val rRes = toDataweaveAst(right)
+    new MigrationResult(OrNode(lRes.dwAstNode, rRes.dwAstNode), DefaultMigrationMetadata(lRes.metadata.children ++ rRes.metadata.children))
   }
 
-  private def toDataweaveKeyValuePairNode(key: StringNode, value: MelExpressionNode) = {
+  private def toDataweaveAndNode(left: MelExpressionNode, right: MelExpressionNode): MigrationResult = {
+    val lRes = toDataweaveAst(left)
+    val rRes = toDataweaveAst(right)
+    new MigrationResult(AndNode(lRes.dwAstNode, rRes.dwAstNode), DefaultMigrationMetadata(lRes.metadata.children ++ rRes.metadata.children))
+  }
+
+  private def toDataweaveBinaryOpNode(opId: BinaryOpIdentifier, left: MelExpressionNode, right: MelExpressionNode, metadata: MigrationMetadata = Empty()): MigrationResult = {
+    val lRes = toDataweaveAst(left)
+    val rRes = toDataweaveAst(right)
+    new MigrationResult(dw.operators.BinaryOpNode(opId, lRes.dwAstNode, rRes.dwAstNode), DefaultMigrationMetadata(lRes.metadata.children ++ rRes.metadata.children))
+  }
+
+  private def toDataweaveMapNode(elements: Seq[KeyValuePairNode]): MigrationResult = {
+    val result = elements.map(toDataweaveAst)
+    new MigrationResult(dw.structure.ObjectNode(result.map(r => r.dwAstNode)), DefaultMigrationMetadata(result.flatMap(r => r.metadata.children)))
+  }
+
+  private def toDataweaveKeyValuePairNode(key: StringNode, value: MelExpressionNode): MigrationResult = {
+    val result = toDataweaveAst(value)
     val keyNode = dw.structure.KeyNode(key.literal)
-    dw.structure.KeyValuePairNode(keyNode, toDataweaveAst(value))
+    new MigrationResult(dw.structure.KeyValuePairNode(keyNode, result.dwAstNode), DefaultMigrationMetadata(result.metadata.children))
   }
 
-  private def toDataweaveListNode(elements: Seq[MelExpressionNode]) = {
-    dw.structure.ArrayNode(elements.map(toDataweaveAst))
+  private def toDataweaveListNode(elements: Seq[MelExpressionNode]): MigrationResult = {
+    val result = elements.map(toDataweaveAst)
+    new MigrationResult(dw.structure.ArrayNode(result.map(r => r.dwAstNode)), DefaultMigrationMetadata(result.flatMap(r => r.metadata.children)))
   }
 
-  private def toDataweaveEnclosedExpressionNode(expression: MelExpressionNode) = {
-    toDataweaveAst(expression).annotate(EnclosedMarkAnnotation())
+  private def toDataweaveEnclosedExpressionNode(expression: MelExpressionNode): MigrationResult = {
+    val result = toDataweaveAst(expression)
+    new MigrationResult(result.dwAstNode.annotate(EnclosedMarkAnnotation()), DefaultMigrationMetadata(result.metadata.children))
   }
 
-  private def toDataweaveConstructorNode(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) = {
+  private def toDataweaveConstructorNode(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]): MigrationResult = {
     val theClassToCreate = Try(Thread.currentThread().getContextClassLoader.loadClass(canonicalName.name))
     theClassToCreate match {
       case Failure(_) => {
@@ -113,35 +145,36 @@ object Migrator {
     }
   }
 
-  private def toGenericConstructor(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) = {
+  private def toGenericConstructor(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]): MigrationResult = {
     val variableReferenceNode = VariableReferenceNode(NameIdentifier(canonicalName.name.replaceAll("\\.", "::") + "::new", Some("java")))
-    dw.functions.FunctionCallNode(variableReferenceNode, FunctionCallParametersNode(arguments.map(toDataweaveAst)))
+    val result = arguments.map(toDataweaveAst)
+    new MigrationResult(dw.functions.FunctionCallNode(variableReferenceNode, FunctionCallParametersNode(result.map(r => r.dwAstNode))), DefaultMigrationMetadata(result.flatMap(r => r.metadata.children)))
   }
 
-  private def toDateConstructor = {
-    dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier("now")))
+  private def toDateConstructor: MigrationResult = {
+    new MigrationResult(dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier("now"))))
   }
 
-  private def isDate(loadedClass: Class[_], arguments: Seq[MelExpressionNode]) = {
-    classOf[Date].isAssignableFrom(loadedClass) && arguments.isEmpty
-  }
-
-  private def toListConstructor(canonicalName: CanonicalNameNode) = {
+  private def toListConstructor(canonicalName: CanonicalNameNode): MigrationResult = {
     val objectNode = dw.structure.ArrayNode(Seq())
     val classValue = dw.structure.StringNode(canonicalName.name)
     //class: "java.util.ArrayList"
     val schemaProperty = SchemaPropertyNode(NameIdentifier(CLASS_PROPERTY_NAME), classValue)
     val arrayTypeRef = TypeReferenceNode(NameIdentifier("Array"), None, Some(SchemaNode(Seq(schemaProperty))))
-    dw.operators.BinaryOpNode(AsOpId, objectNode, arrayTypeRef)
+    new MigrationResult(dw.operators.BinaryOpNode(AsOpId, objectNode, arrayTypeRef))
   }
 
-  private def toMapConstructor(canonicalName: CanonicalNameNode) = {
+  private def toMapConstructor(canonicalName: CanonicalNameNode): MigrationResult = {
     val objectNode = dw.structure.ObjectNode(Seq())
     val classValue = dw.structure.StringNode(canonicalName.name)
     //class: "java.util.HashMap"
     val schemaProperty = SchemaPropertyNode(NameIdentifier(CLASS_PROPERTY_NAME), classValue)
     val objectTypeRef = TypeReferenceNode(NameIdentifier("Object"), None, Some(SchemaNode(Seq(schemaProperty))))
-    dw.operators.BinaryOpNode(AsOpId, objectNode, objectTypeRef)
+    new MigrationResult(dw.operators.BinaryOpNode(AsOpId, objectNode, objectTypeRef))
+  }
+
+  private def isDate(loadedClass: Class[_], arguments: Seq[MelExpressionNode]) = {
+    classOf[Date].isAssignableFrom(loadedClass) && arguments.isEmpty
   }
 
   private def isList(loadedClass: Class[_], arguments: Seq[MelExpressionNode]) = {
@@ -183,11 +216,11 @@ object Migrator {
     melScript.replaceAll("NullPayload\\.getInstance\\(\\)", "null")
   }
 
-  def migrate(melScript: String): String = {
+  def migrate(melScript: String): MigrationResult = {
     val expressionNode = MelParserHelper.parse(removeNullPayload(melScript))
-    val bodyNode = resolveStringConcatenation(toDataweaveAst(expressionNode))
-    val documentNode = dw.structure.DocumentNode(HeaderNode(Seq(VersionDirective(VersionMajor("2"), VersionMinor("0")))), bodyNode)
-    CodeGenerator.generate(documentNode)
+    val result = toDataweaveAst(expressionNode)
+    val bodyNode = resolveStringConcatenation(result.dwAstNode)
+    new MigrationResult(bodyNode, result.metadata)
   }
 
   def resolveName(literal: String): String = {
@@ -213,4 +246,6 @@ object Migrator {
       case _ => node.children().exists(isStringType)
     }
   }
+
+
 }

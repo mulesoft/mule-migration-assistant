@@ -13,9 +13,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModelUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.junit.Before;
@@ -306,6 +310,25 @@ public class MelToDwExpressionMigratorTest {
     String migratedExpression = expressionMigrator.migrateExpression("#[" + originalExpression + "]", false, elementMock);
     verify(reportMock).report(eq("expressions.melToDw"), eq(elementMock), eq(elementMock));
     assertThat("Migrated expression is not the expected", migratedExpression, equalTo("#[mel:" + originalExpression + "]"));
+  }
+
+  @Test
+  public void migrateInstanceOfExpression() {
+    PomModel pomModel = PomModelUtils.buildMinimalMule4ApplicationPom("org.fake", "fake-app", "1.0.0", "mule-application");
+    when(modelMock.getPomModel()).thenReturn(Optional.of(pomModel));
+    Element elementMock = mock(Element.class);
+    String originalExpression = "a instanceOf b";
+
+    assertThat("Pom model should not have the java module dependency",
+               pomModel.getDependencies().stream().noneMatch(d -> d.getArtifactId().equals("mule-java-module")));
+
+    String migratedExpression = expressionMigrator.migrateExpression("#[" + originalExpression + "]", false, elementMock);
+
+    assertThat("Migrated expression is not the expected", migratedExpression,
+               equalTo("#[%dw 2.0\n---\nJava::isInstanceOf(vars.a, vars.b)]"));
+
+    assertThat("Pom model should have the java module dependency",
+               pomModel.getDependencies().stream().anyMatch(d -> d.getArtifactId().equals("mule-java-module")));
   }
 
   @Test
