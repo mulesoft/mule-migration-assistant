@@ -361,6 +361,12 @@ public final class XmlDslUtils {
     parent.addContent(errorHandler);
   }
 
+  public static void removeAttribute(Element element, String attributeName) {
+    if (element.getAttribute(attributeName) != null) {
+      element.removeAttribute(attributeName);
+    }
+  }
+
   public static void addMigrationAttributeToElement(Element element, Attribute attribute) {
     attribute.setNamespace(Namespace.getNamespace("migration", "migration"));
     element.setAttribute(attribute);

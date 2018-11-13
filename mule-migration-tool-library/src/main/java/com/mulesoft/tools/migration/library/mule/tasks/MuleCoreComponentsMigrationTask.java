@@ -10,12 +10,14 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
+import com.mulesoft.tools.migration.library.mule.steps.core.Async;
 import com.mulesoft.tools.migration.library.mule.steps.core.CatchExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExpressions;
 import com.mulesoft.tools.migration.library.mule.steps.core.CompatibilityPomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.core.Enricher;
 import com.mulesoft.tools.migration.library.mule.steps.core.ExceptionStrategyRef;
+import com.mulesoft.tools.migration.library.mule.steps.core.FirstSuccessful;
 import com.mulesoft.tools.migration.library.mule.steps.core.Flow;
 import com.mulesoft.tools.migration.library.mule.steps.core.ForEachExpressions;
 import com.mulesoft.tools.migration.library.mule.steps.core.ForEachScope;
@@ -30,6 +32,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.SetPayload;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetVariable;
 import com.mulesoft.tools.migration.library.mule.steps.core.SpringImport;
 import com.mulesoft.tools.migration.library.mule.steps.core.TransactionalScope;
+import com.mulesoft.tools.migration.library.mule.steps.core.UntilSuccessful;
 import com.mulesoft.tools.migration.library.mule.steps.ee.CacheHttpCachingStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.ee.CacheInvalidateKey;
 import com.mulesoft.tools.migration.library.mule.steps.ee.CacheObjectStoreCachingStrategy;
@@ -79,6 +82,9 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new ScatterGather(),
                         new Enricher(),
                         new Flow(),
+                        new Async(),
+                        new FirstSuccessful(),
+                        new UntilSuccessful(),
                         new Poll(),
                         new ChoiceExpressions(),
                         new ForEachExpressions(),

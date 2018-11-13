@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <flow name="firstSuccessful">
+        <first-successful>
+            <route>
+                <logger message="#['First route1']" level="INFO"/>
+                <logger message="#['First route2']" level="INFO"/>
+            </route>
+            <route>
+                <logger message="#['Second route1']" level="INFO"/>
+            </route>
+            <route>
+                <logger message="#['Third route1']" level="INFO"/>
+            </route>
+        </first-successful>
+    </flow>
+</mule>

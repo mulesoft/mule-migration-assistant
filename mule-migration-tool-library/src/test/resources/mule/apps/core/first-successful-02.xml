@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+    <flow name="firstSuccessful">
+        <first-successful>
+            <route>
+                <logger message="#['First chain']" level="INFO"/>
+                <logger message="#['Second chain']" level="INFO"/>
+                <validation:is-false expression="#['lala']"/>
+            </route>
+            <route>
+                <logger message="#['First route1']" level="INFO"/>
+                <validation:is-false expression="#['lala']"/>
+            </route>
+            <route>
+                <logger message="#['Second route1']" level="INFO"/>
+                <validation:is-false expression="#['lala']"/>
+            </route>
+        </first-successful>
+    </flow>
+</mule>

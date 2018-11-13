@@ -10,7 +10,9 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
@@ -53,7 +55,9 @@ public class FlowTest {
         "flow-09",
         "flow-10",
         "flow-11",
-        "flow-12"
+        "flow-12",
+        "flow-13",
+        "flow-14"
     };
   }
 
@@ -69,9 +73,19 @@ public class FlowTest {
   private SubFlow subFlow;
   private FlowRef flowRef;
 
+  private Document doc;
+  private ApplicationModel appModel;
+
   @Before
   public void setUp() throws Exception {
+    doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
+    appModel = mock(ApplicationModel.class);
+    when(appModel.getNode(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).stream().findFirst()
+            .orElse(null));
+
     flow = new Flow();
+    flow.setApplicationModel(appModel);
     subFlow = new SubFlow();
     flowRef = new FlowRef();
     flowRef.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
@@ -80,8 +94,6 @@ public class FlowTest {
 
   @Test
   public void execute() throws Exception {
-    Document doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
-
     getElementsFromDocument(doc, flow.getAppliedTo().getExpression())
         .forEach(node -> flow.execute(node, report.getReport()));
     getElementsFromDocument(doc, subFlow.getAppliedTo().getExpression())

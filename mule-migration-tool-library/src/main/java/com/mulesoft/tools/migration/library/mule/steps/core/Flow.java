@@ -14,6 +14,7 @@ import static java.util.Collections.reverse;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Content;
 import org.jdom2.Element;
 
@@ -47,12 +48,21 @@ public class Flow extends AbstractApplicationModelMigrationStep {
         .replaceAll("\\]|\\}", ")")
         .replaceAll("#", "_"));
 
-    if (element.getAttribute("processingStrategy") != null) {
-      if ("synchronous".equals(element.getAttributeValue("processingStrategy"))) {
+    Attribute processingStrategy = element.getAttribute("processingStrategy");
+    if (processingStrategy != null) {
+      if ("synchronous".equals(processingStrategy.getValue())) {
         element.setAttribute("maxConcurrency", "1");
       }
 
-      element.removeAttribute("processingStrategy");
+      element.removeAttribute(processingStrategy);
+      Element processingStrategyConfig = getApplicationModel().getNode("//*[@name = '" + processingStrategy.getValue() + "']");
+      if (processingStrategyConfig != null) {
+        processingStrategyConfig.detach();
+
+        if (processingStrategyConfig.getAttribute("maxThreads") != null) {
+          element.setAttribute("maxConcurrency", processingStrategyConfig.getAttribute("maxThreads").getValue());
+        }
+      }
       report.report("flow.processingStrategy", element, element);
     }
 
