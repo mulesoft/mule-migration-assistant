@@ -7,12 +7,17 @@
     <flow name="firstSuccessful">
         <first-successful>
             <route>
+                <logger message="#['First chain']" level="INFO"/>
+                <logger message="#['Second chain']" level="INFO"/>
                 <validation:is-false expression="#['lala']"/>
-                <logger message="#['First route1']" level="INFO"/>
             </route>
             <route>
+                <logger message="#['First route1']" level="INFO"/>
                 <validation:is-false expression="#['lala']"/>
+            </route>
+            <route>
                 <logger message="#['Second route1']" level="INFO"/>
+                <validation:is-false expression="#['lala']"/>
             </route>
         </first-successful>
     </flow>

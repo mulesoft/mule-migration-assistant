@@ -4,6 +4,10 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
     <flow name="firstSuccessful">
         <first-successful failureExpression="#['lala']">
+            <processor-chain>
+                <logger message="#['First chain']" level="INFO"/>
+                <logger message="#['Second chain']" level="INFO"/>
+            </processor-chain>
             <logger message="#['First route1']" level="INFO"/>
             <logger message="#['Second route1']" level="INFO"/>
         </first-successful>

@@ -17,6 +17,7 @@ import java.util.List;
 
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.VALIDATION_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.addValidationNamespace;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.removeAttribute;
@@ -67,10 +68,21 @@ public class UntilSuccessful extends AbstractApplicationModelMigrationStep
       }
     });
 
-    removeAttribute(element, "ackExpression");
     removeAttribute(element, "objectStore-ref");
-    removeAttribute(element, "secondsBetweenRetries");
     removeAttribute(element, "synchronous");
+
+    if (element.getAttribute("ackExpression") != null) {
+      Element setPayload = new Element("set-payload", element.getNamespace());
+      setPayload.setAttribute("value", getExpressionMigrator().migrateExpression(element.getAttributeValue("ackExpression"), true, element) );
+      addElementAfter(setPayload, element);
+      removeAttribute(element, "ackExpression");
+    }
+
+    if (element.getAttribute("secondsBetweenRetries") != null) {
+      Integer retries = Integer.valueOf(element.getAttributeValue("secondsBetweenRetries")) * 1000;
+      element.setAttribute("millisBetweenRetries", retries.toString());
+      removeAttribute(element, "secondsBetweenRetries");
+    }
 
     if (element.getAttribute("deadLetterQueue-ref") != null) {
       Element flow = getFlow(element);
@@ -89,7 +101,7 @@ public class UntilSuccessful extends AbstractApplicationModelMigrationStep
 
       retryExhaustedHandler.addContent(outboundEndPoint);
       errorHandler.addContent(retryExhaustedHandler);
-      element.removeAttribute("deadLetterQueue-ref");
+      removeAttribute(element, "deadLetterQueue-ref");
     }
 
     if (element.getAttribute("failureExpression") != null) {
@@ -98,7 +110,7 @@ public class UntilSuccessful extends AbstractApplicationModelMigrationStep
       String expression = element.getAttributeValue("failureExpression");
       validation.setAttribute("expression", getExpressionMigrator().migrateExpression(expression, true, element));
       element.addContent(validation);
-      element.removeAttribute("failureExpression");
+      removeAttribute(element, "failureExpression");
     }
 
   }

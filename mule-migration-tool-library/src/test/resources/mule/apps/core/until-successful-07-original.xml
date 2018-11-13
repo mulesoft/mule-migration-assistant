@@ -4,7 +4,7 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="untilFlow">
-        <until-successful ackExpression="lala" secondsBetweenRetries="lala" synchronous="lala">
+        <until-successful ackExpression="#['test']" secondsBetweenRetries="10" synchronous="lala">
             <logger message="#[1]"/>
         </until-successful>
     </flow>

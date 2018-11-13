@@ -69,7 +69,7 @@ public class FirstSuccessful extends AbstractApplicationModelMigrationStep
       Element validation = new Element("is-false", VALIDATION_NAMESPACE);
       String expression = element.getAttributeValue("failureExpression");
       validation.setAttribute("expression", getExpressionMigrator().migrateExpression(expression, true, element));
-      element.getChildren().forEach(c -> c.addContent(0, validation.clone()));
+      element.getChildren().forEach(c -> c.addContent(c.getContent().size(), validation.clone()));
       element.removeAttribute("failureExpression");
     }
   }

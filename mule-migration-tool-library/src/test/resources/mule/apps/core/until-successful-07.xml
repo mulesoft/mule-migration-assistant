@@ -4,8 +4,9 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="untilFlow">
-        <until-successful>
+        <until-successful millisBetweenRetries="10000">
             <logger message="#[1]"/>
         </until-successful>
+        <set-payload value="#['test']"/>
     </flow>
 </mule>
