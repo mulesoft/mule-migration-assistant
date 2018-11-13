@@ -22,7 +22,8 @@ public class UntilSuccessfulMigrationTestCase extends EndToEndTestCase {
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "until-successful-01"
+        "until-successful-01",
+        "until-successful-02"
     };
   }
 

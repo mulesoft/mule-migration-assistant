@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+
+    <vm:endpoint name="dlqChannel" path="dlq"/>
+
+    <flow name="untilFlow">
+        <until-successful>
+            <logger message="#[1]"/>
+        </until-successful>
+        <error-handler>
+            <on-error-propagate type="RETRY_EXHAUSTED">
+                <outbound-endpoint ref="dlqChannel"/>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+</mule>

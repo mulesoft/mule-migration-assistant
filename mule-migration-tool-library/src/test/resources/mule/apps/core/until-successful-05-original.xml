@@ -3,7 +3,7 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
     <flow name="untilFlow">
-        <until-successful ackExpression="#['test']" objectStore-ref="os">
+        <until-successful failureExpression="#[regex:(?i).*error]">
             <logger message="#[1]"/>
         </until-successful>
     </flow>

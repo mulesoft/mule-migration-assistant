@@ -7,12 +7,18 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.VALIDATION_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.addValidationNamespace;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.removeAttribute;
 
 /**
@@ -21,9 +27,21 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.removeAttribute
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class UntilSuccessful extends AbstractApplicationModelMigrationStep {
+public class UntilSuccessful extends AbstractApplicationModelMigrationStep
+    implements ExpressionMigratorAware {
 
   public static final String XPATH_SELECTOR = "//mule:*[local-name()='until-successful']";
+  private ExpressionMigrator expressionMigrator;
+
+  @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
+
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return expressionMigrator;
+  }
 
   @Override
   public String getDescription() {
@@ -50,11 +68,39 @@ public class UntilSuccessful extends AbstractApplicationModelMigrationStep {
     });
 
     removeAttribute(element, "ackExpression");
-    removeAttribute(element, "deadLetterQueue-ref");
-    removeAttribute(element, "failureExpression");
     removeAttribute(element, "objectStore-ref");
     removeAttribute(element, "secondsBetweenRetries");
     removeAttribute(element, "synchronous");
+
+    if (element.getAttribute("deadLetterQueue-ref") != null) {
+      Element flow = getFlow(element);
+      Element errorHandler = getFlowExceptionHandlingElement(flow);
+
+      if (errorHandler == null) {
+        errorHandler = new Element("error-handler", element.getNamespace());
+        flow.addContent(flow.getContent().size() - 1, errorHandler);
+      }
+
+      Element retryExhaustedHandler = new Element("on-error-propagate", element.getNamespace());
+      retryExhaustedHandler.setAttribute("type", "RETRY_EXHAUSTED");
+
+      Element outboundEndPoint = new Element("outbound-endpoint", element.getNamespace());
+      outboundEndPoint.setAttribute("ref", element.getAttributeValue("deadLetterQueue-ref"));
+
+      retryExhaustedHandler.addContent(outboundEndPoint);
+      errorHandler.addContent(retryExhaustedHandler);
+      element.removeAttribute("deadLetterQueue-ref");
+    }
+
+    if (element.getAttribute("failureExpression") != null) {
+      addValidationNamespace(element.getDocument());
+      Element validation = new Element("is-false", VALIDATION_NAMESPACE);
+      String expression = element.getAttributeValue("failureExpression");
+      validation.setAttribute("expression", getExpressionMigrator().migrateExpression(expression, true, element));
+      element.addContent(validation);
+      element.removeAttribute("failureExpression");
+    }
+
   }
 
 }
