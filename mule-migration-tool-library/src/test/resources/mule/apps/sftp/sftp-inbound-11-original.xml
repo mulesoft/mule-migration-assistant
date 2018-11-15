@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+    xmlns:quartz="http://www.mulesoft.org/schema/mule/quartz"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+        http://www.mulesoft.org/schema/mule/quartz http://www.mulesoft.org/schema/mule/quartz/current/mule-quartz.xsd">
+
+    <sftp:endpoint name="inboundEndpoint"
+        address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/data"
+        exchange-pattern="request-response" />
+
+    <flow name="flow">
+        <quartz:inbound-endpoint name="quartzInboundEndpoint"
+            cronExpression="0/3 * * * * ?" jobName="cronJob">
+            <quartz:endpoint-polling-job>
+                <quartz:job-endpoint ref="inboundEndpoint" />
+            </quartz:endpoint-polling-job>
+        </quartz:inbound-endpoint>
+        <logger/>
+    </flow>
+
+</mule>

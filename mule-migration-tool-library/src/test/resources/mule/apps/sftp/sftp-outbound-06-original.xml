@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+
+    <sftp:connector name="sftpCustomConnectorTempDirOutbound"
+        outputPattern="#[header:inbound:originalFilename]" identityFile="${USER1_IDENTITYFILE}"
+        passphrase="${USER1_IDENTITYFILE_PASSPHRASE}" tempDirOutbound="uploading" />
+
+    <flow name="flow">
+        <sftp:outbound-endpoint
+            address="sftp://${USER1_NAME}@${SFTP_HOST}:${SFTP_PORT}/~/tempdir-test-outbound"
+            connector-ref="sftpCustomConnectorTempDirOutbound" name="outboundEndpoint">
+        </sftp:outbound-endpoint>
+    </flow>
+
+</mule>

@@ -243,9 +243,6 @@ file:
     message: Use a DataWeave expression in 'file:write' path attribute to set the filename of the file to write.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-file#file_write
-  manyConnectors:
-    type: ERROR
-    message: "There are at least 2 connectors matching protocol 'file', so the connector to use must be specified on the endpoint using the 'connector' property or attribute. Connectors in your configuration that support 'file' are {connectors}"
   caseSensitive:
     type: INFO
     message: "'caseSensitive' is not supported in Mule 4 File connector. The case sensitivity is delegated to the file system."
@@ -276,9 +273,6 @@ ftp:
     message: "'connectionFactoryClass' cannot be changed in Mule 4 FTP connector."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-ftp-sftp#migrating-an-ftp-connection
-  manyConnectors:
-    type: ERROR
-    message: "There are at least 2 connectors matching protocol 'ftp', so the connector to use must be specified on the endpoint using the 'connector' property or attribute. Connectors in your configuration that support 'ftp' are {connectors}"
 
 db:
   referencedDataSource:
@@ -465,6 +459,9 @@ transports:
     message: The configuration for this connector was put in the endpoints in Mule 3. Complete this connection provider in the domain with the appropriate configuration.
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#domain_connectors
+  manyConnectors:
+    type: ERROR
+    message: "There are at least 2 connectors matching protocol '{protocol}', so the connector to use must be specified on the endpoint using the 'connector' property or attribute. Connectors in your configuration that support '{protocol}' are {connectors}"
 
 components:
   unsupported:

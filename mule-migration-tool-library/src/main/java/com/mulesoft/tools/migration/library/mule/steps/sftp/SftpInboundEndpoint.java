@@ -4,11 +4,10 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps.ftp;
+package com.mulesoft.tools.migration.library.mule.steps.sftp;
 
-import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint.migrateFileFilters;
-import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpConfig.FTP_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConfig.SFTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -21,48 +20,45 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
 
 /**
- * Migrates the inbound endpoints of the ftp transport
+ * Migrates the inbound endpoints of the sftp transport
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class FtpInboundEndpoint extends AbstractFtpEndpoint {
+public class SftpInboundEndpoint extends AbstractSftpEndpoint {
 
   public static final String XPATH_SELECTOR =
-      "/*/mule:flow/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'inbound-endpoint'][1]";
+      "/*/mule:flow/*[namespace-uri() = '" + SFTP_NS_URI + "' and local-name() = 'inbound-endpoint'][1]";
 
   @Override
   public String getDescription() {
-    return "Update FTP inbound endpoints.";
+    return "Update SFTP inbound endpoints.";
   }
 
-  public FtpInboundEndpoint() {
+  public SftpInboundEndpoint() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setName("listener");
-    object.setNamespace(FTP_NAMESPACE);
+    object.setNamespace(SFTP_NAMESPACE);
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     String configName = object.getAttributeValue("connector-ref");
     Optional<Element> config;
     if (configName != null) {
-      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI
+      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + SFTP_NS_URI
           + "' and local-name() = 'config' and @name = '" + configName + "']");
     } else {
-      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'config']");
+      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + SFTP_NS_URI + "' and local-name() = 'config']");
     }
 
-    Element ftpConfig = migrateFtpConfig(object, configName, config);
-    Element connection = ftpConfig.getChild("connection", FTP_NAMESPACE);
+    Element sftpConfig = migrateSftpConfig(object, configName, config);
+    Element connection = sftpConfig.getChild("connection", SFTP_NAMESPACE);
 
     addAttributesToInboundProperties(object, report);
 
@@ -84,25 +80,25 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
       migrateRedeliveryPolicyChildren(redelivery, report);
     }
 
-    Element schedulingStr = object.getChild("scheduling-strategy", CORE_NAMESPACE);
-    if (schedulingStr == null) {
-      schedulingStr = new Element("scheduling-strategy", CORE_NAMESPACE);
-      schedulingStr.addContent(new Element("fixed-frequency", CORE_NAMESPACE));
-      object.addContent(schedulingStr);
-    }
-
-    Element fixedFrequency = schedulingStr.getChild("fixed-frequency", CORE_NAMESPACE);
-
-    if (object.getAttribute("pollingFrequency") != null) {
-      fixedFrequency.setAttribute("frequency", object.getAttributeValue("pollingFrequency", "1000"));
-    } else if (fixedFrequency.getAttribute("frequency") == null) {
-      fixedFrequency.setAttribute("frequency", "1000");
-    }
-    object.removeAttribute("pollingFrequency");
+    // Element schedulingStr = object.getChild("scheduling-strategy", CORE_NAMESPACE);
+    // if (schedulingStr == null) {
+    // schedulingStr = new Element("scheduling-strategy", CORE_NAMESPACE);
+    // schedulingStr.addContent(new Element("fixed-frequency", CORE_NAMESPACE));
+    // object.addContent(schedulingStr);
+    // }
+    //
+    // Element fixedFrequency = schedulingStr.getChild("fixed-frequency", CORE_NAMESPACE);
+    //
+    // if (object.getAttribute("pollingFrequency") != null) {
+    // fixedFrequency.setAttribute("frequency", object.getAttributeValue("pollingFrequency", "1000"));
+    // } else if (fixedFrequency.getAttribute("frequency") == null) {
+    // fixedFrequency.setAttribute("frequency", "1000");
+    // }
+    // object.removeAttribute("pollingFrequency");
 
     doExecute(object, report);
 
-    migrateFileFilters(object, report, FTP_NAMESPACE, getApplicationModel());
+    migrateFileFilters(object, report, SFTP_NAMESPACE, getApplicationModel());
 
     processAddress(object, report).ifPresent(address -> {
       connection.setAttribute("host", address.getHost());
@@ -114,43 +110,45 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
         connection.setAttribute("username", credsSplit[0]);
         connection.setAttribute("password", credsSplit[1]);
       }
-      object.setAttribute("directory", address.getPath() != null ? address.getPath() : "/");
+      object.setAttribute("directory", address.getPath() != null ? resolveDirectory(address.getPath()) : "/");
     });
     copyAttributeIfPresent(object, connection, "host");
     copyAttributeIfPresent(object, connection, "port");
     copyAttributeIfPresent(object, connection, "user", "username");
     copyAttributeIfPresent(object, connection, "password");
 
-    if (object.getAttribute("path") != null) {
-      object.getAttribute("path").setName("directory");
+    Attribute pathAttr = object.getAttribute("path");
+    if (pathAttr != null) {
+      pathAttr.setValue(resolveDirectory(pathAttr.getValue()));
+      pathAttr.setName("directory");
     }
     if (object.getAttribute("connector-ref") != null) {
       object.getAttribute("connector-ref").setName("config-ref");
     } else {
-      object.setAttribute("config-ref", ftpConfig.getAttributeValue("name"));
+      object.setAttribute("config-ref", sftpConfig.getAttributeValue("name"));
     }
     object.removeAttribute("name");
 
-    copyAttributeIfPresent(object, connection, "passive");
-    if (object.getAttribute("binary") != null) {
-      connection.setAttribute("transferMode", "true".equals(object.getAttributeValue("binary")) ? "BINARY" : "ASCII");
-      object.removeAttribute("binary");
-    }
-
-    if (object.getAttribute("encoding") != null) {
-      object.getParent().addContent(3, new Element("set-payload", CORE_NAMESPACE)
-          .setAttribute("value", "#[payload]")
-          .setAttribute("encoding", object.getAttributeValue("encoding")));
-      object.removeAttribute("encoding");
-    }
-    if (object.getAttribute("responseTimeout") != null) {
-      copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
-      connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
-    }
+    // copyAttributeIfPresent(object, connection, "passive");
+    // if (object.getAttribute("binary") != null) {
+    // connection.setAttribute("transferMode", "true".equals(object.getAttributeValue("binary")) ? "BINARY" : "ASCII");
+    // object.removeAttribute("binary");
+    // }
+    //
+    // if (object.getAttribute("encoding") != null) {
+    // object.getParent().addContent(3, new Element("set-payload", CORE_NAMESPACE)
+    // .setAttribute("value", "#[payload]")
+    // .setAttribute("encoding", object.getAttributeValue("encoding")));
+    // object.removeAttribute("encoding");
+    // }
+    // if (object.getAttribute("responseTimeout") != null) {
+    // copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
+    // connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
+    // }
   }
 
   protected Optional<Element> fetchConfig(String configName) {
-    return getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'config']");
+    return getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + SFTP_NS_URI + "' and local-name() = 'config']");
   }
 
   protected void doExecute(Element object, MigrationReport report) {
@@ -160,16 +158,16 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
     migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
 
-    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    expressionsPerProperty.put("originalFilename", "message.attributes.name");
-    expressionsPerProperty.put("fileSize", "message.attributes.size");
-    expressionsPerProperty.put("timestamp", "message.attributes.timestamp");
-
-    try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.ftp.api.ftp.FtpFileAttributes", expressionsPerProperty);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    // Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
+    // expressionsPerProperty.put("originalFilename", "message.attributes.name");
+    // expressionsPerProperty.put("fileSize", "message.attributes.size");
+    // expressionsPerProperty.put("timestamp", "message.attributes.timestamp");
+    //
+    // try {
+    // addAttributesMapping(getApplicationModel(), "org.mule.extension.sftp.api.SftpFileAttributes", expressionsPerProperty);
+    // } catch (IOException e) {
+    // throw new RuntimeException(e);
+    // }
   }
 
 }

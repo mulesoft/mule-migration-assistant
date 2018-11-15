@@ -4,9 +4,9 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps.ftp;
+package com.mulesoft.tools.migration.library.mule.steps.sftp;
 
-import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpConfig.FTP_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConfig.SFTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
@@ -19,41 +19,41 @@ import org.jdom2.Element;
 import java.util.Optional;
 
 /**
- * Migrates the outbound endpoints of the ftp transport
+ * Migrates the outbound endpoints of the sftp transport
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
+public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
 
   public static final String XPATH_SELECTOR =
-      "//*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'outbound-endpoint']";
+      "//*[namespace-uri() = '" + SFTP_NS_URI + "' and local-name() = 'outbound-endpoint']";
 
   @Override
   public String getDescription() {
-    return "Update FTP outbound endpoints.";
+    return "Update SFTP outbound endpoints.";
   }
 
-  public FtpOutboundEndpoint() {
+  public SftpOutboundEndpoint() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setName("write");
-    object.setNamespace(FTP_NAMESPACE);
+    object.setNamespace(SFTP_NAMESPACE);
 
     String configName = object.getAttributeValue("connector-ref");
     Optional<Element> config;
     if (configName != null) {
-      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI
+      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + SFTP_NS_URI
           + "' and local-name() = 'config' and @name = '" + configName + "']");
     } else {
-      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'config']");
+      config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + SFTP_NS_URI + "' and local-name() = 'config']");
     }
 
-    Element ftpConfig = migrateFtpConfig(object, configName, config);
-    Element connection = ftpConfig.getChild("connection", FTP_NAMESPACE);
+    Element sftpConfig = migrateSftpConfig(object, configName, config);
+    Element connection = sftpConfig.getChild("connection", SFTP_NAMESPACE);
 
     processAddress(object, report).ifPresent(address -> {
       connection.setAttribute("host", address.getHost());
@@ -65,7 +65,7 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
         connection.setAttribute("username", credsSplit[0]);
         connection.setAttribute("password", credsSplit[1]);
       }
-      object.setAttribute("path", address.getPath() != null ? address.getPath() : "/");
+      object.setAttribute("path", address.getPath() != null ? resolveDirectory(address.getPath()) : "/");
     });
     copyAttributeIfPresent(object, connection, "host");
     copyAttributeIfPresent(object, connection, "port");
@@ -75,14 +75,14 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
     if (object.getAttribute("connector-ref") != null) {
       object.getAttribute("connector-ref").setName("config-ref");
     } else {
-      object.setAttribute("config-ref", ftpConfig.getAttributeValue("name"));
+      object.setAttribute("config-ref", sftpConfig.getAttributeValue("name"));
     }
     object.removeAttribute("name");
 
-    if (object.getAttribute("responseTimeout") != null) {
-      copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
-      connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
-    }
+    // if (object.getAttribute("responseTimeout") != null) {
+    // copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
+    // connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
+    // }
 
     extractInboundChildren(object, getApplicationModel());
 

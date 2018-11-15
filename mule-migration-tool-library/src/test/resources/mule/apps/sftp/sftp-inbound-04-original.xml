@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+
+    <sftp:endpoint
+        address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/testdir/autoDeleteOff"
+        name="inboundEndpointOff" autoDelete="false"/>
+    <sftp:endpoint
+        address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/testdir/autoDeleteOn"
+        name="inboundEndpointOn" autoDelete="true"/>
+
+    <flow name="flowOff">
+        <inbound-endpoint ref="inboundEndpointOff"/>
+        <logger/>
+    </flow>
+
+    <flow name="flowOn">
+        <inbound-endpoint ref="inboundEndpointOn"/>
+        <logger/>
+    </flow>
+
+</mule>

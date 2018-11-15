@@ -15,6 +15,7 @@ import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpEeOutboundEndpoint
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsOutboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.vm.VmOutboundEndpoint;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -39,6 +40,8 @@ public class OutboundEndpoint extends AbstractApplicationModelMigrationStep
   private static final String FILE_NS_URI = "http://www.mulesoft.org/schema/mule/file";
   private static final String FTP_NS_PREFIX = "ftp";
   private static final String FTP_NS_URI = "http://www.mulesoft.org/schema/mule/ee/ftp";
+  private static final String SFTP_NS_PREFIX = "sftp";
+  private static final String SFTP_NS_URI = "http://www.mulesoft.org/schema/mule/sftp";
   private static final String JMS_NS_PREFIX = "jms";
   private static final String JMS_NS_URI = "http://www.mulesoft.org/schema/mule/jms";
   private static final String VM_NS_PREFIX = "vm";
@@ -74,6 +77,9 @@ public class OutboundEndpoint extends AbstractApplicationModelMigrationStep
       } else if (address.startsWith("ftp://")) {
         migrator = new FtpEeOutboundEndpoint();
         object.setNamespace(Namespace.getNamespace(FTP_NS_PREFIX, FTP_NS_URI));
+      } else if (address.startsWith("sftp://")) {
+        migrator = new SftpOutboundEndpoint();
+        object.setNamespace(Namespace.getNamespace(SFTP_NS_PREFIX, SFTP_NS_URI));
       } else if (address.startsWith("http://")) {
         migrator = new HttpOutboundEndpoint();
         object.setNamespace(Namespace.getNamespace(HTTP_NS_PREFIX, HTTP_NS_URI));

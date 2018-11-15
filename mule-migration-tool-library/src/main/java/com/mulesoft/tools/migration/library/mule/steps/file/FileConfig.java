@@ -126,8 +126,8 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
       for (Element implicitConnectorRef : implicitConnectorRefs) {
         // This situation would have caused the app to not start in Mule 3. As it is not a migration issue per se, there's no
         // linked docs
-        report.report("file.manyConnectors", implicitConnectorRef, implicitConnectorRef,
-                      availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
+        report.report("transports.manyConnectors", implicitConnectorRef, implicitConnectorRef,
+                      "file", availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
       }
     } else {
       for (Element implicitConnectorRef : implicitConnectorRefs) {
