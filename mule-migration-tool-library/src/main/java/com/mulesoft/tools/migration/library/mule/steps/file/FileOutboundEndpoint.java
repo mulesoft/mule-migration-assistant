@@ -81,6 +81,10 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("name") != null) {
       object.removeAttribute("name");
     }
+
+    if (object.getAttribute("exchange-pattern") != null) {
+      object.removeAttribute("exchange-pattern");
+    }
   }
 
   private String compatibilityOutputFile(String pathDslParams) {

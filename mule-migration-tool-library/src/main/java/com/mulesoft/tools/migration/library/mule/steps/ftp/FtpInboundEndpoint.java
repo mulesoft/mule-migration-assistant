@@ -147,6 +147,10 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
       copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
       connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
     }
+
+    if (object.getAttribute("exchange-pattern") != null) {
+      object.removeAttribute("exchange-pattern");
+    }
   }
 
   protected Optional<Element> fetchConfig(String configName) {

@@ -57,6 +57,8 @@ public abstract class AbstractSftpEndpoint extends AbstractApplicationModelMigra
   protected String resolveDirectory(String endpointPath) {
     if (endpointPath.startsWith("/~/")) {
       return substring(endpointPath, 3);
+    } else if (endpointPath.equals("/~")) {
+      return "~";
     } else {
       return endpointPath;
     }

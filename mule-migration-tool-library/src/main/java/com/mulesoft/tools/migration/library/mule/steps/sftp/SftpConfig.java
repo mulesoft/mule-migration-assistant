@@ -10,6 +10,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.handleChildElements;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.stream.Collectors.joining;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -88,11 +89,11 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
     // connection.setAttribute("transferMode", "true".equals(object.getAttributeValue("binary")) ? "BINARY" : "ASCII");
     // object.removeAttribute("binary");
     // }
-    //
-    // if (object.getAttribute("connectionTimeout") != null) {
-    // copyAttributeIfPresent(object, connection, "connectionTimeout", "connectionTimeout");
-    // connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
-    // }
+
+    if (object.getAttribute("connectionTimeout") != null) {
+      copyAttributeIfPresent(object, connection, "connectionTimeout", "connectionTimeout");
+      connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
+    }
 
     handleChildElements(object, connection, report);
     handleInputSpecificAttributes(object, report);

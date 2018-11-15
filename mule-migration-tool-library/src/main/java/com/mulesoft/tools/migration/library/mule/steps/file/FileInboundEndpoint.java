@@ -162,6 +162,10 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("name") != null) {
       object.removeAttribute("name");
     }
+
+    if (object.getAttribute("exchange-pattern") != null) {
+      object.removeAttribute("exchange-pattern");
+    }
   }
 
   public static void migrateFileFilters(Element object, MigrationReport report, Namespace ns, ApplicationModel appModel) {

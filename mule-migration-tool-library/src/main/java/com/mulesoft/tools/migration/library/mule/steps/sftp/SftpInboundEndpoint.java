@@ -110,7 +110,7 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
         connection.setAttribute("username", credsSplit[0]);
         connection.setAttribute("password", credsSplit[1]);
       }
-      object.setAttribute("directory", address.getPath() != null ? resolveDirectory(address.getPath()) : "/");
+      object.setAttribute("path", address.getPath() != null ? resolveDirectory(address.getPath()) : "/");
     });
     copyAttributeIfPresent(object, connection, "host");
     copyAttributeIfPresent(object, connection, "port");
@@ -120,8 +120,10 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
     Attribute pathAttr = object.getAttribute("path");
     if (pathAttr != null) {
       pathAttr.setValue(resolveDirectory(pathAttr.getValue()));
-      pathAttr.setName("directory");
+      // pathAttr.setName("directory");
     }
+    copyAttributeIfPresent(object, connection, "path", "workingDir");
+
     if (object.getAttribute("connector-ref") != null) {
       object.getAttribute("connector-ref").setName("config-ref");
     } else {
@@ -141,10 +143,14 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
     // .setAttribute("encoding", object.getAttributeValue("encoding")));
     // object.removeAttribute("encoding");
     // }
-    // if (object.getAttribute("responseTimeout") != null) {
-    // copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
-    // connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
-    // }
+    if (object.getAttribute("responseTimeout") != null) {
+      copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
+      connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
+    }
+
+    if (object.getAttribute("exchange-pattern") != null) {
+      object.removeAttribute("exchange-pattern");
+    }
   }
 
   protected Optional<Element> fetchConfig(String configName) {

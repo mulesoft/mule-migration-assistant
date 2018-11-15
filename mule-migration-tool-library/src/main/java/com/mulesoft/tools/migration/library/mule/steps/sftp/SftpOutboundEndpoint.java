@@ -6,16 +6,21 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.sftp;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConfig.SFTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
+import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -72,6 +77,13 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
     copyAttributeIfPresent(object, connection, "user", "username");
     copyAttributeIfPresent(object, connection, "password");
 
+    Attribute pathAttr = object.getAttribute("path");
+    if (pathAttr != null) {
+      pathAttr.setValue(resolveDirectory(pathAttr.getValue()));
+      // pathAttr.setName("directory");
+    }
+    copyAttributeIfPresent(object, connection, "path", "workingDir");
+
     if (object.getAttribute("connector-ref") != null) {
       object.getAttribute("connector-ref").setName("config-ref");
     } else {
@@ -79,14 +91,59 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
     }
     object.removeAttribute("name");
 
-    // if (object.getAttribute("responseTimeout") != null) {
-    // copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
-    // connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
-    // }
+    if (object.getAttribute("responseTimeout") != null) {
+      copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
+      connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
+    }
 
     extractInboundChildren(object, getApplicationModel());
 
     migrateOperationStructure(getApplicationModel(), object, report);
+
+    object.setAttribute("path", compatibilityOutputFile("{"
+        + " outputPattern: " + propToDwExpr(object, "outputPattern") + ","
+        + " outputPatternConfig: " + getExpressionMigrator().unwrap(propToDwExpr(object, "outputPatternConfig"))
+        + "}"));
+
+    if (object.getAttribute("exchange-pattern") != null) {
+      object.removeAttribute("exchange-pattern");
+    }
   }
 
+  private String compatibilityOutputFile(String pathDslParams) {
+    try {
+      // Replicates logic from org.mule.transport.sftp.SftpMessageDispatcher.buildFilename(MuleEvent)
+      library(getMigrationScriptFolder(getApplicationModel().getProjectBasePath()), "SftpWriteOutputFile.dwl",
+              "" +
+                  "/**" + lineSeparator() +
+                  " * Emulates the outbound endpoint logic for determining the output filename of the Mule 3.x Sftp transport."
+                  + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun sftpWriteOutputfile(vars: {}, pathDslParams: {}) = do {" + lineSeparator() +
+                  "    (((((pathDslParams.outputPattern" + lineSeparator() +
+                  "         default vars.compatibility_outboundProperties.outputPattern)" + lineSeparator() +
+                  "         default pathDslParams.outputPatternConfig)" + lineSeparator() +
+                  "         default vars.compatibility_outboundProperties.filename)" + lineSeparator() +
+                  "         default vars.filename)" + lineSeparator() +
+                  "         default vars.compatibility_inboundProperties.filename)" + lineSeparator() +
+                  "}" + lineSeparator() +
+                  lineSeparator());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    return "#[migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, " + pathDslParams + ")]";
+  }
+
+  private String propToDwExpr(Element object, String propName) {
+    if (object.getAttribute(propName) != null) {
+      if (getExpressionMigrator().isWrapped(object.getAttributeValue(propName))) {
+        return getExpressionMigrator().migrateExpression(object.getAttributeValue(propName), true, object);
+      } else {
+        return "'" + object.getAttributeValue(propName) + "'";
+      }
+    } else {
+      return "null";
+    }
+  }
 }

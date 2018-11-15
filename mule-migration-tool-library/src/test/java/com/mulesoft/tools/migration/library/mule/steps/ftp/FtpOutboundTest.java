@@ -12,7 +12,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -106,26 +106,26 @@ public class FtpOutboundTest {
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
 
+    MelToDwExpressionMigrator exprMigrator = new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
+
     ftpGlobalEndpoint = new FtpGlobalEndpoint();
     ftpGlobalEndpoint.setApplicationModel(appModel);
     ftpEeGlobalEndpoint = new FtpEeGlobalEndpoint();
     ftpEeGlobalEndpoint.setApplicationModel(appModel);
     ftpConfig = new FtpConfig();
-    ftpConfig.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    ftpConfig.setExpressionMigrator(exprMigrator);
     ftpConfig.setApplicationModel(appModel);
     ftpEeConfig = new FtpEeConfig();
-    ftpEeConfig.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    ftpEeConfig.setExpressionMigrator(exprMigrator);
     ftpEeConfig.setApplicationModel(appModel);
     ftpOutboundEndpoint = new FtpOutboundEndpoint();
     ftpOutboundEndpoint.setApplicationModel(appModel);
-    ftpOutboundEndpoint
-        .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    ftpOutboundEndpoint.setExpressionMigrator(exprMigrator);
     ftpEeOutboundEndpoint = new FtpEeOutboundEndpoint();
     ftpEeOutboundEndpoint.setApplicationModel(appModel);
-    ftpEeOutboundEndpoint
-        .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    ftpEeOutboundEndpoint.setExpressionMigrator(exprMigrator);
     outboundEndpoint = new OutboundEndpoint();
-    // inboundEndpoint.setExpressionMigrator(expressionMigrator);
+    outboundEndpoint.setExpressionMigrator(exprMigrator);
     outboundEndpoint.setApplicationModel(appModel);
     removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
   }

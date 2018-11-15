@@ -6,16 +6,21 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.ftp;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
+import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpConfig.FTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
+import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -72,6 +77,13 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
     copyAttributeIfPresent(object, connection, "user", "username");
     copyAttributeIfPresent(object, connection, "password");
 
+    Attribute pathAttr = object.getAttribute("path");
+    if (pathAttr != null) {
+      pathAttr.setValue(resolveDirectory(pathAttr.getValue()));
+      // pathAttr.setName("directory");
+    }
+    copyAttributeIfPresent(object, connection, "path", "workingDir");
+
     if (object.getAttribute("connector-ref") != null) {
       object.getAttribute("connector-ref").setName("config-ref");
     } else {
@@ -87,6 +99,50 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
     extractInboundChildren(object, getApplicationModel());
 
     migrateOperationStructure(getApplicationModel(), object, report);
+
+    object.setAttribute("path", compatibilityOutputFile("{"
+        + " outputPattern: " + propToDwExpr(object, "outputPattern") + ","
+        + " outputPatternConfig: " + getExpressionMigrator().unwrap(propToDwExpr(object, "outputPatternConfig"))
+        + "}"));
+
+    if (object.getAttribute("exchange-pattern") != null) {
+      object.removeAttribute("exchange-pattern");
+    }
   }
 
+  private String compatibilityOutputFile(String pathDslParams) {
+    try {
+      // Replicates logic from org.mule.transport.ftp.FtpConnector.getFilename(ImmutableEndpoint, MuleMessage)
+      library(getMigrationScriptFolder(getApplicationModel().getProjectBasePath()), "FtpWriteOutputFile.dwl",
+              "" +
+                  "/**" + lineSeparator() +
+                  " * Emulates the outbound endpoint logic for determining the output filename of the Mule 3.x Ftp transport."
+                  + lineSeparator() +
+                  " */" + lineSeparator() +
+                  "fun ftpWriteOutputfile(vars: {}, pathDslParams: {}) = do {" + lineSeparator() +
+                  "    ((((vars.compatibility_outboundProperties.filename" + lineSeparator() +
+                  "        default pathDslParams.outputPattern)" + lineSeparator() +
+                  "        default vars.compatibility_outboundProperties.outputPattern)" + lineSeparator() +
+                  "        default pathDslParams.outputPatternConfig)" + lineSeparator() +
+                  "        default (uuid() ++ '.dat'))" + lineSeparator() +
+                  "}" + lineSeparator() +
+                  lineSeparator());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    return "#[migration::FtpWriteOutputFile::ftpWriteOutputfile(vars, " + pathDslParams + ")]";
+  }
+
+  private String propToDwExpr(Element object, String propName) {
+    if (object.getAttribute(propName) != null) {
+      if (getExpressionMigrator().isWrapped(object.getAttributeValue(propName))) {
+        return getExpressionMigrator().migrateExpression(object.getAttributeValue(propName), true, object);
+      } else {
+        return "'" + object.getAttributeValue(propName) + "'";
+      }
+    } else {
+      return "null";
+    }
+  }
 }
