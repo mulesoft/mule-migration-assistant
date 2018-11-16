@@ -98,6 +98,19 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
     }
     object.removeAttribute("pollingFrequency");
 
+    if (object.getAttribute("fileAge") != null && !"0".equals(object.getAttributeValue("fileAge"))) {
+      String fileAge = object.getAttributeValue("fileAge");
+      object.setAttribute("timeBetweenSizeCheck", fileAge);
+      object.removeAttribute("fileAge");
+    }
+
+    if (object.getAttribute("tempDir") != null || object.getAttribute("useTempFileTimestampSuffix") != null) {
+      report.report("sftp.tempDir", object, object);
+
+      object.removeAttribute("tempDir");
+      object.removeAttribute("useTempFileTimestampSuffix");
+    }
+
     doExecute(object, report);
 
     migrateFileFilters(object, report, SFTP_NAMESPACE, getApplicationModel());
@@ -110,7 +123,10 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
         String[] credsSplit = address.getCredentials().split(":");
 
         connection.setAttribute("username", credsSplit[0]);
-        connection.setAttribute("password", credsSplit[1]);
+
+        if (credsSplit.length > 1) {
+          connection.setAttribute("password", credsSplit[1]);
+        }
       }
       object.setAttribute("path", address.getPath() != null ? resolveDirectory(address.getPath()) : "/");
     });
@@ -132,6 +148,10 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
       object.setAttribute("config-ref", sftpConfig.getAttributeValue("name"));
     }
     object.removeAttribute("name");
+
+    copyAttributeIfPresent(object, connection, "identityFile");
+    copyAttributeIfPresent(object, connection, "passphrase");
+
 
     // copyAttributeIfPresent(object, connection, "passive");
     // if (object.getAttribute("binary") != null) {

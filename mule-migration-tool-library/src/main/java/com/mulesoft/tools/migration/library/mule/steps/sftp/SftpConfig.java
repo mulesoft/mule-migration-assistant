@@ -65,11 +65,6 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
     // connection.setAttribute("workingDir", ".");
     object.addContent(connection);
 
-    // if (object.getAttribute("streaming") != null && !"true".equals(object.getAttributeValue("streaming"))) {
-    // report.report("ftp.streaming", object, object);
-    // }
-    // object.removeAttribute("streaming");
-    //
     // if (object.getAttribute("connectionFactoryClass") != null
     // && !"true".equals(object.getAttributeValue("connectionFactoryClass"))) {
     // report.report("ftp.connectionFactoryClass", object, object);
@@ -94,10 +89,18 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
       copyAttributeIfPresent(object, connection, "connectionTimeout", "connectionTimeout");
       connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
     }
+    if (object.getAttribute("identityFile") != null) {
+      copyAttributeIfPresent(object, connection, "identityFile");
+    }
+    if (object.getAttribute("passphrase") != null) {
+      copyAttributeIfPresent(object, connection, "passphrase");
+    }
 
     handleChildElements(object, connection, report);
     handleInputSpecificAttributes(object, report);
     handleOutputSpecificAttributes(object, report);
+
+    object.removeAttribute("autoDelete");
   }
 
   private void handleInputImplicitConnectorRef(Element object, MigrationReport report) {
@@ -160,11 +163,19 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
     Element fixedFrequency = new Element("fixed-frequency", CORE_NAMESPACE);
     fixedFrequency.setAttribute("frequency", object.getAttributeValue("pollingFrequency", "1000"));
     schedulingStr.addContent(fixedFrequency);
+
+    if (listener.getAttribute("autoDelete") == null && object.getAttribute("autoDelete") != null) {
+      listener.setAttribute("autoDelete", object.getAttributeValue("autoDelete"));
+    }
   }
 
   private void passConnectorConfigToOutboundEndpoint(Element object, Element write) {
     if (object.getAttribute("outputPattern") != null) {
       write.setAttribute("outputPatternConfig", object.getAttributeValue("outputPattern"));
+    }
+
+    if (write.getAttribute("autoDelete") == null && object.getAttribute("autoDelete") != null) {
+      write.setAttribute("autoDelete", object.getAttributeValue("autoDelete"));
     }
   }
 

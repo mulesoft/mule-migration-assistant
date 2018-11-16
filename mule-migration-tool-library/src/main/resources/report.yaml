@@ -274,6 +274,13 @@ ftp:
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-ftp-sftp#migrating-an-ftp-connection
 
+sftp:
+  tempDir:
+    type: ERROR
+    message: "Use the 'sftp:move' operation to replicate the logic from 'tempDir' if needed."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-ftp-sftp#sftp-temp-dir
+
 db:
   referencedDataSource:
     type: INFO

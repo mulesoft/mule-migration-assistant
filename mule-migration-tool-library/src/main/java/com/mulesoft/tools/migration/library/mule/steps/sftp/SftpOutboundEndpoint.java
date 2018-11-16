@@ -68,7 +68,9 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
         String[] credsSplit = address.getCredentials().split(":");
 
         connection.setAttribute("username", credsSplit[0]);
-        connection.setAttribute("password", credsSplit[1]);
+        if (credsSplit.length > 1) {
+          connection.setAttribute("password", credsSplit[1]);
+        }
       }
       object.setAttribute("path", address.getPath() != null ? resolveDirectory(address.getPath()) : "/");
     });
@@ -91,9 +93,18 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
     }
     object.removeAttribute("name");
 
+    copyAttributeIfPresent(object, connection, "identityFile");
+    copyAttributeIfPresent(object, connection, "passphrase");
+
     if (object.getAttribute("responseTimeout") != null) {
       copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
       connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
+    }
+
+    if (object.getAttribute("tempDir") != null) {
+      report.report("sftp.tempDir", object, object);
+
+      object.removeAttribute("tempDir");
     }
 
     extractInboundChildren(object, getApplicationModel());
