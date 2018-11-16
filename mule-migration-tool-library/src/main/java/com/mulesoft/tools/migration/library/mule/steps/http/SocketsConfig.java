@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
@@ -54,7 +55,7 @@ public class SocketsConfig extends AbstractApplicationModelMigrationStep {
     applicationModel.getPomModel().ifPresent(pom -> pom.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-sockets-connector")
-        .withVersion("1.1.1")
+        .withVersion(targetVersion("mule-sockets-connector"))
         .withClassifier("mule-plugin")
         .build()));
 

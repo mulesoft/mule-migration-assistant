@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.scripting;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -29,7 +31,7 @@ public class ScriptingPomContribution implements PomContribution {
     pomModel.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-scripting-module")
-        .withVersion("1.1.3")
+        .withVersion(targetVersion("mule-scripting-module"))
         .withClassifier("mule-plugin")
         .build());
   }

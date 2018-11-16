@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
 import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.addSharedLibs;
 
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
@@ -31,7 +32,7 @@ public class DbConnectorPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-db-connector")
-        .withVersion("1.3.4")
+        .withVersion(targetVersion("mule-db-connector"))
         .withClassifier("mule-plugin")
         .build());
 

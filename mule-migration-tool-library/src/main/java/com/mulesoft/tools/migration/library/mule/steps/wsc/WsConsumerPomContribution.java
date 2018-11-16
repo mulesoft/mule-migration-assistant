@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.wsc;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -29,7 +31,7 @@ public class WsConsumerPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-wsc-connector")
-        .withVersion("1.1.1")
+        .withVersion(targetVersion("mule-wsc-connector"))
         .withClassifier("mule-plugin")
         .build());
   }

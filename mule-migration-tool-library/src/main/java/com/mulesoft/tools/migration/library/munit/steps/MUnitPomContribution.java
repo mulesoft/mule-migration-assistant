@@ -6,19 +6,21 @@
  */
 package com.mulesoft.tools.migration.library.munit.steps;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.Plugin;
 import com.mulesoft.tools.migration.project.model.pom.PluginExecution;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Adds the HTTP Connector dependency
@@ -31,7 +33,6 @@ public class MUnitPomContribution implements PomContribution {
   private static final String MUNIT_MAVEN_PLUGIN_ARTIFACT_ID = "munit-maven-plugin";
   private static final String MUNIT_SUPPORT_PROPERTY = "mule.munit.support.version";
   private static final String MUNIT_PROPERTY = "munit.version";
-  private static final String MUNIT_MAVEN_PLUGIN_VERSION = "2.1.3";
 
   @Override
   public String getDescription() {
@@ -43,7 +44,7 @@ public class MUnitPomContribution implements PomContribution {
     pomModel.addDependency(new DependencyBuilder()
         .withGroupId("com.mulesoft.munit")
         .withArtifactId("munit-runner")
-        .withVersion(MUNIT_MAVEN_PLUGIN_VERSION)
+        .withVersion(targetVersion("munit-maven-plugin"))
         .withClassifier("mule-plugin")
         .withScope("test")
         .build());
@@ -51,21 +52,21 @@ public class MUnitPomContribution implements PomContribution {
     pomModel.addDependency(new DependencyBuilder()
         .withGroupId("com.mulesoft.munit")
         .withArtifactId("munit-tools")
-        .withVersion(MUNIT_MAVEN_PLUGIN_VERSION)
+        .withVersion(targetVersion("munit-maven-plugin"))
         .withClassifier("mule-plugin")
         .withScope("test")
         .build());
 
     if (!getMUnitPlugin(pomModel).isEmpty()) {
       Plugin munitPlugin = getMUnitPlugin(pomModel).get(0);
-      munitPlugin.setVersion(MUNIT_MAVEN_PLUGIN_VERSION);
+      munitPlugin.setVersion(targetVersion("munit-maven-plugin"));
     } else {
       pomModel.addPlugin(buildMunitPlugin());
     }
 
     pomModel.removeProperty(MUNIT_SUPPORT_PROPERTY);
     pomModel.removeProperty(MUNIT_PROPERTY);
-    pomModel.addProperty(MUNIT_PROPERTY, MUNIT_MAVEN_PLUGIN_VERSION);
+    pomModel.addProperty(MUNIT_PROPERTY, targetVersion("munit-maven-plugin"));
   }
 
   private List<Plugin> getMUnitPlugin(PomModel pomModel) {
@@ -83,7 +84,7 @@ public class MUnitPomContribution implements PomContribution {
     return new Plugin.PluginBuilder()
         .withGroupId(MUNIT_MAVEN_PLUGIN_GROUP_ID)
         .withArtifactId(MUNIT_MAVEN_PLUGIN_ARTIFACT_ID)
-        .withVersion(MUNIT_MAVEN_PLUGIN_VERSION)
+        .withVersion(targetVersion("munit-maven-plugin"))
         .withExecutions(pluginExecutions)
         .build();
   }

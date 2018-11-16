@@ -10,11 +10,19 @@
     </parent>
     <artifactId>mule-migration-tool-library</artifactId>
     <name>Mule Migration Tool Library</name>
+
     <properties>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
     </properties>
+
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>com.mycila</groupId>

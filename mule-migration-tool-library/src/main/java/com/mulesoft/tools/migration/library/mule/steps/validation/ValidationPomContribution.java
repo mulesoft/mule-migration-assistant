@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.validation;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -33,7 +35,7 @@ public class ValidationPomContribution implements PomContribution {
     pomModel.addDependency(new Dependency.DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-validation-module")
-        .withVersion("1.3.0")
+        .withVersion(targetVersion("mule-validation-module"))
         .withClassifier("mule-plugin")
         .build());
   }
