@@ -55,7 +55,7 @@ public class FirstSuccessful extends AbstractApplicationModelMigrationStep
     childs.forEach(c -> {
       if (c.getName().equals("processor-chain")) {
         c.setName("route");
-      } else {
+      } else if (!c.getName().equals("route")) {
         Element route = new Element("route", element.getNamespace());
         Integer index = element.indexOf(c);
         c.detach();

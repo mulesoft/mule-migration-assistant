@@ -101,14 +101,14 @@ public class ApplicationModel {
    * Returns a single node in the application documents that match the xpath expression
    *
    * @param xpathExpression the xpath expression that defines which nodes should be retrieved
-   * @return all the nodes that match the xpath expression
+   * @return first node matching expression, if not present, it returns null
    */
   public Element getNode(String xpathExpression) {
     List<Element> nodes = getNodes(XPathFactory.instance().compile(xpathExpression));
     if (nodes.isEmpty() || nodes.size() > 1) {
       throw new IllegalStateException(format("Found %d nodes for xpath expression '%s'", nodes.size(), xpathExpression));
     }
-    return nodes.get(0);
+    return nodes.stream().findFirst().orElse(null);
   }
 
   /**
