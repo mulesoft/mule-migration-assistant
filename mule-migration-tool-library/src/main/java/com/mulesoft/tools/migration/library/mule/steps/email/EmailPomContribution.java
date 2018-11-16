@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.email;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -29,7 +31,7 @@ public class EmailPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-email-connector")
-        .withVersion("1.1.0")
+        .withVersion(targetVersion("mule-email-connector"))
         .withClassifier("mule-plugin")
         .build());
   }

@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.os;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -29,7 +31,7 @@ public class OSPomContribution implements PomContribution {
     object.addDependency(new Dependency.DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-objectstore-connector")
-        .withVersion("1.1.1")
+        .withVersion(targetVersion("mule-objectstore-connector"))
         .withClassifier("mule-plugin")
         .build());
   }

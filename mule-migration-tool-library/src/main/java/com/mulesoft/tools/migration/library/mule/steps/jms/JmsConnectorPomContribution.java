@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -29,7 +31,7 @@ public class JmsConnectorPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-jms-connector")
-        .withVersion("1.3.0")
+        .withVersion(targetVersion("mule-jms-connector"))
         .withClassifier("mule-plugin")
         .build());
   }

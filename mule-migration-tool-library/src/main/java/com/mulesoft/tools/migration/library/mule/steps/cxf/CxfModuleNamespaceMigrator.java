@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.cxf;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -41,8 +43,7 @@ public class CxfModuleNamespaceMigrator extends AbstractApplicationModelMigratio
     getApplicationModel().getPomModel().get().addDependency(new DependencyBuilder()
         .withGroupId("com.mulesoft.mule.modules")
         .withArtifactId("mule-compatibility-module")
-        // TODO MMT-171
-        .withVersion("1.3.1")
+        .withVersion(targetVersion("mule-compatibility-module"))
         .withClassifier("mule-plugin")
         .build());
 

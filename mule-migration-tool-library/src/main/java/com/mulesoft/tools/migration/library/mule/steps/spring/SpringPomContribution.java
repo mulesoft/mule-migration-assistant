@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
 import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.addSharedLibs;
 
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
@@ -22,7 +23,6 @@ import com.mulesoft.tools.migration.step.category.PomContribution;
  */
 public class SpringPomContribution implements PomContribution {
 
-  private static final String SPRING_MODULE_VERSION = "1.2.0";
   private static final String SPRING_VERSION = "4.3.17.RELEASE";
   private static final String SPRING_SECURITY_VERSION = "4.2.6.RELEASE";
 
@@ -36,7 +36,7 @@ public class SpringPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-spring-module")
-        .withVersion(SPRING_MODULE_VERSION)
+        .withVersion(targetVersion("mule-spring-module"))
         .withClassifier("mule-plugin")
         .build());
 

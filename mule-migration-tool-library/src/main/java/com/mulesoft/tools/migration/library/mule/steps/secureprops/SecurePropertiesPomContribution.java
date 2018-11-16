@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.secureprops;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -29,8 +31,7 @@ public class SecurePropertiesPomContribution implements PomContribution {
     object.addDependency(new DependencyBuilder()
         .withGroupId("com.mulesoft.modules")
         .withArtifactId("mule-secure-configuration-property-module")
-        // TODO MMT-171
-        .withVersion("1.0.1")
+        .withVersion(targetVersion("mule-secure-configuration-property-module"))
         .withClassifier("mule-plugin")
         .build());
 
