@@ -62,7 +62,6 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
     object.setNamespace(SFTP_NAMESPACE);
 
     Element connection = new Element("connection", sftpNs);
-    // connection.setAttribute("workingDir", ".");
     object.addContent(connection);
 
     if (object.getAttribute("maxConnectionPoolSize") != null && !"0".equals(object.getAttributeValue("maxConnectionPoolSize"))) {

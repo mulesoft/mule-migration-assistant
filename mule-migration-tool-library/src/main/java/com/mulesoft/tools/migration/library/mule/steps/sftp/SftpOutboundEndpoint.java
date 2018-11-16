@@ -21,7 +21,6 @@ import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Attribute;
 import org.jdom2.Element;
 
 import java.io.IOException;
@@ -82,13 +81,6 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
     copyAttributeIfPresent(object, connection, "port");
     copyAttributeIfPresent(object, connection, "user", "username");
     copyAttributeIfPresent(object, connection, "password");
-
-    Attribute pathAttr = object.getAttribute("path");
-    if (pathAttr != null) {
-      pathAttr.setValue(resolveDirectory(pathAttr.getValue()));
-      // pathAttr.setName("directory");
-    }
-    copyAttributeIfPresent(object, connection, "path", "workingDir");
 
     if (object.getAttribute("connector-ref") != null) {
       object.getAttribute("connector-ref").setName("config-ref");
@@ -154,10 +146,12 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
 
     migrateOperationStructure(getApplicationModel(), object, report);
 
-    object.setAttribute("path", compatibilityOutputFile("{"
-        + " outputPattern: " + propToDwExpr(object, "outputPattern") + ","
-        + " outputPatternConfig: " + getExpressionMigrator().unwrap(propToDwExpr(object, "outputPatternConfig"))
-        + "}"));
+    object.setAttribute("path", getExpressionMigrator()
+        .wrap((object.getAttribute("path") != null ? ("'" + object.getAttributeValue("path") + "/' ++ ") : "")
+            + compatibilityOutputFile("{"
+                + " outputPattern: " + propToDwExpr(object, "outputPattern") + ","
+                + " outputPatternConfig: " + getExpressionMigrator().unwrap(propToDwExpr(object, "outputPatternConfig"))
+                + "}")));
 
     object.removeAttribute("outputPattern");
     object.removeAttribute("outputPatternConfig");
@@ -189,7 +183,7 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
       throw new RuntimeException(e);
     }
 
-    return "#[migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, " + pathDslParams + ")]";
+    return "migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, " + pathDslParams + ")";
   }
 
   private String propToDwExpr(Element object, String propName) {

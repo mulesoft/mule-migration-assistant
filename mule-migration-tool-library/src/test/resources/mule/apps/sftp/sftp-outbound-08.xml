@@ -11,15 +11,14 @@
     <sftp:config name="testConnector">
         <sftp:connection host="localhost" port="${sftpPort}" username="muletest1" password="muletest1"
                          passphrase="muletest1"
-                         connectionTimeout="10" connectionTimeoutUnit="MILLISECONDS"
-                         workingDir="~">
+                         connectionTimeout="10" connectionTimeoutUnit="MILLISECONDS">
             <reconnection failsDeployment="true"/>
         </sftp:connection>
     </sftp:config>
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <sftp:write config-ref="testConnector" path="#[migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: 'test.txt', outputPatternConfig: null})]"/>
+        <sftp:write config-ref="testConnector" path="#['~/' ++ migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: 'test.txt', outputPatternConfig: null})]"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
 

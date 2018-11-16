@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.integration;
 
+import static org.apache.commons.io.FileUtils.forceMkdir;
+
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.mulesoft.tools.migration.integration.sftp.SftpServer;
@@ -18,6 +20,8 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import java.io.File;
 
 @RunWith(Parameterized.class)
 public class SftpMigrationTestCase extends EndToEndTestCase {
@@ -52,9 +56,13 @@ public class SftpMigrationTestCase extends EndToEndTestCase {
 
   @Before
   public void before() throws Exception {
-    sftpSourceServer = new SftpServer(sftpSourcePort.getNumber(), sourceTemp.newFolder().getAbsoluteFile().toPath());
-    sftpDestinationServer =
-        new SftpServer(sftpDestinationPort.getNumber(), destinationTemp.newFolder().getAbsoluteFile().toPath());
+    File sourceRoot = sourceTemp.newFolder();
+    forceMkdir(new File(sourceRoot, "source"));
+    sftpSourceServer = new SftpServer(sftpSourcePort.getNumber(), sourceRoot.toPath());
+
+    File targetRoot = destinationTemp.newFolder();
+    forceMkdir(new File(targetRoot, "target"));
+    sftpDestinationServer = new SftpServer(sftpDestinationPort.getNumber(), targetRoot.toPath());
 
     sftpSourceServer.start();
     sftpDestinationServer.start();

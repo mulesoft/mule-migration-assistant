@@ -9,13 +9,13 @@
         http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <sftp:config name="inboundEndpoint2Config">
-        <sftp:connection host="foobar-host" password="passw0rd" port="4243" username="user42" workingDir="data2">
+        <sftp:connection host="foobar-host" password="passw0rd" port="4243" username="user42">
             <reconnection failsDeployment="true"/>
         </sftp:connection>
     </sftp:config>
 
     <flow name="flow">
-        <sftp:listener config-ref="inboundEndpoint2Config">
+        <sftp:listener config-ref="inboundEndpoint2Config" directory="data2">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

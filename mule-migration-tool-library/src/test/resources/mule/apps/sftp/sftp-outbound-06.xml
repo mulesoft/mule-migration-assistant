@@ -10,15 +10,14 @@
 
     <sftp:config name="sftpCustomConnectorTempDirOutbound">
         <sftp:connection host="${SFTP_HOST}" port="${SFTP_PORT}" username="${USER1_NAME}"
-                         identityFile="${USER1_IDENTITYFILE}" passphrase="${USER1_IDENTITYFILE_PASSPHRASE}"
-                         workingDir="tempdir-test-outbound">
+                         identityFile="${USER1_IDENTITYFILE}" passphrase="${USER1_IDENTITYFILE_PASSPHRASE}">
             <reconnection failsDeployment="true"/>
         </sftp:connection>
     </sftp:config>
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <sftp:write config-ref="sftpCustomConnectorTempDirOutbound" path="#[migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: vars.compatibility_inboundProperties.originalFilename})]"/>
+        <sftp:write config-ref="sftpCustomConnectorTempDirOutbound" path="#['tempdir-test-outbound/' ++ migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: vars.compatibility_inboundProperties.originalFilename})]"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
 

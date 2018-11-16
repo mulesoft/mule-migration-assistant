@@ -9,7 +9,7 @@
         http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <sftp:config name="sftpPooledConnector">
-        <sftp:connection host="${SFTP_HOST}" password="${USER1_PASSWORD}" port="${SFTP_PORT}" username="${USER1_NAME}" workingDir="data">
+        <sftp:connection host="${SFTP_HOST}" password="${USER1_PASSWORD}" port="${SFTP_PORT}" username="${USER1_NAME}">
             <pooling-profile exhaustedAction="WHEN_EXHAUSTED_WAIT" maxActive="1" maxIdle="1" maxWait="-1"/>
             <reconnection failsDeployment="true"/>
         </sftp:connection>
@@ -17,12 +17,12 @@
 
     <flow name="flowOut">
         <compatibility:outbound-properties-to-var/>
-        <sftp:write config-ref="sftpPooledConnector" mode="CREATE_NEW" path="#[migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
+        <sftp:write config-ref="sftpPooledConnector" mode="CREATE_NEW" path="#['data/' ++ migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
 
     <flow name="flowIn">
-        <sftp:listener config-ref="sftpPooledConnector" autoDelete="false" timeBetweenSizeCheck="1">
+        <sftp:listener config-ref="sftpPooledConnector" autoDelete="false" directory="data" timeBetweenSizeCheck="1">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

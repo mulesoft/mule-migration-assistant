@@ -10,7 +10,6 @@
 
     <sftp:config name="sftpConnector">
         <sftp:connection host="${SFTP_HOST}" port="${SFTP_PORT}" username="${USER1_NAME}"
-                         workingDir="tempdir2-test-outbound"
                          knownHostsFile="src/test/resources/empty_known_hosts">
             <reconnection failsDeployment="true"/>
         </sftp:connection>
@@ -18,7 +17,7 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <sftp:write config-ref="sftpConnector" path="#[migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
+        <sftp:write config-ref="sftpConnector" path="#['tempdir2-test-outbound/' ++ migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
 

@@ -145,10 +145,8 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
 
     Attribute pathAttr = object.getAttribute("path");
     if (pathAttr != null) {
-      pathAttr.setValue(resolveDirectory(pathAttr.getValue()));
-      // pathAttr.setName("directory");
+      pathAttr.setName("directory");
     }
-    copyAttributeIfPresent(object, connection, "path", "workingDir");
 
     if (object.getAttribute("connector-ref") != null) {
       object.getAttribute("connector-ref").setName("config-ref");
@@ -177,6 +175,8 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
           .setAttribute("path", "#[attributes.name]"));
 
       object.removeAttribute("archiveDir");
+      object.removeAttribute("archiveTempReceivingDir");
+      object.removeAttribute("archiveTempSendingDir");
     }
 
     if (object.getAttribute("responseTimeout") != null) {

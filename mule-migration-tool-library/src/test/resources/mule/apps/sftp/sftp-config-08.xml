@@ -9,7 +9,7 @@
         http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <sftp:config name="sftpConnector">
-        <sftp:connection host="${SFTP_HOST}" password="${USER1_PASSWORD}" port="${SFTP_PORT}" username="${USER1_NAME}" workingDir="data">
+        <sftp:connection host="${SFTP_HOST}" password="${USER1_PASSWORD}" port="${SFTP_PORT}" username="${USER1_NAME}">
             <reconnection failsDeployment="true">
                 <reconnect-forever blocking="false"/>
             </reconnection>
@@ -18,12 +18,12 @@
 
     <flow name="flowOut">
         <compatibility:outbound-properties-to-var/>
-        <sftp:write config-ref="sftpConnector" path="#[migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
+        <sftp:write config-ref="sftpConnector" path="#['data/' ++ migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
 
     <flow name="flowIn">
-        <sftp:listener config-ref="sftpConnector">
+        <sftp:listener config-ref="sftpConnector" directory="data">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

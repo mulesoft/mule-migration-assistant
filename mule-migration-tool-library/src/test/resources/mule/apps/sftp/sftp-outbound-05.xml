@@ -9,15 +9,14 @@
         http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <sftp:config name="outboundEndpointConfig">
-        <sftp:connection host="${SFTP_HOST}" password="${USER1_PASSWORD}" port="${SFTP_PORT}" username="${USER1_NAME}"
-                         workingDir="data2">
+        <sftp:connection host="${SFTP_HOST}" password="${USER1_PASSWORD}" port="${SFTP_PORT}" username="${USER1_NAME}">
             <reconnection failsDeployment="true"/>
         </sftp:connection>
     </sftp:config>
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <sftp:write config-ref="outboundEndpointConfig" path="#[migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: vars.compatibility_inboundProperties.originalFilename, outputPatternConfig: null})]"/>
+        <sftp:write config-ref="outboundEndpointConfig" path="#['data2/' ++ migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: vars.compatibility_inboundProperties.originalFilename, outputPatternConfig: null})]"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
 

@@ -9,7 +9,7 @@
     <sftp:connector name="sftpDestination" />
 
     <flow name="flow">
-        <sftp:inbound-endpoint address="sftp://muletest1:muletest1@localhost:${sftpSourcePort}/~" connector-ref="sftpSource">
+        <sftp:inbound-endpoint address="sftp://muletest1:muletest1@localhost:${sftpSourcePort}/~/source" connector-ref="sftpSource">
             <idempotent-redelivery-policy maxRedeliveryCount="2">
                 <dead-letter-queue>
                     <logger message="I'm dead! :(" />

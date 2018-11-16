@@ -13,7 +13,7 @@
         http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 
     <sftp:config name="flowSftpConfig">
-        <sftp:connection host="${SFTP_HOST}" password="${USER1_PASSWORD}" port="${SFTP_PORT}" username="${USER1_NAME}" workingDir="testdir">
+        <sftp:connection host="${SFTP_HOST}" password="${USER1_PASSWORD}" port="${SFTP_PORT}" username="${USER1_NAME}">
             <reconnection failsDeployment="true"/>
         </sftp:connection>
     </sftp:config>
@@ -23,7 +23,7 @@
     </file:config>
 
     <flow name="flow">
-        <sftp:listener config-ref="flowSftpConfig">
+        <sftp:listener config-ref="flowSftpConfig" directory="testdir">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>

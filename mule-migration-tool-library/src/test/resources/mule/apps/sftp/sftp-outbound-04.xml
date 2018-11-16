@@ -9,8 +9,7 @@
         http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <sftp:config name="outboundEndpoint2Config">
-        <sftp:connection host="foobar-host" password="passw0rd" port="4243" username="user42"
-                         workingDir="data">
+        <sftp:connection host="foobar-host" password="passw0rd" port="4243" username="user42">
             <reconnection failsDeployment="true"/>
         </sftp:connection>
     </sftp:config>
@@ -18,7 +17,7 @@
     <flow name="flow">
         <sftp:listener/>
         <compatibility:outbound-properties-to-var/>
-        <sftp:write config-ref="outboundEndpoint2Config" path="#[migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
+        <sftp:write config-ref="outboundEndpoint2Config" path="#['data/' ++ migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
         <compatibility:attributes-to-inbound-properties/>
         
         <error-handler>
