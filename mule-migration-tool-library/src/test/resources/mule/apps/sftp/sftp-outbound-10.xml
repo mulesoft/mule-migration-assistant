@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+    xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+        http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <sftp:config name="outboundEndpointConfig">
+        <sftp:connection host="${SFTP_HOST}" port="${SFTP_PORT}" username="${USER1_NAME}" password="${USER1_PASSWORD}"
+                         workingDir="outbound">
+            <reconnection failsDeployment="true"/>
+        </sftp:connection>
+    </sftp:config>
+
+    <flow name="flow">
+        <compatibility:outbound-properties-to-var/>
+        <sftp:write config-ref="outboundEndpointConfig" path="#[migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+
+</mule>

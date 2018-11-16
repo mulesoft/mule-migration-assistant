@@ -56,8 +56,9 @@ public class SftpOutboundTest {
   public static Object[] params() {
     return new Object[] {
         "sftp-outbound-01",
-        "sftp-outbound-02",
-        "sftp-outbound-03",
+        // TODO MMT-260
+        // "sftp-outbound-02",
+        // "sftp-outbound-03",
         "sftp-outbound-04",
         "sftp-outbound-05",
         "sftp-outbound-06",

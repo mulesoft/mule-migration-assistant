@@ -9,9 +9,13 @@ package com.mulesoft.tools.migration.library.mule.steps.sftp;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConfig.SFTP_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.lang.System.lineSeparator;
 
@@ -107,6 +111,45 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
       object.removeAttribute("tempDir");
     }
 
+    if (object.getAttribute("duplicateHandling") != null) {
+      String duplicateHandling = object.getAttributeValue("duplicateHandling");
+
+      if ("throwException".equals(duplicateHandling)) {
+        object.setAttribute("mode", "CREATE_NEW");
+      } else if ("overwrite".equals(duplicateHandling)) {
+        object.setAttribute("mode", "OVERWRITE");
+      } else if ("append".equals(duplicateHandling)) {
+        object.setAttribute("mode", "APPEND");
+      } else if ("addSeqNo".equals(duplicateHandling)) {
+        report.report("sftp.addSeqNo", object, object);
+      }
+
+      object.removeAttribute("duplicateHandling");
+    }
+
+    if ("false".equals(object.getAttributeValue("keepFileOnError"))) {
+      Element flow = getFlow(object);
+      Element source = flow.getChildren().get(0);
+      if (source.getName().equals("listener") && source.getNamespace().equals(SFTP_NAMESPACE)) {
+
+        Element errorHandler = getFlowExceptionHandlingElement(flow);
+
+        if (errorHandler == null) {
+          errorHandler = new Element("error-handler", CORE_NAMESPACE);
+          flow.addContent(errorHandler);
+        }
+        errorHandler.addContent(new Element("on-error-continue", CORE_NAMESPACE)
+            .setAttribute("errorType", "SFTP:ILLEGAL_PATH,SFTP:ILLEGAL_CONTENT,SFTP:FILE_ALREADY_EXISTS,SFTP:ACCESS_DENIED")
+            .addContent(new Element("outbound-properties-to-var", COMPATIBILITY_NAMESPACE)));
+      }
+    }
+    object.removeAttribute("keepFileOnError");
+
+    if (object.getAttribute("knownHostsFile") != null && connection.getAttribute("knownHostsFile") == null) {
+      copyAttributeIfPresent(object, connection, "knownHostsFile");
+    }
+    object.removeAttribute("knownHostsFile");
+
     extractInboundChildren(object, getApplicationModel());
 
     migrateOperationStructure(getApplicationModel(), object, report);
@@ -115,6 +158,9 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
         + " outputPattern: " + propToDwExpr(object, "outputPattern") + ","
         + " outputPatternConfig: " + getExpressionMigrator().unwrap(propToDwExpr(object, "outputPatternConfig"))
         + "}"));
+
+    object.removeAttribute("outputPattern");
+    object.removeAttribute("outputPatternConfig");
 
     if (object.getAttribute("exchange-pattern") != null) {
       object.removeAttribute("exchange-pattern");
@@ -148,8 +194,9 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
 
   private String propToDwExpr(Element object, String propName) {
     if (object.getAttribute(propName) != null) {
-      if (getExpressionMigrator().isWrapped(object.getAttributeValue(propName))) {
-        return getExpressionMigrator().migrateExpression(object.getAttributeValue(propName), true, object);
+      if (getExpressionMigrator().isTemplate(object.getAttributeValue(propName))) {
+        return getExpressionMigrator()
+            .unwrap(getExpressionMigrator().migrateExpression(object.getAttributeValue(propName), true, object));
       } else {
         return "'" + object.getAttributeValue(propName) + "'";
       }

@@ -156,19 +156,10 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
     copyAttributeIfPresent(object, connection, "identityFile");
     copyAttributeIfPresent(object, connection, "passphrase");
 
-
-    // copyAttributeIfPresent(object, connection, "passive");
-    // if (object.getAttribute("binary") != null) {
-    // connection.setAttribute("transferMode", "true".equals(object.getAttributeValue("binary")) ? "BINARY" : "ASCII");
-    // object.removeAttribute("binary");
-    // }
-    //
-    // if (object.getAttribute("encoding") != null) {
-    // object.getParent().addContent(3, new Element("set-payload", CORE_NAMESPACE)
-    // .setAttribute("value", "#[payload]")
-    // .setAttribute("encoding", object.getAttributeValue("encoding")));
-    // object.removeAttribute("encoding");
-    // }
+    if (object.getAttribute("knownHostsFile") != null && connection.getAttribute("knownHostsFile") == null) {
+      copyAttributeIfPresent(object, connection, "knownHostsFile");
+    }
+    object.removeAttribute("knownHostsFile");
 
     if (object.getAttribute("archiveDir") != null) {
       String fileArchiveConfigName = sftpConfig.getAttributeValue("name") + "Archive";

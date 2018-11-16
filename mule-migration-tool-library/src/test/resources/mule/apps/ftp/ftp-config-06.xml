@@ -7,7 +7,9 @@
 
     <ftp:config name="FTP">
         <ftp:connection>
-            <reconnection frequency="${pollingFrequency}" count="${count}" failsDeployment="true"/>
+            <reconnection failsDeployment="true">
+                <reconnect frequency="${pollingFrequency}" count="${count}"/>
+            </reconnection>
         </ftp:connection>
     </ftp:config>
 

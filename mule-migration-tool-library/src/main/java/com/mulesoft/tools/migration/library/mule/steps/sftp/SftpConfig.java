@@ -8,8 +8,8 @@ package com.mulesoft.tools.migration.library.mule.steps.sftp;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.handleChildElements;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleReconnection;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.stream.Collectors.joining;
 
@@ -65,36 +65,36 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
     // connection.setAttribute("workingDir", ".");
     object.addContent(connection);
 
-    // if (object.getAttribute("connectionFactoryClass") != null
-    // && !"true".equals(object.getAttributeValue("connectionFactoryClass"))) {
-    // report.report("ftp.connectionFactoryClass", object, object);
-    // }
-    // object.removeAttribute("connectionFactoryClass");
+    if (object.getAttribute("maxConnectionPoolSize") != null && !"0".equals(object.getAttributeValue("maxConnectionPoolSize"))) {
+      int maxConnectionPoolSize = Integer.valueOf(object.getAttributeValue("maxConnectionPoolSize"));
 
-    String failsDeployment = changeDefault("true", "false", object.getAttributeValue("validateConnections"));
-    object.removeAttribute("validateConnections");
-    if (failsDeployment != null) {
-      Element reconnection = new Element("reconnection", CORE_NAMESPACE);
-      reconnection.setAttribute("failsDeployment", failsDeployment);
-      connection.addContent(reconnection);
+      connection.addContent(new Element("pooling-profile", CORE_NAMESPACE)
+          .setAttribute("exhaustedAction", "WHEN_EXHAUSTED_WAIT")
+          .setAttribute("maxActive", "" + maxConnectionPoolSize)
+          // 8 is the default value in the Mule 3 transport
+          .setAttribute("maxIdle", "" + Math.min(8, maxConnectionPoolSize))
+          .setAttribute("maxWait", "-1"));
+
     }
+    object.removeAttribute("maxConnectionPoolSize");
 
-    // copyAttributeIfPresent(object, connection, "passive");
-    // if (object.getAttribute("binary") != null) {
-    // connection.setAttribute("transferMode", "true".equals(object.getAttributeValue("binary")) ? "BINARY" : "ASCII");
-    // object.removeAttribute("binary");
-    // }
+    handleReconnection(object, connection);
+
+    Element proxyConfig = object.getChild("proxy-config", SFTP_NAMESPACE);
+    if (proxyConfig != null) {
+      proxyConfig.setName("sftp-proxy-config");
+      connection.addContent(proxyConfig.detach());
+    }
 
     if (object.getAttribute("connectionTimeout") != null) {
       copyAttributeIfPresent(object, connection, "connectionTimeout", "connectionTimeout");
       connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
     }
-    if (object.getAttribute("identityFile") != null) {
-      copyAttributeIfPresent(object, connection, "identityFile");
-    }
-    if (object.getAttribute("passphrase") != null) {
-      copyAttributeIfPresent(object, connection, "passphrase");
-    }
+
+    copyAttributeIfPresent(object, connection, "identityFile");
+    copyAttributeIfPresent(object, connection, "passphrase");
+    copyAttributeIfPresent(object, connection, "preferredAuthenticationMethods");
+    copyAttributeIfPresent(object, connection, "knownHostsFile");
 
     handleChildElements(object, connection, report);
     handleInputSpecificAttributes(object, report);
@@ -193,10 +193,6 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
   private void passConnectorConfigToOutboundEndpoint(Element object, Element write) {
     if (object.getAttribute("outputPattern") != null) {
       write.setAttribute("outputPatternConfig", object.getAttributeValue("outputPattern"));
-    }
-
-    if (write.getAttribute("autoDelete") == null && object.getAttribute("autoDelete") != null) {
-      write.setAttribute("autoDelete", object.getAttributeValue("autoDelete"));
     }
 
     if (write.getAttribute("tempDirOutbound") == null && object.getAttribute("tempDir") != null) {

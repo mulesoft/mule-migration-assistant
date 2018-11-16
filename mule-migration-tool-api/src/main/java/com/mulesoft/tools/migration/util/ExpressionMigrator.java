@@ -42,7 +42,7 @@ public interface ExpressionMigrator {
   String unwrap(String originalExpression);
 
   /**
-   * Adds the  '#[' prefix and ']' suffix to an expression
+   * Adds the '#[' prefix and ']' suffix to an expression
    * <p>
    * If the expression is already wrapped, it is returned unchanged,
    *
@@ -51,9 +51,16 @@ public interface ExpressionMigrator {
   String wrap(String originalExpression);
 
   /**
-   * Checks if the expression has the  '#[' prefix and ']' suffix
+   * Checks if the expression has the '#[' prefix and ']' suffix
    *
    * @return
    */
   boolean isWrapped(String originalExpression);
+
+  /**
+   * Checks if the expression contains the '#[' prefix and ']' suffix pairs inside
+   *
+   * @return
+   */
+  boolean isTemplate(String originalExpression);
 }

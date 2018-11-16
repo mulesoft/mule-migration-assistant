@@ -24,7 +24,6 @@
 
     <flow name="flow">
         <sftp:listener config-ref="flowSftpConfig">
-            <redelivery-policy idExpression="#[vars.compatibility_outboundProperties['originalFilename']]" maxRedeliveryCount="${maxRedelivery}"/>
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>
             </scheduling-strategy>
@@ -36,12 +35,8 @@
         <error-handler>
             <on-error-propagate type="REDELIVERY_EXHAUSTED">
                 <vm:outbound-endpoint exchange-pattern="one-way" path="error-queue"/>
-            </on-error-propagate>
-            <on-error-continue>
-                <object-to-string-transformer/>
-                <vm:outbound-endpoint exchange-pattern="one-way" path="out"/>
                 <compatibility:outbound-properties-to-var/>
-            </on-error-continue>
+            </on-error-propagate>
         </error-handler>
     </flow>
 

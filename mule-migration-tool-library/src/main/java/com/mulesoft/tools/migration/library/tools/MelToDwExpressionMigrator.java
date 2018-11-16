@@ -6,7 +6,6 @@
  */
 package com.mulesoft.tools.migration.library.tools;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static java.util.Objects.requireNonNull;
 
@@ -32,6 +31,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
   private final MigrationReport report;
 
   private final Pattern EXPRESSION_WRAPPER = Pattern.compile("^\\s*#\\[(.*)]\\s*$", Pattern.DOTALL);
+  private final Pattern EXPRESSION_TEMPLATE_WRAPPER = Pattern.compile(".*#\\[(.*)].*", Pattern.DOTALL);
 
   private final MelCompatibilityResolver compatibilityResolver = new MelCompatibilityResolver();
   private final ApplicationModel model;
@@ -119,6 +119,12 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
   public boolean isWrapped(String originalExpression) {
     checkExpression(originalExpression);
     return EXPRESSION_WRAPPER.matcher(originalExpression).matches();
+  }
+
+  @Override
+  public boolean isTemplate(String originalExpression) {
+    checkExpression(originalExpression);
+    return EXPRESSION_TEMPLATE_WRAPPER.matcher(originalExpression).matches();
   }
 
   private void checkExpression(String expression) {

@@ -67,7 +67,7 @@ public class SftpConfigTest {
         "sftp-config-12",
         "sftp-config-13",
         "sftp-config-14",
-        "sftp-config-1",
+        "sftp-config-15"
     };
   }
 
