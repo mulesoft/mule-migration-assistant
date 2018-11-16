@@ -12,8 +12,6 @@ import org.mule.runtime.api.exception.MuleRuntimeException;
 
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
 import org.apache.sshd.server.SshServer;
-import org.apache.sshd.server.auth.password.PasswordAuthenticator;
-import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.server.scp.ScpCommandFactory;
 import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
@@ -41,24 +39,14 @@ public class SftpServer {
     configureSshdServer(factory);
   }
 
-  public void setPasswordAuthenticator(PasswordAuthenticator passwordAuthenticator) {
-    sshdServer.setPasswordAuthenticator(passwordAuthenticator);
-  }
-
-  public void setPasswordAuthenticator() {
-    sshdServer.setPasswordAuthenticator(passwordAuthenticator());
-  }
-
-  public void setPublicKeyAuthenticator(PublickeyAuthenticator publicKeyAuthenticator) {
-    sshdServer.setPublickeyAuthenticator(publicKeyAuthenticator);
-  }
-
   private void configureSshdServer(SftpSubsystemFactory factory) {
     sshdServer.setPort(port);
     sshdServer.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(new File("hostkey.ser")));
     sshdServer.setSubsystemFactories(asList(factory));
     sshdServer.setCommandFactory(new ScpCommandFactory());
     sshdServer.setFileSystemFactory(new VirtualFileSystemFactory(path));
+
+    sshdServer.setPasswordAuthenticator((username, password, arg2) -> USERNAME.equals(username) && PASSWORD.equals(password));
   }
 
   private SftpSubsystemFactory createFtpSubsystemFactory() {
@@ -67,10 +55,6 @@ public class SftpServer {
 
   private void configureSecurityProvider() {
     Security.addProvider(new BouncyCastleProvider());
-  }
-
-  private static PasswordAuthenticator passwordAuthenticator() {
-    return (arg0, arg1, arg2) -> USERNAME.equals(arg0) && PASSWORD.equals(arg1);
   }
 
   public void start() {

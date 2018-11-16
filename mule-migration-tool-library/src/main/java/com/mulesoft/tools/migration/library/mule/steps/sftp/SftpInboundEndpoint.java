@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.sftp;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint.migrateFileFilters;
 import static com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConfig.SFTP_NAMESPACE;
@@ -22,6 +23,9 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -196,16 +200,15 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
     migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
 
-    // Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    // expressionsPerProperty.put("originalFilename", "message.attributes.name");
-    // expressionsPerProperty.put("fileSize", "message.attributes.size");
-    // expressionsPerProperty.put("timestamp", "message.attributes.timestamp");
-    //
-    // try {
-    // addAttributesMapping(getApplicationModel(), "org.mule.extension.sftp.api.SftpFileAttributes", expressionsPerProperty);
-    // } catch (IOException e) {
-    // throw new RuntimeException(e);
-    // }
+    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
+    expressionsPerProperty.put("originalFilename", "message.attributes.name");
+    expressionsPerProperty.put("filename", "message.attributes.name");
+
+    try {
+      addAttributesMapping(getApplicationModel(), "org.mule.extension.sftp.api.SftpFileAttributes", expressionsPerProperty);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 }

@@ -230,7 +230,7 @@ public final class XmlDslUtils {
         report.report("flow.redeliveryExhausted", dlq, redeliveryPolicy);
       } else {
         Element handler = new Element("on-error-propagate", CORE_NAMESPACE).setAttribute("type", "REDELIVERY_EXHAUSTED");
-        errorHandler.addContent(handler);
+        errorHandler.addContent(0, handler);
         handler.addContent(dlq.getChildren().stream().map(c -> c.detach()).collect(toList()));
       }
 
