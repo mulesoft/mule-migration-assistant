@@ -117,18 +117,22 @@ public class SftpInboundTest {
         });
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
 
+    MelToDwExpressionMigrator expressionMigrator =
+        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
+
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
 
     sftpGlobalEndpoint = new SftpGlobalEndpoint();
     sftpGlobalEndpoint.setApplicationModel(appModel);
     sftpConfig = new SftpConfig();
-    sftpConfig.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    sftpConfig.setExpressionMigrator(expressionMigrator);
     sftpConfig.setApplicationModel(appModel);
     sftpInboundEndpoint = new SftpInboundEndpoint();
+    sftpInboundEndpoint.setExpressionMigrator(expressionMigrator);
     sftpInboundEndpoint.setApplicationModel(appModel);
     inboundEndpoint = new InboundEndpoint();
-    // inboundEndpoint.setExpressionMigrator(expressionMigrator);
+    inboundEndpoint.setExpressionMigrator(expressionMigrator);
     inboundEndpoint.setApplicationModel(appModel);
     removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
   }

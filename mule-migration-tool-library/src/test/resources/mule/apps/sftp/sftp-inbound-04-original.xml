@@ -5,20 +5,11 @@
     xsi:schemaLocation="
         http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
-
-    <sftp:endpoint
-        address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/testdir/autoDeleteOff"
-        name="inboundEndpointOff" autoDelete="false"/>
     <sftp:endpoint
         address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/testdir/autoDeleteOn"
         name="inboundEndpointOn" autoDelete="true"/>
 
-    <flow name="flowOff">
-        <inbound-endpoint ref="inboundEndpointOff"/>
-        <logger/>
-    </flow>
-
-    <flow name="flowOn">
+    <flow name="flow">
         <inbound-endpoint ref="inboundEndpointOn"/>
         <logger/>
     </flow>

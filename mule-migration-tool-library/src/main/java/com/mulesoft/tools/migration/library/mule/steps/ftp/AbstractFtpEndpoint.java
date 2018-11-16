@@ -55,10 +55,12 @@ public abstract class AbstractFtpEndpoint extends AbstractApplicationModelMigrat
   }
 
   protected String resolveDirectory(String endpointPath) {
-    if (endpointPath.startsWith("/~/")) {
-      return substring(endpointPath, 3);
-    } else if (endpointPath.equals("/~")) {
+    if (endpointPath.equals("/~")) {
       return "~";
+    } else if (endpointPath.startsWith("/~/")) {
+      return substring(endpointPath, 3);
+    } else if (endpointPath.startsWith("/")) {
+      return substring(endpointPath, 1);
     } else {
       return endpointPath;
     }

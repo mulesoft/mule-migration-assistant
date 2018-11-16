@@ -6,12 +6,14 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.sftp;
 
+import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint.migrateFileFilters;
 import static com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConfig.SFTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateRedeliveryPolicyChildren;
 
@@ -80,21 +82,21 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
       migrateRedeliveryPolicyChildren(redelivery, report);
     }
 
-    // Element schedulingStr = object.getChild("scheduling-strategy", CORE_NAMESPACE);
-    // if (schedulingStr == null) {
-    // schedulingStr = new Element("scheduling-strategy", CORE_NAMESPACE);
-    // schedulingStr.addContent(new Element("fixed-frequency", CORE_NAMESPACE));
-    // object.addContent(schedulingStr);
-    // }
-    //
-    // Element fixedFrequency = schedulingStr.getChild("fixed-frequency", CORE_NAMESPACE);
-    //
-    // if (object.getAttribute("pollingFrequency") != null) {
-    // fixedFrequency.setAttribute("frequency", object.getAttributeValue("pollingFrequency", "1000"));
-    // } else if (fixedFrequency.getAttribute("frequency") == null) {
-    // fixedFrequency.setAttribute("frequency", "1000");
-    // }
-    // object.removeAttribute("pollingFrequency");
+    Element schedulingStr = object.getChild("scheduling-strategy", CORE_NAMESPACE);
+    if (schedulingStr == null) {
+      schedulingStr = new Element("scheduling-strategy", CORE_NAMESPACE);
+      schedulingStr.addContent(new Element("fixed-frequency", CORE_NAMESPACE));
+      object.addContent(schedulingStr);
+    }
+
+    Element fixedFrequency = schedulingStr.getChild("fixed-frequency", CORE_NAMESPACE);
+
+    if (object.getAttribute("pollingFrequency") != null) {
+      fixedFrequency.setAttribute("frequency", object.getAttributeValue("pollingFrequency", "1000"));
+    } else if (fixedFrequency.getAttribute("frequency") == null) {
+      fixedFrequency.setAttribute("frequency", "1000");
+    }
+    object.removeAttribute("pollingFrequency");
 
     doExecute(object, report);
 
@@ -143,6 +145,21 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
     // .setAttribute("encoding", object.getAttributeValue("encoding")));
     // object.removeAttribute("encoding");
     // }
+
+    if (object.getAttribute("archiveDir") != null) {
+      String fileArchiveConfigName = sftpConfig.getAttributeValue("name") + "Archive";
+      addTopLevelElement(new Element("config", FILE_NAMESPACE)
+          .setAttribute("name", fileArchiveConfigName)
+          .addContent(new Element("connection", FILE_NAMESPACE)
+              .setAttribute("workingDir", object.getAttributeValue("archiveDir"))), object.getDocument());
+
+      object.getParentElement().addContent(3, new Element("write", FILE_NAMESPACE)
+          .setAttribute("config-ref", fileArchiveConfigName)
+          .setAttribute("path", "#[attributes.name]"));
+
+      object.removeAttribute("archiveDir");
+    }
+
     if (object.getAttribute("responseTimeout") != null) {
       copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
       connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");

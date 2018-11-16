@@ -6,22 +6,12 @@
         http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
 
-    <sftp:connector name="SFTP" autoDelete="false"/>
-
     <sftp:endpoint
         address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/testdir/autoDeleteOff"
-        name="inboundEndpointOff" connector-ref="SFTP"/>
-    <sftp:endpoint
-        address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/testdir/autoDeleteOn"
-        name="inboundEndpointOn" autoDelete="true" connector-ref="SFTP"/>
+        name="inboundEndpointOff"/>
 
-    <flow name="flowOff">
+    <flow name="flow">
         <inbound-endpoint ref="inboundEndpointOff"/>
-        <logger/>
-    </flow>
-
-    <flow name="flowOn">
-        <inbound-endpoint ref="inboundEndpointOn"/>
         <logger/>
     </flow>
 

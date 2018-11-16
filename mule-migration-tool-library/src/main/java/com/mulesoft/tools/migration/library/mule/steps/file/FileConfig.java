@@ -34,7 +34,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   private static final String FILE_NAMESPACE_PREFIX = "file";
   private static final String FILE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/file";
-  private static final Namespace FILE_NAMESPACE = Namespace.getNamespace(FILE_NAMESPACE_PREFIX, FILE_NAMESPACE_URI);
+  public static final Namespace FILE_NAMESPACE = Namespace.getNamespace(FILE_NAMESPACE_PREFIX, FILE_NAMESPACE_URI);
   public static final String XPATH_SELECTOR = "/*/file:connector";
 
   private ExpressionMigrator expressionMigrator;
@@ -51,8 +51,6 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace fileNs = Namespace.getNamespace(FILE_NAMESPACE_PREFIX, FILE_NAMESPACE_URI);
-
     handleInputImplicitConnectorRef(object, report);
     handleOutputImplicitConnectorRef(object, report);
 

@@ -35,6 +35,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.PropertiesMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.RequestReplyMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.ScriptingMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SecurePropertiesMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.SftpMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SpringMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.VMMigrationTask;
@@ -57,8 +58,8 @@ import java.util.stream.Collectors;
  */
 public class MigrationTaskLocator {
 
-  private String from;
-  private String to;
+  private final String from;
+  private final String to;
 
   public MigrationTaskLocator(String from, String to) {
     checkArgument(from != null, "From must not be null");
@@ -117,6 +118,7 @@ public class MigrationTaskLocator {
 
     coreMigrationTasks.add(new FileMigrationTask());
     coreMigrationTasks.add(new FtpMigrationTask());
+    coreMigrationTasks.add(new SftpMigrationTask());
     coreMigrationTasks.add(new EndpointsMigrationTask());
     coreMigrationTasks.add(new JmsDomainMigrationTask());
     coreMigrationTasks.add(new JmsMigrationTask());
