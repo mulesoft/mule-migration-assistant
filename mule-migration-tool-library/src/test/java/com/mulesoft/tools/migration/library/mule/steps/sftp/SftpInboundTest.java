@@ -17,8 +17,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
+import com.mulesoft.tools.migration.library.mule.steps.core.CatchExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
+import com.mulesoft.tools.migration.library.mule.steps.core.RollbackExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -65,7 +67,8 @@ public class SftpInboundTest {
         "sftp-inbound-08",
         "sftp-inbound-09",
         "sftp-inbound-10",
-        "sftp-inbound-11",
+        // TODO MMT-218
+        // "sftp-inbound-11",
         "sftp-inbound-12",
         "sftp-inbound-13",
         "sftp-inbound-14",
@@ -87,6 +90,8 @@ public class SftpInboundTest {
     targetPath = SFTP_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
   }
 
+  private CatchExceptionStrategy catchExceptionStrategy;
+  private RollbackExceptionStrategy rollbackExceptionStrategy;
   private GenericGlobalEndpoint genericGlobalEndpoint;
   private SftpGlobalEndpoint sftpGlobalEndpoint;
   private SftpConfig sftpConfig;
@@ -120,6 +125,9 @@ public class SftpInboundTest {
     MelToDwExpressionMigrator expressionMigrator =
         new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
 
+    catchExceptionStrategy = new CatchExceptionStrategy();
+    rollbackExceptionStrategy = new RollbackExceptionStrategy();
+
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);
 
@@ -139,6 +147,11 @@ public class SftpInboundTest {
 
   @Test
   public void execute() throws Exception {
+    getElementsFromDocument(doc, catchExceptionStrategy.getAppliedTo().getExpression())
+        .forEach(node -> catchExceptionStrategy.execute(node, report.getReport()));
+    getElementsFromDocument(doc, rollbackExceptionStrategy.getAppliedTo().getExpression())
+        .forEach(node -> rollbackExceptionStrategy.execute(node, report.getReport()));
+
     getElementsFromDocument(doc, genericGlobalEndpoint.getAppliedTo().getExpression())
         .forEach(node -> genericGlobalEndpoint.execute(node, report.getReport()));
     getElementsFromDocument(doc, sftpGlobalEndpoint.getAppliedTo().getExpression())

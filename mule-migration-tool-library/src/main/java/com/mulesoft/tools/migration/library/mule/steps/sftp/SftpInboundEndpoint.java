@@ -98,7 +98,11 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
     }
     object.removeAttribute("pollingFrequency");
 
-    if (object.getAttribute("fileAge") != null && !"0".equals(object.getAttributeValue("fileAge"))) {
+    if (object.getAttribute("sizeCheckWaitTime") != null && !"0".equals(object.getAttributeValue("sizeCheckWaitTime"))) {
+      String sizeCheckWaitTime = object.getAttributeValue("sizeCheckWaitTime");
+      object.setAttribute("timeBetweenSizeCheck", sizeCheckWaitTime);
+      object.removeAttribute("sizeCheckWaitTime");
+    } else if (object.getAttribute("fileAge") != null && !"0".equals(object.getAttributeValue("fileAge"))) {
       String fileAge = object.getAttributeValue("fileAge");
       object.setAttribute("timeBetweenSizeCheck", fileAge);
       object.removeAttribute("fileAge");

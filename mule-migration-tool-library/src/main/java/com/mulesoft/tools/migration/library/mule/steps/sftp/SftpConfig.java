@@ -143,6 +143,10 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
         .forEach(e -> passConnectorConfigToInboundEnpoint(object, e));
 
     object.removeAttribute("pollingFrequency");
+    object.removeAttribute("fileAge");
+    object.removeAttribute("sizeCheckWaitTime");
+    object.removeAttribute("tempDirInbound");
+    object.removeAttribute("useTempFileTimestampSuffix");
   }
 
   private void handleOutputSpecificAttributes(Element object, MigrationReport report) {
@@ -155,6 +159,8 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
         .forEach(e -> passConnectorConfigToOutboundEndpoint(object, e));
 
     object.removeAttribute("outputPattern");
+    object.removeAttribute("tempDirOutbound");
+    object.removeAttribute("duplicateHandling");
   }
 
   private void passConnectorConfigToInboundEnpoint(Element object, Element listener) {
@@ -167,6 +173,21 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
     if (listener.getAttribute("autoDelete") == null && object.getAttribute("autoDelete") != null) {
       listener.setAttribute("autoDelete", object.getAttributeValue("autoDelete"));
     }
+
+    if (listener.getAttribute("fileAge") == null && object.getAttribute("fileAge") != null) {
+      listener.setAttribute("fileAge", object.getAttributeValue("fileAge"));
+    }
+    if (listener.getAttribute("sizeCheckWaitTime") == null && object.getAttribute("sizeCheckWaitTime") != null) {
+      listener.setAttribute("sizeCheckWaitTime", object.getAttributeValue("sizeCheckWaitTime"));
+    }
+
+    if (listener.getAttribute("tempDirInbound") == null && object.getAttribute("tempDir") != null) {
+      listener.setAttribute("tempDir", object.getAttributeValue("tempDirInbound"));
+    }
+    if (listener.getAttribute("useTempFileTimestampSuffix") == null
+        && object.getAttribute("useTempFileTimestampSuffix") != null) {
+      listener.setAttribute("useTempFileTimestampSuffix", object.getAttributeValue("useTempFileTimestampSuffix"));
+    }
   }
 
   private void passConnectorConfigToOutboundEndpoint(Element object, Element write) {
@@ -176,6 +197,14 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
 
     if (write.getAttribute("autoDelete") == null && object.getAttribute("autoDelete") != null) {
       write.setAttribute("autoDelete", object.getAttributeValue("autoDelete"));
+    }
+
+    if (write.getAttribute("tempDirOutbound") == null && object.getAttribute("tempDir") != null) {
+      write.setAttribute("tempDir", object.getAttributeValue("tempDirOutbound"));
+    }
+
+    if (write.getAttribute("duplicateHandling") == null && object.getAttribute("duplicateHandling") != null) {
+      write.setAttribute("duplicateHandling", object.getAttributeValue("duplicateHandling"));
     }
   }
 
