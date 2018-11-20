@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.file;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
+import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -162,14 +163,16 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("name") != null) {
       object.removeAttribute("name");
     }
+
+    if (object.getAttribute("exchange-pattern") != null) {
+      object.removeAttribute("exchange-pattern");
+    }
   }
 
   public static void migrateFileFilters(Element object, MigrationReport report, Namespace ns, ApplicationModel appModel) {
     Element newMatcher = null;
 
-    Namespace fileNs = Namespace.getNamespace(FILE_NS_PREFIX, FILE_NS_URI);
-
-    Element globFilterIn = object.getChild("filename-wildcard-filter", fileNs);
+    Element globFilterIn = object.getChild("filename-wildcard-filter", FILE_NAMESPACE);
     if (globFilterIn != null) {
       if (newMatcher == null) {
         newMatcher = buildNewMatcher(object, ns, appModel);
@@ -191,7 +194,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.getParentElement().addContent(3, customFilterIn);
     }
 
-    Element regexFilterIn = object.getChild("filename-regex-filter", fileNs);
+    Element regexFilterIn = object.getChild("filename-regex-filter", FILE_NAMESPACE);
     if (regexFilterIn != null) {
       if (newMatcher == null) {
         newMatcher = buildNewMatcher(object, ns, appModel);
@@ -206,7 +209,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.removeContent(regexFilterIn);
     }
 
-    Element globFilter = object.getParentElement().getChild("filename-wildcard-filter", fileNs);
+    Element globFilter = object.getParentElement().getChild("filename-wildcard-filter", FILE_NAMESPACE);
     if (globFilter != null) {
       if (newMatcher == null) {
         newMatcher = buildNewMatcher(object, ns, appModel);
@@ -221,7 +224,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.getParentElement().removeContent(globFilter);
     }
 
-    Element regexFilter = object.getParentElement().getChild("filename-regex-filter", fileNs);
+    Element regexFilter = object.getParentElement().getChild("filename-regex-filter", FILE_NAMESPACE);
     if (regexFilter != null) {
       if (newMatcher == null) {
         newMatcher = buildNewMatcher(object, ns, appModel);

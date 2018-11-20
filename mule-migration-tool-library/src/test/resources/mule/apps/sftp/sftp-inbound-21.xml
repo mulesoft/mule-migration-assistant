@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+    xmlns:file="http://www.mulesoft.org/schema/mule/file"
+    xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+    xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+        http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd
+        http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+        http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+
+    <sftp:config name="flowSftpConfig">
+        <sftp:connection host="${SFTP_HOST}" password="${USER1_PASSWORD}" port="${SFTP_PORT}" username="${USER1_NAME}">
+            <reconnection failsDeployment="true"/>
+        </sftp:connection>
+    </sftp:config>
+
+    <file:config name="flowSftpConfigArchive">
+        <file:connection workingDir="${archiveDir}" />
+    </file:config>
+
+    <flow name="flow">
+        <sftp:listener config-ref="flowSftpConfig" directory="testdir">
+            <redelivery-policy maxRedeliveryCount="${maxRedelivery}"/>
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000"/>
+            </scheduling-strategy>
+        </sftp:listener>
+        <compatibility:attributes-to-inbound-properties/>
+        <file:write config-ref="flowSftpConfigArchive" path="#[attributes.name]"/>
+        <logger/>
+        <compatibility:outbound-properties-to-var/>
+        <error-handler>
+            <on-error-propagate type="REDELIVERY_EXHAUSTED">
+                <vm:outbound-endpoint exchange-pattern="one-way" path="error-queue"/>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+
+</mule>

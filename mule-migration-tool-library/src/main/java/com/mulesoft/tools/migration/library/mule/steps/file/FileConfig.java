@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleReconnection;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static java.util.stream.Collectors.joining;
@@ -34,7 +35,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   private static final String FILE_NAMESPACE_PREFIX = "file";
   private static final String FILE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/file";
-  private static final Namespace FILE_NAMESPACE = Namespace.getNamespace(FILE_NAMESPACE_PREFIX, FILE_NAMESPACE_URI);
+  public static final Namespace FILE_NAMESPACE = Namespace.getNamespace(FILE_NAMESPACE_PREFIX, FILE_NAMESPACE_URI);
   public static final String XPATH_SELECTOR = "/*/file:connector";
 
   private ExpressionMigrator expressionMigrator;
@@ -51,8 +52,6 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace fileNs = Namespace.getNamespace(FILE_NAMESPACE_PREFIX, FILE_NAMESPACE_URI);
-
     handleInputImplicitConnectorRef(object, report);
     handleOutputImplicitConnectorRef(object, report);
 
@@ -83,13 +82,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     }
     object.removeAttribute("workFileNamePattern");
 
-    String failsDeployment = changeDefault("true", "false", object.getAttributeValue("validateConnections"));
-    object.removeAttribute("validateConnections");
-    if (failsDeployment != null) {
-      Element reconnection = new Element("reconnection", CORE_NAMESPACE);
-      reconnection.setAttribute("failsDeployment", failsDeployment);
-      connection.addContent(reconnection);
-    }
+    handleReconnection(object, connection);
 
     Element matcher = new Element("matcher", FILE_NAMESPACE_URI);
     matcher.setAttribute("name", object.getAttributeValue("name") + "Matcher");
@@ -126,8 +119,8 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
       for (Element implicitConnectorRef : implicitConnectorRefs) {
         // This situation would have caused the app to not start in Mule 3. As it is not a migration issue per se, there's no
         // linked docs
-        report.report("file.manyConnectors", implicitConnectorRef, implicitConnectorRef,
-                      availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
+        report.report("transports.manyConnectors", implicitConnectorRef, implicitConnectorRef,
+                      "file", availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
       }
     } else {
       for (Element implicitConnectorRef : implicitConnectorRefs) {

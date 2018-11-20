@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+    xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+        http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <sftp:config name="sftpAddSeq">
+        <sftp:connection host="${SFTP_HOST}" password="${USER1_PASSWORD}" port="${SFTP_PORT}" username="${USER1_NAME}">
+            <reconnection failsDeployment="true"/>
+        </sftp:connection>
+    </sftp:config>
+
+    <flow name="flowOut">
+        <compatibility:outbound-properties-to-var/>
+        <sftp:write config-ref="sftpAddSeq" path="#['data/' ++ migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
+        <compatibility:attributes-to-inbound-properties/>
+    </flow>
+
+    <flow name="flowIn">
+        <sftp:listener config-ref="sftpAddSeq" directory="data">
+            <scheduling-strategy>
+                <fixed-frequency frequency="2000"/>
+            </scheduling-strategy>
+        </sftp:listener>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger/>
+        <compatibility:outbound-properties-to-var/>
+    </flow>
+
+</mule>

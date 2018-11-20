@@ -7,9 +7,7 @@
        http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd">
 
     <ftp:connector name="FTP" validateConnections="true">
-        <reconnect frequency="${pollingFrequency}" count="${count}">
-            <reconnect-custom-notifier class="org.mule.transport.ftp.FtpReconnectionNotifierTestCase$TestReconnectNotifier"/>
-        </reconnect>
+        <reconnect frequency="${pollingFrequency}" count="${count}"/>
     </ftp:connector>
         
 </mule>

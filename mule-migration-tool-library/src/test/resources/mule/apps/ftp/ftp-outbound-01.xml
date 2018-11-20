@@ -9,14 +9,14 @@
        http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
     <ftp:config name="FTP">
-        <ftp:connection username="mule-test" password="mule-test" host="localhost" port="${port}">
+        <ftp:connection username="mule-test" password="mule-test" host="localhost" port="${port}" workingDir="~">
             <reconnection failsDeployment="true"/>
         </ftp:connection>
     </ftp:config>
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <ftp:write config-ref="FTP" path="~"/>
+        <ftp:write config-ref="FTP" path="#[migration::FtpWriteOutputFile::ftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
         <compatibility:attributes-to-inbound-properties/>
     </flow>
 </mule>

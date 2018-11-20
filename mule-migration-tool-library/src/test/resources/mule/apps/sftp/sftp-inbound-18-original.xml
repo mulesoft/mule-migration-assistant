@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+    xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+        http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+
+    <flow name="flow">
+        <sftp:inbound-endpoint address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/testdir" archiveDir="${archiveDir}">
+            <idempotent-redelivery-policy idExpression="#[message.outboundProperties['originalFilename']]" maxRedeliveryCount="${maxRedelivery}">
+                <dead-letter-queue>
+                    <vm:outbound-endpoint exchange-pattern="one-way" path="error-queue"/>
+                </dead-letter-queue>
+            </idempotent-redelivery-policy>
+        </sftp:inbound-endpoint>
+        <logger/>
+        <catch-exception-strategy>
+            <object-to-string-transformer />
+            <vm:outbound-endpoint exchange-pattern="one-way" path="out"/>
+        </catch-exception-strategy>
+    </flow>
+
+</mule>

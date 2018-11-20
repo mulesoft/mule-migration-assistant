@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+
+    <sftp:connector name="sftpAppendConnector" duplicateHandling="append" tempDirInbound="archive" useTempFileTimestampSuffix="true" />
+    <sftp:connector name="sftpAppendConnectorWithTempDirOutbound" duplicateHandling="append" tempDirInbound="archive" useTempFileTimestampSuffix="true" tempDirOutbound="tempFolder" />
+    <sftp:connector name="sftpOverwriteConnector" duplicateHandling="overwrite" tempDirInbound="archive" useTempFileTimestampSuffix="true" />
+    <sftp:connector name="sftpOverwriteConnectorWithTempDirOutbound" duplicateHandling="overwrite" tempDirInbound="archive" tempDirOutbound="tempFolder" useTempFileTimestampSuffix="true" />
+
+    <flow name="flow1">
+        <sftp:outbound-endpoint address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/testdir" outputPattern="append.txt" connector-ref="sftpAppendConnector" />
+    </flow>
+
+    <flow name="flow2">
+        <sftp:outbound-endpoint address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/testdir" outputPattern="append.txt" connector-ref="sftpAppendConnectorWithTempDirOutbound" />
+    </flow>
+
+    <flow name="flow3">
+        <sftp:outbound-endpoint address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/testdir" outputPattern="overwrite.txt" connector-ref="sftpOverwriteConnector" />
+    </flow>
+
+    <flow name="flow4">
+        <sftp:outbound-endpoint address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/testdir" outputPattern="overwrite.txt" connector-ref="sftpOverwriteConnectorWithTempDirOutbound" />
+    </flow>
+
+</mule>

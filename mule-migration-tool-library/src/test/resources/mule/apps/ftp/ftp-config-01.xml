@@ -7,7 +7,9 @@
 
     <ftp:config name="FTP">
         <ftp:connection>
-            <reconnection failsDeployment="true"/>
+            <reconnection failsDeployment="true">
+                <reconnect blocking="false"/>
+            </reconnection>
         </ftp:connection>
     </ftp:config>
 

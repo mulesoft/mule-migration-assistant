@@ -8,8 +8,8 @@ package com.mulesoft.tools.migration.library.mule.steps.ftp;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.handleChildElements;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleReconnection;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.stream.Collectors.joining;
 
@@ -76,13 +76,7 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
     }
     object.removeAttribute("connectionFactoryClass");
 
-    String failsDeployment = changeDefault("true", "false", object.getAttributeValue("validateConnections"));
-    object.removeAttribute("validateConnections");
-    if (failsDeployment != null) {
-      Element reconnection = new Element("reconnection", CORE_NAMESPACE);
-      reconnection.setAttribute("failsDeployment", failsDeployment);
-      connection.addContent(reconnection);
-    }
+    handleReconnection(object, connection);
 
     copyAttributeIfPresent(object, connection, "passive");
     if (object.getAttribute("binary") != null) {
@@ -120,8 +114,8 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
       for (Element implicitConnectorRef : implicitConnectorRefs) {
         // This situation would have caused the app to not start in Mule 3. As it is not a migration issue per se, there's no
         // linked docs
-        report.report("ftp.manyConnectors", implicitConnectorRef, implicitConnectorRef,
-                      availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
+        report.report("transports.manyConnectors", implicitConnectorRef, implicitConnectorRef,
+                      "ftp", availableConfigs.stream().map(e -> e.getAttributeValue("name")).collect(joining(", ")));
       }
     } else {
       for (Element implicitConnectorRef : implicitConnectorRefs) {

@@ -127,9 +127,9 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
     if (object.getAttribute("connector-ref") != null) {
       object.getAttribute("connector-ref").setName("config-ref");
     } else {
-      object.removeAttribute("name");
       object.setAttribute("config-ref", ftpConfig.getAttributeValue("name"));
     }
+    object.removeAttribute("name");
 
     copyAttributeIfPresent(object, connection, "passive");
     if (object.getAttribute("binary") != null) {
@@ -146,6 +146,10 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
     if (object.getAttribute("responseTimeout") != null) {
       copyAttributeIfPresent(object, connection, "responseTimeout", "connectionTimeout");
       connection.setAttribute("connectionTimeoutUnit", "MILLISECONDS");
+    }
+
+    if (object.getAttribute("exchange-pattern") != null) {
+      object.removeAttribute("exchange-pattern");
     }
   }
 

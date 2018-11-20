@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.step.util;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isErrorHanldingElement;
@@ -16,6 +17,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.regex.Pattern.compile;
 import static java.util.stream.Collectors.toList;
+import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -42,7 +44,7 @@ public final class TransportsUtils {
   protected static final String COMPATIBILITY_NS_SCHEMA_LOC =
       "http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd";
 
-  public static final Namespace COMPATIBILITY_NAMESPACE = Namespace.getNamespace("compatibility", COMPATIBILITY_NS_URI);
+  public static final Namespace COMPATIBILITY_NAMESPACE = getNamespace("compatibility", COMPATIBILITY_NS_URI);
 
   // Cannot use just Uri() because the address may have placeholders
   public static final Pattern ADDRESS_PATTERN =
@@ -121,6 +123,36 @@ public final class TransportsUtils {
 
     public String getPath() {
       return path;
+    }
+  }
+
+  public static void handleReconnection(Element mule3Connector, Element connection) {
+    String failsDeployment = changeDefault("true", "false", mule3Connector.getAttributeValue("validateConnections"));
+    mule3Connector.removeAttribute("validateConnections");
+    if (failsDeployment != null) {
+      Element reconnection = new Element("reconnection", CORE_NAMESPACE);
+      reconnection.setAttribute("failsDeployment", failsDeployment);
+      connection.addContent(reconnection);
+    }
+
+    if (mule3Connector.getChild("reconnect", CORE_NAMESPACE) != null) {
+      Element reconnection = connection.getChild("reconnection", CORE_NAMESPACE);
+      if (reconnection == null) {
+        reconnection = new Element("reconnection", CORE_NAMESPACE);
+        connection.addContent(reconnection);
+      }
+
+      reconnection.addContent(mule3Connector.getChild("reconnect", CORE_NAMESPACE).detach());
+    }
+
+    if (mule3Connector.getChild("reconnect-forever", CORE_NAMESPACE) != null) {
+      Element reconnection = connection.getChild("reconnection", CORE_NAMESPACE);
+      if (reconnection == null) {
+        reconnection = new Element("reconnection", CORE_NAMESPACE);
+        connection.addContent(reconnection);
+      }
+
+      reconnection.addContent(mule3Connector.getChild("reconnect-forever", CORE_NAMESPACE).detach());
     }
   }
 

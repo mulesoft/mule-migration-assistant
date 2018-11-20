@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpConfig.FTP_
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static org.apache.commons.lang3.StringUtils.substring;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -51,6 +52,18 @@ public abstract class AbstractFtpEndpoint extends AbstractApplicationModelMigrat
       return ftpCfg;
     });
     return ftpConfig;
+  }
+
+  protected String resolveDirectory(String endpointPath) {
+    if (endpointPath.equals("/~")) {
+      return "~";
+    } else if (endpointPath.startsWith("/~/")) {
+      return substring(endpointPath, 3);
+    } else if (endpointPath.startsWith("/")) {
+      return substring(endpointPath, 1);
+    } else {
+      return endpointPath;
+    }
   }
 
   @Override

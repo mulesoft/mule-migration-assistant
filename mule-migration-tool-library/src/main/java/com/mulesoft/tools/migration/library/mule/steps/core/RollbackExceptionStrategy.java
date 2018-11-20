@@ -46,6 +46,7 @@ public class RollbackExceptionStrategy extends AbstractExceptionsMigrationStep {
 
     encapsulateException(element);
 
+    boolean hadWhen = element.getAttribute("when") != null;
     migrateWhenExpression(element);
 
     if (element.getAttribute("maxRedeliveryAttempts") != null) {
@@ -108,6 +109,9 @@ public class RollbackExceptionStrategy extends AbstractExceptionsMigrationStep {
       newOnError.addContent(redeliveryElements);
 
       element.getParentElement().addContent(newOnError);
+      if (!hadWhen) {
+        element.detach();
+      }
     }
 
   }

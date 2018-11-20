@@ -18,6 +18,7 @@ import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpEeInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.jms.JmsInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.vm.VmInboundEndpoint;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -43,6 +44,8 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
   private static final String FILE_NS_URI = "http://www.mulesoft.org/schema/mule/file";
   private static final String FTP_NS_PREFIX = "ftp";
   private static final String FTP_NS_URI = "http://www.mulesoft.org/schema/mule/ee/ftp";
+  private static final String SFTP_NS_PREFIX = "sftp";
+  private static final String SFTP_NS_URI = "http://www.mulesoft.org/schema/mule/sftp";
   private static final String JMS_NS_PREFIX = "jms";
   private static final String JMS_NS_URI = "http://www.mulesoft.org/schema/mule/jms";
   private static final String VM_NS_PREFIX = "vm";
@@ -81,6 +84,9 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
       } else if (address.startsWith("ftp://")) {
         migrator = new FtpEeInboundEndpoint();
         object.setNamespace(Namespace.getNamespace(FTP_NS_PREFIX, FTP_NS_URI));
+      } else if (address.startsWith("sftp://")) {
+        migrator = new SftpInboundEndpoint();
+        object.setNamespace(Namespace.getNamespace(SFTP_NS_PREFIX, SFTP_NS_URI));
       } else if (address.startsWith("http://")) {
         migrator = new HttpInboundEndpoint();
         object.setNamespace(Namespace.getNamespace(HTTP_NS_PREFIX, HTTP_NS_URI));
@@ -128,6 +134,9 @@ public class InboundEndpoint extends AbstractApplicationModelMigrationStep
         } else if (address.startsWith("ftp://")) {
           migrator = new FtpEeInboundEndpoint();
           object.setNamespace(Namespace.getNamespace(FTP_NS_PREFIX, FTP_NS_URI));
+        } else if (address.startsWith("sftp://")) {
+          migrator = new SftpInboundEndpoint();
+          object.setNamespace(Namespace.getNamespace(SFTP_NS_PREFIX, SFTP_NS_URI));
         } else if (address.startsWith("http://")) {
           migrator = new HttpInboundEndpoint();
           object.setNamespace(Namespace.getNamespace(HTTP_NS_PREFIX, HTTP_NS_URI));

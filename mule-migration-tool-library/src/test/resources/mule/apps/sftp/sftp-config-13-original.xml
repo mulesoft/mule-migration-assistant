@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+
+    <sftp:connector name="sftpConnectorWithKnownHosts"
+        knownHostsFile="src/test/resources/empty_known_hosts" />
+
+    <flow name="flowIn">
+        <sftp:inbound-endpoint name="sftpConnectorWithKnownHosts"
+                               address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/data" />
+        <logger/>
+    </flow>
+
+</mule>

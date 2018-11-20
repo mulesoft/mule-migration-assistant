@@ -81,6 +81,10 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("name") != null) {
       object.removeAttribute("name");
     }
+
+    if (object.getAttribute("exchange-pattern") != null) {
+      object.removeAttribute("exchange-pattern");
+    }
   }
 
   private String compatibilityOutputFile(String pathDslParams) {
@@ -113,8 +117,9 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
   private String propToDwExpr(Element object, String propName) {
     if (object.getAttribute(propName) != null) {
-      if (getExpressionMigrator().isWrapped(object.getAttributeValue(propName))) {
-        return getExpressionMigrator().migrateExpression(object.getAttributeValue(propName), true, object);
+      if (getExpressionMigrator().isTemplate(object.getAttributeValue(propName))) {
+        return getExpressionMigrator()
+            .unwrap(getExpressionMigrator().migrateExpression(object.getAttributeValue(propName), true, object));
       } else {
         return "'" + object.getAttributeValue(propName) + "'";
       }

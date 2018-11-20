@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+
+    <flow name="flow">
+        <sftp:inbound-endpoint user="user42"
+            password="passw0rd" path="data" port="4243" host="foobar-host"
+            pollingFrequency="500" name="inboundEndpoint1" />
+        <logger/>
+    </flow>
+
+</mule>

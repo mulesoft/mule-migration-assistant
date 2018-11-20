@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+    xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+        http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <sftp:config name="outboundEndpoint2Config">
+        <sftp:connection host="foobar-host" password="passw0rd" port="4243" username="user42">
+            <reconnection failsDeployment="true"/>
+        </sftp:connection>
+    </sftp:config>
+
+    <flow name="flow">
+        <sftp:listener/>
+        <compatibility:outbound-properties-to-var/>
+        <sftp:write config-ref="outboundEndpoint2Config" path="#['data/' ++ migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]"/>
+        <compatibility:attributes-to-inbound-properties/>
+        
+        <error-handler>
+            <on-error-continue errorType="SFTP:ILLEGAL_PATH,SFTP:ILLEGAL_CONTENT,SFTP:FILE_ALREADY_EXISTS,SFTP:ACCESS_DENIED">
+                <compatibility:outbound-properties-to-var/>
+            </on-error-continue>
+        </error-handler>
+    </flow>
+
+</mule>
