@@ -654,3 +654,15 @@ untilSuccessful:
     message: Threading Profile is no longer needed in Mule 4.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/intro-engine
+
+json:
+  mapper:
+    type: ERROR
+    message: Use DataWeave instead of a JSON mapper configuration.
+    docLinks: 
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-json#transformers
+  xslt:
+    type: ERROR
+    message: Use DataWeave instead of XSLT.
+    docLinks: 
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-json#xslt

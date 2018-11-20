@@ -10,9 +10,14 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
+import com.mulesoft.tools.migration.library.mule.steps.json.JsonMapper;
 import com.mulesoft.tools.migration.library.mule.steps.json.JsonModulePomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.json.JsonSchemaValidationFilter;
+import com.mulesoft.tools.migration.library.mule.steps.json.JsonToObjectTransformer;
+import com.mulesoft.tools.migration.library.mule.steps.json.JsonToXmlTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.json.JsonValidateSchema;
+import com.mulesoft.tools.migration.library.mule.steps.json.ObjectToJsonTransformer;
+import com.mulesoft.tools.migration.library.mule.steps.json.XmlToJsonTransformer;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
@@ -45,6 +50,11 @@ public class JsonMigrationTask extends AbstractMigrationTask {
   public List<MigrationStep> getSteps() {
     return newArrayList(new JsonModulePomContribution(),
                         new JsonValidateSchema(),
-                        new JsonSchemaValidationFilter());
+                        new JsonSchemaValidationFilter(),
+                        new JsonToObjectTransformer(),
+                        new ObjectToJsonTransformer(),
+                        new JsonToXmlTransformer(),
+                        new XmlToJsonTransformer(),
+                        new JsonMapper());
   }
 }

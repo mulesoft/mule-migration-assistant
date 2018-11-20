@@ -6,6 +6,6 @@
        http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
 
     <flow name="flow">
-        <json:xml-to-json-transformer name="xToJ"/>
+        <json:xml-to-json-transformer/>
     </flow>
 </mule>

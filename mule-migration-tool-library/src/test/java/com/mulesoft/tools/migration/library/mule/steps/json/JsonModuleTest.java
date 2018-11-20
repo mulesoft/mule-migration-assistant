@@ -9,14 +9,25 @@ package com.mulesoft.tools.migration.library.mule.steps.json;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
+import com.mulesoft.tools.migration.library.mule.steps.core.GlobalElementsCleanup;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.FilterReference;
 import com.mulesoft.tools.migration.library.mule.steps.validation.ValidationAllProcessorMigration;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
+import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
@@ -28,6 +39,7 @@ import org.junit.runners.Parameterized;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @RunWith(Parameterized.class)
 public class JsonModuleTest {
@@ -58,7 +70,8 @@ public class JsonModuleTest {
         "json-13",
         "json-14",
         "json-15",
-        "json-16"
+        "json-16",
+        "json-17"
 
     };
   }
@@ -66,6 +79,7 @@ public class JsonModuleTest {
   private final Path configPath;
   private final Path targetPath;
   private Document doc;
+  private ApplicationModel appModel;
 
   public JsonModuleTest(String filePrefix) {
     configPath = JSON_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -73,29 +87,85 @@ public class JsonModuleTest {
   }
 
   private ValidationAllProcessorMigration validationAllProcessorMigration;
+  private FilterReference filterRef;
   private JsonValidateSchema validateSchema;
   private JsonSchemaValidationFilter validateSchemaFilter;
+  private JsonToObjectTransformer j2oTransformer;
+  private ObjectToJsonTransformer o2jTransformer;
+  private JsonMapper mapper;
+  private JsonToXmlTransformer j2xTransformer = new JsonToXmlTransformer();
+  private XmlToJsonTransformer x2jTransformer = new XmlToJsonTransformer();
+  private JsonXsltTransformer jxsltTransformer = new JsonXsltTransformer();
+
+  private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
+  private GlobalElementsCleanup globalElementsCleanup;
 
   @Before
   public void setUp() throws Exception {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
 
+    appModel = mock(ApplicationModel.class);
+    when(appModel.getNodes(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
+    when(appModel.getNode(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
+    when(appModel.getNodeOptional(any(String.class)))
+        .thenAnswer(invocation -> {
+          List<Element> elementsFromDocument = getElementsFromDocument(doc, (String) invocation.getArguments()[0]);
+          if (elementsFromDocument.isEmpty()) {
+            return empty();
+          } else {
+            return of(elementsFromDocument.iterator().next());
+          }
+        });
+    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+    when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
 
     validationAllProcessorMigration = new ValidationAllProcessorMigration();
+    filterRef = new FilterReference();
+    filterRef.setApplicationModel(appModel);
     validateSchema = new JsonValidateSchema();
     validateSchemaFilter = new JsonSchemaValidationFilter();
-    // validateSchema
-    // .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    j2oTransformer = new JsonToObjectTransformer();
+    o2jTransformer = new ObjectToJsonTransformer();
+    mapper = new JsonMapper();
+    j2xTransformer = new JsonToXmlTransformer();
+    x2jTransformer = new XmlToJsonTransformer();
+    jxsltTransformer = new JsonXsltTransformer();
+
+    removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
+    globalElementsCleanup = new GlobalElementsCleanup();
   }
 
   @Test
   public void execute() throws Exception {
     getElementsFromDocument(doc, validationAllProcessorMigration.getAppliedTo().getExpression())
         .forEach(node -> validationAllProcessorMigration.execute(node, report.getReport()));
+    getElementsFromDocument(doc, filterRef.getAppliedTo().getExpression())
+        .forEach(node -> filterRef.execute(node, report.getReport()));
     getElementsFromDocument(doc, validateSchema.getAppliedTo().getExpression())
         .forEach(node -> validateSchema.execute(node, report.getReport()));
     getElementsFromDocument(doc, validateSchemaFilter.getAppliedTo().getExpression())
         .forEach(node -> validateSchemaFilter.execute(node, report.getReport()));
+    getElementsFromDocument(doc, j2oTransformer.getAppliedTo().getExpression())
+        .forEach(node -> j2oTransformer.execute(node, report.getReport()));
+    getElementsFromDocument(doc, o2jTransformer.getAppliedTo().getExpression())
+        .forEach(node -> o2jTransformer.execute(node, report.getReport()));
+    getElementsFromDocument(doc, mapper.getAppliedTo().getExpression())
+        .forEach(node -> mapper.execute(node, report.getReport()));
+    getElementsFromDocument(doc, j2xTransformer.getAppliedTo().getExpression())
+        .forEach(node -> j2xTransformer.execute(node, report.getReport()));
+    getElementsFromDocument(doc, x2jTransformer.getAppliedTo().getExpression())
+        .forEach(node -> x2jTransformer.execute(node, report.getReport()));
+    getElementsFromDocument(doc, x2jTransformer.getAppliedTo().getExpression())
+        .forEach(node -> x2jTransformer.execute(node, report.getReport()));
+    getElementsFromDocument(doc, jxsltTransformer.getAppliedTo().getExpression())
+        .forEach(node -> jxsltTransformer.execute(node, report.getReport()));
+
+    getElementsFromDocument(doc, globalElementsCleanup.getAppliedTo().getExpression())
+        .forEach(node -> globalElementsCleanup.execute(node, report.getReport()));
+    getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
