@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:json="http://www.mulesoft.org/schema/mule/json"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+
+    <json:mapper name="myMapper">
+        <json:mixin mixinClass="org.mule.module.json.transformers.FruitCollectionMixin"
+                        targetClass="org.mule.module.json.transformers.FruitCollection"/>
+        <json:mixin mixinClass="org.mule.module.json.transformers.AppleMixin"
+                        targetClass="org.mule.tck.testmodels.fruit.Apple"/>
+    </json:mapper>
+
+    <flow name="flow">
+        <json:json-to-object-transformer returnClass="org.mule.module.json.transformers.FruitCollection"
+                                         mapper-ref="myMapper">
+            <!-- test augmenting the mixin map with local mixins -->
+            <json:deserialization-mixin
+                    mixinClass="org.mule.module.json.transformers.OrangeMixin"
+                    targetClass="org.mule.tck.testmodels.fruit.Orange"/>
+            </json:json-to-object-transformer>
+    </flow>
+</mule>

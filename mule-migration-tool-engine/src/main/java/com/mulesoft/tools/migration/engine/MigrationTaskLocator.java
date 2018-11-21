@@ -24,6 +24,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.HTTPCleanupTask;
 import com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.JmsDomainMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.JmsMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.JsonMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MigrationCleanTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.MuleDeprecatedCoreComponentsMigrationTask;
@@ -125,6 +126,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new VmDomainMigrationTask());
     coreMigrationTasks.add(new VMMigrationTask());
     coreMigrationTasks.add(new ScriptingMigrationTask());
+    coreMigrationTasks.add(new JsonMigrationTask());
     coreMigrationTasks.add(new DomainAppMigrationTask());
     coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask());
     coreMigrationTasks.add(new MunitMigrationTask());

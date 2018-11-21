@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:json="http://www.mulesoft.org/schema/mule/json"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
+
+    <flow name="flow">
+        <json:object-to-json-transformer name="fruitCollectionToJson"
+                                         sourceClass="org.mule.module.json.transformers.FruitCollection">
+            <json:serialization-mixin
+                    mixinClass="org.mule.module.json.transformers.FruitCollectionMixin"
+                    targetClass="org.mule.module.json.transformers.FruitCollection"/>
+            <json:serialization-mixin
+                    mixinClass="org.mule.module.json.transformers.AppleMixin"
+                    targetClass="org.mule.tck.testmodels.fruit.Apple"/>
+            <json:serialization-mixin
+                    mixinClass="org.mule.module.json.transformers.OrangeMixin"
+                    targetClass="org.mule.tck.testmodels.fruit.Orange"/>
+        </json:object-to-json-transformer>
+    </flow>
+</mule>
