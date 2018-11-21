@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.tools;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static java.util.Objects.requireNonNull;
 
@@ -89,7 +90,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
       Dependency javaModuleDependency = new Dependency.DependencyBuilder()
           .withGroupId("org.mule.module")
           .withArtifactId("mule-java-module")
-          .withVersion("1.0.0")
+          .withVersion(targetVersion("mule-java-module"))
           .build();
       model.getPomModel().ifPresent(m -> m.addDependency(javaModuleDependency));
     }
