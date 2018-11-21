@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:os="http://www.mulesoft.org/schema/mule/os"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+
+    <flow name="firstSelectorWithList">
+        <scheduler>
+            <scheduling-strategy>
+                <fixed-frequency/>
+            </scheduling-strategy>
+        </scheduler>
+        <os:retrieve key="firstSelectorWithList" target="firstSelectorWithList">
+            <os:default-value><![CDATA[#[payload]]]></os:default-value>
+        </os:retrieve>
+        <logger level="INFO" message="Executed inside poll"/>
+        <os:store failIfPresent="false" failOnNullValue="false" key="firstSelectorWithList">
+            <os:value><![CDATA[#[payload[0]]]]></os:value>
+        </os:store>
+    </flow>
+
+</mule>

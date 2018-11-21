@@ -6,14 +6,17 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.os;
 
+import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 
 /**
  * Migrates operations of the OS Connector
@@ -39,9 +42,25 @@ public abstract class AbstractOSMigrator extends AbstractApplicationModelMigrati
     getApplicationModel().addNameSpace(NEW_OS_NAMESPACE, NEW_OS_SCHEMA, element.getDocument());
     element.setNamespace(NEW_OS_NAMESPACE);
 
+    migrateConnection(element);
+  }
+
+  protected void migrateConnection(Element element) {
     Attribute config = element.getAttribute("config-ref");
     if (config != null) {
       config.setName("objectStore");
+      try {
+        Element osBean = getApplicationModel().getNode("//spring:bean[@id = '" + config.getValue() + "']");
+        if (osBean != null) {
+          osBean.detach();
+          Element osConfig = new Element("object-store", NEW_OS_NAMESPACE);
+          osConfig.setAttribute("name", config.getValue());
+          osConfig.setAttribute("persistent", "false");
+          addTopLevelElement(osConfig, element.getDocument());
+        }
+      } catch (IllegalStateException ex) {
+        //        Do nothing, just catch the exception if no bean have been defined and continue with migration.
+      }
     }
   }
 
@@ -51,9 +70,8 @@ public abstract class AbstractOSMigrator extends AbstractApplicationModelMigrati
     retrieveOperation.setAttribute(new Attribute("objectStore", element.getAttributeValue("config-ref")));
     Attribute defaultValue = element.getAttribute("defaultValue-ref");
     if (defaultValue != null) {
-      Element childValue = new Element("default-value", NEW_OS_NAMESPACE);
-      childValue.addContent(new CDATA(getExpressionMigrator().migrateExpression(defaultValue.getValue(), true, element)));
-      retrieveOperation.addContent(childValue);
+      setOSValue(retrieveOperation, getExpressionMigrator().migrateExpression(defaultValue.getValue(), true, element),
+                 "default-value");
     }
     element.getParentElement().addContent(position, retrieveOperation);
   }
@@ -64,11 +82,26 @@ public abstract class AbstractOSMigrator extends AbstractApplicationModelMigrati
     storeOperation.setAttribute(new Attribute("objectStore", element.getAttributeValue("config-ref")));
     Attribute defaultValue = element.getAttribute("defaultValue-ref");
     if (defaultValue != null) {
-      Element childValue = new Element("value", NEW_OS_NAMESPACE);
-      childValue.addContent(new CDATA(getExpressionMigrator().migrateExpression(defaultValue.getValue(), true, element)));
-      storeOperation.addContent(childValue);
+      setOSValue(storeOperation, getExpressionMigrator().migrateExpression(defaultValue.getValue(), true, element), "value");
     }
     element.getParentElement().addContent(position, storeOperation);
+  }
+
+  protected void setOSValue(Element os, String value, String childName) {
+    Element childValue = new Element(childName, NEW_OS_NAMESPACE);
+    childValue.addContent(new CDATA(value));
+    os.addContent(childValue);
+  }
+
+  protected void addOSModule() {
+    getApplicationModel().getPomModel().ifPresent(pom -> pom.addDependency(new Dependency.DependencyBuilder()
+        .withGroupId("org.mule.connectors")
+        .withArtifactId("mule-objectstore-connector")
+        .withVersion(targetVersion("mule-objectstore-connector"))
+        .withClassifier("mule-plugin")
+        .build()));
+
+    getApplicationModel().addNameSpace(NEW_OS_NAMESPACE_PREFIX, NEW_OS_NAMESPACE_URI, NEW_OS_SCHEMA);
   }
 
   @Override

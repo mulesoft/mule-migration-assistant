@@ -6,119 +6,101 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-
-import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
-
+import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
+
+@RunWith(Parameterized.class)
 public class PollTest {
 
-  private static final String FILE_SAMPLE_XML = "poll.xml";
-  private static final Path FILE_EXAMPLES_PATH = Paths.get("mule/examples/core");
-  private static final Path FILE_SAMPLE_PATH = FILE_EXAMPLES_PATH.resolve(FILE_SAMPLE_XML);
-  private static final String SCHEDULING_STRATEGY = "scheduling-strategy";
-  private static final String CORE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/core";
-  private static final String CORE_NAME = "mule";
-  private static final Namespace CORE_NAMESPACE = Namespace.getNamespace(CORE_NAME, CORE_NAMESPACE_URI);
+  private static final Path CORE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/poll");
+
+  @Rule
+  public TemporaryFolder temp = new TemporaryFolder();
 
   @Rule
   public ReportVerification report = new ReportVerification();
 
+  @Parameterized.Parameters(name = "{0}")
+  public static Object[] params() {
+    return new Object[] {
+        "poll-01",
+        "poll-02",
+        "poll-03",
+        "poll-04",
+        "poll-05",
+        "poll-06",
+        "poll-watermark-01",
+        "poll-watermark-02",
+        "poll-watermark-03",
+        "poll-watermark-04",
+        "poll-watermark-05",
+        "poll-watermark-06",
+        "poll-watermark-07"
+        //            TODO Enable on MMT-262
+        //            "poll-watermark-08",
+        //            "poll-watermark-09"
+
+    };
+  }
+
+  private final Path configPath;
+  private final Path targetPath;
+
+  public PollTest(String filePrefix) {
+    configPath = CORE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
+    targetPath = CORE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
+  }
+
   private Poll poll;
-  private Element node;
-  private Document doc;
+  private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
+  private KeepElementsAtBottomOfFlow keepElementsAtBottomOfFlow;
 
   @Before
   public void setUp() throws Exception {
     poll = new Poll();
-    doc = getDocument(this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString()).toURI().getPath());
-  }
-
-  @Test(expected = MigrationStepException.class)
-  public void executeWithNullElement() throws Exception {
-    poll.execute(null, report.getReport());
-  }
-
-  @Test
-  public void executeChangePollName() throws Exception {
-    node = getElementsFromDocument(doc, poll.getAppliedTo().getExpression()).get(0);
-    poll.execute(node, report.getReport());
-
-    assertThat("The node didn't change", node.getName(), is("scheduler"));
+    poll.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    poll.setApplicationModel(mock(ApplicationModel.class));
+    removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
+    keepElementsAtBottomOfFlow = new KeepElementsAtBottomOfFlow();
   }
 
   @Test
-  public void executeMoveElementsInsideProcessorChain() throws Exception {
-    node = getElementsFromDocument(doc, poll.getAppliedTo().getExpression()).get(1);
-    poll.execute(node, report.getReport());
+  public void execute() throws Exception {
+    Document doc =
+        getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
+    getElementsFromDocument(doc, poll.getAppliedTo().getExpression())
+        .forEach(node -> poll.execute(node, report.getReport()));
+    getElementsFromDocument(doc, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
+    getElementsFromDocument(doc, keepElementsAtBottomOfFlow.getAppliedTo().getExpression())
+        .forEach(node -> keepElementsAtBottomOfFlow.execute(node, report.getReport()));
 
-    assertThat("The child elements weren't moved", node.getParentElement().getChildren().size(), is(4));
-    assertThat("The child elements weren't moved", node.getParentElement().getChildren().get(3).getName(), is("set-payload"));
-  }
+    XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+    String xmlString = outputter.outputString(doc);
 
-  @Test
-  public void executeMoveElements() throws Exception {
-    node = getElementsFromDocument(doc, poll.getAppliedTo().getExpression()).get(2);
-    poll.execute(node, report.getReport());
-
-    assertThat("The child elements weren't moved", node.getParentElement().getChildren().size(), is(2));
-    assertThat("The child elements weren't moved", node.getParentElement().getChildren().get(1).getName(), is("logger"));
-  }
-
-  @Test
-  public void executeCronConfiguration() throws Exception {
-    node = getElementsFromDocument(doc, poll.getAppliedTo().getExpression()).get(2);
-    poll.execute(node, report.getReport());
-
-    Element cronConfiguration = node.getChild(SCHEDULING_STRATEGY, CORE_NAMESPACE).getChildren().get(0);
-
-    assertThat("The child elements weren't moved", cronConfiguration.getName(), is("cron"));
-    assertThat("The child elements weren't moved", cronConfiguration.getAttribute("timeZone"), is(notNullValue()));
-  }
-
-  @Test
-  public void executeFixedFrequencyConfiguration() throws Exception {
-    node = getElementsFromDocument(doc, poll.getAppliedTo().getExpression()).get(1);
-    poll.execute(node, report.getReport());
-
-    Element fixedFrequencyConfiguration = node.getChild(SCHEDULING_STRATEGY, CORE_NAMESPACE).getChildren().get(0);
-
-    assertThat("The child elements weren't moved", fixedFrequencyConfiguration.getName(), is("fixed-frequency"));
-    assertThat("The child elements weren't moved", fixedFrequencyConfiguration.getAttributes().size(), is(1));
-    assertThat("The child elements weren't moved", fixedFrequencyConfiguration.getAttribute("frequency"), is(notNullValue()));
-  }
-
-  @Test
-  public void executeFixedFrequencyAllFieldsConfiguration() throws Exception {
-    node = getElementsFromDocument(doc, poll.getAppliedTo().getExpression()).get(3);
-    poll.execute(node, report.getReport());
-
-    Element fixedFrequencyConfiguration = node.getChild(SCHEDULING_STRATEGY, CORE_NAMESPACE).getChildren().get(0);
-
-    assertThat("The child elements weren't moved", fixedFrequencyConfiguration.getName(), is("fixed-frequency"));
-    assertThat("The child elements weren't moved", fixedFrequencyConfiguration.getAttributes().size(), is(3));
-  }
-
-  @Test
-  public void executeWithContenAfterPoll() throws Exception {
-    node = getElementsFromDocument(doc, poll.getAppliedTo().getExpression()).get(4);
-    poll.execute(node, report.getReport());
-
-    assertThat("The child elements weren't moved", node.getParentElement().getChildren().get(0).getName(), is("scheduler"));
-    assertThat("The child elements weren't moved", node.getParentElement().getChildren().get(2).getName(), is("set-payload"));
+    assertThat(xmlString,
+               isSimilarTo(IOUtils.toString(this.getClass().getClassLoader().getResource(targetPath.toString()).toURI(), UTF_8))
+                   .ignoreComments().normalizeWhitespace());
   }
 }

@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.GlobalElementsCleanup;
+import com.mulesoft.tools.migration.library.mule.steps.core.KeepElementsAtBottomOfFlow;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -42,7 +43,8 @@ public class MigrationCleanTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new GlobalElementsCleanup(),
+    return newArrayList(new KeepElementsAtBottomOfFlow(),
+                        new GlobalElementsCleanup(),
                         new RemoveSyntheticMigrationAttributes());
   }
 

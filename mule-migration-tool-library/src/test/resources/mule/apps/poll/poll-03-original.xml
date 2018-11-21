@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:schedulers="http://www.mulesoft.org/schema/mule/schedulers"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/schedulers http://www.mulesoft.org/schema/mule/schedulers/current/mule-schedulers.xsd">
+
+    <flow name="pollFlowWithCronScheduler">
+        <poll>
+            <schedulers:cron-scheduler expression="1 1 1 1,7 * ?" timeZone="GMT"/>
+            <logger level="INFO"/>
+        </poll>
+    </flow>
+
+</mule>

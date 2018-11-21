@@ -61,7 +61,7 @@ public class ReportYamlDocLinksTests {
             .stream())
         .distinct()
         .forEach(docLink -> {
-          pingURL(docLink, 5000);
+          pingURL(docLink, 50000);
         });
   }
 

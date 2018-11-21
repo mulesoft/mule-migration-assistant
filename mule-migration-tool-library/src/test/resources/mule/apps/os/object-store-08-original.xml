@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:objectstore="http://www.mulesoft.org/schema/mule/objectstore"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+               http://www.mulesoft.org/schema/mule/objectstore http://www.mulesoft.org/schema/mule/objectstore/current/mule-objectstore.xsd">
+
+    <spring:beans>
+        <spring:bean id="objectStore" class="org.mule.runtime.api.store.SimpleMemoryObjectStore"/>
+        <spring:bean id="bean" name="Bean1" class="java.lang.String"/>
+    </spring:beans>
+
+    <flow name="osStore">
+        <objectstore:retrieve config-ref="objectStore" key="#['pepe']"/>
+    </flow>
+
+</mule>

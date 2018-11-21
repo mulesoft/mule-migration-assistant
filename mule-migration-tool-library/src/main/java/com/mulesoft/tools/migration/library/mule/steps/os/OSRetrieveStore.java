@@ -36,6 +36,7 @@ public class OSRetrieveStore extends AbstractOSMigrator {
 
     addNewRetrieveOperation(element, position);
     addNewStoreOperation(element, position + 1);
+    migrateConnection(element);
 
     element.detach();
   }

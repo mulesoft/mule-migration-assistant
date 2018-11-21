@@ -6,15 +6,9 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addChildNode;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
-
 import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.library.mule.steps.os.AbstractOSMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -24,16 +18,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addChildNode;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
+
 /**
  * Migration step for poll component
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class Poll extends AbstractApplicationModelMigrationStep {
+public class Poll extends AbstractOSMigrator {
 
   private static final String CRON_FREQ_SCHEDULER = "cron-scheduler";
   private static final String FIXED_FREQ_SCHEDULER = "fixed-frequency-scheduler";
+  private static final String WATERMARK = "watermark";
   private static final String SCHEDULING_STRATEGY = "scheduling-strategy";
   private static final String POLL_NEW_NAME = "scheduler";
   private static final String PROCESSOR_CHAIN = "processor-chain";
@@ -66,17 +66,96 @@ public class Poll extends AbstractApplicationModelMigrationStep {
 
       List<Element> childElementsToMove = element.getChildren().stream()
           .filter(s -> !StringUtils.equals(s.getName(), FIXED_FREQ_SCHEDULER)
-              && !StringUtils.equals(s.getName(), CRON_FREQ_SCHEDULER))
+              && !StringUtils.equals(s.getName(), CRON_FREQ_SCHEDULER)
+              && !StringUtils.equals(s.getName(), WATERMARK))
           .collect(Collectors.toList());
 
       movePollChildsToParent(childElementsToMove, element.getParentElement(), element.getParentElement().indexOf(element) + 1);
 
-      updateCronScheduler(element);
-      updateFixedFrequencyScheduler(element);
+      if (element.getChild(FIXED_FREQ_SCHEDULER, CORE_NAMESPACE) == null
+          && element.getChild(CRON_FREQ_SCHEDULER, SCHEDULERS_NAMESPACE) == null) {
+        Element schedulingStrategy = new Element("scheduling-strategy", element.getNamespace());
+        schedulingStrategy.addContent(new Element("fixed-frequency", element.getNamespace()));
+        element.addContent(schedulingStrategy);
+      } else {
+        updateCronScheduler(element);
+        updateFixedFrequencyScheduler(element);
+      }
+
+      if (element.getChild(WATERMARK, CORE_NAMESPACE) != null) {
+        Element watermark = element.getChild(WATERMARK, CORE_NAMESPACE);
+        Element osStore = new Element("store", NEW_OS_NAMESPACE);
+        Element osRetrieve = new Element("retrieve", NEW_OS_NAMESPACE);
+
+        addMigrationAttributeToElement(osStore, new Attribute("lastElement", "true"));
+
+        osStore.setAttribute("failIfPresent", "false");
+        osStore.setAttribute("failOnNullValue", "false");
+
+        if (watermark.getAttribute("variable") != null) {
+          osStore.setAttribute("key", watermark.getAttributeValue("variable"));
+          osRetrieve.setAttribute("key", watermark.getAttributeValue("variable"));
+          osRetrieve.setAttribute("target", watermark.getAttributeValue("variable"));
+        }
+
+        if (watermark.getAttribute("default-expression") != null) {
+          String defaultExpression =
+              getExpressionMigrator().migrateExpression(watermark.getAttributeValue("default-expression"), true, element);
+          setOSValue(osRetrieve, defaultExpression, "default-value");
+        }
+
+        if (watermark.getAttribute("update-expression") != null) {
+          String updateExpression =
+              getExpressionMigrator().migrateExpression(watermark.getAttributeValue("update-expression"), true, element);
+          setOSValue(osStore, updateExpression, "value");
+        } else if (watermark.getAttribute("selector-expression") != null || watermark.getAttribute("selector") != null) {
+          String selectorExpression = watermark.getAttributeValue("selector-expression");
+          String selector = watermark.getAttributeValue("selector");
+
+          if (selectorExpression == null) {
+            setOSValue(osStore, getExpressionFromSelector(selector), "value");
+          } else if (selector == null) {
+            selectorExpression = getExpressionMigrator().migrateExpression(selectorExpression, true, element);
+            setOSValue(osStore, selectorExpression, "value");
+          } else {
+            //        TODO After MMT-262 is completed, need to review this scenario.
+          }
+        }
+
+        if (watermark.getAttribute("object-store-ref") != null) {
+          osStore.setAttribute("objectStore", watermark.getAttributeValue("object-store-ref"));
+          osRetrieve.setAttribute("objectStore", watermark.getAttributeValue("object-store-ref"));
+        }
+
+        addElementAfter(osRetrieve, element);
+        addElementToBottom(getFlow(element), osStore);
+
+        watermark.detach();
+        addOSModule();
+      }
 
     } catch (Exception ex) {
-      throw new MigrationStepException("Failed to migrate poll.");
+      throw new MigrationStepException("Failed to migrate poll." + ex.getMessage() + ex.getStackTrace());
     }
+  }
+
+  private String getExpressionFromSelector(String selector) {
+    String expression = "";
+    switch (selector.toLowerCase()) {
+      case "min":
+        expression = "#[min(payload)]";
+        break;
+      case "max":
+        expression = "#[max(payload)]";
+        break;
+      case "first":
+        expression = "#[payload[0]]";
+        break;
+      case "last":
+        expression = "#[payload[sizeOf(payload) - 1]]";
+        break;
+    }
+    return expression;
   }
 
   private void updateFixedFrequencyScheduler(Element element) {
