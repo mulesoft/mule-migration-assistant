@@ -6,16 +6,21 @@
  */
 package com.mulesoft.tools.migration.library.tools;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static java.util.Objects.requireNonNull;
 
+import com.mulesoft.tools.JavaModuleRequired;
+import com.mulesoft.tools.MigrationResult;
 import com.mulesoft.tools.Migrator;
 import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
+import org.mule.weave.v2.parser.ast.header.HeaderNode;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,13 +75,24 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
   public String translateSingleExpression(String unwrappedExpression, boolean dataWeaveBodyOnly, Element element,
                                           boolean enricher) {
     String migratedExpression;
+    MigrationResult result;
     try {
-      migratedExpression = Migrator.migrate(unwrappedExpression);
+      result = Migrator.migrate(unwrappedExpression);
+      migratedExpression = result.getGeneratedCode();
     } catch (Exception e) {
       return compatibilityResolver.resolve(unwrappedExpression, element, report, model, this, enricher);
     }
     if (migratedExpression.contains("message.inboundAttachments")) {
       report.report("message.expressionsAttachments", element, element);
+    }
+
+    if (result.metadata().children().exists(a -> a instanceof JavaModuleRequired)) {
+      Dependency javaModuleDependency = new Dependency.DependencyBuilder()
+          .withGroupId("org.mule.module")
+          .withArtifactId("mule-java-module")
+          .withVersion(targetVersion("mule-java-module"))
+          .build();
+      model.getPomModel().ifPresent(m -> m.addDependency(javaModuleDependency));
     }
 
     migratedExpression = resolveServerContext(migratedExpression);

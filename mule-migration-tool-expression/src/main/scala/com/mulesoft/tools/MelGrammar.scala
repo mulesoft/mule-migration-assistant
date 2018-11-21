@@ -2,8 +2,6 @@ package com.mulesoft.tools
 
 import com.mulesoft.tools.ast._
 import org.parboiled2.{Parser, Rule1, _}
-import org.parboiled2.Parser.DeliveryScheme.Either
-import shapeless.HNil
 
 class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
 
@@ -34,11 +32,14 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def logicalExpression = rule {
-    comparableExpression ~ optional((orToken | andToken) ~ root ~> createBinaryOp)
+    instanceOfExpression ~ optional((orToken | andToken) ~ root ~> createBinaryOp)
+  }
+
+  def instanceOfExpression = rule {
+    comparableExpression ~ optional(instanceOfToken ~ root ~> createBinaryOp)
   }
 
   def comparableExpression = rule {
-
     sum ~ optional(comparableToken ~ root ~> createBinaryOp)
   }
 
@@ -104,6 +105,10 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
 
   def enclosedExpression: Rule1[MelExpressionNode] = rule {
     ws ~ "(" ~ ws ~ expression ~ ws ~ ")" ~> createEnclosedExpression
+  }
+
+  def instanceOfToken = rule {
+    ws ~ "instanceOf" ~ push(OperatorType.instanceOf)
   }
 
   def comparableToken = rule {
