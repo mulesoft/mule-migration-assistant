@@ -19,6 +19,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
+import org.mule.weave.v2.parser.ast.header.HeaderNode;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

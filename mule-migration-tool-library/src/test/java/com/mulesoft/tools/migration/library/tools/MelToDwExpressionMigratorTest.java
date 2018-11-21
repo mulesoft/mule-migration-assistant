@@ -317,7 +317,7 @@ public class MelToDwExpressionMigratorTest {
     PomModel pomModel = PomModelUtils.buildMinimalMule4ApplicationPom("org.fake", "fake-app", "1.0.0", "mule-application");
     when(modelMock.getPomModel()).thenReturn(Optional.of(pomModel));
     Element elementMock = mock(Element.class);
-    String originalExpression = "a instanceOf b";
+    String originalExpression = "a instanceOf org.pepe.Pepito";
 
     assertThat("Pom model should not have the java module dependency",
                pomModel.getDependencies().stream().noneMatch(d -> d.getArtifactId().equals("mule-java-module")));
@@ -325,7 +325,7 @@ public class MelToDwExpressionMigratorTest {
     String migratedExpression = expressionMigrator.migrateExpression("#[" + originalExpression + "]", false, elementMock);
 
     assertThat("Migrated expression is not the expected", migratedExpression,
-               equalTo("#[%dw 2.0\n---\nJava::isInstanceOf(vars.a, vars.b)]"));
+               equalTo("#[%dw 2.0\n---\nJava::isInstanceOf(vars.a, 'org.pepe.Pepito')]"));
 
     assertThat("Pom model should have the java module dependency",
                pomModel.getDependencies().stream().anyMatch(d -> d.getArtifactId().equals("mule-java-module")));

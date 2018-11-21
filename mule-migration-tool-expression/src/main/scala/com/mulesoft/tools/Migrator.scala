@@ -63,7 +63,8 @@ object Migrator {
     val rRes = toDataweaveAst(right)
     val variableReferenceNode = VariableReferenceNode(NameIdentifier("Java::isInstanceOf"))
     val metadata = lRes.metadata.children ++ rRes.metadata.children
-    new MigrationResult(dw.functions.FunctionCallNode(variableReferenceNode, FunctionCallParametersNode(Seq(lRes.dwAstNode, rRes.dwAstNode))), DefaultMigrationMetadata(JavaModuleRequired() +: metadata))
+    val classNameNode = dw.structure.StringNode(rRes.getGeneratedCode(HeaderNode(Seq())).replaceFirst("---\nvars\\.", "")).annotate(QuotedStringAnnotation('''))
+    new MigrationResult(dw.functions.FunctionCallNode(variableReferenceNode, FunctionCallParametersNode(Seq(lRes.dwAstNode, classNameNode))), DefaultMigrationMetadata(JavaModuleRequired() +: metadata))
   }
 
   private def toDataweaveBinaryOperatorNode(left: MelExpressionNode, right: MelExpressionNode, operatorType: Int): MigrationResult = {

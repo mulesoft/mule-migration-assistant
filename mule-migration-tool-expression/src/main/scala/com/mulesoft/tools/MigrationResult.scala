@@ -6,8 +6,13 @@ import org.mule.weave.v2.parser.ast.header.directives.{VersionDirective, Version
 import org.mule.weave.v2.parser.{ast => dw}
 
 class MigrationResult(val dwAstNode: dw.AstNode, val metadata: MigrationMetadata = Empty()) {
+  val DEFAULT_HEADER = HeaderNode(Seq(VersionDirective(VersionMajor("2"), VersionMinor("0"))))
+
+  def getGeneratedCode(headerNode: HeaderNode): String = {
+    CodeGenerator.generate(dw.structure.DocumentNode(headerNode, dwAstNode))
+  }
+
   def getGeneratedCode(): String = {
-    val documentNode = dw.structure.DocumentNode(HeaderNode(Seq(VersionDirective(VersionMajor("2"), VersionMinor("0")))), dwAstNode)
-    CodeGenerator.generate(documentNode)
+    getGeneratedCode(DEFAULT_HEADER)
   }
 }
