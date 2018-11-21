@@ -23,5 +23,10 @@
             <artifactId>mule-migration-tool-apikit</artifactId>
             <version>0.1.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.mulesoft.tools</groupId>
+            <artifactId>mule-migration-tool-soapkit</artifactId>
+            <version>0.1.0</version>
+        </dependency>
     </dependencies>
 </project>
