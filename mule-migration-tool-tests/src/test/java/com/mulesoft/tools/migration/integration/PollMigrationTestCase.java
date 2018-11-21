@@ -18,7 +18,9 @@ public class PollMigrationTestCase extends EndToEndTestCase {
   public static Object[] params() {
     return new Object[] {
         // "http1",
-        "poll1Mvn"
+        "poll1Mvn",
+        "poll1Watermark",
+        "poll2Watermark"
     };
   }
 

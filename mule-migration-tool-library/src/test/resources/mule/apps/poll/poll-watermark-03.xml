@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:os="http://www.mulesoft.org/schema/mule/os"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+
+    <flow name="watermarkWithObjectStore">
+        <scheduler>
+            <scheduling-strategy>
+                <fixed-frequency/>
+            </scheduling-strategy>
+        </scheduler>
+        <os:retrieve key="test8" objectStore="OS_Ref" target="test8">
+            <os:default-value>#[payload]</os:default-value>
+        </os:retrieve>
+        <logger level="INFO" message="Executed inside poll"/>
+        <set-payload value="#[string:valueUpdated]"/>
+        <os:store failIfPresent="false" failOnNullValue="false" key="test8" objectStore="OS_Ref">
+            <os:value>#[payload[1]]</os:value>
+        </os:store>
+    </flow>
+
+</mule>

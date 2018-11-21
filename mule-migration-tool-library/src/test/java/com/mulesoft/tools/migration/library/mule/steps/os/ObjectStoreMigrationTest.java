@@ -48,7 +48,9 @@ public class ObjectStoreMigrationTest {
         "object-store-03",
         "object-store-04",
         "object-store-05",
-        "object-store-06"
+        "object-store-06",
+        "object-store-07",
+        "object-store-08"
     };
   }
 
@@ -79,6 +81,9 @@ public class ObjectStoreMigrationTest {
     appModel = mock(ApplicationModel.class);
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
+
+    when(appModel.getNodeOptional(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).stream().findFirst());
 
     osBasicOperations = new OSBasicOperations();
     osBasicOperations.setApplicationModel(appModel);

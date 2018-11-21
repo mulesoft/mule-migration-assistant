@@ -31,8 +31,8 @@ import java.nio.file.Paths;
 
 public class RemoveSchedulersNamespaceTest {
 
-  private static final String FILE_SAMPLE_XML = "poll.xml";
-  private static final Path FILE_EXAMPLES_PATH = Paths.get("mule/examples/core");
+  private static final String FILE_SAMPLE_XML = "poll-03-original.xml";
+  private static final Path FILE_EXAMPLES_PATH = Paths.get("mule/apps/poll");
   private static final Path FILE_SAMPLE_PATH = FILE_EXAMPLES_PATH.resolve(FILE_SAMPLE_XML);
   private static final String APP_NAME = "schedulers";
 
@@ -71,6 +71,6 @@ public class RemoveSchedulersNamespaceTest {
   public void execute() throws Exception {
     removeSchedulersNamespace.execute(applicationModel, report.getReport());
     Document document = Iterables.get(applicationModel.getApplicationDocuments().values(), 0);
-    assertThat("The namespace wasn't removed.", document.getRootElement().getAdditionalNamespaces().size(), is(2));
+    assertThat("The namespace wasn't removed.", document.getRootElement().getAdditionalNamespaces().size(), is(1));
   }
 }

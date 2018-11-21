@@ -324,7 +324,7 @@ public final class XmlDslUtils {
   /**
    * Add new element after some existing element.
    *
-   * @param newElement
+   * @param newElements
    * @param element
    */
   public static void addElementsAfter(Collection<? extends Content> newElements, Element element) {
@@ -379,6 +379,18 @@ public final class XmlDslUtils {
 
   public static Element getFlowExceptionHandlingElement(Element flow) {
     return flow.getChildren().stream().filter(e -> isErrorHanldingElement(e)).findFirst().orElse(null);
+  }
+
+  /**
+   * Add element at the end of the flow before the exception handling components.
+   *
+   * @param flow
+   * @param newElement
+   */
+  public static void addElementToBottom(Element flow, Element newElement) {
+    Element exceptionHandling = getFlowExceptionHandlingElement(flow);
+    Integer newElementIndex = exceptionHandling != null ? flow.indexOf(exceptionHandling) : flow.getContentSize();
+    flow.addContent(newElementIndex, newElement);
   }
 
   /**
