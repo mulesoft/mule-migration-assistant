@@ -6,6 +6,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.os;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -14,9 +18,6 @@ import org.jdom2.Attribute;
 import org.jdom2.CDATA;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 
 /**
  * Migrates operations of the OS Connector
@@ -49,17 +50,13 @@ public abstract class AbstractOSMigrator extends AbstractApplicationModelMigrati
     Attribute config = element.getAttribute("config-ref");
     if (config != null) {
       config.setName("objectStore");
-      try {
-        Element osBean = getApplicationModel().getNode("//spring:bean[@id = '" + config.getValue() + "']");
-        if (osBean != null) {
-          osBean.detach();
-          Element osConfig = new Element("object-store", NEW_OS_NAMESPACE);
-          osConfig.setAttribute("name", config.getValue());
-          osConfig.setAttribute("persistent", "false");
-          addTopLevelElement(osConfig, element.getDocument());
-        }
-      } catch (IllegalStateException ex) {
-        //        Do nothing, just catch the exception if no bean have been defined and continue with migration.
+      Element osBean = getApplicationModel().getNodeOptional("//spring:bean[@id = '" + config.getValue() + "']").orElse(null);
+      if (osBean != null) {
+        osBean.detach();
+        Element osConfig = new Element("object-store", NEW_OS_NAMESPACE);
+        osConfig.setAttribute("name", config.getValue());
+        osConfig.setAttribute("persistent", "false");
+        addTopLevelElement(osConfig, element.getDocument());
       }
     }
   }
@@ -89,7 +86,7 @@ public abstract class AbstractOSMigrator extends AbstractApplicationModelMigrati
 
   protected void setOSValue(Element os, String value, String childName) {
     Element childValue = new Element(childName, NEW_OS_NAMESPACE);
-    childValue.addContent(new CDATA(value));
+    setText(childValue, value);
     os.addContent(childValue);
   }
 

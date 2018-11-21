@@ -6,6 +6,14 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addChildNode;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementToBottom;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.library.mule.steps.os.AbstractOSMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -17,11 +25,6 @@ import org.jdom2.Namespace;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addChildNode;
-import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
 
 /**
  * Migration step for poll component
@@ -118,7 +121,7 @@ public class Poll extends AbstractOSMigrator {
             selectorExpression = getExpressionMigrator().migrateExpression(selectorExpression, true, element);
             setOSValue(osStore, selectorExpression, "value");
           } else {
-            //        TODO After MMT-262 is completed, need to review this scenario.
+            //TODO After MMT-262 is completed, need to pass both values (selector and selector expression) on the expressions migrator and set that value on the OS processor.
           }
         }
 
@@ -140,7 +143,7 @@ public class Poll extends AbstractOSMigrator {
   }
 
   private String getExpressionFromSelector(String selector) {
-    String expression = "";
+    String expression;
     switch (selector.toLowerCase()) {
       case "min":
         expression = "#[min(payload)]";
@@ -152,8 +155,10 @@ public class Poll extends AbstractOSMigrator {
         expression = "#[payload[0]]";
         break;
       case "last":
-        expression = "#[payload[sizeOf(payload) - 1]]";
+        expression = "#[payload[-1]]";
         break;
+      default:
+        throw new IllegalArgumentException("Selector " + selector + " doesn't match with any valid value.");
     }
     return expression;
   }

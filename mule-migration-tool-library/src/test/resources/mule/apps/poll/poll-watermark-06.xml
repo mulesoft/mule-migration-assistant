@@ -12,11 +12,11 @@
             </scheduling-strategy>
         </scheduler>
         <os:retrieve key="firstSelectorWithList" target="firstSelectorWithList">
-            <os:default-value><![CDATA[#[payload]]]></os:default-value>
+            <os:default-value>#[payload]</os:default-value>
         </os:retrieve>
         <logger level="INFO" message="Executed inside poll"/>
         <os:store failIfPresent="false" failOnNullValue="false" key="firstSelectorWithList">
-            <os:value><![CDATA[#[payload[0]]]]></os:value>
+            <os:value>#[payload[0]]</os:value>
         </os:store>
     </flow>
 

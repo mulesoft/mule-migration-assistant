@@ -12,11 +12,11 @@
             </scheduling-strategy>
         </scheduler>
         <os:retrieve key="maxSelectorWithList" target="maxSelectorWithList">
-            <os:default-value><![CDATA[#[payload]]]></os:default-value>
+            <os:default-value>#[payload]</os:default-value>
         </os:retrieve>
         <logger level="INFO" message="Executed inside poll"/>
         <os:store failIfPresent="false" failOnNullValue="false" key="maxSelectorWithList">
-            <os:value><![CDATA[#[max(payload)]]]></os:value>
+            <os:value>#[max(payload)]</os:value>
         </os:store>
     </flow>
 

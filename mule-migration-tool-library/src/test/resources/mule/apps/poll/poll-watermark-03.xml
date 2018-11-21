@@ -12,12 +12,12 @@
             </scheduling-strategy>
         </scheduler>
         <os:retrieve key="test8" objectStore="OS_Ref" target="test8">
-            <os:default-value><![CDATA[#[payload]]]></os:default-value>
+            <os:default-value>#[payload]</os:default-value>
         </os:retrieve>
         <logger level="INFO" message="Executed inside poll"/>
         <set-payload value="#[string:valueUpdated]"/>
         <os:store failIfPresent="false" failOnNullValue="false" key="test8" objectStore="OS_Ref">
-            <os:value><![CDATA[#[payload[1]]]]></os:value>
+            <os:value>#[payload[1]]</os:value>
         </os:store>
     </flow>
 

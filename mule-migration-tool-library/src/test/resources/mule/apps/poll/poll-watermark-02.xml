@@ -12,12 +12,12 @@
             </scheduling-strategy>
         </scheduler>
         <os:retrieve key="testVar" target="testVar">
-            <os:default-value><![CDATA[#[payload[1]]]]></os:default-value>
+            <os:default-value>#[payload[1]]</os:default-value>
         </os:retrieve>
         <logger level="INFO" message="Executed inside poll"/>
         <set-payload value="#['testNull']"/>
         <os:store failIfPresent="false" failOnNullValue="false" key="testVar">
-            <os:value><![CDATA[#[payload[2]]]]></os:value>
+            <os:value>#[payload[2]]</os:value>
         </os:store>
     </flow>
 </mule>

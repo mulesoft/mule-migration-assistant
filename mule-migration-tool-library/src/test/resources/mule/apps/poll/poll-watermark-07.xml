@@ -16,7 +16,7 @@
         </os:retrieve>
         <logger level="INFO" message="Executed inside poll"/>
         <os:store failIfPresent="false" failOnNullValue="false" key="lastSelectorWithList">
-            <os:value><![CDATA[#[payload[sizeOf(payload) - 1]]]]></os:value>
+            <os:value>#[payload[-1]]</os:value>
         </os:store>
     </flow>
 

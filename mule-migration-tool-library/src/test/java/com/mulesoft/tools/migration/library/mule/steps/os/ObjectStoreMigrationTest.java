@@ -82,9 +82,8 @@ public class ObjectStoreMigrationTest {
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
 
-    when(appModel.getNode(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).stream().findFirst()
-            .orElse(null));
+    when(appModel.getNodeOptional(any(String.class)))
+        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).stream().findFirst());
 
     osBasicOperations = new OSBasicOperations();
     osBasicOperations.setApplicationModel(appModel);

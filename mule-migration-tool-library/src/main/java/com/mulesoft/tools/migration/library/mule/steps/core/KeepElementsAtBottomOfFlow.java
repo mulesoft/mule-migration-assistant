@@ -6,14 +6,14 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementToBottom;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static java.util.stream.Collectors.toList;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementToBottom;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Ensure that elements with this attribute will remain at the bottom of the flow.

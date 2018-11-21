@@ -12,7 +12,7 @@
             </scheduling-strategy>
         </scheduler>
         <os:retrieve key="test1" target="test1">
-            <os:default-value><![CDATA[#[payload[0]]]]></os:default-value>
+            <os:default-value>#[payload[0]]</os:default-value>
         </os:retrieve>
         <logger level="INFO" message="Executed inside poll"/>
         <logger message="Executed With watermark"/>
