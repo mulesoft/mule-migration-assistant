@@ -351,4 +351,48 @@ public class MelToDwExpressionMigratorTest {
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result, is("#[vars.a or vars.b]"));
   }
+
+  @Test
+  public void migrateTernaryExpression() {
+    String script = "#[a || b ? 1 : 0] ";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[if (vars.a or vars.b)\n  1\nelse\n  0]"));
+  }
+
+  @Test
+  public void migrateTernaryExpression2() {
+    String script = "#[a && b && c ? \"max\" : \"mule\"] ";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[if (vars.a and vars.b and vars.c)\n  'max'\nelse\n  'mule']"));
+  }
+
+  @Test
+  public void migrateTernaryExpression3() {
+    String script = "#[true ? 1+1 : 4] ";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[if (true)\n  1 + 1\nelse\n  4]"));
+  }
+
+  @Test
+  public void migrateTernaryExpression4() {
+    String script =
+        "#[1 + 1 == 2 ? message.inboundProperties['http.relative.path'] : message.inboundProperties['http.query.params'].lastname] ";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result,
+               is("#[if (1 + 1 == 2)\n  vars.compatibility_inboundProperties['http.relative.path']\nelse\n  vars.compatibility_inboundProperties['http.query.params'].lastname]"));
+  }
+
+  @Test
+  public void migrateTernaryExpression5() {
+    String script = "#[a instanceOf org.pepe.Pepito ? \"is Pepito\" : \"it is not Pepito\"]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[if (Java::isInstanceOf(vars.a, 'org.pepe.Pepito'))\n  'is Pepito'\nelse\n  'it is not Pepito']"));
+  }
+
+  @Test
+  public void migrateTernaryExpression6() {
+    String script = "#[timeNow ? server.dateTime : \"\"]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[if (vars.timeNow)\n  now()\nelse\n  '']"));
+  }
 }

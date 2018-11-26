@@ -140,4 +140,8 @@ class MigratorTest extends FlatSpec with Matchers {
     Migrator.migrate("new com.lala.tools.Pepe('a',1)").getGeneratedCode() shouldBe "%dw 2.0\n---\njava!com::lala::tools::Pepe::new('a', 1)"
   }
 
+  it should "migrate a simple ternary operator expression" in {
+    Migrator.migrate("true ? 1 : 0").getGeneratedCode() shouldBe "%dw 2.0\n---\nif (true)\n  1\nelse\n  0"
+  }
+
 }

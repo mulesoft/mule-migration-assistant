@@ -41,6 +41,9 @@ case class ConstructorNode(canonicalName: CanonicalNameNode, arguments: Seq[MelE
 case class CanonicalNameNode(name: String) extends MelExpressionNode {
 }
 
+case class IfNode(ifExpr: MelExpressionNode, condition: MelExpressionNode, elseExpr: MelExpressionNode) extends MelExpressionNode {
+}
+
 
 object OperatorType {
   val plus = 0
