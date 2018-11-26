@@ -5,14 +5,11 @@ import java.util.Date
 
 import com.mulesoft.tools.ast._
 import com.mulesoft.tools.{ast => mel}
-import org.mule.weave.v2.codegen.CodeGenerator
 import org.mule.weave.v2.grammar._
 import org.mule.weave.v2.parser.ast.logical.{AndNode, OrNode}
 import org.mule.weave.v2.parser.annotation.{EnclosedMarkAnnotation, InfixNotationFunctionCallAnnotation, QuotedStringAnnotation}
 import org.mule.weave.v2.parser.ast.functions.FunctionCallParametersNode
 import org.mule.weave.v2.parser.ast.header.HeaderNode
-import org.mule.weave.v2.parser.ast.header.directives.{VersionDirective, VersionMajor, VersionMinor}
-import org.mule.weave.v2.parser.ast.structure.ArrayNode
 import org.mule.weave.v2.parser.ast.structure.schema.{SchemaNode, SchemaPropertyNode}
 import org.mule.weave.v2.parser.ast.types.TypeReferenceNode
 import org.mule.weave.v2.parser.ast.variables.{NameIdentifier, VariableReferenceNode}
@@ -25,6 +22,7 @@ object Migrator {
   val CLASS_PROPERTY_NAME = "class"
 
   def bindingContextVariable: List[String] = List("message", "exception", "payload", "flowVars", "sessionVars", "recordVars", "null");
+
 
   def toDataweaveAst(expressionNode: mel.MelExpressionNode): MigrationResult = {
     expressionNode match {
@@ -39,8 +37,18 @@ object Migrator {
       case mel.ListNode(elements) => toDataweaveListNode(elements)
       case mel.EnclosedExpression(expression) => toDataweaveEnclosedExpressionNode(expression)
       case mel.ConstructorNode(canonicalName, arguments) => toDataweaveConstructorNode(canonicalName, arguments)
+      case mel.IfNode(ifExpr, condition, elseExpr) => toDataweaveIfNode(ifExpr, condition, elseExpr)
     }
   }
+
+  private def toDataweaveIfNode(ifExpr: MelExpressionNode, condition: MelExpressionNode, elseExpr: MelExpressionNode) = {
+    val ifRes = toDataweaveAst(ifExpr)
+    val conditionRes = toDataweaveAst(condition)
+    val elseRes = toDataweaveAst(elseExpr)
+    val metadata = ifRes.metadata.children ++ conditionRes.metadata.children ++ elseRes.metadata.children
+    new MigrationResult(dw.conditional.IfNode(ifRes.dwAstNode, conditionRes.dwAstNode, elseRes.dwAstNode), DefaultMigrationMetadata(metadata))
+  }
+
 
   private def toDataweaveStringNode(literal: String) = {
     new MigrationResult(dw.structure.StringNode(literal).annotate(QuotedStringAnnotation(''')))

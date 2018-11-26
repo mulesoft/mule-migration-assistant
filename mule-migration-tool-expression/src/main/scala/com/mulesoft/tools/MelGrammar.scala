@@ -17,6 +17,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   private val createListNode = (elements: Seq[MelExpressionNode]) => ListNode(elements)
   private val createConstructorNode = (canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) => ConstructorNode(canonicalName, arguments)
   private val createCanonicalNameNode = (name: String) => CanonicalNameNode(name)
+  private val createIfNode = (condition : MelExpressionNode, ifExpr : MelExpressionNode, elseExpr : MelExpressionNode) => IfNode(ifExpr, condition, elseExpr)
 
 
   private val whiteSpaceChar = CharPredicate(" \f\t")
@@ -28,19 +29,23 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def expression: Rule1[MelExpressionNode] = rule {
-    logicalExpression ~ ws
+    ternaryOperatorExpression ~ ws
+  }
+
+  def ternaryOperatorExpression: Rule1[MelExpressionNode] = rule {
+    logicalExpression ~ ws ~ optional(ch('?') ~ ws ~ logicalExpression ~ ws ~ ch(':') ~ ws ~ logicalExpression ~> createIfNode)
   }
 
   def logicalExpression = rule {
-    instanceOfExpression ~ optional((orToken | andToken) ~ root ~> createBinaryOp)
+    instanceOfExpression ~ optional(oneOrMore((orToken | andToken) ~ instanceOfExpression ~> createBinaryOp))
   }
 
   def instanceOfExpression = rule {
-    comparableExpression ~ optional(instanceOfToken ~ root ~> createBinaryOp)
+    comparableExpression ~ optional(instanceOfToken ~ comparableExpression ~> createBinaryOp)
   }
 
   def comparableExpression = rule {
-    sum ~ optional(comparableToken ~ root ~> createBinaryOp)
+    sum ~ optional(comparableToken ~ sum ~> createBinaryOp)
   }
 
   def sum: Rule1[MelExpressionNode] = namedRule("Math Operator") {
