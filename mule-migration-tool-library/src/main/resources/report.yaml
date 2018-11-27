@@ -492,7 +492,7 @@ components:
     type: ERROR
     message: Interceptors have been replaced by custom policies in Mule 4.
     docLinks:
-      - https://docs.mulesoft.com/api-manager/2.x/custom-policy-index-latest
+      - https://docs.mulesoft.com/api-manager/2.x/policies-custom-landing-page
   java:
     type: ERROR
     message: "Element '{tagName}' which relied on Java no longer exists in Mule 4. Replace its uses with a new Mule 4 feature."
