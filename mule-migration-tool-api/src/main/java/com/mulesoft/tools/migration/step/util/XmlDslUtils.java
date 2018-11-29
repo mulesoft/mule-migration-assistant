@@ -159,7 +159,10 @@ public final class XmlDslUtils {
     addCompatibilityNamespace(object.getDocument());
 
     int index = object.getParent().indexOf(object);
-    buildOutboundPropertiesToVar(report, object.getParent(), index, consumeStreams);
+
+    if (!"true".equals(object.getAttributeValue("isPolledConsumer", Namespace.getNamespace("migration", "migration")))) {
+      buildOutboundPropertiesToVar(report, object.getParent(), index, consumeStreams);
+    }
     if (outputsAttributes) {
       buildAttributesToInboundProperties(report, object.getParent(), index + 2);
     }

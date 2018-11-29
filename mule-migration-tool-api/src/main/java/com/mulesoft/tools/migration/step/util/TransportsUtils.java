@@ -29,6 +29,7 @@ import org.jdom2.Namespace;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -350,5 +351,30 @@ public final class TransportsUtils {
       endpoint.removeAttribute("responseTransformer-refs");
     }
     return responseContent;
+  }
+
+  /**
+   * The endpoint may already have a {@code scheduling-strategy} because it was migrated from a Quartz transport. If not, the
+   * default values are set.
+   *
+   * @param endpoint
+   */
+  public static void migrateSchedulingStrategy(Element endpoint, OptionalInt defaultFreq) {
+    Element schedulingStr = endpoint.getChild("scheduling-strategy", CORE_NAMESPACE);
+    if (schedulingStr == null) {
+      schedulingStr = new Element("scheduling-strategy", CORE_NAMESPACE);
+      schedulingStr.addContent(new Element("fixed-frequency", CORE_NAMESPACE));
+      endpoint.addContent(schedulingStr);
+    }
+
+    Element fixedFrequency = schedulingStr.getChild("fixed-frequency", CORE_NAMESPACE);
+    if (fixedFrequency != null) {
+      if (endpoint.getAttribute("pollingFrequency") != null) {
+        fixedFrequency.setAttribute("frequency", endpoint.getAttributeValue("pollingFrequency", "1000"));
+      } else if (fixedFrequency.getAttribute("frequency") == null) {
+        defaultFreq.ifPresent(df -> fixedFrequency.setAttribute("frequency", Integer.toString(df)));
+      }
+      endpoint.removeAttribute("pollingFrequency");
+    }
   }
 }

@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FI
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint.migrateFileFilters;
 import static com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConfig.SFTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateSchedulingStrategy;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * Migrates the inbound endpoints of the sftp transport
@@ -86,21 +88,7 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
       migrateRedeliveryPolicyChildren(redelivery, report);
     }
 
-    Element schedulingStr = object.getChild("scheduling-strategy", CORE_NAMESPACE);
-    if (schedulingStr == null) {
-      schedulingStr = new Element("scheduling-strategy", CORE_NAMESPACE);
-      schedulingStr.addContent(new Element("fixed-frequency", CORE_NAMESPACE));
-      object.addContent(schedulingStr);
-    }
-
-    Element fixedFrequency = schedulingStr.getChild("fixed-frequency", CORE_NAMESPACE);
-
-    if (object.getAttribute("pollingFrequency") != null) {
-      fixedFrequency.setAttribute("frequency", object.getAttributeValue("pollingFrequency", "1000"));
-    } else if (fixedFrequency.getAttribute("frequency") == null) {
-      fixedFrequency.setAttribute("frequency", "1000");
-    }
-    object.removeAttribute("pollingFrequency");
+    migrateSchedulingStrategy(object, OptionalInt.of(1000));
 
     if (object.getAttribute("sizeCheckWaitTime") != null && !"0".equals(object.getAttributeValue("sizeCheckWaitTime"))) {
       String sizeCheckWaitTime = object.getAttributeValue("sizeCheckWaitTime");

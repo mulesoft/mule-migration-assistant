@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:quartz="http://www.mulesoft.org/schema/mule/quartz" xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:spring="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+                        http://www.mulesoft.org/schema/mule/quartz http://www.mulesoft.org/schema/mule/quartz/current/mule-quartz.xsd">
+
+    <quartz:connector name="quartzConnector1"
+        scheduler-ref="myScheduler" />
+
+<!--     <spring:bean id="myScheduler" factory-bean="mySchedulerFactory" -->
+<!--         factory-method="getScheduler" /> -->
+
+<!--     <spring:bean id="mySchedulerFactory" class="org.quartz.impl.StdSchedulerFactory"> -->
+<!--         <spring:constructor-arg> -->
+<!--             <spring:props> -->
+<!--                 <spring:prop key="org.quartz.scheduler.instanceName">MuleScheduler1 -->
+<!--                 </spring:prop> -->
+<!--                 <spring:prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool -->
+<!--                 </spring:prop> -->
+<!--                 <spring:prop key="org.quartz.threadPool.threadCount">3</spring:prop> -->
+<!--                 <spring:prop key="org.quartz.scheduler.rmi.export">false</spring:prop> -->
+<!--                 <spring:prop key="org.quartz.scheduler.rmi.proxy">false</spring:prop> -->
+<!--                 <spring:prop key="org.quartz.jobStore.class">org.quartz.simpl.RAMJobStore -->
+<!--                 </spring:prop> -->
+<!--             </spring:props> -->
+<!--         </spring:constructor-arg> -->
+<!--     </spring:bean> -->
+
+    <endpoint name="scheduledDispatchEndpoint" address="vm://bar"
+        exchange-pattern="one-way" />
+
+    <flow name="flow">
+        <quartz:outbound-endpoint name="qEP6"
+            repeatCount="0" cronExpression="0 15 10 * * ? *" jobName="job6"
+            connector-ref="quartzConnector1">
+            <quartz:scheduled-dispatch-job>
+                <quartz:job-endpoint ref="scheduledDispatchEndpoint" />
+            </quartz:scheduled-dispatch-job>
+        </quartz:outbound-endpoint>
+    </flow>
+
+</mule>

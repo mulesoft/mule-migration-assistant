@@ -118,4 +118,25 @@ public class VmOutboundEndpoint extends AbstractVmEndpoint {
     report.report("vm.sessionVars", content, content);
   }
 
+  public static void migrateVmEndpointConsumer(Element object, MigrationReport report, Optional<Element> connector,
+                                               String configName,
+                                               Element vmConfig) {
+    String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
+
+    addQueue(VM_NAMESPACE, connector, vmConfig, path);
+
+    if (object.getAttribute("responseTimeout") != null) {
+      object.setAttribute("timeout", object.getAttributeValue("responseTimeout"));
+      object.setAttribute("timeoutUnit", "MILLISECONDS");
+      object.removeAttribute("responseTimeout");
+    }
+
+    object.setAttribute("config-ref", configName);
+    object.setAttribute("queueName", path);
+    object.removeAttribute("path");
+    object.removeAttribute("name");
+    object.removeAttribute("mimeType");
+    object.removeAttribute("disableTransportTransformer");
+  }
+
 }

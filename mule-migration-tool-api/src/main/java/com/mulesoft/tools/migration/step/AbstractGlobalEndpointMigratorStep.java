@@ -62,6 +62,16 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
       referent.getAttribute("ref").setName("name");
     }
 
+    for (Element referent : getQuartzJobRefs(object)) {
+      changeNamespace(referent);
+
+      copyAttributes(object, referent);
+
+      referent.addContent(children.stream().map(e -> e.clone()).collect(toList()));
+
+      referent.getAttribute("ref").setName("name");
+    }
+
     object.detach();
   }
 
@@ -100,6 +110,13 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
         .getNodes("//" + getNamespace().getPrefix() + ":outbound-endpoint[@ref='"
             + object.getAttributeValue("name") + "']"));
     return outboundRefsToGlobal;
+  }
+
+  protected Set<Element> getQuartzJobRefs(Element object) {
+    Set<Element> quartzdRefsToGlobal = new HashSet<>();
+    quartzdRefsToGlobal.addAll(getApplicationModel()
+        .getNodes("//quartz:job-endpoint[@ref='" + object.getAttributeValue("name") + "']"));
+    return quartzdRefsToGlobal;
   }
 
   protected void changeNamespace(Element referent) {

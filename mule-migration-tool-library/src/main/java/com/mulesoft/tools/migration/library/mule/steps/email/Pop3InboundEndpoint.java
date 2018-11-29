@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.email;
 
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateSchedulingStrategy;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
@@ -20,6 +21,7 @@ import org.jdom2.Attribute;
 import org.jdom2.Element;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 
 /**
  * Migrates the Pop3 inbound endpoint of the Email Transport
@@ -54,8 +56,8 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
 
     getApplicationModel().addNameSpace(EMAIL_NAMESPACE.getPrefix(), EMAIL_NAMESPACE.getURI(), EMAIL_SCHEMA_LOC);
 
-    Element fixedFrequency = new Element("fixed-frequency", CORE_NAMESPACE);
-    object.addContent(new Element("scheduling-strategy", CORE_NAMESPACE).addContent(fixedFrequency));
+    migrateSchedulingStrategy(object, OptionalInt.empty());
+    Element fixedFrequency = object.getChild("scheduling-strategy", CORE_NAMESPACE).getChild("fixed-frequency", CORE_NAMESPACE);
 
     pop3Connector.ifPresent(c -> {
       if (c.getAttribute("moveToFolder") != null) {

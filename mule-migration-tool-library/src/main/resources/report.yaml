@@ -98,6 +98,28 @@ dataWeave:
     type: ERROR
     message: "Error migrating DataWeave script from DW 1.0 to DW 2.0: {errorMessage}"
 
+quartz:
+  repeatCount:
+    type: ERROR
+    message: "'repeatCount' is not supported by 'scheduler' in Mule 4."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-poll#qz_repeat_count
+  unsupportedSource:
+    type: ERROR
+    message: "'job-endpoint' is not supported as a polling source. Replace it with a 'consume' or similar operation from the connector."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-poll#qz_job_endpoint
+  outboundEndpoint:
+    type: ERROR
+    message: "'quartz:outbound-endpoint' is not supported in Mule 4."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-poll#qz_outbound_endpoint
+  connector:
+    type: INFO
+    message: "The configutation of the Quartz connector is not needed by the `scheduler` in Mule 4"
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-poll#qz
+  
 http:
   mapExpression:
     type: WARN

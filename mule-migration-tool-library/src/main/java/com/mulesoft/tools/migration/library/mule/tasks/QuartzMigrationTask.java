@@ -10,27 +10,26 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
-import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConfig;
-import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConnectorPomContribution;
-import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpGlobalEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpInboundEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpOutboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.quartz.QuartzConnector;
+import com.mulesoft.tools.migration.library.mule.steps.quartz.QuartzGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.quartz.QuartzInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.quartz.QuartzOutboundEndpoint;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import java.util.List;
 
 /**
- * Migration definition for SFTP Transport
+ * Migration definition for Quartz Transport
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class SftpMigrationTask extends AbstractMigrationTask {
+public class QuartzMigrationTask extends AbstractMigrationTask {
 
   @Override
   public String getDescription() {
-    return "Migrate SFTP Transport";
+    return "Migrate quartz Transport";
   }
 
   @Override
@@ -45,7 +44,7 @@ public class SftpMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new SftpConnectorPomContribution(),
-                        new SftpGlobalEndpoint(), new SftpConfig(), new SftpInboundEndpoint(), new SftpOutboundEndpoint());
+    return newArrayList(new QuartzGlobalEndpoint(), new QuartzInboundEndpoint(), new QuartzOutboundEndpoint(),
+                        new QuartzConnector());
   }
 }
