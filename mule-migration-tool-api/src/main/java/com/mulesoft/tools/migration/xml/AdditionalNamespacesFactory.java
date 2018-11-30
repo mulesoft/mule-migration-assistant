@@ -66,6 +66,7 @@ public class AdditionalNamespacesFactory {
       stepSelector.getApplicationModelContributionSteps()
           .forEach(s -> taskSupportedNamespaces.addAll(s.getNamespacesContributions()));
     }
+    taskSupportedNamespaces.add(getNamespace("mule", CORE_NAMESPACE.getURI()));
     return taskSupportedNamespaces;
   }
 
