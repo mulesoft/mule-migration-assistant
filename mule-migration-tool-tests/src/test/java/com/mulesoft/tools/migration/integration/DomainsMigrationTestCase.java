@@ -6,14 +6,13 @@
  */
 package com.mulesoft.tools.migration.integration;
 
-import static org.junit.rules.ExpectedException.none;
 import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArtifact;
 
 import org.mule.runtime.module.artifact.api.descriptor.BundleDescriptor;
+import org.mule.tck.junit4.rule.DynamicPort;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -22,6 +21,9 @@ import java.io.File;
 
 @RunWith(Parameterized.class)
 public class DomainsMigrationTestCase extends EndToEndTestCase {
+
+  @Rule
+  public final DynamicPort httpPort = new DynamicPort("httpPort");
 
   @Parameters(name = "{0}, {1}")
   public static Object[][] params() {
@@ -62,7 +64,7 @@ public class DomainsMigrationTestCase extends EndToEndTestCase {
 
     migratedAppArtifact = installMavenArtifact(outPutAppPath, migratedAppDescriptor);
 
-    startStopMule(migratedAppDescriptor, migratedAppArtifact);
+    startStopMule(migratedAppDescriptor, migratedAppArtifact, "-M-DhttpPort=" + httpPort.getValue());
   }
 
   @Override
