@@ -52,8 +52,8 @@ import java.util.Set;
  */
 public class ApplicationModel {
 
-  private Map<Path, Document> applicationDocuments;
-  private Map<Path, Document> domainDocuments;
+  private final Map<Path, Document> applicationDocuments;
+  private final Map<Path, Document> domainDocuments;
   private ProjectType projectType;
   private String muleVersion;
   private PomModel pomModel;
@@ -568,7 +568,9 @@ public class ApplicationModel {
       applicationModel.setPomModel(pomModel);
       applicationModel.setSourceProjectBasePath(sourceProjectBasePath);
       applicationModel.setProjectBasePath(projectBasePath);
-      applicationModel.setSupportedNamespaces(supportedNamespaces);
+      // Eliminate duplicates, makes for easier debugging inside
+      applicationModel.setSupportedNamespaces(supportedNamespaces != null ? new ArrayList<>(new HashSet<>(supportedNamespaces))
+          : emptyList());
 
       return applicationModel;
     }

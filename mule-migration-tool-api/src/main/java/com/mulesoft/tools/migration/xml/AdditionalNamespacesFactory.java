@@ -6,8 +6,11 @@
  */
 package com.mulesoft.tools.migration.xml;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationStepSelector;
@@ -21,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Generates a {@link List<Namespace>}
@@ -48,8 +50,11 @@ public class AdditionalNamespacesFactory {
     }
 
     documentNamespaces.addAll(namespaces.entrySet().stream()
-        .map(namespace -> Namespace.getNamespace(namespace.getValue(), namespace.getKey()))
-        .collect(Collectors.toList()));
+        .map(namespace -> getNamespace(namespace.getValue(), namespace.getKey()))
+        .collect(toList()));
+
+    // Add the prefix commonly used in the XPath expressions
+    documentNamespaces.add(getNamespace("mule", CORE_NAMESPACE.getURI()));
 
     return documentNamespaces;
   }

@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addChildNode;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementToBottom;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
@@ -17,6 +18,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.library.mule.steps.os.AbstractOSMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -45,9 +47,6 @@ public class Poll extends AbstractOSMigrator {
   private static final String SCHEDULERS_NAMESPACE_PREFIX = "schedulers";
   private static final Namespace SCHEDULERS_NAMESPACE =
       Namespace.getNamespace(SCHEDULERS_NAMESPACE_PREFIX, SCHEDULERS_NAMESPACE_URI);
-  private static final String CORE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/core";
-  private static final String CORE_NAME = "mule";
-  private static final Namespace CORE_NAMESPACE = Namespace.getNamespace(CORE_NAME, CORE_NAMESPACE_URI);
 
   @Override
   public String getDescription() {
@@ -56,7 +55,7 @@ public class Poll extends AbstractOSMigrator {
 
   public Poll() {
     this.setAppliedTo(XPATH_SELECTOR);
-    this.setNamespacesContributions(newArrayList(CORE_NAMESPACE, SCHEDULERS_NAMESPACE));
+    this.setNamespacesContributions(newArrayList(SCHEDULERS_NAMESPACE));
   }
 
   @Override
