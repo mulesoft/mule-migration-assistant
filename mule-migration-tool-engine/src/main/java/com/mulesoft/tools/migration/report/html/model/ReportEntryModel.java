@@ -45,25 +45,27 @@ import java.util.Objects;
  */
 public class ReportEntryModel {
 
-  private Level level;
-  private String elementContent;
+  private final Level level;
+  private final String elementContent;
   private transient Element element;
   private Integer lineNumber = 0;
   private Integer columnNumber = 0;
-  private String message;
+  private final String message;
   private String filePath;
-  private List<String> documentationLinks = new ArrayList<>();
+  private final List<String> documentationLinks = new ArrayList<>();
 
 
   public ReportEntryModel(Level level, Element element, String message, String... documentationLinks) {
     this.level = level;
-    this.elementContent = escapeXml11(domElementToString(element));
+    this.elementContent = element != null ? escapeXml11(domElementToString(element)) : "";
     this.element = element;
     this.message = message;
-    try {
-      this.filePath = new File(new URI(element.getDocument().getBaseURI())).getAbsolutePath();
-    } catch (URISyntaxException e) {
-      throw new RuntimeException("Report Generation Error - Fail to get file: " + element.getDocument().getBaseURI(), e);
+    if (element != null) {
+      try {
+        this.filePath = new File(new URI(element.getDocument().getBaseURI())).getAbsolutePath();
+      } catch (URISyntaxException e) {
+        throw new RuntimeException("Report Generation Error - Fail to get file: " + element.getDocument().getBaseURI(), e);
+      }
     }
     this.documentationLinks.addAll(asList(documentationLinks));
   }
@@ -72,10 +74,12 @@ public class ReportEntryModel {
     try {
       SAXBuilder saxBuilder = new SAXBuilder();
       saxBuilder.setJDOMFactory(new LocatedJDOMFactory());
-      Document document = saxBuilder.build(Paths.get(filePath).toFile());
-      setElementLocation(document);
+      if (filePath != null) {
+        Document document = saxBuilder.build(Paths.get(filePath).toFile());
+        setElementLocation(document);
+      }
     } catch (Exception ex) {
-      throw new MigrationJobException("Failed to obtain new element location.", ex.getCause());
+      throw new MigrationJobException("Failed to obtain new element location.", ex);
     }
   }
 
@@ -83,7 +87,9 @@ public class ReportEntryModel {
     String xpathExpression = "";
     Element currentElement = element;
 
-    if (element.getDocument() == null) {
+    // element may be null of a report entry is not generated for an XML element (such as a DW script in its own DWL file, the
+    // pom, etc.).
+    if (element == null || element.getDocument() == null) {
       // This shouldn't happen, but we still have to validate in unit tests that the steps don't cause this.
       this.lineNumber = -1;
       this.columnNumber = -1;

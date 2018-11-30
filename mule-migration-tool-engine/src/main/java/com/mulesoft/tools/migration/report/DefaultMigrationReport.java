@@ -41,7 +41,7 @@ public class DefaultMigrationReport implements MigrationReport {
   private transient Map<String, Map<String, Map<String, Object>>> possibleEntries;
 
   private transient XMLOutputter outp = new XMLOutputter();
-  private Set<ReportEntryModel> reportEntries = new HashSet<>();
+  private final Set<ReportEntryModel> reportEntries = new HashSet<>();
 
   private String projectType;
   private String projectName;
@@ -93,19 +93,20 @@ public class DefaultMigrationReport implements MigrationReport {
     ReportEntryModel reportEntry = new ReportEntryModel(level, elementToComment, message, documentationLinks);
 
     if (reportEntries.add(reportEntry)) {
+      if (elementToComment != null) {
+        elementToComment.addContent(i++, new Comment("Migration " + level.name() + ": " + message));
 
-      elementToComment.addContent(i++, new Comment("Migration " + level.name() + ": " + message));
+        if (documentationLinks.length > 0) {
+          elementToComment.addContent(i++, new Comment("    For more information refer to:"));
 
-      if (documentationLinks.length > 0) {
-        elementToComment.addContent(i++, new Comment("    For more information refer to:"));
-
-        for (String link : documentationLinks) {
-          elementToComment.addContent(i++, new Comment("        * " + link));
+          for (String link : documentationLinks) {
+            elementToComment.addContent(i++, new Comment("        * " + link));
+          }
         }
-      }
 
-      if (element != elementToComment) {
-        elementToComment.addContent(i++, new Comment(outp.outputString(element)));
+        if (element != elementToComment) {
+          elementToComment.addContent(i++, new Comment(outp.outputString(element)));
+        }
       }
     }
   }
@@ -114,10 +115,10 @@ public class DefaultMigrationReport implements MigrationReport {
   public void addProcessedElements(int processedElements) {
     this.processedElements += processedElements;
     this.successfulMigrationRatio = (1.0 * (this.processedElements - reportEntries.stream()
-        .filter(re -> !"compatibility".equals(re.getElement().getNamespacePrefix()))
+        .filter(re -> re.getElement() != null && !"compatibility".equals(re.getElement().getNamespacePrefix()))
         .map(re -> re.getElement()).distinct().count())) / this.processedElements;
     this.errorMigrationRatio = (1.0 * reportEntries.stream()
-        .filter(re -> ERROR.equals(re.getLevel()))
+        .filter(re -> re.getElement() != null && ERROR.equals(re.getLevel()))
         .map(re -> re.getElement()).distinct().count()) / this.processedElements;
   }
 

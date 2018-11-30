@@ -53,12 +53,12 @@ public class MigrationJob implements Executable {
   private static final String HTML_REPORT_FOLDER = "report";
   private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  private Path project;
-  private Path parentDomainProject;
-  private Path outputProject;
-  private Path reportPath;
-  private List<AbstractMigrationTask> migrationTasks;
-  private String muleVersion;
+  private final Path project;
+  private final Path parentDomainProject;
+  private final Path outputProject;
+  private final Path reportPath;
+  private final List<AbstractMigrationTask> migrationTasks;
+  private final String muleVersion;
   private String runnerVersion;
 
   private MigrationJob(Path project, Path parentDomainProject, Path outputProject, List<AbstractMigrationTask> migrationTasks,
@@ -168,7 +168,7 @@ public class MigrationJob implements Executable {
       try {
         entry.setElementLocation();
       } catch (Exception ex) {
-        throw new MigrationJobException("Failed to generate report.", ex.getCause());
+        throw new MigrationJobException("Failed to generate report.", ex);
       }
     }
     HTMLReport htmlReport = new HTMLReport(report.getReportEntries(), reportPath.toFile(), this.getRunnerVersion());

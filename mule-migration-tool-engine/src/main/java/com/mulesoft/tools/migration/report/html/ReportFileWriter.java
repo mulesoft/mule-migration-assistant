@@ -6,6 +6,9 @@
  */
 package com.mulesoft.tools.migration.report.html;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedWriter;
@@ -15,9 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Handles report file creation and generates the HTML report file name
@@ -29,7 +29,11 @@ public class ReportFileWriter {
 
   public String getHtmlFileName(String resourceName, Integer fileCount) {
     String htmlFileName = resourceName;
-    htmlFileName = htmlFileName.substring(0, htmlFileName.indexOf(".xml")) + "-" + fileCount + ".html";
+    if (htmlFileName.contains(".xml")) {
+      htmlFileName = htmlFileName.substring(0, htmlFileName.indexOf(".xml")) + "-" + fileCount + ".html";
+    } else {
+      htmlFileName = htmlFileName + "-" + fileCount + ".html";
+    }
     return htmlFileName;
   }
 
