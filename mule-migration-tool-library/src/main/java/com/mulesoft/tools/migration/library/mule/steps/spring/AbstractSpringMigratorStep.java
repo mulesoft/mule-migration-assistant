@@ -10,14 +10,8 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElem
 import static java.util.Arrays.stream;
 import static org.jdom2.Namespace.getNamespace;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
+import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
@@ -27,8 +21,14 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
-import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Common stuff for migrators of Spring elements
@@ -44,7 +44,7 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
   protected static final String SPRING_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/spring";
   protected static final Namespace SPRING_NAMESPACE = getNamespace(SPRING_NAMESPACE_PREFIX, SPRING_NAMESPACE_URI);
   protected static final Namespace SPRING_SECURITY_NAMESPACE =
-      getNamespace("http://www.mulesoft.org/schema/mule/spring-security");
+      getNamespace("mule-ss", "http://www.mulesoft.org/schema/mule/spring-security");
 
   protected Document resolveSpringDocument(Document currentDoc) {
     Document springDocument = null;

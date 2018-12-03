@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
+import static java.util.Collections.singletonList;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -28,6 +30,7 @@ public class SecurityManager extends AbstractSpringMigratorStep {
 
   public SecurityManager() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(singletonList(SPRING_SECURITY_NAMESPACE));
   }
 
   @Override
@@ -35,8 +38,7 @@ public class SecurityManager extends AbstractSpringMigratorStep {
     object.setNamespace(SPRING_NAMESPACE);
     for (Element provider : object.getChildren("delegate-security-provider", SPRING_SECURITY_NAMESPACE)) {
       provider.setNamespace(SPRING_NAMESPACE);
-      for (Element property : provider
-          .getChildren("security-property", SPRING_SECURITY_NAMESPACE)) {
+      for (Element property : provider.getChildren("security-property", SPRING_SECURITY_NAMESPACE)) {
         property.setNamespace(SPRING_NAMESPACE);
       }
     }

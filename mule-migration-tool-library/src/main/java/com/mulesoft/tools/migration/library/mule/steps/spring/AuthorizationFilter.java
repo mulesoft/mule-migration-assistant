@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
+import static java.util.Collections.singletonList;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -28,6 +30,7 @@ public class AuthorizationFilter extends AbstractSpringMigratorStep {
 
   public AuthorizationFilter() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(singletonList(SPRING_SECURITY_NAMESPACE));
   }
 
   @Override

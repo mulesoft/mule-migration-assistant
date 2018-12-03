@@ -8,6 +8,8 @@ package com.mulesoft.tools.migration.library.mule.steps.secureprops;
 
 import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
 import static java.lang.Boolean.parseBoolean;
+import static java.util.Collections.singletonList;
+import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -36,6 +38,8 @@ public class SecurePropertiesPlaceholder extends AbstractApplicationModelMigrati
 
   public SecurePropertiesPlaceholder() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(singletonList(getNamespace("secure-property-placeholder",
+                                                               "http://www.mulesoft.org/schema/mule/secure-property-placeholder")));
   }
 
   @Override
