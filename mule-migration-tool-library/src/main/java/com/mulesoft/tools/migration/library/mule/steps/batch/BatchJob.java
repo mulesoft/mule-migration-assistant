@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.batch;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -42,6 +43,7 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
 
   public BatchJob() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(newArrayList(BATCH_NAMESPACE));
   }
 
   @Override
