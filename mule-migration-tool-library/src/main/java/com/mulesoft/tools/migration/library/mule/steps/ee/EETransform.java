@@ -13,6 +13,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPA
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -21,7 +22,6 @@ import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
-import org.jdom2.CDATA;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -66,7 +66,7 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
     List<Element> transformerNodes = new ArrayList<>(element.getChildren());
     transformerNodes.forEach(n -> {
       n.setNamespace(element.getNamespace());
-      migrateDWScript(n);
+      migrateDWScript(n, report);
       if ("set-payload".equals(n.getName())) {
         n.detach();
         messageNode.addContent(n);
@@ -116,11 +116,15 @@ public class EETransform extends AbstractApplicationModelMigrationStep {
     report.report("transform.outboundProperties", setProperty, setProperty);
   }
 
-  private void migrateDWScript(Element element) {
+  private void migrateDWScript(Element element, MigrationReport report) {
     if (!StringUtils.isEmpty(element.getText())) {
-      String migratedScript = migrateDWToV2(element.getText());
-      element.removeContent();
-      element.addContent(new CDATA(migratedScript));
+      try {
+        String migratedScript = migrateDWToV2(element.getText());
+        element.removeContent();
+        setText(element, migratedScript);
+      } catch (Exception ex) {
+        report.report("dataWeave.migrationErrorScript", element, element, element.getText(), ex.getMessage());
+      }
     } else if (element.getAttribute("resource") != null) {
       Attribute resourceAttr = element.getAttribute("resource");
       String resourceValue = resourceAttr.getValue();

@@ -35,7 +35,13 @@ public class MigrateDWScriptFiles implements ProjectStructureContribution {
   public void execute(Path basePath, MigrationReport report) throws RuntimeException {
     String[] extensions = new String[] {"dwl"};
     List<File> dwFiles = (List<File>) FileUtils.listFiles(basePath.toFile(), extensions, true);
-    dwFiles.forEach(f -> migrateFile(f));
+    dwFiles.forEach(f -> {
+      try {
+        migrateFile(f);
+      } catch (Exception ex) {
+        report.report("dataWeave.migrationErrorFile", null, null, f.getPath(), ex.getMessage());
+      }
+    });
   }
 
   private void migrateFile(File file) {

@@ -90,6 +90,14 @@ expressions:
       - https://docs.mulesoft.com/mule-user-guide/v/3.8/dataweave-migrator
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-procedure#datamapper
 
+dataWeave:
+  migrationErrorFile:
+    type: ERROR
+    message: "Error migrating DataWeave script file '{scriptFileName}' from DW 1.0 to DW 2.0: {errorMessage}"
+  migrationErrorScript:
+    type: ERROR
+    message: "Error migrating DataWeave script from DW 1.0 to DW 2.0: {errorMessage}"
+
 http:
   mapExpression:
     type: WARN

@@ -11,6 +11,9 @@ import static org.apache.commons.lang3.StringUtils.leftPad;
 
 import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 /**
  * Prints output messages on console.
  *
@@ -39,5 +42,9 @@ public class ConsolePrinter {
     log("===============================================================================");
     log("Total time: " + format("%.3f", elapsedTime.floatValue() / 1000) + " s");
     log("Exception: " + exception.getMessage());
+    StringWriter exceptionWriter = new StringWriter();
+    exception.printStackTrace(new PrintWriter(exceptionWriter));
+    log(exceptionWriter.toString());
+    log("===============================================================================");
   }
 }

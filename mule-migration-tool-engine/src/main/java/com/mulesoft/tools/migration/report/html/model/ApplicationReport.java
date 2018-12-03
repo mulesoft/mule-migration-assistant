@@ -115,7 +115,7 @@ public class ApplicationReport {
       Map<String, Map<String, List<ReportEntryModel>>> resources = new HashMap<>();
       reportEntries.forEach(e -> {
         if (e.getLevel().equals(level)) {
-          String fileName = Paths.get(e.getFilePath()).getFileName().toString();
+          String fileName = e.getFilePath() != null ? Paths.get(e.getFilePath()).getFileName().toString() : "misc";
           Map<String, List<ReportEntryModel>> entries = resources.computeIfAbsent(fileName, k -> new LinkedHashMap<>());
           entries.computeIfAbsent(e.getMessage(), f -> new ArrayList<>()).add(e);
         }
