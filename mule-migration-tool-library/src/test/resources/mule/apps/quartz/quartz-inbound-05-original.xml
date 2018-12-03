@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:quartz="http://www.mulesoft.org/schema/mule/quartz" xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                        http://www.mulesoft.org/schema/mule/quartz http://www.mulesoft.org/schema/mule/quartz/current/mule-quartz.xsd">
+
+    <quartz:endpoint name="quartz.in" jobName="eventTimer"
+        repeatInterval="1000" repeatCount="1">
+        <quartz:event-generator-job>
+            <quartz:payload>TRIGGER STRING</quartz:payload>
+        </quartz:event-generator-job>
+    </quartz:endpoint>
+    
+    <flow name="flow">
+        <inbound-endpoint ref="quartz.in" />
+        <logger/>
+    </flow>
+
+</mule>

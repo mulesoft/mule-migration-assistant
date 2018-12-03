@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:quartz="http://www.mulesoft.org/schema/mule/quartz" xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                        http://www.mulesoft.org/schema/mule/quartz http://www.mulesoft.org/schema/mule/quartz/current/mule-quartz.xsd">
+
+	<quartz:connector name="Quartz1" validateConnections="true">
+		<receiver-threading-profile
+			maxThreadsActive="3" />
+	</quartz:connector>
+
+    <flow name="flow">
+        <quartz:inbound-endpoint jobName="myService1"
+            startDelay="2500" repeatInterval="1000" repeatCount="3">
+            <quartz:event-generator-job/>
+        </quartz:inbound-endpoint>
+        <logger/>
+    </flow>
+
+</mule>

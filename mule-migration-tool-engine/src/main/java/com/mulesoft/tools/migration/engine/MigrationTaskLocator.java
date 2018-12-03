@@ -33,6 +33,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.PostprocessGeneral;
 import com.mulesoft.tools.migration.library.mule.tasks.PostprocessMuleApplication;
 import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
 import com.mulesoft.tools.migration.library.mule.tasks.PropertiesMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.QuartzMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.RequestReplyMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.ScriptingMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SecurePropertiesMigrationTask;
@@ -110,6 +111,8 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new BatchMigrationTask());
     coreMigrationTasks.add(new ValidationMigrationTask());
     coreMigrationTasks.add(new RequestReplyMigrationTask());
+    coreMigrationTasks.add(new QuartzMigrationTask());
+
     coreMigrationTasks.add(new HTTPMigrationTask());
     coreMigrationTasks.add(new EmailMigrationTask());
     coreMigrationTasks.add(new SocketsMigrationTask());

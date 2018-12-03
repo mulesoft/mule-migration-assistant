@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:quartz="http://www.mulesoft.org/schema/mule/quartz"
+    xmlns:spring="http://www.springframework.org/schema/beans"
+    xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+                        http://www.mulesoft.org/schema/mule/quartz http://www.mulesoft.org/schema/mule/quartz/current/mule-quartz.xsd">
+
+    <quartz:connector name="quartzConnector1"
+        scheduler-ref="myScheduler" />
+
+<!--     <spring:bean id="myScheduler" factory-bean="mySchedulerFactory" -->
+<!--         factory-method="getScheduler" /> -->
+
+<!--     <spring:bean id="mySchedulerFactory" class="org.quartz.impl.StdSchedulerFactory"> -->
+<!--         <spring:constructor-arg> -->
+<!--             <spring:props> -->
+<!--                 <spring:prop key="org.quartz.scheduler.instanceName">MuleScheduler1 -->
+<!--                 </spring:prop> -->
+<!--                 <spring:prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool -->
+<!--                 </spring:prop> -->
+<!--                 <spring:prop key="org.quartz.threadPool.threadCount">3</spring:prop> -->
+<!--                 <spring:prop key="org.quartz.scheduler.rmi.export">false</spring:prop> -->
+<!--                 <spring:prop key="org.quartz.scheduler.rmi.proxy">false</spring:prop> -->
+<!--                 <spring:prop key="org.quartz.jobStore.class">org.quartz.simpl.RAMJobStore -->
+<!--                 </spring:prop> -->
+<!--             </spring:props> -->
+<!--         </spring:constructor-arg> -->
+<!--     </spring:bean> -->
+    
+    <flow name="flow">
+        <quartz:inbound-endpoint name="qEP1"
+            cronExpression="0 0 12 * * ?" jobName="job1" connector-ref="quartzConnector1">
+            <quartz:event-generator-job>
+                <quartz:payload>foo</quartz:payload>
+            </quartz:event-generator-job>
+        </quartz:inbound-endpoint>
+
+        <logger/>
+    </flow>
+
+</mule>
