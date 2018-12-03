@@ -11,6 +11,8 @@ import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourD
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeDomain;
 
+import java.io.File;
+
 /**
  * Files/Folders excluded from migration.
  *
@@ -19,13 +21,37 @@ import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThre
  */
 public enum Exclusions {
 
-  CLASSPATH(".classpath"), GIT(".gitignore"), PROJECT(".project"), MULE(".mule"), SETTINGS(".settings"), CATALOG(
-      "catalog"), MULE_PROJECT("mule-project.xml"), TARGET("target"), MULE_THREE_APP(
-          MuleThreeApplication.srcMainConfigurationPath), MULE_THREE_TEST(
-              MuleThreeApplication.srcTestsConfigurationPath), MULE_FOUR_APP(
-                  MuleFourApplication.srcMainConfigurationPath), MULE_FOUR_TEST(
-                      MuleFourApplication.srcTestConfigurationPath), MULE_THREE_DOMAIN(
-                          MuleThreeDomain.srcMainConfigurationPath), MULE_FOUR_DOMAIN(MuleFourDomain.srcMainConfigurationPath);
+  CLASSPATH(File.separator + ".classpath"),
+
+  GIT(File.separator + ".gitignore"),
+
+  PROJECT(File.separator + ".project"),
+
+  MULE(File.separator + ".mule"),
+
+  SETTINGS(File.separator + ".settings"),
+
+  CATALOG(File.separator + "catalog"),
+
+  MULE_PROJECT(File.separator + "mule-project.xml"),
+
+  TARGET(File.separator + "target"),
+
+  CLASSES(File.separator + "classes"),
+
+  // Mule resources are processed elsewhere, not cpioed as they are
+
+  MULE_THREE_APP(File.separator + MuleThreeApplication.srcMainConfigurationPath),
+
+  MULE_THREE_TEST(File.separator + MuleThreeApplication.srcTestsConfigurationPath),
+
+  MULE_FOUR_APP(File.separator + MuleFourApplication.srcMainConfigurationPath),
+
+  MULE_FOUR_TEST(File.separator + MuleFourApplication.srcTestConfigurationPath),
+
+  MULE_THREE_DOMAIN(File.separator + MuleThreeDomain.srcMainConfigurationPath),
+
+  MULE_FOUR_DOMAIN(File.separator + MuleFourDomain.srcMainConfigurationPath);
 
   private String exclusion;
 

@@ -109,7 +109,7 @@ public class ApplicationPersister {
   private void persistConfigFiles() throws Exception {
     for (Map.Entry<Path, Document> entry : appModel.getApplicationDocuments().entrySet()) {
       Path originalFilePath = entry.getKey();
-      String targetFilePath = getTargetFilePath(originalFilePath);
+      Path targetFilePath = getTargetFilePath(originalFilePath);
 
       Document document = entry.getValue();
 
@@ -133,20 +133,25 @@ public class ApplicationPersister {
       });
       finalDocument.getRootElement().addContent(0, new Text(lineSeparator()));
 
-      new File(targetFilePath).getParentFile().mkdirs();
-      new XMLOutputter().output(finalDocument, new FileOutputStream(targetFilePath));
+      File targetFile = targetFilePath.toFile();
+      targetFile.getParentFile().mkdirs();
+      new XMLOutputter().output(finalDocument, new FileOutputStream(targetFile));
     }
   }
 
-  private String getTargetFilePath(Path originalFilePath) throws MigrationJobException {
-    if (originalFilePath.toString().contains(MuleThreeApplication.srcMainConfigurationPath)
-        || originalFilePath.toString().contains(MuleFourApplication.srcMainConfigurationPath)) {
+  private Path getTargetFilePath(Path originalFilePath) throws MigrationJobException {
+    if (originalFilePath.toString().startsWith(MuleThreeApplication.srcMainConfigurationPath)) {
       return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
-          .resolve(originalFilePath.getFileName()).toString();
-    } else if (originalFilePath.toString().contains(MuleThreeDomain.srcMainConfigurationPath)
-        || originalFilePath.toString().contains(MuleFourDomain.srcMainConfigurationPath)) {
+          .resolve(originalFilePath.toString().substring(MuleThreeApplication.srcMainConfigurationPath.length() + 1));
+    } else if (originalFilePath.toString().startsWith(MuleFourApplication.srcMainConfigurationPath)) {
       return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
-          .resolve(originalFilePath.getFileName()).toString();
+          .resolve(originalFilePath.toString().substring(MuleFourApplication.srcMainConfigurationPath.length() + 1));
+    } else if (originalFilePath.toString().startsWith(MuleThreeDomain.srcMainConfigurationPath)) {
+      return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
+          .resolve(originalFilePath.toString().substring(MuleThreeDomain.srcMainConfigurationPath.length() + 1));
+    } else if (originalFilePath.toString().startsWith(MuleFourDomain.srcMainConfigurationPath)) {
+      return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
+          .resolve(originalFilePath.toString().substring(MuleFourDomain.srcMainConfigurationPath.length() + 1));
     } else if (projectOutput instanceof MuleFourPolicy) {
       try {
         moveFileToDirectory(outputAppPath.resolve(originalFilePath).toFile(),
@@ -156,12 +161,12 @@ public class ApplicationPersister {
       }
 
       return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
-          .resolve(originalFilePath.getFileName()).toString();
-    } else if (originalFilePath.toString().contains(MuleFourApplication.srcMainResourcesPath)) {
-      return outputAppPath.resolve(originalFilePath).toString();
+          .resolve(originalFilePath.toString());
+    } else if (originalFilePath.toString().startsWith(MuleFourApplication.srcMainResourcesPath)) {
+      return outputAppPath.resolve(originalFilePath);
     } else {
       return outputAppPath.resolve(((MuleProject) projectOutput).srcTestConfiguration())
-          .resolve(originalFilePath.getFileName()).toString();
+          .resolve(originalFilePath.toString());
     }
   }
 
