@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.spring;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static java.util.Arrays.stream;
+import static org.apache.commons.lang3.StringUtils.substring;
 import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
@@ -146,7 +147,9 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
 
   protected void addSpringModuleConfig(Document document, String beansPath) {
     Element config = new Element("config", SPRING_NAMESPACE);
-    config.setAttribute("name", "springConfig");
+    String[] splitBeansPath = beansPath.split("\\/");
+    config.setAttribute("name",
+                        substring("springConfig" + "_" + splitBeansPath[splitBeansPath.length - 1], 0, -"-beans.xml".length()));
     config.setAttribute("files", beansPath);
     addTopLevelElement(config, document);
 

@@ -9,7 +9,7 @@
     <configuration-properties file="other.properties" encoding="ISO8859_2"/>
     <configuration-properties file="messages.properties" encoding="ISO8859_2"/>
     
-    <spring-module:config files="spring/spring-12-original-beans.xml" name="springConfig"/>
+    <spring-module:config files="spring/spring-12-original-beans.xml" name="springConfig_spring-12-original"/>
     
     <flow name="test">
         <logger message="${my.property}"/>

@@ -6,7 +6,7 @@
        http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <spring-module:config files="spring/spring-06-original-beans.xml" name="springConfig"/>
+    <spring-module:config files="spring/spring-06-original-beans.xml" name="springConfig_spring-06-original"/>
     
     <flow name="test">
         <logger/>
