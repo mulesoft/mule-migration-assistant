@@ -144,4 +144,7 @@ class MigratorTest extends FlatSpec with Matchers {
     Migrator.migrate("true ? 1 : 0").getGeneratedCode() shouldBe "%dw 2.0\n---\nif (true)\n  1\nelse\n  0"
   }
 
+  it should "migrate a simple ternary operator expression2" in {
+    Migrator.migrate("true ? true ? 1 : 0 : 0").getGeneratedCode() shouldBe "%dw 2.0\n---\nif (true)\n  if (true)\n    1\n  else\n    0\nelse\n  0"
+  }
 }

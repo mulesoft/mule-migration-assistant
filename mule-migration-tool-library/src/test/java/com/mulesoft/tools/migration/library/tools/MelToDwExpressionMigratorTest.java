@@ -395,4 +395,97 @@ public class MelToDwExpressionMigratorTest {
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result, is("#[if (vars.timeNow)\n  now()\nelse\n  '']"));
   }
+
+  @Test
+  public void migrateLengthMethod() {
+    String script = "#[payload.length()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[length(payload)]"));
+  }
+
+  @Test
+  public void migrateLengthMethod2() {
+    String script = "#[lala.pepe.length()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[length(lala.pepe)]"));
+  }
+
+  @Test
+  public void migrateLengthMethod3() {
+    String script = "#[lala.pepe.length() + 1]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[length(lala.pepe) + 1]"));
+  }
+
+  @Test
+  public void migrateLengthMethod4() {
+    String script = "#[payload.length() == 0 ? 'empty' : 'not empty']";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[if (length(payload) == 0)\n  'empty'\nelse\n  'not empty']"));
+  }
+
+  @Test
+  public void migrateSizeMethod() {
+    String script = "#[payload.size()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[sizeOf(payload)]"));
+  }
+
+  @Test
+  public void migrateSizeMethod2() {
+    String script = "#[pepe.lala.size()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[sizeOf(pepe.lala)]"));
+  }
+
+  @Test
+  public void migrateSizeMethod3() {
+    String script = "#[payload.size()*2 + 1]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[sizeOf(payload) * 2 + 1]"));
+  }
+
+  @Test
+  public void migrateStaticMethod() {
+    String script = "#[java.util.Objects.equals(a,b) ? 'equals' : 'not equals']";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[if (java!java::util::Objects::equals(vars.a, vars.b))\n  'equals'\nelse\n  'not equals']"));
+  }
+
+  @Test
+  public void migrateStaticMethod2() {
+    String script = "#[java.applet.Applet.newAudioClip(url)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[java!java::applet::Applet::newAudioClip(vars.url)]"));
+  }
+
+  @Test
+  public void migrateStaticMethod3() {
+    String script = "#[java.beans.EventHandler.create(a,b,c,d)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[java!java::beans::EventHandler::create(vars.a, vars.b, vars.c, vars.d)]"));
+  }
+
+  @Test
+  public void migrateStaticMethod4() {
+    String script = "#[java.lang.reflect.AccessibleObject.setAccessible(arr,flag)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[java!java::lang::reflect::AccessibleObject::setAccessible(vars.arr, vars.flag)]"));
+  }
+
+
+  @Test
+  public void migrateStaticMethod5() {
+    String script = "#[java.lang.reflect.AccessibleObject.setAccessible(arr,flag)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[java!java::lang::reflect::AccessibleObject::setAccessible(vars.arr, vars.flag)]"));
+  }
+
+  @Test
+  public void migrateStaticMethod6() {
+    String script = "#[not.in.classloader.Pepe.invoke()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[mel:not.in.classloader.Pepe.invoke()]"));
+  }
+
 }
