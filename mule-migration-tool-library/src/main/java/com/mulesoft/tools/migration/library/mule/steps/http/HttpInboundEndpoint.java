@@ -13,6 +13,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnector
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.compatibilityHeaders;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.handleReferencedResponseBuilder;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.httpListenerLib;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -275,6 +276,8 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   private void handleConnector(Element connector, Element listener, MigrationReport report) {
+    handleServiceOverrides(connector, report);
+
     if (connector.getAttribute("serverSoTimeout") != null
         || connector.getAttribute("reuseAddress") != null) {
       // TODO MULE-14960, MULE-15135

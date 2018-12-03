@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.email;
 
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateSchedulingStrategy;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -60,6 +61,8 @@ public class ImapInboundEndpoint extends AbstractEmailSourceMigrator implements 
     Element fixedFrequency = object.getChild("scheduling-strategy", CORE_NAMESPACE).getChild("fixed-frequency", CORE_NAMESPACE);
 
     imapConnector.ifPresent(c -> {
+      handleServiceOverrides(c, report);
+
       if (c.getAttribute("moveToFolder") != null) {
         // TODO https://www.mulesoft.org/jira/browse/MULE-15721
         report.report("email.moveToFolder", c, object);

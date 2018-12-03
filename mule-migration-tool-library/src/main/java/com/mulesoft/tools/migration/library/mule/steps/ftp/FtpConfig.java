@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.ftp;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.handleChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleReconnection;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.stream.Collectors.joining;
@@ -53,7 +54,7 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace ftpNs = Namespace.getNamespace(FTP_NAMESPACE_PREFIX, FTP_NAMESPACE_URI);
+    handleServiceOverrides(object, report);
 
     handleInputImplicitConnectorRef(object, report);
     handleOutputImplicitConnectorRef(object, report);
@@ -61,7 +62,7 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
     object.setName("config");
     object.setNamespace(FTP_NAMESPACE);
 
-    Element connection = new Element("connection", ftpNs);
+    Element connection = new Element("connection", FTP_NAMESPACE);
     // connection.setAttribute("workingDir", ".");
     object.addContent(connection);
 

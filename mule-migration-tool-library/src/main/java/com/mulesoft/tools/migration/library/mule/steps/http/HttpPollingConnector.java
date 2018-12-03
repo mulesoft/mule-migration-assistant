@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.validation.Validat
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.addValidationNamespace;
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationPomContribution.addValidationDependency;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_POLICY;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -53,6 +54,8 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     Namespace httpNamespace = Namespace.getNamespace("http", "http://www.mulesoft.org/schema/mule/http");
+
+    handleServiceOverrides(object, report);
 
     Element requestConnection = new Element("request-connection", httpNamespace);
     String configName = object.getAttributeValue("name") + "Config";

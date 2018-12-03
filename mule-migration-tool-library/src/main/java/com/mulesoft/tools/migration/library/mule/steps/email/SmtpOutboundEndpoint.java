@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.email;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
@@ -58,6 +59,8 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
     Optional<Element> smtpConnector = resolveConnector(object, getApplicationModel());
 
     smtpConnector.ifPresent(c -> {
+      handleServiceOverrides(c, report);
+
       if (c.getAttribute("toAddresses") != null) {
         object.setAttribute("tc", c.getAttributeValue("toAddresses"));
       }
