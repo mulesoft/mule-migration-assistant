@@ -9,7 +9,7 @@
     <configuration-properties file="other.properties"/>
     <configuration-properties file="messages.properties"/>
 
-    <spring-module:config files="spring/spring-09-original-beans.xml" name="springConfig"/>
+    <spring-module:config files="spring/spring-09-original-beans.xml" name="springConfig_spring-09-original"/>
     
     <flow name="test">
         <logger message="${my.property}"/>

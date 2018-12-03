@@ -166,7 +166,7 @@ public final class TransportsUtils {
 
     Element dispatcherThreadingProfile = object.getChild("dispatcher-threading-profile", CORE_NAMESPACE);
     if (dispatcherThreadingProfile != null) {
-      report.report("flow.threading", receiverThreadingProfile, m4Config);
+      report.report("flow.threading", dispatcherThreadingProfile, m4Config);
       object.removeContent(dispatcherThreadingProfile);
     }
 
