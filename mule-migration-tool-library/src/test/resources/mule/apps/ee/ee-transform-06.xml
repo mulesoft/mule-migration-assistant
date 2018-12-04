@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <flow name="ee-transform-01Flow">
+        <set-payload value="#[payload]" mimeType="application/xml"/>
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload>
+                    <![CDATA[%dw 2.0
+                    output application/json
+                    ---
+                    {
+                      order: {
+                        "type": "Book",
+                        title: payload.title,
+                        details: "By $(payload.author) ($(payload.year))"
+                      }
+                    }]]>
+                </ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>
