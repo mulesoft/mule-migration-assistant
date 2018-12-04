@@ -34,7 +34,7 @@ public class CopyFileVisitor implements FileVisitor<Path> {
 
   @Override
   public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-    if (doExclude(dir)) {
+    if (doExclude(fromFolder.toPath().relativize(dir))) {
       return FileVisitResult.SKIP_SUBTREE;
     }
     Path targetPath = targetFolder.toPath().resolve(fromFolder.toPath().relativize(dir));
@@ -46,7 +46,7 @@ public class CopyFileVisitor implements FileVisitor<Path> {
 
   @Override
   public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-    if (doExclude(file)) {
+    if (doExclude(fromFolder.toPath().relativize(file))) {
       return FileVisitResult.SKIP_SUBTREE;
     }
     Files.copy(file, targetFolder.toPath().resolve(fromFolder.toPath().relativize(file)), StandardCopyOption.REPLACE_EXISTING);
@@ -54,7 +54,7 @@ public class CopyFileVisitor implements FileVisitor<Path> {
   }
 
   private Boolean doExclude(Path path) {
-    return Arrays.stream(Exclusions.values()).anyMatch(e -> path.toString().endsWith(e.exclusion()));
+    return Arrays.stream(Exclusions.values()).anyMatch(e -> (File.separator + path.toString()).equals(e.exclusion()));
   }
 
   @Override
