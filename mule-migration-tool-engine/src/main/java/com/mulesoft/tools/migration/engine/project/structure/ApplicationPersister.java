@@ -143,6 +143,9 @@ public class ApplicationPersister {
     if (originalFilePath.toString().startsWith(MuleThreeApplication.srcMainConfigurationPath)) {
       return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
           .resolve(originalFilePath.toString().substring(MuleThreeApplication.srcMainConfigurationPath.length() + 1));
+    } else if (originalFilePath.toString().startsWith(MuleThreeApplication.srcTestsConfigurationPath)) {
+      return outputAppPath.resolve(((MuleProject) projectOutput).srcTestConfiguration())
+          .resolve(originalFilePath.toString().substring(MuleThreeApplication.srcTestsConfigurationPath.length() + 1));
     } else if (originalFilePath.toString().startsWith(MuleFourApplication.srcMainConfigurationPath)) {
       return outputAppPath.resolve(((MuleProject) projectOutput).srcMainConfiguration())
           .resolve(originalFilePath.toString().substring(MuleFourApplication.srcMainConfigurationPath.length() + 1));
@@ -166,7 +169,7 @@ public class ApplicationPersister {
       return outputAppPath.resolve(originalFilePath);
     } else {
       return outputAppPath.resolve(((MuleProject) projectOutput).srcTestConfiguration())
-          .resolve(originalFilePath.toString());
+          .resolve(originalFilePath.getFileName().toString());
     }
   }
 

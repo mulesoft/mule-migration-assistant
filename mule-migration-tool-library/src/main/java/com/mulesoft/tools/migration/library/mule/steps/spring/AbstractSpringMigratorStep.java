@@ -118,7 +118,7 @@ abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrat
       }
 
       for (Namespace namespace : declaredNamespaces) {
-        if (!StringUtils.isEmpty(namespace.getURI())) {
+        if (!StringUtils.isEmpty(namespace.getURI()) && locations.containsKey(namespace.getURI())) {
           getApplicationModel().addNameSpace(namespace, fixSpringSchemaLocationVersion(locations.get(namespace.getURI())),
                                              springDocument.getDocument());
         }
