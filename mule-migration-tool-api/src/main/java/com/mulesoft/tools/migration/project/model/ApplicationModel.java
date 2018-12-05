@@ -28,6 +28,8 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
@@ -247,7 +249,7 @@ public class ApplicationModel {
    * @return all the elements queried by the xpath expression in the given document
    * @throws IllegalArgumentException if the XPath query cannot be compiled
    */
-  private List<Element> getElementsFromDocument(XPathExpression xpath, Document document) {
+  public List<Element> getElementsFromDocument(XPathExpression xpath, Document document) {
     XPathExpression<Element> compiledXPath =
         XPathFactory.instance().compile(xpath.getExpression(), Filters.element(), null,
                                         getDocumentNamespaces(document, supportedNamespaces));
@@ -260,6 +262,32 @@ public class ApplicationModel {
         throw e;
       }
     }
+  }
+
+  /**
+   * Retrieves all documents that contains an specific string value on any place
+   *
+   * @param value
+   * @return all the documents containing the string
+   */
+  public List<Document> getDocumentsContainString(String value) {
+    List<Document> documents = new ArrayList<>();
+    for (Document doc : getApplicationDocuments().values()) {
+      if (documentContainsString(value, doc)) {
+        documents.add(doc);
+      }
+    }
+    for (Document doc : getDomainDocuments().values()) {
+      if (documentContainsString(value, doc)) {
+        documents.add(doc);
+      }
+    }
+    return documents;
+  }
+
+  private boolean documentContainsString(String value, Document doc) {
+    XMLOutputter outputter = new XMLOutputter();
+    return outputter.outputString(doc).contains(value);
   }
 
   /**

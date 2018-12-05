@@ -27,6 +27,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.Logger;
 import com.mulesoft.tools.migration.library.mule.steps.core.MuleApp;
 import com.mulesoft.tools.migration.library.mule.steps.core.MuleDomain;
 import com.mulesoft.tools.migration.library.mule.steps.core.Poll;
+import com.mulesoft.tools.migration.library.mule.steps.core.PropertyPlaceholder;
 import com.mulesoft.tools.migration.library.mule.steps.core.RollbackExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ScatterGather;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetPayload;
@@ -40,6 +41,7 @@ import com.mulesoft.tools.migration.library.mule.steps.ee.CacheObjectStoreCachin
 import com.mulesoft.tools.migration.library.mule.steps.ee.CacheScope;
 import com.mulesoft.tools.migration.library.mule.steps.ee.EETransform;
 import com.mulesoft.tools.migration.library.mule.steps.ee.Tracking;
+import com.mulesoft.tools.migration.library.mule.steps.properties.MuleAppProperties;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
@@ -99,6 +101,8 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new CacheHttpCachingStrategy(),
                         new Tracking(),
                         new GenericGlobalEndpoint(),
-                        new SpringImport());
+                        new SpringImport(),
+                        new PropertyPlaceholder(),
+                        new MuleAppProperties());
   }
 }
