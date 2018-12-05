@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetV
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import com.mulesoft.tools.*;
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
@@ -19,6 +20,7 @@ import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.weave.v2.parser.ast.header.HeaderNode;
@@ -62,18 +64,21 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     }
     String unwrapped = unwrap(originalExpression);
     unwrapped = unwrapped.replaceAll("mel:", "");
+    String migratedExpression;
     if (!unwrapped.contains("#[")) {
-      return wrap(translateSingleExpression(unwrapped, dataWeaveBodyOnly, element, enricher));
+      migratedExpression = wrap(translateSingleExpression(unwrapped, dataWeaveBodyOnly, element, enricher));
+    } else {
+      // Probably an interpolation
+      TemplateParser muleStyleParser = TemplateParser.createMuleStyleParser();
+      migratedExpression = muleStyleParser.translate(originalExpression,
+                                                     (script) -> translateSingleExpression(script, dataWeaveBodyOnly,
+                                                                                           element, enricher));
+      if (migratedExpression.startsWith("#[mel:")) {
+        addCompatibilityNamespace(element.getDocument());
+      }
     }
-    // Probably an interpolation
-    TemplateParser muleStyleParser = TemplateParser.createMuleStyleParser();
-    String migratedExpression = muleStyleParser.translate(originalExpression,
-                                                          (script) -> translateSingleExpression(script, dataWeaveBodyOnly,
-                                                                                                element, enricher));
-    if (migratedExpression.startsWith("#[mel:")) {
-      addCompatibilityNamespace(element.getDocument());
-    }
-    return migratedExpression;
+
+    return StringUtils.replaceAll(migratedExpression, "\\r\\n|[\\r\\n]", " ");
   }
 
   public String translateSingleExpression(String unwrappedExpression, boolean dataWeaveBodyOnly, Element element,
