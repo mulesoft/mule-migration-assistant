@@ -23,6 +23,8 @@ object Migrator {
 
   def bindingContextVariable: List[String] = List("message", "exception", "payload", "flowVars", "sessionVars", "recordVars", "null");
 
+  var counter = 0
+
 
   def toDataweaveAst(expressionNode: mel.MelExpressionNode): MigrationResult = {
     expressionNode match {
@@ -38,7 +40,38 @@ object Migrator {
       case mel.EnclosedExpression(expression) => toDataweaveEnclosedExpressionNode(expression)
       case mel.ConstructorNode(canonicalName, arguments) => toDataweaveConstructorNode(canonicalName, arguments)
       case mel.IfNode(ifExpr, condition, elseExpr) => toDataweaveIfNode(ifExpr, condition, elseExpr)
+      case mel.MethodInvocationNode(canonicalName, arguments) => toDataweaveMethodInvocation(canonicalName, arguments)
     }
+  }
+
+  private def toDataweaveMethodInvocation(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) = {
+    val name = canonicalName.name
+    val lastDot = name.lastIndexOf('.')
+
+    val candidateToCanonicalName = name.patch(lastDot , "", name.length() - lastDot)
+    val methodName = name.patch(0 , "", lastDot+1)
+    val candidateToClass = Try(Thread.currentThread().getContextClassLoader.loadClass(candidateToCanonicalName))
+
+    candidateToClass match {
+      case Failure(_) => {
+        methodName match {
+          case "length" => toFunction("length", candidateToCanonicalName)
+          case "size" => toFunction("sizeOf", candidateToCanonicalName)
+          case _ => {
+            counter += 1
+            val reference = "$" + counter
+            new MigrationResult(toDataweaveStringNode(reference).dwAstNode, DefaultMigrationMetadata(Seq(NonMigratable("expressions.methodInvocation"))))
+          }
+        }
+      }
+      case Success(loadedClass) => toFunctionCall(methodName, CanonicalNameNode(candidateToCanonicalName), arguments)
+    }
+
+  }
+
+
+  private def toFunction(functionName: String, candidateToCanonicalName: String) = {
+    new MigrationResult(dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier(functionName)), FunctionCallParametersNode(Seq(NameIdentifier(candidateToCanonicalName)))))
   }
 
   private def toDataweaveIfNode(ifExpr: MelExpressionNode, condition: MelExpressionNode, elseExpr: MelExpressionNode) = {
@@ -137,25 +170,22 @@ object Migrator {
   private def toDataweaveConstructorNode(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]): MigrationResult = {
     val theClassToCreate = Try(Thread.currentThread().getContextClassLoader.loadClass(canonicalName.name))
     theClassToCreate match {
-      case Failure(_) => {
-        toGenericConstructor(canonicalName, arguments)
-      }
+      case Failure(_) => toGenericConstructor(canonicalName, arguments)
       case Success(loadedClass) => {
-        if (isMap(loadedClass, arguments)) {
-          toMapConstructor(canonicalName)
-        } else if (isList(loadedClass, arguments)) {
-          toListConstructor(canonicalName)
-        } else if (isDate(loadedClass, arguments)) {
-          toDateConstructor
-        } else {
-          toGenericConstructor(canonicalName, arguments)
-        }
+        if (isMap(loadedClass, arguments)) toMapConstructor(canonicalName)
+        else if (isList(loadedClass, arguments)) toListConstructor(canonicalName)
+        else if (isDate(loadedClass, arguments)) toDateConstructor
+        else toGenericConstructor(canonicalName, arguments)
       }
     }
   }
 
   private def toGenericConstructor(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]): MigrationResult = {
-    val variableReferenceNode = VariableReferenceNode(NameIdentifier(canonicalName.name.replaceAll("\\.", "::") + "::new", Some("java")))
+    toFunctionCall("new", canonicalName, arguments)
+  }
+
+  private def toFunctionCall(methodName: String, canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) = {
+    val variableReferenceNode = VariableReferenceNode(NameIdentifier(canonicalName.name.replaceAll("\\.", "::") + "::" + methodName, Some("java")))
     val result = arguments.map(toDataweaveAst)
     new MigrationResult(dw.functions.FunctionCallNode(variableReferenceNode, FunctionCallParametersNode(result.map(r => r.dwAstNode))), DefaultMigrationMetadata(result.flatMap(r => r.metadata.children)))
   }
@@ -226,6 +256,7 @@ object Migrator {
   }
 
   def migrate(melScript: String): MigrationResult = {
+    counter = 0
     val expressionNode = MelParserHelper.parse(removeNullPayload(melScript))
     val result = toDataweaveAst(expressionNode)
     val bodyNode = resolveStringConcatenation(result.dwAstNode)

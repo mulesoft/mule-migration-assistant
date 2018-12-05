@@ -38,6 +38,10 @@ case class ConstructorNode(canonicalName: CanonicalNameNode, arguments: Seq[MelE
   override def children: Seq[MelExpressionNode] = arguments
 }
 
+case class MethodInvocationNode(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) extends MelExpressionNode {
+  override def children: Seq[MelExpressionNode] = arguments
+}
+
 case class CanonicalNameNode(name: String) extends MelExpressionNode {
 }
 

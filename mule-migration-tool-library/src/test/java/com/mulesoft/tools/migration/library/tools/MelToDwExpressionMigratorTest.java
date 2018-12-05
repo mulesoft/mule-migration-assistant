@@ -325,7 +325,7 @@ public class MelToDwExpressionMigratorTest {
     String migratedExpression = expressionMigrator.migrateExpression("#[" + originalExpression + "]", false, elementMock);
 
     assertThat("Migrated expression is not the expected", migratedExpression,
-               equalTo("#[%dw 2.0\n---\nJava::isInstanceOf(vars.a, 'org.pepe.Pepito')]"));
+               equalTo("#[%dw 2.0 --- Java::isInstanceOf(vars.a, 'org.pepe.Pepito')]"));
 
     assertThat("Pom model should have the java module dependency",
                pomModel.getDependencies().stream().anyMatch(d -> d.getArtifactId().equals("mule-java-module")));
@@ -356,21 +356,21 @@ public class MelToDwExpressionMigratorTest {
   public void migrateTernaryExpression() {
     String script = "#[a || b ? 1 : 0] ";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("#[if (vars.a or vars.b)\n  1\nelse\n  0]"));
+    assertThat(result, is("#[if (vars.a or vars.b)   1 else   0]"));
   }
 
   @Test
   public void migrateTernaryExpression2() {
     String script = "#[a && b && c ? \"max\" : \"mule\"] ";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("#[if (vars.a and vars.b and vars.c)\n  'max'\nelse\n  'mule']"));
+    assertThat(result, is("#[if (vars.a and vars.b and vars.c)   'max' else   'mule']"));
   }
 
   @Test
   public void migrateTernaryExpression3() {
     String script = "#[true ? 1+1 : 4] ";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("#[if (true)\n  1 + 1\nelse\n  4]"));
+    assertThat(result, is("#[if (true)   1 + 1 else   4]"));
   }
 
   @Test
@@ -379,20 +379,124 @@ public class MelToDwExpressionMigratorTest {
         "#[1 + 1 == 2 ? message.inboundProperties['http.relative.path'] : message.inboundProperties['http.query.params'].lastname] ";
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result,
-               is("#[if (1 + 1 == 2)\n  vars.compatibility_inboundProperties['http.relative.path']\nelse\n  vars.compatibility_inboundProperties['http.query.params'].lastname]"));
+               is("#[if (1 + 1 == 2)   vars.compatibility_inboundProperties['http.relative.path'] else   vars.compatibility_inboundProperties['http.query.params'].lastname]"));
   }
 
   @Test
   public void migrateTernaryExpression5() {
     String script = "#[a instanceOf org.pepe.Pepito ? \"is Pepito\" : \"it is not Pepito\"]";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("#[if (Java::isInstanceOf(vars.a, 'org.pepe.Pepito'))\n  'is Pepito'\nelse\n  'it is not Pepito']"));
+    assertThat(result, is("#[if (Java::isInstanceOf(vars.a, 'org.pepe.Pepito'))   'is Pepito' else   'it is not Pepito']"));
   }
 
   @Test
   public void migrateTernaryExpression6() {
     String script = "#[timeNow ? server.dateTime : \"\"]";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("#[if (vars.timeNow)\n  now()\nelse\n  '']"));
+    assertThat(result, is("#[if (vars.timeNow)   now() else   '']"));
   }
+
+  @Test
+  public void migrateLengthMethod() {
+    String script = "#[payload.length()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[length(payload)]"));
+  }
+
+  @Test
+  public void migrateLengthMethod2() {
+    String script = "#[lala.pepe.length()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[length(lala.pepe)]"));
+  }
+
+  @Test
+  public void migrateLengthMethod3() {
+    String script = "#[lala.pepe.length() + 1]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[length(lala.pepe) + 1]"));
+  }
+
+  @Test
+  public void migrateLengthMethod4() {
+    String script = "#[payload.length() == 0 ? 'empty' : 'not empty']";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[if (length(payload) == 0)   'empty' else   'not empty']"));
+  }
+
+  @Test
+  public void migrateSizeMethod() {
+    String script = "#[payload.size()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[sizeOf(payload)]"));
+  }
+
+  @Test
+  public void migrateSizeMethod2() {
+    String script = "#[pepe.lala.size()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[sizeOf(pepe.lala)]"));
+  }
+
+  @Test
+  public void migrateSizeMethod3() {
+    String script = "#[payload.size()*2 + 1]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[sizeOf(payload) * 2 + 1]"));
+  }
+
+  @Test
+  public void migrateStaticMethod() {
+    String script = "#[java.util.Objects.equals(a,b) ? 'equals' : 'not equals']";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[if (java!java::util::Objects::equals(vars.a, vars.b))   'equals' else   'not equals']"));
+  }
+
+  @Test
+  public void migrateStaticMethod2() {
+    String script = "#[java.applet.Applet.newAudioClip(url)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[java!java::applet::Applet::newAudioClip(vars.url)]"));
+  }
+
+  @Test
+  public void migrateStaticMethod3() {
+    String script = "#[java.beans.EventHandler.create(a,b,c,d)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[java!java::beans::EventHandler::create(vars.a, vars.b, vars.c, vars.d)]"));
+  }
+
+  @Test
+  public void migrateStaticMethod4() {
+    String script = "#[java.lang.reflect.AccessibleObject.setAccessible(arr,flag)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[java!java::lang::reflect::AccessibleObject::setAccessible(vars.arr, vars.flag)]"));
+  }
+
+
+  @Test
+  public void migrateStaticMethod5() {
+    String script = "#[java.lang.reflect.AccessibleObject.setAccessible(arr,flag)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[java!java::lang::reflect::AccessibleObject::setAccessible(vars.arr, vars.flag)]"));
+  }
+
+  /**
+   * The migration of static methods works as follows:
+   * - The grammar recognizes that the current string is a method invocation
+   * - The string has the form "suffix.method(arguments...)" and is parsed into three different parts: suffix, method, and list(arguments)
+   * - We have then two options:
+   *  1. suffix is something that can be loaded by the current class loader. It means the invocation is a static method and so we migrate it properly to DataWeave
+   *  2. suffix isn't something that can be loaded by the current class loader. Then this option is split in another three suboptions:
+   *  2.1 method is length() => migrate suffix.length() to lenght(suffix)
+   *  2.2 method is size() => migrate suffix.size() to sizeOf(suffix)
+   *  2.3 any other case => does not migrate (add NonMigratable metadata with according report key)
+   */
+  @Test
+  public void migrateStaticMethod6() {
+    String script = "#[not.in.classloader.Pepe.invoke()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[mel:not.in.classloader.Pepe.invoke()]"));
+  }
+
 }

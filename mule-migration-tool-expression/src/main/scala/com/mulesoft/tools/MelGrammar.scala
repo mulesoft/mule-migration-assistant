@@ -16,6 +16,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   private val createMapNode = (elements: Seq[KeyValuePairNode]) => MapNode(elements)
   private val createListNode = (elements: Seq[MelExpressionNode]) => ListNode(elements)
   private val createConstructorNode = (canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) => ConstructorNode(canonicalName, arguments)
+  private val createMethodInvocationNode = (canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) => MethodInvocationNode(canonicalName, arguments)
   private val createCanonicalNameNode = (name: String) => CanonicalNameNode(name)
   private val createIfNode = (condition : MelExpressionNode, ifExpr : MelExpressionNode, elseExpr : MelExpressionNode) => IfNode(ifExpr, condition, elseExpr)
 
@@ -33,7 +34,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def ternaryOperatorExpression: Rule1[MelExpressionNode] = rule {
-    logicalExpression ~ ws ~ optional(ch('?') ~ ws ~ logicalExpression ~ ws ~ ch(':') ~ ws ~ logicalExpression ~> createIfNode)
+    logicalExpression ~ ws ~ optional(ch('?') ~ ws ~ ternaryOperatorExpression ~ ws ~ ch(':') ~ ws ~ ternaryOperatorExpression ~> createIfNode)
   }
 
   def logicalExpression = rule {
@@ -217,7 +218,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def legalCanonicalName: Rule0 = rule {
-    zeroOrMore((CharPredicate.AlphaNum | ch('.')) ~ appendSB())
+    oneOrMore((CharPredicate.AlphaNum | ch('.')) ~ appendSB())
   }
 
   def canonicalNameNode: Rule1[CanonicalNameNode] = rule {
@@ -229,11 +230,15 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def values = rule {
-    (constructor | stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(selector)
+    (constructor | methodInvocation | stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(selector)
   }
 
   def constructor: Rule1[ConstructorNode] = rule {
     (ws ~ str("new") ~ ws ~ canonicalNameNode ~ ws ~ ch('(') ~ ws ~ ((ch(')') ~ push(Seq())) | oneOrMore(simpleExpressions).separatedBy(',') ~ ws ~ ch(')'))) ~> createConstructorNode
+  }
+
+  def methodInvocation = rule {
+    (ws ~ canonicalNameNode ~ ws ~ ch('(') ~ ws ~ ((ch(')') ~ push(Seq())) | oneOrMore(simpleExpressions).separatedBy(',') ~ ws ~ ch(')'))) ~> createMethodInvocationNode
   }
 
   def selector = rule {
