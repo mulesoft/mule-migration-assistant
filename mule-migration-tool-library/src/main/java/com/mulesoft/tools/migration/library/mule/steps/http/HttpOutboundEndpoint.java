@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnector
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.httpRequesterLib;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.SOCKETS_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.addSocketsModule;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -195,6 +196,8 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
   public static void handleConnector(Element connector, Element reqConnection, MigrationReport report,
                                      Namespace httpNamespace, ApplicationModel appModel) {
+    handleServiceOverrides(connector, report);
+
     if (connector.getAttribute("keepAlive") != null && reqConnection.getAttribute("usePersistentConnections") == null) {
       copyAttributeIfPresent(connector, reqConnection, "keepAlive", "usePersistentConnections");
     }

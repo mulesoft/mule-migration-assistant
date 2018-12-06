@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.sftp;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.handleChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleReconnection;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.stream.Collectors.joining;
@@ -53,7 +54,7 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace sftpNs = Namespace.getNamespace(SFTP_NAMESPACE_PREFIX, SFTP_NAMESPACE_URI);
+    handleServiceOverrides(object, report);
 
     handleInputImplicitConnectorRef(object, report);
     handleOutputImplicitConnectorRef(object, report);
@@ -61,7 +62,7 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
     object.setName("config");
     object.setNamespace(SFTP_NAMESPACE);
 
-    Element connection = new Element("connection", sftpNs);
+    Element connection = new Element("connection", SFTP_NAMESPACE);
     object.addContent(connection);
 
     if (object.getAttribute("maxConnectionPoolSize") != null && !"0".equals(object.getAttributeValue("maxConnectionPoolSize"))) {

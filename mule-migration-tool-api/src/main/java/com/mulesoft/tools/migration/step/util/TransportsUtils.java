@@ -377,4 +377,12 @@ public final class TransportsUtils {
       endpoint.removeAttribute("pollingFrequency");
     }
   }
+
+  public static void handleServiceOverrides(Element connector, MigrationReport report) {
+    Element serviceOverrides = connector.getChild("service-override", CORE_NAMESPACE);
+    if (serviceOverrides != null) {
+      report.report("transports.serviceOverrides", serviceOverrides, connector);
+      serviceOverrides.detach();
+    }
+  }
 }

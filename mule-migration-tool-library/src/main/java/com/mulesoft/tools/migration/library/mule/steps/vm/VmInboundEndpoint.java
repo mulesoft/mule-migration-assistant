@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.vm;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
@@ -122,6 +123,8 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
     addQueue(VM_NAMESPACE, connector, vmConfig, path);
 
     connector.ifPresent(conn -> {
+      handleServiceOverrides(conn, report);
+
       Integer consumers = null;
       if (conn.getAttribute("numberOfConcurrentTransactedReceivers") != null) {
         consumers = parseInt(conn.getAttributeValue("numberOfConcurrentTransactedReceivers"));

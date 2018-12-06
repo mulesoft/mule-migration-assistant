@@ -509,6 +509,11 @@ transports:
   manyConnectors:
     type: ERROR
     message: "There are at least 2 connectors matching protocol '{protocol}', so the connector to use must be specified on the endpoint using the 'connector' property or attribute. Connectors in your configuration that support '{protocol}' are {connectors}"
+  serviceOverrides:
+    type: ERROR
+    message: "Custom Java code through 'service-overrides' is not supported in Mule 4."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-transports#service_overrides
 
 components:
   unsupported:

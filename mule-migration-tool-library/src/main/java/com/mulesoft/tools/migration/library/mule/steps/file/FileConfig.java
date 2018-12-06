@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleReconnection;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static java.util.stream.Collectors.joining;
@@ -52,6 +53,8 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    handleServiceOverrides(object, report);
+
     handleInputImplicitConnectorRef(object, report);
     handleOutputImplicitConnectorRef(object, report);
 
