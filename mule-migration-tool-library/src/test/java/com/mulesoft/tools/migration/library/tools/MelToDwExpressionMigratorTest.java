@@ -499,4 +499,18 @@ public class MelToDwExpressionMigratorTest {
     assertThat(result, is("#[mel:not.in.classloader.Pepe.invoke()]"));
   }
 
+  @Test
+  public void migrateFunctionExpressionWithInterpolation() {
+    String script = "#[function:date].txt";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[\"$(now()).txt\"]"));
+  }
+
+  @Test
+  public void migrateFunctionExpressionWithInterpolation1() {
+    String script = "#[function:datestamp:dd-MM-yyyy].csv";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[\"$(now() as String {format: \"${dd-MM-yyyy}\"}).csv\"]"));
+  }
+
 }
