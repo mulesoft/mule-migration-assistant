@@ -58,9 +58,10 @@ public class FunctionExpressionEvaluatorResolver implements CompatibilityResolve
       return "server.host";
     } else if (IP_FUNCTION.equalsIgnoreCase(functionName)) {
       return "server.ip";
-    } else if (PAYLOAD_CLASS_FUNCTION.equalsIgnoreCase(functionName)
-        || SHORT_PAYLOAD_CLASS_FUNCTION.equalsIgnoreCase(functionName)) {
+    } else if (PAYLOAD_CLASS_FUNCTION.equalsIgnoreCase(functionName)) {
       return "payload.^class";
+    } else if (SHORT_PAYLOAD_CLASS_FUNCTION.equalsIgnoreCase(functionName)) {
+      return "( payload.^class splitBy  '.' )[-1]";
     }
 
     return "mel:" + original;

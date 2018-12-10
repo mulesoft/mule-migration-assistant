@@ -126,6 +126,7 @@ public class FunctionExpressionEvaluatorResolverTest {
   @Test
   public void resolveShortPayloadClass() {
     assertThat("Resolver should be able to resolve the shortPayloadClass function",
-               resolver.resolve("function:shortPayloadClass", element, report, model, migrator), equalTo("payload.^class"));
+               resolver.resolve("function:shortPayloadClass", element, report, model, migrator),
+               equalTo("( payload.^class splitBy  '.' )[-1]"));
   }
 }
