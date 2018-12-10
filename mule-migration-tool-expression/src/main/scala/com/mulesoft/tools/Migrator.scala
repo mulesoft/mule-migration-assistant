@@ -44,6 +44,10 @@ object Migrator {
     }
   }
 
+  def toEquals(variableReferenceNode: mel.VariableReferenceNode, arguments: Seq[MelExpressionNode]): MigrationResult = {
+    toDataweaveBinaryOpNode(EqOpId, variableReferenceNode, arguments.head, new DefaultMigrationMetadata(Seq()))
+  }
+
   private def toDataweaveMethodInvocation(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) = {
     val name = canonicalName.name
     val lastDot = name.lastIndexOf('.')
@@ -57,6 +61,7 @@ object Migrator {
         methodName match {
           case "length" => toFunction("length", candidateToCanonicalName)
           case "size" => toFunction("sizeOf", candidateToCanonicalName)
+          case "equals" => toEquals(mel.VariableReferenceNode(candidateToCanonicalName), arguments)
           case _ => {
             counter += 1
             val reference = "$" + counter
@@ -264,7 +269,7 @@ object Migrator {
   }
 
   def resolveName(literal: String): String = {
-    if (bindingContextVariable.exists(name => literal.equals(name)))
+    if (bindingContextVariable.exists(name => literal.startsWith(name)))
       literal
     else
       "vars." + literal

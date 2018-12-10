@@ -513,4 +513,18 @@ public class MelToDwExpressionMigratorTest {
     assertThat(result, is("#[\"$(now() as String {format: \"${dd-MM-yyyy}\"}).csv\"]"));
   }
 
+  @Test
+  public void migrateEquals() {
+    String script = "#[a.equals(b)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[vars.a == vars.b]"));
+  }
+
+  @Test
+  public void migrateEquals1() {
+    String script = "#[flowVars.ingestResourceType.equals(flowVars.ingestPaths.nodesResource)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[vars.ingestResourceType == vars.ingestPaths.nodesResource]"));
+  }
+
 }
