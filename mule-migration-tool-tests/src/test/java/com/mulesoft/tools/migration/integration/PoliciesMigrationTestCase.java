@@ -10,6 +10,7 @@ import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArti
 
 import org.mule.runtime.module.artifact.api.descriptor.BundleDescriptor;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -17,6 +18,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import java.io.File;
 
+@Ignore("AGW-2744 - Uncomment when policies are properly migrated.")
 @RunWith(Parameterized.class)
 public class PoliciesMigrationTestCase extends EndToEndTestCase {
 

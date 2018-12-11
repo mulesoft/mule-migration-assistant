@@ -15,7 +15,6 @@ import static org.mule.runtime.deployment.model.api.application.ApplicationDescr
 import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArtifact;
 
 import org.mule.runtime.module.artifact.api.descriptor.BundleDescriptor;
-import org.mule.test.infrastructure.maven.MavenTestUtils;
 
 import com.mulesoft.mule.distributions.server.AbstractEeAppControl;
 
@@ -44,6 +43,7 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
   private static final String RUNTIME_VERSION = getProperty("mule.version");
 
   private static final String DEBUG_RUNNER = getProperty("mule.test.debugRunner");
+  private static final String DEBUG_MUNIT = getProperty("mule.test.debugMUnit");
 
   private static final String MMT_UPLOAD_REPORT = getProperty("mule.test.mmtUploadReport");
 
@@ -63,18 +63,11 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     Properties props = new Properties();
     // We do this so that the tests that run MUnit tests use the intended runtime
     props.put("runtimeVersion", RUNTIME_VERSION);
-
-    File migratedAppArtifact = null;
-    try {
-      // This method exists only from 4.1.5
-      migratedAppArtifact = (File) MavenTestUtils.class
-          .getDeclaredMethod("installMavenArtifact", String.class, BundleDescriptor.class, Properties.class)
-          .invoke(null, outPutPath, migratedAppDescriptor, props);
-    } catch (NoSuchMethodException e) {
-      migratedAppArtifact = installMavenArtifact(outPutPath, migratedAppDescriptor);
+    if ("true".equals(DEBUG_MUNIT)) {
+      props.put("munit.debug.default", "true");
     }
 
-    startStopMule(migratedAppDescriptor, migratedAppArtifact, muleArgs);
+    startStopMule(migratedAppDescriptor, installMavenArtifact(outPutPath, migratedAppDescriptor, props), muleArgs);
   }
 
   protected void startStopMule(BundleDescriptor migratedAppDescriptor, File migratedAppArtifact, String... muleArgs) {
