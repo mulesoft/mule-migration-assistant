@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:signature="http://www.mulesoft.org/schema/mule/signature"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/signature http://www.mulesoft.org/schema/mule/signature/current/mule-signature.xsd">
+    
+    <signature:config name="hmacKeystore" defaultSigner="JCE_SIGNER">
+
+        <signature:jce-signer-config algorithm="HmacMD5"
+                                 keystorePath="./secret.jks"
+                                 key="aestest"
+                                 keyPassword="mule1234"
+                                 keystorePassword="mule1234"/>
+    </signature:config>
+        
+    <flow name="test">
+        <signature:sign config-ref="hmacKeystore" />
+        <signature:verify-signature config-ref="hmacKeystore" expectedSignature="4DFNQQFdiNJXiQ9DunBIjg==" />
+    </flow>
+
+</mule>

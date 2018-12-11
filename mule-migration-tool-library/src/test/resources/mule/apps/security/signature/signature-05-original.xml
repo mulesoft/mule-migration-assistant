@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:signature="http://www.mulesoft.org/schema/mule/signature"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/signature http://www.mulesoft.org/schema/mule/signature/current/mule-signature.xsd">
+    
+    <signature:config name="signer" enableLanguage="true">
+        <signature:jce-signer-config algorithm="HmacMD5" key="JLfl5sER3kt4oVkzP2d39UQrUxrEK63LjmXAO45b6cU="/>
+        <signature:xml-signer-config signatureType="ENVELOPED" key="JLfl5sER3kt4oVkzP2d39UQrUxrEK63LjmXAO45b6cU="/>
+        <signature:pgp-signer-config secretKeyRingFileName="./private.gpg" secretPassphrase="TestingPassphrase" secretAliasId="56B4312E6168F39C" publicKeyRingFileName="./public.gpg"/>
+    </signature:config>
+
+        
+    <flow name="test">
+        <set-payload value="#[signer.usingPGPSigner().verifySignature(payload, flowVars['detachedSignature'])]" />
+    </flow>
+
+</mule>

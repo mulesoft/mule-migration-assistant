@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:signature="http://www.mulesoft.org/schema/mule/signature"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/signature http://www.mulesoft.org/schema/mule/signature/current/mule-signature.xsd">
+    
+    <signature:config name="pgpSignatureSignBinaryMode" enableLanguage="true">
+        <signature:pgp-signer-config algorithm="SHA256"
+                                     secretKeyRingFileName="./private.gpg"
+                                     secretAliasId="56B4312E6168F39C"
+                                     publicKeyRingFileName="./public.gpg"
+                                     outputMode="BINARY"
+                                     secretPassphrase="TestingPassphrase"/>
+    </signature:config>
+
+        
+    <flow name="test">
+        <signature:sign using="PGP_SIGNER" config-ref="pgpSignatureSignBinaryMode"/>
+        <signature:verify-signature using="PGP_SIGNER" config-ref="pgpSignatureSignBinaryMode" expectedSignature="#[pgpSignatureSignBinaryMode.usingPGPSigner().loadBinarySignature(flowVars['detachedSignature'])]"/>
+    </flow>
+
+</mule>

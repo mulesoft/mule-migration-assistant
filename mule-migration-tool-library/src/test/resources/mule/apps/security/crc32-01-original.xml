@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:crc32="http://www.mulesoft.org/schema/mule/crc32"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/crc32 http://www.mulesoft.org/schema/mule/crc32/current/mule-crc32.xsd">
+    
+    <crc32:config name="configA"/>
+    
+    <flow name="test">
+        <crc32:filter config-ref="configA" expectedChecksum="#[message.inboundProperties['crc']" />
+    </flow>
+
+</mule>
