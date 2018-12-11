@@ -25,7 +25,6 @@ object Migrator {
 
   var counter = 0
 
-
   def toDataweaveAst(expressionNode: mel.MelExpressionNode): MigrationResult = {
     expressionNode match {
       case mel.StringNode(literal) => toDataweaveStringNode(literal)
@@ -41,6 +40,7 @@ object Migrator {
       case mel.ConstructorNode(canonicalName, arguments) => toDataweaveConstructorNode(canonicalName, arguments)
       case mel.IfNode(ifExpr, condition, elseExpr) => toDataweaveIfNode(ifExpr, condition, elseExpr)
       case mel.MethodInvocationNode(canonicalName, arguments) => toDataweaveMethodInvocation(canonicalName, arguments)
+      case mel.PropertyNode(name) => toDataweaveProperty(name.map(_.literal).mkString("."))
     }
   }
 
@@ -183,6 +183,11 @@ object Migrator {
         else toGenericConstructor(canonicalName, arguments)
       }
     }
+  }
+
+  def toDataweaveProperty(name: String): MigrationResult = {
+    val functionCall = dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier("p")), FunctionCallParametersNode(Seq(toDataweaveStringNode(name).dwAstNode)))
+    new MigrationResult(functionCall, DefaultMigrationMetadata(Seq()))
   }
 
   private def toGenericConstructor(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]): MigrationResult = {
