@@ -527,4 +527,24 @@ public class MelToDwExpressionMigratorTest {
     assertThat(result, is("#[vars.ingestResourceType == vars.ingestPaths.nodesResource]"));
   }
 
+  @Test
+  public void migrateStringWithPlaceholder() {
+    String script = "#['Hello ${world}']";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#['Hello ${world}']"));
+  }
+
+  @Test
+  public void migrateProperties() {
+    String script = "#[${world.pepe}]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[p('world.pepe')]"));
+  }
+
+  @Test
+  public void migrateProperties1() {
+    String script = "Hello ${world}";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("Hello ${world}"));
+  }
 }

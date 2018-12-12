@@ -19,7 +19,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   private val createMethodInvocationNode = (canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) => MethodInvocationNode(canonicalName, arguments)
   private val createCanonicalNameNode = (name: String) => CanonicalNameNode(name)
   private val createIfNode = (condition : MelExpressionNode, ifExpr : MelExpressionNode, elseExpr : MelExpressionNode) => IfNode(ifExpr, condition, elseExpr)
-
+  private val createPropertyNode = (identifiers: Seq[IdentifierNode]) => PropertyNode(identifiers)
 
   private val whiteSpaceChar = CharPredicate(" \f\t")
   private val newLineChar = CharPredicate("\r\n")
@@ -230,7 +230,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def values = rule {
-    (constructor | methodInvocation | stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(selector)
+    (property | constructor | methodInvocation | stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(selector)
   }
 
   def constructor: Rule1[ConstructorNode] = rule {
@@ -251,5 +251,9 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
 
   def subscript = rule {
     ws ~ ch('[') ~ ws ~ push(OperatorType.subscript) ~ simpleExpressions ~ ws ~ ch(']') ~ ws ~> createBinaryOp
+  }
+
+  def property = rule {
+    ws ~ "${" ~ ws ~ oneOrMore(identifierNode).separatedBy('.') ~ ws ~ ch('}') ~ ws ~> createPropertyNode
   }
 }
