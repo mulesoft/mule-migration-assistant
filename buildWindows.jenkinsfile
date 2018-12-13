@@ -9,7 +9,7 @@ properties([
 ])
 
 def pipelineParams = [
-  "agent": "windows7-heavy",
+  "agent": "windows7",
   "jdk": params.JDK,
   "maven": params.maven
 ]
