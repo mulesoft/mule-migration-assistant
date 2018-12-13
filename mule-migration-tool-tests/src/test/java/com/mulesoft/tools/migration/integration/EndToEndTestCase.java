@@ -143,7 +143,10 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
       command.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
     }
 
-    command.add("-Dmmt.uploadReport=" + MMT_UPLOAD_REPORT);
+    if (!Boolean.valueOf(MMT_UPLOAD_REPORT)) {
+      command.add("-Dmmt.disableUsageStatistics");
+    }
+
     command.add("-jar");
     command.add(getProperty("migrator.runner"));
     command.add("-projectBasePath");
