@@ -201,6 +201,10 @@ public class MigrationRunner {
   }
 
   protected void sendUsageStatistics(MigrationJob job, Object body) {
+    if (System.getProperty("mmt.disableUsageStatistics") != null) {
+      return;
+    }
+
     try {
       Gson gson = new Gson();
 
