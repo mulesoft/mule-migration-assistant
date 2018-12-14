@@ -26,6 +26,8 @@ import org.jdom2.Namespace;
 public class SecurePropertiesPlaceholder extends AbstractApplicationModelMigrationStep {
 
   private static final String SECURE_NS_URI = "http://www.mulesoft.org/schema/mule/secure-properties";
+  private static final String SECURE_SCHEMA =
+      "http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd";
   public static final Namespace SECURE_NAMESPACE = Namespace.getNamespace("secure-properties", SECURE_NS_URI);
 
   public static final String XPATH_SELECTOR =
@@ -44,6 +46,7 @@ public class SecurePropertiesPlaceholder extends AbstractApplicationModelMigrati
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    getApplicationModel().addNameSpace(SECURE_NAMESPACE, SECURE_SCHEMA, object.getDocument());
     int idx = object.getParent().indexOf(object);
     int j = 1;
     for (String location : object.getAttributeValue("location").split("\\,")) {
