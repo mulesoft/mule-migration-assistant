@@ -4,40 +4,33 @@
  * Agreement (or other master license agreement) separately entered into in writing between
  * you and MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package com.mulesoft.tools.migration.library.mule.steps.secureprops;
+package com.mulesoft.tools.migration.library.mule.steps.security.filter;
 
-import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
-
+import com.mulesoft.tools.migration.library.mule.steps.validation.ValidationPomContribution;
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.category.PomContribution;
 
 /**
- * Adds the mule-secure-configuration-property-module dependency
+ * Add validation module dependency on pom.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class SecurePropertiesPomContribution implements PomContribution {
+public class SecurityFiltersPomContribution extends ValidationPomContribution {
 
   @Override
   public String getDescription() {
-    return "Add mule-secure-configuration-property-module dependency.";
+    return "Add validation module dependency on pom.";
   }
 
   @Override
   public void execute(PomModel object, MigrationReport report) throws RuntimeException {
-    object.addDependency(new DependencyBuilder()
-        .withGroupId("com.mulesoft.modules")
-        .withArtifactId("mule-secure-configuration-property-module")
-        .withVersion(targetVersion("mule-secure-configuration-property-module"))
-        .withClassifier("mule-plugin")
-        .build());
+    super.execute(object, report);
 
     object.removeDependency(new DependencyBuilder()
         .withGroupId("com.mulesoft.security")
-        .withArtifactId("mule-module-security-property-placeholder")
+        .withArtifactId("mule-module-security-filters")
         .withVersion("*")
         .build());
 

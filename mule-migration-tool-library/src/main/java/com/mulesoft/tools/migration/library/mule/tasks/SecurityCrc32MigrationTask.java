@@ -10,24 +10,26 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
-import com.mulesoft.tools.migration.library.mule.steps.security.properties.SecurePropertiesPlaceholder;
-import com.mulesoft.tools.migration.library.mule.steps.security.properties.SecurePropertiesPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.security.crc32.ChecksumPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.security.crc32.Crc32Calculate;
+import com.mulesoft.tools.migration.library.mule.steps.security.crc32.Crc32Config;
+import com.mulesoft.tools.migration.library.mule.steps.security.crc32.Crc32Filter;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import java.util.List;
 
 /**
- * Migrate Secure Properties placeholders
+ * Migrate Security Module crc32
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class SecurePropertiesMigrationTask extends AbstractMigrationTask {
+public class SecurityCrc32MigrationTask extends AbstractMigrationTask {
 
   @Override
   public String getDescription() {
-    return "Migrate Secure Properties placeholders";
+    return "Migrate Security crc32";
   }
 
   @Override
@@ -42,7 +44,9 @@ public class SecurePropertiesMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new SecurePropertiesPomContribution(),
-                        new SecurePropertiesPlaceholder());
+    return newArrayList(new ChecksumPomContribution(),
+                        new Crc32Filter(),
+                        new Crc32Calculate(),
+                        new Crc32Config());
   }
 }

@@ -10,24 +10,27 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
-import com.mulesoft.tools.migration.library.mule.steps.security.properties.SecurePropertiesPlaceholder;
-import com.mulesoft.tools.migration.library.mule.steps.security.properties.SecurePropertiesPomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.security.filter.ByIpRangeCidrFilter;
+import com.mulesoft.tools.migration.library.mule.steps.security.filter.ByIpRangeFilter;
+import com.mulesoft.tools.migration.library.mule.steps.security.filter.ByIpRegexFilter;
+import com.mulesoft.tools.migration.library.mule.steps.security.filter.ExpiredFilter;
+import com.mulesoft.tools.migration.library.mule.steps.security.filter.SecurityFiltersPomContribution;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import java.util.List;
 
 /**
- * Migrate Secure Properties placeholders
+ * Migrate Security Module filters
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class SecurePropertiesMigrationTask extends AbstractMigrationTask {
+public class SecurityFiltersMigrationTask extends AbstractMigrationTask {
 
   @Override
   public String getDescription() {
-    return "Migrate Secure Properties placeholders";
+    return "Migrate Security Module filters";
   }
 
   @Override
@@ -42,7 +45,10 @@ public class SecurePropertiesMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new SecurePropertiesPomContribution(),
-                        new SecurePropertiesPlaceholder());
+    return newArrayList(new SecurityFiltersPomContribution(),
+                        new ExpiredFilter(),
+                        new ByIpRegexFilter(),
+                        new ByIpRangeFilter(),
+                        new ByIpRangeCidrFilter());
   }
 }

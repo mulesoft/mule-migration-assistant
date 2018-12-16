@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+    
+    <validation:ip-filter-list name="test_filter-by-ip-range-cidr">
+        <validation:ips>
+            <validation:ip value="0.0.0.0/0"/>
+        </validation:ips>
+    </validation:ip-filter-list>
+
+    <flow name="test">
+        <validation:is-whitelisted-ip whiteList="test_filter-by-ip-range-cidr" ipAddress="#[if (attributes.headers['X-Forwarded-For'] != null) trim((attributes.headers['X-Forwarded-For'] splitBy  ',')[0]) else attributes.remoteAddress]"/>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+
+</mule>

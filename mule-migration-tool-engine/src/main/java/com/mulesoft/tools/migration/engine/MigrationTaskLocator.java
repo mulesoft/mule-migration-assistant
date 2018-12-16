@@ -37,6 +37,8 @@ import com.mulesoft.tools.migration.library.mule.tasks.QuartzMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.RequestReplyMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.ScriptingMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SecurePropertiesMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.SecurityCrc32MigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.SecurityFiltersMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SftpMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SpringMigrationTask;
@@ -106,6 +108,8 @@ public class MigrationTaskLocator {
     List<AbstractMigrationTask> coreMigrationTasks = new ArrayList<>();
 
     coreMigrationTasks.add(new SecurePropertiesMigrationTask());
+    coreMigrationTasks.add(new SecurityCrc32MigrationTask());
+    coreMigrationTasks.add(new SecurityFiltersMigrationTask());
     coreMigrationTasks.add(new PropertiesMigrationTask());
     coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
     coreMigrationTasks.add(new BatchMigrationTask());
