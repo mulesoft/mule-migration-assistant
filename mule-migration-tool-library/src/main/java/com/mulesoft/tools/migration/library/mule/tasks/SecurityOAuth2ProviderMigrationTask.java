@@ -12,6 +12,8 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2PomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderConfig;
+import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderCreateClient;
+import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderStoresConfigRemove;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderValidate;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderValidateClient;
 import com.mulesoft.tools.migration.step.MigrationStep;
@@ -47,6 +49,8 @@ public class SecurityOAuth2ProviderMigrationTask extends AbstractMigrationTask {
     return newArrayList(new OAuth2PomContribution(),
                         new OAuth2ProviderConfig(),
                         new OAuth2ProviderValidate(),
-                        new OAuth2ProviderValidateClient());
+                        new OAuth2ProviderValidateClient(),
+                        new OAuth2ProviderCreateClient(),
+                        new OAuth2ProviderStoresConfigRemove());
   }
 }

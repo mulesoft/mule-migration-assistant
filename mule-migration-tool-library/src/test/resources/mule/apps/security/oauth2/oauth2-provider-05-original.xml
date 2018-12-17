@@ -16,10 +16,10 @@
 <!--     <global-property name="allSupportedGrantTypes" -->
 <!--                      value="AUTHORIZATION_CODE IMPLICIT RESOURCE_OWNER_PASSWORD_CREDENTIALS CLIENT_CREDENTIALS" /> -->
 
-<!--     <spring:beans> -->
+    <spring:beans>
 <!--         <spring:bean name="tokenGeneratorMockStrategy" class="org.mule.modules.oauth2.provider.mock.TokenGeneratorMockStrategy" /> -->
 
-<!--         <spring:bean name="rateLimiter" class="org.mule.modules.oauth2.provider.ratelimit.SimpleInMemoryRateLimiter" /> -->
+        <spring:bean name="rateLimiter" class="org.mule.modules.oauth2.provider.ratelimit.SimpleInMemoryRateLimiter" />
 
 <!--         <spring:bean name="clientObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
 <!--         <spring:bean name="authorizationCodeObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
@@ -41,7 +41,7 @@
 <!--                 </ss:user-service> -->
 <!--             </ss:authentication-provider> -->
 <!--         </ss:authentication-manager> -->
-<!--     </spring:beans> -->
+    </spring:beans>
                         
 <!--     <mule-ss:security-manager> -->
 <!--         <mule-ss:delegate-security-provider -->

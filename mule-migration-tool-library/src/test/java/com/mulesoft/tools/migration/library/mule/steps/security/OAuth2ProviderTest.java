@@ -19,6 +19,9 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConfig;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderConfig;
+import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderCreateClient;
+import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderDeleteClient;
+import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderStoresConfigRemove;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderValidate;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderValidateClient;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
@@ -91,6 +94,9 @@ public class OAuth2ProviderTest {
   private OAuth2ProviderConfig config;
   private OAuth2ProviderValidate validate;
   private OAuth2ProviderValidateClient validateClient;
+  private OAuth2ProviderCreateClient createClient;
+  private OAuth2ProviderDeleteClient deleteClient;
+  private OAuth2ProviderStoresConfigRemove storesConfigRemove;
   private HttpConfig httpConfig;
 
   @Before
@@ -128,6 +134,17 @@ public class OAuth2ProviderTest {
     validateClient = new OAuth2ProviderValidateClient();
     validateClient.setApplicationModel(appModel);
 
+    createClient = new OAuth2ProviderCreateClient();
+    createClient.setExpressionMigrator(expressionMigrator);
+    createClient.setApplicationModel(appModel);
+
+    deleteClient = new OAuth2ProviderDeleteClient();
+    deleteClient.setExpressionMigrator(expressionMigrator);
+    deleteClient.setApplicationModel(appModel);
+
+    storesConfigRemove = new OAuth2ProviderStoresConfigRemove();
+    storesConfigRemove.setApplicationModel(appModel);
+
     httpConfig = new HttpConfig();
     httpConfig.setApplicationModel(appModel);
   }
@@ -142,6 +159,9 @@ public class OAuth2ProviderTest {
     migrate(config);
     migrate(validate);
     migrate(validateClient);
+    migrate(createClient);
+    migrate(deleteClient);
+    migrate(storesConfigRemove);
     migrate(httpConfig);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());

@@ -4,15 +4,18 @@
        xmlns:http="http://www.mulesoft.org/schema/mule/http"
        xmlns:oauth2-provider="http://www.mulesoft.org/schema/mule/oauth2-provider"
        xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+       xmlns:spring="http://www.springframework.org/schema/beans"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
        http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/current/mule-oauth2-provider.xsd
-       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     
 <!--     <global-property name="allSupportedGrantTypes" -->
 <!--                      value="AUTHORIZATION_CODE IMPLICIT RESOURCE_OWNER_PASSWORD_CREDENTIALS CLIENT_CREDENTIALS" /> -->
 
+    <spring:beans/>
 <!--     <spring:beans> -->
 <!--         <spring:bean name="tokenGeneratorMockStrategy" class="org.mule.modules.oauth2.provider.mock.TokenGeneratorMockStrategy" /> -->
 
@@ -62,17 +65,17 @@
                             resourceOwnerSecurityProvider="resourceOwnerSecurityProvider"
                             clientSecurityProvider="clientSecurityProvider"
                             listenerConfig="httpsConnector"
-                            clientStore="clientStore"
+                            clientStore="clientObjectStore"
                             supportedGrantTypes="${allSupportedGrantTypes}">
         <oauth2-provider:client-validation-rate-limiter>
             <oauth2-provider:period-rate-limiter/>
         </oauth2-provider:client-validation-rate-limiter>
-        <oauth2-provider:token-config path="/token" tokenStore="tokenStore"/>
-        <oauth2-provider:authorization-config loginPage="static/auth.html" path="/authorize" authorizationCodeStore="authorizationCodeStore"/>
+        <oauth2-provider:token-config path="/token" tokenStore="tokenObjectStore"/>
+        <oauth2-provider:authorization-config loginPage="static/auth.html" path="/authorize" authorizationCodeStore="authorizationCodeObjectStore"/>
     </oauth2-provider:config>
 
     <http:listener-config name="httpsConnector">
-        <http:listener-connection protocol="HTTPS" host="0.0.0.0" port="${port}">
+        <http:listener-connection protocol="HTTPS" host="localhost" port="${port}">
             <tls:context>
                 <tls:trust-store path="trustStore" password="mulepassword"/>
                 <tls:key-store path="serverKeystore" keyPassword="mulepassword" password="mulepassword"/>

@@ -3,14 +3,17 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:http="http://www.mulesoft.org/schema/mule/http"
        xmlns:oauth2-provider="http://www.mulesoft.org/schema/mule/oauth2-provider"
+       xmlns:spring="http://www.springframework.org/schema/beans"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-       http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/current/mule-oauth2-provider.xsd">
+       http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/current/mule-oauth2-provider.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     
 <!--     <global-property name="allSupportedGrantTypes" -->
 <!--                      value="AUTHORIZATION_CODE IMPLICIT RESOURCE_OWNER_PASSWORD_CREDENTIALS CLIENT_CREDENTIALS" /> -->
 
+    <spring:beans/>
 <!--     <spring:beans> -->
 <!--         <spring:bean name="tokenGeneratorMockStrategy" class="org.mule.modules.oauth2.provider.mock.TokenGeneratorMockStrategy" /> -->
 
@@ -60,14 +63,14 @@
                             resourceOwnerSecurityProvider="resourceOwnerSecurityProvider"
                             clientSecurityProvider="clientSecurityProvider"
                             listenerConfig="listenerConf"
-                            clientStore="clientStore"
+                            clientStore="clientObjectStore"
                             scopes="GUEST,USER,ADMIN"
                             supportedGrantTypes="${allSupportedGrantTypes}">
         <oauth2-provider:client-validation-rate-limiter>
             <oauth2-provider:period-rate-limiter/>
         </oauth2-provider:client-validation-rate-limiter>
-        <oauth2-provider:token-config path="/token" tokenStore="tokenStore"/>
-        <oauth2-provider:authorization-config loginPage="static/auth.html" path="/authorize" authorizationCodeStore="authorizationCodeStore"/>
+        <oauth2-provider:token-config path="/token" tokenStore="tokenObjectStore"/>
+        <oauth2-provider:authorization-config loginPage="static/auth.html" path="/authorize" authorizationCodeStore="authorizationCodeObjectStore"/>
     </oauth2-provider:config>
 
 <!--     <http:listener-config name="listenerConf"> -->
@@ -75,7 +78,7 @@
 <!--     </http:listener-config> -->
 
     <flow name="test">
-        <oauth2-provider:validate-token config="Test Scoped Provider" scopes="#[['USER', 'ADMIN']]" />
+        <oauth2-provider:validate-token config-ref="Test Scoped Provider" scopes="#[['USER', 'ADMIN']]" />
     </flow>
 
     <flow name="preFlow">

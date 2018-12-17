@@ -47,7 +47,7 @@ public class SpringConfigInMuleConfig extends AbstractSpringMigratorStep {
       moveNamespacesDeclarations(muleDocument, element, springDocument);
     }
 
-    object.getParent().removeContent(object);
+    object.detach();
   }
 
 }
