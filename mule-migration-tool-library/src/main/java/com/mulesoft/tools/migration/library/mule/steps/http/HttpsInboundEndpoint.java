@@ -6,14 +6,17 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.TLS_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.util.Optional;
 
@@ -28,7 +31,7 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
   private static final String HTTP_NS_PREFIX = "http";
   private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
   public static final String XPATH_SELECTOR =
-      "/*/mule:flow/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/https' and local-name() = 'inbound-endpoint' and position() = 1]";
+      "/*/mule:flow/*[namespace-uri() = '" + HTTPS_NAMESPACE_URI + "' and local-name() = 'inbound-endpoint' and position() = 1]";
 
   @Override
   public String getDescription() {
@@ -41,9 +44,6 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace httpsNamespace = Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https");
-    Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
-
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     Element httpsConnector = null;
@@ -61,18 +61,25 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
     getApplicationModel().addNameSpace(HTTP_NS_PREFIX, HTTP_NS_URI,
                                        "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
-    Element httpsListenerConnection = getApplicationModel().getNode("/*/http:listener-config[@name = '"
-        + object.getAttributeValue("config-ref") + "']/http:listener-connection");
+    handleHttpsListenerConfig(getApplicationModel(), object, report, httpsConnector);
+  }
+
+  public static void handleHttpsListenerConfig(ApplicationModel appModel, Element object, MigrationReport report,
+                                               Element httpsConnector) {
+    Element httpsListenerConnection =
+        appModel.getNode("/*/*[namespace-uri() = '" + HTTP_NS_URI + "' and local-name() = 'listener-config' and @name = '"
+            + object.getAttributeValue("config-ref") + "']/*[namespace-uri() = '" + HTTP_NS_URI
+            + "' and local-name() = 'listener-connection']");
 
     httpsListenerConnection.setAttribute("protocol", "HTTPS");
 
-    if (httpsConnector != null && httpsListenerConnection.getChild("context", tlsNamespace) == null) {
-      Element tlsContext = new Element("context", tlsNamespace);
+    if (httpsConnector != null && httpsListenerConnection.getChild("context", TLS_NAMESPACE) == null) {
+      Element tlsContext = new Element("context", TLS_NAMESPACE);
       boolean tlsConfigured = false;
 
-      Element tlsServer = httpsConnector.getChild("tls-server", httpsNamespace);
+      Element tlsServer = httpsConnector.getChild("tls-server", HTTPS_NAMESPACE);
       if (tlsServer != null) {
-        Element trustStore = new Element("trust-store", tlsNamespace);
+        Element trustStore = new Element("trust-store", TLS_NAMESPACE);
         copyAttributeIfPresent(tlsServer, trustStore, "path");
         if (tlsServer.getAttribute("class") != null) {
           report.report("http.tlsServerClass", trustStore, tlsServer);
@@ -83,9 +90,9 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
         tlsContext.addContent(trustStore);
         tlsConfigured = true;
       }
-      Element tlsKeyStore = httpsConnector.getChild("tls-key-store", httpsNamespace);
+      Element tlsKeyStore = httpsConnector.getChild("tls-key-store", HTTPS_NAMESPACE);
       if (tlsKeyStore != null) {
-        Element keyStore = new Element("key-store", tlsNamespace);
+        Element keyStore = new Element("key-store", TLS_NAMESPACE);
         copyAttributeIfPresent(tlsKeyStore, keyStore, "path");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "storePassword", "password");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
@@ -100,8 +107,8 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
       }
 
       if (tlsConfigured) {
-        getApplicationModel().addNameSpace(tlsNamespace.getPrefix(), tlsNamespace.getURI(),
-                                           "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
+        appModel.addNameSpace(TLS_NAMESPACE.getPrefix(), TLS_NAMESPACE.getURI(),
+                              "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
 
         httpsListenerConnection.addContent(tlsContext);
       }

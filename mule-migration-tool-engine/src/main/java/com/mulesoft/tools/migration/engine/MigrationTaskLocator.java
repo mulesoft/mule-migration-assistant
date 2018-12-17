@@ -39,6 +39,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.ScriptingMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SecurePropertiesMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SecurityCrc32MigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SecurityFiltersMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.SecurityOAuth2ProviderMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SftpMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SpringMigrationTask;
@@ -134,6 +135,9 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new VMMigrationTask());
     coreMigrationTasks.add(new ScriptingMigrationTask());
     coreMigrationTasks.add(new JsonMigrationTask());
+
+    coreMigrationTasks.add(new SecurityOAuth2ProviderMigrationTask());
+
     coreMigrationTasks.add(new DomainAppMigrationTask());
     coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask());
     coreMigrationTasks.add(new MunitMigrationTask());

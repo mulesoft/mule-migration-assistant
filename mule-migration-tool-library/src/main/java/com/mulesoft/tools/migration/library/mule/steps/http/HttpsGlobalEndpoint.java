@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE_URI;
+
 import com.mulesoft.tools.migration.step.AbstractGlobalEndpointMigratorStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -23,7 +25,7 @@ public class HttpsGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
   private static final String HTTP_NS_PREFIX = "http";
   private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
   public static final String XPATH_SELECTOR =
-      "/*/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/https' and local-name() = 'endpoint']";
+      "/*/*[namespace-uri() = '" + HTTPS_NAMESPACE_URI + "' and local-name() = 'endpoint']";
 
   @Override
   public String getDescription() {
@@ -43,7 +45,7 @@ public class HttpsGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
   @Override
   protected Namespace getNamespace() {
-    return Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https");
+    return Namespace.getNamespace("https", HTTPS_NAMESPACE_URI);
   }
 
 }

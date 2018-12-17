@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
+import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -30,10 +31,13 @@ import java.util.function.Supplier;
 public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  public static final String HTTP_NAMESPACE = "http://www.mulesoft.org/schema/mule/http";
+  public static final String HTTP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/http";
+  public static final Namespace HTTP_NAMESPACE = getNamespace("http", HTTP_NAMESPACE_URI);
+  public static final String HTTPS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/https";
+  public static final Namespace HTTPS_NAMESPACE = getNamespace("https", HTTPS_NAMESPACE_URI);
   protected static final String TLS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/tls";
   protected static final String TLS_NAMESPACE_PREFIX = "tls";
-  protected static final Namespace TLS_NAMESPACE = Namespace.getNamespace(TLS_NAMESPACE_PREFIX, TLS_NAMESPACE_URI);
+  public static final Namespace TLS_NAMESPACE = getNamespace(TLS_NAMESPACE_PREFIX, TLS_NAMESPACE_URI);
 
   private ExpressionMigrator expressionMigrator;
 

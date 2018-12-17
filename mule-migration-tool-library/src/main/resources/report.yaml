@@ -706,3 +706,22 @@ json:
     message: Use DataWeave instead of XSLT.
     docLinks: 
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-json#xslt
+
+oauth2Provider:
+   preFlow:
+     type: ERROR
+     message: "'pre-flow' is no longer supported bu OAuth2 Provider."
+     docLinks: 
+       - https://docs.mulesoft.com/mule-runtime/4.1/migration-oauth2-provider
+   clientValidationRateLimiter:
+     type: ERROR
+     message: "You can no longer add a custom implementation from a spring bean. Only Period Rate Limiter is implemented for now."
+     docLinks: 
+       - https://docs.mulesoft.com/mule-runtime/4.1/migration-oauth2-provider
+       - https://docs.mulesoft.com/connectors/oauth/oauth2-provider-documentation-reference#client-validation-rate-limiter
+   validateClient:
+     type: ERROR
+     message: "'oauth2-provider:validate-client' is not supported in Mule 4."
+     docLinks: 
+       - https://docs.mulesoft.com/mule-runtime/4.1/migration-oauth2-provider#validate-client
+   

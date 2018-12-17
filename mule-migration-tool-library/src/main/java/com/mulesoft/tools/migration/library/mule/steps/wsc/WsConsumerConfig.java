@@ -51,7 +51,6 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
     Namespace wscNamespace = Namespace.getNamespace("wsc", "http://www.mulesoft.org/schema/mule/wsc");
     getApplicationModel().addNameSpace(wscNamespace.getPrefix(), wscNamespace.getURI(),
                                        "http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd");
-    final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
     object.setNamespace(wscNamespace);
     object.setName("config");
 
@@ -85,8 +84,8 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
     } else if (object.getAttribute("connector-ref") != null) {
       String transportConnectorName = object.getAttributeValue("connector-ref");
 
-      final Element requestConfig = new Element("request-config", httpNamespace).setAttribute("name", transportConnectorName);
-      final Element requestConnection = new Element("request-connection", httpNamespace);
+      final Element requestConfig = new Element("request-config", HTTP_NAMESPACE).setAttribute("name", transportConnectorName);
+      final Element requestConnection = new Element("request-connection", HTTP_NAMESPACE);
 
       requestConfig.addContent(requestConnection);
       addTopLevelElement(requestConfig, object.getDocument());
@@ -134,8 +133,8 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
           Element connector = connectors.iterator().next();
 
           final Element requestConfig =
-              new Element("request-config", httpNamespace).setAttribute("name", connector.getAttributeValue("name"));
-          final Element requestConnection = new Element("request-connection", httpNamespace);
+              new Element("request-config", HTTP_NAMESPACE).setAttribute("name", connector.getAttributeValue("name"));
+          final Element requestConnection = new Element("request-connection", HTTP_NAMESPACE);
 
           requestConfig.addContent(requestConnection);
           addTopLevelElement(requestConfig, connector.getDocument());

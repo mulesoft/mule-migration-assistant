@@ -1,27 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+       xmlns:http="http://www.mulesoft.org/schema/mule/http"
        xmlns:oauth2-provider="http://www.mulesoft.org/schema/mule/oauth2-provider"
-       xmlns:https="http://www.mulesoft.org/schema/mule/https"
-       xmlns:spring="http://www.springframework.org/schema/beans"
-       xmlns:ss="http://www.springframework.org/schema/security"
-       xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-       http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd
-       http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/current/mule-oauth2-provider.xsd
-       http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+       http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/current/mule-oauth2-provider.xsd">
     
 <!--     <global-property name="allSupportedGrantTypes" -->
 <!--                      value="AUTHORIZATION_CODE IMPLICIT RESOURCE_OWNER_PASSWORD_CREDENTIALS CLIENT_CREDENTIALS" /> -->
 
 <!--     <spring:beans> -->
 <!--         <spring:bean name="tokenGeneratorMockStrategy" class="org.mule.modules.oauth2.provider.mock.TokenGeneratorMockStrategy" /> -->
-
-<!--         <spring:bean name="rateLimiter" class="org.mule.modules.oauth2.provider.ratelimit.SimpleInMemoryRateLimiter" /> -->
 
 <!--         <spring:bean name="clientObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
 <!--         <spring:bean name="authorizationCodeObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
@@ -64,28 +55,26 @@
 <!--         <mule-ss:delegate-security-provider -->
 <!--             name="clientSecurityProvider" delegate-ref="clientAuthenticationManager" /> -->
 <!--     </mule-ss:security-manager> -->
+                     
+    <oauth2-provider:config name="oauth2ProviderConfig"
+                            resourceOwnerSecurityProvider="resourceOwnerSecurityProvider"
+                            clientSecurityProvider="clientSecurityProvider"
+                            listenerConfig="oauth2ProviderConfig_httpListenerConfig"
+                            clientStore="clientStore"
+                            supportedGrantTypes="${allSupportedGrantTypes}">
+        <oauth2-provider:client-validation-rate-limiter>
+            <oauth2-provider:period-rate-limiter/>
+        </oauth2-provider:client-validation-rate-limiter>
+        <oauth2-provider:token-config path="/token" tokenStore="tokenStore"/>
+        <oauth2-provider:authorization-config loginPage="static/auth.html" path="/authorize" authorizationCodeStore="authorizationCodeStore"/>
+    </oauth2-provider:config>
 
-    <https:connector name="httpsConnector">
-        <https:tls-client path="clientKeystore" storePassword="mulepassword"/>
-        <https:tls-key-store path="serverKeystore" keyPassword="mulepassword" storePassword="mulepassword"/>
-        <https:tls-server path="trustStore" storePassword="mulepassword"/>
-    </https:connector>
+    <http:listener-config name="oauth2ProviderConfig_httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${port}"/>
+    </http:listener-config>
 
-    <oauth2-provider:config connector-ref="httpsConnector"
-                            loginPage="static/auth.html"
-                            authorizationEndpointPath="authorize"
-                            accessTokenEndpointPath="token"
-                            port="${port}"
-                            resourceOwnerSecurityProvider-ref="resourceOwnerSecurityProvider"
-                            clientSecurityProvider-ref="clientSecurityProvider"
-                            clientStore-ref="clientStore"
-                            tokenStore-ref="tokenStore"
-                            authorizationCodeStore-ref="authorizationCodeStore"
-                            rateLimiter-ref="rateLimiter"
-                            supportedGrantTypes="${allSupportedGrantTypes}" />
-                                
     <flow name="test">
-        <oauth2-provider:validate-client />
+        <oauth2-provider:validate-token config="oauth2ProviderConfig"/>
     </flow>
-    
+
 </mule>

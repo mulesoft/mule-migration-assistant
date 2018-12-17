@@ -17,8 +17,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpConfig;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderConfig;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderValidate;
+import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderValidateClient;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
@@ -31,7 +33,6 @@ import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -43,7 +44,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-@Ignore
 @RunWith(Parameterized.class)
 public class OAuth2ProviderTest {
 
@@ -88,8 +88,10 @@ public class OAuth2ProviderTest {
   private Document doc;
   private ApplicationModel appModel;
 
-  private OAuth2ProviderValidate validate;
   private OAuth2ProviderConfig config;
+  private OAuth2ProviderValidate validate;
+  private OAuth2ProviderValidateClient validateClient;
+  private HttpConfig httpConfig;
 
   @Before
   public void setUp() throws Exception {
@@ -115,13 +117,19 @@ public class OAuth2ProviderTest {
     when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
 
+    config = new OAuth2ProviderConfig();
+    // config.setExpressionMigrator(expressionMigrator);
+    config.setApplicationModel(appModel);
+
     validate = new OAuth2ProviderValidate();
     // validate.setExpressionMigrator(expressionMigrator);
     validate.setApplicationModel(appModel);
 
-    config = new OAuth2ProviderConfig();
-    // config.setExpressionMigrator(expressionMigrator);
-    config.setApplicationModel(appModel);
+    validateClient = new OAuth2ProviderValidateClient();
+    validateClient.setApplicationModel(appModel);
+
+    httpConfig = new HttpConfig();
+    httpConfig.setApplicationModel(appModel);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -131,8 +139,10 @@ public class OAuth2ProviderTest {
 
   @Test
   public void execute() throws Exception {
-    migrate(validate);
     migrate(config);
+    migrate(validate);
+    migrate(validateClient);
+    migrate(httpConfig);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

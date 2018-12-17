@@ -47,11 +47,10 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
-    object.setNamespace(httpNamespace);
+    object.setNamespace(HTTP_NAMESPACE);
 
     if ("request-config".equals(object.getName())) {
-      final Element requestConnection = new Element("request-connection", httpNamespace);
+      final Element requestConnection = new Element("request-connection", HTTP_NAMESPACE);
       copyAttributeIfPresent(object, requestConnection, "protocol");
       copyExpressionAttributeIfPresent(object, requestConnection, "host", "host", true);
       copyExpressionAttributeIfPresent(object, requestConnection, "port", "port", true);
@@ -78,15 +77,15 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
     }
 
     object.getChildren().forEach(c -> {
-      if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
+      if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
         execute(c, report);
       } else if (TLS_NAMESPACE_URI.equals(c.getNamespaceURI()) && "context".equals(c.getName())) {
-        final Element requestConnection = c.getParentElement().getChild("request-connection", httpNamespace);
+        final Element requestConnection = c.getParentElement().getChild("request-connection", HTTP_NAMESPACE);
         c.detach();
         requestConnection.addContent(c);
       } else if (TCP_NAMESPACE_URI.equals(c.getNamespaceURI()) && "client-socket-properties".equals(c.getName())) {
-        final Element clientSocketPropsContainer = new Element("client-socket-properties", httpNamespace);
-        final Element requestConnection = c.getParentElement().getChild("request-connection", httpNamespace);
+        final Element clientSocketPropsContainer = new Element("client-socket-properties", HTTP_NAMESPACE);
+        final Element requestConnection = c.getParentElement().getChild("request-connection", HTTP_NAMESPACE);
 
         c.detach();
         clientSocketPropsContainer.addContent(c);
@@ -98,8 +97,8 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
     if ("basic-authentication".equals(object.getName())
         || "digest-authentication".equals(object.getName())
         || "ntlm-authentication".equals(object.getName())) {
-      final Element authentication = new Element("authentication", httpNamespace);
-      final Element requestConnection = object.getParentElement().getChild("request-connection", httpNamespace);
+      final Element authentication = new Element("authentication", HTTP_NAMESPACE);
+      final Element requestConnection = object.getParentElement().getChild("request-connection", HTTP_NAMESPACE);
 
       object.detach();
       authentication.addContent(object);
@@ -113,8 +112,8 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
     if (("proxy".equals(object.getName())
         || "ntlm-proxy".equals(object.getName()))
         && "request-config".equals(object.getParentElement().getName())) {
-      final Element proxyConfig = new Element("proxy-config", httpNamespace);
-      final Element requestConnection = object.getParentElement().getChild("request-connection", httpNamespace);
+      final Element proxyConfig = new Element("proxy-config", HTTP_NAMESPACE);
+      final Element requestConnection = object.getParentElement().getChild("request-connection", HTTP_NAMESPACE);
 
       object.detach();
       proxyConfig.addContent(object);

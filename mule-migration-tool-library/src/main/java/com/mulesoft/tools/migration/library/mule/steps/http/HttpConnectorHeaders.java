@@ -12,7 +12,6 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrates the listener source of the HTTP Connector
@@ -36,15 +35,14 @@ public class HttpConnectorHeaders extends AbstractHttpConnectorMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
-    object.setNamespace(httpNamespace);
+    object.setNamespace(HTTP_NAMESPACE);
 
     int idx = object.getParent().indexOf(object);
 
     if ("headers".equals(object.getName()) && StringUtils.isEmpty(object.getText())) {
       String headersExpr = object.getAttributeValue("expression");
 
-      setMule4MapBuilderTagText(idx, "headers", object.getParentElement(), httpNamespace, report,
+      setMule4MapBuilderTagText(idx, "headers", object.getParentElement(), HTTP_NAMESPACE, report,
                                 () -> getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(headersExpr), true,
                                                                                 object),
                                 expr -> getExpressionMigrator()
@@ -66,7 +64,7 @@ public class HttpConnectorHeaders extends AbstractHttpConnectorMigrationStep {
       String dwHeaderMapElement = migrateToDwMapKey(migratedName)
           + " : " + toExpressionOrToLiteral(migratedValue);
 
-      setMule4MapBuilderTagText(idx, "headers", object.getParentElement(), httpNamespace, report,
+      setMule4MapBuilderTagText(idx, "headers", object.getParentElement(), HTTP_NAMESPACE, report,
                                 () -> getExpressionMigrator().wrap("{" + dwHeaderMapElement + "}"),
                                 expr -> getExpressionMigrator()
                                     .wrap(getExpressionMigrator().unwrap(expr) + " ++ {" + dwHeaderMapElement + "}"));

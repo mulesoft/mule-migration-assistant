@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.addAttributesToInboundProperties;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.httpRequesterLib;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.SOCKETS_NAMESPACE;
@@ -62,8 +63,7 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     httpRequesterLib(getApplicationModel());
 
-    final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
-    object.setNamespace(httpNamespace);
+    object.setNamespace(HTTP_NAMESPACE);
     object.setName("request");
 
     String flowName = getFlow(object).getAttributeValue("name");
@@ -82,8 +82,8 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
       configName = configName + object.getParentElement().indexOf(object);
     }
 
-    final Element requestConfig = new Element("request-config", httpNamespace).setAttribute("name", configName);
-    final Element requestConnection = new Element("request-connection", httpNamespace);
+    final Element requestConfig = new Element("request-config", HTTP_NAMESPACE).setAttribute("name", configName);
+    final Element requestConnection = new Element("request-connection", HTTP_NAMESPACE);
 
     requestConfig.addContent(requestConnection);
     addTopLevelElement(requestConfig, nodeOptional.map(n -> n.getDocument()).orElse(object.getDocument()));
@@ -116,12 +116,12 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("connector-ref") != null) {
       Element connector = getConnector(object.getAttributeValue("connector-ref"));
 
-      handleConnector(connector, requestConnection, report, httpNamespace, getApplicationModel());
+      handleConnector(connector, requestConnection, report, HTTP_NAMESPACE, getApplicationModel());
 
       object.removeAttribute("connector-ref");
     } else {
       getDefaultConnector().ifPresent(connector -> {
-        handleConnector(connector, requestConnection, report, httpNamespace, getApplicationModel());
+        handleConnector(connector, requestConnection, report, HTTP_NAMESPACE, getApplicationModel());
       });
     }
 
@@ -165,19 +165,19 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
             .setAttribute("value", "#[output " + object.getAttributeValue("contentType") + " --- payload]"));
         object.removeAttribute("contentType");
       } else {
-        object.addContent(new Element("header", httpNamespace)
+        object.addContent(new Element("header", HTTP_NAMESPACE)
             .setAttribute("headerName", "Content-Type")
             .setAttribute("value", object.getAttributeValue("contentType")));
       }
       object.removeAttribute("contentType");
     }
-    object.addContent(compatibilityHeaders(httpNamespace));
+    object.addContent(compatibilityHeaders(HTTP_NAMESPACE));
 
     if (object.getAttribute("exceptionOnMessageError") != null
         && "false".equals(object.getAttributeValue("exceptionOnMessageError"))) {
 
-      object.addContent(new Element("response-validator", httpNamespace)
-          .addContent(new Element("success-status-code-validator", httpNamespace).setAttribute("values", "0..599")));
+      object.addContent(new Element("response-validator", HTTP_NAMESPACE)
+          .addContent(new Element("success-status-code-validator", HTTP_NAMESPACE).setAttribute("values", "0..599")));
 
       object.removeAttribute("exceptionOnMessageError");
     }
@@ -302,7 +302,7 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
   public void executeChild(Element object, MigrationReport report, Namespace httpNamespace) throws RuntimeException {
     object.getChildren().forEach(c -> {
-      if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
+      if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
         executeChild(c, report, httpNamespace);
       }
     });

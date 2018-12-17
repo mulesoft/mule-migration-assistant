@@ -11,7 +11,6 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIf
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrates the listener configuration of the HTTP Connector
@@ -33,11 +32,10 @@ public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationS
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
-    object.setNamespace(httpNamespace);
+    object.setNamespace(HTTP_NAMESPACE);
 
-    if ("listener-config".equals(object.getName()) && object.getChild("listener-connection", httpNamespace) == null) {
-      final Element listenerConnection = new Element("listener-connection", httpNamespace);
+    if ("listener-config".equals(object.getName()) && object.getChild("listener-connection", HTTP_NAMESPACE) == null) {
+      final Element listenerConnection = new Element("listener-connection", HTTP_NAMESPACE);
       copyAttributeIfPresent(object, listenerConnection, "protocol");
       copyAttributeIfPresent(object, listenerConnection, "host");
       copyAttributeIfPresent(object, listenerConnection, "port");
@@ -53,10 +51,10 @@ public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationS
 
 
     object.getChildren().forEach(c -> {
-      if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
+      if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
         execute(c, report);
       } else if (TLS_NAMESPACE_URI.equals(c.getNamespaceURI()) && "context".equals(c.getName())) {
-        final Element listenerConnection = c.getParentElement().getChild("listener-connection", httpNamespace);
+        final Element listenerConnection = c.getParentElement().getChild("listener-connection", HTTP_NAMESPACE);
         c.getParentElement().removeContent(c);
         listenerConnection.addContent(c);
       }
