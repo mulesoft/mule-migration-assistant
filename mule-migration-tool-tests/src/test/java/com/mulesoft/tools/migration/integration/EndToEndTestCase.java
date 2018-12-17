@@ -13,13 +13,9 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.junit.Assert.fail;
 import static org.mule.runtime.deployment.model.api.application.ApplicationDescriptor.MULE_APPLICATION_CLASSIFIER;
 import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArtifact;
-
 import org.mule.runtime.module.artifact.api.descriptor.BundleDescriptor;
 
 import com.mulesoft.mule.distributions.server.AbstractEeAppControl;
-
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,6 +25,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Tests the whole migration process, starting with a Mule 3 source config, migrating it to Mule 4, packaging and deploying it to
@@ -114,13 +113,7 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     pb.redirectErrorStream(true);
     Process p = pb.start();
 
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-
-      @Override
-      public void run() {
-        p.destroy();
-      }
-    });
+    Runtime.getRuntime().addShutdownHook(new Thread(p::destroy));
 
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
       String line;
