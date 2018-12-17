@@ -29,10 +29,10 @@ public class CompressionModulePomContribution implements PomContribution {
   @Override
   public void execute(PomModel object, MigrationReport report) throws RuntimeException {
     object.addDependency(new DependencyBuilder()
-                             .withGroupId("org.mule.modules")
-                             .withArtifactId("mule-compression-module")
-                             .withVersion(targetVersion("mule-compression-module"))
-                             .withClassifier("mule-plugin")
-                             .build());
+        .withGroupId("org.mule.modules")
+        .withArtifactId("mule-compression-module")
+        .withVersion(targetVersion("mule-compression-module"))
+        .withClassifier("mule-plugin")
+        .build());
   }
 }
