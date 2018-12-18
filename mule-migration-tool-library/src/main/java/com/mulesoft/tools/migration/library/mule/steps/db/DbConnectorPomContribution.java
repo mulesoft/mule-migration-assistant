@@ -30,11 +30,11 @@ public class DbConnectorPomContribution implements PomContribution {
   @Override
   public void execute(PomModel object, MigrationReport report) throws RuntimeException {
     object.addDependency(new DependencyBuilder()
-                             .withGroupId("org.mule.connectors")
-                             .withArtifactId("mule-db-connector")
-                             .withVersion(targetVersion("mule-db-connector"))
-                             .withClassifier("mule-plugin")
-                             .build());
+        .withGroupId("org.mule.connectors")
+        .withArtifactId("mule-db-connector")
+        .withVersion(targetVersion("mule-db-connector"))
+        .withClassifier("mule-plugin")
+        .build());
 
     // Due to licensing issues, we may only know the actual GAV of the derby driver.
     object.getDependencies().stream().filter(dep -> "org.apache.derby".equals(dep.getGroupId()))
