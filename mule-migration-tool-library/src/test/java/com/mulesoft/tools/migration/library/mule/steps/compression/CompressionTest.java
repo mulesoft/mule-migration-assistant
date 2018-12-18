@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import java.nio.file.Path;
@@ -58,6 +59,7 @@ public class CompressionTest {
     targetPath = COMPRESSION_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
   }
 
+  private CompressionInlinerStep inliner = new CompressionInlinerStep();
   private GZipCompressTransformer compress = new GZipCompressTransformer();
   private GZipUncompressTransformer uncompress = new GZipUncompressTransformer();
 
@@ -71,17 +73,16 @@ public class CompressionTest {
     when(appModel.getNode(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).stream().findFirst()
             .orElse(null));
+    when(appModel.getNodes(any(String.class))).thenAnswer(invocation -> getElementsFromDocument(doc, invocation.getArgument(0)));
 
     compress.setApplicationModel(appModel);
     uncompress.setApplicationModel(appModel);
+    inliner.setApplicationModel(appModel);
   }
 
   @Test
   public void execute() throws Exception {
-    getElementsFromDocument(doc, compress.getAppliedTo().getExpression())
-        .forEach(node -> compress.execute(node, report.getReport()));
-    getElementsFromDocument(doc, uncompress.getAppliedTo().getExpression())
-        .forEach(node -> uncompress.execute(node, report.getReport()));
+    runSteps(inliner, compress, uncompress);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
@@ -89,5 +90,11 @@ public class CompressionTest {
     assertThat(xmlString,
                isSimilarTo(IOUtils.toString(this.getClass().getClassLoader().getResource(targetPath.toString()).toURI(), UTF_8))
                    .ignoreComments().normalizeWhitespace());
+  }
+
+  private void runSteps(AbstractApplicationModelMigrationStep... steps) {
+    for (AbstractApplicationModelMigrationStep step : steps) {
+      getElementsFromDocument(doc, step.getAppliedTo().getExpression()).forEach(node -> step.execute(node, report.getReport()));
+    }
   }
 }

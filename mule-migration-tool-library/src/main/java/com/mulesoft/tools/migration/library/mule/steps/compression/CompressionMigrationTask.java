@@ -42,6 +42,7 @@ public class CompressionMigrationTask extends AbstractMigrationTask {
   public List<MigrationStep> getSteps() {
     return newArrayList(new CompressionModulePomContribution(),
                         new CompressionNamespaceContribution(),
+                        new CompressionInlinerStep(),
                         new GZipCompressTransformer(),
                         new GZipUncompressTransformer());
   }

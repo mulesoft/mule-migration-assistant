@@ -70,4 +70,17 @@
         </compression:decompress>
     </flow>
 
+    <flow name="refs">
+        <compression:compress>
+            <compression:compressor>
+                <compression:gzip-compressor/>
+            </compression:compressor>
+        </compression:compress>
+        <compression:decompress outputMimeType="application/xml">
+            <compression:decompressor>
+                <compression:gzip-decompressor/>
+            </compression:decompressor>
+        </compression:decompress>
+    </flow>
+
 </mule>

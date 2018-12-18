@@ -23,7 +23,7 @@ import org.jdom2.Element;
  */
 public class GZipUncompressTransformer extends AbstractCompressionMigrationStep {
 
-  private static final String ORIGINAL_ELEMENT_NAME = "gzip-uncompress-transformer";
+  public static final String ORIGINAL_ELEMENT_NAME = "gzip-uncompress-transformer";
   public static final String XPATH_SELECTOR = getCoreXPathSelector(ORIGINAL_ELEMENT_NAME);
 
   public GZipUncompressTransformer() {

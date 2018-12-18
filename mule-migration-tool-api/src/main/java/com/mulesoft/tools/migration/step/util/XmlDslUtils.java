@@ -454,15 +454,23 @@ public final class XmlDslUtils {
     return getXPathSelector(namespaceUri, elementName, false);
   }
 
-  public static String getXPathSelector(String namespaceUri, String elementName, boolean topLevelOnly) {
-    return format("%s[namespace-uri() = '%s' and local-name() = '%s']", topLevelOnly ? "/*/*" : "//*", namespaceUri, elementName);
+  public static String getTopLevelXPathSelector(String namespaceUri, String elementName) {
+    return getXPathSelector(namespaceUri, elementName, true);
+  }
+
+  public static String getXPathSelector(String namespaceUri, String elementName, boolean topLevel) {
+    return format("%s[namespace-uri() = '%s' and local-name() = '%s']", topLevel ? "/*/*" : "//*", namespaceUri, elementName);
   }
 
   public static String getCoreXPathSelector(String elementName) {
     return getCoreXPathSelector(elementName, false);
   }
 
-  public static String getCoreXPathSelector(String elementName, boolean topLevelOnly) {
-    return getXPathSelector(CORE_NS_URI, elementName, topLevelOnly);
+  public static String getTopLevelCoreXPathSelector(String elementName) {
+    return getCoreXPathSelector(elementName, true);
+  }
+
+  private static String getCoreXPathSelector(String elementName, boolean topLevel) {
+    return getXPathSelector(CORE_NS_URI, elementName, topLevel);
   }
 }

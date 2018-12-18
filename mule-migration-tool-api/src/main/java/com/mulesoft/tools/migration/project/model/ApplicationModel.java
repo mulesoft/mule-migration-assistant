@@ -21,18 +21,6 @@ import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 
-import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.jdom2.Attribute;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.Namespace;
-import org.jdom2.filter.Filters;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -41,10 +29,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
+import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 
 /**
  * Represent the application to be migrated
@@ -138,7 +138,7 @@ public class ApplicationModel {
   public List<Element> getNodes(XPathExpression xpathExpression) {
     checkArgument(xpathExpression != null, "The Xpath Expression must not be null nor empty");
 
-    List<Element> nodes = new ArrayList<>();
+    List<Element> nodes = new LinkedList<>();
     for (Document doc : getApplicationDocuments().values()) {
       nodes.addAll(getElementsFromDocument(xpathExpression, doc));
     }
