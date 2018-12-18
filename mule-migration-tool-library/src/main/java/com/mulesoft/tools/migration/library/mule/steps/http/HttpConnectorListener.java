@@ -54,8 +54,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
 
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
-    final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
-    object.setNamespace(httpNamespace);
+    object.setNamespace(HTTP_NAMESPACE);
 
     if (object.getAttribute("parseRequest") != null && !"false".equals(object.getAttributeValue("parseRequest"))) {
       report.report("http.parseRequest", object, object);
@@ -66,31 +65,31 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     addAttributesToInboundProperties(object, getApplicationModel(), report);
 
     object.getChildren().forEach(c -> {
-      if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
-        executeChild(c, report, httpNamespace);
+      if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
+        executeChild(c, report, HTTP_NAMESPACE);
       }
     });
 
-    if (object.getChild("response", httpNamespace) == null) {
-      Element response = new Element("response", httpNamespace);
+    if (object.getChild("response", HTTP_NAMESPACE) == null) {
+      Element response = new Element("response", HTTP_NAMESPACE);
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-      object.addContent(0, response.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace)));
+      object.addContent(0, response.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE)));
       // }
     }
-    Element response = object.getChild("response", httpNamespace);
+    Element response = object.getChild("response", HTTP_NAMESPACE);
     if (response.getAttribute("statusCode") == null) {
       response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
       report.report("http.statusCode", response, response);
     }
-    if (object.getChild("error-response", httpNamespace) == null) {
-      Element errorResponse = new Element("error-response", httpNamespace);
+    if (object.getChild("error-response", HTTP_NAMESPACE) == null) {
+      Element errorResponse = new Element("error-response", HTTP_NAMESPACE);
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-      object.addContent(errorResponse.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace)));
+      object.addContent(errorResponse.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE)));
       // }
     }
-    Element errorResponse = object.getChild("error-response", httpNamespace);
+    Element errorResponse = object.getChild("error-response", HTTP_NAMESPACE);
     if (errorResponse.getAttribute("statusCode") == null) {
       errorResponse.setAttribute("statusCode",
                                  "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
@@ -131,7 +130,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
 
   public void executeChild(Element object, MigrationReport report, Namespace httpNamespace) throws RuntimeException {
     object.getChildren().forEach(c -> {
-      if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
+      if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
         executeChild(c, report, httpNamespace);
       }
     });

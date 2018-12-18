@@ -39,6 +39,7 @@ import org.jdom2.Namespace;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * Migrates the inbound endpoint of the HTTP Transport
@@ -66,22 +67,23 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     httpListenerLib(getApplicationModel());
 
-    final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
-    object.setNamespace(httpNamespace);
+    object.setNamespace(HTTP_NAMESPACE);
     object.setName("listener");
 
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     String flowName = getFlow(object).getAttributeValue("name");
-    String configName = (object.getAttribute("name") != null
-        ? object.getAttributeValue("name")
-        : (object.getAttribute("ref") != null
-            ? object.getAttributeValue("ref")
-            : flowName)).replaceAll("\\\\", "_")
-        + "ListenerConfig";
+    String configName = object.getAttribute("connector-ref") != null ? object.getAttributeValue("connector-ref")
+        : ((object.getAttribute("name") != null
+            ? object.getAttributeValue("name")
+            : (object.getAttribute("ref") != null
+                ? object.getAttributeValue("ref")
+                : flowName)).replaceAll("\\\\", "_")
+            + "ListenerConfig");
 
     processAddress(object, report).ifPresent(address -> {
-      extractListenerConfig(object, httpNamespace, configName, address.getHost(), address.getPort());
+      extractListenerConfig(getApplicationModel(), object, () -> getConnector(object.getAttributeValue("connector-ref")),
+                            HTTP_NAMESPACE, configName, address.getHost(), address.getPort());
 
       if (address.getPath() != null) {
         if (address.getPath().endsWith("*")) {
@@ -92,7 +94,8 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
       }
     });
     if (object.getAttribute("host") != null && object.getAttribute("port") != null) {
-      extractListenerConfig(object, httpNamespace, configName, object.getAttributeValue("host"),
+      extractListenerConfig(getApplicationModel(), object, () -> getConnector(object.getAttributeValue("connector-ref")),
+                            HTTP_NAMESPACE, configName, object.getAttributeValue("host"),
                             object.getAttributeValue("port"));
       object.removeAttribute("host");
       object.removeAttribute("port");
@@ -126,9 +129,9 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     getApplicationModel()
         .getNodes("/*/mule:flow[@name='" + flowName + "']/http:response-builder")
         .forEach(rb -> {
-          handleReferencedResponseBuilder(rb, getApplicationModel(), httpNamespace);
-          Element response = getResponse(object, httpNamespace);
-          handleResponseBuilder(object, response, rb, httpNamespace);
+          handleReferencedResponseBuilder(rb, getApplicationModel(), HTTP_NAMESPACE);
+          Element response = getResponse(object, HTTP_NAMESPACE);
+          handleResponseBuilder(object, response, rb, HTTP_NAMESPACE);
 
           copyAttributeIfPresent(rb, response, "statusCode");
           copyAttributeIfPresent(rb, response, "reasonPhrase");
@@ -140,16 +143,16 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
 
           // if (rb.getAttribute("disablePropertiesAsHeaders") == null
           // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-          response.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
+          response.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE));
           // }
         });
 
     getApplicationModel()
         .getNodes("/*/mule:flow[@name='" + flowName + "']/http:error-response-builder")
         .forEach(rb -> {
-          handleReferencedResponseBuilder(rb, getApplicationModel(), httpNamespace);
-          Element errorResponse = getErrorResponse(object, httpNamespace);
-          handleResponseBuilder(object, errorResponse, rb, httpNamespace);
+          handleReferencedResponseBuilder(rb, getApplicationModel(), HTTP_NAMESPACE);
+          Element errorResponse = getErrorResponse(object, HTTP_NAMESPACE);
+          handleResponseBuilder(object, errorResponse, rb, HTTP_NAMESPACE);
           copyAttributeIfPresent(rb, errorResponse, "statusCode");
           copyAttributeIfPresent(rb, errorResponse, "reasonPhrase");
 
@@ -162,43 +165,43 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
 
           // if (rb.getAttribute("disablePropertiesAsHeaders") == null
           // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-          errorResponse.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
+          errorResponse.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE));
           // }
         });
 
     if (object.getAttribute("contentType") != null) {
-      Element response = getResponse(object, httpNamespace);
-      response.addContent(new Element("header", httpNamespace)
+      Element response = getResponse(object, HTTP_NAMESPACE);
+      response.addContent(new Element("header", HTTP_NAMESPACE)
           .setAttribute("headerName", "Content-Type")
           .setAttribute("value", object.getAttributeValue("contentType")));
       response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
       report.report("http.statusCode", response, response);
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-      response.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
+      response.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE));
       object.removeAttribute("contentType");
     }
 
-    Element response = object.getChild("response", httpNamespace);
+    Element response = object.getChild("response", HTTP_NAMESPACE);
     if (response == null) {
-      response = getResponse(object, httpNamespace);
+      response = getResponse(object, HTTP_NAMESPACE);
       response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
       report.report("http.statusCode", response, response);
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-      response.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
+      response.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE));
       // }
     }
-    Element errorResponse = object.getChild("error-response", httpNamespace);
+    Element errorResponse = object.getChild("error-response", HTTP_NAMESPACE);
     if (errorResponse == null) {
-      errorResponse = getErrorResponse(object, httpNamespace);
+      errorResponse = getErrorResponse(object, HTTP_NAMESPACE);
       errorResponse.setAttribute("statusCode",
                                  "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
       report.report("http.statusCode", errorResponse, errorResponse,
                     "Avoid using an outbound property to determine the status code.");
       // if (rb.getAttribute("disablePropertiesAsHeaders") == null
       // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-      errorResponse.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
+      errorResponse.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE));
       // }
     }
 
@@ -243,9 +246,11 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     return setText(new Element("headers", httpNamespace), "#[migration::HttpListener::httpListenerResponseHeaders(vars)]");
   }
 
-  private void extractListenerConfig(Element object, final Namespace httpNamespace, String configName, String host, String port) {
+  public static void extractListenerConfig(ApplicationModel appModel, Element object, Supplier<Element> connectorLookup,
+                                           final Namespace httpNamespace,
+                                           String configName, String host, String port) {
     Optional<Element> existingListener =
-        getApplicationModel().getNodeOptional("/*/http:listener-config/http:listener-connection[@host = '" + host
+        appModel.getNodeOptional("/*/http:listener-config/http:listener-connection[@host = '" + host
             + "' and @port = '" + port + "']");
 
     if (existingListener.isPresent()) {
@@ -261,12 +266,10 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
       if (object.getAttribute("keepAlive") != null || object.getAttribute("keep-alive") != null) {
         copyAttributeIfPresent(object, listenerConnection, "keep-alive", "usePersistentConnections");
         copyAttributeIfPresent(object, listenerConnection, "keepAlive", "usePersistentConnections");
-      } else {
-        if (object.getAttribute("connector-ref") != null) {
-          Element connector = getConnector(object.getAttributeValue("connector-ref"));
-          if (connector.getAttribute("keepAlive") != null) {
-            copyAttributeIfPresent(connector, listenerConnection, "keepAlive", "usePersistentConnections");
-          }
+      } else if (object.getAttribute("connector-ref") != null) {
+        Element connector = connectorLookup.get();
+        if (connector.getAttribute("keepAlive") != null) {
+          copyAttributeIfPresent(connector, listenerConnection, "keepAlive", "usePersistentConnections");
         }
       }
 

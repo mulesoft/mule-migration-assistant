@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:samlmodule="http://www.mulesoft.org/schema/mule/samlmodule"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/samlmodule http://www.mulesoft.org/schema/mule/samlmodule/1.0-SNAPSHOT/mule-samlmodule.xsd">
+    
+    <samlmodule:config myProperty="Some string"/>
+    
+    <flow name="test">
+        <samlmodule:my-processor content="Another string"/>
+    </flow>
+
+</mule>

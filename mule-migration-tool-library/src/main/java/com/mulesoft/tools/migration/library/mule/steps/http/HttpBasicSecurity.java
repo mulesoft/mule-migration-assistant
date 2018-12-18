@@ -14,7 +14,6 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrates the static-resource-handler of the HTTP Transport
@@ -40,7 +39,7 @@ public class HttpBasicSecurity extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    object.setNamespace(Namespace.getNamespace("http", HTTP_NAMESPACE));
+    object.setNamespace(HTTP_NAMESPACE);
   }
 
   @Override

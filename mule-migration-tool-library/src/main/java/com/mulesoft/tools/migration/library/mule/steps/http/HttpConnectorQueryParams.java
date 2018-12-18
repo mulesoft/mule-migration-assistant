@@ -11,7 +11,6 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrates the listener source of the HTTP Connector
@@ -35,15 +34,14 @@ public class HttpConnectorQueryParams extends AbstractHttpConnectorMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
-    object.setNamespace(httpNamespace);
+    object.setNamespace(HTTP_NAMESPACE);
 
     int idx = object.getParent().indexOf(object);
 
     if ("query-params".equals(object.getName())) {
       String paramsExpr = object.getAttributeValue("expression");
 
-      setMule4MapBuilderTagText(idx, "query-params", object.getParentElement(), httpNamespace, report,
+      setMule4MapBuilderTagText(idx, "query-params", object.getParentElement(), HTTP_NAMESPACE, report,
                                 () -> getExpressionMigrator().migrateExpression(getExpressionMigrator().wrap(paramsExpr), true,
                                                                                 object),
                                 expr -> getExpressionMigrator()
@@ -63,7 +61,7 @@ public class HttpConnectorQueryParams extends AbstractHttpConnectorMigrationStep
               ? getExpressionMigrator().unwrap(getExpressionMigrator().migrateExpression(paramValue, true, object))
               : ("'" + paramValue + "'"));
 
-      setMule4MapBuilderTagText(idx, "query-params", object.getParentElement(), httpNamespace, report,
+      setMule4MapBuilderTagText(idx, "query-params", object.getParentElement(), HTTP_NAMESPACE, report,
                                 () -> getExpressionMigrator().wrap("{" + dwParamMapElement + "}"),
                                 expr -> getExpressionMigrator()
                                     .wrap(getExpressionMigrator().unwrap(expr) + " ++ {" + dwParamMapElement + "}"));

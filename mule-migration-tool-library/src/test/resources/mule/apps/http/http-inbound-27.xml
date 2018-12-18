@@ -10,7 +10,7 @@
                http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
                http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
 
-    <http:listener-config name="clientEndpointListenerConfig">
+    <http:listener-config name="httpsConnector">
         <http:listener-connection protocol="HTTPS" host="localhost" port="${port1}">
             <tls:context>
                 <tls:trust-store path="trustStore" password="mulepassword3"/>
@@ -20,7 +20,7 @@
     </http:listener-config>
 
     <flow name="flow">
-        <http:listener config-ref="clientEndpointListenerConfig" path="/*">
+        <http:listener config-ref="httpsConnector" path="/*">
           <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
             <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
           </http:response>

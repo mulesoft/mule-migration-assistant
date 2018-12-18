@@ -55,7 +55,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     httpRequesterLib(getApplicationModel());
 
-    final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE);
+    final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE_URI);
     object.setNamespace(httpNamespace);
 
     if (object.getAttribute("port") != null) {
@@ -76,7 +76,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     addAttributesToInboundProperties(object, getApplicationModel(), report);
 
     object.getChildren().forEach(c -> {
-      if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
+      if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
         executeChild(c, report, httpNamespace);
       }
     });
@@ -157,7 +157,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
 
   public void executeChild(Element object, MigrationReport report, Namespace httpNamespace) throws RuntimeException {
     object.getChildren().forEach(c -> {
-      if (HTTP_NAMESPACE.equals(c.getNamespaceURI())) {
+      if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
         executeChild(c, report, httpNamespace);
       }
     });

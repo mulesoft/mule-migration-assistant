@@ -23,7 +23,7 @@ public class ValidationPomContribution implements PomContribution {
 
   @Override
   public String getDescription() {
-    return "Add scripting module to pom.";
+    return "Add validation module to pom.";
   }
 
   @Override

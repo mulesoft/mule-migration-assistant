@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:filters="http://www.mulesoft.org/schema/mule/filters"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/filters http://www.mulesoft.org/schema/mule/filters/current/mule-filters.xsd">
+    
+    <flow name="test">
+        <filters:filter-by-ip-range-cidr cidr="127.0.0.1/24"/>
+    </flow>
+
+</mule>

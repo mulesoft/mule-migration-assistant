@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:encryption="http://www.mulesoft.org/schema/mule/encryption"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/encryption http://www.mulesoft.org/schema/mule/encryption/current/mule-encryption.xsd">
+    
+    <encryption:config name="asymetricPlain" >
+        <encryption:jce-encrypter-config algorithm="RSA" />
+    </encryption:config>
+            
+    <flow name="test">
+        <encryption:encrypt config-ref="asymetricPlain">
+            <encryption:jce-encrypter 
+                    key="MIIChAIBADANBgkqhkiG9w0BAQEFAASCAm4wggJqAgEAAoGEAKAJH4GCLcF29dcIak9y9hkD4jUXDe6rOBFKpaZui8f5C7PQ4IRulCJJ7LBdunNZJnSj59cRtL6F4EKLZEdGLoh2FMStPpT270n5GyphfHdN/x8+KTYO0xjQWa5FmBFKoE33A3NRHjp1gBO37QIf+nPigMumROTzzyWoUNzHScD6hf3pAgMBAAECgYQAhhNem+fuYZlCmabpOiq8V3TTfVsVRxGXZZU+dtNCtITH8xxaHVlvLdL1Q0UjQiQ8fZgcUij5Xm1W1yllF/mKXrVJMD0hevfzWi65p5j6tkF+ViXk92yogoLGacqPw3AZPaTI1npwprn8WIONVk6BjeBbKpQPtODft6FuyYZ46bGLGiECQg/Y4yJHTsJZEeNPrnCaJHTvF2oLp7j1Qiii2hd9HOz0NxDZixqAaSFg4WMOohNQWMZrJIKW6z7VxMWxx4UTA4DuVQJCChlBwIHe0/rJkLrJRDWUyyN6QanLMBzOtQdGay/tABjF24PtpmV8ahnL0Nc1sMWp0eZQt6RVeUlFpBbcSNVEjb1FAkIJ7IeowsEGoiK6l/6kk1L7S3L9PNlG0YghzIIJLZd8qB8H1UPwT7QGbBYZI2PJ9onxj80oXnxpOBNmvkM1Ccgq6JUCQgDmX0WYTRL2th9/hY/ednPjpXFUgBa5enIHQ+8pRiVMD9WP3A2H3Z5WziK+CrrF4mwh6e9zZWp5bQtCPj7/QiyfQQJCDpZmBiXH8ooxdc50zaSK/2kf9w1I3+zKZqapOppxG0C102v1H/nfcpEoTgzA1UgUUK3k/E5ct7vdT727H8qkPJyp"/>
+        </encryption:encrypt>
+        <encryption:decrypt config-ref="asymetricPlain">
+            <encryption:jce-encrypter
+                    key="MIGiMA0GCSqGSIb3DQEBAQUAA4GQADCBjAKBhACgCR+Bgi3BdvXXCGpPcvYZA+I1Fw3uqzgRSqWmbovH+Quz0OCEbpQiSeywXbpzWSZ0o+fXEbS+heBCi2RHRi6IdhTErT6U9u9J+RsqYXx3Tf8fPik2DtMY0FmuRZgRSqBN9wNzUR46dYATt+0CH/pz4oDLpkTk888lqFDcx0nA+oX96QIDAQAB"/>
+        </encryption:decrypt>
+    </flow>
+
+</mule>

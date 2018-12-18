@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:crypto="http://www.mulesoft.org/schema/mule/crypto"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/crypto http://www.mulesoft.org/schema/mule/crypto/current/mule-crypto.xsd">
+    
+    <flow name="test">
+        <crypto:validate-checksum algorithm="CRC32" expected="#[mel:message.inboundProperties['crc']"/>
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+
+</mule>

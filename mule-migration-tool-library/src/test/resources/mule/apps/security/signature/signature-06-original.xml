@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:signature="http://www.mulesoft.org/schema/mule/signature"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/signature http://www.mulesoft.org/schema/mule/signature/current/mule-signature.xsd">
+    
+    <signature:config name="MD5RSAPlain">
+        <signature:jce-signer-config algorithm="MD5WithRSAEncryption"/>
+    </signature:config>
+        
+    <flow name="test">
+        <signature:sign config-ref="MD5RSAPlain">
+            <signature:jce-signer key="MIIBUwIBADANBgkqhkiG9w0BAQEFAASCAT0wggE5AgEAAkEAjyQLZ+MqT3dii535r12j5LMOfwzZr9L1vb2dYK5Va9nNz9E6kbFZF9UT16irJ5soNxLslsvQnkh4JHhd83hgIQIDAQABAkBoqKQmS3RuMg49oz4iuMbSuxEIWC76XbcMCo39WLpgZfilAIs2WPzajip720dJXz+RKSaDXcON5zkBeD2JHbg5AiEA+DkihJtCHXji8E/6uzJ4JbqE2KUoYnq8cXKdQlBu+d8CIQCToBmnrs0+Ov5gztInMfPUrZhOHB7C53Np9vLYL7fl/wIgFDukAqcdJoXaCbibOXMNtBWWCoq71fsnLSAojWU9BoUCIDTtnOUi5hFew19gJ7bH0R06lDXFHT5SD245jP33td5vAiAoJK4/H+I1q2+HiWnYiWKpcyLQBjIc3xRWbvAA/4Vk/Q=="/>
+        </signature:sign>
+    </flow>
+
+</mule>

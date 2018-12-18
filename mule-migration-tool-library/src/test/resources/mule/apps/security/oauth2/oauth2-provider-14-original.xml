@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+       xmlns:oauth2-provider="http://www.mulesoft.org/schema/mule/oauth2-provider"
+       xmlns:spring="http://www.springframework.org/schema/beans"
+       xmlns:ss="http://www.springframework.org/schema/security"
+       xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd
+       http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/current/mule-oauth2-provider.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+    
+<!--     <global-property name="allSupportedGrantTypes" -->
+<!--                      value="AUTHORIZATION_CODE IMPLICIT RESOURCE_OWNER_PASSWORD_CREDENTIALS CLIENT_CREDENTIALS" /> -->
+
+    <spring:beans>
+<!--         <spring:bean name="tokenGeneratorMockStrategy" class="org.mule.modules.oauth2.provider.mock.TokenGeneratorMockStrategy" /> -->
+
+        <spring:bean name="rateLimiter" class="org.mule.modules.oauth2.provider.ratelimit.SimpleInMemoryRateLimiter" />
+
+<!--         <spring:bean name="clientObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
+<!--         <spring:bean name="authorizationCodeObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
+<!--         <spring:bean name="tokenObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
+<!--         <spring:bean name="refreshTokenObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
+
+        <spring:bean name="clientStore"
+            class="org.mule.modules.oauth2.provider.client.ObjectStoreClientStore"
+            p:objectStore-ref="clientObjectStore" />
+
+        <spring:bean name="tokenStore"
+            class="org.mule.modules.oauth2.provider.token.ManagedObjectStoreTokenStore"
+            p:refreshTokenObjectStore-ref="refreshTokenObjectStore"
+            p:accessTokenObjectStore-ref="tokenObjectStore"/>
+
+        <spring:bean name="authorizationCodeStore"
+            class="org.mule.modules.oauth2.provider.code.ObjectStoreAuthorizationCode"
+            p:objectStore-ref="authorizationCodeObjectStore" />
+
+<!--         <ss:authentication-manager id="resourceOwnerAuthenticationManager"> -->
+<!--             <ss:authentication-provider> -->
+<!--                 <ss:user-service id="resourceOwnerUserService"> -->
+<!--                     <ss:user name="rousr" password="ropwd+%" authorities="RESOURCE_OWNER" /> -->
+<!--                 </ss:user-service> -->
+<!--             </ss:authentication-provider> -->
+<!--         </ss:authentication-manager> -->
+
+<!--         <ss:authentication-manager id="clientAuthenticationManager"> -->
+<!--             <ss:authentication-provider> -->
+<!--                 <ss:user-service id="clientUserService"> -->
+<!--                     <ss:user name="clusr" password="clpwd+%" authorities="CLIENT" /> -->
+<!--                 </ss:user-service> -->
+<!--             </ss:authentication-provider> -->
+<!--         </ss:authentication-manager> -->
+    </spring:beans>
+                        
+<!--     <mule-ss:security-manager> -->
+<!--         <mule-ss:delegate-security-provider -->
+<!--             name="resourceOwnerSecurityProvider" delegate-ref="resourceOwnerAuthenticationManager" /> -->
+<!--         <mule-ss:delegate-security-provider -->
+<!--             name="clientSecurityProvider" delegate-ref="clientAuthenticationManager" /> -->
+<!--     </mule-ss:security-manager> -->
+                     
+    <oauth2-provider:config loginPage="static/auth.html"
+                            port="${port}"
+                            resourceOwnerSecurityProvider-ref="resourceOwnerSecurityProvider"
+                            clientSecurityProvider-ref="clientSecurityProvider"
+                            clientStore-ref="clientStore"
+                            tokenStore-ref="tokenStore"
+                            authorizationCodeStore-ref="authorizationCodeStore"
+                            rateLimiter-ref="rateLimiter"
+                            refreshTokenTtlSeconds="5"
+                            enableRefreshToken="true"
+                            issueNewRefreshToken="false"
+                            supportedGrantTypes="${allSupportedGrantTypes}" />
+                                
+    <flow name="test">
+        <oauth2-provider:validate />
+    </flow>
+    
+</mule>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:http="http://www.mulesoft.org/schema/mule/http"
+       xmlns:oauth2-provider="http://www.mulesoft.org/schema/mule/oauth2-provider"
+       xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+       xmlns:spring="http://www.springframework.org/schema/beans"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+       http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/current/mule-oauth2-provider.xsd
+       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+<!--     <global-property name="allSupportedGrantTypes" -->
+<!--                      value="AUTHORIZATION_CODE IMPLICIT RESOURCE_OWNER_PASSWORD_CREDENTIALS CLIENT_CREDENTIALS" /> -->
+
+    <spring:beans/>
+<!--     <spring:beans> -->
+<!--         <spring:bean name="tokenGeneratorMockStrategy" class="org.mule.modules.oauth2.provider.mock.TokenGeneratorMockStrategy" /> -->
+
+<!--         <spring:bean name="clientObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
+<!--         <spring:bean name="authorizationCodeObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
+<!--         <spring:bean name="tokenObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
+<!--         <spring:bean name="refreshTokenObjectStore" class="org.mule.util.store.InMemoryObjectStore" /> -->
+
+<!--         <spring:bean name="clientStore" -->
+<!--             class="org.mule.modules.oauth2.provider.client.ObjectStoreClientStore" -->
+<!--             p:objectStore-ref="clientObjectStore" /> -->
+
+<!--         <spring:bean name="tokenStore" -->
+<!--             class="org.mule.modules.oauth2.provider.token.ManagedObjectStoreTokenStore" -->
+<!--             p:refreshTokenObjectStore-ref="refreshTokenObjectStore" -->
+<!--             p:accessTokenObjectStore-ref="tokenObjectStore"/> -->
+
+<!--         <spring:bean name="authorizationCodeStore" -->
+<!--             class="org.mule.modules.oauth2.provider.code.ObjectStoreAuthorizationCode" -->
+<!--             p:objectStore-ref="authorizationCodeObjectStore" /> -->
+
+<!--         <ss:authentication-manager id="resourceOwnerAuthenticationManager"> -->
+<!--             <ss:authentication-provider> -->
+<!--                 <ss:user-service id="resourceOwnerUserService"> -->
+<!--                     <ss:user name="rousr" password="ropwd+%" authorities="RESOURCE_OWNER" /> -->
+<!--                 </ss:user-service> -->
+<!--             </ss:authentication-provider> -->
+<!--         </ss:authentication-manager> -->
+
+<!--         <ss:authentication-manager id="clientAuthenticationManager"> -->
+<!--             <ss:authentication-provider> -->
+<!--                 <ss:user-service id="clientUserService"> -->
+<!--                     <ss:user name="clusr" password="clpwd+%" authorities="CLIENT" /> -->
+<!--                 </ss:user-service> -->
+<!--             </ss:authentication-provider> -->
+<!--         </ss:authentication-manager> -->
+<!--     </spring:beans> -->
+                        
+<!--     <mule-ss:security-manager> -->
+<!--         <mule-ss:delegate-security-provider -->
+<!--             name="resourceOwnerSecurityProvider" delegate-ref="resourceOwnerAuthenticationManager" /> -->
+<!--         <mule-ss:delegate-security-provider -->
+<!--             name="clientSecurityProvider" delegate-ref="clientAuthenticationManager" /> -->
+<!--     </mule-ss:security-manager> -->
+                     
+    <oauth2-provider:config name="oauth2ProviderConfig"
+                            resourceOwnerSecurityProvider="resourceOwnerSecurityProvider"
+                            clientSecurityProvider="clientSecurityProvider"
+                            listenerConfig="httpsConnector"
+                            clientStore="clientObjectStore"
+                            supportedGrantTypes="${allSupportedGrantTypes}">
+        <oauth2-provider:client-validation-rate-limiter>
+            <oauth2-provider:period-rate-limiter/>
+        </oauth2-provider:client-validation-rate-limiter>
+        <oauth2-provider:token-config path="/token" tokenStore="tokenObjectStore"/>
+        <oauth2-provider:authorization-config loginPage="static/auth.html" path="/authorize" authorizationCodeStore="authorizationCodeObjectStore"/>
+    </oauth2-provider:config>
+
+    <http:listener-config name="httpsConnector">
+        <http:listener-connection protocol="HTTPS" host="localhost" port="${port}">
+            <tls:context>
+                <tls:trust-store path="trustStore" password="mulepassword"/>
+                <tls:key-store path="serverKeystore" keyPassword="mulepassword" password="mulepassword"/>
+            </tls:context>
+        </http:listener-connection>
+    </http:listener-config>
+
+    <flow name="test">
+    </flow>
+    
+</mule>

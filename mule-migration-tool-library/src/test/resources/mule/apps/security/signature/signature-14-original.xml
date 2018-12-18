@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:signature="http://www.mulesoft.org/schema/mule/signature"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/signature http://www.mulesoft.org/schema/mule/signature/current/mule-signature.xsd">
+    
+    <signature:config name="keystoreSignatureWithDetached">
+        <signature:jce-signer-config algorithm="MD5WithRSAEncryption"
+                                 keystorePath="./keystore.jks"
+                                 key="test2"
+                                 keyPassword="test21234"
+                                 keystorePassword="mule1234"/>
+        <signature:xml-signer-config signatureType="DETACHED"
+                              keystorePath="./keystore.jks"
+                              key="test2"
+                              keyPassword="test21234"
+                              keystorePassword="mule1234"
+                              referenceUri="http://www.w3.org/TR/xml-stylesheet"/>
+    </signature:config>
+        
+    <flow name="test">
+        <signature:sign-xml config-ref="keystoreSignatureWithDetached"/>
+        <signature:verify-signature using="XML_SIGNER" config-ref="keystoreSignatureWithDetached"/>
+    </flow>
+
+</mule>

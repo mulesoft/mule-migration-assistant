@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:encryption="http://www.mulesoft.org/schema/mule/encryption"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/encryption http://www.mulesoft.org/schema/mule/encryption/current/mule-encryption.xsd">
+    
+    <encryption:config name="symmetricKeystore">
+        <encryption:jce-encrypter-config algorithm="AES" keystorePath="./secret.jks"
+                                  key="aes128test"
+                                  keyPassword="mule1234"
+                                  keystorePassword="mule1234"/>
+    </encryption:config>
+            
+    <flow name="test">
+        <encryption:encrypt config-ref="symmetricKeystore"/>
+        <encryption:decrypt config-ref="symmetricKeystore"/>
+    </flow>
+
+</mule>

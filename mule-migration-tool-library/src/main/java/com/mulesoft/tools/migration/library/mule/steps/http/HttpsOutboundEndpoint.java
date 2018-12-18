@@ -6,13 +6,14 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.TLS_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.util.Optional;
 
@@ -58,18 +59,15 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
 
   public static void migrate(Element httpsRequesterConnection, Optional<Element> httpsConnector, MigrationReport report,
                              ApplicationModel appModel, String tlsClientTagName) {
-    Namespace httpsNamespace = Namespace.getNamespace("https", "http://www.mulesoft.org/schema/mule/https");
-    Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
-
     httpsRequesterConnection.setAttribute("protocol", "HTTPS");
 
-    if (httpsConnector.isPresent() && httpsRequesterConnection.getChild("context", tlsNamespace) == null) {
-      Element tlsContext = new Element("context", tlsNamespace);
+    if (httpsConnector.isPresent() && httpsRequesterConnection.getChild("context", TLS_NAMESPACE) == null) {
+      Element tlsContext = new Element("context", TLS_NAMESPACE);
       boolean tlsConfigured = false;
 
-      Element tlsClient = httpsConnector.get().getChild(tlsClientTagName, httpsNamespace);
+      Element tlsClient = httpsConnector.get().getChild(tlsClientTagName, HTTPS_NAMESPACE);
       if (tlsClient != null) {
-        Element keyStore = new Element("trust-store", tlsNamespace);
+        Element keyStore = new Element("trust-store", TLS_NAMESPACE);
         copyAttributeIfPresent(tlsClient, keyStore, "path");
         copyAttributeIfPresent(tlsClient, keyStore, "storePassword", "password");
         if (tlsClient.getAttribute("class") != null) {
@@ -79,9 +77,9 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
         tlsContext.addContent(keyStore);
         tlsConfigured = true;
       }
-      Element tlsKeyStore = httpsConnector.get().getChild("tls-key-store", httpsNamespace);
+      Element tlsKeyStore = httpsConnector.get().getChild("tls-key-store", HTTPS_NAMESPACE);
       if (tlsKeyStore != null) {
-        Element keyStore = new Element("key-store", tlsNamespace);
+        Element keyStore = new Element("key-store", TLS_NAMESPACE);
         copyAttributeIfPresent(tlsKeyStore, keyStore, "path");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "storePassword", "password");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
@@ -96,7 +94,7 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
       }
 
       if (tlsConfigured) {
-        appModel.addNameSpace(tlsNamespace.getPrefix(), tlsNamespace.getURI(),
+        appModel.addNameSpace(TLS_NAMESPACE.getPrefix(), TLS_NAMESPACE.getURI(),
                               "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
 
         httpsRequesterConnection.addContent(tlsContext);

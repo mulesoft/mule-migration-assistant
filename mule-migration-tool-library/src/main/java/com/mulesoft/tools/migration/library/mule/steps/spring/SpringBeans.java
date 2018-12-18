@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -23,8 +24,8 @@ import org.jdom2.Namespace;
 public class SpringBeans extends AbstractSpringMigratorStep {
 
   private static final String SPRING_BEANS_NS_PREFIX = "spring";
-  private static final String SPRING_BEANS_NS_URI = "http://www.springframework.org/schema/beans";
-  private static final Namespace SPRING_BEANS_NS = Namespace.getNamespace(SPRING_BEANS_NS_PREFIX, SPRING_BEANS_NS_URI);
+  public static final String SPRING_BEANS_NS_URI = "http://www.springframework.org/schema/beans";
+  private static final Namespace SPRING_BEANS_NS = getNamespace(SPRING_BEANS_NS_PREFIX, SPRING_BEANS_NS_URI);
   public static final String XPATH_SELECTOR =
       "/*[starts-with(namespace-uri(), 'http://www.mulesoft.org/schema/mule/')]/*[namespace-uri() = '" + SPRING_BEANS_NS_URI
           + "' and local-name() != 'beans']";

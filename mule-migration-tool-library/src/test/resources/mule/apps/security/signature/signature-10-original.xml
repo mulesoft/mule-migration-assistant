@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:signature="http://www.mulesoft.org/schema/mule/signature"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/signature http://www.mulesoft.org/schema/mule/signature/current/mule-signature.xsd">
+    
+    <signature:config name="shaPublicKeyStore" defaultSigner="JCE_SIGNER">
+        <signature:jce-signer-config algorithm="SHA1WithRSAEncryption"
+                                     keystorePath="./publicKeyStore.jks"
+                                     key="pub"
+                                     keystorePassword="muletest"/>
+    </signature:config>
+        
+    <flow name="test">
+        <signature:sign config-ref="shaPublicKeyStore"/>
+        <signature:verify-signature config-ref="shaPublicKeyStore" expectedSignature="O1gOfi+wfQSPwrQzBtsrTFTWSq7s3iTBZ/QWsSpLC7vKX9AOecGYQ/JpG7Ml1OAt1agQMr9vw+PiilzglZvBAKYWcRvaKVQ0zYD1XnNlEQhIXWldQTH5MJJUaKm+4/YxctFYMZkCc+eQxJhnXAjWSzCpg0TjQuLZHDs4dbBgx0k="/>
+    </flow>
+
+</mule>

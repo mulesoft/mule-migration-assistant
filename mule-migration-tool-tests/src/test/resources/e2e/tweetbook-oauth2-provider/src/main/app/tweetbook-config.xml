@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:oauth2-provider="http://www.mulesoft.org/schema/mule/oauth2-provider"
+    xmlns:spring="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+    xmlns:ss="http://www.springframework.org/schema/security"
+    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+    xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+        http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/current/mule-oauth2-provider.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <context:property-placeholder location="bookstore.properties" />
+
+    <spring:beans>     
+        <ss:authentication-manager id="resourceOwnerAuthenticationManager">
+            <ss:authentication-provider>
+                <ss:user-service id="resourceOwnerUserService">
+                    <ss:user name="john" password="doe" authorities="RESOURCE_OWNER" />
+                </ss:user-service>
+            </ss:authentication-provider> 
+        </ss:authentication-manager>
+    </spring:beans>
+
+    <mule-ss:security-manager>
+        <mule-ss:delegate-security-provider
+            name="resourceOwnerSecurityProvider"
+            delegate-ref="resourceOwnerAuthenticationManager" />
+    </mule-ss:security-manager>
+
+    <oauth2-provider:config 
+        name="oauth2Provider"
+        providerName="TweetBook"
+        host="localhost"
+        port="${httpPort}"
+        authorizationEndpointPath="tweetbook/api/authorize"
+        accessTokenEndpointPath="tweetbook/api/token"
+        resourceOwnerSecurityProvider-ref="resourceOwnerSecurityProvider"
+        scopes="READ_PROFILE WRITE_PROFILE READ_BOOKSHELF WRITE_BOOKSHELF" >
+            <oauth2-provider:clients>
+                <oauth2-provider:client clientId="${client_id}" secret="${client_secret}"
+                                        type="CONFIDENTIAL" clientName="Mule Bookstore" description="Mule-powered On-line Bookstore">
+                    <oauth2-provider:redirect-uris>
+                        <oauth2-provider:redirect-uri>http://localhost*</oauth2-provider:redirect-uri>
+                    </oauth2-provider:redirect-uris>
+                    <oauth2-provider:authorized-grant-types>
+                        <oauth2-provider:authorized-grant-type>AUTHORIZATION_CODE</oauth2-provider:authorized-grant-type>
+                    </oauth2-provider:authorized-grant-types>
+                    <oauth2-provider:scopes>
+                        <oauth2-provider:scope>READ_PROFILE</oauth2-provider:scope>
+                        <oauth2-provider:scope>READ_BOOKSHELF</oauth2-provider:scope>
+                        <oauth2-provider:scope>WRITE_BOOKSHELF</oauth2-provider:scope>
+                        <oauth2-provider:scope>WRITE_PROFILE</oauth2-provider:scope>
+                    </oauth2-provider:scopes>
+                </oauth2-provider:client>
+            </oauth2-provider:clients>
+    </oauth2-provider:config>
+
+    <flow name="publicProfile">
+        <http:inbound-endpoint address="http://localhost:8084/tweetbook/api/profile" exchange-pattern="request-response" doc:name="Profile API"/>
+        <oauth2-provider:validate scopes="READ_PROFILE" />
+<!--         <component class="org.mule.security.examples.oauth2.ProfileLookupComponent" doc:name="Profile Lookup"/> -->
+        <logger/>
+    </flow>
+
+    <flow name="publicBookshelf">
+        <http:inbound-endpoint address="http://localhost:8084/tweetbook/api/bookshelf" exchange-pattern="request-response" doc:name="Bookshelf API"/>
+        <oauth2-provider:validate scopes="READ_BOOKSHELF" />
+        <set-payload value="The Lord of the Rings,The Hitchhiker's Guide to the Galaxy" doc:name="Retrieve Bookshelf"/>
+    </flow>
+</mule>
