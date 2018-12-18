@@ -59,7 +59,8 @@
 <!--             name="clientSecurityProvider" delegate-ref="clientAuthenticationManager" /> -->
 <!--     </mule-ss:security-manager> -->
                      
-    <oauth2-provider:config name="Test Scoped Provider"
+    <oauth2-provider:config name="Test_Scoped_Provider"
+                            providerName="Test Scoped Provider"
                             resourceOwnerSecurityProvider="resourceOwnerSecurityProvider"
                             clientSecurityProvider="clientSecurityProvider"
                             listenerConfig="listenerConf"
@@ -78,7 +79,7 @@
 <!--     </http:listener-config> -->
 
     <flow name="test">
-        <oauth2-provider:validate-token config-ref="Test Scoped Provider" scopes="#[['USER', 'ADMIN']]" />
+        <oauth2-provider:validate-token config-ref="Test_Scoped_Provider" scopes="#[['USER', 'ADMIN']]" />
     </flow>
 
     <flow name="preFlow">

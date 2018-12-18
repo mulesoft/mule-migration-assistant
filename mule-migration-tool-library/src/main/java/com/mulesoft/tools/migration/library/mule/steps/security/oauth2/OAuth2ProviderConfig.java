@@ -61,10 +61,12 @@ public class OAuth2ProviderConfig extends AbstractApplicationModelMigrationStep 
       element.removeAttribute("preFlow-ref");
     }
 
-    if (element.getAttribute("providerName") != null) {
-      element.getAttribute("providerName").setName("name");
-    } else if (element.getAttribute("name") == null) {
-      element.setAttribute("name", "oauth2ProviderConfig");
+    if (element.getAttribute("name") == null) {
+      if (element.getAttribute("providerName") != null) {
+        element.setAttribute("name", element.getAttributeValue("providerName").replaceAll(" ", "_"));
+      } else {
+        element.setAttribute("name", "oauth2ProviderConfig");
+      }
     }
 
     if (element.getAttribute("clientStore-ref") != null) {
@@ -78,43 +80,17 @@ public class OAuth2ProviderConfig extends AbstractApplicationModelMigrationStep 
       element.getAttribute("clientStore-ref").setName("clientStore");
     }
 
-    if (element.getAttribute("listenerConfig-ref") != null) {
-      element.getAttribute("listenerConfig-ref").setName("listenerConfig");
-    } else if (element.getAttribute("connector-ref") != null) {
-      String configName = element.getAttributeValue("connector-ref");
+    handleHttpListener(element, report);
 
-      final String port = element.getAttributeValue("port");
-      element.removeAttribute("port");
-
-      final Element httpConnector = getHttpConnector(element.getAttributeValue("connector-ref"));
-      extractListenerConfig(getApplicationModel(), element, () -> httpConnector, HTTP_NAMESPACE, configName, "localhost",
-                            port != null ? port : "9999");
-      getApplicationModel().addNameSpace("http", HTTP_NAMESPACE_URI,
-                                         "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
-      if (HTTPS_NAMESPACE.equals(httpConnector.getNamespace())) {
-        handleHttpsListenerConfig(getApplicationModel(), element, report, httpConnector);
-      }
-      element.removeAttribute("config-ref");
-
-      element.getAttribute("connector-ref").setName("listenerConfig");
-    } else {
-      final String httpListenerConfigName = element.getAttributeValue("name") + "_httpListenerConfig";
-
-      element.setAttribute("listenerConfig", httpListenerConfigName);
-
-      final String port = element.getAttributeValue("port");
-      element.removeAttribute("port");
-
-      addElementAfter(new Element("listener-config", HTTP_NAMESPACE)
-          .setAttribute("name", httpListenerConfigName)
-          .addContent(new Element("listener-connection", HTTP_NAMESPACE)
-              .setAttribute("host", "localhost")
-              .setAttribute("port", port != null ? port : "9999")), element);
+    if (element.getAttribute("resourceOwnerSecurityProvider-ref") != null) {
+      element.getAttribute("resourceOwnerSecurityProvider-ref").setName("resourceOwnerSecurityProvider");
     }
-    element.removeAttribute("port");
-
-    element.getAttribute("resourceOwnerSecurityProvider-ref").setName("resourceOwnerSecurityProvider");
-    element.getAttribute("clientSecurityProvider-ref").setName("clientSecurityProvider");
+    if (element.getAttribute("clientSecurityProvider-ref") != null) {
+      element.getAttribute("clientSecurityProvider-ref").setName("clientSecurityProvider");
+    }
+    if (element.getAttribute("tokenGeneratorStrategy-ref") != null) {
+      element.getAttribute("tokenGeneratorStrategy-ref").setName("tokenGeneratorStrategy");
+    }
 
     final String scopes = element.getAttributeValue("scopes");
     if (scopes != null) {
@@ -138,6 +114,46 @@ public class OAuth2ProviderConfig extends AbstractApplicationModelMigrationStep 
     migrateTokenConfig(element, report);
     migrateAuthorizationConfig(element, report);
     migrateClients(element);
+  }
+
+  private void handleHttpListener(Element element, MigrationReport report) {
+    if (element.getAttribute("listenerConfig-ref") != null) {
+      element.getAttribute("listenerConfig-ref").setName("listenerConfig");
+    } else if (element.getAttribute("connector-ref") != null) {
+      String configName = element.getAttributeValue("connector-ref");
+
+      final String host = element.getAttributeValue("host");
+      final String port = element.getAttributeValue("port");
+
+      final Element httpConnector = getHttpConnector(element.getAttributeValue("connector-ref"));
+      extractListenerConfig(getApplicationModel(), element, () -> httpConnector, HTTP_NAMESPACE, configName,
+                            host != null ? host : "localhost",
+                            port != null ? port : "9999");
+      getApplicationModel().addNameSpace("http", HTTP_NAMESPACE_URI,
+                                         "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
+      if (HTTPS_NAMESPACE.equals(httpConnector.getNamespace())) {
+        handleHttpsListenerConfig(getApplicationModel(), element, report, httpConnector);
+      }
+      element.removeAttribute("config-ref");
+
+      element.getAttribute("connector-ref").setName("listenerConfig");
+    } else {
+      final String httpListenerConfigName = element.getAttributeValue("name") + "_httpListenerConfig";
+
+      element.setAttribute("listenerConfig", httpListenerConfigName);
+
+      final String host = element.getAttributeValue("host");
+      final String port = element.getAttributeValue("port");
+
+      addElementAfter(new Element("listener-config", HTTP_NAMESPACE)
+          .setAttribute("name", httpListenerConfigName)
+          .addContent(new Element("listener-connection", HTTP_NAMESPACE)
+              .setAttribute("host", host != null ? host : "localhost")
+              .setAttribute("port", port != null ? port : "9999")), element);
+    }
+
+    element.removeAttribute("host");
+    element.removeAttribute("port");
   }
 
   private void migrateRateLimiter(Element element, MigrationReport report) {
@@ -164,35 +180,40 @@ public class OAuth2ProviderConfig extends AbstractApplicationModelMigrationStep 
       element.removeAttribute("accessTokenEndpointPath");
     }
 
-    if (element.getAttributeValue("tokenStore-ref") != null) {
-      AtomicReference<Element> refreshTokens = new AtomicReference<>();
-      if ("true".equals(element.getAttributeValue("enableRefreshToken"))) {
+    AtomicReference<Element> refreshTokens = new AtomicReference<>();
+    if ("true".equals(element.getAttributeValue("enableRefreshToken"))) {
+      if ("true".equals(element.getAttributeValue("issueNewRefreshToken"))) {
+        refreshTokens.set(new Element("multiple-refresh-tokens", OAUTH2_PROVIDER_NAMESPACE));
+      } else {
         refreshTokens.set(new Element("single-refresh-tokens", OAUTH2_PROVIDER_NAMESPACE));
-        tokenConfig.addContent(new Element("refresh-token-strategy", OAUTH2_PROVIDER_NAMESPACE)
-            .addContent(refreshTokens.get().setAttribute("objectStore", "lalala")));
-
-
-        if (element.getAttributeValue("refreshTokenTtlSeconds") != null) {
-          report.report("oauth2Provider.refreshTokenTtl", element, tokenConfig);
-          element.removeAttribute("refreshTokenTtlSeconds");
-        }
       }
-      element.removeAttribute("enableRefreshToken");
+      element.removeAttribute("issueNewRefreshToken");
 
-      getApplicationModel().getNodeOptional("//*[namespace-uri() = '" + SPRING_BEANS_NS_URI
-          + "' and local-name() = 'bean' and @name='" + element.getAttributeValue("tokenStore-ref") + "']")
-          .ifPresent(b -> {
-            tokenConfig.setAttribute("tokenStore", b.getAttributes().stream()
-                .filter(att -> "accessTokenObjectStore-ref".equals(att.getName())).map(att -> att.getValue()).findFirst().get());
+      tokenConfig.addContent(new Element("refresh-token-strategy", OAUTH2_PROVIDER_NAMESPACE)
+          .addContent(refreshTokens.get()));
 
-            if (refreshTokens.get() != null) {
-              refreshTokens.get().setAttribute("objectStore", b.getAttributes().stream()
-                  .filter(att -> "refreshTokenObjectStore-ref".equals(att.getName())).map(att -> att.getValue()).findFirst()
-                  .get());
+      if (element.getAttributeValue("refreshTokenTtlSeconds") != null) {
+        report.report("oauth2Provider.refreshTokenTtl", element, tokenConfig);
+        element.removeAttribute("refreshTokenTtlSeconds");
+      }
+    }
+    element.removeAttribute("enableRefreshToken");
 
-            }
-          });
+    getApplicationModel().getNodeOptional("//*[namespace-uri() = '" + SPRING_BEANS_NS_URI
+        + "' and local-name() = 'bean' and @name='" + element.getAttributeValue("tokenStore-ref") + "']")
+        .ifPresent(b -> {
+          tokenConfig.setAttribute("tokenStore", b.getAttributes().stream()
+              .filter(att -> "accessTokenObjectStore-ref".equals(att.getName())).map(att -> att.getValue()).findFirst().get());
 
+          if (refreshTokens.get() != null) {
+            refreshTokens.get().setAttribute("objectStore", b.getAttributes().stream()
+                .filter(att -> "refreshTokenObjectStore-ref".equals(att.getName())).map(att -> att.getValue()).findFirst()
+                .get());
+
+          }
+        });
+
+    if (element.getAttributeValue("tokenStore-ref") != null) {
       element.removeAttribute("tokenStore-ref");
 
       if (element.getAttributeValue("tokenTtlSeconds") != null) {
@@ -243,21 +264,35 @@ public class OAuth2ProviderConfig extends AbstractApplicationModelMigrationStep 
       element.addContent(clients);
 
       clients.getChildren("client", OAUTH2_PROVIDER_NAMESPACE).forEach(client -> {
-        client.getChild("redirect-uris", OAUTH2_PROVIDER_NAMESPACE).setName("client-redirect-uris")
-            .getChildren("redirect-uri", OAUTH2_PROVIDER_NAMESPACE)
-            .forEach(redirectUri -> {
-              redirectUri.setAttribute("value", redirectUri.getTextTrim());
-              redirectUri.setName("client-redirect-uri");
-              redirectUri.removeContent();
-            });
+        if (client.getChild("redirect-uris", OAUTH2_PROVIDER_NAMESPACE) != null) {
+          client.getChild("redirect-uris", OAUTH2_PROVIDER_NAMESPACE).setName("client-redirect-uris")
+              .getChildren("redirect-uri", OAUTH2_PROVIDER_NAMESPACE)
+              .forEach(redirectUri -> {
+                redirectUri.setAttribute("value", redirectUri.getTextTrim());
+                redirectUri.setName("client-redirect-uri");
+                redirectUri.removeContent();
+              });
+        }
 
-        client.getChild("authorized-grant-types", OAUTH2_PROVIDER_NAMESPACE).setName("client-authorized-grant-types")
-            .getChildren("authorized-grant-type", OAUTH2_PROVIDER_NAMESPACE)
-            .forEach(redirectUri -> {
-              redirectUri.setAttribute("value", redirectUri.getTextTrim());
-              redirectUri.setName("client-authorized-grant-type");
-              redirectUri.removeContent();
-            });
+        if (client.getChild("authorized-grant-types", OAUTH2_PROVIDER_NAMESPACE) != null) {
+          client.getChild("authorized-grant-types", OAUTH2_PROVIDER_NAMESPACE).setName("client-authorized-grant-types")
+              .getChildren("authorized-grant-type", OAUTH2_PROVIDER_NAMESPACE)
+              .forEach(redirectUri -> {
+                redirectUri.setAttribute("value", redirectUri.getTextTrim());
+                redirectUri.setName("client-authorized-grant-type");
+                redirectUri.removeContent();
+              });
+        }
+
+        if (client.getChild("scopes", OAUTH2_PROVIDER_NAMESPACE) != null) {
+          client.getChild("scopes", OAUTH2_PROVIDER_NAMESPACE).setName("client-scopes")
+              .getChildren("scope", OAUTH2_PROVIDER_NAMESPACE)
+              .forEach(redirectUri -> {
+                redirectUri.setAttribute("value", redirectUri.getTextTrim());
+                redirectUri.setName("client-scope");
+                redirectUri.removeContent();
+              });
+        }
       });
     }
   }

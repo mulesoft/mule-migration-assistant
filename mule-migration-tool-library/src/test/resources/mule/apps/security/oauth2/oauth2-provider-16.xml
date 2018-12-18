@@ -59,26 +59,38 @@
 <!--             name="clientSecurityProvider" delegate-ref="clientAuthenticationManager" /> -->
 <!--     </mule-ss:security-manager> -->
                      
-    <oauth2-provider:config name="Test_Scoped_Provider"
-                            providerName="Test Scoped Provider"
+    <oauth2-provider:config name="oauth2ProviderConfig"
                             resourceOwnerSecurityProvider="resourceOwnerSecurityProvider"
                             clientSecurityProvider="clientSecurityProvider"
-                            listenerConfig="Test_Scoped_Provider_httpListenerConfig"
-                            clientStore="clientObjectStore"
-                            scopes="GUEST,USER,ADMIN">
+                            listenerConfig="oauth2ProviderConfig_httpListenerConfig"
+                            supportedGrantTypes="${allSupportedGrantTypes}">
         <oauth2-provider:client-validation-rate-limiter>
             <oauth2-provider:period-rate-limiter/>
         </oauth2-provider:client-validation-rate-limiter>
-        <oauth2-provider:token-config tokenStore="tokenObjectStore"/>
-        <oauth2-provider:authorization-config authorizationCodeStore="authorizationCodeObjectStore"/>
+        <oauth2-provider:token-config path="/token">
+            <oauth2-provider:refresh-token-strategy>
+                <oauth2-provider:single-refresh-tokens/>
+            </oauth2-provider:refresh-token-strategy>
+        </oauth2-provider:token-config>
+        <oauth2-provider:authorization-config loginPage="static/auth.html" path="/authorize"/>
+        <oauth2-provider:clients>
+            <oauth2-provider:client clientId="clientId1" secret="clientSecret1" principal="clusr" type="CONFIDENTIAL">
+                <oauth2-provider:client-redirect-uris>
+                    <oauth2-provider:client-redirect-uri value="http://fake/redirect"/>
+                </oauth2-provider:client-redirect-uris>
+                <oauth2-provider:client-authorized-grant-types>
+                    <oauth2-provider:client-authorized-grant-type value="AUTHORIZATION_CODE"/>
+                </oauth2-provider:client-authorized-grant-types>
+            </oauth2-provider:client>
+        </oauth2-provider:clients>
     </oauth2-provider:config>
 
-    <http:listener-config name="Test_Scoped_Provider_httpListenerConfig">
+    <http:listener-config name="oauth2ProviderConfig_httpListenerConfig">
         <http:listener-connection host="localhost" port="${port}"/>
     </http:listener-config>
 
     <flow name="test">
-        <oauth2-provider:validate-token config-ref="Test_Scoped_Provider" scopes="#[['USER', 'ADMIN']]" />
+        <oauth2-provider:revoke-token config-ref="oauth2ProviderConfig" token="#[payload]"/>
     </flow>
-    
+
 </mule>

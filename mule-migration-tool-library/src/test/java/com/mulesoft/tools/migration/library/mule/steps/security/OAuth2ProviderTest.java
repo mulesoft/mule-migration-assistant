@@ -21,6 +21,7 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpConfig;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderConfig;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderCreateClient;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderDeleteClient;
+import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderRevokeToken;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderStoresConfigRemove;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderValidate;
 import com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderValidateClient;
@@ -93,6 +94,7 @@ public class OAuth2ProviderTest {
 
   private OAuth2ProviderConfig config;
   private OAuth2ProviderValidate validate;
+  private OAuth2ProviderRevokeToken revoke;
   private OAuth2ProviderValidateClient validateClient;
   private OAuth2ProviderCreateClient createClient;
   private OAuth2ProviderDeleteClient deleteClient;
@@ -124,12 +126,14 @@ public class OAuth2ProviderTest {
     when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
 
     config = new OAuth2ProviderConfig();
-    // config.setExpressionMigrator(expressionMigrator);
     config.setApplicationModel(appModel);
 
     validate = new OAuth2ProviderValidate();
-    // validate.setExpressionMigrator(expressionMigrator);
     validate.setApplicationModel(appModel);
+
+    revoke = new OAuth2ProviderRevokeToken();
+    revoke.setExpressionMigrator(expressionMigrator);
+    revoke.setApplicationModel(appModel);
 
     validateClient = new OAuth2ProviderValidateClient();
     validateClient.setApplicationModel(appModel);
@@ -158,6 +162,7 @@ public class OAuth2ProviderTest {
   public void execute() throws Exception {
     migrate(config);
     migrate(validate);
+    migrate(revoke);
     migrate(validateClient);
     migrate(createClient);
     migrate(deleteClient);

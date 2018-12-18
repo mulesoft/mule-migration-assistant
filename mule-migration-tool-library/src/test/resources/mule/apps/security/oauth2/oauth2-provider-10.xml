@@ -59,10 +59,11 @@
 <!--             name="clientSecurityProvider" delegate-ref="clientAuthenticationManager" /> -->
 <!--     </mule-ss:security-manager> -->
                      
-    <oauth2-provider:config name="Test Scoped Provider"
+    <oauth2-provider:config name="Test_Scoped_Provider"
+                            providerName="Test Scoped Provider"
                             resourceOwnerSecurityProvider="resourceOwnerSecurityProvider"
                             clientSecurityProvider="clientSecurityProvider"
-                            listenerConfig="Test Scoped Provider_httpListenerConfig"
+                            listenerConfig="Test_Scoped_Provider_httpListenerConfig"
                             clientStore="clientObjectStore"
                             scopes="GUEST,USER,ADMIN"
                             supportedGrantTypes="${allSupportedGrantTypes}">
@@ -73,12 +74,12 @@
         <oauth2-provider:authorization-config loginPage="static/auth.html" path="/authorize" authorizationCodeStore="authorizationCodeObjectStore"/>
     </oauth2-provider:config>
 
-    <http:listener-config name="Test Scoped Provider_httpListenerConfig">
+    <http:listener-config name="Test_Scoped_Provider_httpListenerConfig">
         <http:listener-connection host="localhost" port="${port}"/>
     </http:listener-config>
 
     <flow name="test">
-        <oauth2-provider:validate-token config-ref="Test Scoped Provider" scopes="#[['USER', 'ADMIN']]" />
+        <oauth2-provider:validate-token config-ref="Test_Scoped_Provider" scopes="#[['USER', 'ADMIN']]" />
     </flow>
 
 </mule>
