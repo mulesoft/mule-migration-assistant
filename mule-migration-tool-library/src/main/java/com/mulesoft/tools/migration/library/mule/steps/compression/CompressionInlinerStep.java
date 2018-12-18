@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.compression;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
 import java.util.List;
 
@@ -22,9 +23,10 @@ import org.jdom2.Element;
 public class CompressionInlinerStep extends AbstractApplicationModelMigrationStep {
 
   public CompressionInlinerStep() {
-    setAppliedTo(String.format("/*/*[local-name()='%s' or local-name()='%s' and @name]",
+    setAppliedTo(String.format("/*/*[local-name()='%s' or local-name()='%s' and @name and namespace-uri() = '%s']",
                                GZipCompressTransformer.ORIGINAL_ELEMENT_NAME,
-                               GZipUncompressTransformer.ORIGINAL_ELEMENT_NAME));
+                               GZipUncompressTransformer.ORIGINAL_ELEMENT_NAME,
+                               XmlDslUtils.CORE_NS_URI));
   }
 
   @Override

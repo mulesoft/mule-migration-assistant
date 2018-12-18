@@ -745,8 +745,10 @@ compression:
     message: "The returnClass element has been removed. In Mule 4, you no longer depend on the return class of any component. Only the mimeType is important"
     docLinks:
       - https://docs.mulesoft.com/connectors/compression/compression-module
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-transformers
   ignoreBadInput:
     type: WARN
     message: "The ignoredBadInput element has been removed. Mule 4, is strongly typed and has auto transformation of parameters. The input will be autotransformed to a correct type or the operation will fail"
     docLinks:
       - https://docs.mulesoft.com/connectors/compression/compression-module
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-transformers

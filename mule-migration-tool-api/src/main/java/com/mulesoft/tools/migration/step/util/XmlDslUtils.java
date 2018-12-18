@@ -45,7 +45,7 @@ import org.jdom2.located.LocatedJDOMFactory;
  */
 public final class XmlDslUtils {
 
-  private static final String CORE_NS_URI = "http://www.mulesoft.org/schema/mule/core";
+  public static final String CORE_NS_URI = "http://www.mulesoft.org/schema/mule/core";
   public static final Namespace CORE_NAMESPACE = Namespace.getNamespace(CORE_NS_URI);
 
   public static final String EE_NAMESPACE_NAME = "ee";
@@ -373,8 +373,8 @@ public final class XmlDslUtils {
   }
 
   public static void removeAllAttributes(Element element) {
-    List<String> attributeNames = element.getAttributes().stream().map(Attribute::getName).collect(toList());
-    attributeNames.forEach(element::removeAttribute);
+    List<Attribute> attributes = element.getAttributes().stream().collect(toList());
+    attributes.forEach(Attribute::detach);
   }
 
   public static void addMigrationAttributeToElement(Element element, Attribute attribute) {
