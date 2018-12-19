@@ -8,7 +8,7 @@
     <flow name="lastSelectorWithList">
         <scheduler>
             <scheduling-strategy>
-                <fixed-frequency/>
+                <fixed-frequency frequency="1000"/>
             </scheduling-strategy>
         </scheduler>
         <os:retrieve key="lastSelectorWithList" target="lastSelectorWithList">

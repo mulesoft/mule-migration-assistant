@@ -13,6 +13,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementToBottom;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static java.util.stream.Collectors.toList;
@@ -78,18 +79,16 @@ public class Poll extends AbstractOSMigrator {
       if (element.getChild(FIXED_FREQ_SCHEDULER, CORE_NAMESPACE) == null
           && element.getChild(CRON_FREQ_SCHEDULER, SCHEDULERS_NAMESPACE) == null) {
         Element schedulingStrategy = new Element("scheduling-strategy", element.getNamespace());
-        final Element fixedFrquency = new Element("fixed-frequency", element.getNamespace());
-        schedulingStrategy.addContent(fixedFrquency);
+        final Element fixedFrequency = new Element("fixed-frequency", element.getNamespace());
+        schedulingStrategy.addContent(fixedFrequency);
         element.addContent(schedulingStrategy);
 
         // support the `frequency` attribute that was deprecated in 3.5.0
-        if (element.getAttribute("frequency") != null) {
-          fixedFrquency.setAttribute("frequency", element.getAttributeValue("frequency"));
-          element.removeAttribute("frequency");
-        } else {
-          fixedFrquency.setAttribute("frequency", "1000");
+        final String newFrequency = changeDefault("1000", "60000", element.getAttributeValue("frequency"));
+        if (newFrequency != null) {
+          fixedFrequency.setAttribute("frequency", newFrequency);
         }
-
+        element.removeAttribute("frequency");
       } else {
         updateCronScheduler(element);
         updateFixedFrequencyScheduler(element);
