@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+          http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <gzip-compress-transformer name="globalCompressor" mimeType="application/json" />
+    <gzip-uncompress-transformer name="globalDecompressor" mimeType="application/xml" />
+
+    <flow name="compressInput">
+        <gzip-compress-transformer/>
+    </flow>
+
+    <flow name="decompressInput">
+        <gzip-uncompress-transformer/>
+    </flow>
+
+    <flow name="decompressAsString">
+        <gzip-uncompress-transformer returnClass="java.lang.String"/>
+    </flow>
+
+    <flow name="compressAsString">
+        <gzip-compress-transformer returnClass="java.lang.String"/>
+    </flow>
+
+    <flow name="compressBadInput">
+        <gzip-compress-transformer ignoreBadInput="true"/>
+    </flow>
+
+    <flow name="decompressBadInput">
+        <gzip-uncompress-transformer ignoreBadInput="true"/>
+    </flow>
+
+    <flow name="compressWithMimeTypeAndEncoding">
+        <gzip-compress-transformer mimeType="application/json" encoding="UTF-8"/>
+    </flow>
+
+    <flow name="uncompressWithMimeTypeAndEncoding">
+        <gzip-uncompress-transformer mimeType="application/json" encoding="UTF-8"/>
+    </flow>
+
+    <flow name="refs">
+        <transformer ref="globalCompressor" />
+        <transformer ref="globalDecompressor" />
+    </flow>
+</mule>

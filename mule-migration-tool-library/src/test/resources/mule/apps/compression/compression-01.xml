@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:compression="http://www.mulesoft.org/schema/mule/compression"
+      xsi:schemaLocation="
+          http://www.mulesoft.org/schema/mule/compression http://www.mulesoft.org/schema/mule/compression/current/mule-compression.xsd
+          http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="compressInput">
+        <compression:compress>
+            <compression:compressor>
+                <compression:gzip-compressor/>
+            </compression:compressor>
+        </compression:compress>
+    </flow>
+
+    <flow name="decompressInput">
+        <compression:decompress>
+            <compression:decompressor>
+                <compression:gzip-decompressor/>
+            </compression:decompressor>
+        </compression:decompress>
+    </flow>
+
+    <flow name="decompressAsString">
+        <compression:decompress>
+            <compression:decompressor>
+                <compression:gzip-decompressor/>
+            </compression:decompressor>
+        </compression:decompress>
+    </flow>
+
+    <flow name="compressAsString">
+        <compression:compress>
+            <compression:compressor>
+                <compression:gzip-compressor/>
+            </compression:compressor>
+        </compression:compress>
+    </flow>
+
+    <flow name="compressBadInput">
+        <compression:compress>
+            <compression:compressor>
+                <compression:gzip-compressor/>
+            </compression:compressor>
+        </compression:compress>
+    </flow>
+
+    <flow name="decompressBadInput">
+        <compression:decompress>
+            <compression:decompressor>
+                <compression:gzip-decompressor/>
+            </compression:decompressor>
+        </compression:decompress>
+    </flow>
+
+    <flow name="compressWithMimeTypeAndEncoding">
+        <compression:compress>
+            <compression:compressor>
+                <compression:gzip-compressor/>
+            </compression:compressor>
+        </compression:compress>
+    </flow>
+
+    <flow name="uncompressWithMimeTypeAndEncoding">
+        <compression:decompress outputMimeType="application/json" outputEncoding="UTF-8">
+            <compression:decompressor>
+                <compression:gzip-decompressor/>
+            </compression:decompressor>
+        </compression:decompress>
+    </flow>
+
+    <flow name="refs">
+        <compression:compress>
+            <compression:compressor>
+                <compression:gzip-compressor/>
+            </compression:compressor>
+        </compression:compress>
+        <compression:decompress outputMimeType="application/xml">
+            <compression:decompressor>
+                <compression:gzip-decompressor/>
+            </compression:decompressor>
+        </compression:decompress>
+    </flow>
+
+</mule>

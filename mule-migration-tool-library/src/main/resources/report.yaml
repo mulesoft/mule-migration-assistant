@@ -711,31 +711,44 @@ oauth2Provider:
    preFlow:
      type: ERROR
      message: "'pre-flow' is no longer supported bu OAuth2 Provider."
-     docLinks: 
+     docLinks:
        - https://docs.mulesoft.com/mule-runtime/4.1/migration-oauth2-provider
    clientValidationRateLimiter:
      type: ERROR
      message: "You can no longer add a custom implementation from a spring bean. Only Period Rate Limiter is implemented for now."
-     docLinks: 
+     docLinks:
        - https://docs.mulesoft.com/mule-runtime/4.1/migration-oauth2-provider
        - https://docs.mulesoft.com/connectors/oauth/oauth2-provider-documentation-reference#client-validation-rate-limiter
    validateClient:
      type: ERROR
      message: "'oauth2-provider:validate-client' is not supported in Mule 4."
-     docLinks: 
+     docLinks:
        - https://docs.mulesoft.com/mule-runtime/4.1/migration-oauth2-provider#validate-client
    authorizationTtl:
      type: ERROR
      message: "The 'authorizationTtlSeconds' must be configured in the entryTtl of the 'object-store' for the 'authorization-config'."
-     docLinks: 
+     docLinks:
        - https://docs.mulesoft.com/mule-runtime/4.1/migration-oauth2-provider
    tokenTtl:
      type: ERROR
      message: "The 'tokenTtlSeconds' must also be configured in the entryTtl of the 'object-store' for the 'token-config'."
-     docLinks: 
+     docLinks:
        - https://docs.mulesoft.com/mule-runtime/4.1/migration-oauth2-provider
    refreshTokenTtl:
      type: ERROR
      message: "The 'refreshTokenTtlSeconds' must be configured in the entryTtl of the 'object-store' for the Refresh Token Strategy in case there is one."
-     docLinks: 
+     docLinks:
        - https://docs.mulesoft.com/mule-runtime/4.1/migration-oauth2-provider
+compression:
+  returnClass:
+    type: WARN
+    message: "The returnClass element has been removed. In Mule 4, you no longer depend on the return class of any component. Only the mimeType is important"
+    docLinks:
+      - https://docs.mulesoft.com/connectors/compression/compression-module
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-transformers
+  ignoreBadInput:
+    type: WARN
+    message: "The ignoredBadInput element has been removed. Mule 4, is strongly typed and has auto transformation of parameters. The input will be autotransformed to a correct type or the operation will fail"
+    docLinks:
+      - https://docs.mulesoft.com/connectors/compression/compression-module
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-transformers

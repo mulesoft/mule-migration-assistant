@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.step.util;
 import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -16,6 +17,13 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Attribute;
@@ -29,12 +37,6 @@ import org.jdom2.Parent;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Optional;
-
 /**
  * Provides reusable methods for common migration scenarios.
  *
@@ -43,7 +45,7 @@ import java.util.Optional;
  */
 public final class XmlDslUtils {
 
-  private static final String CORE_NS_URI = "http://www.mulesoft.org/schema/mule/core";
+  public static final String CORE_NS_URI = "http://www.mulesoft.org/schema/mule/core";
   public static final Namespace CORE_NAMESPACE = Namespace.getNamespace(CORE_NS_URI);
 
   public static final String EE_NAMESPACE_NAME = "ee";
@@ -370,6 +372,11 @@ public final class XmlDslUtils {
     }
   }
 
+  public static void removeAllAttributes(Element element) {
+    List<Attribute> attributes = element.getAttributes().stream().collect(toList());
+    attributes.forEach(Attribute::detach);
+  }
+
   public static void addMigrationAttributeToElement(Element element, Attribute attribute) {
     attribute.setNamespace(Namespace.getNamespace("migration", "migration"));
     element.setAttribute(attribute);
@@ -441,5 +448,29 @@ public final class XmlDslUtils {
       }
     }
     return muleConfig;
+  }
+
+  public static String getXPathSelector(String namespaceUri, String elementName) {
+    return getXPathSelector(namespaceUri, elementName, false);
+  }
+
+  public static String getTopLevelXPathSelector(String namespaceUri, String elementName) {
+    return getXPathSelector(namespaceUri, elementName, true);
+  }
+
+  public static String getXPathSelector(String namespaceUri, String elementName, boolean topLevel) {
+    return format("%s[namespace-uri() = '%s' and local-name() = '%s']", topLevel ? "/*/*" : "//*", namespaceUri, elementName);
+  }
+
+  public static String getCoreXPathSelector(String elementName) {
+    return getCoreXPathSelector(elementName, false);
+  }
+
+  public static String getTopLevelCoreXPathSelector(String elementName) {
+    return getCoreXPathSelector(elementName, true);
+  }
+
+  private static String getCoreXPathSelector(String elementName, boolean topLevel) {
+    return getXPathSelector(CORE_NS_URI, elementName, topLevel);
   }
 }
