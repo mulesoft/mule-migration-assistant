@@ -21,6 +21,9 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +39,9 @@ public class Enricher extends AbstractApplicationModelMigrationStep implements E
       "\\#\\[mel:message\\.outboundAttachments\\['([^']+)'\\] = new DataHandler\\(\\$, 'text\\/plain'\\)]";
   private static final Pattern ATTACHEMNT_ENRICHMENT_PATTERN = compile(ATTACHMENT_ENRICHMENT_REGEX);
   public static final String XPATH_SELECTOR = "//mule:enricher";
+
+  private final Map<String, AtomicInteger> enricherSubFlowIndex = new HashMap<>();
+
   private ExpressionMigrator expressionMigrator;
 
   @Override
@@ -49,8 +55,9 @@ public class Enricher extends AbstractApplicationModelMigrationStep implements E
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    String subFlowName =
-        getFlow(element).getAttributeValue("name") + "_Enricher_" + (element.getParentElement().indexOf(element) - 1);
+    final String flowName = getFlow(element).getAttributeValue("name");
+    String subFlowName = flowName + "_Enricher_" + enricherSubFlowIndex
+        .computeIfAbsent(flowName, k -> new AtomicInteger()).getAndIncrement();
 
     Element flowRef = new Element("flow-ref", CORE_NAMESPACE).setAttribute("name", subFlowName);
     addElementAfter(flowRef, element);
