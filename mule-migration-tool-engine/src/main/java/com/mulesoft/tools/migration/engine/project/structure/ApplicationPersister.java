@@ -9,10 +9,10 @@ package com.mulesoft.tools.migration.engine.project.structure;
 import static com.mulesoft.tools.migration.engine.project.ProjectMatcher.getProjectDestination;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_APPLICATION;
 import static com.mulesoft.tools.migration.project.ProjectType.MULE_THREE_MAVEN_APPLICATION;
-import static java.lang.System.lineSeparator;
 import static java.nio.file.Files.exists;
 import static org.apache.commons.io.FileUtils.moveFileToDirectory;
 import static org.jdom2.output.Format.getPrettyFormat;
+import static org.jdom2.output.LineSeparator.NL;
 
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.project.ProjectTypeFactory;
@@ -123,15 +123,15 @@ public class ApplicationPersister {
       // Add empty lines between top level elements, as requested by our beloved PM <3
       new LinkedList<>(finalDocument.getRootElement().getChildren()).descendingIterator().forEachRemaining(c -> {
         finalDocument.getRootElement().addContent(finalDocument.getRootElement().indexOf(c) + 1,
-                                                  new Text(lineSeparator()));
+                                                  new Text(NL.value()));
 
         if ("flow".equals(c.getName())) {
           new LinkedList<>(c.getChildren()).descendingIterator().forEachRemaining(fc -> {
-            c.addContent(c.indexOf(fc) + 1, new Text(lineSeparator()));
+            c.addContent(c.indexOf(fc) + 1, new Text(NL.value()));
           });
         }
       });
-      finalDocument.getRootElement().addContent(0, new Text(lineSeparator()));
+      finalDocument.getRootElement().addContent(0, new Text(NL.value()));
 
       File targetFile = targetFilePath.toFile();
       targetFile.getParentFile().mkdirs();

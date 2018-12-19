@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  */
 public class CleanNamespaces implements NamespaceContribution {
 
-  private List<String> nonRemovableNamespaces = newArrayList("doc", "xsi");
+  private final List<String> nonRemovableNamespaces = newArrayList("doc", "xsi");
 
   @Override
   public String getDescription() {
@@ -70,6 +70,6 @@ public class CleanNamespaces implements NamespaceContribution {
       usedSchemas.append(" " + schema + " ");
     });
 
-    schemaLocationAttribute.setValue(usedSchemas.toString());
+    schemaLocationAttribute.setValue(usedSchemas.toString().trim());
   }
 }
