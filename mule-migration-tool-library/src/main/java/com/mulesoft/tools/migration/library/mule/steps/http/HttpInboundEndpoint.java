@@ -260,7 +260,9 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
       final Element listenerConnection = new Element("listener-connection", httpNamespace);
 
       listenerConnection.setAttribute("host", host);
-      listenerConnection.setAttribute("port", port);
+      if (port != null) {
+        listenerConnection.setAttribute("port", port);
+      }
       listenerConfig.addContent(listenerConnection);
 
       if (object.getAttribute("keepAlive") != null || object.getAttribute("keep-alive") != null) {

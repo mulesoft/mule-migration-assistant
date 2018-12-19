@@ -49,12 +49,16 @@ public final class TransportsUtils {
 
   // Cannot use just Uri() because the address may have placeholders
   public static final Pattern ADDRESS_PATTERN =
-      compile("(\\w+):\\/\\/(?:(.*)@)?([^\\/:]*)(?::([^\\/]+))?(\\/.*)?");
+      compile("((?:\\w+|\\$\\{[^\\}]*\\})):\\/\\/(?:(.*)@)?([^\\/:]*)(?::([^\\/]+))?(\\/.*)?");
 
   private TransportsUtils() {
     // Nothing to do
   }
 
+  /**
+   * In the case the address can't be parsed (it may be a property reference), it will be used as the host as to continue with the
+   * migration.
+   */
   public static Optional<EndpointAddress> processAddress(Element endpoint, MigrationReport report) {
     if (endpoint.getAttribute("address") == null) {
       return empty();
@@ -80,7 +84,9 @@ public final class TransportsUtils {
       }
     } else {
       report.report("transports.cantParseAddress", endpoint, endpoint, address);
-      return empty();
+      endpoint.removeAttribute("address");
+
+      return of(new EndpointAddress(null, null, address, null, null));
     }
   }
 
