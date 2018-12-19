@@ -13,7 +13,10 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementToBottom;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static java.util.stream.Collectors.toList;
+import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.library.mule.steps.os.AbstractOSMigrator;
@@ -26,7 +29,6 @@ import org.jdom2.Namespace;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Migration step for poll component
@@ -42,11 +44,10 @@ public class Poll extends AbstractOSMigrator {
   private static final String SCHEDULING_STRATEGY = "scheduling-strategy";
   private static final String POLL_NEW_NAME = "scheduler";
   private static final String PROCESSOR_CHAIN = "processor-chain";
-  private static final String XPATH_SELECTOR = "//*[local-name()='poll']";
+  private static final String XPATH_SELECTOR = getCoreXPathSelector("poll");
   private static final String SCHEDULERS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/schedulers";
   private static final String SCHEDULERS_NAMESPACE_PREFIX = "schedulers";
-  private static final Namespace SCHEDULERS_NAMESPACE =
-      Namespace.getNamespace(SCHEDULERS_NAMESPACE_PREFIX, SCHEDULERS_NAMESPACE_URI);
+  private static final Namespace SCHEDULERS_NAMESPACE = getNamespace(SCHEDULERS_NAMESPACE_PREFIX, SCHEDULERS_NAMESPACE_URI);
 
   @Override
   public String getDescription() {
@@ -70,15 +71,25 @@ public class Poll extends AbstractOSMigrator {
           .filter(s -> !StringUtils.equals(s.getName(), FIXED_FREQ_SCHEDULER)
               && !StringUtils.equals(s.getName(), CRON_FREQ_SCHEDULER)
               && !StringUtils.equals(s.getName(), WATERMARK))
-          .collect(Collectors.toList());
+          .collect(toList());
 
       movePollChildsToParent(childElementsToMove, element.getParentElement(), element.getParentElement().indexOf(element) + 1);
 
       if (element.getChild(FIXED_FREQ_SCHEDULER, CORE_NAMESPACE) == null
           && element.getChild(CRON_FREQ_SCHEDULER, SCHEDULERS_NAMESPACE) == null) {
         Element schedulingStrategy = new Element("scheduling-strategy", element.getNamespace());
-        schedulingStrategy.addContent(new Element("fixed-frequency", element.getNamespace()));
+        final Element fixedFrquency = new Element("fixed-frequency", element.getNamespace());
+        schedulingStrategy.addContent(fixedFrquency);
         element.addContent(schedulingStrategy);
+
+        // support the `frequency` attribute that was deprecated in 3.5.0
+        if (element.getAttribute("frequency") != null) {
+          fixedFrquency.setAttribute("frequency", element.getAttributeValue("frequency"));
+          element.removeAttribute("frequency");
+        } else {
+          fixedFrquency.setAttribute("frequency", "1000");
+        }
+
       } else {
         updateCronScheduler(element);
         updateFixedFrequencyScheduler(element);
