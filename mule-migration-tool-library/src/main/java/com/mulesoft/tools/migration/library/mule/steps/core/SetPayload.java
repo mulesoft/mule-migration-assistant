@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -23,7 +24,7 @@ import org.jdom2.Element;
  */
 public class SetPayload extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='set-payload']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("set-payload");
 
   private ExpressionMigrator expressionMigrator;
 

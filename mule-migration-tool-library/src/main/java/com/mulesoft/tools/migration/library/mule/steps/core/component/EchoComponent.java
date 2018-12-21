@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.component;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -19,7 +21,7 @@ import org.jdom2.Element;
  */
 public class EchoComponent extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='echo-component']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("echo-component");
 
   @Override
   public String getDescription() {

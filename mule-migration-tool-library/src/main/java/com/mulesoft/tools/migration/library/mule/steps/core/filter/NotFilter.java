@@ -7,16 +7,17 @@
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementsAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Content;
 import org.jdom2.Element;
+
+import java.util.List;
 
 /**
  * Migrate not-filter to validations
@@ -26,7 +27,7 @@ import org.jdom2.Element;
  */
 public class NotFilter extends AbstractFilterMigrator {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='not-filter']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("not-filter");
 
   @Override
   public String getDescription() {

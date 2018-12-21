@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementsAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -25,7 +26,7 @@ import java.util.List;
  */
 public class MessageFilter extends AbstractFilterMigrator {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='message-filter']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("message-filter");
 
   @Override
   public String getDescription() {

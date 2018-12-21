@@ -12,7 +12,6 @@ import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrate JSON Schema validation
@@ -20,9 +19,8 @@ import org.jdom2.Namespace;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class JsonValidateSchema extends AbstractApplicationModelMigrationStep {
+public class JsonValidateSchema extends AbstractApplicationModelMigrationStep implements JsonMigrationStep {
 
-  private static final String JSON_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/json";
   public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + JSON_NAMESPACE_URI + "'"
       + " and local-name()='validate-schema']";
 
@@ -33,7 +31,7 @@ public class JsonValidateSchema extends AbstractApplicationModelMigrationStep {
 
   public JsonValidateSchema() {
     this.setAppliedTo(XPATH_SELECTOR);
-    this.setNamespacesContributions(newArrayList(Namespace.getNamespace("json", JSON_NAMESPACE_URI)));
+    this.setNamespacesContributions(newArrayList(JSON_NAMESPACE));
   }
 
   @Override

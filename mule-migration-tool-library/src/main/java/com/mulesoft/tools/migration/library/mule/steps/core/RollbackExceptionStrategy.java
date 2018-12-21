@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateRedeliveryPolicyChildren;
 
@@ -28,7 +29,7 @@ import java.util.List;
  */
 public class RollbackExceptionStrategy extends AbstractExceptionsMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='rollback-exception-strategy']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("rollback-exception-strategy");
 
   @Override
   public String getDescription() {

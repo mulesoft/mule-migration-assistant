@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -18,7 +20,7 @@ import org.jdom2.Element;
  */
 public class MessagePropertyFilter extends AbstractFilterMigrator {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='message-property-filter']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("message-property-filter");
 
   @Override
   public String getDescription() {
