@@ -22,7 +22,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   private val createPropertyNode = (identifiers: Seq[IdentifierNode]) => PropertyNode(identifiers)
 
   private val whiteSpaceChar = CharPredicate(" \f\t")
-  private val newLineChar = CharPredicate("\r\n")
+  private val newLineChar = CharPredicate(sys.props("line.separator") )
   val whiteSpaceOrNewLineChar = whiteSpaceChar ++ newLineChar
 
   def root: Rule1[MelExpressionNode] = rule {
