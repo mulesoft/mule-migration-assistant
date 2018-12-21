@@ -15,7 +15,7 @@ object MelExpressionEmitter {
         }
         case _ => melExpressionNode.getClass.getSimpleName
       }) +
-      melExpressionNode.children.map(toString(_, indent + 1)).foldLeft("")(_ + "\n" + _)
+      melExpressionNode.children.map(toString(_, indent + 1)).foldLeft("")(_ + sys.props("line.separator") + _)
   }
 
 }
