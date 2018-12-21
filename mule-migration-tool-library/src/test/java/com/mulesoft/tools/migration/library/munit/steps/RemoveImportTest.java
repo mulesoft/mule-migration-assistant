@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -28,6 +29,8 @@ public class RemoveImportTest {
   private static final String MUNIT_SAMPLE_XML = "munit-processors.xml";
   private static final Path MUNIT_EXAMPLES_PATH = Paths.get("munit/examples");
   private static final Path MUNIT_SAMPLE_PATH = MUNIT_EXAMPLES_PATH.resolve(MUNIT_SAMPLE_XML);
+  private static final String MUNIT_PATH =
+      "src" + File.separator + "test" + File.separator + "munit" + File.separator + MUNIT_SAMPLE_XML;
 
   @Rule
   public ReportVerification report = new ReportVerification();
@@ -43,7 +46,7 @@ public class RemoveImportTest {
   @Test
   public void execute() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(MUNIT_SAMPLE_PATH.toString()).toURI().getPath());
-    doc.setBaseURI("src/test/munit/" + MUNIT_SAMPLE_XML);
+    doc.setBaseURI(MUNIT_PATH);
     node = getElementsFromDocument(doc, removeSpringImport.getAppliedTo().getExpression()).get(0);
 
     assertThat("There is no spring section defined on doc.", doc.getRootElement().getChildren().size(), is(10));
