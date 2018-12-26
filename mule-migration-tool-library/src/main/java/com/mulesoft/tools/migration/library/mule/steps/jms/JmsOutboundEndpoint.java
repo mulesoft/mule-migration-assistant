@@ -30,7 +30,8 @@ import java.util.Optional;
  */
 public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
 
-  public static final String XPATH_SELECTOR = "//jms:outbound-endpoint";
+  public static final String XPATH_SELECTOR =
+      "//*[namespace-uri()='" + JMS_NAMESPACE_URI + "' and local-name()='outbound-endpoint']";
 
   @Override
   public String getDescription() {
@@ -175,7 +176,9 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
         object.setAttribute("priority", "#[vars.compatibility_inboundProperties.JMSPriority default 4]");
       }
 
-      handleConnectorChildElements(m3c, appModel.getNode("*/jms:config[@name='" + configName + "']"),
+      handleConnectorChildElements(m3c,
+                                   appModel.getNode("*/*[namespace-uri()='" + JMS_NAMESPACE_URI
+                                       + "' and local-name()='config' and @name='" + configName + "']"),
                                    new Element("connection", CORE_NAMESPACE), report);
     });
 

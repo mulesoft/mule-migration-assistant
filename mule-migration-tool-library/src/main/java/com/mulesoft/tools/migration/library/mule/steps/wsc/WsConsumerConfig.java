@@ -123,7 +123,7 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
               .setAttribute("requesterConfig", transportConnectorName)));
       object.removeAttribute("connector-ref");
     } else {
-      // If the protocol is not http, lookup the apropiate connector
+      // If the protocol is not http, lookup the appropriate connector
       // only https/jms transports supported
 
       String address = connection.getAttributeValue("address");

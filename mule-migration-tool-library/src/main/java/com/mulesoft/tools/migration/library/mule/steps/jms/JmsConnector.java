@@ -7,12 +7,13 @@
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEndpoint.JMS_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEndpoint.JMS_NAMESPACE_URI;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrates the jms connector of the JMS transport
@@ -22,17 +23,13 @@ import org.jdom2.Namespace;
  */
 public class JmsConnector extends AbstractApplicationModelMigrationStep {
 
-  private static final String JMS_NAMESPACE_PREFIX = "jms";
-  private static final String JMS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/jms";
-  private static final Namespace JMS_NAMESPACE = Namespace.getNamespace(JMS_NAMESPACE_PREFIX, JMS_NAMESPACE_URI);
-
-  public static final String XPATH_SELECTOR = "/*/jms:*["
+  public static final String XPATH_SELECTOR = "/*/*[namespace-uri()='" + JMS_NAMESPACE_URI + "' and ("
       + "(local-name() = 'activemq-connector' or "
       + "local-name() = 'activemq-xa-connector' or "
       + "local-name() = 'weblogic-connector' or "
       + "local-name() = 'websphere-connector' or "
       + "local-name() = 'connector' or "
-      + "local-name() = 'custom-connector')]";
+      + "local-name() = 'custom-connector'))]";
 
   @Override
   public String getDescription() {

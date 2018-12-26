@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
+import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.lang.System.lineSeparator;
@@ -30,7 +31,8 @@ import java.io.IOException;
 public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "//file:outbound-endpoint";
+  public static final String XPATH_SELECTOR =
+      "//*[namespace-uri()='" + FILE_NAMESPACE_URI + "' and local-name()='outbound-endpoint']";
 
   private ExpressionMigrator expressionMigrator;
 

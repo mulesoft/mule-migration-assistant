@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateSchedulingStrategy;
@@ -42,9 +43,8 @@ import java.util.OptionalInt;
 public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  private static final String FILE_NS_PREFIX = "file";
-  private static final String FILE_NS_URI = "http://www.mulesoft.org/schema/mule/file";
-  public static final String XPATH_SELECTOR = "/*/mule:flow/file:inbound-endpoint[1]";
+  public static final String XPATH_SELECTOR =
+      "/*/mule:flow/*[namespace-uri()='" + FILE_NAMESPACE_URI + "' and local-name()='inbound-endpoint'][1]";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -59,8 +59,6 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace fileNs = Namespace.getNamespace(FILE_NS_PREFIX, FILE_NS_URI);
-
     object.setName("listener");
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
@@ -106,7 +104,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       }
     }
 
-    migrateFileFilters(object, report, fileNs, getApplicationModel());
+    migrateFileFilters(object, report, FILE_NAMESPACE, getApplicationModel());
 
     object.setAttribute("applyPostActionWhenFailed", "false");
 

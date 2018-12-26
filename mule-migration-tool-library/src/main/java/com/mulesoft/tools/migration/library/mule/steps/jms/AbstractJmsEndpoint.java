@@ -46,7 +46,7 @@ import java.util.Optional;
 public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
   protected static final String JMS_NAMESPACE_PREFIX = "jms";
-  protected static final String JMS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/jms";
+  public static final String JMS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/jms";
   public static final Namespace JMS_NAMESPACE = Namespace.getNamespace(JMS_NAMESPACE_PREFIX, JMS_NAMESPACE_URI);
 
   private ExpressionMigrator expressionMigrator;
@@ -161,7 +161,8 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
             : "")).replaceAll("\\\\", "_")
         + "JmsConfig");
 
-    Optional<Element> config = appModel.getNodeOptional("*/jms:config[@name='" + configName + "']");
+    Optional<Element> config = appModel.getNodeOptional("*/*[namespace-uri()='" + JMS_NAMESPACE_URI
+        + "' and local-name()='config' and @name='" + configName + "']");
     config.orElseGet(() -> {
       final Element jmsCfg = new Element("config", JMS_NAMESPACE);
       jmsCfg.setAttribute("name", configName);

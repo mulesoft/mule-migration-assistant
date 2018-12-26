@@ -13,6 +13,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServi
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static java.util.stream.Collectors.joining;
+import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -35,9 +36,10 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
   private static final String FILE_NAMESPACE_PREFIX = "file";
-  private static final String FILE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/file";
-  public static final Namespace FILE_NAMESPACE = Namespace.getNamespace(FILE_NAMESPACE_PREFIX, FILE_NAMESPACE_URI);
-  public static final String XPATH_SELECTOR = "/*/file:connector";
+  public static final String FILE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/file";
+  public static final Namespace FILE_NAMESPACE = getNamespace(FILE_NAMESPACE_PREFIX, FILE_NAMESPACE_URI);
+  public static final String XPATH_SELECTOR =
+      "/*/*[namespace-uri()='" + FILE_NAMESPACE_URI + "' and local-name()='connector']";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -104,20 +106,23 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   private void handleInputImplicitConnectorRef(Element object, MigrationReport report) {
     makeImplicitConnectorRefsExplicit(object, report, getApplicationModel()
-        .getNodes("/*/mule:flow/file:inbound-endpoint[not(@connector-ref)]"));
+        .getNodes("/*/mule:flow/*[namespace-uri()='" + FILE_NAMESPACE_URI
+            + "' and local-name()='inbound-endpoint' and not(@connector-ref)]"));
     makeImplicitConnectorRefsExplicit(object, report, getApplicationModel()
         .getNodes("//mule:inbound-endpoint[not(@connector-ref) and starts-with(@address, 'file://')]"));
   }
 
   private void handleOutputImplicitConnectorRef(Element object, MigrationReport report) {
     makeImplicitConnectorRefsExplicit(object, report,
-                                      getApplicationModel().getNodes("//file:outbound-endpoint[not(@connector-ref)]"));
+                                      getApplicationModel().getNodes("//*[namespace-uri()='" + FILE_NAMESPACE_URI
+                                          + "' and local-name()='outbound-endpoint' and not(@connector-ref)]"));
     makeImplicitConnectorRefsExplicit(object, report, getApplicationModel()
         .getNodes("//mule:outbound-endpoint[not(@connector-ref) and starts-with(@address, 'file://')]"));
   }
 
   private void makeImplicitConnectorRefsExplicit(Element object, MigrationReport report, List<Element> implicitConnectorRefs) {
-    List<Element> availableConfigs = getApplicationModel().getNodes("/*/file:config");
+    List<Element> availableConfigs =
+        getApplicationModel().getNodes("/*/*[namespace-uri()='" + FILE_NAMESPACE_URI + "' and local-name()='config']");
     if (implicitConnectorRefs.size() > 0 && availableConfigs.size() > 1) {
       for (Element implicitConnectorRef : implicitConnectorRefs) {
         // This situation would have caused the app to not start in Mule 3. As it is not a migration issue per se, there's no
@@ -147,7 +152,8 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   private void handleInputSpecificAttributes(Element object, boolean matcherUsed, String fileAge, MigrationReport report) {
     Stream.concat(getApplicationModel()
-        .getNodes("//file:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
+        .getNodes("//*[namespace-uri()='" + FILE_NAMESPACE_URI + "' and local-name()='inbound-endpoint' and @connector-ref='"
+            + object.getAttributeValue("name") + "']")
         .stream(),
                   getApplicationModel()
                       .getNodes("//mule:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
@@ -164,7 +170,8 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
 
   private void handleOutputSpecificAttributes(Element object, MigrationReport report) {
     Stream.concat(getApplicationModel()
-        .getNodes("//file:outbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
+        .getNodes("//*[namespace-uri()='" + FILE_NAMESPACE_URI + "' and local-name()='outbound-endpoint' and @connector-ref='"
+            + object.getAttributeValue("name") + "']")
         .stream(),
                   getApplicationModel()
                       .getNodes("//mule:outbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
