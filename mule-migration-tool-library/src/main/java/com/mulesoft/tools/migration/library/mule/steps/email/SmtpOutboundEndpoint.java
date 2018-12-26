@@ -36,7 +36,8 @@ import java.util.Optional;
 public class SmtpOutboundEndpoint extends AbstractEmailMigrator
     implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "//smtp:outbound-endpoint";
+  public static final String XPATH_SELECTOR =
+      "//*[namespace-uri()='" + SMTP_NAMESPACE_URI + "' and local-name()='outbound-endpoint']";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -198,7 +199,8 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
 
   @Override
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/*/smtp:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/*[namespace-uri()='" + SMTP_NAMESPACE_URI
+        + "' and local-name()='connector' and @name = '" + connectorName + "']");
   }
 
   protected Element createConnection() {
@@ -211,7 +213,8 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
 
   @Override
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/*/smtp:connector");
+    return getApplicationModel()
+        .getNodeOptional("/*/*[namespace-uri()='" + SMTP_NAMESPACE_URI + "' and local-name()='connector']");
   }
 
   public static void smtpTransportLib(ApplicationModel appModel) {

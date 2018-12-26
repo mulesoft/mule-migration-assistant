@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.email;
 
+import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.POP3S_NAMESPACE_URI;
+
 import com.mulesoft.tools.migration.step.AbstractGlobalEndpointMigratorStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -20,7 +22,7 @@ import org.jdom2.Namespace;
  */
 public class Pop3sGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
-  public static final String XPATH_SELECTOR = "/*/pop3s:endpoint";
+  public static final String XPATH_SELECTOR = "/*/*[namespace-uri()='" + POP3S_NAMESPACE_URI + "' and local-name()='endpoint']";
 
   @Override
   public String getDescription() {

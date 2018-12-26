@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpC
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint.handleConnector;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint.migrate;
+import static com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer.WS_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
@@ -35,7 +36,8 @@ import java.util.List;
  */
 public class WsConsumerConfig extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "/*/ws:consumer-config";
+  public static final String XPATH_SELECTOR =
+      "/*/*[namespace-uri()='" + WS_NAMESPACE_URI + "' and local-name()='consumer-config']";
 
   private ExpressionMigrator expressionMigrator;
 

@@ -25,7 +25,8 @@ import java.util.Optional;
  */
 public class SmtpsOutboundEndpoint extends SmtpOutboundEndpoint {
 
-  public static final String XPATH_SELECTOR = "//smtps:outbound-endpoint";
+  public static final String XPATH_SELECTOR =
+      "//*[namespace-uri()='" + SMTPS_NAMESPACE_URI + "' and local-name()='outbound-endpoint']";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -111,11 +112,13 @@ public class SmtpsOutboundEndpoint extends SmtpOutboundEndpoint {
 
   @Override
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/*/smtps:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/*[namespace-uri()='" + SMTPS_NAMESPACE_URI
+        + "' and local-name()='connector' and @name = '" + connectorName + "']");
   }
 
   @Override
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/*/smtps:connector");
+    return getApplicationModel()
+        .getNodeOptional("/*/*[namespace-uri()='" + SMTPS_NAMESPACE_URI + "' and local-name()='connector']");
   }
 }

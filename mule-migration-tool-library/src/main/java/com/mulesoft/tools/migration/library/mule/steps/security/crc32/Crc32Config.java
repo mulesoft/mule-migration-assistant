@@ -23,9 +23,11 @@ import org.jdom2.Namespace;
  */
 public class Crc32Config extends AbstractApplicationModelMigrationStep {
 
-  private static final Namespace CRC32_NAMESPACE = getNamespace("crc32", "http://www.mulesoft.org/schema/mule/crc32");
+  private static final String CRC32_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/crc32";
 
-  public static final String XPATH_SELECTOR = "//crc32:config";
+  private static final Namespace CRC32_NAMESPACE = getNamespace("crc32", CRC32_NAMESPACE_URI);
+
+  public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + CRC32_NAMESPACE_URI + "' and local-name()='config']";
 
   @Override
   public String getDescription() {

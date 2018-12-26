@@ -30,7 +30,7 @@ import java.util.Map;
 public class WsConsumer extends AbstractApplicationModelMigrationStep {
 
   private static final String WS_NAMESPACE_PREFIX = "ws";
-  private static final String WS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ws";
+  public static final String WS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ws";
   private static final Namespace WS_NAMESPACE = Namespace.getNamespace(WS_NAMESPACE_PREFIX, WS_NAMESPACE_URI);
 
   private static final String WSC_NAMESPACE_PREFIX = "wsc";

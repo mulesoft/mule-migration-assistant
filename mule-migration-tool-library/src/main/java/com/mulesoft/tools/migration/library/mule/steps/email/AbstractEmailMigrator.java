@@ -26,17 +26,24 @@ import java.util.Optional;
  */
 public abstract class AbstractEmailMigrator extends AbstractApplicationModelMigrationStep {
 
+  public static final String SMTP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/smtp";
+  public static final String SMTPS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/smtps";
+  public static final String IMAP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/imap";
+  public static final String IMAPS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/imaps";
+  public static final String POP3_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/pop3";
+  public static final String POP3S_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/pop3s";
+
   public static final Namespace EMAIL_NAMESPACE = getNamespace("email", "http://www.mulesoft.org/schema/mule/email");
   public static final String EMAIL_SCHEMA_LOC = "http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd";
 
   public AbstractEmailMigrator() {
     this.setNamespacesContributions(asList(EMAIL_NAMESPACE,
-                                           getNamespace("smtp", "http://www.mulesoft.org/schema/mule/smtp"),
-                                           getNamespace("smtps", "http://www.mulesoft.org/schema/mule/smtps"),
-                                           getNamespace("imap", "http://www.mulesoft.org/schema/mule/imap"),
-                                           getNamespace("imaps", "http://www.mulesoft.org/schema/mule/imaps"),
-                                           getNamespace("pop3", "http://www.mulesoft.org/schema/mule/pop3"),
-                                           getNamespace("pop3s", "http://www.mulesoft.org/schema/mule/pop3s")));
+                                           getNamespace("smtp", SMTP_NAMESPACE_URI),
+                                           getNamespace("smtps", SMTPS_NAMESPACE_URI),
+                                           getNamespace("imap", IMAP_NAMESPACE_URI),
+                                           getNamespace("imaps", IMAPS_NAMESPACE_URI),
+                                           getNamespace("pop3", POP3_NAMESPACE_URI),
+                                           getNamespace("pop3s", POP3S_NAMESPACE_URI)));
   }
 
   protected Optional<Element> resolveConnector(Element object, ApplicationModel appModel) {
