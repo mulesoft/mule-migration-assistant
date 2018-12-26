@@ -547,4 +547,35 @@ public class MelToDwExpressionMigratorTest {
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result, is("Hello ${world}"));
   }
+
+  @Test
+  public void migratePayloadAs() {
+    String script = "#[message.payloadAs(java.lang.String)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[write(payload) as String]"));
+  }
+
+  @Test
+  public void migratePayloadAsConcatenation() {
+    String script = "#['payload: ' + message.payloadAs(java.lang.String)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#['payload: ' ++ write(payload) as String]"));
+  }
+
+  @Test
+  public void migratePayloadAsInInterpolation() {
+    String script = "Payload: #[message.payloadAs(java.lang.String)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[\"Payload: $(write(payload) as String)\"]"));
+  }
+
+  @Test
+  public void migratePayloadAsFailure() {
+    String script = "#[message.payloadAs(com.lala.Pepe)]";
+    Element elementMock = mock(Element.class);
+    String result = expressionMigrator.migrateExpression(script, true, elementMock);
+    verify(reportMock).report(eq("expressions.melToDw"), eq(elementMock), eq(elementMock));
+    verify(reportMock).report(eq("expressions.methodInvocation"), eq(elementMock), eq(elementMock));
+    assertThat(result, is("#[mel:message.payloadAs(com.lala.Pepe)]"));
+  }
 }
