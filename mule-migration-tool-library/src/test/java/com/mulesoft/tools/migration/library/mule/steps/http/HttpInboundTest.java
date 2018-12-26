@@ -11,7 +11,7 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFrom
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.of;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -22,7 +22,6 @@ import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
@@ -92,7 +91,9 @@ public class HttpInboundTest {
         "http-inbound-34",
         "http-inbound-35",
         "http-inbound-36",
-        "http-inbound-37"
+        "http-inbound-37",
+        "http-inbound-38",
+        "http-inbound-39"
     };
   }
 
