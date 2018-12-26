@@ -112,13 +112,15 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
 
   private void handleOutputImplicitConnectorRef(Element object, MigrationReport report) {
     makeImplicitConnectorRefsExplicit(object, report,
-                                      getApplicationModel().getNodes("//sftp:outbound-endpoint[not(@connector-ref)]"));
+                                      getApplicationModel().getNodes("//*[namespace-uri()='" + SFTP_NAMESPACE_URI
+                                          + "' and local-name()='outbound-endpoint' and not(@connector-ref)]"));
     makeImplicitConnectorRefsExplicit(object, report, getApplicationModel()
         .getNodes("//mule:outbound-endpoint[not(@connector-ref) and starts-with(@address, 'sftp://')]"));
   }
 
   private void makeImplicitConnectorRefsExplicit(Element object, MigrationReport report, List<Element> implicitConnectorRefs) {
-    List<Element> availableConfigs = getApplicationModel().getNodes("/*/sftp:config");
+    List<Element> availableConfigs =
+        getApplicationModel().getNodes("/*/*[namespace-uri()='" + SFTP_NAMESPACE_URI + "' and local-name()='config']");
     if (implicitConnectorRefs.size() > 0 && availableConfigs.size() > 1) {
       for (Element implicitConnectorRef : implicitConnectorRefs) {
         // This situation would have caused the app to not start in Mule 3. As it is not a migration issue per se, there's no
@@ -135,7 +137,8 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
 
   private void handleInputSpecificAttributes(Element object, MigrationReport report) {
     Stream.concat(getApplicationModel()
-        .getNodes("//sftp:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
+        .getNodes("//*[namespace-uri()='" + SFTP_NAMESPACE_URI + "' and local-name()='inbound-endpoint' and @connector-ref='"
+            + object.getAttributeValue("name") + "']")
         .stream(),
                   getApplicationModel()
                       .getNodes("//mule:inbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
@@ -151,7 +154,8 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
 
   private void handleOutputSpecificAttributes(Element object, MigrationReport report) {
     Stream.concat(getApplicationModel()
-        .getNodes("//sftp:outbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")
+        .getNodes("//*[namespace-uri()='" + SFTP_NAMESPACE_URI + "' and local-name()='outbound-endpoint' and @connector-ref='"
+            + object.getAttributeValue("name") + "']")
         .stream(),
                   getApplicationModel()
                       .getNodes("//mule:outbound-endpoint[@connector-ref='" + object.getAttributeValue("name") + "']")

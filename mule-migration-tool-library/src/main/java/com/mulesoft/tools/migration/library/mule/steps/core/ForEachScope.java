@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -14,7 +14,6 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migration of For Each Scope
@@ -24,11 +23,9 @@ import org.jdom2.Namespace;
  */
 public class ForEachScope extends AbstractApplicationModelMigrationStep {
 
-  private static final String XPATH_SELECTOR = "//*[local-name()='foreach']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("foreach");
+
   private static final String JSON_TRANSFORMER_NAME = "json-to-object-transformer";
-  private static final String JSON_TRANSFORMER_PREFIX = "json";
-  private static final String JSON_TRANSFORMER_URI = "http://www.mulesoft.org/schema/mule/json";
-  private static final Namespace JSON_NAMESPACE = Namespace.getNamespace(JSON_TRANSFORMER_PREFIX, JSON_TRANSFORMER_URI);
   private static final String BYTE_ARRAY_TRANSFORMER_NAME = "byte-array-to-object-transformer";
 
   @Override
@@ -38,7 +35,6 @@ public class ForEachScope extends AbstractApplicationModelMigrationStep {
 
   public ForEachScope() {
     this.setAppliedTo(XPATH_SELECTOR);
-    this.setNamespacesContributions(newArrayList(JSON_NAMESPACE));
   }
 
   @Override

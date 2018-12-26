@@ -26,7 +26,8 @@ import java.util.Optional;
  */
 public class VmOutboundEndpoint extends AbstractVmEndpoint {
 
-  public static final String XPATH_SELECTOR = "//vm:outbound-endpoint";
+  public static final String XPATH_SELECTOR =
+      "//*[namespace-uri()='" + VM_NAMESPACE_URI + "' and local-name()='outbound-endpoint']";
 
   @Override
   public String getDescription() {

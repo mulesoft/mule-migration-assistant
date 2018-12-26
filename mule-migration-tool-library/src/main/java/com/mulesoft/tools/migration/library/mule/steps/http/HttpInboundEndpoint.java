@@ -9,6 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.addAttributesToInboundProperties;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.compatibilityHeaders;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.handleReferencedResponseBuilder;
@@ -50,7 +51,8 @@ import java.util.function.Supplier;
 public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow/http:inbound-endpoint[1]";
+  public static final String XPATH_SELECTOR =
+      "/*/mule:flow/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='inbound-endpoint'][1]";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -73,13 +75,12 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     String flowName = getFlow(object).getAttributeValue("name");
-    String configName = object.getAttribute("connector-ref") != null ? object.getAttributeValue("connector-ref")
-        : ((object.getAttribute("name") != null
-            ? object.getAttributeValue("name")
-            : (object.getAttribute("ref") != null
-                ? object.getAttributeValue("ref")
-                : flowName)).replaceAll("\\\\", "_")
-            + "ListenerConfig");
+    String configName = ((object.getAttribute("name") != null
+        ? object.getAttributeValue("name")
+        : (object.getAttribute("ref") != null
+            ? object.getAttributeValue("ref")
+            : flowName)).replaceAll("\\\\", "_")
+        + "ListenerConfig");
 
     processAddress(object, report).ifPresent(address -> {
       extractListenerConfig(getApplicationModel(), object, () -> getConnector(object.getAttributeValue("connector-ref")),
@@ -127,7 +128,8 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     }
 
     getApplicationModel()
-        .getNodes("/*/mule:flow[@name='" + flowName + "']/http:response-builder")
+        .getNodes("/*/mule:flow[@name='" + flowName + "']/*[namespace-uri()='" + HTTP_NAMESPACE_URI
+            + "' and local-name()='response-builder']")
         .forEach(rb -> {
           handleReferencedResponseBuilder(rb, getApplicationModel(), HTTP_NAMESPACE);
           Element response = getResponse(object, HTTP_NAMESPACE);
@@ -148,7 +150,8 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
         });
 
     getApplicationModel()
-        .getNodes("/*/mule:flow[@name='" + flowName + "']/http:error-response-builder")
+        .getNodes("/*/mule:flow[@name='" + flowName + "']/*[namespace-uri()='" + HTTP_NAMESPACE_URI
+            + "' and local-name()='error-response-builder']")
         .forEach(rb -> {
           handleReferencedResponseBuilder(rb, getApplicationModel(), HTTP_NAMESPACE);
           Element errorResponse = getErrorResponse(object, HTTP_NAMESPACE);
@@ -250,7 +253,9 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
                                            final Namespace httpNamespace,
                                            String configName, String host, String port) {
     Optional<Element> existingListener =
-        appModel.getNodeOptional("/*/http:listener-config/http:listener-connection[@host = '" + host
+        appModel.getNodeOptional("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI
+            + "' and local-name()='listener-config']/*[namespace-uri()='" + HTTP_NAMESPACE_URI
+            + "' and local-name()='listener-connection' and @host = '" + host
             + "' and @port = '" + port + "']");
 
     if (existingListener.isPresent()) {
@@ -297,11 +302,13 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/*/http:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI
+        + "' and local-name()='connector' and @name = '" + connectorName + "']");
   }
 
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/*/http:connector");
+    return getApplicationModel()
+        .getNodeOptional("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='connector']");
   }
 
   private void handleResponseBuilder(Element listenerSource, Element listenerResponse, Element responseBuilder,

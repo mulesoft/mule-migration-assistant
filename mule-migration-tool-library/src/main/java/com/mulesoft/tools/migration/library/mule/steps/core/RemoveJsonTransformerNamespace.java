@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.library.mule.steps.json.JsonMigrationStep.JSON_NAMESPACE;
+
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -19,9 +21,8 @@ import com.mulesoft.tools.migration.step.category.NamespaceContribution;
  */
 public class RemoveJsonTransformerNamespace implements NamespaceContribution {
 
-  private static final String JSON_TRANSFORMER_XPRESSION = "//*[local-name()='json-to-object-transformer']";
-  private static final String JSON_TRANSFORMER_NAME = "json";
-  private static final String JSON_TRANSFORMER_URI = "http://www.mulesoft.org/schema/mule/json";
+  private static final String JSON_TRANSFORMER_XPRESSION =
+      "//*[namespace-uri()='" + JSON_NAMESPACE.getURI() + "' and local-name()='json-to-object-transformer']";
   private static final String JSON_TRANSFORMER_SCHEMA = "http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd";
 
   @Override
@@ -33,7 +34,7 @@ public class RemoveJsonTransformerNamespace implements NamespaceContribution {
   public void execute(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
     try {
       if (applicationModel.getNodes(JSON_TRANSFORMER_XPRESSION).isEmpty()) {
-        applicationModel.removeNameSpace(JSON_TRANSFORMER_NAME, JSON_TRANSFORMER_URI, JSON_TRANSFORMER_SCHEMA);
+        applicationModel.removeNameSpace(JSON_NAMESPACE.getPrefix(), JSON_NAMESPACE.getURI(), JSON_TRANSFORMER_SCHEMA);
       }
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());

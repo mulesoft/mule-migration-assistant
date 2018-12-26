@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.file;
 
+import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE_URI;
+
 import com.mulesoft.tools.migration.step.AbstractGlobalEndpointMigratorStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -20,7 +22,7 @@ import org.jdom2.Namespace;
  */
 public class FileGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
-  public static final String XPATH_SELECTOR = "/*/file:endpoint";
+  public static final String XPATH_SELECTOR = "/*/*[namespace-uri()='" + FILE_NAMESPACE_URI + "' and local-name()='endpoint']";
 
   @Override
   public String getDescription() {

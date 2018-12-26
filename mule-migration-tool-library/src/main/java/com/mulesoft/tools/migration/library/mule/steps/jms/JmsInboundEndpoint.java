@@ -31,7 +31,8 @@ import java.util.Optional;
  */
 public class JmsInboundEndpoint extends AbstractJmsEndpoint {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow/jms:inbound-endpoint";
+  public static final String XPATH_SELECTOR =
+      "/*/mule:flow/*[namespace-uri()='" + JMS_NAMESPACE_URI + "' and local-name()='inbound-endpoint']";
 
   @Override
   public String getDescription() {
@@ -132,7 +133,9 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
         object.setAttribute("numberOfConsumers", m3c.getAttributeValue("numberOfConsumers"));
       }
 
-      handleConnectorChildElements(m3c, getApplicationModel().getNode("*/jms:config[@name='" + configName + "']"),
+      handleConnectorChildElements(m3c,
+                                   getApplicationModel().getNode("*/*[namespace-uri()='" + JMS_NAMESPACE_URI
+                                       + "' and local-name()='config' and @name='" + configName + "']"),
                                    new Element("connection", CORE_NAMESPACE), report);
     });
 

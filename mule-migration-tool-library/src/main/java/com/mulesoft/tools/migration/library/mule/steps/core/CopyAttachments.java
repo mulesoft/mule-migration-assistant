@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -21,7 +22,7 @@ import org.jdom2.Element;
  */
 public class CopyAttachments extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='copy-attachments']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("copy-attachments");
 
   @Override
   public String getDescription() {

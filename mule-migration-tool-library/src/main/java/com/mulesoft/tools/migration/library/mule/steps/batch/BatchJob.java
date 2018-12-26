@@ -32,7 +32,7 @@ public class BatchJob extends AbstractApplicationModelMigrationStep implements E
   public static final String BATCH_NAMESPACE_PREFIX = "batch";
   public static final String BATCH_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/batch";
   private static final Namespace BATCH_NAMESPACE = Namespace.getNamespace(BATCH_NAMESPACE_PREFIX, BATCH_NAMESPACE_URI);
-  public static final String XPATH_SELECTOR = "/*/batch:job";
+  public static final String XPATH_SELECTOR = "/*/*[namespace-uri()='" + BATCH_NAMESPACE_URI + "' and local-name()='job']";
 
   private ExpressionMigrator expressionMigrator;
 

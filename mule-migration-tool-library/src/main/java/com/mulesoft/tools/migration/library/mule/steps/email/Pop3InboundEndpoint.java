@@ -32,7 +32,8 @@ import java.util.OptionalInt;
  */
 public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow/pop3:inbound-endpoint[1]";
+  public static final String XPATH_SELECTOR =
+      "/*/mule:flow/*[namespace-uri()='" + POP3_NAMESPACE_URI + "' and local-name()='inbound-endpoint'][1]";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -124,7 +125,8 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
 
   @Override
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/*/pop3:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/*[namespace-uri()='" + POP3_NAMESPACE_URI
+        + "' and local-name()='connector' and @name = '" + connectorName + "']");
   }
 
   protected Element getConnection(Element m4Config) {
@@ -133,7 +135,8 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
 
   @Override
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/*/pop3:connector");
+    return getApplicationModel()
+        .getNodeOptional("/*/*[namespace-uri()='" + POP3_NAMESPACE_URI + "' and local-name()='connector']");
   }
 
   public Element migratePop3Config(Element object, MigrationReport report, Optional<Element> connector) {

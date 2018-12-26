@@ -10,7 +10,6 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIf
 import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -25,9 +24,8 @@ import java.util.Optional;
  */
 public class Pop3sInboundEndpoint extends Pop3InboundEndpoint {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow/pop3s:inbound-endpoint[1]";
-
-  private ExpressionMigrator expressionMigrator;
+  public static final String XPATH_SELECTOR =
+      "/*/mule:flow/*[namespace-uri()='" + POP3S_NAMESPACE_URI + "' and local-name()='inbound-endpoint'][1]";
 
   @Override
   public String getDescription() {
@@ -111,11 +109,13 @@ public class Pop3sInboundEndpoint extends Pop3InboundEndpoint {
 
   @Override
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/*/pop3s:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/*[namespace-uri()='" + POP3S_NAMESPACE_URI
+        + "' and local-name()='connector and @name = '" + connectorName + "']");
   }
 
   @Override
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/*/pop3s:connector");
+    return getApplicationModel()
+        .getNodeOptional("/*/*[namespace-uri()='" + POP3S_NAMESPACE_URI + "' and local-name()='connector']");
   }
 }

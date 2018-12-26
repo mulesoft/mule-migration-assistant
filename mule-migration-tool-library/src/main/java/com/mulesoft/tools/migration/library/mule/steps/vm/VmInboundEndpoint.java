@@ -33,7 +33,8 @@ import java.util.Optional;
  */
 public class VmInboundEndpoint extends AbstractVmEndpoint {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow/vm:inbound-endpoint";
+  public static final String XPATH_SELECTOR =
+      "/*/mule:flow/*[namespace-uri()='" + VM_NAMESPACE_URI + "' and local-name()='inbound-endpoint']";
 
   @Override
   public String getDescription() {

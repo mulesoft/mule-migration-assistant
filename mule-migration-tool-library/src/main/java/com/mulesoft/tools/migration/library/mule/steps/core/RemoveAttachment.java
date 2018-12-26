@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
@@ -25,7 +26,7 @@ import org.jdom2.Element;
  */
 public class RemoveAttachment extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='remove-attachment']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("remove-attachment");
 
   @Override
   public String getDescription() {

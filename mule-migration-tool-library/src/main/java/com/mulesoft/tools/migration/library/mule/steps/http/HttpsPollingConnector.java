@@ -7,6 +7,8 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint.migrate;
 import static java.util.Optional.of;
 
@@ -22,9 +24,8 @@ import org.jdom2.Element;
  */
 public class HttpsPollingConnector extends HttpPollingConnector {
 
-  private static final String HTTP_NS_PREFIX = "http";
-  private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
-  public static final String XPATH_SELECTOR = "/*/https:polling-connector";
+  public static final String XPATH_SELECTOR =
+      "/*/*[namespace-uri()='" + HTTPS_NAMESPACE_URI + "' and local-name()='polling-connector']";
 
   @Override
   public String getDescription() {
@@ -38,11 +39,11 @@ public class HttpsPollingConnector extends HttpPollingConnector {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     super.execute(object, report);
-    getApplicationModel().addNameSpace(HTTP_NS_PREFIX, HTTP_NS_URI,
-                                       "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
-    Element httpsRequesterConnection = getApplicationModel().getNode("/*/http:request-config[@name = '"
-        + object.getAttributeValue("name") + "Config']/http:request-connection");
+    Element httpsRequesterConnection = getApplicationModel()
+        .getNode("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='request-config' and @name = '"
+            + object.getAttributeValue("name") + "Config']/*[namespace-uri()='" + HTTP_NAMESPACE_URI
+            + "' and local-name()='request-connection']");
 
     HttpsOutboundEndpoint httpRequesterMigrator = new HttpsOutboundEndpoint();
     httpRequesterMigrator.setApplicationModel(getApplicationModel());

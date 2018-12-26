@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
@@ -19,7 +21,7 @@ import org.jdom2.Element;
  */
 public class RegexFilter extends AbstractFilterMigrator {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='regex-filter']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("regex-filter");
 
   @Override
   public String getDescription() {

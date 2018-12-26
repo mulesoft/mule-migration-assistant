@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.file;
 
+import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE_URI;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -23,7 +25,8 @@ public class FileTransformers extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
   public static final String XPATH_SELECTOR =
-      "//file:*[local-name()='file-to-string-transformer' or local-name()='file-to-byte-array-transformer']";
+      "//*[namespace-uri()='" + FILE_NAMESPACE_URI
+          + "' and (local-name()='file-to-string-transformer' or local-name()='file-to-byte-array-transformer')]";
 
   private ExpressionMigrator expressionMigrator;
 

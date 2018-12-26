@@ -2,16 +2,16 @@
 
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:httpn="http://www.mulesoft.org/schema/mule/http"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <http:listener-config name="httpConf" host="localhost" port="${httpPort}"/>
+    <httpn:listener-config name="httpConf" host="localhost" port="${httpPort}"/>
 
-    <http:request-config name="requesterConfig" protocol="HTTPS" host="httpbin.org" port="443"/>
+    <httpn:request-config name="requesterConfig" protocol="HTTPS" host="httpbin.org" port="443"/>
 
     <flow name="listenerContentType" >
-        <http:listener config-ref="httpConf" path="testInput"/>
+        <httpn:listener config-ref="httpConf" path="testInput"/>
 
         <copy-properties propertyName="*" />
         <remove-property propertyName="http.*" />
@@ -19,7 +19,7 @@
 
         <set-property propertyName="X-Forwarded-For" value="#[message.inboundProperties['http.remote.address']]" />
         
-        <http:request config-ref="requesterConfig" path="/get" method="GET"/>
+        <httpn:request config-ref="requesterConfig" path="/get" method="GET"/>
 
         <copy-properties propertyName="*" />
         <remove-property propertyName="http.*" />

@@ -29,11 +29,12 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
   private static final Namespace TCP_NAMESPACE = Namespace.getNamespace(TCP_NAMESPACE_PREFIX, TCP_NAMESPACE_URI);
 
   public static final String XPATH_SELECTOR = ""
-      + "/*/http:*["
+      + "/*/*["
+      + "namespace-uri()='" + HTTP_NAMESPACE_URI + "' and ("
       + " local-name()='request-config' or"
       + " local-name()='proxy' or"
       + " local-name()='ntlm-proxy'"
-      + "]";
+      + ")]";
 
   @Override
   public String getDescription() {

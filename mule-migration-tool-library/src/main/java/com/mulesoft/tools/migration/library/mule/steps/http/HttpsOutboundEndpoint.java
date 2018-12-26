@@ -7,6 +7,8 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.TLS_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 
@@ -25,9 +27,8 @@ import java.util.Optional;
  */
 public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
 
-  private static final String HTTP_NS_PREFIX = "http";
-  private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
-  public static final String XPATH_SELECTOR = "//https:outbound-endpoint";
+  public static final String XPATH_SELECTOR =
+      "//*[namespace-uri()='" + HTTPS_NAMESPACE_URI + "' and local-name()='outbound-endpoint']";
 
   @Override
   public String getDescription() {
@@ -48,11 +49,11 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
     }
 
     super.execute(object, report);
-    getApplicationModel().addNameSpace(HTTP_NS_PREFIX, HTTP_NS_URI,
-                                       "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
-    Element httpsRequesterConnection = getApplicationModel().getNode("/*/http:request-config[@name = '"
-        + object.getAttributeValue("config-ref") + "']/http:request-connection");
+    Element httpsRequesterConnection = getApplicationModel()
+        .getNode("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='request-config' and @name = '"
+            + object.getAttributeValue("config-ref") + "']/*[namespace-uri()='" + HTTP_NAMESPACE_URI
+            + "' and local-name()='request-connection']");
 
     migrate(httpsRequesterConnection, httpsConnector, report, getApplicationModel(), "tls-client");
   }
@@ -104,12 +105,14 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
 
   @Override
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/*/https:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/*[namespace-uri()='" + HTTPS_NAMESPACE_URI
+        + "' and local-name()='connector' and @name = '" + connectorName + "']");
   }
 
   @Override
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/*/https:connector");
+    return getApplicationModel()
+        .getNodeOptional("/*/*[namespace-uri()='" + HTTPS_NAMESPACE_URI + "' and local-name()='connector']");
   }
 
 }

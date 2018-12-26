@@ -105,11 +105,12 @@ public abstract class AbstractVmEndpoint extends AbstractApplicationModelMigrati
   }
 
   protected static Element getConnector(String connectorName, ApplicationModel appModel) {
-    return appModel.getNode("/*/vm:connector[@name = '" + connectorName + "']");
+    return appModel.getNode("/*/*[namespace-uri()='" + VM_NAMESPACE_URI + "' and local-name()='connector' and @name = '"
+        + connectorName + "']");
   }
 
   protected static Optional<Element> getDefaultConnector(ApplicationModel appModel) {
-    return appModel.getNodeOptional("/*/vm:connector");
+    return appModel.getNodeOptional("/*/*[namespace-uri()='" + VM_NAMESPACE_URI + "' and local-name()='connector']");
   }
 
   public static String getVmConfigName(Element object, Optional<Element> connector) {
@@ -124,7 +125,8 @@ public abstract class AbstractVmEndpoint extends AbstractApplicationModelMigrati
 
   public static Element migrateVmConfig(Element object, Optional<Element> connector, String configName,
                                         ApplicationModel appModel) {
-    Optional<Element> config = appModel.getNodeOptional("*/vm:config[@name='" + configName + "']");
+    Optional<Element> config = appModel.getNodeOptional("*/*[namespace-uri()='" + VM_NAMESPACE_URI
+        + "' and local-name()='config' and @name='" + configName + "']");
     Element vmConfig = config.orElseGet(() -> {
       Element vmCfg = new Element("config", VM_NAMESPACE);
       vmCfg.setAttribute("name", configName);

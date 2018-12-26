@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -20,7 +22,7 @@ import org.jdom2.Element;
 public class HttpMuleConfig extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR =
-      "/*/mule:configuration/http:config";
+      "/*/mule:configuration/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='config']";
 
   @Override
   public String getDescription() {

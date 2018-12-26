@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -21,7 +22,7 @@ import org.jdom2.Namespace;
  */
 public class FilterReference extends AbstractFilterMigrator {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='filter' and @ref]";
+  public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + CORE_NS_URI + "' and local-name()='filter' and @ref]";
 
   @Override
   public String getDescription() {

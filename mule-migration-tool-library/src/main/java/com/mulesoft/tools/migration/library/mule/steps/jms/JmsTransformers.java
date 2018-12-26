@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.jms;
 
+import static com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEndpoint.JMS_NAMESPACE_URI;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -23,8 +25,8 @@ public class JmsTransformers extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
   public static final String XPATH_SELECTOR =
-      "//jms:*[local-name()='jmsmessage-to-object-transformer' or "
-          + "local-name()='object-to-jmsmessage-transformer']";
+      "//*[namespace-uri()='" + JMS_NAMESPACE_URI + "' and (local-name()='jmsmessage-to-object-transformer' or "
+          + "local-name()='object-to-jmsmessage-transformer')]";
 
   private ExpressionMigrator expressionMigrator;
 

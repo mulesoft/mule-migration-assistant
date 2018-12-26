@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
+import static java.util.Arrays.asList;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -19,7 +20,8 @@ import org.jdom2.Element;
  */
 public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationStep {
 
-  public static final String XPATH_SELECTOR = "/*/http:listener-config";
+  public static final String XPATH_SELECTOR =
+      "/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='listener-config']";
 
   @Override
   public String getDescription() {
@@ -28,6 +30,7 @@ public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationS
 
   public HttpConnectorListenerConfig() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(asList(HTTP_NAMESPACE));
   }
 
   @Override

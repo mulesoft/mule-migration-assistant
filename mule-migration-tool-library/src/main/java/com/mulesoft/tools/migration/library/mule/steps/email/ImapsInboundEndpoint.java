@@ -24,7 +24,8 @@ import java.util.Optional;
  */
 public class ImapsInboundEndpoint extends ImapInboundEndpoint {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow/imaps:inbound-endpoint[1]";
+  public static final String XPATH_SELECTOR =
+      "/*/mule:flow/*[namespace-uri()='" + IMAPS_NAMESPACE_URI + "' and local-name()='inbound-endpoint'][1]";
 
   @Override
   public String getDescription() {
@@ -108,12 +109,14 @@ public class ImapsInboundEndpoint extends ImapInboundEndpoint {
 
   @Override
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/*/imaps:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/*[namespace-uri()='" + IMAPS_NAMESPACE_URI
+        + "' and local-name()='connector' and @name = '" + connectorName + "']");
   }
 
   @Override
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/*/imaps:connector");
+    return getApplicationModel()
+        .getNodeOptional("/*/*[namespace-uri()='" + IMAPS_NAMESPACE_URI + "' and local-name()='connector']");
   }
 
 }

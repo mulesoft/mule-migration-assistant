@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.VALIDATION_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.addValidationNamespace;
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationPomContribution.addValidationDependency;
@@ -29,13 +30,13 @@ public class HttpTransformers extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
   public static final String XPATH_SELECTOR =
-      "//http:*[local-name()='body-to-parameter-map-transformer' or "
+      "//*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and (local-name()='body-to-parameter-map-transformer' or "
           + "local-name()='request-wildcard-filter' or "
           + "local-name()='http-response-to-object-transformer' or "
           + "local-name()='http-response-to-string-transformer' or "
           + "local-name()='object-to-http-request-transformer' or "
           + "local-name()='message-to-http-response-transformer' or "
-          + "local-name()='body-to-parameter-map-transformer']";
+          + "local-name()='body-to-parameter-map-transformer')]";
 
   private ExpressionMigrator expressionMigrator;
 

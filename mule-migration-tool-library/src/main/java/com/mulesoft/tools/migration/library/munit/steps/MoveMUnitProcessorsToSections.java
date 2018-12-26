@@ -6,6 +6,9 @@
  */
 package com.mulesoft.tools.migration.library.munit.steps;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getXPathSelector;
+
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -16,8 +19,6 @@ import org.jdom2.Namespace;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * This steps migrates the MUnit 1.x assert-true
@@ -33,7 +34,7 @@ public class MoveMUnitProcessorsToSections extends AbstractApplicationModelMigra
   private static final Namespace MUNIT_NS = Namespace.getNamespace(MUNIT_NS_PREFIX, MUNIT_NS_URI);
 
   private static String[] sections = new String[] {"munit:behavior", "munit:execution", "munit:validation"};
-  public static final String XPATH_SELECTOR = "//*[local-name()='test']";
+  private static final String XPATH_SELECTOR = getXPathSelector("http://www.mulesoft.org/schema/mule/munit", "test", true);
 
   @Override
   public String getDescription() {

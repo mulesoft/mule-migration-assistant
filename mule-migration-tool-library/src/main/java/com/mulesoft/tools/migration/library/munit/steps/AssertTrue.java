@@ -9,11 +9,11 @@ package com.mulesoft.tools.migration.library.munit.steps;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.addAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getXPathSelector;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -24,7 +24,7 @@ import org.jdom2.Element;
  */
 public class AssertTrue extends AbstractAssertionMigration {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='assert-true']";
+  private static final String XPATH_SELECTOR = getXPathSelector("http://www.mulesoft.org/schema/mule/munit", "assert-true");
 
   @Override
   public String getDescription() {

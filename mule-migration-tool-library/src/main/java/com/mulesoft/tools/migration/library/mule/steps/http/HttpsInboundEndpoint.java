@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.TLS_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
@@ -28,8 +29,6 @@ import java.util.Optional;
  */
 public class HttpsInboundEndpoint extends HttpInboundEndpoint {
 
-  private static final String HTTP_NS_PREFIX = "http";
-  private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
   public static final String XPATH_SELECTOR =
       "/*/mule:flow/*[namespace-uri() = '" + HTTPS_NAMESPACE_URI + "' and local-name() = 'inbound-endpoint' and position() = 1]";
 
@@ -58,17 +57,14 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
 
     super.execute(object, report);
 
-    getApplicationModel().addNameSpace(HTTP_NS_PREFIX, HTTP_NS_URI,
-                                       "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
-
     handleHttpsListenerConfig(getApplicationModel(), object, report, httpsConnector);
   }
 
   public static void handleHttpsListenerConfig(ApplicationModel appModel, Element object, MigrationReport report,
                                                Element httpsConnector) {
     Element httpsListenerConnection =
-        appModel.getNode("/*/*[namespace-uri() = '" + HTTP_NS_URI + "' and local-name() = 'listener-config' and @name = '"
-            + object.getAttributeValue("config-ref") + "']/*[namespace-uri() = '" + HTTP_NS_URI
+        appModel.getNode("/*/*[namespace-uri() = '" + HTTP_NAMESPACE_URI + "' and local-name() = 'listener-config' and @name = '"
+            + object.getAttributeValue("config-ref") + "']/*[namespace-uri() = '" + HTTP_NAMESPACE_URI
             + "' and local-name() = 'listener-connection']");
 
     httpsListenerConnection.setAttribute("protocol", "HTTPS");
@@ -117,12 +113,14 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
 
   @Override
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/*/https:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/*[namespace-uri()='" + HTTPS_NAMESPACE_URI
+        + "' and local-name()='connector' and @name = '" + connectorName + "']");
   }
 
   @Override
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/*/https:connector");
+    return getApplicationModel()
+        .getNodeOptional("/*/*[namespace-uri()='" + HTTPS_NAMESPACE_URI + "' and local-name()='connector']");
   }
 
 }

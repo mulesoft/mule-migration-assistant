@@ -26,7 +26,7 @@ import org.jdom2.Element;
  */
 public class ScriptingFilterMigration extends ScriptingModuleMigration {
 
-  public static final String XPATH_SELECTOR = "//scripting:*[local-name()='filter']";
+  public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + SCRIPT_NAMESPACE_URI + "' and local-name()='filter']";
 
   public ScriptingFilterMigration() {
     this.setAppliedTo(XPATH_SELECTOR);

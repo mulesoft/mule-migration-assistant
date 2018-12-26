@@ -6,9 +6,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.wsc;
 
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.TLS_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint.handleConnector;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint.migrate;
+import static com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer.WS_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
@@ -33,7 +37,8 @@ import java.util.List;
  */
 public class WsConsumerConfig extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "/*/ws:consumer-config";
+  public static final String XPATH_SELECTOR =
+      "/*/*[namespace-uri()='" + WS_NAMESPACE_URI + "' and local-name()='consumer-config']";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -102,11 +107,13 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
 
       connection.setAttribute("address", address);
 
-      Element connector = getApplicationModel().getNode("/*/http:connector[@name='" + transportConnectorName + "']");
+      Element connector = getApplicationModel().getNode("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI
+          + "' and local-name()='connector' and @name='" + transportConnectorName + "']");
       if (connector != null) {
         handleConnector(connector, requestConnection, report, wscNamespace, getApplicationModel());
       } else {
-        connector = getApplicationModel().getNode("/*/https:connector[@name='" + transportConnectorName + "']");
+        connector = getApplicationModel().getNode("/*/*[namespace-uri()='" + HTTPS_NAMESPACE_URI
+            + "' and local-name()='connector' and @name='" + transportConnectorName + "']");
 
         if (connector != null) {
           handleConnector(connector, requestConnection, report, wscNamespace, getApplicationModel());
@@ -119,14 +126,15 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
               .setAttribute("requesterConfig", transportConnectorName)));
       object.removeAttribute("connector-ref");
     } else {
-      // If the protocol is not http, lookup the apropiate connector
+      // If the protocol is not http, lookup the appropriate connector
       // only https/jms transports supported
 
       String address = connection.getAttributeValue("address");
 
       processAddress(connection, report).ifPresent(a -> {
         if ("https".equals(a.getProtocol())) {
-          List<Element> connectors = getApplicationModel().getNodes("/*/https:connector");
+          List<Element> connectors =
+              getApplicationModel().getNodes("/*/*[namespace-uri()='" + HTTPS_NAMESPACE_URI + "' and local-name()='connector']");
           if (connectors.isEmpty()) {
             return;
           }
@@ -164,9 +172,9 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
 
     object.addContent(connection);
 
-    Namespace ws3Namespace = Namespace.getNamespace("ws", "http://www.mulesoft.org/schema/mule/ws");
+    Namespace ws3Namespace = Namespace.getNamespace("ws", WS_NAMESPACE_URI);
     if (object.getChild("security", ws3Namespace) != null) {
-      Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
+      Namespace tlsNamespace = Namespace.getNamespace("tls", TLS_NAMESPACE_URI);
       Element security = object.getChild("security", ws3Namespace);
 
       security.setName("web-service-security");
@@ -184,7 +192,8 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         sign.removeAttribute("tlsContext-ref");
 
         // TODO signatureKeyIdentifier?
-        Element tlsContext = getApplicationModel().getNode("/*/tls:context[@name='" + tlsContextName + "']");
+        Element tlsContext = getApplicationModel().getNode("/*/*[namespace-uri()='" + TLS_NAMESPACE_URI
+            + "' and local-name()='context' and @name='" + tlsContextName + "']");
         Element keyStoreConfig = new Element("key-store-configuration", wscNamespace);
         Element keyStore = tlsContext.getChild("key-store", tlsNamespace);
 
@@ -211,7 +220,8 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         String tlsContextName = verifySignature.getAttributeValue("tlsContext-ref");
         verifySignature.removeAttribute("tlsContext-ref");
 
-        Element tlsContext = getApplicationModel().getNode("/*/tls:context[@name='" + tlsContextName + "']");
+        Element tlsContext = getApplicationModel().getNode("/*/*[namespace-uri()='" + TLS_NAMESPACE_URI
+            + "' and local-name()='context' and @name='" + tlsContextName + "']");
         Element keyStoreConfig = new Element("trust-store-configuration", wscNamespace);
         Element trustStore = tlsContext.getChild("trust-store", tlsNamespace);
 
@@ -259,7 +269,8 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         String tlsContextName = decrypt.getAttributeValue("tlsContext-ref");
         decrypt.removeAttribute("tlsContext-ref");
 
-        Element tlsContext = getApplicationModel().getNode("/*/tls:context[@name='" + tlsContextName + "']");
+        Element tlsContext = getApplicationModel().getNode("/*/*[namespace-uri()='" + TLS_NAMESPACE_URI
+            + "' and local-name()='context' and @name='" + tlsContextName + "']");
         Element keyStoreConfig = new Element("key-store-configuration", wscNamespace);
         Element keyStore = tlsContext.getChild("key-store", tlsNamespace);
 
@@ -291,7 +302,8 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
         String tlsContextName = encrypt.getAttributeValue("tlsContext-ref");
         encrypt.removeAttribute("tlsContext-ref");
 
-        Element tlsContext = getApplicationModel().getNode("/*/tls:context[@name='" + tlsContextName + "']");
+        Element tlsContext = getApplicationModel().getNode("/*/*[namespace-uri()='" + TLS_NAMESPACE_URI
+            + "' and local-name()='context' and @name='" + tlsContextName + "']");
         Element keyStoreConfig = new Element("key-store-configuration", wscNamespace);
         Element trustStore = tlsContext.getChild("trust-store", tlsNamespace);
 

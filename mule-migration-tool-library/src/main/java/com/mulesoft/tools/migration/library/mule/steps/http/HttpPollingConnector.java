@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.addAttributesToInboundProperties;
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.VALIDATION_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.addValidationNamespace;
@@ -38,7 +39,8 @@ import java.util.List;
  */
 public class HttpPollingConnector extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "/*/http:polling-connector";
+  public static final String XPATH_SELECTOR =
+      "/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='polling-connector']";
 
   private ExpressionMigrator expressionMigrator;
 

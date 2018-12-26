@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -24,7 +25,8 @@ import org.jdom2.Element;
 public class HttpStaticResource extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "//http:static-resource-handler";
+  public static final String XPATH_SELECTOR =
+      "//*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='static-resource-handler']";
 
   private ExpressionMigrator expressionMigrator;
 

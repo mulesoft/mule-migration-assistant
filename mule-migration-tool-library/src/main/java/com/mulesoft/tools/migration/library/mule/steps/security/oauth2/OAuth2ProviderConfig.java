@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.security.oauth2;
 
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpInboundEndpoint.extractListenerConfig;
@@ -298,8 +299,11 @@ public class OAuth2ProviderConfig extends AbstractApplicationModelMigrationStep 
   }
 
   protected Element getHttpConnector(String connectorName) {
-    return getApplicationModel().getNodeOptional("/*/http:connector[@name = '" + connectorName + "']")
-        .orElse(getApplicationModel().getNode("/*/https:connector[@name = '" + connectorName + "']"));
+    return getApplicationModel()
+        .getNodeOptional("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='connector' and @name = '"
+            + connectorName + "']")
+        .orElse(getApplicationModel().getNode("/*/*[namespace-uri()='" + HTTPS_NAMESPACE_URI
+            + "' and local-name()='connector' and @name = '" + connectorName + "']"));
   }
 
 }

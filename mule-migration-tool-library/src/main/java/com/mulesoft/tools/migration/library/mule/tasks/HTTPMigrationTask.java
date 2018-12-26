@@ -21,6 +21,7 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequest
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorUriParams;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpGlobalEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.http.HttpNamespaceContribution;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpPollingConnector;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpStaticResource;
@@ -61,6 +62,7 @@ public class HTTPMigrationTask extends AbstractMigrationTask {
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new HttpConnectorPomContribution(),
+                        new HttpNamespaceContribution(),
                         // Connector, introduced in Mule 3.6
                         new HttpConnectorListenerConfig(),
                         new HttpConnectorRequestConfig(),

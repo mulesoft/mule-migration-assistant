@@ -6,17 +6,19 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.VALIDATION_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.addValidationNamespace;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.VALIDATION_NAMESPACE;
-import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.addValidationNamespace;
 
 /**
  * Migrate First Successful
@@ -27,7 +29,8 @@ import static com.mulesoft.tools.migration.library.mule.steps.validation.Validat
 public class FirstSuccessful extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "//mule:*[local-name()='first-successful']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("first-successful");
+
   private ExpressionMigrator expressionMigrator;
 
   @Override

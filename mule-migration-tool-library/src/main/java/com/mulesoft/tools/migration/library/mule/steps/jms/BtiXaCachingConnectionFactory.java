@@ -25,7 +25,7 @@ public class BtiXaCachingConnectionFactory extends AbstractApplicationModelMigra
   }
 
   public BtiXaCachingConnectionFactory() {
-    this.setAppliedTo("/*/bti:xa-caching-connection-factory");
+    this.setAppliedTo("/*/*[namespace-uri() = 'http://www.mulesoft.org/schema/mule/ee/bti' and local-name() = 'xa-caching-connection-factory']");
   }
 
   @Override

@@ -32,11 +32,11 @@ import java.util.Map;
  */
 public class ScriptingModuleMigration extends AbstractApplicationModelMigrationStep {
 
-  private static final String SCRIPT_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/scripting";
+  protected static final String SCRIPT_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/scripting";
   private static final String SCRIPT_NAMESPACE_PREFIX = "scripting";
   protected static final Namespace SCRIPT_NAMESPACE = Namespace.getNamespace(SCRIPT_NAMESPACE_PREFIX, SCRIPT_NAMESPACE_URI);
 
-  public static final String XPATH_SELECTOR = "//scripting:*[local-name()='component']";
+  public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + SCRIPT_NAMESPACE_URI + "' and local-name()='component']";
 
   public ScriptingModuleMigration() {
     this.setAppliedTo(XPATH_SELECTOR);

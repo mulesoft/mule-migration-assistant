@@ -13,7 +13,6 @@ import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrate XML to JSON transformer
@@ -21,9 +20,8 @@ import org.jdom2.Namespace;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class XmlToJsonTransformer extends AbstractApplicationModelMigrationStep {
+public class XmlToJsonTransformer extends AbstractApplicationModelMigrationStep implements JsonMigrationStep {
 
-  private static final String JSON_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/json";
   public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + JSON_NAMESPACE_URI + "'"
       + " and local-name()='xml-to-json-transformer']";
 
@@ -34,7 +32,7 @@ public class XmlToJsonTransformer extends AbstractApplicationModelMigrationStep 
 
   public XmlToJsonTransformer() {
     this.setAppliedTo(XPATH_SELECTOR);
-    this.setNamespacesContributions(newArrayList(Namespace.getNamespace("json", JSON_NAMESPACE_URI)));
+    this.setNamespacesContributions(newArrayList(JSON_NAMESPACE));
   }
 
   @Override

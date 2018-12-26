@@ -10,6 +10,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -30,7 +31,7 @@ import java.util.List;
  */
 public class MessagePropertiesTransformer extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "//*[local-name()='message-properties-transformer']";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("message-properties-transformer");
   private ExpressionMigrator expressionMigrator;
 
   @Override

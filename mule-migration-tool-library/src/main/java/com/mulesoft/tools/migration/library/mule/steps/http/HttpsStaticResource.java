@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE_URI;
+
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 
 /**
@@ -17,7 +19,8 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 public class HttpsStaticResource extends HttpStaticResource
     implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "//https:static-resource-handler";
+  public static final String XPATH_SELECTOR =
+      "//*[namespace-uri()='" + HTTPS_NAMESPACE_URI + "' and local-name()='static-resource-handler']";
 
   @Override
   public String getDescription() {

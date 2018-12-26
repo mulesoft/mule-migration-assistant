@@ -6,8 +6,12 @@
  */
 package com.mulesoft.tools.migration.library.munit.steps;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -22,7 +26,7 @@ import java.io.File;
 public class RemoveImport extends AbstractApplicationModelMigrationStep {
 
   private static final String MUNIT_PATH = "src" + File.separator + "test" + File.separator + "munit";
-  private static final String XPATH_SELECTOR = "//*[local-name()='import']";
+  private static final String XPATH_SELECTOR = getCoreXPathSelector("import");
 
   @Override
   public String getDescription() {
