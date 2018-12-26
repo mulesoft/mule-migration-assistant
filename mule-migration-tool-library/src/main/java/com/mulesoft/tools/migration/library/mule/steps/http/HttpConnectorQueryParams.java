@@ -21,7 +21,8 @@ import org.jdom2.Element;
 public class HttpConnectorQueryParams extends AbstractHttpConnectorMigrationStep {
 
   public static final String XPATH_SELECTOR =
-      "//http:*[local-name()='query-param' or (local-name()='query-params' and normalize-space(text())='')]";
+      "//*[namespace-uri()='" + HTTP_NAMESPACE_URI
+          + "' and (local-name()='query-param' or (local-name()='query-params' and normalize-space(text())=''))]";
 
   @Override
   public String getDescription() {

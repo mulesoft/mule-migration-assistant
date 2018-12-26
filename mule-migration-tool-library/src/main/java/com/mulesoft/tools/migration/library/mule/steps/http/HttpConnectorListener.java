@@ -37,7 +37,8 @@ import java.util.Map;
  */
 public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow/http:listener";
+  public static final String XPATH_SELECTOR =
+      "/*/mule:flow/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='listener']";
 
   @Override
   public String getDescription() {
@@ -198,7 +199,8 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
       object.removeContent(builderRef);
 
       Element builder =
-          appModel.getNode("/*/http:response-builder[@name='" + builderRef.getAttributeValue("ref") + "']");
+          appModel.getNode("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='response-builder' and @name='"
+              + builderRef.getAttributeValue("ref") + "']");
 
       handleReferencedResponseBuilder(builder, appModel, httpNamespace);
       List<Element> builderContent = ImmutableList.copyOf(builder.getChildren()).asList();

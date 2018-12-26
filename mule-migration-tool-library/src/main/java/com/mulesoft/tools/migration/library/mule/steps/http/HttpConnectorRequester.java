@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
 
-  public static final String XPATH_SELECTOR = "//http:request";
+  public static final String XPATH_SELECTOR = "//*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='request']";
 
   @Override
   public String getDescription() {
@@ -227,7 +227,9 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
       object.removeContent(builderRef);
 
       Element builder =
-          getApplicationModel().getNode("/*/http:request-builder[@name='" + builderRef.getAttributeValue("ref") + "']");
+          getApplicationModel()
+              .getNode("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='request-builder' and @name='"
+                  + builderRef.getAttributeValue("ref") + "']");
 
       handleReferencedRequestBuilder(builder, httpNamespace);
       List<Element> builderContent = ImmutableList.copyOf(builder.getChildren()).asList();

@@ -46,7 +46,8 @@ import java.util.Optional;
 public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "//http:outbound-endpoint";
+  public static final String XPATH_SELECTOR =
+      "//*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='outbound-endpoint']";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -75,7 +76,8 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
         + "RequestConfig";
 
     Optional<Element> nodeOptional = getApplicationModel()
-        .getNodeOptional("/*/http:request-config[@name='" + configName + "']/http:request-connection");
+        .getNodeOptional("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='request-config' and @name='"
+            + configName + "']/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='request-connection']");
 
     if (nodeOptional.isPresent()) {
       // If there are multiple outbound endpoints in a flow, generate a config for each one, with an index appended
@@ -187,11 +189,13 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
   }
 
   protected Element getConnector(String connectorName) {
-    return getApplicationModel().getNode("/*/http:connector[@name = '" + connectorName + "']");
+    return getApplicationModel().getNode("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI
+        + "' and local-name()='connector' and @name = '" + connectorName + "']");
   }
 
   protected Optional<Element> getDefaultConnector() {
-    return getApplicationModel().getNodeOptional("/*/http:connector");
+    return getApplicationModel()
+        .getNodeOptional("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='connector']");
   }
 
   public static void handleConnector(Element connector, Element reqConnection, MigrationReport report,
@@ -325,7 +329,8 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
       object.removeContent(builderRef);
 
       Element builder =
-          getApplicationModel().getNode("/*/http:request-builder[@name='" + builderRef.getAttributeValue("ref") + "']");
+          getApplicationModel().getNode("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI
+              + "' and local-name()='request-builder' and @name='" + builderRef.getAttributeValue("ref") + "']");
 
       handleReferencedRequestBuilder(builder, httpNamespace);
       List<Element> builderContent = ImmutableList.copyOf(builder.getChildren()).asList();

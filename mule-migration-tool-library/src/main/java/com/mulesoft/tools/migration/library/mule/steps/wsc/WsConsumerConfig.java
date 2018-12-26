@@ -6,7 +6,9 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.wsc;
 
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTPS_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint.handleConnector;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint.migrate;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -102,11 +104,13 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
 
       connection.setAttribute("address", address);
 
-      Element connector = getApplicationModel().getNode("/*/http:connector[@name='" + transportConnectorName + "']");
+      Element connector = getApplicationModel().getNode("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI
+          + "' and local-name()='connector' and @name='" + transportConnectorName + "']");
       if (connector != null) {
         handleConnector(connector, requestConnection, report, wscNamespace, getApplicationModel());
       } else {
-        connector = getApplicationModel().getNode("/*/https:connector[@name='" + transportConnectorName + "']");
+        connector = getApplicationModel().getNode("/*/*[namespace-uri()='" + HTTPS_NAMESPACE_URI
+            + "' and local-name()='connector' and @name='" + transportConnectorName + "']");
 
         if (connector != null) {
           handleConnector(connector, requestConnection, report, wscNamespace, getApplicationModel());
@@ -126,7 +130,8 @@ public class WsConsumerConfig extends AbstractApplicationModelMigrationStep impl
 
       processAddress(connection, report).ifPresent(a -> {
         if ("https".equals(a.getProtocol())) {
-          List<Element> connectors = getApplicationModel().getNodes("/*/https:connector");
+          List<Element> connectors =
+              getApplicationModel().getNodes("/*/*[namespace-uri()='" + HTTPS_NAMESPACE_URI + "' and local-name()='connector']");
           if (connectors.isEmpty()) {
             return;
           }
