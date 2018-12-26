@@ -556,6 +556,13 @@ public class MelToDwExpressionMigratorTest {
   }
 
   @Test
+  public void migratePayloadAs1() {
+    String script = "#[message.payloadAs(String)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[write(payload) as String]"));
+  }
+
+  @Test
   public void migratePayloadAsConcatenation() {
     String script = "#['payload: ' + message.payloadAs(java.lang.String)]";
     String result = expressionMigrator.migrateExpression(script, true, null);
