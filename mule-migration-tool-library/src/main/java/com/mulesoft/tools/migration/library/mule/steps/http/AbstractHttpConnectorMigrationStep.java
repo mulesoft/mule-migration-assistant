@@ -35,7 +35,7 @@ public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplica
   public static final Namespace HTTP_NAMESPACE = getNamespace("http", HTTP_NAMESPACE_URI);
   public static final String HTTPS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/https";
   public static final Namespace HTTPS_NAMESPACE = getNamespace("https", HTTPS_NAMESPACE_URI);
-  protected static final String TLS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/tls";
+  public static final String TLS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/tls";
   protected static final String TLS_NAMESPACE_PREFIX = "tls";
   public static final Namespace TLS_NAMESPACE = getNamespace(TLS_NAMESPACE_PREFIX, TLS_NAMESPACE_URI);
 

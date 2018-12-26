@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.spring;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.mule.steps.spring.SpringBeans.SPRING_BEANS_NS_URI;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -21,7 +22,8 @@ import org.jdom2.Element;
  */
 public class SpringConfigContainingMuleConfig extends AbstractSpringMigratorStep {
 
-  public static final String XPATH_SELECTOR = "/spring:beans/mule:mule";
+  public static final String XPATH_SELECTOR =
+      "/*[namespace-uri()='" + SPRING_BEANS_NS_URI + "' and local-name()='beans']/mule:mule";
 
   @Override
   public String getDescription() {

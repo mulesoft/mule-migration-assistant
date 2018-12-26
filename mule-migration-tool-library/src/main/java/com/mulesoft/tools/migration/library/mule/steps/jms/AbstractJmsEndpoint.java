@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.XPATH_SELECTOR;
+import static com.mulesoft.tools.migration.library.mule.steps.spring.SpringBeans.SPRING_BEANS_NS_URI;
 import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.addSharedLibs;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -320,11 +321,12 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
       Element providerProperties = new Element("provider-properties", JMS_NAMESPACE);
       nameResolverBuilder.addContent(providerProperties);
 
-      appModel.getNodes("//*[@id='" + jndiProviderPropertiesRef + "']/spring:prop").forEach(prop -> {
-        providerProperties.addContent(new Element("provider-property", JMS_NAMESPACE)
-            .setAttribute("key", prop.getAttributeValue("key"))
-            .setAttribute("value", prop.getTextTrim()));
-      });
+      appModel.getNodes("//*[@id='" + jndiProviderPropertiesRef + "']/*[namespace-uri()='" + SPRING_BEANS_NS_URI
+          + "' and local-name()='prop']").forEach(prop -> {
+            providerProperties.addContent(new Element("provider-property", JMS_NAMESPACE)
+                .setAttribute("key", prop.getAttributeValue("key"))
+                .setAttribute("value", prop.getTextTrim()));
+          });
     }
   }
 

@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.os;
 
+import static com.mulesoft.tools.migration.library.mule.steps.spring.SpringBeans.SPRING_BEANS_NS_URI;
 import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
@@ -14,8 +15,8 @@ import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import org.jdom2.Attribute;
-import org.jdom2.CDATA;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -50,7 +51,8 @@ public abstract class AbstractOSMigrator extends AbstractApplicationModelMigrati
     Attribute config = element.getAttribute("config-ref");
     if (config != null) {
       config.setName("objectStore");
-      Element osBean = getApplicationModel().getNodeOptional("//spring:bean[@id = '" + config.getValue() + "']").orElse(null);
+      Element osBean = getApplicationModel().getNodeOptional("//*[namespace-uri()='" + SPRING_BEANS_NS_URI
+          + "' and local-name()='bean' and @id = '" + config.getValue() + "']").orElse(null);
       if (osBean != null) {
         osBean.detach();
         Element osConfig = new Element("object-store", NEW_OS_NAMESPACE);
