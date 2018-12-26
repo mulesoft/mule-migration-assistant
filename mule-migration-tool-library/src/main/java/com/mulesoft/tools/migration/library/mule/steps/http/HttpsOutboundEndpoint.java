@@ -27,7 +27,6 @@ import java.util.Optional;
  */
 public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
 
-  private static final String HTTP_NS_PREFIX = "http";
   public static final String XPATH_SELECTOR =
       "//*[namespace-uri()='" + HTTPS_NAMESPACE_URI + "' and local-name()='outbound-endpoint']";
 
@@ -50,8 +49,6 @@ public class HttpsOutboundEndpoint extends HttpOutboundEndpoint {
     }
 
     super.execute(object, report);
-    getApplicationModel().addNameSpace(HTTP_NS_PREFIX, HTTPS_NAMESPACE_URI,
-                                       "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
     Element httpsRequesterConnection = getApplicationModel()
         .getNode("/*/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='request-config' and @name = '"

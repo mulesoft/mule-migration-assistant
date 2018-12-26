@@ -75,13 +75,12 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
     String flowName = getFlow(object).getAttributeValue("name");
-    String configName = object.getAttribute("connector-ref") != null ? object.getAttributeValue("connector-ref")
-        : ((object.getAttribute("name") != null
-            ? object.getAttributeValue("name")
-            : (object.getAttribute("ref") != null
-                ? object.getAttributeValue("ref")
-                : flowName)).replaceAll("\\\\", "_")
-            + "ListenerConfig");
+    String configName = ((object.getAttribute("name") != null
+        ? object.getAttributeValue("name")
+        : (object.getAttribute("ref") != null
+            ? object.getAttributeValue("ref")
+            : flowName)).replaceAll("\\\\", "_")
+        + "ListenerConfig");
 
     processAddress(object, report).ifPresent(address -> {
       extractListenerConfig(getApplicationModel(), object, () -> getConnector(object.getAttributeValue("connector-ref")),

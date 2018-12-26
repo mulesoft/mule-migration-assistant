@@ -29,8 +29,6 @@ import java.util.Optional;
  */
 public class HttpsInboundEndpoint extends HttpInboundEndpoint {
 
-  private static final String HTTP_NS_PREFIX = "http";
-  private static final String HTTP_NS_URI = "http://www.mulesoft.org/schema/mule/http";
   public static final String XPATH_SELECTOR =
       "/*/mule:flow/*[namespace-uri() = '" + HTTPS_NAMESPACE_URI + "' and local-name() = 'inbound-endpoint' and position() = 1]";
 
@@ -58,9 +56,6 @@ public class HttpsInboundEndpoint extends HttpInboundEndpoint {
     }
 
     super.execute(object, report);
-
-    getApplicationModel().addNameSpace(HTTP_NS_PREFIX, HTTP_NAMESPACE_URI,
-                                       "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
     handleHttpsListenerConfig(getApplicationModel(), object, report, httpsConnector);
   }
