@@ -32,6 +32,8 @@ public abstract class AbstractVmEndpoint extends AbstractApplicationModelMigrati
 
   protected static final String VM_NAMESPACE_PREFIX = "vm";
   protected static final String VM_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/vm";
+
+  public static final String VM_SCHEMA_LOCATION = "http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd";
   public static final Namespace VM_NAMESPACE = Namespace.getNamespace(VM_NAMESPACE_PREFIX, VM_NAMESPACE_URI);
 
   private ExpressionMigrator expressionMigrator;

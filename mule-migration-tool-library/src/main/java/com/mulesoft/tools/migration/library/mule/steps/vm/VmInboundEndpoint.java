@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.vm;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
@@ -110,8 +111,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
       object.removeChild("multi-transaction", CORE_EE_NAMESPACE);
     }
 
-    getApplicationModel().addNameSpace(VM_NAMESPACE, "http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd",
-                                       object.getDocument());
+    addNameSpace(VM_NAMESPACE, VM_SCHEMA_LOCATION, object.getDocument());
 
     object.setNamespace(VM_NAMESPACE);
     object.setName("listener");
