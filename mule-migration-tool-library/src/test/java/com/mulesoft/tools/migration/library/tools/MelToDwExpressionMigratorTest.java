@@ -602,4 +602,18 @@ public class MelToDwExpressionMigratorTest {
     verify(reportMock).report(eq("expressions.methodInvocation"), eq(elementMock), eq(elementMock));
     assertThat(result, is("#[mel:MyClass.currentTimeMillis()]"));
   }
+
+  @Test
+  public void migrateToString() {
+    String script = "#[pepe.toString()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[write(pepe) as String]"));
+  }
+
+  @Test
+  public void migrateToString1() {
+    String script = "#[flowVars.pepe.toString()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[write(vars.pepe) as String]"));
+  }
 }
