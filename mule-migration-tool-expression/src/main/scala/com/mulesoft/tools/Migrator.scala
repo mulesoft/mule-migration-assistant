@@ -48,6 +48,15 @@ object Migrator {
     toDataweaveBinaryOpNode(EqOpId, variableReferenceNode, arguments.head, new DefaultMigrationMetadata(Seq()))
   }
 
+  def toAs(arguments: Seq[MelExpressionNode]): MigrationResult = {
+    if (containsString(arguments(0), "String")) {
+      val writeFunctionNode = dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier("write")), FunctionCallParametersNode(Seq(NameIdentifier("payload"))))
+      new MigrationResult(dw.operators.BinaryOpNode(AsOpId, writeFunctionNode, VariableReferenceNode("String")), DefaultMigrationMetadata(Seq()))
+    } else {
+      new MigrationResult(toDataweaveNameIdentifierNode("$").dwAstNode, DefaultMigrationMetadata(Seq(NonMigratable("expressions.methodInvocation"))))
+    }
+  }
+
   private def toDataweaveMethodInvocation(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) = {
     val name = canonicalName.name
     val lastDot = name.lastIndexOf('.')
@@ -62,6 +71,7 @@ object Migrator {
           case "length" => toFunction("length", candidateToCanonicalName)
           case "size" => toFunction("sizeOf", candidateToCanonicalName)
           case "equals" => toEquals(mel.VariableReferenceNode(candidateToCanonicalName), arguments)
+          case "payloadAs" => toAs(arguments)
           case _ => {
             counter += 1
             val reference = "$" + counter
@@ -294,6 +304,15 @@ object Migrator {
       //TODO check cast and .toString()
       case dw.structure.StringNode(_) => true
       case _ => node.children().exists(isStringType)
+    }
+  }
+
+  def containsString(node: MelExpressionNode, name: String): Boolean = {
+    node match {
+      case IdentifierNode(literal) => literal.contains(name)
+      case mel.VariableReferenceNode(literal) => literal.contains(name)
+      case mel.BinaryOperatorNode(left, right, operatorType) => containsString(left, name) || containsString(right, name)
+      case _ => false
     }
   }
 
