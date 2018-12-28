@@ -651,4 +651,18 @@ public class MelToDwExpressionMigratorTest {
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result, is("#[payload['pepe'] contains write(vars.pepe) as String]"));
   }
+
+  @Test
+  public void migrateModulus() {
+    String script = "#[10 % 4]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[10 mod 4]"));
+  }
+
+  @Test
+  public void migrateModulus1() {
+    String script = "#[flowVars.pepe % payload['lala']]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[vars.pepe mod payload['lala']]"));
+  }
 }

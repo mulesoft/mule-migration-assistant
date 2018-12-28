@@ -83,8 +83,13 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
     divisionToken ~ push(OperatorType.division) ~!~ simpleExpressions ~> createBinaryOp
   }
 
+  def modulusSubExpr = namedRule("%") {
+    modulusToken ~ push(OperatorType.modulus) ~!~ simpleExpressions ~> createBinaryOp
+  }
+
+
   def multiplicativeExpr: Rule1[MelExpressionNode] = namedRule("Math Operator") {
-    simpleExpressions ~ optional(ws ~ oneOrMore(multiplicationSubExpr | divisionSubExpr).separatedBy(ws))
+    simpleExpressions ~ optional(ws ~ oneOrMore(multiplicationSubExpr | divisionSubExpr | modulusSubExpr).separatedBy(ws))
   }
 
   def ws: Rule0 = rule {
@@ -145,6 +150,10 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
 
   def divisionToken = rule {
     ws ~ ch('/')
+  }
+
+  def modulusToken = rule {
+    ws ~ ch('%')
   }
 
   def equalsToken = rule {

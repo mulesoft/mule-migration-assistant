@@ -74,4 +74,5 @@ object OperatorType {
   val leftShift = 14
   val rightShift = 15
   val instanceOf = 16
+  val modulus = 17
 }
