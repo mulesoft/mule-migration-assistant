@@ -166,7 +166,16 @@ object Migrator {
       case mel.OperatorType.multiplication => toDataweaveBinaryOpNode(MultiplicationOpId, left, right)
       case mel.OperatorType.division => toDataweaveBinaryOpNode(DivisionOpId, left, right)
       case mel.OperatorType.instanceOf => toInstanceOf(left, right)
+      case mel.OperatorType.modulus => toDataweaveModulusNode(left, right)
     }
+  }
+
+  private def toDataweaveModulusNode(left: MelExpressionNode, right: MelExpressionNode): MigrationResult = {
+    val lRes = toDataweaveAst(left)
+    val rRes = toDataweaveAst(right)
+    val metadata = lRes.metadata.children ++ rRes.metadata.children
+    val migratedNode = dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier("mod")), FunctionCallParametersNode(Seq(lRes.dwAstNode, rRes.dwAstNode))).annotate(InfixNotationFunctionCallAnnotation())
+    new MigrationResult(migratedNode, DefaultMigrationMetadata(metadata))
   }
 
   private def toDataweaveOrNode(left: MelExpressionNode, right: MelExpressionNode): MigrationResult = {

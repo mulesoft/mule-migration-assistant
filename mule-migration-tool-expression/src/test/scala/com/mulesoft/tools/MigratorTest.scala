@@ -115,6 +115,26 @@ class MigratorTest extends FlatSpec with Matchers {
     Migrator.migrate("1+2*3/4 + 5 ==15/2").getGeneratedCode() shouldBe "%dw 2.0\n---\n1 + 2 * 3 / 4 + 5 == 15 / 2"
   }
 
+  it should "migrate modulus" in {
+    Migrator.migrate("1%2").getGeneratedCode() shouldBe "%dw 2.0\n---\n1 mod 2"
+  }
+
+  it should "migrate multiple modulus" in {
+    Migrator.migrate("1%2%3").getGeneratedCode() shouldBe "%dw 2.0\n---\n1 mod 2 mod 3"
+  }
+
+  it should "migrate modulus and addition" in {
+    Migrator.migrate("1%2+3").getGeneratedCode() shouldBe "%dw 2.0\n---\n1 mod 2 + 3"
+  }
+
+  it should "migrate addition and modulus and division" in {
+    Migrator.migrate("1+2%3/4 + 5").getGeneratedCode() shouldBe "%dw 2.0\n---\n1 + 2 mod 3 / 4 + 5"
+  }
+
+  it should "migrate arithmetic with modulus and comparison" in {
+    Migrator.migrate("1+10%3*4 + 5 ==10").getGeneratedCode() shouldBe "%dw 2.0\n---\n1 + 10 mod 3 * 4 + 5 == 10"
+  }
+
   it should "migrate Java HashMap constructor" in {
     Migrator.migrate("new java.util.HashMap()").getGeneratedCode() shouldBe "%dw 2.0\n---\n{} as Object {class: java.util.HashMap}"
   }
