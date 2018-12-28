@@ -72,6 +72,7 @@ object Migrator {
           case "size" => toFunction("sizeOf", candidateToCanonicalName)
           case "equals" => toEquals(mel.VariableReferenceNode(candidateToCanonicalName), arguments)
           case "payloadAs" => toAs(arguments)
+          case "currentTimeMillis" => toNow(candidateToCanonicalName)
           case _ => {
             counter += 1
             val reference = "$" + counter
@@ -83,7 +84,6 @@ object Migrator {
     }
 
   }
-
 
   private def toFunction(functionName: String, candidateToCanonicalName: String) = {
     new MigrationResult(dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier(functionName)), FunctionCallParametersNode(Seq(NameIdentifier(candidateToCanonicalName)))))
@@ -212,6 +212,14 @@ object Migrator {
 
   private def toDateConstructor: MigrationResult = {
     new MigrationResult(dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier("now"))))
+  }
+
+  private def toNow(candidateToCanonicalName: String): MigrationResult = {
+    if(candidateToCanonicalName.equals("System")) {
+      toDateConstructor
+    } else {
+      new MigrationResult(toDataweaveStringNode(candidateToCanonicalName).dwAstNode, DefaultMigrationMetadata(Seq(NonMigratable("expressions.methodInvocation"))))
+    }
   }
 
   private def toListConstructor(canonicalName: CanonicalNameNode): MigrationResult = {
