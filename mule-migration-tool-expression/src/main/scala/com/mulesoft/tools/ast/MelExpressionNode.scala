@@ -51,6 +51,10 @@ case class IfNode(ifExpr: MelExpressionNode, condition: MelExpressionNode, elseE
 case class PropertyNode(name: Seq[IdentifierNode]) extends MelExpressionNode {
 }
 
+case class ContainsNode(left: MelExpressionNode, right: MelExpressionNode) extends MelExpressionNode {
+}
+
+
 
 object OperatorType {
   val plus = 0
