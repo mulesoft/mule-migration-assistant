@@ -20,6 +20,8 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   private val createCanonicalNameNode = (name: String) => CanonicalNameNode(name)
   private val createIfNode = (condition : MelExpressionNode, ifExpr : MelExpressionNode, elseExpr : MelExpressionNode) => IfNode(ifExpr, condition, elseExpr)
   private val createPropertyNode = (identifiers: Seq[IdentifierNode]) => PropertyNode(identifiers)
+  private val createContainsNode = (left: MelExpressionNode, right: MelExpressionNode) => ContainsNode(left, right)
+
 
   private val whiteSpaceChar = CharPredicate(" \f\t")
   private val newLineChar = CharPredicate(sys.props("line.separator") )
@@ -30,7 +32,11 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def expression: Rule1[MelExpressionNode] = rule {
-    ternaryOperatorExpression ~ ws
+    ws ~ containsExpression ~ ws
+  }
+
+  def containsExpression: Rule1[MelExpressionNode] = rule {
+    ws ~ ternaryOperatorExpression ~ ws ~ optional(containsToken ~ ws ~ containsExpression ~ ws ~> createContainsNode)
   }
 
   def ternaryOperatorExpression: Rule1[MelExpressionNode] = rule {
@@ -235,6 +241,10 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
 
   def constructor: Rule1[ConstructorNode] = rule {
     (ws ~ str("new") ~ ws ~ canonicalNameNode ~ ws ~ ch('(') ~ ws ~ ((ch(')') ~ push(Seq())) | oneOrMore(simpleExpressions).separatedBy(',') ~ ws ~ ch(')'))) ~> createConstructorNode
+  }
+
+  def containsToken = rule {
+    ws ~ "contains"
   }
 
   def methodInvocation = rule {

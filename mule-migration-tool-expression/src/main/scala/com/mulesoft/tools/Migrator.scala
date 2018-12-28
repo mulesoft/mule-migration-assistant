@@ -25,6 +25,7 @@ object Migrator {
 
   var counter = 0
 
+
   def toDataweaveAst(expressionNode: mel.MelExpressionNode): MigrationResult = {
     expressionNode match {
       case mel.StringNode(literal) => toDataweaveStringNode(literal)
@@ -41,7 +42,17 @@ object Migrator {
       case mel.IfNode(ifExpr, condition, elseExpr) => toDataweaveIfNode(ifExpr, condition, elseExpr)
       case mel.MethodInvocationNode(canonicalName, arguments) => toDataweaveMethodInvocation(canonicalName, arguments)
       case mel.PropertyNode(name) => toDataweaveProperty(name.map(_.literal).mkString("."))
+      case mel.ContainsNode(left, right) => toContainsInvocation(left, right)
     }
+  }
+
+  def toContainsInvocation(left: MelExpressionNode, right: MelExpressionNode): MigrationResult = {
+    val lRes = toDataweaveAst(left)
+    val rRes = toDataweaveAst(right)
+    val metadata = lRes.metadata.children ++ rRes.metadata.children
+    val migratedNode = dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier("contains")), FunctionCallParametersNode(Seq(lRes.dwAstNode, rRes.dwAstNode))).annotate(InfixNotationFunctionCallAnnotation())
+    new MigrationResult(migratedNode, DefaultMigrationMetadata(metadata))
+
   }
 
   def toEquals(variableReferenceNode: mel.VariableReferenceNode, arguments: Seq[MelExpressionNode]): MigrationResult = {
@@ -74,6 +85,7 @@ object Migrator {
           case "payloadAs" => toAs(arguments)
           case "currentTimeMillis" => toNow(candidateToCanonicalName)
           case "toString" => toString(candidateToCanonicalName)
+          case "contains" => toContainsInvocation(mel.VariableReferenceNode(candidateToCanonicalName), arguments.head)
           case _ => {
             counter += 1
             val reference = "$" + counter

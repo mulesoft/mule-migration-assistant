@@ -623,4 +623,32 @@ public class MelToDwExpressionMigratorTest {
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result, is("#[uuid()]"));
   }
+
+  @Test
+  public void migrateContains() {
+    String script = "#[payload.contains(2)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[payload contains 2]"));
+  }
+
+  @Test
+  public void migrateContains1() {
+    String script = "#[payload.contains(flowVars.pepe.toString())]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[payload contains write(vars.pepe) as String]"));
+  }
+
+  @Test
+  public void migrateContains2() {
+    String script = "#[flowVars.fileName contains 'GenericExtract']";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[vars.fileName contains 'GenericExtract']"));
+  }
+
+  @Test
+  public void migrateContains3() {
+    String script = "#[payload['pepe'] contains flowVars.pepe.toString()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[payload['pepe'] contains write(vars.pepe) as String]"));
+  }
 }
