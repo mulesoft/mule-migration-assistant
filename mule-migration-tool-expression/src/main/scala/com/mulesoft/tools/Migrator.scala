@@ -81,9 +81,17 @@ object Migrator {
           }
         }
       }
-      case Success(loadedClass) => toFunctionCall(methodName, CanonicalNameNode(candidateToCanonicalName), arguments)
+      case Success(loadedClass) => {
+        methodName match {
+          case "randomUUID" => toUUID
+          case _ => toFunctionCall(methodName, CanonicalNameNode(candidateToCanonicalName), arguments)
+        }
+      }
     }
+  }
 
+  private def toUUID: MigrationResult = {
+    new MigrationResult(dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier("uuid"))))
   }
 
   private def toFunction(functionName: String, candidateToCanonicalName: String) = {

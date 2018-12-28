@@ -616,4 +616,11 @@ public class MelToDwExpressionMigratorTest {
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result, is("#[write(vars.pepe) as String]"));
   }
+
+  @Test
+  public void migrateJavaUUI() {
+    String script = "#[java.util.UUID.randomUUID()]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[uuid()]"));
+  }
 }
