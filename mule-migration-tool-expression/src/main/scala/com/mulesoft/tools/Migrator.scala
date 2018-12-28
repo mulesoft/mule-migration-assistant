@@ -73,6 +73,7 @@ object Migrator {
           case "equals" => toEquals(mel.VariableReferenceNode(candidateToCanonicalName), arguments)
           case "payloadAs" => toAs(arguments)
           case "currentTimeMillis" => toNow(candidateToCanonicalName)
+          case "toString" => toString(candidateToCanonicalName)
           case _ => {
             counter += 1
             val reference = "$" + counter
@@ -87,6 +88,11 @@ object Migrator {
 
   private def toFunction(functionName: String, candidateToCanonicalName: String) = {
     new MigrationResult(dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier(functionName)), FunctionCallParametersNode(Seq(NameIdentifier(candidateToCanonicalName)))))
+  }
+
+  private def toString(identifier: String): MigrationResult = {
+    val writeFunctionNode = dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier("write")), FunctionCallParametersNode(Seq(NameIdentifier(identifier))))
+    new MigrationResult(dw.operators.BinaryOpNode(AsOpId, writeFunctionNode, VariableReferenceNode("String")), DefaultMigrationMetadata(Seq()))
   }
 
   private def toDataweaveIfNode(ifExpr: MelExpressionNode, condition: MelExpressionNode, elseExpr: MelExpressionNode) = {
