@@ -12,9 +12,4 @@ public class CollectionSplitter extends AbstractSplitter {
   protected String getMatchingAggregatorName() {
     return "collection-aggregator";
   }
-
-  @Override
-  protected String getSplitterName() {
-    return "collection-splitter";
-  }
 }
