@@ -258,7 +258,9 @@ public final class XmlDslUtils {
    * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
    */
   public static boolean copyAttributeIfPresent(final Element source, final Element target, final String attributeName) {
-    return copyAttributeIfPresent(source, target, attributeName, attributeName, true);
+    return copyAttributeIfPresent(source, target, attributeName, attributeName, (attrValue) -> {
+      return attrValue;
+    }, true);
   }
 
   /**
@@ -270,18 +272,9 @@ public final class XmlDslUtils {
    */
   public static boolean copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
                                                final String targetAttributeName) {
-    return copyAttributeIfPresent(source, target, sourceAttributeName, targetAttributeName, true);
-  }
-
-  /**
-   * @param source the element to remove the attribute from
-   * @param target the element to add the element to
-   * @param attributeName the name of the attribute to move from source to target
-   * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
-   */
-  public static boolean copyAttributeIfPresent(final Element source, final Element target, final String attributeName,
-                                               boolean removeSource) {
-    return copyAttributeIfPresent(source, target, attributeName, attributeName, removeSource);
+    return copyAttributeIfPresent(source, target, sourceAttributeName, targetAttributeName, (attrValue) -> {
+      return attrValue;
+    }, true);
   }
 
   /**
@@ -293,8 +286,65 @@ public final class XmlDslUtils {
    */
   public static boolean copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
                                                final String targetAttributeName, boolean removeSource) {
-    if (source.getAttribute(sourceAttributeName) != null) {
-      target.setAttribute(targetAttributeName, source.getAttributeValue(sourceAttributeName));
+    return copyAttributeIfPresent(source, target, sourceAttributeName, targetAttributeName, (attrValue) -> {
+      return attrValue;
+    }, true);
+  }
+
+  /**
+   * @param source the element to remove the attribute from
+   * @param target the element to add the element to
+   * @param sourceAttributeName the name of the attribute to remove from source
+   * @param targetAttributeName the name of the attribute to add to target
+   * @param attributeValueMapper functional interface to map attribute values
+   * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
+   */
+  public static boolean copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
+                                               final String targetAttributeName,
+                                               AttributeValueMapper<String> attributeValueMapper) {
+    return copyAttributeIfPresent(source, target, sourceAttributeName, targetAttributeName, attributeValueMapper, true);
+  }
+
+  /**
+   * @param source the element to remove the attribute from
+   * @param target the element to add the element to
+   * @param attributeName the name of the attribute to move from source to target
+   * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
+   */
+  public static boolean copyAttributeIfPresent(final Element source, final Element target, final String attributeName,
+                                               boolean removeSource) {
+    return copyAttributeIfPresent(source, target, attributeName, attributeName, (attrValue) -> {
+      return attrValue;
+    }, removeSource);
+  }
+
+  /**
+   * @param source the element to remove the attribute from
+   * @param target the element to add the element to
+   * @param attributeName the name of the attribute to move from source to target
+   * @param attributeValueMapper functional interface to map attribute values
+   * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
+   */
+  public static boolean copyAttributeIfPresent(final Element source, final Element target, final String attributeName,
+                                               AttributeValueMapper<String> attributeValueMapper,
+                                               boolean removeSource) {
+    return copyAttributeIfPresent(source, target, attributeName, attributeName, attributeValueMapper, removeSource);
+  }
+
+  /**
+   * @param source the element to remove the attribute from
+   * @param target the element to add the element to
+   * @param sourceAttributeName the name of the attribute to remove from source
+   * @param targetAttributeName the name of the attribute to add to target
+   * @param attributeValueMapper functional interface to map attribute values
+   * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
+   */
+  public static boolean copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
+                                               final String targetAttributeName,
+                                               AttributeValueMapper<String> attributeValueMapper, boolean removeSource) {
+    if (hasAttribute(source, sourceAttributeName)) {
+      target.setAttribute(targetAttributeName,
+                          attributeValueMapper.getAttributeValue(source.getAttributeValue(sourceAttributeName)));
       if (removeSource) {
         source.removeAttribute(sourceAttributeName);
       }
@@ -302,6 +352,10 @@ public final class XmlDslUtils {
     } else {
       return false;
     }
+  }
+
+  public static boolean hasAttribute(final Element source, final String sourceAttributeName) {
+    return source.getAttribute(sourceAttributeName) != null;
   }
 
   /**
@@ -367,7 +421,7 @@ public final class XmlDslUtils {
   }
 
   public static void removeAttribute(Element element, String attributeName) {
-    if (element.getAttribute(attributeName) != null) {
+    if (hasAttribute(element, attributeName)) {
       element.removeAttribute(attributeName);
     }
   }
