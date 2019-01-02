@@ -499,6 +499,26 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>com.mulesoft.munit.tools</groupId>
+                <artifactId>munit-maven-plugin</artifactId>
+                <version>${munit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.munit</groupId>
+                <artifactId>munit-runner</artifactId>
+                <version>${munit.version}</version>
+                <scope>test</scope>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.munit</groupId>
+                <artifactId>munit-tools</artifactId>
+                <version>${munit.version}</version>
+                <scope>test</scope>
+                <classifier>mule-plugin</classifier>
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>

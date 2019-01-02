@@ -153,6 +153,23 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.mulesoft.munit.tools</groupId>
+            <artifactId>munit-maven-plugin</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mulesoft.munit</groupId>
+            <artifactId>munit-runner</artifactId>
+            <scope>test</scope>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.mulesoft.munit</groupId>
+            <artifactId>munit-tools</artifactId>
+            <scope>test</scope>
+            <classifier>mule-plugin</classifier>
+        </dependency>
     
         <dependency>
             <groupId>com.icegreen</groupId>
