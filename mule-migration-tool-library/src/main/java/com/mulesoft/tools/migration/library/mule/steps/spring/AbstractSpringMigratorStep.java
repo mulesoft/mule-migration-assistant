@@ -22,6 +22,7 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,7 +40,8 @@ import java.util.TreeSet;
  */
 abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrationStep {
 
-  private static final String SPRING_FOLDER = "src/main/resources/spring/";
+  private static final String SPRING_FOLDER =
+      "src" + File.separator + "main" + File.separator + "resources" + File.separator + "spring" + File.separator;
 
   protected static final String SPRING_NAMESPACE_PREFIX = "spring-module";
   protected static final String SPRING_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/spring";

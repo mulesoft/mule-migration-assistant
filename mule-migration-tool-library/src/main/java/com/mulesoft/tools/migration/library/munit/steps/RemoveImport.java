@@ -25,7 +25,7 @@ import java.io.File;
  */
 public class RemoveImport extends AbstractApplicationModelMigrationStep {
 
-  private static final String MUNIT_PATH = "src" + File.separator + "test" + File.separator + "munit";
+  private static final String MUNIT_PATH = "src/test/munit";
   private static final String XPATH_SELECTOR = getCoreXPathSelector("import");
 
   @Override

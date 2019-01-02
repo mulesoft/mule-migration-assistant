@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.engine.project.structure;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -15,10 +16,10 @@ import java.nio.file.Path;
  */
 public class JavaProject extends BasicProject {
 
-  public static final String srcMainJavaPath = "src/main/java";
-  public static final String srcMainResourcesPath = "src/main/resources";
-  public static final String srcTestJavaPath = "src/test/java";
-  public static final String srcTestResourcesPath = "src/test/resources";
+  public static final String srcMainJavaPath = "src" + File.separator + "main" + File.separator + "java";
+  public static final String srcMainResourcesPath = "src" + File.separator + "main" + File.separator + "resources";
+  public static final String srcTestJavaPath = "src" + File.separator + "test" + File.separator + "java";
+  public static final String srcTestResourcesPath = "src" + File.separator + "test" + File.separator + "resources";
 
   public JavaProject(Path baseFolder) {
     super(baseFolder);
