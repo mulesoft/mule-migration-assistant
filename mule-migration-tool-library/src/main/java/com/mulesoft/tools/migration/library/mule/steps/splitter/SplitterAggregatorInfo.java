@@ -61,7 +61,7 @@ public class SplitterAggregatorInfo {
     return this.splitterElement;
   }
 
-  public String getGrupSizeVariableName() {
+  public String getGroupSizeVariableName() {
     return this.getSplitterUniqueId() + "-group-size";
   }
 

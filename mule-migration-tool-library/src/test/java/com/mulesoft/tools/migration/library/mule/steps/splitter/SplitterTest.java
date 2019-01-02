@@ -1,21 +1,14 @@
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static com.mulesoft.tools.migration.utils.ApplicationModelUtils.generateAppModel;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.google.common.collect.Iterables;
-import com.mulesoft.tools.migration.library.mule.steps.core.PreprocessNamespaces;
-import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements;
 import com.mulesoft.tools.migration.library.mule.steps.vm.VmNamespaceContribution;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -27,8 +20,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -58,17 +50,21 @@ public class SplitterTest {
   @Parameterized.Parameters(name = "{0}")
   public static Collection<Object[]> data() {
     return asList(new Object[][] {
-            {"collection-splitter-aggregator-01"},
+            {"collection-splitter-aggregator-01", emptyList()},
+            {"collection-splitter-aggregator-02", asList("splitter.correlation.never")},
+            //{"splitter-custom-aggregator-01"}
     });
   }
 
   private final Path configPath;
   private final Path targetPath;
   private Path fileUnderTestPath;
+  private List<String> expectedReportKeys;
 
-  public SplitterTest(String filePrefix) {
+  public SplitterTest(String filePrefix, List<String> expectedReportKeys) {
     configPath = SPLITTER_EXAMPLE_PATHS.resolve(filePrefix + "-original.xml");
     targetPath = SPLITTER_EXAMPLE_PATHS.resolve(filePrefix + ".xml");
+    this.expectedReportKeys = expectedReportKeys;
   }
 
   private AbstractSplitter splitter;
@@ -87,6 +83,10 @@ public class SplitterTest {
     vmNamespaceContribution = new VmNamespaceContribution();
     aggregatorsNamespaceContribution = new AggregatorsNamespaceContribution();
     removeSyntheticMigrationGlobalElements = new RemoveSyntheticMigrationGlobalElements();
+
+    for (String expectedReportKey : expectedReportKeys) {
+      report.expectReportEntry(expectedReportKey);
+    }
   }
 
   private void buildProject() throws IOException {

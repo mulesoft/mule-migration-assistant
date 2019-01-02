@@ -791,7 +791,7 @@ amqp:
     message: "Exchange definition removal strategy could not be resolved. Exchange is both 'autoDelete' and 'durable', which is invalid. Please review the migrated Mule 3 app to verify if the exchange should be removed on shutdown (SHUTDOWN), just if explicitly removed (EXPLICIT) or when no queues are bound to it (UNUSED)."
     docLinks:
       - https://docs.mulesoft.com/connectors/amqp/amqp-documentation#parameters-11
-      - https://docs.mulesoft.com/mule-runtime/3.9/amqp-connector-reference#endpoint-attributes      
+      - https://docs.mulesoft.com/mule-runtime/3.9/amqp-connector-reference#endpoint-attributes
   queueDefinitionInPublish:
     type: WARN
     message: "Queue cannot be defined in the 'publish' operation in AMQP Connector."
@@ -807,9 +807,24 @@ amqp:
     type: WARN
     message: "'fallbackAddresses' is not used in Mule 4 AMQP connector. Using an HAProxy is recommended, instead."
     docLinks:
-      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#ConfiguringTheConnector   
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#ConfiguringTheConnector
   listenerTx:
     type: WARN
     message: "There can be no transaction active before the listener, so JOIN is not supported at this point."
     docLinks:
-      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#UsingTransactions  
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#UsingTransactions
+
+splitter:
+  correlation:
+    never:
+      type: ERROR
+      message: enableCorrelation=NEVER is not supported. If the original message has a correlation ID,it will be set to the result message.
+  aggregator:
+    custom:
+      type: ERROR
+      message: Custom aggregators are not supported anymore. Check the Aggregator's module to see if the needed functionality is avaliable.
+      docLinks:
+        - https://docs.mulesoft.com/connectors/aggregator/aggregators-module
+    missing:
+      type: WARN
+      message: Could not find any associated aggregator to splitter. Result may not be the expected one.
