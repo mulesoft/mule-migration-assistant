@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements;
 import com.mulesoft.tools.migration.library.mule.steps.splitter.AggregatorsModulePomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.splitter.AggregatorsNamespaceContribution;
 import com.mulesoft.tools.migration.library.mule.steps.splitter.CollectionSplitter;
@@ -32,6 +33,6 @@ public class SplitterAggregatorTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new VmNamespaceContribution(), new AggregatorsNamespaceContribution(), new AggregatorsModulePomContribution(), new CollectionSplitter());
+    return newArrayList(new VmNamespaceContribution(), new AggregatorsNamespaceContribution(), new AggregatorsModulePomContribution(), new CollectionSplitter(), new RemoveSyntheticMigrationGlobalElements());
   }
 }

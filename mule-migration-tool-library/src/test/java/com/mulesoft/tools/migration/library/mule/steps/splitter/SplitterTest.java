@@ -15,6 +15,8 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.google.common.collect.Iterables;
 import com.mulesoft.tools.migration.library.mule.steps.core.PreprocessNamespaces;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements;
 import com.mulesoft.tools.migration.library.mule.steps.vm.VmNamespaceContribution;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
@@ -72,7 +74,7 @@ public class SplitterTest {
   private AbstractSplitter splitter;
   private VmNamespaceContribution vmNamespaceContribution;
   private AggregatorsNamespaceContribution aggregatorsNamespaceContribution;
-  private Document doc;
+  private RemoveSyntheticMigrationGlobalElements removeSyntheticMigrationGlobalElements;
   private ApplicationModel applicationModel;
 
   @Before
@@ -84,6 +86,7 @@ public class SplitterTest {
     splitter.setApplicationModel(applicationModel);
     vmNamespaceContribution = new VmNamespaceContribution();
     aggregatorsNamespaceContribution = new AggregatorsNamespaceContribution();
+    removeSyntheticMigrationGlobalElements = new RemoveSyntheticMigrationGlobalElements();
   }
 
   private void buildProject() throws IOException {
@@ -104,6 +107,9 @@ public class SplitterTest {
 
     getElementsFromDocument(document, splitter.getAppliedTo().getExpression())
             .forEach(node -> splitter.execute(node, report.getReport()));
+
+    getElementsFromDocument(document, removeSyntheticMigrationGlobalElements.getAppliedTo().getExpression())
+            .forEach(node -> removeSyntheticMigrationGlobalElements.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(document);

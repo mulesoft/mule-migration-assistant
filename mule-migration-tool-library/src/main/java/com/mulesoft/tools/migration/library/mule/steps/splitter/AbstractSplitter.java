@@ -5,7 +5,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpo
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementBefore;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static java.lang.Math.abs;
 import static java.nio.file.Paths.get;
 import static java.util.Optional.empty;
 import static org.jdom2.Namespace.getNamespace;
@@ -15,11 +15,9 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.jdom2.Parent;
 
 public abstract class AbstractSplitter extends AbstractApplicationModelMigrationStep {
 
@@ -40,10 +38,9 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
 
   protected abstract String getMatchingAggregatorName();
 
-  protected abstract String getSplitterName();
-
   @Override
   public void execute(Element splitter, MigrationReport report) throws RuntimeException {
+    SplitterAggregatorInfo splitterAggregatorInfo = new SplitterAggregatorInfo(splitter, getApplicationModel());
     List<Element> objectAndSiblings = splitter.getParentElement().getChildren();
     List<Element> elementsBetweenSplitterAndAggregator = new ArrayList<>();
     boolean shouldAdd = false;
@@ -61,16 +58,17 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
         elementsBetweenSplitterAndAggregator.add(element);
       }
     }
-    addElementBefore(getSetPayloadSizeVariableElement(splitter), splitter);
-    addElementBefore(wrapWithForEachAndAggregator(splitter, elementsBetweenSplitterAndAggregator), splitter);
-    addElementAfter(VM_CONSUME_TEMPLATE_ELEMENT.clone(), splitter);
+    addElementBefore(getSetPayloadSizeVariableElement(splitterAggregatorInfo), splitter);
+    addElementBefore(wrapWithForEachAndAggregator(splitterAggregatorInfo, elementsBetweenSplitterAndAggregator), splitter);
+    addElementAfter(getVmConsumeElement(splitterAggregatorInfo), splitter);
+    addVmQueue(splitterAggregatorInfo);
     splitter.detach();
   }
 
-  private Element wrapWithForEachAndAggregator(Element splitter, List<Element> elements) {
+  private Element wrapWithForEachAndAggregator(SplitterAggregatorInfo splitterAggregatorInfo, List<Element> elements) {
     Element forEachElement = FOR_EACH_TEMPLATE_ELEMENT.clone();
     forEachElement.addContent(elements);
-    forEachElement.addContent(getAggregatorElement(splitter));
+    forEachElement.addContent(getAggregatorElement(splitterAggregatorInfo));
     return forEachElement;
   }
 
@@ -78,70 +76,35 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     return "custom-aggregator".equals(elementName);
   }
 
-  private Element getAggregatorElement(Element splitter) {
+  private Element getAggregatorElement(SplitterAggregatorInfo splitterAggregatorInfo) {
     return AGGREGATOR_TEMPLATE
             .clone()
-            .setAttribute("name", getAggregatorName(splitter))
+            .setAttribute("name", splitterAggregatorInfo.getAggregatorName())
             .addContent(
                     new Element("aggregation-complete", AGGREGATORS_NAMESPACE)
                             .addContent(new Element("publish", VM_NAMESPACE)
-                                                .setAttribute("config-ref",getVmConfigName(splitter))
-                                                .setAttribute("queueName", getVMQueueName(splitter)))
+                                                .setAttribute("config-ref",splitterAggregatorInfo.getVmConfigName())
+                                                .setAttribute("queueName", splitterAggregatorInfo.getVmQueueName()))
             );
   }
 
-  private Element getSetPayloadSizeVariableElement(Element splitter) {
+  private Element getSetPayloadSizeVariableElement(SplitterAggregatorInfo splitterAggregatorInfo) {
     return SET_VARIABLE_TEMPLATE
             .clone()
-            .setAttribute("variableName", getGrupSizeVariableName(splitter));
+            .setAttribute("variableName", splitterAggregatorInfo.getGrupSizeVariableName());
   }
 
-  private Element getVmConsumeElement(Element splitter) {
+  private Element getVmConsumeElement(SplitterAggregatorInfo splitterAggregatorInfo) {
     return VM_CONSUME_TEMPLATE_ELEMENT
             .clone()
-            .setAttribute("config-ref", getVmConfigName(splitter))
-            .setAttribute("queueName", getVMQueueName(splitter));
+            .setAttribute("config-ref", splitterAggregatorInfo.getVmConfigName())
+            .setAttribute("queueName", splitterAggregatorInfo.getVmQueueName());
   }
 
-  private String getGrupSizeVariableName(Element splitter) {
-    return this.getSplitterUniqueId(splitter) + "group-size";
-  }
-
-  private String getAggregatorName(Element splitter) {
-    return this.getSplitterUniqueId(splitter) + "" + "-aggregator";
-  }
-
-  private String getVMQueueName(Element splitter) {
-    return this.getSplitterUniqueId(splitter) + "" + "-vm-queue";
-  }
-
-  private String getVmConfigName(Element splitter) {
-    return splitter.getDocument().getBaseURI();
-  }
-
-  private String getDocumentRelativePath(Element splitter) {
-    return get(getApplicationModel().getProjectBasePath().toUri().toString()).relativize(get(splitter.getDocument().getBaseURI())).toString();
-  }
-
-  private String getSplitterUniqueId(Element splitter) {
-    int id = 31;
-    String documentId = getDocumentRelativePath(splitter);
-    Element flow = getFlow(splitter);
-    String flowName = flow.getName();
-    Element parent = splitter.getParentElement();
-    id = 31 * id + documentId.hashCode();
-    id = 31 * id + flowName.hashCode();
-    while(parent != flow) {
-      id = 31 * id + Objects.hashCode(parent.getChildren());
-      parent = parent.getParentElement();
-    }
-    return getSplitterName() + id;
-  }
-
-  private void addVmQueue(Element splitter) {
-    Element vmConfig = migrateVmConfig(splitter, empty(), getVmConfigName(splitter), getApplicationModel());
-    Element queues = vmConfig.getChild("queues");
-    queues.addContent(VM_QUEUE_TEMPLATE.clone().setAttribute("name", getVMQueueName(splitter)));
+  private void addVmQueue(SplitterAggregatorInfo splitterAggregatorInfo) {
+    Element vmConfig = migrateVmConfig(splitterAggregatorInfo.getSplitterElement(), empty(), splitterAggregatorInfo.getVmConfigName(), getApplicationModel());
+    Element queues = vmConfig.getChild("queues", VM_NAMESPACE);
+    queues.addContent(VM_QUEUE_TEMPLATE.clone().setAttribute("name", splitterAggregatorInfo.getVmQueueName()));
   }
 
 }
