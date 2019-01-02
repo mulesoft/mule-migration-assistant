@@ -768,3 +768,18 @@ watermarkSelector:
     message: "Selector expression could not be migrated to a DataWeave expression."
     docLinks:
     - https://docs.mulesoft.com/mule-runtime/4.1/migration-patterns-watermark
+
+splitter:
+  correlation:
+    never:
+      type: ERROR
+      message: enableCorrelation=NEVER is not supported. If the original message has a correlation ID,it will be set to the result message.
+  aggregator:
+    custom:
+      type: ERROR
+      message: Custom aggregators are not supported anymore. Check the Aggregator's module to see if the needed functionality is avaliable.
+      docLinks:
+        - https://docs.mulesoft.com/connectors/aggregator/aggregators-module
+    missing:
+      type: WARN
+      message: Could not find any associated aggregator to splitter. Result may not be the expected one.
