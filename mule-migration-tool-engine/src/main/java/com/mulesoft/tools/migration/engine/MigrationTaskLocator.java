@@ -13,6 +13,7 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
 import com.mulesoft.tools.migration.library.mule.steps.compression.CompressionMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.AmqpMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.BatchMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.DomainAppMigrationTask;
@@ -132,6 +133,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new EndpointsMigrationTask());
     coreMigrationTasks.add(new JmsDomainMigrationTask());
     coreMigrationTasks.add(new JmsMigrationTask());
+    coreMigrationTasks.add(new AmqpMigrationTask());
     coreMigrationTasks.add(new VmDomainMigrationTask());
     coreMigrationTasks.add(new VMMigrationTask());
 

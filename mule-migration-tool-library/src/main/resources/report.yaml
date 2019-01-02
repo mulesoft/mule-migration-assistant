@@ -768,3 +768,51 @@ watermarkSelector:
     message: "Selector expression could not be migrated to a DataWeave expression."
     docLinks:
     - https://docs.mulesoft.com/mule-runtime/4.1/migration-patterns-watermark
+
+amqp:
+  exchangeDefinition:
+    type: WARN
+    message: "No Exchange Definition is allowed in a listener in mule 4. You can define a fallback queue, but bindings and exchanges must be previously declared."
+    docLinks:
+    - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp
+  queueRemovalStrategy:
+    type: ERROR
+    message: "Queue definition removal strategy could not be resolved. Queue is both autoDelete and durable."
+  returnListener:
+    type: WARN
+    message: "Return listener endpoint cannot be set in AMQP Connector. You can define a default return exchange."
+    docLinks:
+    - https://docs.mulesoft.com/connectors/amqp/amqp-publish#returned-messages-handling
+  exchangeRemovalStrategy:
+    type: ERROR
+    message: "Exchange definition removal strategy could not be resolved. Queue is both autoDelete and durable. Default queue params where used."
+  queueDefinitionInPublish:
+    type: WARN
+    message: "Queue cannot be defined in the publish operation in mule 4."
+    docLinks:
+    - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp
+  recover:
+    type: WARN
+    message: "Queue cannot be defined in the publish operation in mule 4."
+    docLinks:
+    - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp
+  activeDeclarationsOnly:
+    type: WARN
+    message: "active declarations only will be migrated to createFallbackQueue and createFallbackExchange so this is managed the same as in mule 3"
+    docLinks:
+    - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp
+  fallbackAddresses:
+    type: WARN
+    message: "fallbackAddresses is not used in mule 4 AMQP connector. An HAProxy is recommended to use instead. "
+    docLinks:
+    - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#ConfiguringTheConnector   
+  returnEndpoint:
+    type: WARN
+    message: "Default return endpoint is not used in mule 4. Please define a return exchange."
+    docLinks:
+    - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp 
+  listenerTx:
+    type: WARN
+    message: There can be no transaction active before the listener, so JOIN is not supported at this point.
+    docLinks:
+    - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp   
