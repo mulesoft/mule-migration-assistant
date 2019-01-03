@@ -131,4 +131,20 @@
             </resource>
         </resources>
     </build>
+
+    <!-- Cannot put the root project as parent pom because it will bring its own dependency management, and that will mess up other 
+        projects that use this module's dependency managemnt. -->
+    <!-- So, we need to duplicate the distributionManagement here so this artifact can be published. -->
+    <distributionManagement>
+        <repository>
+            <id>mule-releases</id>
+            <name>MuleSoft Releases Repository</name>
+            <url>https://repository-master.mulesoft.org/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>mule-snapshots</id>
+            <name>MuleSoft Snapshots Repository</name>
+            <url>https://repository-master.mulesoft.org/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
