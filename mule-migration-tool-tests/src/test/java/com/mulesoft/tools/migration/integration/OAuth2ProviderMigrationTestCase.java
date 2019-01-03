@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.integration;
 
 import org.mule.tck.junit4.rule.DynamicPort;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +16,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
+@Ignore("EE-6488")
 public class OAuth2ProviderMigrationTestCase extends EndToEndTestCase {
 
   @Rule
