@@ -23,7 +23,17 @@
         <module>migration-contribution-archetype</module>
         <module>mule-migration-tool-contribution</module>
         <module>mule-migration-tool-stats-gatherer</module>
+
     </modules>
+
+    <profiles>
+        <profile>
+            <id>compatibility</id>
+            <modules>
+                <module>compatibility</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <properties>
         <javaVersion>1.8</javaVersion>

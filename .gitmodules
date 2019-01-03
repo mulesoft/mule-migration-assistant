@@ -1,0 +1,3 @@
+[submodule "compatibility"]
+	path = compatibility
+	url = git@github.com:mulesoft/mule-compatibility-plugin.git
