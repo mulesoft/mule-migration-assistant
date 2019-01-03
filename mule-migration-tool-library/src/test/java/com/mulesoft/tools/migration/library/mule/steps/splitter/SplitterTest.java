@@ -52,7 +52,8 @@ public class SplitterTest {
     return asList(new Object[][] {
             {"collection-splitter-aggregator-01", emptyList()},
             {"collection-splitter-aggregator-02", asList("splitter.correlation.never")},
-            //{"splitter-custom-aggregator-01"}
+            {"collection-splitter-aggregator-03", asList("splitter.aggregator.missing")},
+            {"splitter-custom-aggregator-01", asList("splitter.aggregator.custom")}
     });
   }
 

@@ -5,9 +5,9 @@
 		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="main">
-        <set-payload value="#[['a','b','c']]"/>
         <collection-splitter/>
-        <collection-aggregator/>
+        <logger message="not important"/>
+        <flow-ref name="otherFlow"/>
     </flow>
 
 </mule>
