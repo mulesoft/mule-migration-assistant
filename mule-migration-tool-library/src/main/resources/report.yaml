@@ -827,4 +827,4 @@ splitter:
         - https://docs.mulesoft.com/connectors/aggregator/aggregators-module
     missing:
       type: WARN
-      message: Could not find any associated aggregator to splitter. Result may not be the expected one.
+      message: Could not find any associated aggregator for the splitter. Migrated behaviour may not be the expected one.

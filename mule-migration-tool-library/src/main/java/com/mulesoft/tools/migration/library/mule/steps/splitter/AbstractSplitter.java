@@ -6,13 +6,15 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementBefore;
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -39,67 +41,101 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
   @Override
   public void execute(Element splitter, MigrationReport report) throws RuntimeException {
     SplitterAggregatorInfo splitterAggregatorInfo = new SplitterAggregatorInfo(splitter, getApplicationModel());
-    List<Element> splitterAndSiblings = splitter.getParentElement().getChildren();
-    List<Element> elementsBetweenSplitterAndAggregator = new ArrayList<>();
-    Element aggregator = null;
-    boolean shouldAdd = false;
-    handleNeverEnableCorrelation(splitter, report);
-    for(Element element : splitterAndSiblings) {
-      if(element.equals(splitter)) {
-        shouldAdd = true;
-        continue;
+    List<ReportEntry> reports = new LinkedList<>();
+    Element forEachElement = null;
+
+    //Check if enableCorrelation=NEVER and report it
+    reportNeverEnableCorrelation(splitter, reports);
+
+    List<Element> elementsBetweenSplitterAndAggregator = collectUntilAggregator(splitter);
+    Element aggregatorElement = foundMatchingAggregator(elementsBetweenSplitterAndAggregator.get(elementsBetweenSplitterAndAggregator.size() - 1)) ?
+                                elementsBetweenSplitterAndAggregator.remove(elementsBetweenSplitterAndAggregator.size() - 1) :
+                                null;
+
+    if(!isCustomAggregator(aggregatorElement)) {
+      if(aggregatorElement == null) {
+        //There is no related aggregator
+        reportNoAggregator(splitter, reports);
+      }else {
+        aggregatorElement.detach();
       }
-      if(foundMatchingAggregator(element)) {
-        aggregator = element;
-        break;
-      }
-      if(shouldAdd) {
-        elementsBetweenSplitterAndAggregator.add(element);
-      }
-    }
-    if(aggregator == null) {
-      //Splitter has no aggregator.
-    }else if(isCustomAggregator(aggregator)) {
-      //Splitter has a custom aggregator
-      handleCustomAggregator(splitter, aggregator, report);
-    }else {
       //Splitter has a matching aggregator
-      addElementBefore(getSetPayloadSizeVariableElement(splitterAggregatorInfo), splitter);
-      addElementBefore(wrapWithForEachAndAggregator(splitterAggregatorInfo, elementsBetweenSplitterAndAggregator), splitter);
-      addElementAfter(getVmConsumeElement(splitterAggregatorInfo), splitter);
-      addVmQueue(splitterAggregatorInfo);
-      for(Element element : elementsBetweenSplitterAndAggregator) {
-        element.detach();
-      }
-      aggregator.detach();
-      splitter.detach();
+      forEachElement = wrapWithForEachAndAggregator(splitterAggregatorInfo, elementsBetweenSplitterAndAggregator);
+      replaceInDocument(splitter, forEachElement, splitterAggregatorInfo);
+    }else {
+      //Splitter has a custom aggregator
+      reportCustomAggregator(aggregatorElement, report);
     }
+    //Write collected reports
+    writeReports(forEachElement, reports, report);
   }
 
-  private boolean foundMatchingAggregator(Element element) {
-    return isCustomAggregator(element) || getMatchingAggregatorName().equals(element.getName());
-  }
-
-  private void handleCustomAggregator(Element splitter,Element aggregator, MigrationReport report) {
-    report.report("splitter.aggregator.custom", splitter, aggregator);
-  }
-
-  private void handleNeverEnableCorrelation(Element splitter, MigrationReport report) {
-    String enableCorrelation = splitter.getAttributeValue("enableCorrelation");
-    if("NEVER".equals(enableCorrelation)) {
-      report.report("splitter.correlation.never", splitter, splitter);
-    }
+  private void replaceInDocument(Element splitterElement, Element forEachAggregatorElement, SplitterAggregatorInfo splitterAggregatorInfo) {
+    addElementBefore(getSetPayloadSizeVariableElement(splitterAggregatorInfo), splitterElement);
+    addElementBefore(forEachAggregatorElement, splitterElement);
+    addElementAfter(getVmConsumeElement(splitterAggregatorInfo), splitterElement);
+    addVmQueue(splitterAggregatorInfo);
+    splitterElement.detach();
   }
 
   private Element wrapWithForEachAndAggregator(SplitterAggregatorInfo splitterAggregatorInfo, List<Element> elements) {
+    elements.forEach(Element::detach);
     Element forEachElement = FOR_EACH_TEMPLATE_ELEMENT.clone();
     forEachElement.addContent(elements);
     forEachElement.addContent(getAggregatorElement(splitterAggregatorInfo));
     return forEachElement;
   }
 
+  private List<Element> collectUntilAggregator(Element splitter) {
+    List<Element> splitterAndSiblings = splitter.getParentElement().getChildren();
+    List<Element> elementsBetweenSplitterAndAggregator = new LinkedList<>();
+    boolean shouldAdd = false;
+    for(Element element : splitterAndSiblings) {
+      if(element.equals(splitter)) {
+        shouldAdd = true;
+        continue;
+      }
+      if(shouldAdd) {
+        elementsBetweenSplitterAndAggregator.add(element);
+        if(foundMatchingAggregator(element)) {
+          break;
+        }
+      }
+    }
+    return elementsBetweenSplitterAndAggregator;
+  }
+
+  private boolean foundMatchingAggregator(Element element) {
+    return isCustomAggregator(element) || getMatchingAggregatorName().equals(element.getName());
+  }
+
   private boolean isCustomAggregator(Element element) {
-    return "custom-aggregator".equals(element.getName());
+    return element != null && "custom-aggregator".equals(element.getName());
+  }
+
+  private void reportCustomAggregator(Element aggregator, MigrationReport report) {
+    report.report("splitter.aggregator.custom", aggregator, aggregator);
+  }
+
+  private void reportNoAggregator(Element splitter, List<ReportEntry> reports) {
+    reports.add(new ReportEntry("splitter.aggregator.missing", splitter));
+  }
+
+  private void reportNeverEnableCorrelation(Element splitter, List<ReportEntry> reports) {
+    String enableCorrelation = splitter.getAttributeValue("enableCorrelation");
+    if ("NEVER".equals(enableCorrelation)) {
+      reports.add(new ReportEntry("splitter.correlation.never", splitter));
+    }
+  }
+
+  //These reports will be written all at once when the document is fully written since the forEach element needs to be created.
+  private void writeReports(Element forEachElement, List<ReportEntry> reports, MigrationReport migrationReport) {
+    reports.forEach(r -> {
+      Element reportOn = r.reportOn.orElse(forEachElement);
+      Element reportAbout = r.reportAbout;
+      String reportKey = r.reportKey;
+      migrationReport.report(reportKey, reportAbout, reportOn);
+    });
   }
 
   private Element getAggregatorElement(SplitterAggregatorInfo splitterAggregatorInfo) {
@@ -132,6 +168,24 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     Element vmConfig = migrateVmConfig(splitterAggregatorInfo.getSplitterElement(), empty(), splitterAggregatorInfo.getVmConfigName(), getApplicationModel());
     Element queues = vmConfig.getChild("queues", VM_NAMESPACE);
     queues.addContent(VM_QUEUE_TEMPLATE.clone().setAttribute("queueName", splitterAggregatorInfo.getVmQueueName()));
+  }
+
+  private static class ReportEntry {
+
+    private Optional<Element> reportOn;
+    private Element reportAbout;
+    private String reportKey;
+
+    private ReportEntry(String reportKey, Element reportAbout) {
+      this.reportKey = reportKey;
+      this.reportAbout = reportAbout;
+      this.reportOn = empty();
+    }
+
+    private ReportEntry(String reportKey, Element reportAbout, Element reportOn) {
+      this(reportKey, reportAbout);
+      this.reportOn = of(reportOn);
+    }
   }
 
 }
