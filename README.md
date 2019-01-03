@@ -23,6 +23,12 @@ These are the instructions to have the project up and running.
 - Java 8
 - Maven 3.3.9
 
+### Check out
+
+```
+git clone --recursive git@github.com:mulesoft/mule-migration-tool.git 
+```
+
 ### Build
 
 Go to the project root and type
