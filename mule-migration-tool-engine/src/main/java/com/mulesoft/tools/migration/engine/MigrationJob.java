@@ -225,14 +225,31 @@ public class MigrationJob implements Executable {
 
     public MigrationJob build() throws Exception {
       checkState(project != null, "The project must not be null");
-      checkState(outputProject != null, "The output project must not be null");
+      if (!project.toFile().exists()) {
+        throw new MigrationJobException("`projectBasePath` " + project.toString() + " does not exist");
+      }
+      if (!project.toFile().isDirectory()) {
+        throw new MigrationJobException("`projectBasePath` " + project.toString() + " is not a directory");
+      }
+
+      if (parentDomainProject != null) {
+        if (!parentDomainProject.toFile().exists()) {
+          throw new MigrationJobException("`parentDomainBasePath` " + project.toString() + " does not exist");
+        }
+        if (!parentDomainProject.toFile().isDirectory()) {
+          throw new MigrationJobException("`parentDomainBasePath` " + project.toString() + " is not a directory");
+        }
+      }
+
       checkState(inputVersion != null, "The input version must not be null");
 
+      checkState(outputVersion != null, "The output version must not be null");
       if (!isVersionValid(outputVersion, MIN_MULE4_VALID_VERSION)) {
         throw new MigrationJobException("Output Version " + outputVersion
             + " does not comply with semantic versioning specification");
       }
 
+      checkState(outputProject != null, "The output project must not be null");
       if (outputProject.toFile().exists()) {
         throw new MigrationJobException("Destination folder already exist.");
       }
