@@ -31,15 +31,13 @@ public enum Exclusions {
 
   SETTINGS(File.separator + ".settings"),
 
-  CATALOG(File.separator + "catalog"),
-
   MULE_PROJECT(File.separator + "mule-project.xml"),
 
   TARGET(File.separator + "target"),
 
   CLASSES(File.separator + "classes"),
 
-  // Mule resources are processed elsewhere, not cpioed as they are
+  // Mule resources are processed elsewhere, not copied as they are
 
   MULE_THREE_APP(File.separator + MuleThreeApplication.srcMainConfigurationPath),
 
