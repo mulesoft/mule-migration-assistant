@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.CompatibilityPomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyAttachments;
+import com.mulesoft.tools.migration.library.mule.steps.core.CopyCatalogFolder;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyProperties;
 import com.mulesoft.tools.migration.library.mule.steps.core.DataMapper;
 import com.mulesoft.tools.migration.library.mule.steps.core.JavaReferenceElements;
@@ -78,6 +79,7 @@ public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigration
                         new RemoveProperty(),
                         new RemoveSessionVariable(),
                         new RemoveJsonTransformerNamespace(),
+                        new CopyCatalogFolder(),
                         new RemoveMetadataAttributes(),
                         new MessagePropertiesTransformer(),
                         new RemoveSchedulersNamespace(),
