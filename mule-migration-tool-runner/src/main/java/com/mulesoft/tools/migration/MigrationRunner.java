@@ -103,13 +103,13 @@ public class MigrationRunner {
   }
 
   private MigrationJob buildMigrationJob() throws Exception {
-    MigrationJobBuilder builder = new MigrationJobBuilder()
+    return new MigrationJobBuilder()
         .withProject(Paths.get(projectBasePath))
         .withParentDomainProject(parentDomainProjectBasePath != null ? Paths.get(parentDomainProjectBasePath) : null)
         .withOutputProject(Paths.get(destinationProjectBasePath))
         .withInputVersion(MULE_3_VERSION)
-        .withOuputVersion(muleVersion);
-    return builder.build();
+        .withOuputVersion(muleVersion)
+        .build();
   }
 
   /**
