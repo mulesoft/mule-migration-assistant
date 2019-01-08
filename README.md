@@ -1,7 +1,7 @@
-# Mule Migration Tool
+# Mule Migration Assistant
 [![Build Status](https://munit.ci.cloudbees.com/job/MMT-1.x/badge/icon)](https://munit.ci.cloudbees.com/job/MMT-1.x)
 
-This tool goal is to migrate projects in general.
+This tool goal is to assist in the migration of projects in general.
 
 Currently, it is being developed towards supporting the Mule 3.x &#8594; Mule 4.x migration.
 
@@ -42,13 +42,13 @@ $ mvn clean package
 Go to the runner module target directory:
 
 ```
-$ cd mule-migration-tool-runner/target
+$ cd runner/target
 ```
 
 Run the tool:
 
 ```
-$ java -jar mule-migration-tool-runner-*CURRENT VERSION*.jar [options]
+$ java -jar mule-migration-assistant-runner-*CURRENT VERSION*.jar [options]
 ```
 
 // TODO list options
@@ -68,7 +68,7 @@ However, please be aware that migration task contributions are going to be added
 
 #### Contributing with tasks
 
-The migration tool locates the tasks using SPI. In order to contribute with your own task, follow the steps below:
+The migration assistant locates the tasks using SPI. In order to contribute with your own task, follow the steps below:
 
 - Create your new task contribution project:
 

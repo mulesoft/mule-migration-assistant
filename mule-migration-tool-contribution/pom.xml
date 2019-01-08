@@ -9,7 +9,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>mule-migration-tool-contribution</artifactId>
-    <name>Mule Migration Tool Contribution</name>
+    <name>Mule Migration Assistant Contribution</name>
 
     <properties>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>

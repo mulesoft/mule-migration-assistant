@@ -7,7 +7,7 @@
     <groupId>com.mulesoft.tools</groupId>
     <version>1.0.0-SNAPSHOT</version>
     <artifactId>mule-migration-tool-target-modules</artifactId>
-    <name>Mule Migration Tool Library - Target Modules dependencies</name>
+    <name>Mule Migration Assistant Library - Target Modules dependencies</name>
     <packaging>jar</packaging>
     <description>Provide a dependency management of modules to use in behavior tests (i.e.: Compatibility module integration tests)</description>
 

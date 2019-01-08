@@ -9,7 +9,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>mule-migration-tool-library</artifactId>
-    <name>Mule Migration Tool Library</name>
+    <name>Mule Migration Assistant Library</name>
 
     <properties>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>

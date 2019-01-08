@@ -30,13 +30,16 @@ public class CopyCatalogFolder implements ProjectStructureContribution {
 
   @Override
   public void execute(Path basePath, MigrationReport report) throws RuntimeException {
-    final File destinationCatalogFolder = new File(basePath.toFile(), "src/main/resources/catalog");
     final File sourceCatalogFolder = new File(basePath.toFile(), "catalog");
 
-    try {
-      moveDirectory(sourceCatalogFolder, destinationCatalogFolder);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    if (sourceCatalogFolder.exists()) {
+      final File destinationCatalogFolder = new File(basePath.toFile(), "src/main/resources/catalog");
+
+      try {
+        moveDirectory(sourceCatalogFolder, destinationCatalogFolder);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 

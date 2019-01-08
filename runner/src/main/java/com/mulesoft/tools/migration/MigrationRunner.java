@@ -197,7 +197,7 @@ public class MigrationRunner {
 
   private void printHelp(Options options) {
     HelpFormatter formatter = new HelpFormatter();
-    formatter.printHelp("migration-tool - Help", options);
+    formatter.printHelp("migration-assistant - Help", options);
   }
 
   protected void sendUsageStatistics(MigrationJob job, Object body) {

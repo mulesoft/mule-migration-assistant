@@ -17,7 +17,7 @@
         <module>mule-migration-tool-tck</module>
         <module>mule-migration-tool-engine</module>
         <module>mule-migration-tool-library</module>
-        <module>mule-migration-tool-runner</module>
+        <module>runner</module>
         <module>mule-migration-tool-tests</module>
         <module>mule-migration-tool-expression</module>
         <module>migration-contribution-archetype</module>

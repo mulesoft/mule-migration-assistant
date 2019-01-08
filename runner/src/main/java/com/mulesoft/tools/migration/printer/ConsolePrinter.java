@@ -27,7 +27,7 @@ public class ConsolePrinter {
 
   public static void printMigrationSummary(String reportPath, Long elapsedTime, DefaultMigrationReport report) {
     log("===============================================================================");
-    log("MIGRATION TOOL RUN SUCCESSFULLY");
+    log("MIGRATION ASSISTANT RUN SUCCESSFULLY");
     log("===============================================================================");
     log("Total time: " + format("%.3f", elapsedTime.floatValue() / 1000) + " s");
     log("Migration report: " + reportPath);
