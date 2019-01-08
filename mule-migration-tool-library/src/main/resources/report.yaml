@@ -754,3 +754,10 @@ compression:
     docLinks:
       - https://docs.mulesoft.com/connectors/compression/compression-module
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-transformers
+
+watermarkSelector:
+  expression:
+    type: ERROR
+    message: "Selector expression could not be migrated to a DataWeave expression."
+    docLinks:
+    - https://docs.mulesoft.com/mule-runtime/4.1/migration-patterns-watermark

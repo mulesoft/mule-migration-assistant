@@ -21,6 +21,7 @@ import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.library.mule.steps.os.AbstractOSMigrator;
+import com.mulesoft.tools.migration.library.tools.mel.WatermarkSelectorMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +50,7 @@ public class Poll extends AbstractOSMigrator {
   private static final String SCHEDULERS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/schedulers";
   private static final String SCHEDULERS_NAMESPACE_PREFIX = "schedulers";
   private static final Namespace SCHEDULERS_NAMESPACE = getNamespace(SCHEDULERS_NAMESPACE_PREFIX, SCHEDULERS_NAMESPACE_URI);
+  private static final WatermarkSelectorMigrator watermarkSelectorMigrator = new WatermarkSelectorMigrator();
 
   @Override
   public String getDescription() {
@@ -130,7 +132,9 @@ public class Poll extends AbstractOSMigrator {
             selectorExpression = getExpressionMigrator().migrateExpression(selectorExpression, true, element);
             setOSValue(osStore, selectorExpression, "value");
           } else {
-            //TODO After MMT-262 is completed, need to pass both values (selector and selector expression) on the expressions migrator and set that value on the OS processor.
+            selectorExpression = watermarkSelectorMigrator.migrateSelector(selectorExpression, selector.toLowerCase(), element,
+                                                                           report, getExpressionMigrator());
+            setOSValue(osStore, selectorExpression, "value");
           }
         }
 
