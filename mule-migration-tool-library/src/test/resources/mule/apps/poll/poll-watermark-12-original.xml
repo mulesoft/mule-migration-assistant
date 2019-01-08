@@ -5,7 +5,7 @@
 
     <flow name="lastSelectorWithList">
         <poll>
-            <watermark variable="lastSelectorWithList" default-expression="#[payload]" selector="MAX" selector-expression="#[payload.pepe]" />
+            <watermark variable="lastSelectorWithList" default-expression="#[payload]" selector="MAX" selector-expression='#[flowVars.pepe["test"]]' />
             <logger level="INFO" message="Executed inside poll"/>
         </poll>
     </flow>

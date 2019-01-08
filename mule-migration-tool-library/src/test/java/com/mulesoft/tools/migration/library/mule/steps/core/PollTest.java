@@ -59,10 +59,12 @@ public class PollTest {
         "poll-watermark-04",
         "poll-watermark-05",
         "poll-watermark-06",
-        "poll-watermark-07"
-        //            TODO Enable on MMT-262
-        //            "poll-watermark-08",
-        //            "poll-watermark-09"
+        "poll-watermark-07",
+        "poll-watermark-08",
+        "poll-watermark-09",
+        "poll-watermark-10",
+        "poll-watermark-11",
+        "poll-watermark-12"
 
     };
   }

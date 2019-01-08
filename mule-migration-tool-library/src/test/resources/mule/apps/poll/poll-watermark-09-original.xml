@@ -5,7 +5,7 @@
 
     <flow name="lastSelectorWithList">
         <poll>
-            <watermark variable="lastSelectorWithList" default-expression="#[payload]" selector="MIN" selector-expression="#[payload.charAt(0)]" />
+            <watermark variable="lastSelectorWithList" default-expression="#[payload]" selector="MIN" selector-expression="#[payload]" />
             <logger level="INFO" message="Executed inside poll"/>
         </poll>
     </flow>
