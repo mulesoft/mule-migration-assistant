@@ -9,7 +9,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>mule-migration-tool-api</artifactId>
-    <name>Mule Migration Tool API</name>
+    <name>Mule Migration Assistant API</name>
 
     <properties>
         <semver.version>2.0.3</semver.version>

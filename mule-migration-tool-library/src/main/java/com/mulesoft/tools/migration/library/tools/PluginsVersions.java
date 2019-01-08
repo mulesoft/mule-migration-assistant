@@ -28,7 +28,7 @@ public class PluginsVersions {
       props = new Properties();
       props.load(PluginsVersions.class.getResourceAsStream("/target-versions.properties"));
     } catch (IOException e) {
-      throw new MigrationAbortException("Could not initialize migration tool", e);
+      throw new MigrationAbortException("Could not initialize migration assistant", e);
     }
   }
 

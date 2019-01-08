@@ -10,7 +10,7 @@
     </parent>
     <artifactId>mule-migration-tool-expression</artifactId>
 
-    <name>Mule Migration Tool Expression</name>
+    <name>Mule Migration Assistant Expression</name>
 
 
     <properties>
