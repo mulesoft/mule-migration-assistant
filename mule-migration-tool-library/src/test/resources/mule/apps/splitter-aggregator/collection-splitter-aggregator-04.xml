@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:aggregators="http://www.mulesoft.org/schema/mule/aggregators"
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/aggregators http://www.mulesoft.org/schema/mule/aggregators/current/mule-aggregators.xsd
+      http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+
+    <vm:config name="splitter-aggregator-vm-config1816755023">
+        <vm:queues>
+            <vm:queue queueName="collection-splitter0-vm-queue"/>
+        </vm:queues>
+    </vm:config>
+
+    <flow name="main">
+        <set-variable variableName="collection-splitter0-group-size" value="#[sizeOf(payload)]"/>
+        <set-variable variableName="collection-splitter0-aggregator-complete-aggregation" value="#[false]"/>
+        <foreach>
+            <logger message="not important"/>
+            <aggregators:group-based-aggregator name="collection-splitter0-aggregator"
+                                                groupSize="#[vars.collection-splitter0-group-size]"
+                                                timeout="1000"
+                                                timeoutUnit="MILLISECONDS">
+                <aggregators:aggregation-complete>
+                    <set-variable variableName="collection-splitter0-aggregator-complete-aggregation" value="#[true]"/>
+                    <vm:publish config-ref="splitter-aggregator-vm-config1816755023" queueName="collection-splitter0-vm-queue"/>
+                </aggregators:aggregation-complete>
+            </aggregators:group-based-aggregator>
+        </foreach>
+        <vm:consume queueName="collection-splitter0-vm-queue" config-ref="splitter-aggregator-vm-config1816755023"/>
+        <choice>
+            <when expression="#[vars.collection-splitter0-aggregator-complete-aggregation == false]">
+                <!--place to add logic for when an aggregation timed out and the failOnTimeout flag was true-->
+            </when>
+        </choice>
+    </flow>
+
+    <flow name="collection-splitter0-aggregator-listener-flow">
+        <aggregators:aggregator-listener aggregatorName="collection-splitter0-aggregator" includeTimedOutGroups="true"/>
+        <choice>
+            <when expression="#[not attributes.isAggregationComplete]">
+                <vm:publish config-ref="config1816755023" queueName="collection-splitter0-vm-queue"/>
+            </when>
+        </choice>
+    </flow>
+
+</mule>

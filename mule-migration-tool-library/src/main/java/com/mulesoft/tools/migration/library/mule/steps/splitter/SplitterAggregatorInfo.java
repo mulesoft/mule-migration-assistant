@@ -69,6 +69,18 @@ public class SplitterAggregatorInfo {
     return this.getSplitterUniqueId() + "-aggregator";
   }
 
+  public String getAggregatorListenerFlowName() {
+    return this.getAggregatorName() + "-listener-flow";
+  }
+
+  public String getAggregationCompleteVariableName() {
+    return this.getAggregatorName() + "-complete-aggregation";
+  }
+
+  public String getAggregationCompleteExpression() {
+    return "#[vars." + getAggregationCompleteVariableName() + " == false]";
+  }
+
   public String getVmQueueName() {
     return this.getSplitterUniqueId() + "-vm-queue";
   }
