@@ -7,8 +7,8 @@
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnection;
 import static java.util.stream.Collectors.toList;
 import static org.jdom2.Content.CType.Element;
 
@@ -23,6 +23,7 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -179,21 +180,18 @@ public class DbConfig extends AbstractApplicationModelMigrationStep
       report.report("db.jdbcDriverDependency", connection, connection);
     }
 
-    for (Element element : new ArrayList<>(object.getChildren())) {
+    migrateReconnection(connection, object, report);
+
+    final List<Element> configChildren = new ArrayList<>(object.getChildren());
+    Collections.reverse(configChildren);
+    for (Element element : configChildren) {
       if (element != connection) {
         element.detach();
-        connection.addContent(element);
+        if (!"reconnect-forever".equals(element.getName()) && !"reconnect".equals(element.getName())) {
+          connection.addContent(0, element);
+        }
       }
     }
-
-    Element reconnect = connection.getChild("reconnect", CORE_NAMESPACE);
-    if (reconnect != null) {
-      // TODO migrate reconnections
-      report.report("db.reconnectNotifiers", reconnect, connection);
-      connection.removeContent(reconnect);
-    }
-
-    connection.addContent(new Element("reconnection", CORE_NAMESPACE).setAttribute("failsDeployment", "true"));
 
     object.setName("config");
   }
