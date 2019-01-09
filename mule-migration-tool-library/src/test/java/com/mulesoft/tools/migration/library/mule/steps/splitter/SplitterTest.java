@@ -53,6 +53,8 @@ public class SplitterTest {
             {"collection-splitter-aggregator-01", emptyList()},
             {"collection-splitter-aggregator-02", asList("splitter.correlation.never")},
             {"collection-splitter-aggregator-03", asList("splitter.aggregator.missing")},
+            {"collection-splitter-aggregator-04", emptyList()},
+            {"collection-splitter-aggregator-05", emptyList()},
             {"splitter-custom-aggregator-01", asList("splitter.aggregator.custom")}
     });
   }
