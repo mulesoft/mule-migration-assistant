@@ -57,7 +57,7 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
       config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + FTP_NS_URI + "' and local-name() = 'config']");
     }
 
-    Element ftpConfig = migrateFtpConfig(object, configName, config);
+    Element ftpConfig = migrateFtpConfig(object, config, configName, config, report);
     Element connection = ftpConfig.getChild("connection", FTP_NAMESPACE);
 
     processAddress(object, report).ifPresent(address -> {

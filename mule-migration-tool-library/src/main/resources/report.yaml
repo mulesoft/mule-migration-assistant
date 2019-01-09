@@ -65,6 +65,13 @@ flow:
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/intro-engine
 
+connectors:
+  reconnectNotifiers:
+    type: ERROR
+    message: "Reconnection notifiers cannot be configured on the 'reconnect' element."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-database#reconnection_strategies
+
 expressions:
   melToDw:
     type: WARN
@@ -345,11 +352,6 @@ db:
   jbossTxManager:
     type: ERROR
     message: JBoss Transaction manager must be replaced by the Bitronix Transaction Manager provided by Mule.
-  reconnectNotifiers:
-    type: ERROR
-    message: "Reconnection notifiers cannot be configured on the 'reconnect' element."
-    docLinks:
-      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-database#reconnection_strategies
   source:
     type: ERROR
     message: "'source' attribute does not exist in Mule 4. Update the query accordingly."
