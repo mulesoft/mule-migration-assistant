@@ -13,7 +13,6 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnection;
 
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -64,7 +63,6 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
 
     pop3Connector.ifPresent(c -> {
       handleServiceOverrides(c, report);
-      migrateReconnection(c, object, report);
 
       if (c.getAttribute("moveToFolder") != null) {
         // TODO https://www.mulesoft.org/jira/browse/MULE-15721

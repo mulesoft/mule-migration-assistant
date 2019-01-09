@@ -8,10 +8,10 @@ package com.mulesoft.tools.migration.library.mule.steps.ftp;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.handleChildElements;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleReconnection;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnection;
 import static java.util.stream.Collectors.joining;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -77,7 +77,7 @@ public class FtpConfig extends AbstractApplicationModelMigrationStep
     }
     object.removeAttribute("connectionFactoryClass");
 
-    migrateReconnection(connection, object, report);
+    handleReconnection(object, connection);
 
     copyAttributeIfPresent(object, connection, "passive");
     if (object.getAttribute("binary") != null) {

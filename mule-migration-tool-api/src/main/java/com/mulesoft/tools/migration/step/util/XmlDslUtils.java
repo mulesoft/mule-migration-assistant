@@ -18,6 +18,13 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
@@ -29,13 +36,6 @@ import org.jdom2.Namespace;
 import org.jdom2.Parent;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Provides reusable methods for common migration scenarios.
@@ -417,47 +417,6 @@ public final class XmlDslUtils {
     } else {
       elementIndex = document.getRootElement().getContent().size();
       document.getRootElement().addContent(elementIndex > 0 ? elementIndex - 1 : 0, element);
-    }
-  }
-
-  public static void migrateReconnection(Element m4Connection, Element m3Connector, MigrationReport report) {
-    String failsDeployment = changeDefault("true", "false", m3Connector.getAttributeValue("validateConnections"));
-    m3Connector.removeAttribute("validateConnections");
-
-    Element reconnection = new Element("reconnection", CORE_NAMESPACE);
-    if (failsDeployment != null) {
-      reconnection.setAttribute("failsDeployment", failsDeployment);
-      m4Connection.addContent(reconnection);
-    }
-
-    migrateReconnect(m3Connector, reconnection, report, m4Connection);
-  }
-
-  /**
-   *
-   * @param m3Connection the source or connector config that may contain a {@code reconnect element}.
-   */
-  public static void migrateReconnect(Element m3Connection, Element m4Reconnection, MigrationReport report, Element parent) {
-    Element reconnectForever = m3Connection.getChild("reconnect-forever", CORE_NAMESPACE);
-    if (reconnectForever != null) {
-      m4Reconnection.addContent(reconnectForever.detach());
-    }
-
-    Element reconnect = m3Connection.getChild("reconnect", CORE_NAMESPACE);
-    if (reconnect != null) {
-      final Element m4Reconnect = reconnect.detach();
-
-      if (m4Reconnect.getChild("reconnect-notifier", CORE_NAMESPACE) != null
-          || m4Reconnect.getChild("reconnect-custom-notifier", CORE_NAMESPACE) != null) {
-        report.report("connectors.reconnectNotifiers", reconnect, parent);
-
-        m4Reconnect.removeChildren("reconnect-notifier", CORE_NAMESPACE);
-        m4Reconnect.removeChildren("reconnect-custom-notifier", CORE_NAMESPACE);
-      }
-
-      if (m4Reconnect.hasAttributes() || !m4Reconnect.getChildren().isEmpty()) {
-        m4Reconnection.addContent(m4Reconnect);
-      }
     }
   }
 

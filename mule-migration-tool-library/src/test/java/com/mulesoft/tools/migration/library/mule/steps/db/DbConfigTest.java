@@ -10,7 +10,7 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -66,8 +66,7 @@ public class DbConfigTest {
         "db-config-17",
         "db-config-18",
         "db-config-19",
-        "db-config-20",
-        "db-config-21"
+        "db-config-20"
     };
   }
 

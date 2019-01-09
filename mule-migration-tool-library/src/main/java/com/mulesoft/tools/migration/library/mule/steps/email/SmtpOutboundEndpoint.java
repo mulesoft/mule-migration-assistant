@@ -13,7 +13,6 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutb
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnection;
 import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -62,7 +61,6 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
 
     smtpConnector.ifPresent(c -> {
       handleServiceOverrides(c, report);
-      migrateReconnection(c, object, report);
 
       if (c.getAttribute("toAddresses") != null) {
         object.setAttribute("tc", c.getAttributeValue("toAddresses"));

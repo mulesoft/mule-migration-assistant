@@ -14,7 +14,6 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPA
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnect;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -104,7 +103,18 @@ public class JmsInboundEndpoint extends AbstractJmsEndpoint {
     String configName = migrateJmsConfig(object, report, connector, getApplicationModel());
 
     connector.ifPresent(m3c -> {
-      migrateReconnect(m3c, object, report, object);
+      Element reconnectforever = m3c.getChild("reconnect-forever", CORE_NAMESPACE);
+      if (reconnectforever != null) {
+        object.addContent(new Element("reconnect-forever", CORE_NAMESPACE)
+            .setAttribute("frequency", reconnectforever.getAttributeValue("frequency")));
+      }
+
+      Element reconnect = m3c.getChild("reconnect", CORE_NAMESPACE);
+      if (reconnect != null) {
+        object.addContent(new Element("reconnect", CORE_NAMESPACE)
+            .setAttribute("frequency", reconnect.getAttributeValue("frequency"))
+            .setAttribute("count", reconnect.getAttributeValue("count")));
+      }
 
       if (m3c.getAttributeValue("acknowledgementMode") != null) {
         switch (m3c.getAttributeValue("acknowledgementMode")) {

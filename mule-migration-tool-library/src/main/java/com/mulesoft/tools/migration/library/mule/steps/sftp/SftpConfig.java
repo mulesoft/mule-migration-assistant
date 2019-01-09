@@ -8,10 +8,10 @@ package com.mulesoft.tools.migration.library.mule.steps.sftp;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.handleChildElements;
+import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleReconnection;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnection;
 import static java.util.stream.Collectors.joining;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -78,7 +78,7 @@ public class SftpConfig extends AbstractApplicationModelMigrationStep
     }
     object.removeAttribute("maxConnectionPoolSize");
 
-    migrateReconnection(connection, object, report);
+    handleReconnection(object, connection);
 
     Element proxyConfig = object.getChild("proxy-config", SFTP_NAMESPACE);
     if (proxyConfig != null) {

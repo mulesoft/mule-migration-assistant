@@ -60,7 +60,7 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
       config = getApplicationModel().getNodeOptional("/*/*[namespace-uri() = '" + SFTP_NS_URI + "' and local-name() = 'config']");
     }
 
-    Element sftpConfig = migrateSftpConfig(object, configName, config, report);
+    Element sftpConfig = migrateSftpConfig(object, configName, config);
     Element connection = sftpConfig.getChild("connection", SFTP_NAMESPACE);
 
     processAddress(object, report).ifPresent(address -> {

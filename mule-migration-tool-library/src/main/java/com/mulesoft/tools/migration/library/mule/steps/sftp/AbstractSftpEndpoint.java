@@ -7,14 +7,13 @@
 package com.mulesoft.tools.migration.library.mule.steps.sftp;
 
 import static com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConfig.SFTP_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnection;
 import static org.apache.commons.lang3.StringUtils.substring;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
@@ -35,7 +34,7 @@ public abstract class AbstractSftpEndpoint extends AbstractApplicationModelMigra
 
   private ExpressionMigrator expressionMigrator;
 
-  protected Element migrateSftpConfig(Element object, String configName, Optional<Element> config, MigrationReport report) {
+  protected Element migrateSftpConfig(Element object, String configName, Optional<Element> config) {
     Element sftpConfig = config.orElseGet(() -> {
       Element sftpCfg = new Element("config", SFTP_NAMESPACE);
       sftpCfg.setAttribute("name", configName != null
@@ -45,7 +44,7 @@ public abstract class AbstractSftpEndpoint extends AbstractApplicationModelMigra
               : (getFlow(object).getAttributeValue("name") + "Sftp"))
               + "Config");
       Element conn = new Element("connection", SFTP_NAMESPACE);
-      migrateReconnection(conn, object, report);
+      conn.addContent(new Element("reconnection", CORE_NAMESPACE).setAttribute("failsDeployment", "true"));
       sftpCfg.addContent(conn);
 
       addTopLevelElement(sftpCfg, object.getDocument());
