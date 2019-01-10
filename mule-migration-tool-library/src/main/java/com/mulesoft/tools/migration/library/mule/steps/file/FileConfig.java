@@ -8,10 +8,10 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
-import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleReconnection;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnection;
 import static java.util.stream.Collectors.joining;
 import static org.jdom2.Namespace.getNamespace;
 
@@ -87,7 +87,7 @@ public class FileConfig extends AbstractApplicationModelMigrationStep
     }
     object.removeAttribute("workFileNamePattern");
 
-    handleReconnection(object, connection);
+    migrateReconnection(connection, object, report);
 
     Element matcher = new Element("matcher", FILE_NAMESPACE_URI);
     matcher.setAttribute("name", object.getAttributeValue("name") + "Matcher");

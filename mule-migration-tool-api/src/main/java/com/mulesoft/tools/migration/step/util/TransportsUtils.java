@@ -7,11 +7,11 @@
 package com.mulesoft.tools.migration.step.util;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isErrorHanldingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnection;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -133,34 +133,8 @@ public final class TransportsUtils {
     }
   }
 
-  public static void handleReconnection(Element mule3Connector, Element connection) {
-    String failsDeployment = changeDefault("true", "false", mule3Connector.getAttributeValue("validateConnections"));
-    mule3Connector.removeAttribute("validateConnections");
-    if (failsDeployment != null) {
-      Element reconnection = new Element("reconnection", CORE_NAMESPACE);
-      reconnection.setAttribute("failsDeployment", failsDeployment);
-      connection.addContent(reconnection);
-    }
-
-    if (mule3Connector.getChild("reconnect", CORE_NAMESPACE) != null) {
-      Element reconnection = connection.getChild("reconnection", CORE_NAMESPACE);
-      if (reconnection == null) {
-        reconnection = new Element("reconnection", CORE_NAMESPACE);
-        connection.addContent(reconnection);
-      }
-
-      reconnection.addContent(mule3Connector.getChild("reconnect", CORE_NAMESPACE).detach());
-    }
-
-    if (mule3Connector.getChild("reconnect-forever", CORE_NAMESPACE) != null) {
-      Element reconnection = connection.getChild("reconnection", CORE_NAMESPACE);
-      if (reconnection == null) {
-        reconnection = new Element("reconnection", CORE_NAMESPACE);
-        connection.addContent(reconnection);
-      }
-
-      reconnection.addContent(mule3Connector.getChild("reconnect-forever", CORE_NAMESPACE).detach());
-    }
+  public static void handleReconnection(Element mule3Connector, Element connection, MigrationReport report) {
+    migrateReconnection(connection, mule3Connector, report);
   }
 
   public static void handleConnectorChildElements(Element object, Element m4Config, Element connection, MigrationReport report) {
