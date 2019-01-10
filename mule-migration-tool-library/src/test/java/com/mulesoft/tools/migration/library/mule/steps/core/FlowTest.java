@@ -8,11 +8,9 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
@@ -26,6 +24,7 @@ import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -37,6 +36,9 @@ import java.nio.file.Paths;
 public class FlowTest {
 
   private static final Path FLOW_EXAMPLES_PATH = Paths.get("mule/apps/core");
+
+  @Rule
+  public TemporaryFolder temp = new TemporaryFolder();
 
   @Rule
   public ReportVerification report = new ReportVerification();
@@ -79,16 +81,13 @@ public class FlowTest {
   @Before
   public void setUp() throws Exception {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
-    appModel = mock(ApplicationModel.class);
-    when(appModel.getNode(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).stream().findFirst()
-            .orElse(null));
+    appModel = mockApplicationModel(doc, temp);
 
     flow = new Flow();
     flow.setApplicationModel(appModel);
     subFlow = new SubFlow();
     flowRef = new FlowRef();
-    flowRef.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    flowRef.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
   }
 
 

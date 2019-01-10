@@ -8,12 +8,9 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Optional.of;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
@@ -23,8 +20,6 @@ import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
 import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
@@ -102,15 +97,9 @@ public class FileInboundTest {
   @Before
   public void setUp() throws Exception {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
+    appModel = mockApplicationModel(doc, temp);
 
-
-    MelToDwExpressionMigrator expressionMigrator =
-        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
-    appModel = mock(ApplicationModel.class);
-    when(appModel.getNodes(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
-    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
-    when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
+    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
 
     customFilter = new CustomFilter();
     customFilter.setApplicationModel(appModel);

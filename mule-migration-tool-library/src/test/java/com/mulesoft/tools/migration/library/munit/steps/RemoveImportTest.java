@@ -8,12 +8,10 @@ package com.mulesoft.tools.migration.library.munit.steps;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.SpringImport;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -55,10 +53,7 @@ public class RemoveImportTest {
     doc = getDocument(this.getClass().getClassLoader().getResource(MUNIT_SAMPLE_PATH.toString()).toURI().getPath());
     doc.setBaseURI(MUNIT_PATH);
 
-    appModel = mock(ApplicationModel.class);
-    when(appModel.getNodes(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
-    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+    appModel = mockApplicationModel(doc, temp);
 
     springImport = new SpringImport();
     springImport.setApplicationModel(appModel);

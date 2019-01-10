@@ -8,19 +8,14 @@ package com.mulesoft.tools.migration.library.mule.steps.compression;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.tck.ReportVerification;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -32,6 +27,9 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RunWith(Parameterized.class)
 public class CompressionTest {
@@ -59,9 +57,9 @@ public class CompressionTest {
     targetPath = COMPRESSION_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
   }
 
-  private CompressionInlinerStep inliner = new CompressionInlinerStep();
-  private GZipCompressTransformer compress = new GZipCompressTransformer();
-  private GZipUncompressTransformer uncompress = new GZipUncompressTransformer();
+  private final CompressionInlinerStep inliner = new CompressionInlinerStep();
+  private final GZipCompressTransformer compress = new GZipCompressTransformer();
+  private final GZipUncompressTransformer uncompress = new GZipUncompressTransformer();
 
   private Document doc;
   private ApplicationModel appModel;
@@ -69,11 +67,7 @@ public class CompressionTest {
   @Before
   public void setUp() throws Exception {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
-    appModel = mock(ApplicationModel.class);
-    when(appModel.getNode(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).stream().findFirst()
-            .orElse(null));
-    when(appModel.getNodes(any(String.class))).thenAnswer(invocation -> getElementsFromDocument(doc, invocation.getArgument(0)));
+    appModel = mockApplicationModel(doc, temp);
 
     compress.setApplicationModel(appModel);
     uncompress.setApplicationModel(appModel);

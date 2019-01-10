@@ -68,7 +68,6 @@ public class OutboundPropertiesTest {
   private SetProperty setProperty;
   private CopyProperties copyProperties;
   private MessagePropertiesTransformer mpt;
-  private ApplicationModel appModel;
 
   @Before
   public void setUp() throws Exception {

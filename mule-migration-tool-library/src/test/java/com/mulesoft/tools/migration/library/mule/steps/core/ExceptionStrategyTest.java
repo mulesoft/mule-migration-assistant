@@ -8,18 +8,15 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListenerConfig;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
@@ -61,13 +58,12 @@ public class ExceptionStrategyTest {
 
   private final Path configPath;
   private final Path targetPath;
-  private final ApplicationModel appModel;
+  private ApplicationModel appModel;
   private Document doc;
 
   public ExceptionStrategyTest(String filePrefix) {
     configPath = CORE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = CORE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
-    appModel = mock(ApplicationModel.class);
   }
 
   private CatchExceptionStrategy catchExceptionStrategy;
@@ -81,13 +77,11 @@ public class ExceptionStrategyTest {
   @Before
   public void setUp() throws Exception {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
+    appModel = mockApplicationModel(doc, temp);
 
     httpListenerConfig = new HttpConnectorListenerConfig();
 
     httpListener = new HttpConnectorListener();
-    when(appModel.getNode(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
-    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
     httpListener.setApplicationModel(appModel);
     httpListener.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
 
