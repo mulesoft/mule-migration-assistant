@@ -8,11 +8,9 @@ package com.mulesoft.tools.migration.library.mule.steps.batch;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
@@ -83,8 +81,9 @@ public class BatchTest {
 
   @Before
   public void setUp() throws Exception {
-    appModel = mock(ApplicationModel.class);
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
+    appModel = mockApplicationModel(doc, temp);
+
     batchJob = new BatchJob();
     batchExecute = new BatchExecute();
     batchSetRecordVariable = new BatchSetRecordVariable();
@@ -92,18 +91,11 @@ public class BatchTest {
     batchStep = new BatchStep();
     batchHistoryExpiration = new BatchHistoryExpiration();
 
-    MelToDwExpressionMigrator expressionMigrator =
-        new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
+    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     batchSetRecordVariable.setExpressionMigrator(expressionMigrator);
     batchExecute.setExpressionMigrator(expressionMigrator);
     batchStep.setExpressionMigrator(expressionMigrator);
     batchJob.setExpressionMigrator(expressionMigrator);
-
-    appModel = mock(ApplicationModel.class);
-    when(appModel.getNodes(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
-    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
-
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {

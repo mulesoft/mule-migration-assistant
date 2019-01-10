@@ -50,8 +50,7 @@ public class ChoiceExpressionsTest {
     appModel = mock(ApplicationModel.class);
 
     choiceExpressions = new ChoiceExpressions();
-    choiceExpressions
-        .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    choiceExpressions.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
     choiceExpressions.setApplicationModel(appModel);
   }
 

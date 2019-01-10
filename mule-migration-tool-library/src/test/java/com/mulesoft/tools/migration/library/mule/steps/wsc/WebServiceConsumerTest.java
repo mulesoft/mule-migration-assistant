@@ -8,11 +8,9 @@ package com.mulesoft.tools.migration.library.mule.steps.wsc;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConfig;
@@ -23,7 +21,6 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpOutboundEndpoint
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpsOutboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.apache.commons.io.IOUtils;
@@ -107,15 +104,8 @@ public class WebServiceConsumerTest {
   @Before
   public void setUp() throws Exception {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
-    appModel = mock(ApplicationModel.class);
     doc.getRootElement().addNamespaceDeclaration(Namespace.getNamespace("wsc", "http://www.mulesoft.org/schema/mule/wsc"));
-    when(appModel.getNode(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
-    when(appModel.getNodes(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
-    when(appModel.getNodeOptional(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).stream().findAny());
-    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
+    appModel = mockApplicationModel(doc, temp);
 
     httpOutbound = new HttpOutboundEndpoint();
     httpOutbound.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
