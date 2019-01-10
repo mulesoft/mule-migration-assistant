@@ -316,12 +316,26 @@ public class PomModel {
   }
 
   /**
+   * Retrieves the list of reapositories repository section.
+   */
+  public List<Repository> getRepositories() {
+    return model.getRepositories().stream().map(r -> Repository.of(r)).collect(toList());
+  }
+
+  /**
    * Adds a {@link Repository} to the {@link PomModel} in the repository section.
    *
    * @param repository
    */
   public void addRepository(Repository repository) {
     model.addRepository(repository.getInnerModel());
+  }
+
+  /**
+   * Retrieves the list of reapositories plugin repository section.
+   */
+  public List<Repository> getPluginRepositories() {
+    return model.getPluginRepositories().stream().map(r -> Repository.of(r)).collect(toList());
   }
 
   /**
