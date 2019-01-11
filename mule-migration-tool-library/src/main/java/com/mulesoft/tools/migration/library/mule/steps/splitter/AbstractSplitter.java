@@ -100,13 +100,13 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
                               getFlow(splitterElement)),
               splitterAggregatorInfo);
       if(!oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_FAIL_ON_TIMEOUT_ATTRIBUTE)
-        || "true".equals(oldAggregatorAttributes.get(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE))) {
-        addElementAfter(splitterElement,
-                        getFailOnTimeoutChoiceElement(splitterAggregatorInfo));
+        || "true".equals(oldAggregatorAttributes.get(OLD_AGGREGATOR_FAIL_ON_TIMEOUT_ATTRIBUTE))) {
+        addElementAfter(getFailOnTimeoutChoiceElement(splitterAggregatorInfo),
+                        splitterElement);
       }
     }
     addElementBefore(forEachAggregatorElement, splitterElement);
-    addElementAfter( getVmConsumeElement(splitterAggregatorInfo), splitterElement);
+    addElementAfter(getVmConsumeElement(splitterAggregatorInfo), splitterElement);
     addVmQueue(splitterAggregatorInfo);
     splitterElement.detach();
   }
