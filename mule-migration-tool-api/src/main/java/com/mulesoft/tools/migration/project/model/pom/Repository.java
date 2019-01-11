@@ -6,10 +6,10 @@
  */
 package com.mulesoft.tools.migration.project.model.pom;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.RepositoryPolicy;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 
 /**
@@ -120,6 +120,10 @@ public class Repository {
 
   public org.apache.maven.model.Repository getInnerModel() {
     return repository;
+  }
+
+  static final Repository of(org.apache.maven.model.Repository repo) {
+    return new Repository(repo);
   }
 
   /**

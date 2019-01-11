@@ -10,14 +10,15 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
-import com.mulesoft.tools.migration.library.mule.steps.core.SetSecureProperties;
 import com.mulesoft.tools.migration.library.mule.steps.core.PreprocessNamespaces;
+import com.mulesoft.tools.migration.library.mule.steps.core.SetSecureProperties;
 import com.mulesoft.tools.migration.library.mule.steps.ee.MigrateDWScriptFiles;
 import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveBuildHelperMavenPlugin;
 import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleAppMavenPlugin;
 import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleDependencies;
 import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateMuleMavenPlugin;
 import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateProjectVersion;
+import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateRepositories;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
@@ -48,7 +49,8 @@ public class PreprocessMuleApplication extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new RemoveMuleDependencies(),
+    return newArrayList(new UpdateRepositories(),
+                        new RemoveMuleDependencies(),
                         new UpdateMuleMavenPlugin(),
                         new RemoveMuleAppMavenPlugin(),
                         new RemoveBuildHelperMavenPlugin(),
