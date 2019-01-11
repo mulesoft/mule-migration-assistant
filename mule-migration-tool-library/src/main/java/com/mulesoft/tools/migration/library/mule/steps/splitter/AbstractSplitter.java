@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
+ */
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
 import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.VM_NAMESPACE;
@@ -41,7 +47,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
   private static final Element AGGREGATOR_TEMPLATE = new Element("group-based-aggregator", AGGREGATORS_NAMESPACE);
 
   private static final Element AGGREGATOR_LISTENER_TEMPLATE = new Element("aggregator-listener", AGGREGATORS_NAMESPACE)
-          .setAttribute("includeTimedOutGroups", "true");
+      .setAttribute("includeTimedOutGroups", "true");
 
   private static final Element VM_QUEUE_TEMPLATE = new Element("queue", VM_NAMESPACE);
 
@@ -65,24 +71,26 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     registerNeverEnableCorrelationReport(splitter, reports);
 
     List<Element> elementsBetweenSplitterAndAggregator = collectUntilAggregator(splitter);
-    Element aggregatorElement = foundMatchingAggregator(elementsBetweenSplitterAndAggregator.get(elementsBetweenSplitterAndAggregator.size() - 1)) ?
-                                elementsBetweenSplitterAndAggregator.remove(elementsBetweenSplitterAndAggregator.size() - 1) :
-                                null;
+    Element aggregatorElement =
+        foundMatchingAggregator(elementsBetweenSplitterAndAggregator.get(elementsBetweenSplitterAndAggregator.size() - 1))
+            ? elementsBetweenSplitterAndAggregator.remove(elementsBetweenSplitterAndAggregator.size() - 1)
+            : null;
 
     if (!isCustomAggregator(aggregatorElement)) {
       if (aggregatorElement == null) {
         //There is no related aggregator
         registerNoAggregatorReport(splitter, reports);
-      }
-      else {
+      } else {
         //Splitter has a matching aggregator
         aggregatorElement.detach();
       }
       Map<String, String> oldAggregatorAttributes = getOldAggregatorAttributes(aggregatorElement);
-      forEachElement = wrapWithForEachAndAggregator(splitterAggregatorInfo, oldAggregatorAttributes, elementsBetweenSplitterAndAggregator);
+      forEachElement =
+          wrapWithForEachAndAggregator(splitterAggregatorInfo, oldAggregatorAttributes, elementsBetweenSplitterAndAggregator);
       replaceInDocument(splitter, forEachElement, splitterAggregatorInfo, oldAggregatorAttributes);
-    }
-    else {
+      reportOldAggregatorAttributes(reports, oldAggregatorAttributes, aggregatorElement,
+                                    forEachElement.getChild(AGGREGATOR_TEMPLATE.getName(), AGGREGATORS_NAMESPACE));
+    } else {
       //Splitter has a custom aggregator
       reportCustomAggregator(aggregatorElement, report);
     }
@@ -90,17 +98,20 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     writeRegisteredReports(forEachElement, reports, report);
   }
 
-  private void replaceInDocument(Element splitterElement, Element forEachAggregatorElement, SplitterAggregatorInfo splitterAggregatorInfo, Map<String, String> oldAggregatorAttributes) {
+  private void replaceInDocument(Element splitterElement,
+                                 Element forEachAggregatorElement,
+                                 SplitterAggregatorInfo splitterAggregatorInfo,
+                                 Map<String, String> oldAggregatorAttributes) {
     addElementBefore(getSetPayloadSizeVariableElement(splitterAggregatorInfo), splitterElement);
-    if(oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE)
-       && Long.parseLong(oldAggregatorAttributes.get(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE)) > 0L) {
-      addElementBefore(getAggregationCompleteVariableElement(splitterAggregatorInfo, false) ,splitterElement);
+    if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE)
+        && Long.parseLong(oldAggregatorAttributes.get(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE)) > 0L) {
+      addElementBefore(getAggregationCompleteVariableElement(splitterAggregatorInfo, false), splitterElement);
       setAggregatorListenerFlowContent(
-              addNewFlowAfter(splitterAggregatorInfo.getAggregatorListenerFlowName(),
-                              getFlow(splitterElement)),
-              splitterAggregatorInfo);
-      if(!oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_FAIL_ON_TIMEOUT_ATTRIBUTE)
-        || "true".equals(oldAggregatorAttributes.get(OLD_AGGREGATOR_FAIL_ON_TIMEOUT_ATTRIBUTE))) {
+                                       addNewFlowAfter(splitterAggregatorInfo.getAggregatorListenerFlowName(),
+                                                       getFlow(splitterElement)),
+                                       splitterAggregatorInfo);
+      if (!oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_FAIL_ON_TIMEOUT_ATTRIBUTE)
+          || "true".equals(oldAggregatorAttributes.get(OLD_AGGREGATOR_FAIL_ON_TIMEOUT_ATTRIBUTE))) {
         addElementAfter(getFailOnTimeoutChoiceElement(splitterAggregatorInfo),
                         splitterElement);
       }
@@ -111,7 +122,8 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     splitterElement.detach();
   }
 
-  private Element wrapWithForEachAndAggregator(SplitterAggregatorInfo splitterAggregatorInfo, Map<String, String> oldAggregatorAttributes, List<Element> elements) {
+  private Element wrapWithForEachAndAggregator(SplitterAggregatorInfo splitterAggregatorInfo,
+                                               Map<String, String> oldAggregatorAttributes, List<Element> elements) {
     elements.forEach(Element::detach);
     Element forEachElement = FOR_EACH_TEMPLATE_ELEMENT.clone();
     forEachElement.addContent(elements);
@@ -146,6 +158,23 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     return element != null && "custom-aggregator".equals(element.getName());
   }
 
+  private void reportOldAggregatorAttributes(List<ReportEntry> reports, Map<String, String> oldAggregatorAttributes,
+                                             Element oldAggregator, Element newAggregator) {
+    if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_PROCESSED_GROUPS_OBJECT_STORE_REF_ATTRIBUTE)) {
+      reports.add(new ReportEntry("splitter.aggregator.processedGroupsObjectStore", oldAggregator, newAggregator));
+    }
+    if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_EVENT_GROUPS_OBJECT_STORE_REF_ATTRIBUTE)) {
+      reports.add(new ReportEntry("splitter.aggregator.eventGroupsObjectStore", oldAggregator, newAggregator));
+    }
+    if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_PERSISTENT_STORES_ATTRIBUTE)) {
+      reports.add(new ReportEntry("splitter.aggregator.persistentStores", oldAggregator, newAggregator));
+    }
+    if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_STORE_PREFIX_ATTRIBUTE)) {
+      reports.add(new ReportEntry("splitter.aggregator.storePrefix", oldAggregator, newAggregator));
+    }
+
+  }
+
   private void reportCustomAggregator(Element aggregator, MigrationReport report) {
     report.report("splitter.aggregator.custom", aggregator, aggregator);
   }
@@ -171,91 +200,92 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     });
   }
 
-  private Element getAggregatorElement(SplitterAggregatorInfo splitterAggregatorInfo, Map<String, String> oldAggregatorAttributes) {
+  private Element getAggregatorElement(SplitterAggregatorInfo splitterAggregatorInfo,
+                                       Map<String, String> oldAggregatorAttributes) {
     Element aggregationCompleteRoute = new Element("aggregation-complete", AGGREGATORS_NAMESPACE)
-            .addContent(
-                    getVmPublishElement(splitterAggregatorInfo)
-            );
+        .addContent(
+                    getVmPublishElement(splitterAggregatorInfo));
     Element newAggregator =
-            AGGREGATOR_TEMPLATE
-                    .clone()
-                    .setAttribute("name", splitterAggregatorInfo.getAggregatorName())
-                    .setAttribute("groupSize", "#[vars." + splitterAggregatorInfo.getGroupSizeVariableName() + "]")
-                    .addContent(aggregationCompleteRoute);
-    if(oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE)) {
+        AGGREGATOR_TEMPLATE
+            .clone()
+            .setAttribute("name", splitterAggregatorInfo.getAggregatorName())
+            .setAttribute("groupSize", "#[vars." + splitterAggregatorInfo.getGroupSizeVariableName() + "]")
+            .addContent(aggregationCompleteRoute);
+    if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE)) {
       String timeout = oldAggregatorAttributes.get(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE);
       newAggregator.setAttribute("timeout", timeout);
       newAggregator.setAttribute("timeoutUnit", "MILLISECONDS");
       aggregationCompleteRoute.getContent().add(0, getAggregationCompleteVariableElement(splitterAggregatorInfo, true));
+    }
+    if(oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_EVENT_GROUPS_OBJECT_STORE_REF_ATTRIBUTE)) {
+      newAggregator.setAttribute("objectStore", oldAggregatorAttributes.get(OLD_AGGREGATOR_EVENT_GROUPS_OBJECT_STORE_REF_ATTRIBUTE));
     }
     return newAggregator;
   }
 
   private Element setAggregatorListenerFlowContent(Element flow, SplitterAggregatorInfo splitterAggregatorInfo) {
     return flow
-            .addContent(
+        .addContent(
                     AGGREGATOR_LISTENER_TEMPLATE
-                            .clone()
-                            .setAttribute("aggregatorName", splitterAggregatorInfo.getAggregatorName()))
-            .addContent(
+                        .clone()
+                        .setAttribute("aggregatorName", splitterAggregatorInfo.getAggregatorName()))
+        .addContent(
                     CHOICE_TEMPLATE_ELEMENT
-                            .clone()
-                            .setContent(
-                            WHEN_TEMPLATE_ELEMENT
-                                    .clone()
-                                    .setAttribute("expression", "#[not attributes.isAggregationComplete]")
-                                    .setContent(
-                                            getVmPublishElement(splitterAggregatorInfo)
-                                    )
-                            )
-            );
+                        .clone()
+                        .setContent(
+                                    WHEN_TEMPLATE_ELEMENT
+                                        .clone()
+                                        .setAttribute("expression", "#[not attributes.isAggregationComplete]")
+                                        .setContent(
+                                                    getVmPublishElement(splitterAggregatorInfo))));
   }
 
   private Element getSetPayloadSizeVariableElement(SplitterAggregatorInfo splitterAggregatorInfo) {
     return SET_VARIABLE_TEMPLATE
-            .clone()
-            .setAttribute("variableName", splitterAggregatorInfo.getGroupSizeVariableName())
-            .setAttribute("value", "#[sizeOf(payload)]");
+        .clone()
+        .setAttribute("variableName", splitterAggregatorInfo.getGroupSizeVariableName())
+        .setAttribute("value", "#[sizeOf(payload)]");
   }
 
   private Element getAggregationCompleteVariableElement(SplitterAggregatorInfo splitterAggregatorInfo, boolean value) {
     return SET_VARIABLE_TEMPLATE
-            .clone()
-            .setAttribute("variableName", splitterAggregatorInfo.getAggregationCompleteVariableName())
-            .setAttribute("value", value ? "#[true]":"#[false]");
+        .clone()
+        .setAttribute("variableName", splitterAggregatorInfo.getAggregationCompleteVariableName())
+        .setAttribute("value", value ? "#[true]" : "#[false]");
   }
 
   private Element getVmConsumeElement(SplitterAggregatorInfo splitterAggregatorInfo) {
     return VM_CONSUME_TEMPLATE_ELEMENT
-            .clone()
-            .setAttribute("config-ref", splitterAggregatorInfo.getVmConfigName())
-            .setAttribute("queueName", splitterAggregatorInfo.getVmQueueName());
+        .clone()
+        .setAttribute("config-ref", splitterAggregatorInfo.getVmConfigName())
+        .setAttribute("queueName", splitterAggregatorInfo.getVmQueueName());
   }
 
   private Element getFailOnTimeoutChoiceElement(SplitterAggregatorInfo splitterAggregatorInfo) {
     return CHOICE_TEMPLATE_ELEMENT
+        .clone()
+        .setContent(WHEN_TEMPLATE_ELEMENT
             .clone()
-            .setContent(WHEN_TEMPLATE_ELEMENT
-                                .clone()
-                                .setAttribute("expression", splitterAggregatorInfo.getAggregationCompleteExpression()));
+            .setAttribute("expression", splitterAggregatorInfo.getAggregationCompleteExpression()));
   }
 
   private Element getVmPublishElement(SplitterAggregatorInfo splitterAggregatorInfo) {
     return VM_PUBLISH_TEMPLATE_ELEMENT
-            .clone()
-            .setAttribute("config-ref", splitterAggregatorInfo.getVmConfigName())
-            .setAttribute("queueName", splitterAggregatorInfo.getVmQueueName());
+        .clone()
+        .setAttribute("config-ref", splitterAggregatorInfo.getVmConfigName())
+        .setAttribute("queueName", splitterAggregatorInfo.getVmQueueName());
   }
 
   private void addVmQueue(SplitterAggregatorInfo splitterAggregatorInfo) {
-    Element vmConfig = migrateVmConfig(splitterAggregatorInfo.getSplitterElement(), empty(), splitterAggregatorInfo.getVmConfigName(), getApplicationModel());
+    Element vmConfig = migrateVmConfig(splitterAggregatorInfo.getSplitterElement(), empty(),
+                                       splitterAggregatorInfo.getVmConfigName(), getApplicationModel());
     Element queues = vmConfig.getChild("queues", VM_NAMESPACE);
     queues.addContent(VM_QUEUE_TEMPLATE.clone().setAttribute("queueName", splitterAggregatorInfo.getVmQueueName()));
   }
 
-  private Map<String,String> getOldAggregatorAttributes(Element aggregatorElement) {
+  private Map<String, String> getOldAggregatorAttributes(Element aggregatorElement) {
     Map<String, String> attributes = new HashMap<>();
-    if(aggregatorElement != null ) {
+    if (aggregatorElement != null) {
       addAttributeToMap(aggregatorElement, OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE, attributes, null);
       addAttributeToMap(aggregatorElement, OLD_AGGREGATOR_FAIL_ON_TIMEOUT_ATTRIBUTE, attributes, "true");
       addAttributeToMap(aggregatorElement, OLD_AGGREGATOR_PROCESSED_GROUPS_OBJECT_STORE_REF_ATTRIBUTE, attributes, null);
@@ -266,12 +296,12 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     return attributes;
   }
 
-  private void addAttributeToMap(Element element,String attributeKey, Map<String, String> attributes, String defaultValue ) {
-    if(defaultValue != null) {
+  private void addAttributeToMap(Element element, String attributeKey, Map<String, String> attributes, String defaultValue) {
+    if (defaultValue != null) {
       attributes.put(attributeKey, element.getAttributeValue(attributeKey, defaultValue));
-    }else {
+    } else {
       String value = element.getAttributeValue(attributeKey);
-      if(value != null) {
+      if (value != null) {
         attributes.put(attributeKey, value);
       }
     }

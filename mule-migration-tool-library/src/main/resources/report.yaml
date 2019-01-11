@@ -828,3 +828,20 @@ splitter:
     missing:
       type: WARN
       message: Could not find any associated aggregator for the splitter. Migrated behaviour may not be the expected one.
+    processedGroupsObjectStore:
+      type: WARN
+      message: Processed groups are not longer stored in a different object store. This parameter is being ignored. Check Aggregator configuration parameters if wanting to add logic for group eviction.
+      docLinks:
+        - https://docs.mulesoft.com/connectors/aggregator/aggregators-module-reference#parameters-3
+    eventGroupsObjectStore:
+      type: WARN
+      message: Event groups are not stored the same way as in the previous aggregators. Accessing them externally may lead to unexpected errors.
+    persistentStores:
+      type: WARN
+      message: This parameter is being ignored. If wanting to use a persisten object store, the configuration should reference a globally created persistent object store or a private persistent object store should be defined inline.
+      docLinks:
+        - https://docs.mulesoft.com/connectors/aggregator/aggregators-module-reference#parameters-3
+        - https://docs.mulesoft.com/connectors/object-store/object-store-to-define-a-new-os#private_os
+    storePrefix:
+      type: WARN
+      message: This parameter is being ignored.
