@@ -40,7 +40,7 @@
         <aggregators:aggregator-listener aggregatorName="collection-splitter0-aggregator" includeTimedOutGroups="true"/>
         <choice>
             <when expression="#[not attributes.isAggregationComplete]">
-                <vm:publish config-ref="config1816755023" queueName="collection-splitter0-vm-queue"/>
+                <vm:publish config-ref="splitter-aggregator-vm-config1816755023" queueName="collection-splitter0-vm-queue"/>
             </when>
         </choice>
     </flow>

@@ -15,16 +15,15 @@
 
     <flow name="main">
         <set-variable variableName="collection-splitter0-group-size" value="#[sizeOf(payload)]"/>
-        <set-variable variableName="collection-splitter0-aggregator-aggregation-complete" value="false"/>
+        <set-variable variableName="collection-splitter0-aggregator-complete-aggregation" value="#[false]"/>
         <foreach>
             <logger message="not important"/>
-            <flow-ref name="otherFlow"/>
             <aggregators:group-based-aggregator name="collection-splitter0-aggregator"
                                                 groupSize="#[vars.collection-splitter0-group-size]"
                                                 timeout="1000"
                                                 timeoutUnit="MILLISECONDS">
                 <aggregators:aggregation-complete>
-                    <set-variable variableName="collection-splitter0-aggregator-aggregation-complete" value="true"/>
+                    <set-variable variableName="collection-splitter0-aggregator-complete-aggregation" value="#[true]"/>
                     <vm:publish config-ref="splitter-aggregator-vm-config1311196398" queueName="collection-splitter0-vm-queue"/>
                 </aggregators:aggregation-complete>
             </aggregators:group-based-aggregator>
@@ -36,7 +35,7 @@
         <aggregators:aggregator-listener aggregatorName="collection-splitter0-aggregator" includeTimedOutGroups="true"/>
         <choice>
             <when expression="#[not attributes.isAggregationComplete]">
-                <vm:publish config-ref="config1311196398" queueName="collection-splitter0-vm-queue"/>
+                <vm:publish config-ref="splitter-aggregator-vm-config1311196398" queueName="collection-splitter0-vm-queue"/>
             </when>
         </choice>
     </flow>
