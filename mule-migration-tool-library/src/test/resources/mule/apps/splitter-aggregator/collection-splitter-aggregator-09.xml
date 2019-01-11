@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:aggregators="http://www.mulesoft.org/schema/mule/aggregators"
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/aggregators http://www.mulesoft.org/schema/mule/aggregators/current/mule-aggregators.xsd
+      http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+
+    <vm:config name="splitter-aggregator-vm-config711038102">
+        <vm:queues>
+            <vm:queue queueName="collection-splitter0-vm-queue"/>
+        </vm:queues>
+    </vm:config>
+
+    <flow name="main">
+        <set-variable variableName="collection-splitter0-group-size" value="#[sizeOf(payload)]"/>
+        <foreach>
+            <logger message="not important"/>
+            <aggregators:group-based-aggregator name="collection-splitter0-aggregator"
+                                                groupSize="#[vars.collection-splitter0-group-size]">
+                <aggregators:aggregation-complete>
+                    <vm:publish config-ref="splitter-aggregator-vm-config711038102" queueName="collection-splitter0-vm-queue"/>
+                </aggregators:aggregation-complete>
+            </aggregators:group-based-aggregator>
+        </foreach>
+        <vm:consume queueName="collection-splitter0-vm-queue" config-ref="splitter-aggregator-vm-config711038102"/>
+    </flow>
+
+</mule>

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
+ */
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
@@ -50,12 +56,16 @@ public class SplitterTest {
   @Parameterized.Parameters(name = "{0}")
   public static Collection<Object[]> data() {
     return asList(new Object[][] {
-            {"collection-splitter-aggregator-01", emptyList()},
-            {"collection-splitter-aggregator-02", asList("splitter.correlation.never")},
-            {"collection-splitter-aggregator-03", asList("splitter.aggregator.missing")},
-            {"collection-splitter-aggregator-04", emptyList()},
-            {"collection-splitter-aggregator-05", emptyList()},
-            {"splitter-custom-aggregator-01", asList("splitter.aggregator.custom")}
+        {"collection-splitter-aggregator-01", emptyList()},
+        {"collection-splitter-aggregator-02", asList("splitter.correlation.never")},
+        {"collection-splitter-aggregator-03", asList("splitter.aggregator.missing")},
+        {"collection-splitter-aggregator-04", emptyList()},
+        {"collection-splitter-aggregator-05", emptyList()},
+        {"collection-splitter-aggregator-06", asList("splitter.aggregator.processedGroupsObjectStore")},
+        {"collection-splitter-aggregator-07", asList("splitter.aggregator.eventGroupsObjectStore")},
+        {"collection-splitter-aggregator-08", asList("splitter.aggregator.persistentStores")},
+        {"collection-splitter-aggregator-09", asList("splitter.aggregator.storePrefix")},
+        {"splitter-custom-aggregator-01", asList("splitter.aggregator.custom")}
     });
   }
 
@@ -109,17 +119,17 @@ public class SplitterTest {
     aggregatorsNamespaceContribution.execute(applicationModel, report.getReport());
 
     getElementsFromDocument(document, splitter.getAppliedTo().getExpression())
-            .forEach(node -> splitter.execute(node, report.getReport()));
+        .forEach(node -> splitter.execute(node, report.getReport()));
 
     getElementsFromDocument(document, removeSyntheticMigrationGlobalElements.getAppliedTo().getExpression())
-            .forEach(node -> removeSyntheticMigrationGlobalElements.execute(node, report.getReport()));
+        .forEach(node -> removeSyntheticMigrationGlobalElements.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(document);
 
     assertThat(xmlString,
                isSimilarTo(IOUtils
-                                   .toString(this.getClass().getClassLoader().getResource(targetPath.toString()).toURI(), UTF_8))
+                   .toString(this.getClass().getClassLoader().getResource(targetPath.toString()).toURI(), UTF_8))
                        .ignoreComments().normalizeWhitespace());
   }
 }

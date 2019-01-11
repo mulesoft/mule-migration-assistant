@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017 MuleSoft, Inc. This software is protected under international
+ * copyright law. All use of this software is subject to MuleSoft's Master Subscription
+ * Agreement (or other master license agreement) separately entered into in writing between
+ * you and MuleSoft. If such an agreement is not in place, you may not use the software.
+ */
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes.MIGRATION_NAMESPACE;
@@ -29,28 +35,33 @@ public class SplitterAggregatorInfo {
     this.splitterElement = splitterElement;
     this.applicationModel = applicationModel;
 
-    this.documentIdLazyValue = new LazyValue<>(() -> abs(Objects.hashCode(get(applicationModel.getProjectBasePath().toUri().toString()).relativize(get(splitterElement.getDocument().getBaseURI())).toString())));
+    this.documentIdLazyValue =
+        new LazyValue<>(() -> abs(Objects.hashCode(get(applicationModel.getProjectBasePath().toUri().toString())
+            .relativize(get(splitterElement.getDocument().getBaseURI())).toString())));
 
     this.splitterIndexLazyValue = new LazyValue<>(
-            () -> {
-              Optional<Element> splitterGlobalValuesElementOptional = applicationModel.getNodeOptional("//*[local-name()='" + SPLITTER_GLOBAL_VALUES + "']");
-              Element splitterGlobalValuesElement = splitterGlobalValuesElementOptional.orElseGet(() -> {
-                Element globalValues = new Element(SPLITTER_GLOBAL_VALUES, MIGRATION_NAMESPACE);
-                globalValues.setAttribute(SPLITTER_GLOBAL_INDEX, "-1");
-                addTopLevelElement(globalValues, splitterElement.getDocument());
-                return globalValues;
-              });
-              int newId = 0;
-              try {
-                Attribute newIdAttribute = splitterGlobalValuesElement.getAttribute(SPLITTER_GLOBAL_INDEX);
-                newId = newIdAttribute.getIntValue() + 1;
-                newIdAttribute.setValue(Integer.toString(newId));
-              }catch (DataConversionException e) {
-                //
-              }
-              return newId;
-            }
-    );
+                                                  () -> {
+                                                    Optional<Element> splitterGlobalValuesElementOptional = applicationModel
+                                                        .getNodeOptional("//*[local-name()='" + SPLITTER_GLOBAL_VALUES + "']");
+                                                    Element splitterGlobalValuesElement =
+                                                        splitterGlobalValuesElementOptional.orElseGet(() -> {
+                                                          Element globalValues =
+                                                              new Element(SPLITTER_GLOBAL_VALUES, MIGRATION_NAMESPACE);
+                                                          globalValues.setAttribute(SPLITTER_GLOBAL_INDEX, "-1");
+                                                          addTopLevelElement(globalValues, splitterElement.getDocument());
+                                                          return globalValues;
+                                                        });
+                                                    int newId = 0;
+                                                    try {
+                                                      Attribute newIdAttribute =
+                                                          splitterGlobalValuesElement.getAttribute(SPLITTER_GLOBAL_INDEX);
+                                                      newId = newIdAttribute.getIntValue() + 1;
+                                                      newIdAttribute.setValue(Integer.toString(newId));
+                                                    } catch (DataConversionException e) {
+                                                      //
+                                                    }
+                                                    return newId;
+                                                  });
   }
 
   public int getSplitterIndex() {
