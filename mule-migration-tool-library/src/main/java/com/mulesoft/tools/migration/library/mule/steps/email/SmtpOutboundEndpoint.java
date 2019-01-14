@@ -90,25 +90,42 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
     Element m4Config = migrateSmtpConfig(object, report, smtpConnector);
     Element connection = getConnection(m4Config);
 
-    if (object.getAttribute("host") != null) {
-      object.setAttribute("host", expressionMigrator.migrateExpression(object.getAttributeValue("host"), false, object));
+    if (smtpConnector.isPresent() && "gmail-connector".equals(smtpConnector.get().getName())) {
+      connection.setName("smtps-connection");
+      connection.addContent(new Element("context", TLS_NAMESPACE)
+          .addContent(new Element("trust-store", TLS_NAMESPACE).setAttribute("insecure", "true")));
+
+      connection.setAttribute("host", "smtp.gmail.com");
+      connection.setAttribute("port", "465");
+      object.removeAttribute("host");
+      object.removeAttribute("port");
+
+      getApplicationModel().addNameSpace(TLS_NAMESPACE.getPrefix(), TLS_NAMESPACE.getURI(),
+                                         "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
+
+      report.report("email.gmail", smtpConnector.get(), connection);
+    } else {
+      if (object.getAttribute("host") != null) {
+        object.setAttribute("host", expressionMigrator.migrateExpression(object.getAttributeValue("host"), false, object));
+      }
+      copyAttributeIfPresent(object, connection, "host");
+      copyAttributeIfPresent(object, connection, "port");
+
+      processAddress(object, report).ifPresent(address -> {
+        connection.setAttribute("host", address.getHost());
+        connection.setAttribute("port", address.getPort());
+
+        if (address.getCredentials() != null) {
+          String[] credsSplit = address.getCredentials().split(":");
+
+          connection.setAttribute("user", credsSplit[0]);
+          connection.setAttribute("password", credsSplit[1]);
+        }
+      });
     }
-    copyAttributeIfPresent(object, connection, "host");
-    copyAttributeIfPresent(object, connection, "port");
+
     copyAttributeIfPresent(object, connection, "user");
     copyAttributeIfPresent(object, connection, "password");
-
-    processAddress(object, report).ifPresent(address -> {
-      connection.setAttribute("host", address.getHost());
-      connection.setAttribute("port", address.getPort());
-
-      if (address.getCredentials() != null) {
-        String[] credsSplit = address.getCredentials().split(":");
-
-        connection.setAttribute("user", credsSplit[0]);
-        connection.setAttribute("password", credsSplit[1]);
-      }
-    });
 
     if (object.getAttribute("connector-ref") != null) {
       object.getAttribute("connector-ref").setName("config-ref");
@@ -202,7 +219,7 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
   @Override
   protected Element getConnector(String connectorName) {
     return getApplicationModel().getNode("/*/*[namespace-uri()='" + SMTP_NAMESPACE_URI
-        + "' and local-name()='connector' and @name = '" + connectorName + "']");
+        + "' and (local-name()='connector' or local-name()='gmail-connector') and @name = '" + connectorName + "']");
   }
 
   protected Element createConnection() {
@@ -216,7 +233,8 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
   @Override
   protected Optional<Element> getDefaultConnector() {
     return getApplicationModel()
-        .getNodeOptional("/*/*[namespace-uri()='" + SMTP_NAMESPACE_URI + "' and local-name()='connector']");
+        .getNodeOptional("/*/*[namespace-uri()='" + SMTP_NAMESPACE_URI
+            + "' and (local-name()='connector' or local-name()='gmail-connector')]");
   }
 
   public static void smtpTransportLib(ApplicationModel appModel) {

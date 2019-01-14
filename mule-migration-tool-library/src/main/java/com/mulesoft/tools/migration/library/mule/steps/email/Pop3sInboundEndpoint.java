@@ -52,17 +52,15 @@ public class Pop3sInboundEndpoint extends Pop3InboundEndpoint {
             + object.getAttributeValue("config-ref")
             + "']/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'pop3s-connection']");
 
-    Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
+    if (pop3sConnector.isPresent() && pop3sConnection.getChild("context", TLS_NAMESPACE) == null) {
 
-    if (pop3sConnector.isPresent() && pop3sConnection.getChild("context", tlsNamespace) == null) {
-
-      Element tlsContext = new Element("context", tlsNamespace);
+      Element tlsContext = new Element("context", TLS_NAMESPACE);
       boolean tlsConfigured = false;
 
       Namespace pop3sNamespace = getNamespace("pop3s", "http://www.mulesoft.org/schema/mule/pop3s");
       Element tlsKeyStore = pop3sConnector.get().getChild("tls-client", pop3sNamespace);
       if (tlsKeyStore != null) {
-        Element keyStore = new Element("key-store", tlsNamespace);
+        Element keyStore = new Element("key-store", TLS_NAMESPACE);
         copyAttributeIfPresent(tlsKeyStore, keyStore, "path");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "storePassword", "password");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
@@ -77,7 +75,7 @@ public class Pop3sInboundEndpoint extends Pop3InboundEndpoint {
       }
       Element tlsClient = pop3sConnector.get().getChild("tls-trust-store", pop3sNamespace);
       if (tlsClient != null) {
-        Element keyStore = new Element("trust-store", tlsNamespace);
+        Element keyStore = new Element("trust-store", TLS_NAMESPACE);
         copyAttributeIfPresent(tlsClient, keyStore, "path");
         copyAttributeIfPresent(tlsClient, keyStore, "storePassword", "password");
         if (tlsClient.getAttribute("class") != null) {
@@ -89,7 +87,7 @@ public class Pop3sInboundEndpoint extends Pop3InboundEndpoint {
       }
 
       if (tlsConfigured) {
-        getApplicationModel().addNameSpace(tlsNamespace.getPrefix(), tlsNamespace.getURI(),
+        getApplicationModel().addNameSpace(TLS_NAMESPACE.getPrefix(), TLS_NAMESPACE.getURI(),
                                            "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
 
         pop3sConnection.addContent(tlsContext);
@@ -110,12 +108,13 @@ public class Pop3sInboundEndpoint extends Pop3InboundEndpoint {
   @Override
   protected Element getConnector(String connectorName) {
     return getApplicationModel().getNode("/*/*[namespace-uri()='" + POP3S_NAMESPACE_URI
-        + "' and local-name()='connector and @name = '" + connectorName + "']");
+        + "' and (local-name()='connector' or local-name()='gmail-connector') and @name = '" + connectorName + "']");
   }
 
   @Override
   protected Optional<Element> getDefaultConnector() {
     return getApplicationModel()
-        .getNodeOptional("/*/*[namespace-uri()='" + POP3S_NAMESPACE_URI + "' and local-name()='connector']");
+        .getNodeOptional("/*/*[namespace-uri()='" + POP3S_NAMESPACE_URI
+            + "' and (local-name()='connector' or local-name()='gmail-connector')]");
   }
 }

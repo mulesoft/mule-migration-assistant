@@ -33,6 +33,8 @@ public abstract class AbstractEmailMigrator extends AbstractApplicationModelMigr
   public static final String POP3_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/pop3";
   public static final String POP3S_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/pop3s";
 
+  public static final Namespace TLS_NAMESPACE = getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
+
   public static final Namespace EMAIL_NAMESPACE = getNamespace("email", "http://www.mulesoft.org/schema/mule/email");
   public static final String EMAIL_SCHEMA_LOC = "http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd";
 

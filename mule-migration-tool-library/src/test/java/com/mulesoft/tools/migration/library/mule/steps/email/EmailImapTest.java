@@ -61,7 +61,8 @@ public class EmailImapTest {
         "email-imap-inbound-08",
         "email-imap-inbound-09",
         "email-imap-inbound-10",
-        "email-imap-inbound-11"
+        "email-imap-inbound-11",
+        "gmail-imap-inbound-01"
     };
   }
 

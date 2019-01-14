@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:email="http://www.mulesoft.org/schema/mule/email"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+       http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+       http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd">
+
+    <email:imap-config name="imapConnector">
+        <email:imaps-connection host="imap.gmail.com" port="993" password="password" user="bob">
+            <tls:context>
+                <tls:trust-store insecure="true"/>
+            </tls:context>        
+        </email:imaps-connection>
+    </email:imap-config>
+
+    <flow name="flow">
+        <email:listener-imap config-ref="imapConnector" deleteAfterRetrieve="false">
+            <scheduling-strategy>
+                <fixed-frequency frequency="200"/>
+            </scheduling-strategy>
+        </email:listener-imap>
+        <compatibility:attributes-to-inbound-properties/>
+        <logger/>
+    </flow>
+</mule>

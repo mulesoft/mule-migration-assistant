@@ -55,17 +55,15 @@ public class SmtpsOutboundEndpoint extends SmtpOutboundEndpoint {
             + object.getAttributeValue("config-ref")
             + "']/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'smtps-connection']");
 
-    Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
+    if (smtpsConnector.isPresent() && smtpsConnection.getChild("context", TLS_NAMESPACE) == null) {
 
-    if (smtpsConnector.isPresent() && smtpsConnection.getChild("context", tlsNamespace) == null) {
-
-      Element tlsContext = new Element("context", tlsNamespace);
+      Element tlsContext = new Element("context", TLS_NAMESPACE);
       boolean tlsConfigured = false;
 
       Namespace smtpsNamespace = getNamespace("smtps", "http://www.mulesoft.org/schema/mule/smtps");
       Element tlsKeyStore = smtpsConnector.get().getChild("tls-client", smtpsNamespace);
       if (tlsKeyStore != null) {
-        Element keyStore = new Element("key-store", tlsNamespace);
+        Element keyStore = new Element("key-store", TLS_NAMESPACE);
         copyAttributeIfPresent(tlsKeyStore, keyStore, "path");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "storePassword", "password");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
@@ -80,7 +78,7 @@ public class SmtpsOutboundEndpoint extends SmtpOutboundEndpoint {
       }
       Element tlsClient = smtpsConnector.get().getChild("tls-trust-store", smtpsNamespace);
       if (tlsClient != null) {
-        Element keyStore = new Element("trust-store", tlsNamespace);
+        Element keyStore = new Element("trust-store", TLS_NAMESPACE);
         copyAttributeIfPresent(tlsClient, keyStore, "path");
         copyAttributeIfPresent(tlsClient, keyStore, "storePassword", "password");
         if (tlsClient.getAttribute("class") != null) {
@@ -92,7 +90,7 @@ public class SmtpsOutboundEndpoint extends SmtpOutboundEndpoint {
       }
 
       if (tlsConfigured) {
-        getApplicationModel().addNameSpace(tlsNamespace.getPrefix(), tlsNamespace.getURI(),
+        getApplicationModel().addNameSpace(TLS_NAMESPACE.getPrefix(), TLS_NAMESPACE.getURI(),
                                            "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
 
         smtpsConnection.addContent(tlsContext);
@@ -113,12 +111,13 @@ public class SmtpsOutboundEndpoint extends SmtpOutboundEndpoint {
   @Override
   protected Element getConnector(String connectorName) {
     return getApplicationModel().getNode("/*/*[namespace-uri()='" + SMTPS_NAMESPACE_URI
-        + "' and local-name()='connector' and @name = '" + connectorName + "']");
+        + "' and (local-name()='connector' or local-name()='gmail-connector') and @name = '" + connectorName + "']");
   }
 
   @Override
   protected Optional<Element> getDefaultConnector() {
     return getApplicationModel()
-        .getNodeOptional("/*/*[namespace-uri()='" + SMTPS_NAMESPACE_URI + "' and local-name()='connector']");
+        .getNodeOptional("/*/*[namespace-uri()='" + SMTPS_NAMESPACE_URI
+            + "' and (local-name()='connector' or local-name()='gmail-connector')]");
   }
 }
