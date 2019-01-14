@@ -24,7 +24,7 @@ import org.jdom2.Element;
 public class SplitterAggregatorInfo {
 
   private static final String SPLITTER_GLOBAL_VALUES = "splitterGlobalValues";
-  private static final String SPLITTER_GLOBAL_INDEX = "splitterGlobalIndex";
+  private static final String SPLITTER_GLOBAL_INDEXES = "splitterGlobalIndexes";
 
   private Element splitterElement;
   private ApplicationModel applicationModel;
@@ -47,14 +47,22 @@ public class SplitterAggregatorInfo {
                                                         splitterGlobalValuesElementOptional.orElseGet(() -> {
                                                           Element globalValues =
                                                               new Element(SPLITTER_GLOBAL_VALUES, MIGRATION_NAMESPACE);
-                                                          globalValues.setAttribute(SPLITTER_GLOBAL_INDEX, "-1");
+                                                          Element globalIndexes =
+                                                              new Element(SPLITTER_GLOBAL_INDEXES, MIGRATION_NAMESPACE);
+                                                          globalValues.addContent(globalIndexes);
                                                           addTopLevelElement(globalValues, splitterElement.getDocument());
                                                           return globalValues;
                                                         });
                                                     int newId = 0;
                                                     try {
+                                                      Element globalIndexesElement = splitterGlobalValuesElement
+                                                          .getChild(SPLITTER_GLOBAL_INDEXES, MIGRATION_NAMESPACE);
                                                       Attribute newIdAttribute =
-                                                          splitterGlobalValuesElement.getAttribute(SPLITTER_GLOBAL_INDEX);
+                                                          globalIndexesElement.getAttribute(splitterElement.getName());
+                                                      if (newIdAttribute == null) {
+                                                        newIdAttribute = new Attribute(splitterElement.getName(), "-1");
+                                                        globalIndexesElement.setAttribute(newIdAttribute);
+                                                      }
                                                       newId = newIdAttribute.getIntValue() + 1;
                                                       newIdAttribute.setValue(Integer.toString(newId));
                                                     } catch (DataConversionException e) {

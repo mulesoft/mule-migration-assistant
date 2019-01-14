@@ -815,10 +815,16 @@ amqp:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#UsingTransactions
 
 splitter:
-  correlation:
-    never:
+  attibutes:
+    neverCorrelation:
       type: ERROR
       message: enableCorrelation=NEVER is not supported. If the original message has a correlation ID,it will be set to the result message.
+    evaluator:
+      type: ERROR
+      message: Can not longer define an expression evaluator. Only DataWeave is supported.
+    customEvaluator:
+      type: ERROR
+      message: Can not longer define a custom expression evaluator. Only DataWeave is supported.
   aggregator:
     custom:
       type: ERROR
@@ -828,6 +834,11 @@ splitter:
     missing:
       type: WARN
       message: Could not find any associated aggregator for the splitter. Migrated behaviour may not be the expected one.
+    noSplitter:
+      type: ERROR
+      message: Could not find any splitter associated with this aggregator and there is no way of knowing the expected aggregation size. This may be the case where the splitter and the aggregator are in different flows and that case can't yet be migrated. If that is not the case, the aggregator's module should provider the required functionality.
+      docLinks:
+        - https://docs.mulesoft.com/connectors/aggregator/aggregators-module
     processedGroupsObjectStore:
       type: WARN
       message: Processed groups are not longer stored in a different object store. This parameter is being ignored. Check Aggregator configuration parameters if wanting to add logic for group eviction.

@@ -18,7 +18,9 @@ import static java.util.Optional.of;
 import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,7 +31,7 @@ import java.util.Optional;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-public abstract class AbstractSplitter extends AbstractApplicationModelMigrationStep {
+public abstract class AbstractSplitter extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
   private static final String OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE = "timeout";
   private static final String OLD_AGGREGATOR_FAIL_ON_TIMEOUT_ATTRIBUTE = "failOnTimeout";
@@ -59,7 +61,21 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
   private static final Element CHOICE_TEMPLATE_ELEMENT = new Element("choice", CORE_NAMESPACE);
   private static final Element WHEN_TEMPLATE_ELEMENT = new Element("when", CORE_NAMESPACE);
 
+  private ExpressionMigrator expressionMigrator;
+
   protected abstract String getMatchingAggregatorName();
+
+  protected abstract void setForEachExpressionAttribute(Element splitterElement, Element forEachElement);
+
+  @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
+
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return this.expressionMigrator;
+  }
 
   @Override
   public void execute(Element splitter, MigrationReport report) throws RuntimeException {
@@ -128,6 +144,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     Element forEachElement = FOR_EACH_TEMPLATE_ELEMENT.clone();
     forEachElement.addContent(elements);
     forEachElement.addContent(getAggregatorElement(splitterAggregatorInfo, oldAggregatorAttributes));
+    setForEachExpressionAttribute(splitterAggregatorInfo.getSplitterElement(), forEachElement);
     return forEachElement;
   }
 
@@ -186,7 +203,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
   private void registerNeverEnableCorrelationReport(Element splitter, List<ReportEntry> reports) {
     String enableCorrelation = splitter.getAttributeValue("enableCorrelation");
     if ("NEVER".equals(enableCorrelation)) {
-      reports.add(new ReportEntry("splitter.correlation.never", splitter));
+      reports.add(new ReportEntry("splitter.attributes.neverCorrelation", splitter));
     }
   }
 
@@ -217,8 +234,9 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
       newAggregator.setAttribute("timeoutUnit", "MILLISECONDS");
       aggregationCompleteRoute.getContent().add(0, getAggregationCompleteVariableElement(splitterAggregatorInfo, true));
     }
-    if(oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_EVENT_GROUPS_OBJECT_STORE_REF_ATTRIBUTE)) {
-      newAggregator.setAttribute("objectStore", oldAggregatorAttributes.get(OLD_AGGREGATOR_EVENT_GROUPS_OBJECT_STORE_REF_ATTRIBUTE));
+    if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_EVENT_GROUPS_OBJECT_STORE_REF_ATTRIBUTE)) {
+      newAggregator.setAttribute("objectStore",
+                                 oldAggregatorAttributes.get(OLD_AGGREGATOR_EVENT_GROUPS_OBJECT_STORE_REF_ATTRIBUTE));
     }
     return newAggregator;
   }
