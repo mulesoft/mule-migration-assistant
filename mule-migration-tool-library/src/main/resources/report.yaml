@@ -434,7 +434,7 @@ email:
       - https://docs.mulesoft.com/mule-runtime/4.1/tls-configuration
   gmail:
     type: WARN
-    message: "MAke sure the migrated app is allowed to access GMail."
+    message: "Make sure the migrated app is allowed to access GMail."
     docLinks:
       - https://docs.mulesoft.com/connectors/email/email-gmail#gmail-configurations
 
