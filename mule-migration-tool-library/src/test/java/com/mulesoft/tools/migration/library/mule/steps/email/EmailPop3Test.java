@@ -56,7 +56,8 @@ public class EmailPop3Test {
         "email-pop3-inbound-04",
         "email-pop3-inbound-05",
         "email-pop3-inbound-06",
-        "email-pop3-inbound-07"
+        "email-pop3-inbound-07",
+        "gmail-pop3-inbound-01"
     };
   }
 

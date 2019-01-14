@@ -94,19 +94,36 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
     Element m4Config = migratePop3Config(object, report, pop3Connector);
     Element connection = getConnection(m4Config);
 
-    processAddress(object, report).ifPresent(address -> {
-      connection.setAttribute("host", address.getHost());
-      connection.setAttribute("port", address.getPort());
+    if (pop3Connector.isPresent() && "gmail-connector".equals(pop3Connector.get().getName())) {
+      connection.setName("pop3s-connection");
+      connection.addContent(new Element("context", TLS_NAMESPACE)
+          .addContent(new Element("trust-store", TLS_NAMESPACE).setAttribute("insecure", "true")));
 
-      if (address.getCredentials() != null) {
-        String[] credsSplit = address.getCredentials().split(":");
+      connection.setAttribute("host", "pop.gmail.com");
+      connection.setAttribute("port", "995");
+      object.removeAttribute("host");
+      object.removeAttribute("port");
 
-        connection.setAttribute("user", credsSplit[0]);
-        connection.setAttribute("password", credsSplit[1]);
-      }
-    });
-    copyAttributeIfPresent(object, connection, "host");
-    copyAttributeIfPresent(object, connection, "port");
+      getApplicationModel().addNameSpace(TLS_NAMESPACE.getPrefix(), TLS_NAMESPACE.getURI(),
+                                         "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
+
+      report.report("email.gmail", pop3Connector.get(), connection);
+    } else {
+      processAddress(object, report).ifPresent(address -> {
+        connection.setAttribute("host", address.getHost());
+        connection.setAttribute("port", address.getPort());
+
+        if (address.getCredentials() != null) {
+          String[] credsSplit = address.getCredentials().split(":");
+
+          connection.setAttribute("user", credsSplit[0]);
+          connection.setAttribute("password", credsSplit[1]);
+        }
+      });
+      copyAttributeIfPresent(object, connection, "host");
+      copyAttributeIfPresent(object, connection, "port");
+    }
+
     copyAttributeIfPresent(object, connection, "user");
     copyAttributeIfPresent(object, connection, "password");
 
@@ -128,7 +145,7 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
   @Override
   protected Element getConnector(String connectorName) {
     return getApplicationModel().getNode("/*/*[namespace-uri()='" + POP3_NAMESPACE_URI
-        + "' and local-name()='connector' and @name = '" + connectorName + "']");
+        + "' and (local-name()='connector' or local-name()='gmail-connector') and @name = '" + connectorName + "']");
   }
 
   protected Element getConnection(Element m4Config) {
@@ -138,7 +155,8 @@ public class Pop3InboundEndpoint extends AbstractEmailSourceMigrator implements 
   @Override
   protected Optional<Element> getDefaultConnector() {
     return getApplicationModel()
-        .getNodeOptional("/*/*[namespace-uri()='" + POP3_NAMESPACE_URI + "' and local-name()='connector']");
+        .getNodeOptional("/*/*[namespace-uri()='" + POP3_NAMESPACE_URI
+            + "' and (local-name()='connector' or local-name()='gmail-connector')]");
   }
 
   public Element migratePop3Config(Element object, MigrationReport report, Optional<Element> connector) {

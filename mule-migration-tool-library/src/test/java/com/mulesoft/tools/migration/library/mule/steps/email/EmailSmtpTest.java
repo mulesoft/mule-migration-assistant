@@ -58,7 +58,8 @@ public class EmailSmtpTest {
         "email-smtp-outbound-06",
         "email-smtp-outbound-07",
         "email-smtp-outbound-08",
-        "email-smtp-outbound-09"
+        "email-smtp-outbound-09",
+        "gmail-smtp-outbound-01"
     };
   }
 

@@ -432,6 +432,11 @@ email:
     message: "'class' attribute of 'smtps:tls-key-store' was deprecated in 3.x. Use 'type' instead."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/tls-configuration
+  gmail:
+    type: WARN
+    message: "Make sure the migrated app is allowed to access GMail."
+    docLinks:
+      - https://docs.mulesoft.com/connectors/email/email-gmail#gmail-configurations
 
 wsc:
   unsupportedProtocol:

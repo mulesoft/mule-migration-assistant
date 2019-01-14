@@ -27,7 +27,7 @@ public class EmailConnectorConfig extends AbstractApplicationModelMigrationStep 
           + "namespace-uri() = 'http://www.mulesoft.org/schema/mule/pop3s' or "
           + "namespace-uri() = 'http://www.mulesoft.org/schema/mule/smtp' or "
           + "namespace-uri() = 'http://www.mulesoft.org/schema/mule/smtps'"
-          + ") and local-name() = 'connector']";
+          + ") and (local-name() = 'connector' or local-name()='gmail-connector')]";
 
   @Override
   public String getDescription() {

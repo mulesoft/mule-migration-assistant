@@ -52,17 +52,15 @@ public class ImapsInboundEndpoint extends ImapInboundEndpoint {
             + object.getAttributeValue("config-ref")
             + "']/*[namespace-uri() = '" + EMAIL_NAMESPACE.getURI() + "' and local-name() = 'imaps-connection']");
 
-    Namespace tlsNamespace = Namespace.getNamespace("tls", "http://www.mulesoft.org/schema/mule/tls");
+    if (imapsConnector.isPresent() && imapsConnection.getChild("context", TLS_NAMESPACE) == null) {
 
-    if (imapsConnector.isPresent() && imapsConnection.getChild("context", tlsNamespace) == null) {
-
-      Element tlsContext = new Element("context", tlsNamespace);
+      Element tlsContext = new Element("context", TLS_NAMESPACE);
       boolean tlsConfigured = false;
 
       Namespace imapsNamespace = getNamespace("imaps", "http://www.mulesoft.org/schema/mule/imaps");
       Element tlsKeyStore = imapsConnector.get().getChild("tls-client", imapsNamespace);
       if (tlsKeyStore != null) {
-        Element keyStore = new Element("key-store", tlsNamespace);
+        Element keyStore = new Element("key-store", TLS_NAMESPACE);
         copyAttributeIfPresent(tlsKeyStore, keyStore, "path");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "storePassword", "password");
         copyAttributeIfPresent(tlsKeyStore, keyStore, "keyPassword");
@@ -77,7 +75,7 @@ public class ImapsInboundEndpoint extends ImapInboundEndpoint {
       }
       Element tlsClient = imapsConnector.get().getChild("tls-trust-store", imapsNamespace);
       if (tlsClient != null) {
-        Element keyStore = new Element("trust-store", tlsNamespace);
+        Element keyStore = new Element("trust-store", TLS_NAMESPACE);
         copyAttributeIfPresent(tlsClient, keyStore, "path");
         copyAttributeIfPresent(tlsClient, keyStore, "storePassword", "password");
         if (tlsClient.getAttribute("class") != null) {
@@ -89,7 +87,7 @@ public class ImapsInboundEndpoint extends ImapInboundEndpoint {
       }
 
       if (tlsConfigured) {
-        getApplicationModel().addNameSpace(tlsNamespace.getPrefix(), tlsNamespace.getURI(),
+        getApplicationModel().addNameSpace(TLS_NAMESPACE.getPrefix(), TLS_NAMESPACE.getURI(),
                                            "http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd");
 
         imapsConnection.addContent(tlsContext);
@@ -110,13 +108,14 @@ public class ImapsInboundEndpoint extends ImapInboundEndpoint {
   @Override
   protected Element getConnector(String connectorName) {
     return getApplicationModel().getNode("/*/*[namespace-uri()='" + IMAPS_NAMESPACE_URI
-        + "' and local-name()='connector' and @name = '" + connectorName + "']");
+        + "' and (local-name()='connector' or local-name()='gmail-connector') and @name = '" + connectorName + "']");
   }
 
   @Override
   protected Optional<Element> getDefaultConnector() {
     return getApplicationModel()
-        .getNodeOptional("/*/*[namespace-uri()='" + IMAPS_NAMESPACE_URI + "' and local-name()='connector']");
+        .getNodeOptional("/*/*[namespace-uri()='" + IMAPS_NAMESPACE_URI
+            + "' and (local-name()='connector' or local-name()='gmail-connector')]");
   }
 
 }
