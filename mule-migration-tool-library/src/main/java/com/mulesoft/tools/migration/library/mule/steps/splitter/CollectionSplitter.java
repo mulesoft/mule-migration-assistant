@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
+import org.jdom2.Element;
+
 public class CollectionSplitter extends AbstractSplitter {
 
   private static final String XPATH_SELECTOR = "//*[local-name()='collection-splitter']";
@@ -17,5 +19,10 @@ public class CollectionSplitter extends AbstractSplitter {
   @Override
   protected String getMatchingAggregatorName() {
     return "collection-aggregator";
+  }
+
+  @Override
+  protected void setForEachExpressionAttribute(Element splitterElement, Element forEachElement) {
+    //Do nothing, use default attribute
   }
 }

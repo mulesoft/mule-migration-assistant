@@ -116,6 +116,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
       model.getPomModel().ifPresent(m -> m.addDependency(javaModuleDependency));
     }
 
+
     migratedExpression = resolveServerContext(migratedExpression);
     migratedExpression = resolveIdentifiers(migratedExpression);
 
