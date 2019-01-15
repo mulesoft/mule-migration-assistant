@@ -21,7 +21,7 @@ import org.jdom2.Namespace;
 public class RemoveSyntheticMigrationGlobalElements extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR = "//*[namespace-uri() = 'migration']";
-  public static final Namespace MIGRATION_NAMESPACE = Namespace.getNamespace("migration");
+  public static final Namespace MIGRATION_NAMESPACE = Namespace.getNamespace("migration", "migration");
 
   @Override
   public String getDescription() {

@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
 import static com.mulesoft.tools.migration.library.mule.steps.splitter.SplitterAggregatorUtils.setAggregatorAsProcessed;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -20,7 +21,8 @@ import org.jdom2.Element;
  */
 public class MessageChunkSplitter extends AbstractSplitter {
 
-  private static final String XPATH_SELECTOR = "//*[local-name()='message-chunk-splitter']";
+  private static final String XPATH_SELECTOR =
+      "//*[local-name()='message-chunk-splitter' and namespace-uri()='" + CORE_NS_URI + "']";
 
   public MessageChunkSplitter() {
     this.setAppliedTo(XPATH_SELECTOR);

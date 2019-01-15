@@ -20,11 +20,11 @@
             <logger message="not important"/>
             <aggregators:group-based-aggregator name="collection-splitter0-aggregator"
                                                 groupSize="#[vars.collection-splitter0-group-size]"
+                                                evictionTime="0"
                                                 timeout="1000"
                                                 timeoutUnit="MILLISECONDS">
                 <aggregators:aggregation-complete>
                     <set-variable variableName="collection-splitter0-aggregator-complete-aggregation" value="#[true]"/>
-                    <vm:publish config-ref="splitter-aggregator-vm-config1311196398" queueName="collection-splitter0-vm-queue"/>
                 </aggregators:aggregation-complete>
             </aggregators:group-based-aggregator>
         </foreach>
@@ -33,11 +33,7 @@
 
     <flow name="collection-splitter0-aggregator-listener-flow">
         <aggregators:aggregator-listener aggregatorName="collection-splitter0-aggregator" includeTimedOutGroups="true"/>
-        <choice>
-            <when expression="#[not attributes.isAggregationComplete]">
-                <vm:publish config-ref="splitter-aggregator-vm-config1311196398" queueName="collection-splitter0-vm-queue"/>
-            </when>
-        </choice>
+        <vm:publish config-ref="splitter-aggregator-vm-config1311196398" queueName="collection-splitter0-vm-queue"/>
     </flow>
 
 </mule>

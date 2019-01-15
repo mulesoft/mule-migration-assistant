@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
 import static com.mulesoft.tools.migration.library.mule.steps.splitter.CollectionSplitter.COLLECTION_AGGREGATOR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
 import static java.util.Optional.of;
 
 import java.util.Optional;
@@ -21,7 +22,7 @@ import org.jdom2.Element;
  */
 public class MapSplitter extends AbstractSplitter {
 
-  private static final String XPATH_SELECTOR = "//*[local-name()='map-splitter']";
+  private static final String XPATH_SELECTOR = "//*[local-name()='map-splitter' and namespace-uri()='" + CORE_NS_URI + "']";
 
   private static final String FOR_EACH_EXPRESSION = "#[dw::core::Objects::entrySet(payload)]";
 

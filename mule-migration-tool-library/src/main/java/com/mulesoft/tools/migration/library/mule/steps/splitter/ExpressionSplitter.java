@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
 import static com.mulesoft.tools.migration.library.mule.steps.splitter.CollectionSplitter.COLLECTION_AGGREGATOR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
 import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -25,7 +26,7 @@ import org.jdom2.Element;
  */
 public class ExpressionSplitter extends AbstractSplitter implements ExpressionMigratorAware {
 
-  private static final String XPATH_SELECTOR = "//*[local-name()='splitter']";
+  private static final String XPATH_SELECTOR = "//*[local-name()='splitter' and namespace-uri()='" + CORE_NS_URI + "']";
 
   private static final String OLD_SPLITTER_EVALUATOR_ATTRIBUTE = "evaluator";
   private static final String OLD_SPLITTER_CUSTOM_EVALUATOR_ATTRIUBUTE = "custom-evaluator";

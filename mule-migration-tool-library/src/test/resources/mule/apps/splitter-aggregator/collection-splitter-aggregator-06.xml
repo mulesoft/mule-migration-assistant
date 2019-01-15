@@ -7,24 +7,19 @@
       http://www.mulesoft.org/schema/mule/aggregators http://www.mulesoft.org/schema/mule/aggregators/current/mule-aggregators.xsd
       http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
 
-    <vm:config name="splitter-aggregator-vm-config805637773">
-        <vm:queues>
-            <vm:queue queueName="collection-splitter0-vm-queue"/>
-        </vm:queues>
-    </vm:config>
-
     <flow name="main">
         <set-variable variableName="collection-splitter0-group-size" value="#[sizeOf(payload)]"/>
         <foreach>
             <logger message="not important"/>
             <aggregators:group-based-aggregator name="collection-splitter0-aggregator"
-                                                groupSize="#[vars.collection-splitter0-group-size]">
+                                                groupSize="#[vars.collection-splitter0-group-size]"
+                                                evictionTime="0">
                 <aggregators:aggregation-complete>
-                    <vm:publish config-ref="splitter-aggregator-vm-config805637773" queueName="collection-splitter0-vm-queue"/>
+                    <set-variable variableName="collection-splitter0-aggregator-aggregation" value="#[payload]"/>
                 </aggregators:aggregation-complete>
             </aggregators:group-based-aggregator>
         </foreach>
-        <vm:consume queueName="collection-splitter0-vm-queue" config-ref="splitter-aggregator-vm-config805637773"/>
+        <set-payload value="#[vars.collection-splitter0-aggregator-aggregation]"/>
     </flow>
 
 </mule>
