@@ -108,6 +108,10 @@ public class SplitterAggregatorInfo {
     return "#[vars." + getAggregationCompleteVariableName() + " == false]";
   }
 
+  public String getAggregationVariableName() {
+    return this.getAggregatorName() + "-aggregation";
+  }
+
   public String getVmQueueName() {
     return this.getSplitterUniqueId() + "-vm-queue";
   }

@@ -8,15 +8,6 @@
         http://www.mulesoft.org/schema/mule/aggregators http://www.mulesoft.org/schema/mule/aggregators/current/mule-aggregators.xsd
         http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
 
-    <vm:config name="splitter-aggregator-vm-config1235036770">
-        <vm:queues>
-            <vm:queue queueName="collection-splitter0-vm-queue"/>
-            <vm:queue queueName="collection-splitter1-vm-queue"/>
-            <vm:queue queueName="splitter0-vm-queue"/>
-            <vm:queue queueName="map-splitter0-vm-queue"/>
-        </vm:queues>
-    </vm:config>
-
     <flow name="collectionSplitter">
         <set-variable variableName="collection-splitter0-group-size" value="#[sizeOf(payload)]"/>
         <foreach>
@@ -24,11 +15,11 @@
                                                 groupSize="#[vars.collection-splitter0-group-size]"
                                                 evictionTime="0">
                 <aggregators:aggregation-complete>
-                    <vm:publish config-ref="splitter-aggregator-vm-config1235036770" queueName="collection-splitter0-vm-queue"/>
+                    <set-variable variableName="collection-splitter0-aggregator-aggregation" value="#[payload]"/>
                 </aggregators:aggregation-complete>
             </aggregators:group-based-aggregator>
         </foreach>
-        <vm:consume config-ref="splitter-aggregator-vm-config1235036770" queueName="collection-splitter0-vm-queue"/>
+        <set-payload value="#[vars.collection-splitter0-aggregator-aggregation]"/>
     </flow>
 
     <flow name="expressionSplitter">
@@ -38,11 +29,11 @@
                                                 groupSize="#[vars.splitter0-group-size]"
                                                 evictionTime="0">
                 <aggregators:aggregation-complete>
-                    <vm:publish config-ref="splitter-aggregator-vm-config1235036770" queueName="splitter0-vm-queue"/>
+                    <set-variable variableName="splitter0-aggregator-aggregation" value="#[payload]"/>
                 </aggregators:aggregation-complete>
             </aggregators:group-based-aggregator>
         </foreach>
-        <vm:consume config-ref="splitter-aggregator-vm-config1235036770" queueName="splitter0-vm-queue"/>
+        <set-payload value="#[vars.splitter0-aggregator-aggregation]"/>
     </flow>
 
     <flow name="mapSplitter">
@@ -52,11 +43,11 @@
                                                 groupSize="#[vars.map-splitter0-group-size]"
                                                 evictionTime="0">
                 <aggregators:aggregation-complete>
-                    <vm:publish config-ref="splitter-aggregator-vm-config1235036770" queueName="map-splitter0-vm-queue"/>
+                    <set-variable variableName="map-splitter0-aggregator-aggregation" value="#[payload]"/>
                 </aggregators:aggregation-complete>
             </aggregators:group-based-aggregator>
         </foreach>
-        <vm:consume config-ref="splitter-aggregator-vm-config1235036770" queueName="map-splitter0-vm-queue"/>
+        <set-payload value="#[vars.map-splitter0-aggregator-aggregation]"/>
     </flow>
 
     <flow name="customSplitter">
@@ -77,11 +68,11 @@
                                                 groupSize="#[vars.collection-splitter1-group-size]"
                                                 evictionTime="0">
                 <aggregators:aggregation-complete>
-                    <vm:publish config-ref="splitter-aggregator-vm-config1235036770" queueName="collection-splitter1-vm-queue"/>
+                    <set-variable variableName="collection-splitter1-aggregator-aggregation" value="#[payload]"/>
                 </aggregators:aggregation-complete>
             </aggregators:group-based-aggregator>
         </foreach>
-        <vm:consume config-ref="splitter-aggregator-vm-config1235036770" queueName="collection-splitter1-vm-queue"/>
+        <set-payload value="#[vars.collection-splitter1-aggregator-aggregation]"/>
     </flow>
 
     <sub-flow name="theAggregator">

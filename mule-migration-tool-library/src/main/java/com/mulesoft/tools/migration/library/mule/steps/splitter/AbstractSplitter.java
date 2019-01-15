@@ -54,6 +54,8 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
 
   private static final Element SET_VARIABLE_TEMPLATE = new Element("set-variable", CORE_NAMESPACE);
 
+  private static final Element SET_PAYLOAD_TEMPLATE = new Element("set-payload", CORE_NAMESPACE);
+
   private static final Element AGGREGATOR_TEMPLATE =
       new Element("group-based-aggregator", AGGREGATORS_NAMESPACE).setAttribute("evictionTime", "0");
 
@@ -127,6 +129,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE)
         && Long.parseLong(oldAggregatorAttributes.get(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE)) > 0L) {
       addElementBefore(getAggregationCompleteVariableElement(splitterAggregatorInfo, false), splitterElement);
+      addVmQueue(splitterAggregatorInfo);
       setAggregatorListenerFlowContent(
                                        addNewFlowAfter(splitterAggregatorInfo.getAggregatorListenerFlowName(),
                                                        getFlow(splitterElement)),
@@ -136,10 +139,11 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
         addElementAfter(getFailOnTimeoutChoiceElement(splitterAggregatorInfo),
                         splitterElement);
       }
+      addElementAfter(getVmConsumeElement(splitterAggregatorInfo), splitterElement);
+    } else {
+      addElementAfter(getSetAggregationPayloadElement(splitterAggregatorInfo), splitterElement);
     }
     addElementBefore(forEachAggregatorElement, splitterElement);
-    addElementAfter(getVmConsumeElement(splitterAggregatorInfo), splitterElement);
-    addVmQueue(splitterAggregatorInfo);
     splitterElement.detach();
   }
 
@@ -236,9 +240,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
 
   private Element getAggregatorElement(SplitterAggregatorInfo splitterAggregatorInfo,
                                        Map<String, String> oldAggregatorAttributes) {
-    Element aggregationCompleteRoute = new Element("aggregation-complete", AGGREGATORS_NAMESPACE)
-        .addContent(
-                    getVmPublishElement(splitterAggregatorInfo));
+    Element aggregationCompleteRoute = new Element("aggregation-complete", AGGREGATORS_NAMESPACE);
     Element newAggregator =
         AGGREGATOR_TEMPLATE
             .clone()
@@ -250,6 +252,8 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
       newAggregator.setAttribute("timeout", timeout);
       newAggregator.setAttribute("timeoutUnit", "MILLISECONDS");
       aggregationCompleteRoute.getContent().add(0, getAggregationCompleteVariableElement(splitterAggregatorInfo, true));
+    } else {
+      aggregationCompleteRoute.getContent().add(0, getAggregationVariableElement(splitterAggregatorInfo));
     }
     if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_EVENT_GROUPS_OBJECT_STORE_REF_ATTRIBUTE)) {
       newAggregator.setAttribute("objectStore",
@@ -264,15 +268,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
                     AGGREGATOR_LISTENER_TEMPLATE
                         .clone()
                         .setAttribute("aggregatorName", splitterAggregatorInfo.getAggregatorName()))
-        .addContent(
-                    CHOICE_TEMPLATE_ELEMENT
-                        .clone()
-                        .setContent(
-                                    WHEN_TEMPLATE_ELEMENT
-                                        .clone()
-                                        .setAttribute("expression", "#[not attributes.isAggregationComplete]")
-                                        .setContent(
-                                                    getVmPublishElement(splitterAggregatorInfo))));
+        .addContent(getVmPublishElement(splitterAggregatorInfo));
   }
 
   private Element getSetPayloadSizeVariableElement(SplitterAggregatorInfo splitterAggregatorInfo) {
@@ -287,6 +283,19 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
         .clone()
         .setAttribute("variableName", splitterAggregatorInfo.getAggregationCompleteVariableName())
         .setAttribute("value", value ? "#[true]" : "#[false]");
+  }
+
+  private Element getAggregationVariableElement(SplitterAggregatorInfo splitterAggregatorInfo) {
+    return SET_VARIABLE_TEMPLATE
+        .clone()
+        .setAttribute("variableName", splitterAggregatorInfo.getAggregationVariableName())
+        .setAttribute("value", "#[payload]");
+  }
+
+  private Element getSetAggregationPayloadElement(SplitterAggregatorInfo splitterAggregatorInfo) {
+    return SET_PAYLOAD_TEMPLATE
+        .clone()
+        .setAttribute("value", "#[vars." + splitterAggregatorInfo.getAggregationVariableName() + "]");
   }
 
   private Element getVmConsumeElement(SplitterAggregatorInfo splitterAggregatorInfo) {
