@@ -784,7 +784,7 @@ splitter:
     message: "Can't migrate a custom splitter."
   messageChunk:
    type: ERROR
-   message: "'message-chunk-splitter'" is not supported anymore."
+   message: "'message-chunk-splitter' is not supported anymore."
 
 aggregator:
   custom:
@@ -822,4 +822,4 @@ aggregator:
     message: "This parameter is being ignored."
   messageChunk:
     type: ERROR
-    message: "'message-chunk-aggregator' is not supported anymore.
+    message: "'message-chunk-aggregator' is not supported anymore."
