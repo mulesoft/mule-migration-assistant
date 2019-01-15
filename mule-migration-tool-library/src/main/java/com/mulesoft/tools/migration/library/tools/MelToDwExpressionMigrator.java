@@ -22,14 +22,11 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
-import org.mule.runtime.api.metadata.resolving.MetadataResult;
-import org.mule.weave.v2.parser.ast.header.HeaderNode;
 import scala.collection.JavaConverters;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Migrate mel expressions to dw expression
@@ -115,7 +112,6 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
           .build();
       model.getPomModel().ifPresent(m -> m.addDependency(javaModuleDependency));
     }
-
 
     migratedExpression = resolveServerContext(migratedExpression);
     migratedExpression = resolveIdentifiers(migratedExpression);

@@ -23,7 +23,7 @@ import org.jdom2.Namespace;
  */
 public class KeepElementsAtBottomOfFlow extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "/*[@*[namespace-uri() = 'migration' and local-name()='lastElement']]";
+  public static final String XPATH_SELECTOR = "//*[@*[namespace-uri() = 'migration' and local-name()='lastElement']]";
   public static final Namespace MIGRATION_NAMESPACE = Namespace.getNamespace("migration");
 
   @Override
