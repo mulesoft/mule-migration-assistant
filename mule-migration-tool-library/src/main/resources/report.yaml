@@ -817,54 +817,54 @@ amqp:
 splitter:
   neverCorrelationAttribute:
     type: ERROR
-    message: enableCorrelation=NEVER is not supported. If the original message has a correlation ID,it will be set to the result message.
+    message: "'enableCorrelation=NEVER' is not supported. If the original message has a correlation ID, it will be set to the result message."
   evaluatorAttribute:
     type: ERROR
-    message: Can not longer define an expression evaluator. Only DataWeave is supported.
+    message: "Can no longer define an expression evaluator. Only DataWeave is supported."
   customEvaluatorAttribute:
     type: ERROR
-    message: Can not longer define a custom expression evaluator. Only DataWeave is supported.
+    message: "Can no longer define a custom expression evaluator. Only DataWeave is supported."
   custom:
     type: ERROR
-    message: Can't migrate a custom splitter.
+    message: "Can't migrate a custom splitter."
   messageChunk:
    type: ERROR
-   message: message-chunk-splitter is not supported anymore
+   message: "'message-chunk-splitter'" is not supported anymore."
 
 aggregator:
   custom:
     type: ERROR
-    message: Custom aggregators are not supported anymore. Check the Aggregator's module to see if the needed functionality is avaliable.
+    message: "Custom aggregators are not supported anymore. Check the Aggregator's module to see if the needed functionality is avaliable."
     docLinks:
       - https://docs.mulesoft.com/connectors/aggregator/aggregators-module
   customSplitter:
     type: ERROR
-    message: Aggregator is linked to custom splitter, can't migrate.
+    message: "Aggregator is linked to custom splitter, can't migrate."
   missing:
     type: WARN
-    message: Could not find any associated aggregator for the splitter. Migrated behaviour may not be the expected one.
+    message: "Could not find any associated aggregator for the splitter. Migrated behaviour may not be the expected one."
   noSplitter:
     type: ERROR
-    message: Could not find any non custom splitter associated with this aggregator and there is no way of knowing the expected aggregation size. This may be the case where the splitter and the aggregator are in different flows and that case can't yet be migrated. If that is not the case, the aggregator's module should provider the required functionality.
+    message: "Could not find any non custom splitter associated with this aggregator and there is no way of knowing the expected aggregation size. This may be the case where the splitter and the aggregator are in different flows and that case can't yet be migrated. If that is not the case, the aggregator's module should provider the required functionality."
     docLinks:
       - https://docs.mulesoft.com/connectors/aggregator/aggregators-module
   processedGroupsObjectStore:
     type: WARN
-    message: Processed groups are not longer stored in a different object store. This parameter is being ignored. Check Aggregator configuration parameters if wanting to add logic for group eviction.
+    message: "Processed groups are not longer stored in a different object store. This parameter is being ignored. Check Aggregator configuration parameters if wanting to add logic for group eviction."
     docLinks:
       - https://docs.mulesoft.com/connectors/aggregator/aggregators-module-reference#parameters-3
   eventGroupsObjectStore:
     type: WARN
-    message: Event groups are not stored the same way as in the previous aggregators. Accessing them externally may lead to unexpected errors.
+    message: "Event groups are not stored the same way as in the previous aggregators. Accessing them externally may lead to unexpected errors."
   persistentStores:
     type: WARN
-    message: This parameter is being ignored. If wanting to use a persisten object store, the configuration should reference a globally created persistent object store or a private persistent object store should be defined inline.
+    message: "This parameter is being ignored. If wanting to use a persisten object store, the configuration should reference a globally created persistent object store or a private persistent object store should be defined inline."
     docLinks:
       - https://docs.mulesoft.com/connectors/aggregator/aggregators-module-reference#parameters-3
       - https://docs.mulesoft.com/connectors/object-store/object-store-to-define-a-new-os#private_os
   storePrefix:
     type: WARN
-    message: This parameter is being ignored.
+    message: "This parameter is being ignored."
   messageChunk:
     type: ERROR
-    message: message-chunk-aggregator is not supported anymore
+    message: "'message-chunk-aggregator' is not supported anymore.
