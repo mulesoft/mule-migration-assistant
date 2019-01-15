@@ -12,6 +12,12 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 
+/**
+ * Handle the addition of the Aggregator's module Namespace to the xml being migrated.
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class AggregatorsNamespaceContribution implements NamespaceContribution {
 
   private static final String AGGREGATORS_SCHEMA_LOCATION =

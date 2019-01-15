@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="collectionSplitter">
+        <collection-splitter/>
+        <collection-aggregator />
+    </flow>
+
+    <flow name="expressionSplitter">
+        <splitter expression="#[payload.someKey]"/>
+        <collection-aggregator/>
+    </flow>
+
+    <flow name="mapSplitter">
+        <map-splitter/>
+    </flow>
+
+    <flow name="customSplitter">
+        <custom-splitter class="some.custom.SplitterClass"/>
+        <collection-aggregator/>
+    </flow>
+
+    <flow name="messageChunkSplitter">
+        <message-chunk-splitter messageSize="512"/>
+        <message-chunk-aggregator/>
+    </flow>
+
+    <flow name="remoteAggregator">
+        <collection-splitter/>
+        <flow-ref name="theAggregator"/>
+    </flow>
+
+    <sub-flow name="theAggregator">
+        <collection-aggregator/>
+    </sub-flow>
+
+    <flow name="customAggregator">
+        <collection-splitter/>
+        <custom-aggregator class="some.custom.AggregatorClass"/>
+    </flow>
+
+</mule>

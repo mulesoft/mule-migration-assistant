@@ -44,6 +44,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.SecurityFiltersMigrationT
 import com.mulesoft.tools.migration.library.mule.tasks.SecurityOAuth2ProviderMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SftpMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.SplitterAggregatorTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SpringMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.VMMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.ValidationMigrationTask;
@@ -115,6 +116,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new SecurityFiltersMigrationTask());
     coreMigrationTasks.add(new PropertiesMigrationTask());
     coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
+    coreMigrationTasks.add(new SplitterAggregatorTask());
     coreMigrationTasks.add(new BatchMigrationTask());
     coreMigrationTasks.add(new ValidationMigrationTask());
     coreMigrationTasks.add(new RequestReplyMigrationTask());

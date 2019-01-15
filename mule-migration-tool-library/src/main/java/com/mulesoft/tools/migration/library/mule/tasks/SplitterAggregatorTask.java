@@ -10,16 +10,29 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements;
+import com.mulesoft.tools.migration.library.mule.steps.splitter.AggregatorWithNoSplitter;
 import com.mulesoft.tools.migration.library.mule.steps.splitter.AggregatorsModulePomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.splitter.AggregatorsNamespaceContribution;
 import com.mulesoft.tools.migration.library.mule.steps.splitter.CollectionSplitter;
+import com.mulesoft.tools.migration.library.mule.steps.splitter.CustomSplitter;
+import com.mulesoft.tools.migration.library.mule.steps.splitter.ExpressionSplitter;
+import com.mulesoft.tools.migration.library.mule.steps.splitter.MapSplitter;
+import com.mulesoft.tools.migration.library.mule.steps.splitter.MessageChunkSplitter;
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmConnectorPomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.vm.VmNamespaceContribution;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import java.util.List;
 
+/**
+ * Migration definition for splitter and aggregators
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class SplitterAggregatorTask extends AbstractMigrationTask {
 
   @Override
@@ -34,13 +47,22 @@ public class SplitterAggregatorTask extends AbstractMigrationTask {
 
   @Override
   public String getDescription() {
-    return null;
+    return "Migrate splitter and aggregator components";
   }
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new VmNamespaceContribution(), new AggregatorsNamespaceContribution(),
-                        new AggregatorsModulePomContribution(), new CollectionSplitter(),
+    return newArrayList(new VmConnectorPomContribution(),
+                        new AggregatorsModulePomContribution(),
+                        new VmNamespaceContribution(),
+                        new AggregatorsNamespaceContribution(),
+                        new CollectionSplitter(),
+                        new ExpressionSplitter(),
+                        new CustomSplitter(),
+                        new MapSplitter(),
+                        new MessageChunkSplitter(),
+                        new AggregatorWithNoSplitter(),
+                        new RemoveSyntheticMigrationAttributes(),
                         new RemoveSyntheticMigrationGlobalElements());
   }
 }

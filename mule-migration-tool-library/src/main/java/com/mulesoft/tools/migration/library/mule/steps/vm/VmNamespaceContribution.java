@@ -14,6 +14,12 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 
+/**
+ * Handles the addition of the vm namespace to the xml being migrated.
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class VmNamespaceContribution implements NamespaceContribution {
 
   @Override

@@ -6,11 +6,20 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
+import static com.mulesoft.tools.migration.library.mule.steps.splitter.SplitterAggregatorUtils.isAggregatorProcessed;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 
+/**
+ * Reports aggregators that are not migrated after all splitters were migrated.
+ * This can happen because the splitter and the aggregator were not in the same flow. That is a valid configuration that can not be migrated yet, so we should report it.
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class AggregatorWithNoSplitter extends AbstractApplicationModelMigrationStep {
 
   private static final String XPATH_SELECTOR = "//mule:*[contains(local-name(),'aggregator')]";
@@ -21,7 +30,9 @@ public class AggregatorWithNoSplitter extends AbstractApplicationModelMigrationS
 
   @Override
   public void execute(Element aggregator, MigrationReport report) throws RuntimeException {
-    report.report("splitter.aggregator.noSplitter", aggregator, aggregator);
+    if (!isAggregatorProcessed(aggregator)) {
+      report.report("aggregator.noSplitter", aggregator, aggregator);
+    }
   }
 
 }

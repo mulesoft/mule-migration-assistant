@@ -21,6 +21,13 @@ import org.jdom2.Attribute;
 import org.jdom2.DataConversionException;
 import org.jdom2.Element;
 
+/**
+ * POJO to store information about the splitter being migrated.
+ * It handles all naming related to the migrated splitter to make sure that 2 don't have the same name.
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class SplitterAggregatorInfo {
 
   private static final String SPLITTER_GLOBAL_VALUES = "splitterGlobalValues";
@@ -72,7 +79,7 @@ public class SplitterAggregatorInfo {
                                                   });
   }
 
-  public int getSplitterIndex() {
+  private int getSplitterIndex() {
     return splitterIndexLazyValue.get();
   }
 

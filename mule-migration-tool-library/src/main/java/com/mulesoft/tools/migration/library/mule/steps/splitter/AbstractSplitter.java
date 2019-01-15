@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
+import static com.mulesoft.tools.migration.library.mule.steps.splitter.SplitterAggregatorUtils.setAggregatorAsProcessed;
 import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.VM_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.migrateVmConfig;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -18,9 +19,7 @@ import static java.util.Optional.of;
 import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -31,7 +30,16 @@ import java.util.Optional;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-public abstract class AbstractSplitter extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
+/**
+ * Contains all common logic for migrating any '*-splitter' and it's matching aggregator.
+ * </p>
+ * For every splitter that triggers the execution, the flow will be iterated until a matching aggregator is found or the flow ends.
+ * Then every message processor found will be put inside the scope of a 'foreach' element, with an aggregator at the end that will trigger when all the elements were processed.
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
+public abstract class AbstractSplitter extends AbstractApplicationModelMigrationStep {
 
   private static final String OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE = "timeout";
   private static final String OLD_AGGREGATOR_FAIL_ON_TIMEOUT_ATTRIBUTE = "failOnTimeout";
@@ -54,6 +62,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
   private static final Element VM_QUEUE_TEMPLATE = new Element("queue", VM_NAMESPACE);
 
   private static final Element FOR_EACH_TEMPLATE_ELEMENT = new Element("foreach", CORE_NAMESPACE);
+  private static final String FOR_EACH_COLLECTION_ATTRIBUTE_KEY = "collection";
 
   private static final Element VM_CONSUME_TEMPLATE_ELEMENT = new Element("consume", VM_NAMESPACE);
   private static final Element VM_PUBLISH_TEMPLATE_ELEMENT = new Element("publish", VM_NAMESPACE);
@@ -61,20 +70,10 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
   private static final Element CHOICE_TEMPLATE_ELEMENT = new Element("choice", CORE_NAMESPACE);
   private static final Element WHEN_TEMPLATE_ELEMENT = new Element("when", CORE_NAMESPACE);
 
-  private ExpressionMigrator expressionMigrator;
-
   protected abstract String getMatchingAggregatorName();
 
-  protected abstract void setForEachExpressionAttribute(Element splitterElement, Element forEachElement);
-
-  @Override
-  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
-    this.expressionMigrator = expressionMigrator;
-  }
-
-  @Override
-  public ExpressionMigrator getExpressionMigrator() {
-    return this.expressionMigrator;
+  protected Optional<String> getForEachCollectionAttribute(Element splitterElement) {
+    return empty();
   }
 
   @Override
@@ -87,10 +86,15 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     registerNeverEnableCorrelationReport(splitter, reports);
 
     List<Element> elementsBetweenSplitterAndAggregator = collectUntilAggregator(splitter);
-    Element aggregatorElement =
-        foundMatchingAggregator(elementsBetweenSplitterAndAggregator.get(elementsBetweenSplitterAndAggregator.size() - 1))
-            ? elementsBetweenSplitterAndAggregator.remove(elementsBetweenSplitterAndAggregator.size() - 1)
-            : null;
+    Element aggregatorElement = null;
+    if (!elementsBetweenSplitterAndAggregator.isEmpty()) {
+      if (foundMatchingAggregator(elementsBetweenSplitterAndAggregator.get(elementsBetweenSplitterAndAggregator.size() - 1))) {
+        aggregatorElement = elementsBetweenSplitterAndAggregator.remove(elementsBetweenSplitterAndAggregator.size() - 1);
+
+        //Set as processed to be able to decide to report some things
+        setAggregatorAsProcessed(aggregatorElement);
+      }
+    }
 
     if (!isCustomAggregator(aggregatorElement)) {
       if (aggregatorElement == null) {
@@ -144,11 +148,13 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     Element forEachElement = FOR_EACH_TEMPLATE_ELEMENT.clone();
     forEachElement.addContent(elements);
     forEachElement.addContent(getAggregatorElement(splitterAggregatorInfo, oldAggregatorAttributes));
-    setForEachExpressionAttribute(splitterAggregatorInfo.getSplitterElement(), forEachElement);
+    getForEachCollectionAttribute(splitterAggregatorInfo.getSplitterElement())
+        .ifPresent(
+                   e -> forEachElement.setAttribute(FOR_EACH_COLLECTION_ATTRIBUTE_KEY, e));
     return forEachElement;
   }
 
-  private List<Element> collectUntilAggregator(Element splitter) {
+  protected List<Element> collectUntilAggregator(Element splitter) {
     List<Element> splitterAndSiblings = splitter.getParentElement().getChildren();
     List<Element> elementsBetweenSplitterAndAggregator = new LinkedList<>();
     boolean shouldAdd = false;
@@ -167,6 +173,16 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     return elementsBetweenSplitterAndAggregator;
   }
 
+  protected Optional<Element> getMatchingAggregatorElement(Element splitter) {
+    List<Element> elementsUntilAggregator = collectUntilAggregator(splitter);
+    if (!elementsUntilAggregator.isEmpty()) {
+      if (foundMatchingAggregator(elementsUntilAggregator.get(elementsUntilAggregator.size() - 1))) {
+        return of(elementsUntilAggregator.get(elementsUntilAggregator.size() - 1));
+      }
+    }
+    return empty();
+  }
+
   private boolean foundMatchingAggregator(Element aggregator) {
     return isCustomAggregator(aggregator) || getMatchingAggregatorName().equals(aggregator.getName());
   }
@@ -178,32 +194,32 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
   private void reportOldAggregatorAttributes(List<ReportEntry> reports, Map<String, String> oldAggregatorAttributes,
                                              Element oldAggregator, Element newAggregator) {
     if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_PROCESSED_GROUPS_OBJECT_STORE_REF_ATTRIBUTE)) {
-      reports.add(new ReportEntry("splitter.aggregator.processedGroupsObjectStore", oldAggregator, newAggregator));
+      reports.add(new ReportEntry("aggregator.processedGroupsObjectStore", oldAggregator, newAggregator));
     }
     if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_EVENT_GROUPS_OBJECT_STORE_REF_ATTRIBUTE)) {
-      reports.add(new ReportEntry("splitter.aggregator.eventGroupsObjectStore", oldAggregator, newAggregator));
+      reports.add(new ReportEntry("aggregator.eventGroupsObjectStore", oldAggregator, newAggregator));
     }
     if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_PERSISTENT_STORES_ATTRIBUTE)) {
-      reports.add(new ReportEntry("splitter.aggregator.persistentStores", oldAggregator, newAggregator));
+      reports.add(new ReportEntry("aggregator.persistentStores", oldAggregator, newAggregator));
     }
     if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_STORE_PREFIX_ATTRIBUTE)) {
-      reports.add(new ReportEntry("splitter.aggregator.storePrefix", oldAggregator, newAggregator));
+      reports.add(new ReportEntry("aggregator.storePrefix", oldAggregator, newAggregator));
     }
 
   }
 
   private void reportCustomAggregator(Element aggregator, MigrationReport report) {
-    report.report("splitter.aggregator.custom", aggregator, aggregator);
+    report.report("aggregator.custom", aggregator, aggregator);
   }
 
   private void registerNoAggregatorReport(Element splitter, List<ReportEntry> reports) {
-    reports.add(new ReportEntry("splitter.aggregator.missing", splitter));
+    reports.add(new ReportEntry("aggregator.missing", splitter));
   }
 
   private void registerNeverEnableCorrelationReport(Element splitter, List<ReportEntry> reports) {
     String enableCorrelation = splitter.getAttributeValue("enableCorrelation");
     if ("NEVER".equals(enableCorrelation)) {
-      reports.add(new ReportEntry("splitter.attributes.neverCorrelation", splitter));
+      reports.add(new ReportEntry("splitter.neverCorrelationAttribute", splitter));
     }
   }
 

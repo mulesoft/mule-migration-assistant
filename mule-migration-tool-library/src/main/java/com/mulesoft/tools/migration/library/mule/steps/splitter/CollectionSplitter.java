@@ -6,9 +6,15 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
-import org.jdom2.Element;
-
+/**
+ * Migrates 'collection-splitter' along with it's matching aggregator.
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class CollectionSplitter extends AbstractSplitter {
+
+  public static final String COLLECTION_AGGREGATOR = "collection-aggregator";
 
   private static final String XPATH_SELECTOR = "//*[local-name()='collection-splitter']";
 
@@ -18,11 +24,6 @@ public class CollectionSplitter extends AbstractSplitter {
 
   @Override
   protected String getMatchingAggregatorName() {
-    return "collection-aggregator";
-  }
-
-  @Override
-  protected void setForEachExpressionAttribute(Element splitterElement, Element forEachElement) {
-    //Do nothing, use default attribute
+    return COLLECTION_AGGREGATOR;
   }
 }

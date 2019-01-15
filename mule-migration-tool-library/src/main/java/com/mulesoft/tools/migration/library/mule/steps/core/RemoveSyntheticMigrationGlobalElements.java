@@ -12,6 +12,12 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
+/**
+ * Remove global elements that have the migration namespace, used internally for migration.
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class RemoveSyntheticMigrationGlobalElements extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR = "//*[namespace-uri() = 'migration']";
