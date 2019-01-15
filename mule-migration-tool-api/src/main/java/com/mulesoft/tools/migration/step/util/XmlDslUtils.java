@@ -53,8 +53,6 @@ public final class XmlDslUtils {
   public static final Namespace CORE_EE_NAMESPACE = Namespace.getNamespace(EE_NAMESPACE_NAME, CORE_EE_NS_URI);
   public static final String EE_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd";
 
-  private static final Element FLOW_TEMPLATE = new Element("flow", CORE_NAMESPACE);
-
   private XmlDslUtils() {
     // Nothing to do
   }
@@ -470,7 +468,7 @@ public final class XmlDslUtils {
    * @return the new flow element
    */
   public static Element addNewFlowAfter(String name, Element previousSibling) {
-    Element flow = FLOW_TEMPLATE.clone();
+    Element flow = new Element("flow", CORE_NAMESPACE);
     flow.setAttribute("name", name);
     addElementAfter(flow, previousSibling);
     return flow;

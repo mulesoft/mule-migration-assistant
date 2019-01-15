@@ -20,6 +20,7 @@
             <logger message="not important"/>
             <aggregators:group-based-aggregator name="collection-splitter0-aggregator"
                                                 groupSize="#[vars.collection-splitter0-group-size]"
+                                                evictionTime="0"
                                                 timeout="1000"
                                                 timeoutUnit="MILLISECONDS">
                 <aggregators:aggregation-complete>

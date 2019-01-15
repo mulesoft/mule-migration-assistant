@@ -54,7 +54,8 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
 
   private static final Element SET_VARIABLE_TEMPLATE = new Element("set-variable", CORE_NAMESPACE);
 
-  private static final Element AGGREGATOR_TEMPLATE = new Element("group-based-aggregator", AGGREGATORS_NAMESPACE);
+  private static final Element AGGREGATOR_TEMPLATE =
+      new Element("group-based-aggregator", AGGREGATORS_NAMESPACE).setAttribute("evictionTime", "0");
 
   private static final Element AGGREGATOR_LISTENER_TEMPLATE = new Element("aggregator-listener", AGGREGATORS_NAMESPACE)
       .setAttribute("includeTimedOutGroups", "true");
@@ -188,7 +189,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
   }
 
   private boolean isCustomAggregator(Element element) {
-    return element != null && "custom-aggregator".equals(element.getName());
+    return element != null && "custom-aggregator".equals(element.getName()) && CORE_NAMESPACE.equals(element.getNamespace());
   }
 
   private void reportOldAggregatorAttributes(List<ReportEntry> reports, Map<String, String> oldAggregatorAttributes,

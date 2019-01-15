@@ -19,7 +19,8 @@
         <foreach collection="#[dw::core::Objects::entrySet(payload)]">
             <logger message="does not matter"/>
             <aggregators:group-based-aggregator name="map-splitter0-aggregator"
-                                                groupSize="#[vars.map-splitter0-group-size]">
+                                                groupSize="#[vars.map-splitter0-group-size]"
+                                                evictionTime="0">
                 <aggregators:aggregation-complete>
                     <vm:publish config-ref="splitter-aggregator-vm-config1785408738" queueName="map-splitter0-vm-queue"/>
                 </aggregators:aggregation-complete>

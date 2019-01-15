@@ -19,7 +19,8 @@
         <foreach collection="#[payload]">
             <logger message="not important"/>
             <aggregators:group-based-aggregator name="splitter0-aggregator"
-                                                groupSize="#[vars.splitter0-group-size]">
+                                                groupSize="#[vars.splitter0-group-size]"
+                                                evictionTime="0">
                 <aggregators:aggregation-complete>
                     <vm:publish config-ref="splitter-aggregator-vm-config1260429482" queueName="splitter0-vm-queue"/>
                 </aggregators:aggregation-complete>

@@ -17,7 +17,7 @@
         <set-payload value="#[['a','b','c']]"/>
         <set-variable variableName="collection-splitter0-group-size" value="#[sizeOf(payload)]"/>
         <foreach>
-            <aggregators:group-based-aggregator name="collection-splitter0-aggregator"  groupSize="#[vars.collection-splitter0-group-size]">
+            <aggregators:group-based-aggregator name="collection-splitter0-aggregator"  groupSize="#[vars.collection-splitter0-group-size]" evictionTime="0">
                 <aggregators:aggregation-complete>
                     <vm:publish config-ref="splitter-aggregator-vm-config961536398" queueName="collection-splitter0-vm-queue"/>
                 </aggregators:aggregation-complete>

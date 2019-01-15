@@ -21,7 +21,8 @@
         <set-variable variableName="collection-splitter0-group-size" value="#[sizeOf(payload)]"/>
         <foreach>
             <aggregators:group-based-aggregator name="collection-splitter0-aggregator"
-                                                groupSize="#[vars.collection-splitter0-group-size]">
+                                                groupSize="#[vars.collection-splitter0-group-size]"
+                                                evictionTime="0">
                 <aggregators:aggregation-complete>
                     <vm:publish config-ref="splitter-aggregator-vm-config1235036770" queueName="collection-splitter0-vm-queue"/>
                 </aggregators:aggregation-complete>
@@ -34,7 +35,8 @@
         <set-variable variableName="splitter0-group-size" value="#[sizeOf(payload)]"/>
         <foreach collection="#[payload.someKey]">
             <aggregators:group-based-aggregator name="splitter0-aggregator"
-                                                groupSize="#[vars.splitter0-group-size]">
+                                                groupSize="#[vars.splitter0-group-size]"
+                                                evictionTime="0">
                 <aggregators:aggregation-complete>
                     <vm:publish config-ref="splitter-aggregator-vm-config1235036770" queueName="splitter0-vm-queue"/>
                 </aggregators:aggregation-complete>
@@ -47,7 +49,8 @@
         <set-variable variableName="map-splitter0-group-size" value="#[sizeOf(payload)]"/>
         <foreach collection="#[dw::core::Objects::entrySet(payload)]">
             <aggregators:group-based-aggregator name="map-splitter0-aggregator"
-                                                groupSize="#[vars.map-splitter0-group-size]">
+                                                groupSize="#[vars.map-splitter0-group-size]"
+                                                evictionTime="0">
                 <aggregators:aggregation-complete>
                     <vm:publish config-ref="splitter-aggregator-vm-config1235036770" queueName="map-splitter0-vm-queue"/>
                 </aggregators:aggregation-complete>
@@ -71,7 +74,8 @@
         <foreach>
             <flow-ref name="theAggregator"/>
             <aggregators:group-based-aggregator name="collection-splitter1-aggregator"
-                                                groupSize="#[vars.collection-splitter1-group-size]">
+                                                groupSize="#[vars.collection-splitter1-group-size]"
+                                                evictionTime="0">
                 <aggregators:aggregation-complete>
                     <vm:publish config-ref="splitter-aggregator-vm-config1235036770" queueName="collection-splitter1-vm-queue"/>
                 </aggregators:aggregation-complete>

@@ -18,7 +18,7 @@
         <foreach>
             <logger message="not important"/>
             <flow-ref name="otherFlow"/>
-            <aggregators:group-based-aggregator name="collection-splitter0-aggregator"  groupSize="#[vars.collection-splitter0-group-size]">
+            <aggregators:group-based-aggregator name="collection-splitter0-aggregator"  groupSize="#[vars.collection-splitter0-group-size]" evictionTime="0">
                 <aggregators:aggregation-complete>
                     <vm:publish config-ref="splitter-aggregator-vm-config1972653648" queueName="collection-splitter0-vm-queue"/>
                 </aggregators:aggregation-complete>

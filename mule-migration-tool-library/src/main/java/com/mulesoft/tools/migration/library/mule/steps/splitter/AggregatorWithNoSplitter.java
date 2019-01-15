@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
 import static com.mulesoft.tools.migration.library.mule.steps.splitter.SplitterAggregatorUtils.isAggregatorProcessed;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -22,7 +23,8 @@ import org.jdom2.Element;
  */
 public class AggregatorWithNoSplitter extends AbstractApplicationModelMigrationStep {
 
-  private static final String XPATH_SELECTOR = "//mule:*[contains(local-name(),'aggregator')]";
+  private static final String XPATH_SELECTOR =
+      "//*[contains(local-name(),'aggregator') and namespace-uri()='" + CORE_NS_URI + "' ]";
 
   public AggregatorWithNoSplitter() {
     this.setAppliedTo(XPATH_SELECTOR);

@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
+
 /**
  * Migrates 'collection-splitter' along with it's matching aggregator.
  *
@@ -16,7 +18,8 @@ public class CollectionSplitter extends AbstractSplitter {
 
   public static final String COLLECTION_AGGREGATOR = "collection-aggregator";
 
-  private static final String XPATH_SELECTOR = "//*[local-name()='collection-splitter']";
+  private static final String XPATH_SELECTOR =
+      "//*[local-name()='collection-splitter' and namespace-uri()='" + CORE_NS_URI + "']";
 
   public CollectionSplitter() {
     this.setAppliedTo(XPATH_SELECTOR);

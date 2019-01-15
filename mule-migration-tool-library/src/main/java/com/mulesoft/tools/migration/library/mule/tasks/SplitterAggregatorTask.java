@@ -61,8 +61,6 @@ public class SplitterAggregatorTask extends AbstractMigrationTask {
                         new CustomSplitter(),
                         new MapSplitter(),
                         new MessageChunkSplitter(),
-                        new AggregatorWithNoSplitter(),
-                        new RemoveSyntheticMigrationAttributes(),
-                        new RemoveSyntheticMigrationGlobalElements());
+                        new AggregatorWithNoSplitter());
   }
 }

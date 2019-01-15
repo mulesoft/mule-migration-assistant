@@ -6,7 +6,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
-import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes.MIGRATION_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static java.lang.Math.abs;
 import static java.nio.file.Paths.get;
@@ -49,7 +49,8 @@ public class SplitterAggregatorInfo {
     this.splitterIndexLazyValue = new LazyValue<>(
                                                   () -> {
                                                     Optional<Element> splitterGlobalValuesElementOptional = applicationModel
-                                                        .getNodeOptional("//*[local-name()='" + SPLITTER_GLOBAL_VALUES + "']");
+                                                        .getNodeOptional("//*[local-name()='" + SPLITTER_GLOBAL_VALUES
+                                                            + "' and namespace-uri()='" + MIGRATION_NAMESPACE.getURI() + "']");
                                                     Element splitterGlobalValuesElement =
                                                         splitterGlobalValuesElementOptional.orElseGet(() -> {
                                                           Element globalValues =
