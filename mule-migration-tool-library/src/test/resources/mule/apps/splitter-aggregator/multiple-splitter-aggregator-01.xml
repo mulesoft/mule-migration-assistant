@@ -17,7 +17,7 @@
 
     <flow name="main">
         <set-variable variableName="splitter0-group-size" value="#[sizeOf(payload)]"/>
-        <foreach expression="#[payload]">
+        <foreach collection="#[payload]">
             <logger message="not important"/>
             <aggregators:group-based-aggregator name="splitter0-aggregator"
                                                 groupSize="#[vars.splitter0-group-size]">

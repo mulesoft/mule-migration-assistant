@@ -15,6 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 import com.google.common.collect.Iterables;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements;
 import com.mulesoft.tools.migration.library.mule.steps.vm.VmNamespaceContribution;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
@@ -59,21 +60,31 @@ public class SplitterTest {
   public static Collection<Object[]> data() {
     return asList(new Object[][] {
         {"collection-splitter-aggregator-01", emptyList()},
-        {"collection-splitter-aggregator-02", asList("splitter.attributes.neverCorrelation")},
-        {"collection-splitter-aggregator-03", asList("splitter.aggregator.missing")},
+        {"collection-splitter-aggregator-02", asList("splitter.neverCorrelationAttribute")},
+        {"collection-splitter-aggregator-03", asList("aggregator.missing")},
         {"collection-splitter-aggregator-04", emptyList()},
         {"collection-splitter-aggregator-05", emptyList()},
-        {"collection-splitter-aggregator-06", asList("splitter.aggregator.processedGroupsObjectStore")},
-        {"collection-splitter-aggregator-07", asList("splitter.aggregator.eventGroupsObjectStore")},
-        {"collection-splitter-aggregator-08", asList("splitter.aggregator.persistentStores")},
-        {"collection-splitter-aggregator-09", asList("splitter.aggregator.storePrefix")},
-        {"collection-splitter-aggregator-10", asList("splitter.aggregator.missing", "splitter.aggregator.noSplitter")},
-        {"expression-splitter-aggregator-01", asList("splitter.attributes.evaluator")},
-        {"expression-splitter-aggregator-02", asList("splitter.attributes.evaluator", "splitter.attributes.customEvaluator")},
+        {"collection-splitter-aggregator-06", asList("aggregator.processedGroupsObjectStore")},
+        {"collection-splitter-aggregator-07", asList("aggregator.eventGroupsObjectStore")},
+        {"collection-splitter-aggregator-08", asList("aggregator.persistentStores")},
+        {"collection-splitter-aggregator-09", asList("aggregator.storePrefix")},
+        {"collection-splitter-aggregator-10", asList("aggregator.missing", "aggregator.noSplitter")},
+        {"custom-splitter-aggregator-01", asList("splitter.custom", "aggregator.customSplitter")},
+        {"expression-splitter-aggregator-01", asList("splitter.evaluatorAttribute")},
+        {"expression-splitter-aggregator-02", asList("splitter.evaluatorAttribute", "splitter.customEvaluatorAttribute")},
         {"expression-splitter-aggregator-03", emptyList()},
+        {"map-splitter-aggregator-01", emptyList()},
+        {"message-chunk-splitter-aggregator-01", asList("splitter.messageChunk", "aggregator.messageChunk")},
         {"multiple-splitter-aggregator-01", emptyList()},
         {"multiple-splitter-aggregator-02", emptyList()},
-        {"splitter-custom-aggregator-01", asList("splitter.aggregator.custom")}
+        {"multiple-splitter-aggregator-03", asList("aggregator.missing",
+                                                   "aggregator.custom",
+                                                   "aggregator.noSplitter",
+                                                   "splitter.custom",
+                                                   "aggregator.customSplitter",
+                                                   "splitter.messageChunk",
+                                                   "aggregator.messageChunk")},
+        {"splitter-custom-aggregator-01", asList("aggregator.custom")}
     });
   }
 
@@ -89,11 +100,15 @@ public class SplitterTest {
     this.expectedReportKeys = expectedReportKeys;
   }
 
-  private AbstractSplitter collectionSplitter;
-  private AbstractSplitter expressionSplitter;
+  private CollectionSplitter collectionSplitter;
+  private ExpressionSplitter expressionSplitter;
+  private CustomSplitter customSplitter;
+  private MapSplitter mapSplitter;
+  private MessageChunkSplitter messageChunkSplitter;
   private AggregatorWithNoSplitter aggregatorWithNoSplitter;
   private VmNamespaceContribution vmNamespaceContribution;
   private AggregatorsNamespaceContribution aggregatorsNamespaceContribution;
+  private RemoveSyntheticMigrationAttributes removeSyntheticMigrationAttributes;
   private RemoveSyntheticMigrationGlobalElements removeSyntheticMigrationGlobalElements;
   private ApplicationModel applicationModel;
 
@@ -106,17 +121,26 @@ public class SplitterTest {
 
     collectionSplitter = new CollectionSplitter();
     collectionSplitter.setApplicationModel(applicationModel);
-    collectionSplitter.setExpressionMigrator(expressionMigrator);
 
     expressionSplitter = new ExpressionSplitter();
     expressionSplitter.setApplicationModel(applicationModel);
     expressionSplitter.setExpressionMigrator(expressionMigrator);
+
+    customSplitter = new CustomSplitter();
+    customSplitter.setApplicationModel(applicationModel);
+
+    mapSplitter = new MapSplitter();
+    mapSplitter.setApplicationModel(applicationModel);
+
+    messageChunkSplitter = new MessageChunkSplitter();
+    messageChunkSplitter.setApplicationModel(applicationModel);
 
     aggregatorWithNoSplitter = new AggregatorWithNoSplitter();
     aggregatorWithNoSplitter.setApplicationModel(applicationModel);
 
     vmNamespaceContribution = new VmNamespaceContribution();
     aggregatorsNamespaceContribution = new AggregatorsNamespaceContribution();
+    removeSyntheticMigrationAttributes = new RemoveSyntheticMigrationAttributes();
     removeSyntheticMigrationGlobalElements = new RemoveSyntheticMigrationGlobalElements();
 
     for (String expectedReportKey : expectedReportKeys) {
@@ -146,12 +170,23 @@ public class SplitterTest {
     getElementsFromDocument(document, expressionSplitter.getAppliedTo().getExpression())
         .forEach(node -> expressionSplitter.execute(node, report.getReport()));
 
+    getElementsFromDocument(document, customSplitter.getAppliedTo().getExpression())
+        .forEach(node -> customSplitter.execute(node, report.getReport()));
+
+    getElementsFromDocument(document, mapSplitter.getAppliedTo().getExpression())
+        .forEach(node -> mapSplitter.execute(node, report.getReport()));
+
+    getElementsFromDocument(document, messageChunkSplitter.getAppliedTo().getExpression())
+        .forEach(node -> messageChunkSplitter.execute(node, report.getReport()));
+
     getElementsFromDocument(document, aggregatorWithNoSplitter.getAppliedTo().getExpression())
         .forEach(node -> aggregatorWithNoSplitter.execute(node, report.getReport()));
 
+    getElementsFromDocument(document, removeSyntheticMigrationAttributes.getAppliedTo().getExpression())
+        .forEach(node -> removeSyntheticMigrationAttributes.execute(node, report.getReport()));
+
     getElementsFromDocument(document, removeSyntheticMigrationGlobalElements.getAppliedTo().getExpression())
         .forEach(node -> removeSyntheticMigrationGlobalElements.execute(node, report.getReport()));
-
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(document);
