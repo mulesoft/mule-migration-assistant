@@ -15,7 +15,7 @@ import org.junit.rules.ExternalResource;
 public class TestBrokerManagerRule extends ExternalResource {
 
   private static final String INITIAL_CONFIG_PATH =
-      "amqp1Mvn/broker/broker_config.json";
+      "../src/test/resources/e2e/amqp1Mvn/broker/broker_config.json";
   protected static final SystemLauncher broker = new SystemLauncher();
 
   public void startBroker() throws Exception {
