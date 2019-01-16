@@ -773,53 +773,78 @@ splitter:
   neverCorrelationAttribute:
     type: ERROR
     message: enableCorrelation=NEVER is not supported. If the original message has a correlation ID,it will be set to the result message.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#additional-attributes
   evaluatorAttribute:
     type: ERROR
     message: Can not longer define an expression evaluator. Only DataWeave is supported.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#additional-attributes
   customEvaluatorAttribute:
     type: ERROR
     message: Can not longer define a custom expression evaluator. Only DataWeave is supported.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#additional-attributes
   custom:
     type: ERROR
     message: Can't migrate a custom splitter.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#available-splitters-migration
   messageChunk:
    type: ERROR
    message: message-chunk-splitter is not supported anymore
+   docLinks:
+     - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#available-splitters-migration
 
 aggregator:
   custom:
     type: ERROR
-    message: Custom aggregators are not supported anymore. Check the Aggregator's module to see if the needed functionality is avaliable.
+    message: Custom aggregators are not supported anymore. Check the Aggregators module to see if the needed functionality is available.
     docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#available-aggregators-migration
       - https://docs.mulesoft.com/connectors/aggregator/aggregators-module
   customSplitter:
     type: ERROR
-    message: Aggregator is linked to custom splitter, can't migrate.
+    message: Aggregator is linked to custom splitter, so cannot migrate.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#available-splitters-migration
   missing:
     type: WARN
-    message: Could not find any associated aggregator for the splitter. Migrated behaviour may not be the expected one.
+    message: Could not find any associated aggregator for the splitter. Might produce unexpected behaviour.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator
   noSplitter:
     type: ERROR
-    message: Could not find any non custom splitter associated with this aggregator and there is no way of knowing the expected aggregation size. This may be the case where the splitter and the aggregator are in different flows and that case can't yet be migrated. If that is not the case, the aggregator's module should provider the required functionality.
+    message: Could not find a non-custom splitter associated with this aggregator and there is no way of knowing the expected aggregation size. If the splitter and aggregator are in different flows, they might not be migrated. If that is not the case, the aggregators module should provide the required functionality.
     docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator
       - https://docs.mulesoft.com/connectors/aggregator/aggregators-module
   processedGroupsObjectStore:
     type: WARN
-    message: Processed groups are not longer stored in a different object store. This parameter is being ignored. Check Aggregator configuration parameters if wanting to add logic for group eviction.
+    message: Processed groups are no longer stored in a different object store. This parameter is being ignored. Check Aggregator configuration parameters if you want to add logic for group eviction.
     docLinks:
       - https://docs.mulesoft.com/connectors/aggregator/aggregators-module-reference#parameters-3
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#aggregators
   eventGroupsObjectStore:
     type: WARN
-    message: Event groups are not stored the same way as in the previous aggregators. Accessing them externally may lead to unexpected errors.
+    message: Event groups are not stored the same way as in the previous aggregators. Accessing them externally might lead to unexpected errors.
+    docLinks:
+      - - https://docs.mulesoft.com/connectors/aggregator/aggregators-module-reference#parameters-3
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#aggregators
   persistentStores:
     type: WARN
-    message: This parameter is being ignored. If wanting to use a persisten object store, the configuration should reference a globally created persistent object store or a private persistent object store should be defined inline.
+    message: This parameter is ignored. To use a persistent object store, the configuration should reference a globally created persistent object store or you need to define a private persistent object store.
     docLinks:
       - https://docs.mulesoft.com/connectors/aggregator/aggregators-module-reference#parameters-3
       - https://docs.mulesoft.com/connectors/object-store/object-store-to-define-a-new-os#private_os
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#aggregators
   storePrefix:
     type: WARN
     message: This parameter is being ignored.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#aggregators
   messageChunk:
     type: ERROR
     message: message-chunk-aggregator is not supported anymore
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#available-aggregators-migration

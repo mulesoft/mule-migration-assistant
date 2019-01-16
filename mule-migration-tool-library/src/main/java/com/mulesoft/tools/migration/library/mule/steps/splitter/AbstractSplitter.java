@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
 import static com.mulesoft.tools.migration.library.mule.steps.splitter.SplitterAggregatorUtils.setAggregatorAsProcessed;
 import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.VM_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.VM_SCHEMA_LOCATION;
 import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.migrateVmConfig;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
@@ -325,6 +326,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
                                        splitterAggregatorInfo.getVmConfigName(), getApplicationModel());
     Element queues = vmConfig.getChild("queues", VM_NAMESPACE);
     queues.addContent(VM_QUEUE_TEMPLATE.clone().setAttribute("queueName", splitterAggregatorInfo.getVmQueueName()));
+    getApplicationModel().addNameSpace(VM_NAMESPACE.getPrefix(), VM_NAMESPACE.getURI(), VM_SCHEMA_LOCATION);
   }
 
   private Map<String, String> getOldAggregatorAttributes(Element aggregatorElement) {

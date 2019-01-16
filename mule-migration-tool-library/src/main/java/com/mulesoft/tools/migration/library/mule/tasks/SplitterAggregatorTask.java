@@ -52,7 +52,10 @@ public class SplitterAggregatorTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new VmConnectorPomContribution(),
+    return newArrayList(
+                        //TODO: MMT-316 conditionally add this.
+                        new VmConnectorPomContribution(),
+
                         new AggregatorsModulePomContribution(),
                         new VmNamespaceContribution(),
                         new AggregatorsNamespaceContribution(),
