@@ -810,7 +810,7 @@ aggregator:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#available-splitters-migration
   missing:
     type: WARN
-    message: "Could not find any associated aggregator for the splitter. Might produce unexpected behaviour."
+    message: "Could not find any associated aggregator for the splitter. Might produce unexpected behavior."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator
   noSplitter:
