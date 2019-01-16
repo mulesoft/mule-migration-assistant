@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.splitter.SplitterA
 import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.VM_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.VM_SCHEMA_LOCATION;
 import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.migrateVmConfig;
+import static com.mulesoft.tools.migration.library.mule.steps.vm.VmConnectorPomContribution.addVMDependency;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementBefore;
@@ -19,6 +20,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.jdom2.Namespace.getNamespace;
 
+import com.mulesoft.tools.migration.library.mule.steps.vm.VmConnectorPomContribution;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -327,6 +329,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
     Element queues = vmConfig.getChild("queues", VM_NAMESPACE);
     queues.addContent(VM_QUEUE_TEMPLATE.clone().setAttribute("queueName", splitterAggregatorInfo.getVmQueueName()));
     getApplicationModel().addNameSpace(VM_NAMESPACE.getPrefix(), VM_NAMESPACE.getURI(), VM_SCHEMA_LOCATION);
+    getApplicationModel().getPomModel().ifPresent(VmConnectorPomContribution::addVMDependency);
   }
 
   private Map<String, String> getOldAggregatorAttributes(Element aggregatorElement) {
