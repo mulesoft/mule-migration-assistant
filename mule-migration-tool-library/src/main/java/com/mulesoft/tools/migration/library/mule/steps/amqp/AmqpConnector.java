@@ -7,14 +7,14 @@
 package com.mulesoft.tools.migration.library.mule.steps.amqp;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.mule.steps.amqp.AbstractAmqpEndpoint.AMQPS_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.amqp.AbstractAmqpEndpoint.AMQP_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.amqp.AbstractAmqpEndpoint.AMQP_NAMESPACE_URI;
-import static com.mulesoft.tools.migration.library.mule.steps.amqp.AbstractAmqpEndpoint.AMQPS_NAMESPACE_URI;
-
-import org.jdom2.Element;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Element;
 
 /**
  * Migrates the AMQP connector from the AMQP transport
@@ -26,7 +26,7 @@ public class AmqpConnector extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR =
       "/*/*[(namespace-uri()='" + AMQP_NAMESPACE_URI + "' or namespace-uri()='" + AMQPS_NAMESPACE_URI + "') and ("
-          + "(local-name() =  'connector'))]";
+          + "(local-name()='connector'))]";
 
   @Override
   public String getDescription() {

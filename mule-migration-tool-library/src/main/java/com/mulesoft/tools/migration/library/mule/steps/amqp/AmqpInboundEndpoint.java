@@ -13,12 +13,12 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAtt
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.hasAttribute;
 
-import java.util.Optional;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import java.util.Optional;
 
 /**
  * Migrates the inbound endpoint of the AMQP Transport
@@ -60,7 +60,6 @@ public class AmqpInboundEndpoint extends AbstractAmqpEndpoint {
     Optional<Element> connector = resolveAmqpConnector(object, getApplicationModel());
     String configName = migrateAmqpConfig(object, report, connector, getApplicationModel());
 
-
     connector.ifPresent(m3c -> {
       Element reconnectforever = m3c.getChild("reconnect-forever", CORE_NAMESPACE);
       if (reconnectforever != null) {
@@ -97,7 +96,6 @@ public class AmqpInboundEndpoint extends AbstractAmqpEndpoint {
     object.removeAttribute("numberOfChannels");
 
     resolveFallbackQueue(object, report);
-
   }
 
   private void resolveFallbackQueue(Element object, MigrationReport report) {

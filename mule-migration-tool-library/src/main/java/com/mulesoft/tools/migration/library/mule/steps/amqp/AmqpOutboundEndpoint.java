@@ -8,18 +8,16 @@ package com.mulesoft.tools.migration.library.mule.steps.amqp;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
-import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.hasAttribute;
 import static java.lang.Boolean.parseBoolean;
 
-import java.util.Optional;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import java.util.Optional;
 
 /**
  * Migration for Amqp Outbound.
@@ -31,7 +29,6 @@ public class AmqpOutboundEndpoint extends AbstractAmqpEndpoint {
 
   public static final String XPATH_SELECTOR =
       "//*[namespace-uri()='" + AMQP_NAMESPACE_URI + "' and local-name()='outbound-endpoint']";
-
 
   @Override
   public String getDescription() {
@@ -108,8 +105,6 @@ public class AmqpOutboundEndpoint extends AbstractAmqpEndpoint {
     }
   }
 
-
-
   private void resolveFallbackExchange(Element object, MigrationReport report) {
     Element queueDefinition = new Element("fallback-exchange-definition", AMQP_NAMESPACE);
     Boolean autoDelete = parseBoolean(object.getAttributeValue("exchangeAutoDelete"));
@@ -154,7 +149,5 @@ public class AmqpOutboundEndpoint extends AbstractAmqpEndpoint {
 
     return action;
   }
-
-
 
 }

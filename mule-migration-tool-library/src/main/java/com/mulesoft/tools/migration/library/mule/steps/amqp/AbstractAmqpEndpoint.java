@@ -14,17 +14,6 @@ import static java.lang.Boolean.parseBoolean;
 import static java.util.Optional.of;
 import static org.jdom2.Namespace.getNamespace;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import com.mulesoft.tools.migration.library.mule.steps.amqp.values.AckModeAttributeMapper;
 import com.mulesoft.tools.migration.library.mule.steps.amqp.values.DeliveryModeAttributeMapper;
 import com.mulesoft.tools.migration.library.mule.steps.amqp.values.SimpleAttributeMapper;
@@ -33,6 +22,17 @@ import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Migrates the endpoints of the AMQP Transport
@@ -150,12 +150,9 @@ public abstract class AbstractAmqpEndpoint extends AbstractApplicationModelMigra
               Boolean.toString(!parseBoolean(conn.getAttribute("activeDeclarationsOnly").getValue()));
           amqpConfig.setAttribute("createFallbackQueue", fallbackQueueActionValue);
           amqpConfig.setAttribute("createFallbackExchange", fallbackQueueActionValue);
-          report
-              .report("activeDeclarationsOnly", conn, amqpConfig);
+          report.report("activeDeclarationsOnly", conn, amqpConfig);
         }
       });
-
-
 
       addTopLevelElement(amqpConfig, connector.map(c -> c.getDocument()).orElse(object.getDocument()));
 
@@ -176,18 +173,18 @@ public abstract class AbstractAmqpEndpoint extends AbstractApplicationModelMigra
   }
 
   private static boolean mustAddQoSConfig(Element connector) {
-    return musdAddAdditionalConfig(connector, QOS_CONFIG_ATTRIBUTES.keySet());
+    return mustAddAdditionalConfig(connector, QOS_CONFIG_ATTRIBUTES.keySet());
   }
 
   private static boolean mustAddPublisherConfig(Element connector) {
-    return musdAddAdditionalConfig(connector, PUBLISHER_CONFIG_ATTRIBUTES.keySet());
+    return mustAddAdditionalConfig(connector, PUBLISHER_CONFIG_ATTRIBUTES.keySet());
   }
 
   private static boolean mustAddConsumerConfig(Element connector) {
-    return musdAddAdditionalConfig(connector, CONSUMER_CONFIG_ATTRIBUTES.keySet());
+    return mustAddAdditionalConfig(connector, CONSUMER_CONFIG_ATTRIBUTES.keySet());
   }
 
-  private static boolean musdAddAdditionalConfig(Element connector, Set<String> attributes) {
+  private static boolean mustAddAdditionalConfig(Element connector, Set<String> attributes) {
     for (String attribute : attributes) {
       if (hasAttribute(connector, attribute)) {
         return true;

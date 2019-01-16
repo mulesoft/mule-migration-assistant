@@ -21,7 +21,6 @@ public abstract class AmqpAttributeMapper extends SimpleAttributeMapper {
   public AmqpAttributeMapper(String attributeName) {
     super(attributeName);
     populateValueMapper();
-
   };
 
   public abstract void populateValueMapper();

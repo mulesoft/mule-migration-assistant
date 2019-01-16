@@ -258,9 +258,7 @@ public final class XmlDslUtils {
    * @return {@code true} if the attribute was present on {@code source}, {@code false} otherwise
    */
   public static boolean copyAttributeIfPresent(final Element source, final Element target, final String attributeName) {
-    return copyAttributeIfPresent(source, target, attributeName, attributeName, (attrValue) -> {
-      return attrValue;
-    }, true);
+    return copyAttributeIfPresent(source, target, attributeName, attributeName, attrValue -> attrValue, true);
   }
 
   /**
@@ -272,9 +270,7 @@ public final class XmlDslUtils {
    */
   public static boolean copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
                                                final String targetAttributeName) {
-    return copyAttributeIfPresent(source, target, sourceAttributeName, targetAttributeName, (attrValue) -> {
-      return attrValue;
-    }, true);
+    return copyAttributeIfPresent(source, target, sourceAttributeName, targetAttributeName, attrValue -> attrValue, true);
   }
 
   /**
@@ -286,9 +282,7 @@ public final class XmlDslUtils {
    */
   public static boolean copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
                                                final String targetAttributeName, boolean removeSource) {
-    return copyAttributeIfPresent(source, target, sourceAttributeName, targetAttributeName, (attrValue) -> {
-      return attrValue;
-    }, true);
+    return copyAttributeIfPresent(source, target, sourceAttributeName, targetAttributeName, attrValue -> attrValue, true);
   }
 
   /**
@@ -313,9 +307,7 @@ public final class XmlDslUtils {
    */
   public static boolean copyAttributeIfPresent(final Element source, final Element target, final String attributeName,
                                                boolean removeSource) {
-    return copyAttributeIfPresent(source, target, attributeName, attributeName, (attrValue) -> {
-      return attrValue;
-    }, removeSource);
+    return copyAttributeIfPresent(source, target, attributeName, attributeName, attrValue -> attrValue, removeSource);
   }
 
   /**

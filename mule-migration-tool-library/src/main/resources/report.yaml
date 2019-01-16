@@ -767,44 +767,44 @@ watermarkSelector:
     type: ERROR
     message: "Selector expression could not be migrated to a DataWeave expression."
     docLinks:
-    - https://docs.mulesoft.com/mule-runtime/4.1/migration-patterns-watermark
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-patterns-watermark
 
 amqp:
   exchangeDefinition:
     type: WARN
     message: "No Exchange Definition is allowed in a listener in mule 4. You can define a fallback queue, but bindings and exchanges must be previously declared."
     docLinks:
-    - https://docs.mulesoft.com/connectors/amqp/amqp-listener#declaring-a-queue-in-the-amqp-listener
+      - https://docs.mulesoft.com/connectors/amqp/amqp-listener#declaring-a-queue-in-the-amqp-listener
   queueRemovalStrategy:
     type: ERROR
-    message: "Queue definition removal strategy could not be resolved. Queue is both autoDelete and durable."
+    message: "Queue definition removal strategy could not be resolved. Queue is both 'autoDelete' and 'durable'."
   returnListener:
     type: WARN
     message: "Return listener endpoint cannot be set in AMQP Connector. You can define a default return exchange."
     docLinks:
-    - https://docs.mulesoft.com/connectors/amqp/amqp-publish#returned-messages-handling
+      - https://docs.mulesoft.com/connectors/amqp/amqp-publish#returned-messages-handling
   exchangeRemovalStrategy:
     type: ERROR
-    message: "Exchange definition removal strategy could not be resolved. Queue is both autoDelete and durable. Default queue params where used."
+    message: "Exchange definition removal strategy could not be resolved. Queue is both 'autoDelete' and 'durable'. Default queue params where used."
   queueDefinitionInPublish:
     type: WARN
-    message: "Queue cannot be defined in the publish operation in AMQP Connector."
+    message: "Queue cannot be defined in the 'publish' operation in AMQP Connector."
     docLinks:
-    - https://docs.mulesoft.com/connectors/amqp/amqp-publish#declaring-an-exchange-in-the-publish-operation
+      - https://docs.mulesoft.com/connectors/amqp/amqp-publish#declaring-an-exchange-in-the-publish-operation
   activeDeclarationsOnly:
     type: WARN
-    message: "active declarations only will be migrated to createFallbackQueue and createFallbackExchange so this is managed the same as in mule 3"
+    message: "'activeDeclarationsOnly' will be migrated to 'createFallbackQueue' and 'createFallbackExchange' so this is managed the same as in mule 3."
     docLinks:
-    - https://docs.mulesoft.com/connectors/amqp/amqp-topography
-    - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#EnforcingExistenceQueueExchanges
+      - https://docs.mulesoft.com/connectors/amqp/amqp-topography
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#EnforcingExistenceQueueExchanges
   fallbackAddresses:
     type: WARN
-    message: "fallbackAddresses is not used in mule 4 AMQP connector. An HAProxy is recommended to use instead. "
+    message: "'fallbackAddresses' is not used in mule 4 AMQP connector. An HAProxy is recommended to use instead. "
     docLinks:
-    - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#ConfiguringTheConnector   
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#ConfiguringTheConnector   
   listenerTx:
     type: WARN
-    message: There can be no transaction active before the listener, so JOIN is not supported at this point.
+    message: "There can be no transaction active before the listener, so JOIN is not supported at this point."
     docLinks:
-    - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#UsingTransactions
-    - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp   
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#UsingTransactions
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp   

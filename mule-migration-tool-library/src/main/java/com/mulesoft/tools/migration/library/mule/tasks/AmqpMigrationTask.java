@@ -10,8 +10,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
-import java.util.List;
-
 import com.mulesoft.tools.migration.library.mule.steps.amqp.AmqpAck;
 import com.mulesoft.tools.migration.library.mule.steps.amqp.AmqpConnector;
 import com.mulesoft.tools.migration.library.mule.steps.amqp.AmqpConnectorPomContribution;
@@ -21,6 +19,8 @@ import com.mulesoft.tools.migration.library.mule.steps.amqp.AmqpOutboundEndpoint
 import com.mulesoft.tools.migration.library.mule.steps.amqp.AmqpReject;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+
+import java.util.List;
 
 /**
  * Migration definition for AMQP Transport
@@ -47,7 +47,12 @@ public class AmqpMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new AmqpConnectorPomContribution(), new AmqpInboundEndpoint(), new AmqpOutboundEndpoint(), new AmqpAck(),
-                        new AmqpGlobalEndpoint(), new AmqpReject(), new AmqpConnector());
+    return newArrayList(new AmqpConnectorPomContribution(),
+                        new AmqpInboundEndpoint(),
+                        new AmqpOutboundEndpoint(),
+                        new AmqpAck(),
+                        new AmqpGlobalEndpoint(),
+                        new AmqpReject(),
+                        new AmqpConnector());
   }
 }
