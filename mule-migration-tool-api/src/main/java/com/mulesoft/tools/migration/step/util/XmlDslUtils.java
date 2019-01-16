@@ -508,6 +508,19 @@ public final class XmlDslUtils {
   }
 
   /**
+   * Create a new flow element with the given name and add it after the {@param previousSibling}
+   * @param name name for the flow to create
+   * @param previousSibling an element that will be before the flow in the file
+   * @return the new flow element
+   */
+  public static Element addNewFlowAfter(String name, Element previousSibling) {
+    Element flow = new Element("flow", CORE_NAMESPACE);
+    flow.setAttribute("name", name);
+    addElementAfter(flow, previousSibling);
+    return flow;
+  }
+
+  /**
    * Return JDOM document from a file path.
    *
    * @param filePath

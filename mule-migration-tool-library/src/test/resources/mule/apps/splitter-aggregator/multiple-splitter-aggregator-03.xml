@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xmlns:aggregators="http://www.mulesoft.org/schema/mule/aggregators"
+      xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/aggregators http://www.mulesoft.org/schema/mule/aggregators/current/mule-aggregators.xsd
+        http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+
+    <flow name="collectionSplitter">
+        <set-variable variableName="collection-splitter0-group-size" value="#[sizeOf(payload)]"/>
+        <foreach>
+            <aggregators:group-based-aggregator name="collection-splitter0-aggregator"
+                                                groupSize="#[vars.collection-splitter0-group-size]"
+                                                evictionTime="0">
+                <aggregators:aggregation-complete>
+                    <set-variable variableName="collection-splitter0-aggregator-aggregation" value="#[payload]"/>
+                </aggregators:aggregation-complete>
+            </aggregators:group-based-aggregator>
+        </foreach>
+        <set-payload value="#[vars.collection-splitter0-aggregator-aggregation]"/>
+    </flow>
+
+    <flow name="expressionSplitter">
+        <set-variable variableName="splitter0-group-size" value="#[sizeOf(payload)]"/>
+        <foreach collection="#[payload.someKey]">
+            <aggregators:group-based-aggregator name="splitter0-aggregator"
+                                                groupSize="#[vars.splitter0-group-size]"
+                                                evictionTime="0">
+                <aggregators:aggregation-complete>
+                    <set-variable variableName="splitter0-aggregator-aggregation" value="#[payload]"/>
+                </aggregators:aggregation-complete>
+            </aggregators:group-based-aggregator>
+        </foreach>
+        <set-payload value="#[vars.splitter0-aggregator-aggregation]"/>
+    </flow>
+
+    <flow name="mapSplitter">
+        <set-variable variableName="map-splitter0-group-size" value="#[sizeOf(payload)]"/>
+        <foreach collection="#[dw::core::Objects::entrySet(payload)]">
+            <aggregators:group-based-aggregator name="map-splitter0-aggregator"
+                                                groupSize="#[vars.map-splitter0-group-size]"
+                                                evictionTime="0">
+                <aggregators:aggregation-complete>
+                    <set-variable variableName="map-splitter0-aggregator-aggregation" value="#[payload]"/>
+                </aggregators:aggregation-complete>
+            </aggregators:group-based-aggregator>
+        </foreach>
+        <set-payload value="#[vars.map-splitter0-aggregator-aggregation]"/>
+    </flow>
+
+    <flow name="customSplitter">
+        <custom-splitter class="some.custom.SplitterClass"/>
+        <collection-aggregator/>
+    </flow>
+
+    <flow name="messageChunkSplitter">
+        <message-chunk-splitter messageSize="512"/>
+        <message-chunk-aggregator/>
+    </flow>
+
+    <flow name="remoteAggregator">
+        <set-variable variableName="collection-splitter1-group-size" value="#[sizeOf(payload)]"/>
+        <foreach>
+            <flow-ref name="theAggregator"/>
+            <aggregators:group-based-aggregator name="collection-splitter1-aggregator"
+                                                groupSize="#[vars.collection-splitter1-group-size]"
+                                                evictionTime="0">
+                <aggregators:aggregation-complete>
+                    <set-variable variableName="collection-splitter1-aggregator-aggregation" value="#[payload]"/>
+                </aggregators:aggregation-complete>
+            </aggregators:group-based-aggregator>
+        </foreach>
+        <set-payload value="#[vars.collection-splitter1-aggregator-aggregation]"/>
+    </flow>
+
+    <sub-flow name="theAggregator">
+        <collection-aggregator/>
+    </sub-flow>
+
+    <flow name="customAggregator">
+        <collection-splitter/>
+        <custom-aggregator class="some.custom.AggregatorClass"/>
+    </flow>
+
+</mule>

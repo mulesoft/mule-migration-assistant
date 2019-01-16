@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElem
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -32,7 +33,9 @@ public abstract class AbstractVmEndpoint extends AbstractApplicationModelMigrati
 
   protected static final String VM_NAMESPACE_PREFIX = "vm";
   protected static final String VM_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/vm";
-  public static final Namespace VM_NAMESPACE = Namespace.getNamespace(VM_NAMESPACE_PREFIX, VM_NAMESPACE_URI);
+
+  public static final String VM_SCHEMA_LOCATION = "http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd";
+  public static final Namespace VM_NAMESPACE = getNamespace(VM_NAMESPACE_PREFIX, VM_NAMESPACE_URI);
 
   private ExpressionMigrator expressionMigrator;
 
