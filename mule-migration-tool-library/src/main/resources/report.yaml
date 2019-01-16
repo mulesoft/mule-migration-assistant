@@ -874,7 +874,7 @@ aggregator:
     type: WARN
     message: "Event groups are not stored the same way as in the previous aggregators. Accessing them externally might lead to unexpected errors."
     docLinks:
-      - - https://docs.mulesoft.com/connectors/aggregator/aggregators-module-reference#parameters-3
+      - https://docs.mulesoft.com/connectors/aggregator/aggregators-module-reference#parameters-3
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#aggregators
   persistentStores:
     type: WARN
