@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:amqps="http://www.mulesoft.org/schema/mule/amqps"
+	xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/amqps http://www.mulesoft.org/schema/mule/amqp/current/mule-amqps.xsd">
+
+	<amqps:connector name="amqpConnector"
+		sslProtocol="TLSv1.2">
+		<amqps:ssl-key-store path="ssl/client/keycert.p12"
+			type="PKCS12" algorithm="SunX509" keyPassword="MySecretPassword"
+			storePassword="MySecretPassword" />
+		<amqps:ssl-trust-store
+			path="ssl/client/trustStore.jks" type="JKS" algorithm="SunX509"
+			storePassword="rabbitstore" />
+	</amqps:connector>
+
+	<flow name="flow">
+		<amqps:inbound-endpoint
+			connector-ref="amqpConnector" queueName="in" />
+		<logger />
+	</flow>
+
+</mule>

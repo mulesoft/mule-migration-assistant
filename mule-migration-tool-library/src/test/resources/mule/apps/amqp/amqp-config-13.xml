@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp"
+	xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+	xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+               http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd">
+
+	<amqp:config name="amqpConnector">
+		<amqp:connection host="localhost" password="guest"
+			username="guest" useTls="true">
+			<tls:context enabledProtocols="TLSv1.2">
+				<tls:key-store path="ssl/client/keycert.p12"
+					keyPassword="MySecretPassword" password="MySecretPassword"
+					algorithm="SunX509" type="PKCS12" />
+				<tls:trust-store path="ssl/client/trustStore.jks"
+					password="rabbitstore" type="JKS" />
+			</tls:context>
+		</amqp:connection>
+	</amqp:config>
+
+	<flow name="flow">
+		<amqp:listener config-ref="amqpConnector" queueName="in">
+			<amqp:fallback-queue-definition
+				removalStrategy="SHUTDOWN" />
+		</amqp:listener>
+		<logger />
+	</flow>
+
+</mule>
