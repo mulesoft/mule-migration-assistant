@@ -866,7 +866,7 @@ aggregator:
       - https://docs.mulesoft.com/connectors/aggregator/aggregators-module
   processedGroupsObjectStore:
     type: WARN
-    message: "Processed groups are no longer stored in a different object store. This parameter is being ignored. Check Aggregator configuration parameters if you want to add logic for group eviction."
+    message: "Processed groups are no longer stored in a different object store. This parameter is ignored. Check Aggregator configuration parameters if you want to add logic for group eviction."
     docLinks:
       - https://docs.mulesoft.com/connectors/aggregator/aggregators-module-reference#parameters-3
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#aggregators
@@ -885,7 +885,7 @@ aggregator:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#aggregators
   storePrefix:
     type: WARN
-    message: "This parameter is being ignored."
+    message: "This parameter is ignored."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#aggregators
   messageChunk:

@@ -28,7 +28,11 @@ public class VmConnectorPomContribution implements PomContribution {
 
   @Override
   public void execute(PomModel object, MigrationReport report) throws RuntimeException {
-    object.addDependency(new DependencyBuilder()
+    addVMDependency(object);
+  }
+
+  public static void addVMDependency(PomModel pomModel) {
+    pomModel.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.connectors")
         .withArtifactId("mule-vm-connector")
         .withVersion(targetVersion("mule-vm-connector"))
