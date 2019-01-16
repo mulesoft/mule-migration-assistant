@@ -5,10 +5,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mule.migrated</groupId>
-	<artifactId>amqp1mvn</artifactId>
+	<artifactId>amqp1Mvn</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>mule</packaging>
-	<name>Mule amqp1mvn Application</name>
+	<name>amqp1Mvn</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
