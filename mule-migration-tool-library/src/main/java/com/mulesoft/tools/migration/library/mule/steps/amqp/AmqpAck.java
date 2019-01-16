@@ -28,7 +28,7 @@ public class AmqpAck extends AbstractApplicationModelMigrationStep implements Ex
 
   private ExpressionMigrator expressionMigrator;
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow/*[(namespace-uri()='" + AMQP_NAMESPACE_URI
+  public static final String XPATH_SELECTOR = "//*[(namespace-uri()='" + AMQP_NAMESPACE_URI
       + "' or namespace-uri()='" + AMQPS_NAMESPACE_URI + "') and local-name()='acknowledge-message']";
 
   @Override

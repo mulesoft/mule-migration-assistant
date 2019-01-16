@@ -8,28 +8,17 @@ package com.mulesoft.tools.migration.library.mule.steps.amqp;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
-import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
-import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
-import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
-import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
-import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.tck.ReportVerification;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
-import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
@@ -40,9 +29,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
+import com.mulesoft.tools.migration.library.mule.steps.core.filter.CustomFilter;
+import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
+import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.tck.ReportVerification;
 
 @RunWith(Parameterized.class)
 public class AmqpInboundTest {
@@ -95,22 +88,7 @@ public class AmqpInboundTest {
 
     MelToDwExpressionMigrator expressionMigrator =
         new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
-    appModel = mock(ApplicationModel.class);
-    when(appModel.getNodes(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
-    when(appModel.getNode(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
-    when(appModel.getNodeOptional(any(String.class)))
-        .thenAnswer(invocation -> {
-          List<Element> elementsFromDocument = getElementsFromDocument(doc, (String) invocation.getArguments()[0]);
-          if (elementsFromDocument.isEmpty()) {
-            return empty();
-          } else {
-            return of(elementsFromDocument.iterator().next());
-          }
-        });
-    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
-    when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
+    appModel = mockApplicationModel(doc, temp);
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);

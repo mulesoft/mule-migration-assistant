@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.amqp;
 
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -41,6 +42,7 @@ import com.mulesoft.tools.migration.library.mule.steps.endpoint.InboundEndpoint;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.tck.MockApplicationModelSupplier;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
 @RunWith(Parameterized.class)
@@ -88,22 +90,7 @@ public class AmqpAckTest {
 
     MelToDwExpressionMigrator expressionMigrator =
         new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class));
-    appModel = mock(ApplicationModel.class);
-    when(appModel.getNodes(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
-    when(appModel.getNode(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).iterator().next());
-    when(appModel.getNodeOptional(any(String.class)))
-        .thenAnswer(invocation -> {
-          List<Element> elementsFromDocument = getElementsFromDocument(doc, (String) invocation.getArguments()[0]);
-          if (elementsFromDocument.isEmpty()) {
-            return empty();
-          } else {
-            return of(elementsFromDocument.iterator().next());
-          }
-        });
-    when(appModel.getProjectBasePath()).thenReturn(temp.newFolder().toPath());
-    when(appModel.getPomModel()).thenReturn(of(mock(PomModel.class)));
+    appModel = mockApplicationModel(doc, temp);
 
     genericGlobalEndpoint = new GenericGlobalEndpoint();
     genericGlobalEndpoint.setApplicationModel(appModel);

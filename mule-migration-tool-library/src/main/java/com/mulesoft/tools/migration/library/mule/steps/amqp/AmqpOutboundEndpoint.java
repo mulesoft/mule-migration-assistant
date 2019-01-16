@@ -27,8 +27,9 @@ import java.util.Optional;
  */
 public class AmqpOutboundEndpoint extends AbstractAmqpEndpoint {
 
-  public static final String XPATH_SELECTOR =
-      "//*[namespace-uri()='" + AMQP_NAMESPACE_URI + "' and local-name()='outbound-endpoint']";
+  public static final String XPATH_SELECTOR = "//*[(namespace-uri()='" + AMQP_NAMESPACE_URI
+      + "' or namespace-uri()='" + AMQPS_NAMESPACE_URI + "') and local-name()='outbound-endpoint']";
+
 
   @Override
   public String getDescription() {

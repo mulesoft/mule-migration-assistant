@@ -28,7 +28,7 @@ import java.util.Optional;
  */
 public class AmqpInboundEndpoint extends AbstractAmqpEndpoint {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow/*[(namespace-uri()='" + AMQP_NAMESPACE_URI
+  public static final String XPATH_SELECTOR = "//*[(namespace-uri()='" + AMQP_NAMESPACE_URI
       + "' or namespace-uri()='" + AMQPS_NAMESPACE_URI + "') and local-name()='inbound-endpoint']";
 
   @Override

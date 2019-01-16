@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.amqp;
 
 import static com.mulesoft.tools.migration.library.mule.steps.amqp.AbstractAmqpEndpoint.AMQP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.amqp.AbstractAmqpEndpoint.AMQPS_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.amqp.AbstractAmqpEndpoint.AMQP_NAMESPACE;
 
 import com.mulesoft.tools.migration.step.AbstractGlobalEndpointMigratorStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -42,7 +43,7 @@ public class AmqpGlobalEndpoint extends AbstractGlobalEndpointMigratorStep {
 
   @Override
   protected Namespace getNamespace() {
-    return Namespace.getNamespace("amqp", "http://www.mulesoft.org/schema/mule/amqp");
+    return AMQP_NAMESPACE;
   }
 
 }

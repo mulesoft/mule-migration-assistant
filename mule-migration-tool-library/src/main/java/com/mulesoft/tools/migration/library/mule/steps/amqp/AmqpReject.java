@@ -24,7 +24,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
  */
 public class AmqpReject extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow/*[(namespace-uri()='" + AMQP_NAMESPACE_URI
+  public static final String XPATH_SELECTOR = "//*[(namespace-uri()='" + AMQP_NAMESPACE_URI
       + "' or namespace-uri()='" + AMQPS_NAMESPACE_URI + "') and (local-name()='reject-message' or local-name()='recover')]";
 
   @Override
