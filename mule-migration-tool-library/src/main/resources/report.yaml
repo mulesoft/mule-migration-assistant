@@ -805,7 +805,7 @@ amqp:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#EnforcingExistenceQueueExchanges
   fallbackAddresses:
     type: WARN
-    message: "'fallbackAddresses' is not used in Mule 4 AMQP connector. Using an HAProxy is recommended, instead "
+    message: "'fallbackAddresses' is not used in Mule 4 AMQP connector. Using an HAProxy is recommended, instead."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-amqp#ConfiguringTheConnector   
   listenerTx:
