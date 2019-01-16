@@ -282,7 +282,7 @@ public final class XmlDslUtils {
    */
   public static boolean copyAttributeIfPresent(final Element source, final Element target, final String sourceAttributeName,
                                                final String targetAttributeName, boolean removeSource) {
-    return copyAttributeIfPresent(source, target, sourceAttributeName, targetAttributeName, attrValue -> attrValue, true);
+    return copyAttributeIfPresent(source, target, sourceAttributeName, targetAttributeName, attrValue -> attrValue, removeSource);
   }
 
   /**
