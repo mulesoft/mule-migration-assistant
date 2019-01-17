@@ -110,6 +110,9 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
       object.removeChild("multi-transaction", CORE_EE_NAMESPACE);
     }
 
+    getApplicationModel().addNameSpace(VM_NAMESPACE, "http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd",
+                                       object.getDocument());
+
     object.setNamespace(VM_NAMESPACE);
     object.setName("listener");
 
