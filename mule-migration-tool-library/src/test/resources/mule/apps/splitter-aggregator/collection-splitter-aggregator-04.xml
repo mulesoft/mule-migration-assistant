@@ -19,7 +19,7 @@
         <foreach>
             <logger message="not important"/>
             <aggregators:group-based-aggregator name="collection-splitter0-aggregator"
-                                                groupSize="#[vars.collection-splitter0-group-size]"
+                                                groupSize="#[vars.'collection-splitter0-group-size']"
                                                 evictionTime="0"
                                                 timeout="1000"
                                                 timeoutUnit="MILLISECONDS">
@@ -30,7 +30,7 @@
         </foreach>
         <vm:consume queueName="collection-splitter0-vm-queue" config-ref="splitter-aggregator-vm-config1816755023"/>
         <choice>
-            <when expression="#[vars.collection-splitter0-aggregator-complete-aggregation == false]">
+            <when expression="#[vars.'collection-splitter0-aggregator-complete-aggregation' == false]">
                 <!--place to add logic for when an aggregation timed out and the failOnTimeout flag was true-->
             </when>
         </choice>
