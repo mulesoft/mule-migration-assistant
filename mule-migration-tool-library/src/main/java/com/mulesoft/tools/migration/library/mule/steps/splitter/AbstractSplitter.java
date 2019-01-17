@@ -248,7 +248,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
         AGGREGATOR_TEMPLATE
             .clone()
             .setAttribute("name", splitterAggregatorInfo.getAggregatorName())
-            .setAttribute("groupSize", "#[vars." + splitterAggregatorInfo.getGroupSizeVariableName() + "]")
+            .setAttribute("groupSize", "#[vars.'" + splitterAggregatorInfo.getGroupSizeVariableName() + "']")
             .addContent(aggregationCompleteRoute);
     if (oldAggregatorAttributes.containsKey(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE)) {
       String timeout = oldAggregatorAttributes.get(OLD_AGGREGATOR_TIMEOUT_ATTRIBUTE);
@@ -298,7 +298,7 @@ public abstract class AbstractSplitter extends AbstractApplicationModelMigration
   private Element getSetAggregationPayloadElement(SplitterAggregatorInfo splitterAggregatorInfo) {
     return SET_PAYLOAD_TEMPLATE
         .clone()
-        .setAttribute("value", "#[vars." + splitterAggregatorInfo.getAggregationVariableName() + "]");
+        .setAttribute("value", "#[vars.'" + splitterAggregatorInfo.getAggregationVariableName() + "']");
   }
 
   private Element getVmConsumeElement(SplitterAggregatorInfo splitterAggregatorInfo) {

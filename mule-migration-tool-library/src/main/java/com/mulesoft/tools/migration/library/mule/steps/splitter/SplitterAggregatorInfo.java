@@ -105,7 +105,7 @@ public class SplitterAggregatorInfo {
   }
 
   public String getAggregationCompleteExpression() {
-    return "#[vars." + getAggregationCompleteVariableName() + " == false]";
+    return "#[vars.'" + getAggregationCompleteVariableName() + "' == false]";
   }
 
   public String getAggregationVariableName() {
