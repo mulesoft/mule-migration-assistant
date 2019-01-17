@@ -22,6 +22,7 @@
         <mule.jms.connector.version>1.3.3</mule.jms.connector.version>
         <mule.vm.connector.version>2.0.0</mule.vm.connector.version>
         <mule.amqp.connector.version>1.2.0</mule.amqp.connector.version>
+        <mule.aggregators.module.version>1.0.0</mule.aggregators.module.version>
 
         <mule.validation.module.version>1.4.0</mule.validation.module.version>
         <mule.secureProps.module.version>1.0.2</mule.secureProps.module.version>
@@ -68,6 +69,12 @@
                 <groupId>org.mule.connectors</groupId>
                 <artifactId>mule-vm-connector</artifactId>
                 <version>${mule.vm.connector.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.modules</groupId>
+                <artifactId>mule-aggregators-module</artifactId>
+                <version>${mule.aggregators.module.version}</version>
                 <classifier>mule-plugin</classifier>
             </dependency>
             <dependency>
