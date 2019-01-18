@@ -72,38 +72,39 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>libs/</classpathPrefix>
+                            <mainClass>
+                                com.mulesoft.tools.migration.MigrationRunner
+                            </mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>bin</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <archive>
-                                <manifest>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                    <addClasspath>true</addClasspath>
-                                    <classpathPrefix>libs/</classpathPrefix>
-                                    <mainClass>
-                                        com.mulesoft.tools.migration.MigrationRunner
-                                    </mainClass>
-                                </manifest>
-                            </archive>
+                            <tarLongFileMode>posix</tarLongFileMode>
                             <descriptors>
-                                <descriptor>src/assembly/jar-with-libs.xml</descriptor>
+                                <descriptor>src/assembly/bin-with-libs.xml</descriptor>
                             </descriptors>
                             <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <classifier>simple-jar</classifier>
-                </configuration>
             </plugin>
         </plugins>
     </build>
