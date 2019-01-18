@@ -6,16 +6,24 @@
  */
 package com.mulesoft.tools.migration.integration;
 
+import static java.io.File.separator;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.System.getProperty;
+import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.junit.Assert.fail;
 import static org.mule.runtime.deployment.model.api.application.ApplicationDescriptor.MULE_APPLICATION_CLASSIFIER;
 import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArtifact;
+
 import org.mule.runtime.module.artifact.api.descriptor.BundleDescriptor;
 
 import com.mulesoft.mule.distributions.server.AbstractEeAppControl;
+
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,11 +31,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * Tests the whole migration process, starting with a Mule 3 source config, migrating it to Mule 4, packaging and deploying it to
@@ -45,6 +53,33 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
   private static final String DEBUG_MUNIT = getProperty("mule.test.debugMUnit");
 
   private static final String MMT_UPLOAD_REPORT = getProperty("mule.test.mmtUploadReport");
+
+  @ClassRule
+  public static TemporaryFolder mmaBinary = new TemporaryFolder();
+
+  private static File mmaBinaryFolder;
+
+  @BeforeClass
+  public static void prepareMma() throws IOException {
+    mmaBinaryFolder = mmaBinary.newFolder();
+
+    try (ZipFile zip = new ZipFile(new File(getProperty("migrator.runner")))) {
+      Enumeration<? extends ZipEntry> zipFileEntries = zip.entries();
+      ZipEntry root = zipFileEntries.nextElement();
+      File mmaRootFile = new File(mmaBinaryFolder, root.getName());
+      mmaRootFile.mkdirs();
+      while (zipFileEntries.hasMoreElements()) {
+        ZipEntry entry = zipFileEntries.nextElement();
+        File destFile = new File(mmaBinaryFolder, entry.getName());
+        if (entry.isDirectory()) {
+          destFile.mkdir();
+        } else {
+          copyInputStreamToFile(zip.getInputStream(entry), destFile);
+        }
+      }
+    }
+
+  }
 
   @Rule
   public TemporaryFolder migrationResult = new TemporaryFolder();
@@ -141,7 +176,8 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     }
 
     command.add("-jar");
-    command.add(getProperty("migrator.runner"));
+    command.add(mmaBinaryFolder.getAbsolutePath() + separator
+        + "mule-migration-assistant-runner-" + getProperty("mma.version") + ".jar");
     command.add("-projectBasePath");
     command.add(projectBasePath);
     command.add("-destinationProjectBasePath");
