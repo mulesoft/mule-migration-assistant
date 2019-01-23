@@ -29,7 +29,7 @@ public class RemoveMuleDependencies implements PomContribution {
   @Override
   public void execute(PomModel pomModel, MigrationReport report) {
     List<Dependency> dependencies = pomModel.getDependencies();
-    dependencies.removeIf(d -> d.getGroupId().startsWith("org.mule.") || d.getGroupId().startsWith("com.mulesoft.muleesb")
+    dependencies.removeIf(d -> d.getGroupId().startsWith("org.mule") || d.getGroupId().startsWith("com.mulesoft.muleesb")
         || d.getGroupId().startsWith("com.mulesoft.weave") || d.getGroupId().startsWith("com.mulesoft.munit"));
     pomModel.setDependencies(dependencies);
   }
