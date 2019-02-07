@@ -551,20 +551,26 @@ public class ApplicationModel {
       ApplicationModel applicationModel;
       if (parentDomainBasePath != null) {
         Set<Path> domainFilePaths = new HashSet<>();
-        for (File domainXmlFile : parentDomainBasePath.resolve("src" + separator + "main" + separator + "domain")
-            .toFile()
-            .listFiles((FilenameFilter) new SuffixFileFilter(".xml"))) {
-          domainFilePaths.add(domainXmlFile.toPath());
-        }
-        Map<Path, Document> domainDocuments = new HashMap<>();
-        for (Path dfp : domainFilePaths) {
-          try {
-            domainDocuments.put(parentDomainBasePath.relativize(dfp), generateDocument(dfp));
-          } catch (JDOMException | IOException e) {
-            throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + dfp, e);
+        Path domainSourceFilesPath = parentDomainBasePath.resolve("src" + separator + "main" + separator + "domain");
+        if (domainSourceFilesPath.toFile().exists()) {
+          for (File domainXmlFile : domainSourceFilesPath
+              .toFile()
+              .listFiles((FilenameFilter) new SuffixFileFilter(".xml"))) {
+            domainFilePaths.add(domainXmlFile.toPath());
           }
+          Map<Path, Document> domainDocuments = new HashMap<>();
+          for (Path dfp : domainFilePaths) {
+            try {
+              domainDocuments.put(parentDomainBasePath.relativize(dfp), generateDocument(dfp));
+            } catch (JDOMException | IOException e) {
+              throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + dfp, e);
+            }
+          }
+          applicationModel = new ApplicationModel(applicationDocuments, domainDocuments);
+        } else {
+          throw new RuntimeException("Application Model Generation Error - The domain doesn't seem to be a Mule 3 domain: "
+              + domainSourceFilesPath);
         }
-        applicationModel = new ApplicationModel(applicationDocuments, domainDocuments);
       } else {
         applicationModel = new ApplicationModel(applicationDocuments);
       }
