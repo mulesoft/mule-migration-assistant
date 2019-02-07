@@ -568,8 +568,8 @@ public class ApplicationModel {
           }
           applicationModel = new ApplicationModel(applicationDocuments, domainDocuments);
         } else {
-          throw new RuntimeException("Application Model Generation Error - The domain doesn't seem to be a Mule 3 domain: "
-              + domainSourceFilesPath);
+          throw new RuntimeException("Application Model Generation Error - The provided domain isn't a Mule 3 domain: "
+              + parentDomainBasePath);
         }
       } else {
         applicationModel = new ApplicationModel(applicationDocuments);
