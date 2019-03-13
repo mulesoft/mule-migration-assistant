@@ -54,7 +54,6 @@ public class MessageFilter extends AbstractFilterMigrator {
 
       addElementAfter(wrappingTry, element);
       wrappingTry.addContent(element.cloneContent());
-      element.detach();
 
       wrappingTry.addContent(new Element("error-handler", CORE_NAMESPACE)
           .addContent(new Element("on-error-propagate", CORE_NAMESPACE)
@@ -73,8 +72,8 @@ public class MessageFilter extends AbstractFilterMigrator {
       element.removeAttribute("throwOnUnaccepted");
 
       addElementsAfter(clonedContent, element);
-      element.detach();
     }
 
+    element.detach();
   }
 }
