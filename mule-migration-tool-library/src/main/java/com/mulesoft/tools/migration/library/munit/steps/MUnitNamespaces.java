@@ -28,6 +28,10 @@ public class MUnitNamespaces implements NamespaceContribution {
   private static final String MUNIT_TOOLS_NAME = "munit-tools";
   private static final String MUNIT_TOOLS_URI = "http://www.mulesoft.org/schema/mule/munit-tools";
   private static final String MUNIT_TOOLS_SCHEMA = "http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd";
+  private static final String MUNIT_SYNCHRONIZE_NAME = "synchronize";
+  private static final String MUNIT_SYNCHRONIZE_URI = "http://www.mulesoft.org/schema/mule/synchronize";
+  private static final String MUNIT_SYNCHRONIZE_SCHEMA =
+      "http://www.mulesoft.org/schema/mule/synchronize/current/mule-synchronize.xsd";
 
   @Override
   public String getDescription() {
@@ -38,6 +42,7 @@ public class MUnitNamespaces implements NamespaceContribution {
   public void execute(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
     try {
       applicationModel.removeNameSpace(MUNIT_MOCK_NAME, MUNIT_MOCK_URI, MUNIT_MOCK_SCHEMA);
+      applicationModel.removeNameSpace(MUNIT_SYNCHRONIZE_NAME, MUNIT_SYNCHRONIZE_URI, MUNIT_SYNCHRONIZE_SCHEMA);
 
       Namespace namespace = Namespace.getNamespace(MUNIT_TOOLS_NAME, MUNIT_TOOLS_URI);
       applicationModel.getApplicationDocuments().values().stream().filter(d -> isMUnitFile(d))

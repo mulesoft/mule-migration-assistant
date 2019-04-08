@@ -23,6 +23,7 @@ import com.mulesoft.tools.migration.library.munit.steps.MUnitPomContribution;
 import com.mulesoft.tools.migration.library.munit.steps.Mock;
 import com.mulesoft.tools.migration.library.munit.steps.MoveMUnitProcessorsToSections;
 import com.mulesoft.tools.migration.library.munit.steps.RemoveImport;
+import com.mulesoft.tools.migration.library.munit.steps.Synchronize;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -54,8 +55,9 @@ public class MunitMigrationTask extends AbstractMigrationTask {
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new AssertEquals(), new AssertNotEquals(), new AssertNotNullPayload(), new AssertNullPayload(),
-                        new AssertPayload(), new AssertTrue(), new AssertFalse(), new Mock(), new MUnitNamespaces(),
-                        new MoveMUnitProcessorsToSections(), new MUnitPomContribution(), new RemoveImport());
+                        new AssertPayload(), new AssertTrue(), new AssertFalse(), new Mock(), new Synchronize(),
+                        new MUnitNamespaces(), new MoveMUnitProcessorsToSections(), new MUnitPomContribution(),
+                        new RemoveImport());
   }
 
   @Override
