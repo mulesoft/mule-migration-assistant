@@ -20,6 +20,9 @@ import com.mulesoft.tools.migration.library.munit.steps.AssertPayload;
 import com.mulesoft.tools.migration.library.munit.steps.AssertTrue;
 import com.mulesoft.tools.migration.library.munit.steps.MUnitNamespaces;
 import com.mulesoft.tools.migration.library.munit.steps.MUnitPomContribution;
+import com.mulesoft.tools.migration.library.munit.steps.MUnitUtilsDBServer;
+import com.mulesoft.tools.migration.library.munit.steps.MUnitUtilsFTPServer;
+import com.mulesoft.tools.migration.library.munit.steps.MUnitUtilsMuleClient;
 import com.mulesoft.tools.migration.library.munit.steps.Mock;
 import com.mulesoft.tools.migration.library.munit.steps.MoveMUnitProcessorsToSections;
 import com.mulesoft.tools.migration.library.munit.steps.RemoveImport;
@@ -54,8 +57,10 @@ public class MunitMigrationTask extends AbstractMigrationTask {
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new AssertEquals(), new AssertNotEquals(), new AssertNotNullPayload(), new AssertNullPayload(),
-                        new AssertPayload(), new AssertTrue(), new AssertFalse(), new Mock(), new MUnitNamespaces(),
-                        new MoveMUnitProcessorsToSections(), new MUnitPomContribution(), new RemoveImport());
+                        new AssertPayload(), new AssertTrue(), new AssertFalse(), new Mock(),
+                        new MUnitUtilsMuleClient(), new MUnitUtilsDBServer(), new MUnitUtilsFTPServer(),
+                        new MUnitNamespaces(), new MoveMUnitProcessorsToSections(), new MUnitPomContribution(),
+                        new RemoveImport());
   }
 
   @Override

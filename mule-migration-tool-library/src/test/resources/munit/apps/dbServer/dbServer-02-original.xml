@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dbserver="http://www.mulesoft.org/schema/mule/dbserver"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.mulesoft.org/schema/mule/dbserver http://www.mulesoft.org/schema/mule/dbserver/current/mule-dbserver.xsd">
+
+    <munit:config name="munit"/>
+
+    <dbserver:config name="DB_Server" csv="file.csv" database="MyDb" sqlFile="mysql.sql" connectionStringParameters="dumb"/>
+
+    <munit:test name="dbServerTest" description="MUnit Test">
+        <logger message="Execute db server" level="INFO"/>
+        <dbserver:execute-query config-ref="DB_Server" sql="select * from table"/>
+    </munit:test>
+
+</mule>

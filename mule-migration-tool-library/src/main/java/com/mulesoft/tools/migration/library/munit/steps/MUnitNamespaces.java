@@ -25,6 +25,9 @@ public class MUnitNamespaces implements NamespaceContribution {
   private static final String MUNIT_MOCK_NAME = "mock";
   private static final String MUNIT_MOCK_URI = "http://www.mulesoft.org/schema/mule/mock";
   private static final String MUNIT_MOCK_SCHEMA = "http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd";
+  private static final String MUNIT_MCLIENT_NAME = "mclient";
+  private static final String MUNIT_MCLIENT_URI = "http://www.mulesoft.org/schema/mule/mclient";
+  private static final String MUNIT_MCLIENT_SCHEMA = "http://www.mulesoft.org/schema/mule/mclient/current/mule-mclient.xsd";
   private static final String MUNIT_TOOLS_NAME = "munit-tools";
   private static final String MUNIT_TOOLS_URI = "http://www.mulesoft.org/schema/mule/munit-tools";
   private static final String MUNIT_TOOLS_SCHEMA = "http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd";
@@ -38,6 +41,7 @@ public class MUnitNamespaces implements NamespaceContribution {
   public void execute(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
     try {
       applicationModel.removeNameSpace(MUNIT_MOCK_NAME, MUNIT_MOCK_URI, MUNIT_MOCK_SCHEMA);
+      applicationModel.removeNameSpace(MUNIT_MCLIENT_NAME, MUNIT_MCLIENT_URI, MUNIT_MCLIENT_SCHEMA);
 
       Namespace namespace = Namespace.getNamespace(MUNIT_TOOLS_NAME, MUNIT_TOOLS_URI);
       applicationModel.getApplicationDocuments().values().stream().filter(d -> isMUnitFile(d))

@@ -893,3 +893,20 @@ aggregator:
     message: "'message-chunk-aggregator' is not supported anymore"
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#available-aggregators-migration
+
+munit:
+  mclient:
+    type: ERROR
+    message: "MClient processor is no longer supported on Mule 4."
+    docLinks:
+      - https://docs.mulesoft.com/munit/2.1/
+  ftpServer:
+    type: INFO
+    message: "MUnit FTP Server does no longer require to be initialized/stopped."
+    docLinks:
+      - https://docs.mulesoft.com/munit/2.1/
+  dbServer:
+    type: INFO
+    message: "MUnit DB Server does no longer require to be initialized/stopped."
+    docLinks:
+      - https://docs.mulesoft.com/munit/2.1/

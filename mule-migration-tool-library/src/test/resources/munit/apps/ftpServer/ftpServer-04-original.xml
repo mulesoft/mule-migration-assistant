@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ftpserver="http://www.mulesoft.org/schema/mule/ftpserver"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+http://www.mulesoft.org/schema/mule/ftpserver http://www.mulesoft.org/schema/mule/ftpserver/current/mule-ftpserver.xsd">
+
+    <munit:config name="munit"/>
+
+    <ftpserver:config name="FTP_Server" secure="true" username="user" password="pass" homeDir="home"/>
+
+    <munit:test name="ftpServerTest" description="MUnit Test">
+        <logger message="Executing MUnit ftpServer" level="INFO"/>
+        <ftpserver:stop-server config-ref="FTP_Server"/>
+    </munit:test>
+
+</mule>
