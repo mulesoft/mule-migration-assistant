@@ -71,16 +71,12 @@ public class ReportEntryModel {
   }
 
   public ReportEntryModel(Level level, Element element, String message, Document document, String... documentationLinks) {
-    this.level = level;
-    this.elementContent = element != null ? escapeXml11(domElementToString(element)) : "";
-    this.element = element;
-    this.message = message;
+    this(level, element, message, documentationLinks);
     try {
       this.filePath = new File(new URI(document.getBaseURI())).getAbsolutePath();
     } catch (URISyntaxException e) {
       throw new RuntimeException("Report Generation Error - Fail to get file: " + element.getDocument().getBaseURI(), e);
     }
-    this.documentationLinks.addAll(asList(documentationLinks));
   }
 
   public void setElementLocation() throws Exception {
