@@ -19,6 +19,7 @@ message:
     message: "Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties')."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/intro-mule-message#inbound-properties-are-now-attributes
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#inbound_properties
   outboundPropertyEnricher:
     type: WARN
     message: Set this value as a variable instead of setting an outbound property.
