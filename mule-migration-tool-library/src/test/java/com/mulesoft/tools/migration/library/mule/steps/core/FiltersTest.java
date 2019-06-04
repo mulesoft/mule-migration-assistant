@@ -78,7 +78,8 @@ public class FiltersTest {
         "filter-14",
         "filter-15",
         "filter-16",
-        "filter-17"
+        "filter-17",
+        "filter-18"
     };
   }
 

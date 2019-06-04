@@ -90,7 +90,13 @@ public class DefaultMigrationReport implements MigrationReport {
   public void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks) {
     int i = 0;
 
-    ReportEntryModel reportEntry = new ReportEntryModel(level, elementToComment, message, documentationLinks);
+    ReportEntryModel reportEntry;
+
+    if (elementToComment.getDocument() != null) {
+      reportEntry = new ReportEntryModel(level, elementToComment, message, documentationLinks);
+    } else {
+      reportEntry = new ReportEntryModel(level, elementToComment, message, element.getDocument(), documentationLinks);
+    }
 
     if (reportEntries.add(reportEntry)) {
       if (elementToComment != null) {

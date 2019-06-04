@@ -70,6 +70,15 @@ public class ReportEntryModel {
     this.documentationLinks.addAll(asList(documentationLinks));
   }
 
+  public ReportEntryModel(Level level, Element element, String message, Document document, String... documentationLinks) {
+    this(level, element, message, documentationLinks);
+    try {
+      this.filePath = new File(new URI(document.getBaseURI())).getAbsolutePath();
+    } catch (URISyntaxException e) {
+      throw new RuntimeException("Report Generation Error - Fail to get file: " + element.getDocument().getBaseURI(), e);
+    }
+  }
+
   public void setElementLocation() throws Exception {
     try {
       SAXBuilder saxBuilder = new SAXBuilder();
