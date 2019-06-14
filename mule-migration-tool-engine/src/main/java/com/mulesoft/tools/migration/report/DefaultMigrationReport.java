@@ -23,6 +23,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -126,6 +127,12 @@ public class DefaultMigrationReport implements MigrationReport {
     this.errorMigrationRatio = (1.0 * reportEntries.stream()
         .filter(re -> re.getElement() != null && ERROR.equals(re.getLevel()))
         .map(re -> re.getElement()).distinct().count()) / this.processedElements;
+  }
+
+  @Override
+  public void updateReportEntryFilePath(Path oldFileName, Path newFileName) {
+    reportEntries.stream().filter(e -> e.getFilePath().equals(oldFileName.toString()))
+        .forEach(r -> r.setFilePath(newFileName.toString()));
   }
 
   public String getProjectType() {
