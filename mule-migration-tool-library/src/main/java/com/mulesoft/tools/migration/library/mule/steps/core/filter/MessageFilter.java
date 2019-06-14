@@ -47,7 +47,7 @@ public class MessageFilter extends AbstractFilterMigrator {
     if (element.getAttribute("onUnaccepted") != null) {
       Element wrappingTry = new Element("try", CORE_NAMESPACE);
 
-      if (element.getAttribute("throwOnUnaccepted") == null || element.getAttributeValue("throwOnUnaccepted").equals("false")) {
+      if (element.getAttribute("throwOnUnaccepted") != null && element.getAttributeValue("throwOnUnaccepted").equals("false")) {
         report.report("filters.validationsRaiseError", element, wrappingTry);
       }
       element.removeAttribute("throwOnUnaccepted");
