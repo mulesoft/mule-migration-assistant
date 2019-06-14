@@ -190,6 +190,10 @@ public class ReportEntryModel {
     return filePath;
   }
 
+  public void setFilePath(String path) {
+    this.filePath = path;
+  }
+
   public List<String> getDocumentationLinks() {
     return documentationLinks;
   }
