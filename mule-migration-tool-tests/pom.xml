@@ -58,6 +58,7 @@
                     <reuseForks>true</reuseForks>
                     <workingDirectory>${project.build.directory}</workingDirectory>
                     <systemPropertyVariables>
+                        <mule.test.timeoutSecs>200</mule.test.timeoutSecs>
                         <migrator.runner>${com.mulesoft.tools:mule-migration-assistant-runner:zip}</migrator.runner>
                         <mule.version>${mule.runtime.version}</mule.version>
                         <mma.version>${project.version}</mma.version>

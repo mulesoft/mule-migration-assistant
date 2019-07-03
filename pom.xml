@@ -81,7 +81,7 @@
         <maven.model.version>3.5.0</maven.model.version>
 
         <mule.runtime.version>4.1.5</mule.runtime.version>
-        <munit.version>2.1.5-SNAPSHOT</munit.version>
+        <munit.version>2.2.1-SNAPSHOT</munit.version>
 
         <mule.api.version>1.1.5</mule.api.version>
         <migrant.version>2.1.10</migrant.version>
