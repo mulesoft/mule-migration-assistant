@@ -119,6 +119,15 @@ public class PluginExecution {
   }
 
   /**
+   * Sets a {@link Xpp3Dom} representing the configuration
+   *
+   * @param configuration a {@link Xpp3Dom} element representation of the configuration
+   */
+  public void setConfiguration(Xpp3Dom configuration) {
+    pluginExecution.setConfiguration(configuration);
+  }
+
+  /**
    * Sets the plugin execution id
    *
    * @param id a string representation of the id
