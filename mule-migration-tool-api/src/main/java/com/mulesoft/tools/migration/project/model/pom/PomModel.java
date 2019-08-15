@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.build
 import static java.util.stream.Collectors.toList;
 
 import org.apache.maven.model.Build;
+import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -297,6 +298,24 @@ public class PomModel {
     Optional<Plugin> removedPlugin = getPlugins().stream().filter(pluginPredicate).findFirst();
     removedPlugin.ifPresent(this::removePlugin);
     return removedPlugin;
+  }
+
+  /**
+   * Sets distribution management
+   *
+   * @param distributionManagement
+   */
+  public void setDistributionManagement(DistributionManagement distributionManagement) {
+    model.setDistributionManagement(distributionManagement);
+  }
+
+  /**
+   * Retrieves distribution management
+   *
+   * @return a {@link DistributionManagement}
+   */
+  public DistributionManagement getDistributionManagement() {
+    return model.getDistributionManagement();
   }
 
   public List<Profile> getProfiles() {

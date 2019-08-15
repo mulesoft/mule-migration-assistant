@@ -6,6 +6,8 @@
  */
 package com.mulesoft.tools.migration.project.model.pom;
 
+import org.apache.maven.model.DeploymentRepository;
+import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
@@ -27,6 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Every.everyItem;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.powermock.api.mockito.PowerMockito.*;
 import static org.powermock.reflect.Whitebox.getInternalState;
@@ -198,6 +201,21 @@ public class PomModelTestCase {
 
       assertThat("Method should return true", model.removeDependency(dependency));
       assertThat("Pom model should have no dependencies", model.getDependencies().size(), equalTo(0));
+    }
+
+    @Test
+    public void setDistributionManagement() {
+      DistributionManagement distributionManagement = new DistributionManagement();
+      DeploymentRepository deploymentRepository = new DeploymentRepository();
+      deploymentRepository.setName("deploymentRepositoryName");
+      distributionManagement.setRepository(deploymentRepository);
+
+      PomModel model = new PomModel();
+      model.setDistributionManagement(distributionManagement);
+
+      assertNotNull(model.getDistributionManagement());
+      assertNotNull(model.getDistributionManagement().getRepository());
+      assertThat(model.getDistributionManagement().getRepository().getName(), is("deploymentRepositoryName"));
     }
   }
 }
