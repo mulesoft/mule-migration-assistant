@@ -58,10 +58,10 @@ public class PluginExecutionTestCase {
     @Before
     public void setUp() {
       pluginExecution = new PluginExecution.PluginExecutionBuilder()
-              .withId("testId")
-              .withPhase("testPhase")
-              .withGoals(Arrays.asList("testGoal"))
-              .build();
+          .withId("testId")
+          .withPhase("testPhase")
+          .withGoals(Arrays.asList("testGoal"))
+          .build();
     }
 
     @Test
@@ -76,7 +76,7 @@ public class PluginExecutionTestCase {
       assertNotNull(pluginConfiguration);
       Xpp3Dom testChildElement = pluginConfiguration.getChild("childElementKey");
       assertNotNull(testChildElement);
-      assertThat(testChildElement.getValue(), is ("childElementValue"));
+      assertThat(testChildElement.getValue(), is("childElementValue"));
     }
   }
 }
