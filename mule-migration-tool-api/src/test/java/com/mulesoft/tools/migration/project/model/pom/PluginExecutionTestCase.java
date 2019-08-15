@@ -6,6 +6,7 @@
  */
 package com.mulesoft.tools.migration.project.model.pom;
 
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,6 +15,11 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
 
 @RunWith(Enclosed.class)
 public class PluginExecutionTestCase {
@@ -42,6 +48,35 @@ public class PluginExecutionTestCase {
       expectedException.expect(IllegalArgumentException.class);
       expectedException.expectMessage("Phase should not be blank");
       builder.withPhase(EMPTY).build();
+    }
+  }
+
+  public static class PluginExecutionTest {
+
+    private PluginExecution pluginExecution;
+
+    @Before
+    public void setUp() {
+      pluginExecution = new PluginExecution.PluginExecutionBuilder()
+              .withId("testId")
+              .withPhase("testPhase")
+              .withGoals(Arrays.asList("testGoal"))
+              .build();
+    }
+
+    @Test
+    public void setConfiguration() {
+      Xpp3Dom simpleConfigurationElement = new Xpp3Dom("configuration");
+      Xpp3Dom childElement = new Xpp3Dom("childElementKey");
+      childElement.setValue("childElementValue");
+      simpleConfigurationElement.addChild(childElement);
+      pluginExecution.setConfiguration(simpleConfigurationElement);
+
+      Xpp3Dom pluginConfiguration = pluginExecution.getConfiguration();
+      assertNotNull(pluginConfiguration);
+      Xpp3Dom testChildElement = pluginConfiguration.getChild("childElementKey");
+      assertNotNull(testChildElement);
+      assertThat(testChildElement.getValue(), is ("childElementValue"));
     }
   }
 }
