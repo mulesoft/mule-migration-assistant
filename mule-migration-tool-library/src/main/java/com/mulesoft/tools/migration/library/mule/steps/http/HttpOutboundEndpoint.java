@@ -18,6 +18,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddr
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFileName;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
@@ -67,7 +68,8 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     object.setNamespace(HTTP_NAMESPACE);
     object.setName("request");
 
-    String flowName = getFlow(object).getAttributeValue("name");
+    Element flow = getFlow(object);
+    String flowName = flow != null ? flow.getAttributeValue("name") : getFileName(object.getDocument());
     String configName = (object.getAttribute("name") != null
         ? object.getAttributeValue("name")
         : (object.getAttribute("ref") != null

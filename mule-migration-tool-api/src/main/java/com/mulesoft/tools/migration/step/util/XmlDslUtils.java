@@ -573,4 +573,9 @@ public final class XmlDslUtils {
   private static String getCoreXPathSelector(String elementName, boolean topLevel) {
     return getXPathSelector(CORE_NS_URI, elementName, topLevel);
   }
+
+  public static String getFileName(Document document) {
+    File docFile = new File(document.getBaseURI());
+    return docFile.getName();
+  }
 }
