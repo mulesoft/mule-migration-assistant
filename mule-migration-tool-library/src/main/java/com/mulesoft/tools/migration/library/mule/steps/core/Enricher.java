@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILI
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static java.util.regex.Pattern.compile;
 import static org.apache.commons.lang3.StringUtils.substring;
@@ -19,6 +20,7 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 
 import java.util.HashMap;
@@ -55,7 +57,9 @@ public class Enricher extends AbstractApplicationModelMigrationStep implements E
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    final String flowName = getContainerElement(element).getAttributeValue("name");
+    Element flow = getContainerElement(element);
+    final String flowName = flow.getAttributeValue("name") != null ? flow.getAttributeValue("name")
+        : flow.getParentElement().getName() + StringUtils.capitalize(flow.getName());
     String subFlowName = flowName + "_Enricher_" + enricherSubFlowIndex
         .computeIfAbsent(flowName, k -> new AtomicInteger()).getAndIncrement();
 
@@ -84,7 +88,11 @@ public class Enricher extends AbstractApplicationModelMigrationStep implements E
       subFlow.addContent(element.cloneContent());
     }
 
-    addElementAfter(subFlow, getContainerElement(flowRef));
+    if (flow != null) {
+      addElementAfter(subFlow, flow);
+    } else {
+      addTopLevelElement(subFlow, flowRef.getDocument());
+    }
 
     if (target != null) {
       String migratedTargetExpr;

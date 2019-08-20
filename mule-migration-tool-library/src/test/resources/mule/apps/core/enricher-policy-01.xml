@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+              http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <before>
+        <mule:flow-ref xmlns="http://www.mulesoft.org/schema/mule/core" name="policyBefore_Enricher_0" target="flowVars['match']"/>
+        <compatibility:set-property propertyName="flowVars['match']" value="#[vars.flowVars['match']]"/>
+        <compatibility:outbound-properties-to-var/>
+    </before>
+
+    <mule:sub-flow name="policyBefore_Enricher_0">
+        <mule:byte-array-to-string-transformer/>
+        <mule:set-variable value="#[message.payload.replace('\n','')]" variableName="requestStr"/>
+        <mule:logger level="INFO" message="PAYLOAD IS #[flowVars['requestStr']]"/>
+        <mule:set-payload value="{{sqlKeywords}}"/>
+    </mule:sub-flow>
+
+</policy>
