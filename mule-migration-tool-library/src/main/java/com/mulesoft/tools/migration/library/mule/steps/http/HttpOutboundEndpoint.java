@@ -30,6 +30,7 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -69,7 +70,8 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     object.setName("request");
 
     Element flow = getFlow(object);
-    String flowName = flow != null ? flow.getAttributeValue("name") : getFileName(object.getDocument());
+    String flowName = flow.getAttributeValue("name") != null ? flow.getAttributeValue("name")
+        : flow.getParentElement().getName() + StringUtils.capitalize(flow.getName());
     String configName = (object.getAttribute("name") != null
         ? object.getAttributeValue("name")
         : (object.getAttribute("ref") != null

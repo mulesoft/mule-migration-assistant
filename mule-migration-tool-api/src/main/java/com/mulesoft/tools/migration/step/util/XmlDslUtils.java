@@ -384,7 +384,8 @@ public final class XmlDslUtils {
   }
 
   public static Element getFlow(Element processor) {
-    while (processor != null && !"flow".equals(processor.getName()) && !"sub-flow".equals(processor.getName())) {
+    while (processor != null && !"flow".equals(processor.getName()) && !"sub-flow".equals(processor.getName())
+        && !"before".equals(processor.getName())) {
       processor = processor.getParentElement();
     }
 

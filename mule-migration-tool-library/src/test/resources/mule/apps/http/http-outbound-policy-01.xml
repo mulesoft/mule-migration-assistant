@@ -13,7 +13,7 @@
     <before>
         <mule:logger message="'Policy hit!" level="INFO" />
         <compatibility:outbound-properties-to-var/>
-        <http:request config-ref="http-outbound-policy-01-original.xmlRequestConfig" path="/backend" method="POST">
+        <http:request config-ref="policyBeforeRequestConfig" path="/backend" method="POST">
             <http:headers>
                 #[migration::HttpRequester::httpRequesterTransportHeaders(vars)]
             </http:headers>
@@ -21,7 +21,7 @@
         <compatibility:attributes-to-inbound-properties/>
     </before>
 
-    <http:request-config name="http-outbound-policy-01-original.xmlRequestConfig">
+    <http:request-config name="policyBeforeRequestConfig">
         <http:request-connection host="localhost" port="${httpPort}" />
     </http:request-config>
 </policy>
