@@ -894,3 +894,10 @@ aggregator:
     message: "'message-chunk-aggregator' is not supported anymore"
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-core-splitter-aggregator#available-aggregators-migration
+
+mulexml:
+  xmlToDom:
+    type: ERROR
+    message: "Conversion to Java object is no longer needed on Mule 4. You can access the data using DW."
+    docLinks:
+      - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-transformers#object-model-representation-for-json-and-xml
