@@ -18,7 +18,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddr
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.util.Collections.emptyList;
@@ -29,6 +29,7 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -67,7 +68,9 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     object.setNamespace(HTTP_NAMESPACE);
     object.setName("request");
 
-    String flowName = getFlow(object).getAttributeValue("name");
+    Element flow = getContainerElement(object);
+    String flowName = flow.getAttributeValue("name") != null ? flow.getAttributeValue("name")
+        : flow.getParentElement().getName() + StringUtils.capitalize(flow.getName());
     String configName = (object.getAttribute("name") != null
         ? object.getAttributeValue("name")
         : (object.getAttribute("ref") != null

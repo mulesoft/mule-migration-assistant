@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.sftp;
 
 import static com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConfig.SFTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnection;
 import static org.apache.commons.lang3.StringUtils.substring;
 
@@ -42,7 +42,7 @@ public abstract class AbstractSftpEndpoint extends AbstractApplicationModelMigra
           ? configName
           : (object.getAttributeValue("name") != null
               ? object.getAttributeValue("name")
-              : (getFlow(object).getAttributeValue("name") + "Sftp"))
+              : (getContainerElement(object).getAttributeValue("name") + "Sftp"))
               + "Config");
       Element conn = new Element("connection", SFTP_NAMESPACE);
       migrateReconnection(conn, object, report);

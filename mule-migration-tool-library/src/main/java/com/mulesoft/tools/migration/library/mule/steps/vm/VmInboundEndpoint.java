@@ -15,7 +15,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPA
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static java.lang.Integer.parseInt;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -135,7 +135,7 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
       }
 
       if (consumers != null) {
-        getFlow(object).setAttribute("maxConcurrency", "" + consumers);
+        getContainerElement(object).setAttribute("maxConcurrency", "" + consumers);
         object.setAttribute("numberOfConsumers", "" + consumers);
       }
 

@@ -7,7 +7,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementToBottom;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -44,7 +44,7 @@ public class KeepElementsAtBottomOfFlow extends AbstractApplicationModelMigratio
         .forEach(att -> att.detach());
     element.removeNamespaceDeclaration(MIGRATION_NAMESPACE);
 
-    Element flow = getFlow(element);
+    Element flow = getContainerElement(element);
     element.detach();
     addElementToBottom(flow, element);
   }

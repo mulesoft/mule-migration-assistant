@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.security.filter;
 
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationPomContribution.addValidationDependency;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static java.util.Collections.singletonList;
 import static org.jdom2.Namespace.getNamespace;
 
@@ -53,7 +53,7 @@ public class ByIpRangeCidrFilter extends AbstractFilterMigrator {
     element.setAttribute("ipAddress",
                          "#[if (attributes.headers['X-Forwarded-For'] != null) trim((attributes.headers['X-Forwarded-For'] splitBy  ',')[0]) else attributes.remoteAddress]");
 
-    final String ipFilterListName = getFlow(element).getAttributeValue("name") + "_filter-by-ip-range-cidr";
+    final String ipFilterListName = getContainerElement(element).getAttributeValue("name") + "_filter-by-ip-range-cidr";
     element.setAttribute("whiteList", ipFilterListName);
 
     final Element ipFilterList = new Element("ip-filter-list", VALIDATION_NAMESPACE)

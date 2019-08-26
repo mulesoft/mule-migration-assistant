@@ -10,7 +10,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.VALIDATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 
@@ -54,7 +54,7 @@ public class ScriptingFilterMigration extends ScriptingModuleMigration {
   protected void handleFilter(Element filter) {
     if (!(filter.getParentElement().getNamespace().equals(VALIDATION_NAMESPACE)
         && filter.getParentElement().getName().endsWith("filter"))) {
-      Element flow = getFlow(filter);
+      Element flow = getContainerElement(filter);
 
       if (flow != null) {
         Element errorHandler = getFlowExceptionHandlingElement(flow);

@@ -75,7 +75,8 @@ public class HttpOutboundTest {
         "http-outbound-23",
         "http-outbound-24",
         "http-outbound-25",
-        "http-outbound-26"
+        "http-outbound-26",
+        "http-outbound-policy-01"
     };
   }
 

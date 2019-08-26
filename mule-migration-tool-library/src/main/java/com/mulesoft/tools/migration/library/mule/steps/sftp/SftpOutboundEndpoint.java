@@ -14,7 +14,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInbo
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.lang.System.lineSeparator;
@@ -120,7 +120,7 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
     }
 
     if ("false".equals(object.getAttributeValue("keepFileOnError"))) {
-      Element flow = getFlow(object);
+      Element flow = getContainerElement(object);
       Element source = flow.getChildren().get(0);
       if (source.getName().equals("listener") && source.getNamespace().equals(SFTP_NAMESPACE)) {
 

@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.ftp;
 
 import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpConfig.FTP_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnection;
 import static org.apache.commons.lang3.StringUtils.substring;
 
@@ -43,7 +43,7 @@ public abstract class AbstractFtpEndpoint extends AbstractApplicationModelMigrat
           ? configName
           : (object.getAttributeValue("name") != null
               ? object.getAttributeValue("name")
-              : (getFlow(object).getAttributeValue("name") + "Ftp"))
+              : (getContainerElement(object).getAttributeValue("name") + "Ftp"))
               + "Config");
       Element conn = new Element("connection", FTP_NAMESPACE);
       migrateReconnection(conn, object, report);

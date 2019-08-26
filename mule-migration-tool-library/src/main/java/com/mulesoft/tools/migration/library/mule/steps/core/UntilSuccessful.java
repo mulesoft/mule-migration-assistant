@@ -18,7 +18,7 @@ import java.util.List;
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.VALIDATION_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration.addValidationNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.removeAttribute;
 
@@ -87,7 +87,7 @@ public class UntilSuccessful extends AbstractApplicationModelMigrationStep
     }
 
     if (element.getAttribute("deadLetterQueue-ref") != null) {
-      Element flow = getFlow(element);
+      Element flow = getContainerElement(element);
       Element errorHandler = getFlowExceptionHandlingElement(flow);
 
       if (errorHandler == null) {
