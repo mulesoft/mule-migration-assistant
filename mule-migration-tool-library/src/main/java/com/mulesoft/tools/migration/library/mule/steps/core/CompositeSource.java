@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementBefore;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -38,7 +38,7 @@ public class CompositeSource extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Element flow = getFlow(object);
+    Element flow = getContainerElement(object);
     String flowName = flow.getAttributeValue("name");
 
     int i = 0;

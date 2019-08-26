@@ -22,7 +22,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutb
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -214,7 +214,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
   }
 
   protected void migrateToReplyFlow(Element object, MigrationReport report, final Element request, final Element reply) {
-    final Element flow = getFlow(object);
+    final Element flow = getContainerElement(object);
     final Element replyFlow = new Element("flow", CORE_NAMESPACE);
     replyFlow.setAttribute("name", flow.getName() + "_reply");
 

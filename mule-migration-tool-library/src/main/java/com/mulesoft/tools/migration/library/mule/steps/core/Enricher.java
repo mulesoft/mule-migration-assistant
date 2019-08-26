@@ -10,7 +10,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILI
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static java.util.regex.Pattern.compile;
 import static org.apache.commons.lang3.StringUtils.substring;
 
@@ -55,7 +55,7 @@ public class Enricher extends AbstractApplicationModelMigrationStep implements E
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    final String flowName = getFlow(element).getAttributeValue("name");
+    final String flowName = getContainerElement(element).getAttributeValue("name");
     String subFlowName = flowName + "_Enricher_" + enricherSubFlowIndex
         .computeIfAbsent(flowName, k -> new AtomicInteger()).getAndIncrement();
 
@@ -84,7 +84,7 @@ public class Enricher extends AbstractApplicationModelMigrationStep implements E
       subFlow.addContent(element.cloneContent());
     }
 
-    addElementAfter(subFlow, getFlow(flowRef));
+    addElementAfter(subFlow, getContainerElement(flowRef));
 
     if (target != null) {
       String migratedTargetExpr;

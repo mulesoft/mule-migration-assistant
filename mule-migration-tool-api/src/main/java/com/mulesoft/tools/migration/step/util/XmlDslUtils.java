@@ -220,7 +220,7 @@ public final class XmlDslUtils {
   public static void migrateRedeliveryPolicyChildren(Element redeliveryPolicy, MigrationReport report) {
     Element dlq = redeliveryPolicy.getChild("dead-letter-queue", CORE_NAMESPACE);
     if (dlq != null) {
-      Element flow = getFlow(redeliveryPolicy);
+      Element flow = getContainerElement(redeliveryPolicy);
       Element errorHandler = getFlowExceptionHandlingElement(flow);
 
       if (errorHandler == null) {
@@ -383,9 +383,9 @@ public final class XmlDslUtils {
     element.getParentElement().addContent(elementIndex + 1, newElements);
   }
 
-  public static Element getFlow(Element processor) {
+  public static Element getContainerElement(Element processor) {
     while (processor != null && !"flow".equals(processor.getName()) && !"sub-flow".equals(processor.getName())
-        && !"before".equals(processor.getName())) {
+        && !"before".equals(processor.getName()) && !"after".equals(processor.getName())) {
       processor = processor.getParentElement();
     }
 
@@ -575,8 +575,4 @@ public final class XmlDslUtils {
     return getXPathSelector(CORE_NS_URI, elementName, topLevel);
   }
 
-  public static String getFileName(Document document) {
-    File docFile = new File(document.getBaseURI());
-    return docFile.getName();
-  }
 }

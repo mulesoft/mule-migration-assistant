@@ -23,7 +23,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementBefore;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static org.jdom2.Namespace.getNamespace;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -85,7 +85,8 @@ public class QuartzInboundEndpoint extends AbstractApplicationModelMigrationStep
 
       if (receiverThreadingProfile != null) {
         if (receiverThreadingProfile.getAttribute("maxThreadsActive") != null) {
-          getFlow(object).setAttribute("maxConcurrency", receiverThreadingProfile.getAttributeValue("maxThreadsActive"));
+          getContainerElement(object).setAttribute("maxConcurrency",
+                                                   receiverThreadingProfile.getAttributeValue("maxThreadsActive"));
         }
       }
     });

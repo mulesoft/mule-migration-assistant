@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
 
 import com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration;
@@ -26,7 +26,7 @@ public class AbstractFilterMigrator extends ValidationMigration {
   protected void handleFilter(Element filter) {
     if (!(filter.getParentElement().getNamespace().equals(VALIDATION_NAMESPACE)
         && filter.getParentElement().getName().endsWith("filter"))) {
-      Element flow = getFlow(filter);
+      Element flow = getContainerElement(filter);
 
       if (flow != null) {
         if ("flow".equals(flow.getName())) {

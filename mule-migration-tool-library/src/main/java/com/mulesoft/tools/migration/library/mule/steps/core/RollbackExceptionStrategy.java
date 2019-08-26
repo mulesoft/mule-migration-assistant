@@ -9,7 +9,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateRedeliveryPolicyChildren;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -54,7 +54,7 @@ public class RollbackExceptionStrategy extends AbstractExceptionsMigrationStep {
       Attribute maxRedelivery = element.getAttribute("maxRedeliveryAttempts");
       maxRedelivery.detach();
 
-      Element flow = getFlow(element);
+      Element flow = getContainerElement(element);
       if (flow != null && !flow.getChildren().isEmpty()) {
         Element source = flow.getChildren().get(0);
         if (source.getAttribute("isMessageSource", Namespace.getNamespace("migration")) != null) {

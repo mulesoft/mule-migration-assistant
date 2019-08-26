@@ -15,7 +15,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementToBot
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlow;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static java.util.stream.Collectors.toList;
 import static org.jdom2.Namespace.getNamespace;
 
@@ -144,7 +144,7 @@ public class Poll extends AbstractOSMigrator {
         }
 
         addElementAfter(osRetrieve, element);
-        addElementToBottom(getFlow(element), osStore);
+        addElementToBottom(getContainerElement(element), osStore);
 
         watermark.detach();
         addOSModule();
