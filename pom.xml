@@ -578,12 +578,4 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <repositories>
-        <repository>
-            <id>mule-private</id>
-            <name>Internal Release Repo</name>
-            <url>https://repository.mulesoft.org/nexus/content/repositories/private</url>
-        </repository>
-    </repositories>
-
 </project>
