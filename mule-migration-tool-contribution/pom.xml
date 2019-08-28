@@ -28,5 +28,10 @@
             <artifactId>mule-migration-tool-soapkit</artifactId>
             <version>0.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.mulesoft.tools</groupId>
+            <artifactId>mule-migration-tool-gateway-plugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

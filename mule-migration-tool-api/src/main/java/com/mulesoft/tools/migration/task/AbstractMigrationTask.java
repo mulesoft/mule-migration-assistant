@@ -76,7 +76,10 @@ public abstract class AbstractMigrationTask implements MigrationTask, Expression
 
 
           stepSelector.getProjectStructureContributionSteps()
-              .forEach(s -> s.execute(applicationModel.getProjectBasePath(), report));
+              .forEach(s -> {
+                s.setApplicationModel(applicationModel);
+                s.execute(applicationModel.getProjectBasePath(), report);
+              });
 
           stepSelector.getPomContributionSteps()
               .forEach(s -> {

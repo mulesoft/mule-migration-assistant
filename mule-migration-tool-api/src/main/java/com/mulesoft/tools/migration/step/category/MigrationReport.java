@@ -10,6 +10,7 @@ import com.mulesoft.tools.migration.project.ProjectType;
 
 import org.jdom2.Element;
 
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -88,6 +89,14 @@ public interface MigrationReport<T> {
    * @param processedElements
    */
   void addProcessedElements(int processedElements);
+
+  /**
+   * Update file reference on report
+   *
+   * @param oldFileName
+   * @param newFileName
+   */
+  void updateReportEntryFilePath(Path oldFileName, Path newFileName);
 
   /**
    * Returns the report entries.

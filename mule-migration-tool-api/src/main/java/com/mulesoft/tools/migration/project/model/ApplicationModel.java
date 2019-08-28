@@ -392,6 +392,23 @@ public class ApplicationModel {
     return this.supportedNamespaces;
   }
 
+  /**
+   * Updates a reference on the application documents map
+   *
+   * @param fileName
+   * @param newFileName
+   */
+  public void updateApplicationModelReference(Path fileName, Path newFileName) {
+    Path relativeFilePath = projectBasePath.relativize(fileName);
+    Path keyToRemove =
+        applicationDocuments.keySet().stream().filter(key -> key.equals(relativeFilePath)).findFirst().orElse(null);
+    if (keyToRemove != null) {
+      Document newDocument = applicationDocuments.get(keyToRemove);
+      newDocument.setBaseURI(newFileName.toUri().toString());
+      applicationDocuments.put(projectBasePath.relativize(newFileName), newDocument);
+      applicationDocuments.remove(keyToRemove);
+    }
+  }
 
   /**
    * It represent the builder to obtain a {@link ApplicationModel}
