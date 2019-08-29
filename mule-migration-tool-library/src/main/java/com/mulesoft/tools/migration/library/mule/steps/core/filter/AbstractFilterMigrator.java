@@ -13,7 +13,9 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptio
 
 import com.mulesoft.tools.migration.library.mule.steps.validation.ValidationMigration;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Generic filter migration support
@@ -23,7 +25,16 @@ import org.jdom2.Element;
  */
 public class AbstractFilterMigrator extends ValidationMigration {
 
+  private static final String DOCS_NAMESPACE_URL = "http://www.mulesoft.org/schema/mule/documentation";
+  private static final String DOCS_NAMESPACE_PREFIX = "doc";
+  private static final Namespace DOCS_NAMESPACE = Namespace.getNamespace(DOCS_NAMESPACE_PREFIX, DOCS_NAMESPACE_URL);
+
   protected void handleFilter(Element filter) {
+    if (filter.getAttribute("name") != null) {
+      Attribute nameAttribute = filter.getAttribute("name");
+      filter.getDocument().getRootElement().addNamespaceDeclaration(DOCS_NAMESPACE);
+      nameAttribute.setNamespace(DOCS_NAMESPACE);
+    }
     if (!(filter.getParentElement().getNamespace().equals(VALIDATION_NAMESPACE)
         && filter.getParentElement().getName().endsWith("filter"))) {
       Element flow = getContainerElement(filter);
