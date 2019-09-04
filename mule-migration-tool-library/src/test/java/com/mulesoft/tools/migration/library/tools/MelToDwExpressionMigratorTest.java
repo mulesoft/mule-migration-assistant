@@ -665,4 +665,18 @@ public class MelToDwExpressionMigratorTest {
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result, is("#[vars.pepe mod payload['lala']]"));
   }
+
+  @Test
+  public void migrateMessageEncoding() {
+    String script = "#[message.dataType.encoding.contains('UTF')]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[message.^encoding contains 'UTF']"));
+  }
+
+  @Test
+  public void migrateMessageMediaType() {
+    String script = "#[message.dataType.mimeType.contains('json')]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[message.^mediaType contains 'json']"));
+  }
 }
