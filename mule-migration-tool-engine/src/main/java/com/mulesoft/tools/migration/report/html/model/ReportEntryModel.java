@@ -60,7 +60,7 @@ public class ReportEntryModel {
     this.elementContent = element != null ? escapeXml11(domElementToString(element)) : "";
     this.element = element;
     this.message = message;
-    if (element != null) {
+    if (element != null && element.getDocument() != null) {
       try {
         this.filePath = new File(new URI(element.getDocument().getBaseURI())).getAbsolutePath();
       } catch (URISyntaxException e) {
