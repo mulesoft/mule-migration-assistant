@@ -130,7 +130,9 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
         .replaceAll("message\\.id", "correlationId")
         .replaceAll("message\\.inboundProperties", "vars.compatibility_inboundProperties")
         .replaceAll("message\\.outboundProperties", "vars.compatibility_outboundProperties")
-        .replaceAll("message\\.inboundAttachments", "payload.parts");
+        .replaceAll("message\\.inboundAttachments", "payload.parts")
+        .replaceAll("message\\.dataType\\.mimeType", "message.^mediaType")
+        .replaceAll("message\\.dataType\\.encoding", "message.^encoding");
   }
 
   @Override
