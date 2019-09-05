@@ -5,9 +5,9 @@
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="test-filterFlow">
-        <message-filter throwOnUnaccepted="false">
-            <expression-filter expression="#[flowVars.currency == 'USD']"/>
+        <message-filter>
+            <expression-filter expression="#[flowVars.currency == 'USD']" name="currencyFilter"/>
         </message-filter>
     </flow>
 
-</mule>
+</mule> 
