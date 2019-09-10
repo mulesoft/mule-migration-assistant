@@ -36,7 +36,8 @@ public class XmlToDomTransformer extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    Element parentElement = object.getParentElement();
     object.detach();
-    report.report("mulexml.xmlToDom", object, object.getParentElement());
+    report.report("mulexml.xmlToDom", object, parentElement);
   }
 }
