@@ -73,5 +73,6 @@ public class XmlToDomTransformerTest {
     assertThat(xmlString,
                isSimilarTo(IOUtils.toString(this.getClass().getClassLoader().getResource(targetPath.toString()).toURI(), UTF_8))
                    .ignoreComments().normalizeWhitespace());
+    report.expectReportEntry("mulexml.xmlToDom");
   }
 }
