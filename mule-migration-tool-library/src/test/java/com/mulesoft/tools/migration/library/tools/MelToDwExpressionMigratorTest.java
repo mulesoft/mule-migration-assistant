@@ -679,4 +679,18 @@ public class MelToDwExpressionMigratorTest {
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result, is("#[message.^mediaType contains 'json']"));
   }
+
+  @Test
+  public void migrateServerIp() {
+    String script = "#[server.ip]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[server.ip]"));
+  }
+
+  @Test
+  public void migrateServerHost() {
+    String script = "#[server.host]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[server.host]"));
+  }
 }
