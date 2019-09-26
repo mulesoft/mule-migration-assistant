@@ -66,6 +66,10 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
       report.report("http.host", object, object, object.getAttributeValue("host"));
       object.removeAttribute("host");
     }
+    if (object.getAttribute("parseResponse") != null) {
+      report.report("http.parseResponse", object, object, object.getAttributeValue("parseResponse"));
+      object.removeAttribute("parseResponse");
+    }
 
     migrateExpression(object.getAttribute("path"), getExpressionMigrator());
     migrateExpression(object.getAttribute("method"), getExpressionMigrator());

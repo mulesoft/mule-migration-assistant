@@ -171,6 +171,12 @@ http:
     message: "'host' cannot be overridden by the HTTP Request operation. You can use an expression in the config to make it dynamic. Original value was host=\"{host}\"."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http#http-request
+  parseResponse:
+    type: WARN
+    message: "'parseResponse' is not needed in Mule 4 because DataWeave 2.0 now handle those MIME types."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http#http-mime-types
+      - https://docs.mulesoft.com/mule-runtime/4.1/dataweave-formats#format_form_data
   socketProperties:
     type: ERROR
     message: The server socket properties can be configured at the runtime level in Mule 4.2.0 or higher.
