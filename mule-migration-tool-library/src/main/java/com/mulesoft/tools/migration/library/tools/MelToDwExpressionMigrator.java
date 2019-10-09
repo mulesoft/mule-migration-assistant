@@ -121,7 +121,9 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
 
   private String resolveServerContext(String expression) {
     return expression.replaceAll("(vars\\.)?server\\.dateTime", "now()")
-        .replaceAll("(vars\\.)?server\\.nanoSeconds", "System.nanoTime()");
+        .replaceAll("(vars\\.)?server\\.nanoSeconds", "System.nanoTime()")
+        .replaceAll("(vars\\.)?server\\.ip", "server.ip")
+        .replaceAll("(vars\\.)?server\\.host", "server.host");
   }
 
   public String resolveIdentifiers(String expression) {
