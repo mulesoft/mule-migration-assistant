@@ -173,7 +173,7 @@ http:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http#http-request
   parseResponse:
     type: WARN
-    message: "'parseResponse' is not needed in Mule 4 because DataWeave 2.0 now handle those MIME types."
+    message: "'parseResponse' is not needed in Mule 4 because DataWeave 2.0 now handles those MIME types."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-connectors-http#http-mime-types
       - https://docs.mulesoft.com/mule-runtime/4.1/dataweave-formats#format_form_data
