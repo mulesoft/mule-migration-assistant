@@ -901,3 +901,10 @@ mulexml:
     message: "Conversion to Java object is no longer needed on Mule 4. You can access the data using DW."
     docLinks:
       - https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-transformers#object-model-representation-for-json-and-xml
+
+configuration:
+  processingStrategy:
+    type: INFO
+    message: "The 'configuration' element no longer has a 'defaultProcessingStrategy' attribute."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/intro-engine
