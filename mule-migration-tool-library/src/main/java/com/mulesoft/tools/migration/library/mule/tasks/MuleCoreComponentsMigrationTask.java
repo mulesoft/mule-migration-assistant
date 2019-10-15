@@ -16,6 +16,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExceptionStrat
 import com.mulesoft.tools.migration.library.mule.steps.core.ChoiceExpressions;
 import com.mulesoft.tools.migration.library.mule.steps.core.CompatibilityPomContribution;
 import com.mulesoft.tools.migration.library.mule.steps.core.CompositeSource;
+import com.mulesoft.tools.migration.library.mule.steps.core.Configuration;
 import com.mulesoft.tools.migration.library.mule.steps.core.Enricher;
 import com.mulesoft.tools.migration.library.mule.steps.core.ExceptionStrategyRef;
 import com.mulesoft.tools.migration.library.mule.steps.core.FirstSuccessful;
@@ -105,6 +106,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new SpringImport(),
                         new PropertyPlaceholder(),
                         new MuleAppProperties(),
-                        new ProcessorChain());
+                        new ProcessorChain(),
+                        new Configuration());
   }
 }
