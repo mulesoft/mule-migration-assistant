@@ -59,8 +59,8 @@ public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplica
         .orElseGet(() -> {
           final Element mapBuilderElement = new Element(tagName, httpNamespace);
 
-          report.report("http.mapExpression", mapBuilderElement, parentTag, tagName);
           parentTag.addContent(idx, mapBuilderElement);
+          report.report("http.mapExpression", mapBuilderElement, parentTag, tagName);
 
           return mapBuilderElement;
         });
