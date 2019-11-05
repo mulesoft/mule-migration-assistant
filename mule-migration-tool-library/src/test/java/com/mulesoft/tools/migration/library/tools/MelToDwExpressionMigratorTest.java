@@ -317,7 +317,7 @@ public class MelToDwExpressionMigratorTest {
     PomModel pomModel = PomModelUtils.buildMinimalMule4ApplicationPom("org.fake", "fake-app", "1.0.0", "mule-application");
     when(modelMock.getPomModel()).thenReturn(Optional.of(pomModel));
     Element elementMock = mock(Element.class);
-    String originalExpression = "a instanceOf org.pepe.Pepito";
+    String originalExpression = "a instanceof org.pepe.Pepito";
 
     assertThat("Pom model should not have the java module dependency",
                pomModel.getDependencies().stream().noneMatch(d -> d.getArtifactId().equals("mule-java-module")));
@@ -384,7 +384,7 @@ public class MelToDwExpressionMigratorTest {
 
   @Test
   public void migrateTernaryExpression5() {
-    String script = "#[a instanceOf org.pepe.Pepito ? \"is Pepito\" : \"it is not Pepito\"]";
+    String script = "#[a instanceof org.pepe.Pepito ? \"is Pepito\" : \"it is not Pepito\"]";
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result, is("#[if (Java::isInstanceOf(vars.a, 'org.pepe.Pepito'))   'is Pepito' else   'it is not Pepito']"));
   }
@@ -693,4 +693,28 @@ public class MelToDwExpressionMigratorTest {
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result, is("#[server.host]"));
   }
+
+  @Test
+  public void migrateExceptionInstanceOf() {
+    String script = "#[exception instanceof org.mule.api.MessagingException]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[Java::isInstanceOf(exception, 'org.mule.api.MessagingException')]"));
+  }
+
+  @Test
+  public void migrateExceptionCausedExactlyBy() {
+    String script = "#[exception.causedExactlyBy(java.util.concurrent.TimeoutException)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[mel:exception.causedExactlyBy(java.util.concurrent.TimeoutException)]"));
+  }
+
+  @Test
+  public void migrateNestedExceptionExpression() {
+    String script =
+        "#[exception instanceof org.mule.api.MessagingException && exception.causedExactlyBy(java.util.concurrent.TimeoutException)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result,
+               is("#[Java::isInstanceOf(exception, 'org.mule.api.MessagingException') and mel:exception.causedExactlyBy(java.util.concurrent.TimeoutException)]"));
+  }
+
 }
