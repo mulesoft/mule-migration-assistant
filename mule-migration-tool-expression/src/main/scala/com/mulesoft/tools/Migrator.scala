@@ -22,7 +22,6 @@ object Migrator {
   val CLASS_PROPERTY_NAME = "class"
 
   def bindingContextVariable: List[String] = List("message", "exception", "payload", "flowVars", "sessionVars", "recordVars", "null");
-  def escapedLiterals: List[String] = List("org.", "com.", "java.");
   var counter = 0
 
 
