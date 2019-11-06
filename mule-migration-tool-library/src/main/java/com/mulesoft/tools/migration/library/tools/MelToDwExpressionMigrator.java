@@ -109,6 +109,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
           .withGroupId("org.mule.module")
           .withArtifactId("mule-java-module")
           .withVersion(targetVersion("mule-java-module"))
+          .withClassifier("mule-plugin")
           .build();
       model.getPomModel().ifPresent(m -> m.addDependency(javaModuleDependency));
     }
