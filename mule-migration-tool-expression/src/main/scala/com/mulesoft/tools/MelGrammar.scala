@@ -125,7 +125,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def instanceOfToken = rule {
-    ws ~ "instanceOf" ~ push(OperatorType.instanceOf)
+    ws ~ "instanceof" ~ push(OperatorType.instanceOf)
   }
 
   def comparableToken = rule {

@@ -70,7 +70,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
       migratedExpression = muleStyleParser.translate(originalExpression,
                                                      (script) -> translateSingleExpression(script, dataWeaveBodyOnly,
                                                                                            element, enricher));
-      if (migratedExpression.startsWith("#[mel:")) {
+      if (migratedExpression.contains("mel:")) {
         addCompatibilityNamespace(element.getDocument());
       }
     }
@@ -109,6 +109,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
           .withGroupId("org.mule.module")
           .withArtifactId("mule-java-module")
           .withVersion(targetVersion("mule-java-module"))
+          .withClassifier("mule-plugin")
           .build();
       model.getPomModel().ifPresent(m -> m.addDependency(javaModuleDependency));
     }
@@ -134,7 +135,9 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
         .replaceAll("message\\.outboundProperties", "vars.compatibility_outboundProperties")
         .replaceAll("message\\.inboundAttachments", "payload.parts")
         .replaceAll("message\\.dataType\\.mimeType", "message.^mediaType")
-        .replaceAll("message\\.dataType\\.encoding", "message.^encoding");
+        .replaceAll("message\\.dataType\\.encoding", "message.^encoding")
+        .replaceAll("exception\\.causedBy", "mel:exception.causedBy")
+        .replaceAll("exception\\.causedExactlyBy", "mel:exception.causedExactlyBy");
   }
 
   @Override

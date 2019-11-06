@@ -22,7 +22,6 @@ object Migrator {
   val CLASS_PROPERTY_NAME = "class"
 
   def bindingContextVariable: List[String] = List("message", "exception", "payload", "flowVars", "sessionVars", "recordVars", "null");
-
   var counter = 0
 
 
@@ -86,6 +85,8 @@ object Migrator {
           case "currentTimeMillis" => toNow(candidateToCanonicalName)
           case "toString" => toString(candidateToCanonicalName)
           case "contains" => toContainsInvocation(mel.VariableReferenceNode(candidateToCanonicalName), arguments.head)
+          case "causedBy" => toExceptionFunction(name, arguments.head)
+          case "causedExactlyBy" => toExceptionFunction(name, arguments.head)
           case _ => {
             counter += 1
             val reference = "$" + counter
@@ -147,6 +148,12 @@ object Migrator {
     val metadata = lRes.metadata.children ++ rRes.metadata.children
     val classNameNode = dw.structure.StringNode(rRes.getGeneratedCode(HeaderNode(Seq())).replaceFirst("---\nvars\\.", "")).annotate(QuotedStringAnnotation('''))
     new MigrationResult(dw.functions.FunctionCallNode(variableReferenceNode, FunctionCallParametersNode(Seq(lRes.dwAstNode, classNameNode))), DefaultMigrationMetadata(JavaModuleRequired() +: metadata))
+  }
+
+  private def toExceptionFunction(functionName: String, parametersNode: MelExpressionNode) = {
+    val parameters = toDataweaveAst(parametersNode)
+    val classNameNode = dw.structure.StringNode(parameters.getGeneratedCode(HeaderNode(Seq())).replaceFirst("---\nvars\\.", ""))
+    new MigrationResult(dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier(functionName)), FunctionCallParametersNode(Seq(classNameNode))))
   }
 
   private def toDataweaveBinaryOperatorNode(left: MelExpressionNode, right: MelExpressionNode, operatorType: Int): MigrationResult = {
