@@ -58,6 +58,7 @@
                     <reuseForks>true</reuseForks>
                     <workingDirectory>${project.build.directory}</workingDirectory>
                     <systemPropertyVariables>
+                        <mule.test.timeoutSecs>600</mule.test.timeoutSecs>
                         <migrator.runner>${com.mulesoft.tools:mule-migration-assistant-runner:zip}</migrator.runner>
                         <mule.version>${mule.runtime.version}</mule.version>
                         <mma.version>${project.version}</mma.version>
@@ -89,8 +90,8 @@
             </activation>
             
             <properties>
-                <mule.runtime.version>4.2.0-SNAPSHOT</mule.runtime.version>
-                <mule.api.version>1.2.0-SNAPSHOT</mule.api.version>
+                <mule.runtime.version>4.2.0</mule.runtime.version>
+                <mule.api.version>1.2.0</mule.api.version>
             </properties>
         </profile>
     </profiles>
