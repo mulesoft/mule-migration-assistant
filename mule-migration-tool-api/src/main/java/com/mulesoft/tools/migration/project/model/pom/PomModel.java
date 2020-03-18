@@ -86,7 +86,7 @@ public class PomModel {
   public boolean removeDependency(Dependency dependency) {
     int originalNumDependencies = model.getDependencies().size();
     List dependencies = model.getDependencies().stream()
-        .filter(dep -> dep.getGroupId().equals(dependency.getGroupId()) && dep.getArtifactId().equals(dep.getArtifactId()))
+        .filter(dep -> dep.getGroupId().equals(dependency.getGroupId()) && dep.getArtifactId().equals(dependency.getArtifactId()))
         .collect(toList());
     List<org.apache.maven.model.Dependency> newDeps = new ArrayList<>(model.getDependencies());
     newDeps.removeAll(dependencies);
