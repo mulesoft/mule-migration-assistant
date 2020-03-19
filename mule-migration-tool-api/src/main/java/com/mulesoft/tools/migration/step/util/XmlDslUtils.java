@@ -21,6 +21,7 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
+import org.jdom2.Comment;
 import org.jdom2.Content;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -34,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -573,6 +575,21 @@ public final class XmlDslUtils {
 
   private static String getCoreXPathSelector(String elementName, boolean topLevel) {
     return getXPathSelector(CORE_NS_URI, elementName, topLevel);
+  }
+
+  public static void removeNestedComments(Element element) {
+    Iterator<Content> contentIterator = element.getContent().iterator();
+    while (contentIterator.hasNext()) {
+      Content content = contentIterator.next();
+      if (content instanceof Comment) {
+        contentIterator.remove();
+      }
+
+      if (content instanceof Element) {
+        Element contentElement = (Element) content;
+        removeNestedComments(contentElement);
+      }
+    }
   }
 
 }
