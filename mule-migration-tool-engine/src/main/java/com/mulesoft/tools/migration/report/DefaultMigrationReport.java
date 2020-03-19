@@ -114,9 +114,8 @@ public class DefaultMigrationReport implements MigrationReport {
           }
 
           if (element != elementToComment) {
-            Element clonedElement = element.clone();
-            XmlDslUtils.removeNestedComments(clonedElement);
-            elementToComment.addContent(i++, new Comment(outp.outputString(clonedElement)));
+            XmlDslUtils.removeNestedComments(element);
+            elementToComment.addContent(i++, new Comment(outp.outputString(element)));
           }
         }
       }
