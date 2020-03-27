@@ -131,10 +131,11 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
                                                   final String targetAttributeName, boolean expression) {
     if (source.getAttribute(sourceAttributeName) != null) {
       String sourceAttributeValue = source.getAttributeValue(sourceAttributeName);
-      target.setAttribute(targetAttributeName,
-                          expression && getExpressionMigrator().isWrapped(sourceAttributeValue)
-                              ? getExpressionMigrator().migrateExpression(sourceAttributeValue, true, target)
-                              : sourceAttributeValue);
+      String value = sourceAttributeValue;
+      if (expression && getExpressionMigrator().isWrapped(sourceAttributeValue)) {
+        value = getExpressionMigrator().migrateExpression(sourceAttributeValue, true, target);
+      }
+      target.setAttribute(targetAttributeName, value);
       source.removeAttribute(sourceAttributeName);
     }
   }

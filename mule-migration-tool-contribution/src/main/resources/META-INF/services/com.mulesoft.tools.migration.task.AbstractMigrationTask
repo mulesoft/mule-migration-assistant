@@ -2,7 +2,6 @@
 com.mulesoft.tools.migration.apikit.tasks.ApikitMigrationTask
 com.mulesoft.tools.migration.soapkit.tasks.SoapkitMigrationTask
 com.mulesoft.tools.migration.gateway.task.ProxyMigrationTask
-com.mulesoft.tools.migration.gateway.task.RamlProxyMigrationTask
 com.mulesoft.tools.migration.gateway.task.IpFilterMigrationTask
 com.mulesoft.tools.migration.gateway.task.ThreatProtectionMigrationTask
 com.mulesoft.tools.migration.gateway.task.ThrottlingMigrationTask

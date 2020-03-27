@@ -95,7 +95,7 @@ public class DefaultMigrationReport implements MigrationReport {
     ReportEntryModel reportEntry;
 
     if (elementToComment != null) {
-      if (elementToComment.getDocument() != null) {
+      if (elementToComment.getDocument() != null || element.getDocument() == null) {
         reportEntry = new ReportEntryModel(level, elementToComment, message, documentationLinks);
       } else {
         reportEntry = new ReportEntryModel(level, elementToComment, message, element.getDocument(), documentationLinks);
@@ -136,7 +136,7 @@ public class DefaultMigrationReport implements MigrationReport {
 
   @Override
   public void updateReportEntryFilePath(Path oldFileName, Path newFileName) {
-    reportEntries.stream().filter(e -> e.getFilePath().equals(oldFileName.toString()))
+    reportEntries.stream().filter(e -> oldFileName.toString().equals(e.getFilePath()))
         .forEach(r -> r.setFilePath(newFileName.toString()));
   }
 
