@@ -15,6 +15,7 @@ import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.jdom2.Comment;
 import org.jdom2.Element;
 import org.jdom2.output.XMLOutputter;
@@ -93,29 +94,33 @@ public class DefaultMigrationReport implements MigrationReport {
 
     ReportEntryModel reportEntry;
 
-    if (elementToComment.getDocument() != null) {
-      reportEntry = new ReportEntryModel(level, elementToComment, message, documentationLinks);
-    } else {
-      reportEntry = new ReportEntryModel(level, elementToComment, message, element.getDocument(), documentationLinks);
-    }
+    if (elementToComment != null) {
+      if (elementToComment.getDocument() != null) {
+        reportEntry = new ReportEntryModel(level, elementToComment, message, documentationLinks);
+      } else {
+        reportEntry = new ReportEntryModel(level, elementToComment, message, element.getDocument(), documentationLinks);
+      }
 
-    if (reportEntries.add(reportEntry)) {
-      if (elementToComment != null) {
-        elementToComment.addContent(i++, new Comment("Migration " + level.name() + ": " + message));
+      if (reportEntries.add(reportEntry)) {
+        if (elementToComment != null) {
+          elementToComment.addContent(i++, new Comment("Migration " + level.name() + ": " + message));
 
-        if (documentationLinks.length > 0) {
-          elementToComment.addContent(i++, new Comment("    For more information refer to:"));
+          if (documentationLinks.length > 0) {
+            elementToComment.addContent(i++, new Comment("    For more information refer to:"));
 
-          for (String link : documentationLinks) {
-            elementToComment.addContent(i++, new Comment("        * " + link));
+            for (String link : documentationLinks) {
+              elementToComment.addContent(i++, new Comment("        * " + link));
+            }
           }
-        }
 
-        if (element != elementToComment) {
-          elementToComment.addContent(i++, new Comment(outp.outputString(element)));
+          if (element != elementToComment) {
+            XmlDslUtils.removeNestedComments(element);
+            elementToComment.addContent(i++, new Comment(outp.outputString(element)));
+          }
         }
       }
     }
+
   }
 
   @Override
