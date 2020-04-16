@@ -13,10 +13,12 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
 
 import java.util.Optional;
+import java.util.StringJoiner;
 
 import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 
 /**
  * Migrate <expression-transformer expression="" /> to <set-payload value=#[expression] />.
@@ -60,12 +62,20 @@ public class SimpleExpressionTransformer extends AbstractApplicationModelMigrati
       return;
     }
 
+    Optional<String> encoding = ofNullable(object.getAttributeValue("encoding"));
+    object.removeAttribute("encoding");
 
     if (object.getAttribute("mimeType") != null) {
-      StringBuilder stringBuilder = new StringBuilder(migratedExpression);
-      stringBuilder.insert(2, format("output %s --- ", object.getAttributeValue("mimeType")));
-      migratedExpression = stringBuilder.toString();
+      StringJoiner outputHeader = new StringJoiner(" ").add("output");
+      outputHeader.add(object.getAttributeValue("mimeType"));
       object.removeAttribute("mimeType");
+
+      // in DW we can set the output encoding ONLY if we know the mimeType
+      encoding.ifPresent(enc -> outputHeader.add(format("encoding='%s'", enc)));
+      outputHeader.add("--- ");
+      StringBuilder stringBuilder = new StringBuilder(migratedExpression);
+      stringBuilder.insert(2, outputHeader.toString());
+      migratedExpression = stringBuilder.toString();
     }
 
     object.setAttribute("value", migratedExpression);

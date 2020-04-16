@@ -53,7 +53,9 @@ public class SimpleExpressionTransformerTest {
     return new Object[] {
         "simple-expression",
         "simple-expression-with-mimetype",
-        "simple-expression-with-return-argument"
+        "simple-expression-with-return-argument",
+        "simple-expression-with-encoding",
+        "simple-expression-without-mimetype-with-encoding"
     };
   }
 
