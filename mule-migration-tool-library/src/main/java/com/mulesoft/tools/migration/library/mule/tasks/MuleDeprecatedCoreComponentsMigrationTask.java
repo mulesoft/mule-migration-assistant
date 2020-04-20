@@ -15,6 +15,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.CopyAttachments;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyCatalogFolder;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyProperties;
 import com.mulesoft.tools.migration.library.mule.steps.core.DataMapper;
+import com.mulesoft.tools.migration.library.mule.steps.core.ExpressionComponent;
 import com.mulesoft.tools.migration.library.mule.steps.core.JavaReferenceElements;
 import com.mulesoft.tools.migration.library.mule.steps.core.MessageAttachmentsListExpressionEvaluator;
 import com.mulesoft.tools.migration.library.mule.steps.core.MessagePropertiesTransformer;
@@ -83,6 +84,7 @@ public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigration
                         new RemoveMetadataAttributes(),
                         new MessagePropertiesTransformer(),
                         new RemoveSchedulersNamespace(),
-                        new DataMapper());
+                        new DataMapper(),
+                        new ExpressionComponent());
   }
 }
