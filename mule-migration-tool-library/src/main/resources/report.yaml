@@ -111,6 +111,14 @@ dataWeave:
     type: ERROR
     message: "Error migrating DataWeave script from DW 1.0 to DW 2.0: {errorMessage}"
 
+expressionTransformer:
+  multipleTransforms:
+    type: ERROR
+    message: "Error migrating migration-expression. Multiple return-argument are not supported"
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.1/set-payload-transformer-reference
+      - https://docs.mulesoft.com/mule-runtime/4.1/transform-dataweave-xml-reference
+
 quartz:
   repeatCount:
     type: ERROR
