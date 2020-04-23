@@ -12,6 +12,7 @@
   ],
   "timezone": "America/Argentina/Buenos_Aires",
   "ignoreDeps": [
+    "com.mulesoft.connectors:mule-amazon-s3-connector",
     "com.mulesoft.mule.distributions:mule-ee-distribution-standalone",
     "com.mulesoft.mule.runtime:mule-core-ee",
     "com.mulesoft.tools:mule-migration-assistant-runner",
