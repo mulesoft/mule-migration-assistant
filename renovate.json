@@ -1,0 +1,31 @@
+{
+  "extends": [
+    "config:base",
+    ":masterIssue",
+    "docker:enableMajor"
+  ],
+  "prHourlyLimit": 1,
+  "prConcurrentLimit": 10,
+  "schedule": [
+    "after 8pm and before 8am on every weekday",
+    "every weekend"
+  ],
+  "timezone": "America/Argentina/Buenos_Aires",
+  "ignoreDeps": [
+    "com.mulesoft.mule.distributions:mule-ee-distribution-standalone",
+    "com.mulesoft.mule.runtime:mule-core-ee",
+    "com.mulesoft.tools:mule-migration-assistant-runner",
+    "com.mulesoft.tools:mule-migration-tool-api",
+    "com.mulesoft.tools:mule-migration-tool-apikit",
+    "com.mulesoft.tools:mule-migration-tool-expression",
+    "com.mulesoft.tools:mule-migration-tool-gateway-plugin",
+    "com.mulesoft.tools:mule-migration-tool-library",
+    "com.mulesoft.tools:mule-migration-tool-soapkit",
+    "com.mulesoft.tools:mule-migration-tool-target-modules",
+    "org.mule.runtime:mule-module-artifact",
+    "org.mule.runtime:mule-module-deployment-model",
+    "org.mule.tests:mule-tests-infrastructure",
+    "org.mule.weave:parser",
+    "org.mule.weave:migrant"
+  ]
+}
