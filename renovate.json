@@ -4,6 +4,7 @@
     ":masterIssue",
     "docker:enableMajor"
   ],
+  "branchPrefix": "renovate-",
   "prHourlyLimit": 1,
   "prConcurrentLimit": 10,
   "schedule": [
