@@ -120,7 +120,7 @@ expressionTransformer:
       - https://docs.mulesoft.com/mule-runtime/4.1/transform-dataweave-xml-reference
   deprecated:
     type: ERROR
-    message: "Mule 4 does not require transformers anymore. Now that DataWeave is the default expression language most scenarios that required a transformer no longer exist.
+    message: "Mule 4 does not require transformers anymore. Now that DataWeave is the default expression language most scenarios that required a transformer no longer exist."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/migration-transformers
       - https://docs.mulesoft.com/mule-runtime/4.1/transform-dataweave-xml-reference
