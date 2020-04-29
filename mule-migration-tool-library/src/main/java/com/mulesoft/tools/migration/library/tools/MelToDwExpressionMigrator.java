@@ -8,9 +8,11 @@ package com.mulesoft.tools.migration.library.tools;
 
 import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.join;
 
 import com.mulesoft.tools.*;
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
@@ -24,9 +26,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import scala.collection.JavaConverters;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Migrate mel expressions to dw expression
@@ -117,7 +122,11 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     migratedExpression = resolveServerContext(migratedExpression);
     migratedExpression = resolveIdentifiers(migratedExpression);
 
-    return dataWeaveBodyOnly ? migratedExpression.replaceFirst("%dw 2\\.0\n---", "").trim() : migratedExpression;
+    if (dataWeaveBodyOnly) {
+      migratedExpression = migratedExpression.replaceFirst("%dw 2\\.0\n---", "").trim();
+    }
+
+    return escapeUnderscores(migratedExpression);
   }
 
   private String resolveServerContext(String expression) {
@@ -138,6 +147,12 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
         .replaceAll("message\\.dataType\\.encoding", "message.^encoding")
         .replaceAll("exception\\.causedBy", "mel:exception.causedBy")
         .replaceAll("exception\\.causedExactlyBy", "mel:exception.causedExactlyBy");
+  }
+
+  private String escapeUnderscores(String expression) {
+    return Arrays.stream(expression.split("\\."))
+        .map(part -> part.startsWith("_") ? format("'%s'", part) : part)
+        .collect(Collectors.joining("."));
   }
 
   @Override
