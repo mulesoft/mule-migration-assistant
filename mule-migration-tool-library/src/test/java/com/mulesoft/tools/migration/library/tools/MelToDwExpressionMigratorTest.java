@@ -717,4 +717,28 @@ public class MelToDwExpressionMigratorTest {
                is("#[Java::isInstanceOf(exception, 'org.mule.api.MessagingException') and mel:exception.causedExactlyBy(java.util.concurrent.TimeoutException)]"));
   }
 
+  @Test
+  public void migrateExpressionWithUnderscore() {
+    String script = "#[flowVars._varName]";
+    String expectedResult = "#[vars.'_varName']";
+    String actualResult = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(actualResult, is(expectedResult));
+  }
+
+  @Test
+  public void migrateExpressionWithMultipleUnderscores() {
+    String script = "#[flowVars._myVar.normalValue._underscoreValue]";
+    String expectedResult = "#[vars.'_myVar'.normalValue.'_underscoreValue']";
+    String actualResult = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(actualResult, is(expectedResult));
+  }
+
+  @Test
+  public void migrateExpressionWithoutUnderscores() {
+    String script = "#[flowVars.varName.normalValue.anotherNormalValue]";
+    String expectedResult = "#[vars.varName.normalValue.anotherNormalValue]";
+    String actualResult = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(actualResult, is(expectedResult));
+  }
+
 }
