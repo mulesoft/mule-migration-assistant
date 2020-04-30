@@ -29,6 +29,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.MuleApp;
 import com.mulesoft.tools.migration.library.mule.steps.core.MuleDomain;
 import com.mulesoft.tools.migration.library.mule.steps.core.Poll;
 import com.mulesoft.tools.migration.library.mule.steps.core.ProcessorChain;
+import com.mulesoft.tools.migration.library.mule.steps.core.ProcessorChainReference;
 import com.mulesoft.tools.migration.library.mule.steps.core.PropertyPlaceholder;
 import com.mulesoft.tools.migration.library.mule.steps.core.RollbackExceptionStrategy;
 import com.mulesoft.tools.migration.library.mule.steps.core.ScatterGather;
@@ -107,6 +108,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new PropertyPlaceholder(),
                         new MuleAppProperties(),
                         new ProcessorChain(),
-                        new Configuration());
+                        new Configuration(),
+                        new ProcessorChainReference());
   }
 }
