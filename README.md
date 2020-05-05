@@ -14,6 +14,25 @@ In order to understand the tool, let's start with a couple of informal definitio
 
 In simple terms, the tool executes a sequence of tasks over a project and outputs a migrated project and a report about the migration.
 
+## Architecture
+
+The Mule Migration Assistant workflow is designed as follows:
+
+<!-- NOTE: this image is defined in './architecture.dot' and created by running './architecture.sh' -->
+![Mule Migration Assistant Architecture](./architecture.svg
+"A visual representation of the relation between different components that take part of a recording")
+
+## Modules
+
+* [Migration Archetype](./migration-contribution-archetype): Maven archetype generator for a new Migration Task contribution. 
+* [Migration API](./mule-migration-tool-api): Set of API's to use when developing a new Migration task.
+* [Contributions](./mule-migration-tool-contribution): Where all external contributions are contributed to the tools. The set of migration tasks defined on this module will be loaded to the Migration Assistant trough SPI.
+* [Expression Migrator](./mule-migration-tool-expression): MEL to DW migrator. It contains all the rules to migrate Mule 3 expressions defined on MEL to the new DW transformation language on Mule 4.
+* [Migration Library](./mule-migration-tool-library): Set of default migrations that are shipped wit the Mule Migration Assistant. It contains all the migrations of Mule Core components, MUnit, etc.
+* [Engine](./mule-migration-tool-engine): The execution engine that identifies the project type, locate all the migration tasks available and performs the migration.
+* [Runner](./runner): Console implementation to execute the Mule Migration Assistant.
+* [Integration Tests](./mule-migration-tool-tests): Suite of tests to validate all the component that will be supported by this tool. 
+
 ## Getting Started
 
 These are the instructions to have the project up and running.
