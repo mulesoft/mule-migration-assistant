@@ -209,7 +209,7 @@ javax
 <blank Line>
 org.mule
 <blank Line>
-<all other import sorted alphabetically>
+<all other imports sorted alphabetically>
 ```
 
 
