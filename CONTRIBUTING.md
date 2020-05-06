@@ -63,7 +63,7 @@ Before you get started, you need to set yourself up with an environment in which
 
 ### JDK
 
-1. If you are working with **Windows** or **Linux**, install Java SE 8u152 or a later update on your local drive. It can be downloaded from [Java Development Kits](http://www.oracle.com/technetwork/java/javase/downloads/index.html). If you are working on a **Mac**, simply confirm that the JDK shipped with your Mac OS X is *Java SE Development Kit 8 (also known as Java SE 8u152)* or a later update using the command `java -version`, then skip to step 4 below: 
+1. If you are working with **Windows** or **Linux**, install Java SE 8u152 or a later update on your local drive. It can be downloaded from [Java Development Kits](http://www.oracle.com/technetwork/java/javase/downloads/index.html). If you are working on a **Mac**, simply confirm that the JDK shipped with your Mac OS X is *Java SE Development Kit 8 (also known as Java SE 8u152)* or a later update using the command `java -version`, then you can skip this section: 
 2. Create an environment variable called `JAVA_HOME`, setting it to the directory in which you installed the JDK. 
 3. Update the PATH environment variable so that it includes the path to JDK binaries. Add the following line to the PATH variable:
     - Windows: `%JAVA_HOME%/bin`
@@ -208,7 +208,7 @@ In order to create our feature branch we should follow these steps:
 2. Switch to the new branch using the following command: 
 `git checkout yourJIRAissuenumber`.
 
-Now we should be able to make our very first compilation of the Mule Runtime source code. We just need to instruct Maven to download all the dependent libraries and compile the project, you can do so execution the following command Within the directory into which you cloned the Mule source code: `mvn -DskipTests install`.
+Now we should be able to make our very first compilation of the Mule Runtime source code. We just need to instruct Maven to download all the dependent libraries and compile the project, you can do so execution the following command within the directory into which you cloned the Mule source code: `mvn -DskipTests install`.
 
 Note that if this is your first time using Maven, the download make take several minutes to complete.
 
@@ -245,7 +245,7 @@ git checkout master
 ```shell
 git merge upstream/master
 ```
-4. Push any changes to the master to your forked clone using the following commands:
+4. Push any changes to the master of your forked clone using the following commands:
 
 ```shell
 git push origin master
@@ -300,7 +300,7 @@ At that point we were almost ready to develop improvements, we just needed to [c
 
 Then we were finally ready to [develop our contribution](#developing-your-contribution). We created our very own [feature branch](#creating-your-topic-branch) were we'll develop our improvement, then we learnt how to [keep it updated](#updating-your-topic-branch) in order to be able to submit a [pull request](#submitting-a-pull-request) to the main Mule Migration Assistant repository
 
-We also covered the scenario were you need to [develop a migration to a component](#contribute-a-new-component-migration-to-mma) that is not currently supported by MMA. Then we learnt how to [publish it](publish-your-migration-to-maven-repository) and include it into the [engine](#include-your-migration-into-mma). 
+We also covered the scenario where you need to [develop a migration to a component](#contribute-a-new-component-migration-to-mma) that is not currently supported by MMA. Then we learnt how to [publish it](publish-your-migration-to-maven-repository) and include it into the [engine](#include-your-migration-into-mma). 
 
 Thank you one more time for taking some time understanding how to contribute to Mule Migration Assistant.
 

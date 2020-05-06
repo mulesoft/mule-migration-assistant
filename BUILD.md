@@ -8,18 +8,18 @@ In the following sections you will learn how MMA is organized, how to build it a
 
 ### Mule Migration Assistant Source Code Sub-projects
 
-The Mule source code project is neatly organized into a hierarchy of sub-projects. (Sub-projects are sometimes referred to as "modules," but to avoid confusion with Mule modules, we use "sub-projects".) Each sub-project generally produces one Maven artifact, usually a JAR file. The Mule build is structured using intermediate project object models (POMs) to group common sub-projects together. These intermediate sub-projects are sub-folders of the source code's mule folder, and are described in the table below.
+The MMA source code project is neatly organized into a hierarchy of sub-projects. (Sub-projects are sometimes referred to as "modules", but to avoid confusion, we use "sub-projects") Each sub-project generally produces one Maven artifact, usually a JAR file. The Mule build is structured using intermediate project object models (POMs) to group common sub-projects together. These intermediate sub-projects are sub-folders of the source code's mule folder, and are described in the table below.
 
 | Sub-project       | Description  |  
 |-------------------|--------------|  
-| `buildtools`      | tools to build Mule, scripts, and checkstyle configuration |
-| `core`            | Mule's core API and functionality that is required by all transports distributions       |  
-| `builds`          | the various distributions (refer to the Distributions section below for further details)    |  
-| `examples`        | examples that come with the full Mule distribution |
-| `modules`         | non-transport extensions to Mule, such as XML processing, Spring extras, or scripting support
-| `tests`           | tests that can be run as part of the Mule build |
-| `tools`           | tools for Mule |
-| `transports`      | Mule transports such as the JMS, VM, and TCP transports |
+| `migration-contribution-archetype`      | Maven archetype to generate a contribution project |
+| `mule-migration-tool-api`            | MMA's API and functionality to be consumed by any migration contribution       |  
+| `mule-migration-tool-contribution`          | The external distributions    |  
+| `mule-migration-tool-expression`        | MEL to DW expressions migrator |
+| `mule-migration-tool-library`         | Default migrations that are shipped within MMA
+| `mule-migration-tool-engine`           | MMA's execution engine |
+| `runner`           | Console implementation of the migration assistant |
+| `mule-migration-tool-tests`      | Integration Tests |
  
 
 ### Building Mule Migration Assistant
@@ -56,6 +56,6 @@ This section describes some problems you might experience using Maven and how to
 | Files could not be retrieved	       | You are behind a firewall and get an error stating that repository metadata for org.mule.tools could not be retrieved from the central repository.|Check the proxy settings in your Maven settings.xml file to confirm that they are configured correctly.|
 |OutOfMemory Error                    | You encounter OutOfMemoryError exceptions when attempting a full build of Mule.| Increasing the max heap and the PermGen space sizes. To do so, either export a MAVEN_OPTS variable in your shell, or add the variable to the original mvn script. Use the following: `MAVEN_OPTS=-Xmx512m -XX:MaxPermSize=256m` |
 |Slow build                           | 	-	 |If you know your downloads are up-to-date, you can use the offline option using the following command: `mvn -o` |
-| Conflicting transitive dependencies | Transitive dependencies in m2 are both powerful and problematic at times. For example, you many have conflicting library versions or when unwanted libraries are in your classpath.|	Use the debug option to display the effective classpath in a tree format, making it easy to see where each library is coming from: `mvn -x` |
+| Conflicting transitive dependencies | Transitive dependencies in m2 are both powerful and problematic at times. For example, you may have conflicting library versions or when unwanted libraries are in your classpath.|	Use the debug option to display the effective classpath in a tree format, making it easy to see where each library is coming from: `mvn -x` |
 | Running a goal for a specific project| By default, Maven execute a goal for a project and all sub-projects in its hierarchy. |	If you want to run the goal for a specific project only (and not its children), you can use the non-recursive option: `mvn -N` |
 | Debugging test failures | 	Surefire, the default Maven test runner, outputs all reports as a set of XML and text files. Any test failure details and stack traces are written to those files instead of the console, so it can be time consuming to open files to find problems. | You can redirect the output to the console temporarily by adding the following option: `mvn -Dsurefire.useFile=false`. This option skips creation ofthe text report, but still makes the XML report available for transformation by tools. | 

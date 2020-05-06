@@ -121,7 +121,7 @@ As per the following example, ensure your project meets these general coding con
 
 ### Design
 
-As per the the following example, ensure your project enforces encapsulation and adheres to standard coding design.
+As per the following example, ensure your project enforces encapsulation and adheres to standard coding design.
 
 ```xml
 <\!-\- [http://checkstyle.sf.net/config_design.html] \-->
@@ -187,8 +187,7 @@ NOT: `class OrderServiceImpl implements OrderService` | It is not uncommon to cr
 | Variable names must be in mixed case starting with lower case.	 | `message`, `newOrder` | Common practice in the Java development community and also the naming convention for variables used by Sun for the Java core packages. Makes variables easy to distinguish from types, and effectively resolves potential naming collision as in the declaration Line line; |
 | Names representing constants (final variables) must be all uppercase using underscore to separate words.  | `MAX_ITERATIONS`, `COLOR_RED`  | Common practice in the Java development community and also the naming convention used by Sun for the Java core packages.  |
 | Names representing methods must be verbs and written in mixed case starting with lower case. | `getName()`, `computeTotalWidth()`  | Common practice in the Java development community and also the naming convention used by Sun for the Java core packages and the JavaBean specification. This is identical to variable names, but methods in Java are already distinguishable from variables by their specific form. |
-| Abbreviations and acronyms should not be uppercase when used as name. | `exportHtmlSource();` NOT: `exportHTMLSource();`
-`openDvdPlayer(); ` NOT: `openDVDPlayer();` | Using all uppercase for the base name will give conflicts with the naming conventions given above. A variable of this type whould have to be named dVD, hTML etc. which obviously is not very readable. Another problem is illustrated in the examples above; When the name is connected to another, the readability is seriously reduced; The word following the acronym does not stand out as it should. |
+| Abbreviations and acronyms should not be uppercase when used as name. | `exportHtmlSource();` NOT: `exportHTMLSource();` | Using all uppercase for the base name will give conflicts with the naming conventions given above. A variable of this type whould have to be named dVD, hTML etc. which obviously is not very readable. Another problem is illustrated in the examples above; When the name is connected to another, the readability is seriously reduced; The word following the acronym does not stand out as it should. |
 | Underscores and other special characters should NOT be used in variable names, method names or class names | `private String name;` NOT `private String name_;` | Often private member variables are given an underscore '_' prefix to denote it's private member status. Mule does not use this convention as Java Editors make the status of variables know through color coding. |
 | Generic variables should have the same name as their type. |  `void setTopic(Topic topic)` NOT: `void setTopic(Topic value)` NOT: `void setTopic(Topic aTopic)` NOT: `void setTopic(Topic t)` `void connect(Database database)` NOT: `void connect(Database db)` NOT: `void connect(Database oracleDB)` | Reduce complexity by reducing the number of terms and names used. Also makes it easy to deduce the type given a variable name only. If for some reason this convention doesn't seem to fit it is a strong indication that the type name is badly chosen. Non-generic variables have a role. These variables can often be named by combining role and type: Point startingPoint, centerPoint; Name loginName;|
 |All names should be written in English.| | English is the preferred language for Mule development.|
@@ -202,13 +201,13 @@ NOT: `class OrderServiceImpl implements OrderService` | It is not uncommon to cr
 In general, do not include star imports, and ensure that you sort all imports alphabetically, in ascending order in each group.
 
 ```java
-org.mule
-<blank Line>
 com
 <blank Line>
 java
 <blank Line>
 javax
+<blank Line>
+org.mule
 <blank Line>
 <all other import sorted alphabetically>
 ```
@@ -227,8 +226,8 @@ javax
 
 ## XML Schema Conventions
 
-| Schema Item                    | Convention                                                                         |
-|:-------------------------------|:-----------------------------------------------------------------------------------|
+| Schema Item                    | Convention                                                                         | Example          |
+|:-------------------------------|:-----------------------------------------------------------------------------------|:---------------- |
 | Simple Types and Complex Types | Use nouns for the names of simple and complex types. Use mixed case names, starting with lowercase. Always apply a `Type` suffix.  | `inboundRouterType` |
 | Attributes                     | Use mixed case names for attributes, starting with lowercase. | `address` `name` `synchronous` |
 | Element                        | Use lowercase for element names. Use a "-" separator between words, when necessary. | `inbound-router` `custom-transformer` |
