@@ -1,0 +1,113 @@
+// This architecture is written in DOT language, to allow easier modification as it evolves. Documentation on the
+// language can be found on https://www.graphviz.org/doc/info/lang.html, https://www.graphviz.org/pdf/dotguide.pdf,
+// and https://en.wikipedia.org/wiki/DOT_(graph_description_language)
+
+digraph architecture {
+    // DEFINE STYLE
+    bgcolor="#CCCCCC"
+    graph [fontname="helvetica",fontsize="14"];
+    node [fontname="helvetica",fontsize="14"];
+    edge [fontname="helvetica",fontsize="14"];
+
+    // DEFINE NODES
+    subgraph cluster_studio {
+        // DEFINE STYLE
+        label = "Mule Migration Assistant Architecture";
+        bgcolor="#FFFFFF"
+        node [shape=plain]
+
+        // DEFINE NODES
+        migrationTasks [label=
+            <<table border='1' bgcolor='#DADAEA'>
+                <tr>
+                    <td port='title' border='0' colspan='1' valign='top'>External Migration Contributions</td>
+                </tr>
+                <tr>
+                    <td port='tasks' border='1' bgcolor='#BCBEDA'>Migration Tasks</td>
+                </tr>
+            </table>>];
+
+        runner [label=
+            <<table border='1' bgcolor='#F4C7C2'> // Runner
+                <tr> // TITLE
+                    <td port='title' border='0' colspan='2' valign='top'>Migration Runner</td>
+                </tr>
+
+                <tr>
+                    <td border='0'>
+                        <table border='1' bgcolor='#EDB1BF'> // APIS
+                            <tr> // TITLE
+                                <td border='0' valign='top'>APIs</td>
+                            </tr>
+
+                            // APIS LIST
+                            <tr>
+                                <td border='1' bgcolor='#E396AD'>Reporting</td>
+                            </tr>
+                            <tr>
+                                <td border='1' bgcolor='#E396AD'>Exception</td>
+                            </tr>
+                            <tr>
+                                <td border='1' bgcolor='#E396AD'>MEL to DW<BR/>Expressions transformer<BR/></td>
+                            </tr>
+                        </table>
+                    </td>
+
+                    <td border='0'>
+                        <table border='1' bgcolor='#CADBED'> // Tasks
+                            <tr> // TITLE
+                                <td port='locator' border='0' colspan='1' valign='top'>Tasks Locator</td>
+                            </tr>
+
+                           <tr> // APPS
+                               <td border='1' bgcolor='#A7C9DF'>
+                                   <table border='0'>
+                                       <tr> // TITLE
+                                           <td border='0' colspan='1' valign='top'>Tasks</td>
+                                       </tr>
+
+                                       // APPS LIST
+                                       <tr>
+                                            <td>
+                                                <table border='1' bgcolor='#7AACD2'>
+                                                   <tr> // APP NAME
+                                                       <td border='0' colspan='2' valign="top">Mule Core Migration</td>
+                                                   </tr>
+                                                </table>
+                                            </td>
+                                       </tr>
+                                       <tr>
+                                           <td>
+                                               <table border='1' bgcolor='#7AACD2'>
+                                                  <tr> // APP NAME
+                                                      <td border='0' colspan='2' valign="top">MUnit</td>
+                                                  </tr>
+                                               </table>
+                                           </td>
+                                      </tr>
+                                      <tr>
+                                         <td>
+                                             <table border='1' bgcolor='#7AACD2'>
+                                                <tr> // APP NAME
+                                                    <td border='0' colspan='2' valign="top">...</td>
+                                                </tr>
+                                             </table>
+                                         </td>
+                                    </tr>
+                                   </table>
+                               </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>>];
+
+        // DEFINE ORDER
+        rankdir="LR" // LEFT TO RIGHT
+        {rank=same;migrationTasks;runner} // ALIGN HORIZONTALLY
+        runner -> migrationTasks [style=invis,weight=99999] // RUNNER TO THE LEFT OF MIGRATION TASKS
+
+        // DEFINE RELATIONS
+        migrationTasks:title:w -> runner:locator:e [label="SPI"];
+    }
+}
