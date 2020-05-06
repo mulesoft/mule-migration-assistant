@@ -28,7 +28,7 @@ The Mule Migration Assistant workflow is designed as follows:
 * [Migration API](./mule-migration-tool-api): Set of API's to use when developing a new Migration task.
 * [Contributions](./mule-migration-tool-contribution): Where all external contributions are contributed to the tools. The set of migration tasks defined on this module will be loaded to the Migration Assistant trough SPI.
 * [Expression Migrator](./mule-migration-tool-expression): MEL to DW migrator. It contains all the rules to migrate Mule 3 expressions defined on MEL to the new DW transformation language on Mule 4.
-* [Migration Library](./mule-migration-tool-library): Set of default migrations that are shipped wit the Mule Migration Assistant. It contains all the migrations of Mule Core components, MUnit, etc.
+* [Migration Library](./mule-migration-tool-library): Set of default migrations that are shipped with the Mule Migration Assistant. It contains all the migrations of Mule Core components, MUnit, etc.
 * [Engine](./mule-migration-tool-engine): The execution engine that identifies the project type, locate all the migration tasks available and performs the migration.
 * [Runner](./runner): Console implementation to execute the Mule Migration Assistant.
 * [Integration Tests](./mule-migration-tool-tests): Suite of tests to validate all the component that will be supported by this tool. 
