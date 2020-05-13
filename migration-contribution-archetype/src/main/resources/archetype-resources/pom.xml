@@ -9,7 +9,7 @@
     <properties>
         <java.source>1.8</java.source>
         <java.target>1.8</java.target>
-        <mule.migration.tool.version>0.3.0</mule.migration.tool.version>
+        <mule.migration.tool.version>0.5.3</mule.migration.tool.version>
     </properties>
 
     <dependencies>
