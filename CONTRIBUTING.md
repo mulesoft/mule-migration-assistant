@@ -303,13 +303,13 @@ These are the methods that you must implement:
 
 Now it's time to create each step of your migration task. Create a new class under `src/main/java/com/mulesoft/tools/migration/library/mule/steps` and implement the corresponding interface depending the type of migration you want to make:
 
-[ApplicationModelContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/ApplicationModelContribution.java) if you want to migrate the application structure. Note that there's also an abstract class named [AbstractApplicationModelMigrationStep](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/AbstractApplicationModelMigrationStep.java) with some xPath-related functionality that you can extend.
+- [ApplicationModelContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/ApplicationModelContribution.java) if you want to migrate the application structure. Note that there's also an abstract class named [AbstractApplicationModelMigrationStep](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/AbstractApplicationModelMigrationStep.java) with some XPath-related functionality that you can extend.
 
-[PomContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/PomContribution.java) if you want to migrate the application POM structure.
+- [PomContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/PomContribution.java) if you want to migrate the application POM structure.
 
-[ProjectStructureContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/ProjectStructureContribution.java) if you want to migrate TBD
+- [ProjectStructureContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/ProjectStructureContribution.java) if you want to migrate TBD
 
-Then, if you are doing an application structure migration you have to declare the xPath selector of the mule processor that is going to be migrated. To do it you have call the `setAppliedTo` method –which is inherited– and pass the selector as parameter.
+Then, if you are doing an application structure migration you have to declare the XPath selector of the mule processor that is going to be migrated. To do it you have call the `setAppliedTo` method –which is inherited– and pass the selector as parameter.
 For example:
 
 ```java
@@ -320,7 +320,7 @@ public MyMigrationTaskStep() {
 }
 ```
 
-**Note:** You can write your own xPath selector or use the methods provided by the XmlDslUtils class.
+**Note:** You can write your own XPath selector or use the methods provided by the XmlDslUtils class.
 
 Finally, you have to implement the `execute` method, which receives two arguments:
 1. The element that is being processed depending the interface you are implementing: 
