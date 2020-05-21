@@ -278,17 +278,106 @@ Ready to submit your patch for review and merging? Initiate a pull request in gi
 4. MMA's core dev team reviews the pull request and may initiate discussion or ask questions about your changes in a Pull Request Discussion. The team can then merge your commits with the master where appropriate. We will validate acceptance of the agreement at this step. 
 5. If you have made changes or corrections to your commit after having submitted the pull request, please add them into the existing pull request. Don't create a new one. 
 
-## Contribute a new component migration to MMA (TBD)
+## Contribute a new component migration to MMA
+The component migration consists of two parts: the actual application migration, and a report indicating errors, suggestions or links to docs.
 
-## Creating your migration task repository (TBD)
+There are several types of component migrations:
 
-## Develop your component migration (TBD)
+1. Application structure: This migration will modify the Mule Application XML. You can add or remove or edit the XML elements and its children.
+2. Pom structure: In this type of migration you can modify the whole pom structure, add or remove dependencies, repositories, profiles, etc.
+3. Project structure: In this type of migration you will be able work with the project file system, meaning that you can create, copy, or remove any file. 
 
-## Document new component support (TBD)
 
-## Publish your migration to Maven repository (TBD)
+## Creating your migration task repository
+To get started with your migration task you have to create a new class and make it inherit from [AbstractMigrationTask](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/task/AbstractMigrationTask.java). In order to be consistent with the rest of the migrators, this class must be placed in the library module under the folder `src/main/java/com/mulesoft/tools/migration/library/mule/tasks`.
 
-## Include your migration into MMA (TBD)
+These are the methods that you must implement:
+
+`getDescription` a simple description of what this migrator is intended to do.
+
+`getFrom` the Mule version which the migration will be supported from.
+
+`getTo` the Mule version code that your migration will generate.
+
+`getSteps` This is the most important method, this is the collection of steps that the migrator will execute.
+
+Now it's time to create each step of your migration task. Create a new class under `src/main/java/com/mulesoft/tools/migration/library/mule/steps` and implement the corresponding interface depending the type of migration you want to make:
+
+- [ApplicationModelContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/ApplicationModelContribution.java) if you want to migrate the application structure. Note that there's also an abstract class named [AbstractApplicationModelMigrationStep](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/AbstractApplicationModelMigrationStep.java) with some XPath-related functionality that you can extend.
+
+- [PomContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/PomContribution.java) if you want to migrate the application POM structure.
+
+- [ProjectStructureContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/ProjectStructureContribution.java) if you want to modify the structure of the project, mainly work with files (moving, copying, or removing them).
+
+Then, if you are doing an application structure migration you have to declare the XPath selector of the mule processor that is going to be migrated. To do it you have call the `setAppliedTo` method –which is inherited– and pass the selector as parameter.
+For example:
+
+```java
+private static final String XPATH_SELECTOR = XmlDslUtils.getCoreXPathSelector("set-payload");
+
+public MyMigrationTaskStep() {
+  this.setAppliedTo(XPATH_SELECTOR);
+}
+```
+
+**Note:** You can write your own XPath selector or use the methods provided by the [XmlDslUtils](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/util/XmlDslUtils.java) class.
+
+Finally, you have to implement the `execute` method, which receives two arguments:
+1. The element that is being processed depending the interface you are implementing: 
+    - If it's [ApplicationModelContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/ApplicationModelContribution.java) this argument is going to be the JDom Element. 
+    - If it's [PomContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/PomContribution.java) this argument is going to be the application POM model.
+    - If it's [ProjectStructureContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/ProjectStructureContribution.java) this argument is going to be the Project Path. 
+
+2) The current migration report model.
+
+```java
+@Override
+public void execute(Element element, MigrationReport report) throws RuntimeException {
+  element.setName("new-element-name");
+}
+``` 
+
+If you need to report something, for example a deprecated behavior, you must create a new entry in the [report.yaml](./mule-migration-tool-library/src/main/resources/report.yaml) file indicating the severity of the report (error, warning or info), a message, a link to the docs, and then call the `report` method of the [MigrationReport](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/MigrationReport.java) model
+
+*report.yaml*
+```yaml
+myNewReportSection:
+  reportEntry:
+    type: INFO
+    message: this a is a simple message explaining something
+    docLinks:
+      - link to docs
+      - another link to docs
+```
+
+*migration task that needs to report something*
+```java
+@Override
+public void execute(Element element, MigrationReport report) throws RuntimeException {
+  if (element.getAttribute("deprecatedMule3Value") != null) {
+    report.report("myNewReportSection.reportEntry", element, element);
+  }
+}
+```
+
+## Include your migration into MMA
+Your new migrator is ready to be used! Now you have to make the Mule Migration Assitant be aware of this new feature.
+Doing it is as simple as going to the engine module and including your new migrator in the `getCoreMigrationTask` method of the [MigrationTaskLocator](./mule-migration-tool-engine/src/main/java/com/mulesoft/tools/migration/engine/MigrationTaskLocator.java) class.
+
+```java
+public List<AbstractMigrationTask> getCoreMigrationTasks() {
+    List<AbstractMigrationTask> coreMigrationTasks = new ArrayList<>();
+    ...
+    coreMigrationTasks.add(new MyNewMigrationTask());
+    ...
+    return coreMigrationTasks;
+}
+```
+
+## Document new component support
+You have already created a new migrator, created its migration tasks, and added it to the Mule Migration Assistant. Now it's time of the last but not least step: document the new feature!
+
+In order to make other developers aware of this new migrator, you have to document it! Send us a PR to TBD describing the new feature.
 
 # Summary
 
