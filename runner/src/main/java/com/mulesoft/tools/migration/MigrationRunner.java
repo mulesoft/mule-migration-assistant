@@ -82,14 +82,10 @@ public class MigrationRunner {
       log("Executing migrator " + job.getRunnerVersion() + "...");
       job.execute(report);
 
-      migrationRunner.sendUsageStatistics(job, report);
-
       printMigrationSummary(job.getReportPath().resolve(REPORT_HOME).toAbsolutePath().toString(),
                             stopwatch.stop().elapsed(MILLISECONDS), report);
       exit(0);
     } catch (Exception ex) {
-      migrationRunner.sendUsageStatistics(job, ex);
-
       printMigrationError(ex, stopwatch.stop().elapsed(MILLISECONDS));
       exit(-1);
     }
@@ -198,39 +194,6 @@ public class MigrationRunner {
   private void printHelp(Options options) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.printHelp("migration-assistant - Help", options);
-  }
-
-  protected void sendUsageStatistics(MigrationJob job, Object body) {
-    if (System.getProperty("mmt.disableUsageStatistics") != null) {
-      return;
-    }
-
-    try {
-      Gson gson = new Gson();
-
-      Executor httpExecutor = newInstance(HttpClients.custom().build());
-
-      if (proxyUser != null && proxyPass != null) {
-        httpExecutor = httpExecutor.auth(new HttpHost(proxyHost, proxyPort), proxyUser, proxyPass);
-      }
-
-      Request request = Request.Post("https://mmt-stats-gatherer.us-e1.cloudhub.io/api/v1/migrated" +
-          format("?status=%d&userId=%s&sessionId=%s&mmtVersion=%s&osName=%s&osVersion=%s",
-                 0, userId, sessionId, job.getRunnerVersion(),
-                 encode(getProperty("os.name"), "UTF-8"), encode(getProperty("os.version"), "UTF-8")))
-          .version(HTTP_1_1)
-          .bodyString(gson.toJson(body), APPLICATION_JSON);
-
-      if (proxyHost != null) {
-        request = request.viaProxy(new HttpHost(proxyHost, proxyPort));
-      }
-
-      httpExecutor.execute(request).handleResponse(response -> {
-        return response;
-      });
-    } catch (Exception e) {
-      // Nothing to do, do not fail the migration just for being unable to send the statistics.
-    }
   }
 
 }
