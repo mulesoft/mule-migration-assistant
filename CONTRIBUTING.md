@@ -320,7 +320,7 @@ public MyMigrationTaskStep() {
 }
 ```
 
-**Note:** You can write your own XPath selector or use the methods provided by the XmlDslUtils class.
+**Note:** You can write your own XPath selector or use the methods provided by the [XmlDslUtils](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/util/XmlDslUtils.java) class.
 
 Finally, you have to implement the `execute` method, which receives two arguments:
 1. The element that is being processed depending the interface you are implementing: 
@@ -348,7 +348,7 @@ public void execute(Element element, MigrationReport report) throws RuntimeExcep
 ```
 
 ## Include your migration into MMA
-Your new migrator is ready to be used! Now you have to make the Mule Migration Assitant to be aware of this new feature.
+Your new migrator is ready to be used! Now you have to make the Mule Migration Assitant be aware of this new feature.
 Doing it is as simple as going to the engine module and including your new migrator in the `getCoreMigrationTask` method of the [MigrationTaskLocator](./mule-migration-tool-engine/src/main/java/com/mulesoft/tools/migration/engine/MigrationTaskLocator.java) class.
 
 ```java
