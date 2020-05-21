@@ -284,8 +284,8 @@ The component migration consists of two parts: the actual application migration,
 There are several types of component migrations:
 
 1. Application structure: This migration will modify the Mule Application XML. You can add or remove or edit the XML elements and its children.
-2. Pom structure: in this type of migration you can modify the whole pom structure, add or remove dependencies, repositories, profiles, etc.
-3. Project structure: TBD
+2. Pom structure: In this type of migration you can modify the whole pom structure, add or remove dependencies, repositories, profiles, etc.
+3. Project structure: In this type of migration you will be able work with the project file system, meaning that you can create, copy, or remove any file. 
 
 
 ## Creating your migration task repository
@@ -307,7 +307,7 @@ Now it's time to create each step of your migration task. Create a new class und
 
 - [PomContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/PomContribution.java) if you want to migrate the application POM structure.
 
-- [ProjectStructureContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/ProjectStructureContribution.java) if you want to migrate TBD
+- [ProjectStructureContribution](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/ProjectStructureContribution.java) if you want to modify the structure of the project, mainly work with files (moving, copying, or removing them).
 
 Then, if you are doing an application structure migration you have to declare the XPath selector of the mule processor that is going to be migrated. To do it you have call the `setAppliedTo` method –which is inherited– and pass the selector as parameter.
 For example:
@@ -337,7 +337,20 @@ public void execute(Element element, MigrationReport report) throws RuntimeExcep
 }
 ``` 
 
-If you need to report something, for example a deprecated behavior, you must create a new entry in the [report.yaml](./mule-migration-tool-library/src/main/resources/report.yaml) file indicating the severity of the report (error, warning or info), a message, and then call the `report` method of the [MigrationReport](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/MigrationReport.java) model
+If you need to report something, for example a deprecated behavior, you must create a new entry in the [report.yaml](./mule-migration-tool-library/src/main/resources/report.yaml) file indicating the severity of the report (error, warning or info), a message, a link to the docs, and then call the `report` method of the [MigrationReport](./mule-migration-tool-api/src/main/java/com/mulesoft/tools/migration/step/category/MigrationReport.java) model
+
+*report.yaml*
+```yaml
+myNewReportSection:
+  reportEntry:
+    type: INFO
+    message: this a is a simple message explaining something
+    docLinks:
+      - link to docs
+      - another link to docs
+```
+
+*migration task that needs to report something*
 ```java
 @Override
 public void execute(Element element, MigrationReport report) throws RuntimeException {
