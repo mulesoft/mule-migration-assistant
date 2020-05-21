@@ -26,8 +26,7 @@ public class SetProjectDescription implements PomContribution {
 
   @Override
   public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
-    //TODO Find a way to dynamically obtain the runner version
-    pomModel.setDescription("Application migrated with Mule Migration Assistant 1.0.0");
+    pomModel.setDescription("Application migrated with MMA");
   }
 
 }
