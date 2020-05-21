@@ -37,7 +37,7 @@ The migration assistan is an easy project to contribute with. Before contributin
 ## Getting to know better Mule Migration Assistant
 Here you can find useful sources to understand better the Mule Migration Assistant and its forthcoming features:
 
-- MuleSoft's [Docs Site](https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool). The fastest way of knowing about new features and missing scenarios. 
+- MuleSoft's [Docs Site](https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.3/migration-tool). The fastest way of knowing about new features and missing scenarios. 
 - The Mule Migration Assistant Github [repository](https://github.com/mulesoft/mule-migration-tool/blob/master/README.md). You can see detailed information about the Mule Migration Assistant architecture.
 
 ## Understanding the migration task locator mechanisms (TBD)

@@ -22,7 +22,6 @@
         <module>mule-migration-tool-expression</module>
         <module>migration-contribution-archetype</module>
         <module>mule-migration-tool-contribution</module>
-        <module>mule-migration-tool-stats-gatherer</module>
 
     </modules>
 
