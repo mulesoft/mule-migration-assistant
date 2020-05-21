@@ -124,7 +124,7 @@ public class PomModel {
   /**
    * Retrieves the description in the pom.
    *
-   * @retunr a {@link String}
+   * @return a {@link String}
    */
   public String getDescription() {
     return model.getDescription();
