@@ -122,6 +122,24 @@ public class PomModel {
   }
 
   /**
+   * Retrieves the description in the pom.
+   *
+   * @retunr a {@link String}
+   */
+  public String getDescription() {
+    return model.getDescription();
+  }
+
+  /**
+   * Sets the description in the pom.
+   *
+   * @param description
+   */
+  public void setDescription(String description) {
+    model.setDescription(description);
+  }
+
+  /**
    * Retrieves the artifact id declared in the pom.
    *
    * @return a {@link String}
