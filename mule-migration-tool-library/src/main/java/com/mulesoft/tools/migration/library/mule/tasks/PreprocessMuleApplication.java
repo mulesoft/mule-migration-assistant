@@ -16,6 +16,7 @@ import com.mulesoft.tools.migration.library.mule.steps.ee.MigrateDWScriptFiles;
 import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveBuildHelperMavenPlugin;
 import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleAppMavenPlugin;
 import com.mulesoft.tools.migration.library.mule.steps.pom.RemoveMuleDependencies;
+import com.mulesoft.tools.migration.library.mule.steps.pom.SetProjectDescription;
 import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateMuleMavenPlugin;
 import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateProjectVersion;
 import com.mulesoft.tools.migration.library.mule.steps.pom.UpdateRepositories;
@@ -49,7 +50,8 @@ public class PreprocessMuleApplication extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new UpdateRepositories(),
+    return newArrayList(new SetProjectDescription(),
+                        new UpdateRepositories(),
                         new RemoveMuleDependencies(),
                         new UpdateMuleMavenPlugin(),
                         new RemoveMuleAppMavenPlugin(),

@@ -217,5 +217,14 @@ public class PomModelTestCase {
       assertNotNull(model.getDistributionManagement().getRepository());
       assertThat(model.getDistributionManagement().getRepository().getName(), is("deploymentRepositoryName"));
     }
+
+    @Test
+    public void setDescription() {
+      PomModel model = new PomModel();
+      String value = "sample";
+      model.setDescription(value);
+
+      assertThat("Description should exist on the pom model", model.getDescription(), equalTo(value));
+    }
   }
 }
