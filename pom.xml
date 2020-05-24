@@ -68,7 +68,7 @@
         <commons.net.version>3.6</commons.net.version>
         <commons.text.version>1.4</commons.text.version>
         <commons.cli.version>1.4</commons.cli.version>
-        <commons.lang3.version>3.7</commons.lang3.version>
+        <commons.lang3.version>3.10</commons.lang3.version>
         <log4j.version>2.9.1</log4j.version>
 
         <junit.version>4.12</junit.version>
