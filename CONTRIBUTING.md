@@ -26,6 +26,9 @@ In this guide you will find:
     - [Document new component support](#document-new-component-support)
     - [Publish your migration to Maven repository](#publish-your-migration-to-maven-repository)
     - [Include your migration into MMA](#include-your-migration-into-mma)   
+- [Contribute a new expression migration to MMA](#contribute-a-new-expression-migration-to-mma) 
+    - [Understanding the expressions migration module](#understanding-the-expressions-migration-module)   
+    - [Develop your expression migration](#develop-your-expression-migration)
 - [Summary](#summary)
 
 -----------------------------------------------------------------------------
@@ -378,6 +381,37 @@ public List<AbstractMigrationTask> getCoreMigrationTasks() {
 You have already created a new migrator, created its migration tasks, and added it to the Mule Migration Assistant. Now it's time of the last but not least step: document the new feature!
 
 In order to make other developers aware of this new migrator, you have to document it! Send us a PR to TBD describing the new feature.
+
+## Contribute a new expression migration to MMA
+
+Mule 3 uses Mule Expression Language (MEL) to access and evaluate the data in the payload, properties and variables of a Mule message. This changed on Mule 4 where DataWeave was introduced as the default expression language.
+Since MEL will be not supported on Mule 4, all the expressions using it, will need to be migrated to DW.
+MMA supports the migration of the most used expressions but we welcome any users that want to contribute and extend this migration.
+
+## Understanding the expressions migration module
+
+The [mule-migration-tool-expression](./mule-migration-tool-expression) module was developed using Scala. This helped us to parse the MEL expression and generate an [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree). Once this AST is generated, we use DW libraries to transform this into a DW expression.
+Here are some useful links to get to know the tools used on this module:
+- [Parboiled2](https://github.com/sirthias/parboiled2)
+- [DataWeave](https://github.com/mulesoft/data-weave)
+
+## Develop your expression migration
+
+Before you begin you need to identify the DW expression will represent your previous MEL expression. 
+
+Once you have that, you need to check on [MelGrammar.scala](./mule-migration-tool-expression/src/main/scala/com/mulesoft/tools/MelGrammar.scala) and define a new rule to migrate your expression. This will generate a new node the expressions AST that later will be converted to a DW expression.
+
+After adding the new rule, on [Migrator.scala](./mule-migration-tool-expression/src/main/scala/com/mulesoft/tools/Migrator.scala) you will need to add a new route on `toDataweaveAst` method that will take that AST and convert it to DW structure. You can check the existing structure [here](https://github.com/mulesoft/data-weave/tree/master/parser/src/main/scala/org/mule/weave/v2/parser/ast).
+
+Now that we already have our new expression migrated, the last and most important part is Tests!
+
+All the expressions migration tests are defined [here](). You will need to add tests there to validate your contribution and to also check that existing ones are running ok. We take care of the migration, you just need to define your incoming MEL expression and your desired outcome.
+
+```scala
+it should "migrate a simple ternary operator expression" in {
+    Migrator.migrate("true ? 1 : 0").getGeneratedCode() shouldBe "%dw 2.0\n---\nif (true)\n  1\nelse\n  0"
+  }
+```
 
 # Summary
 
