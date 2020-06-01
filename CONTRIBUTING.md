@@ -397,7 +397,7 @@ Here are some useful links to get to know the tools used on this module:
 
 ## Develop your expression migration
 
-Before you begin you need to identify the DW expression will represent your previous MEL expression. 
+Before you begin you need to identify the DW expression equivalent to your current MEL expression. 
 
 Once you have that, you need to check on [MelGrammar.scala](./mule-migration-tool-expression/src/main/scala/com/mulesoft/tools/MelGrammar.scala) and define a new rule to migrate your expression. This will generate a new node the expressions AST that later will be converted to a DW expression.
 
@@ -405,7 +405,7 @@ After adding the new rule, on [Migrator.scala](./mule-migration-tool-expression/
 
 Now that we already have our new expression migrated, the last and most important part is Tests!
 
-All the expressions migration tests are defined [here](). You will need to add tests there to validate your contribution and to also check that existing ones are running ok. We take care of the migration, you just need to define your incoming MEL expression and your desired outcome.
+All the expressions migration tests are defined [here](./mule-migration-tool-expression/src/test/com/mulesoft/tools/MigratorTest.scala). You will need to add tests there to validate your contribution and to also check that existing ones are running ok. We take care of the migration, you just need to define your incoming MEL expression and your desired outcome.
 
 ```scala
 it should "migrate a simple ternary operator expression" in {
