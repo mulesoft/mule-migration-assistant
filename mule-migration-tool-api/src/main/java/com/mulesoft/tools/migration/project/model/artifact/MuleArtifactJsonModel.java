@@ -79,8 +79,8 @@ public class MuleArtifactJsonModel {
   /**
    * Add a new property to the model
    *
-   * @param key
-   * @param value
+   * @param key the property key name
+   * @param value the property key value
    * @throws IllegalArgumentException
    */
   public void addProperty(String key, String value) throws IllegalArgumentException {
@@ -150,7 +150,7 @@ public class MuleArtifactJsonModel {
   /**
    * Get the application secure properties defined on the mule artifact file
    *
-   * @return an optional of {@link List<String>}
+   * @return an optional of {@link List<String>} with the secure properties
    */
   public Optional<List<String>> getSecureProperties() {
     if (model.has(SECURE_PROPERTIES)) {

@@ -143,30 +143,30 @@ public final class TransportsUtils {
   /**
    * Migrate child elements for all the transports processors to Mule 4 configuration
    *
-   * @param object
-   * @param m4Config
-   * @param connection
-   * @param report
+   * @param element the Mule transport element
+   * @param flow the flow that contains the transport
+   * @param connection the Mule transport connection element
+   * @param report the migration report
    */
-  public static void handleConnectorChildElements(Element object, Element m4Config, Element connection, MigrationReport report) {
-    Element receiverThreadingProfile = object.getChild("receiver-threading-profile", CORE_NAMESPACE);
+  public static void handleConnectorChildElements(Element element, Element flow, Element connection, MigrationReport report) {
+    Element receiverThreadingProfile = element.getChild("receiver-threading-profile", CORE_NAMESPACE);
     if (receiverThreadingProfile != null) {
-      report.report("flow.threading", receiverThreadingProfile, m4Config);
-      object.removeContent(receiverThreadingProfile);
+      report.report("flow.threading", receiverThreadingProfile, flow);
+      element.removeContent(receiverThreadingProfile);
     }
 
-    Element dispatcherThreadingProfile = object.getChild("dispatcher-threading-profile", CORE_NAMESPACE);
+    Element dispatcherThreadingProfile = element.getChild("dispatcher-threading-profile", CORE_NAMESPACE);
     if (dispatcherThreadingProfile != null) {
-      report.report("flow.threading", dispatcherThreadingProfile, m4Config);
-      object.removeContent(dispatcherThreadingProfile);
+      report.report("flow.threading", dispatcherThreadingProfile, flow);
+      element.removeContent(dispatcherThreadingProfile);
     }
 
-    Element reconnect = object.getChild("reconnect", CORE_NAMESPACE);
+    Element reconnect = element.getChild("reconnect", CORE_NAMESPACE);
 
     if (reconnect != null) {
       Element reconnectNotification = reconnect.getChild("reconnect-custom-notifier", CORE_NAMESPACE);
       if (reconnectNotification != null) {
-        report.report("transports.reconnectCustomNotifier", dispatcherThreadingProfile, m4Config);
+        report.report("transports.reconnectCustomNotifier", dispatcherThreadingProfile, flow);
         reconnectNotification.detach();
       }
 
@@ -190,10 +190,10 @@ public final class TransportsUtils {
   /**
    * Add the required compatibility elements to the flow for a migrated inbound endpoint to work correctly.
    *
-   * @param appModel
-   * @param inboundEndpoint
-   * @param report
-   * @param expectsOutboundProperties
+   * @param appModel the application model representation
+   * @param inboundEndpoint the inbound processor
+   * @param report the migration report
+   * @param expectsOutboundProperties should it declare outbound properties
    */
   public static void migrateInboundEndpointStructure(ApplicationModel appModel, Element inboundEndpoint, MigrationReport report,
                                                      boolean expectsOutboundProperties) {
@@ -203,11 +203,11 @@ public final class TransportsUtils {
   /**
    * Add the required compatibility elements to the flow for a migrated inbound endpoint to work correctly.
    *
-   * @param appModel
-   * @param inboundEndpoint
-   * @param report
-   * @param expectsOutboundProperties
-   * @param consumeStreams
+   * @param appModel the application model representation
+   * @param inboundEndpoint the inbound processor
+   * @param report the migration report
+   * @param expectsOutboundProperties should it declare outbound properties
+   * @param consumeStreams should properties be declared as streams
    */
   public static void migrateInboundEndpointStructure(ApplicationModel appModel, Element inboundEndpoint, MigrationReport report,
                                                      boolean expectsOutboundProperties, boolean consumeStreams) {
@@ -220,10 +220,10 @@ public final class TransportsUtils {
   /**
    * Add the required compatibility elements to the flow for a migrated outbound endpoint to work correctly.
    *
-   * @param appModel
-   * @param outboundEndpoint
-   * @param report
-   * @param outputsAttributes
+   * @param appModel the application model representation
+   * @param outboundEndpoint the outbound processor
+   * @param report the migration report
+   * @param outputsAttributes should it declare attributes
    */
   public static void migrateOutboundEndpointStructure(ApplicationModel appModel, Element outboundEndpoint, MigrationReport report,
                                                       boolean outputsAttributes) {
@@ -233,11 +233,11 @@ public final class TransportsUtils {
   /**
    * Add the required compatibility elements to the flow for a migrated outbound endpoint to work correctly.
    *
-   * @param appModel
-   * @param outboundEndpoint
-   * @param report
-   * @param outputsAttributes
-   * @param consumeStreams
+   * @param appModel the application model representation
+   * @param outboundEndpoint the outbound processor
+   * @param report  the migration report
+   * @param outputsAttributes should it declare attributes
+   * @param consumeStreams should properties be declared as streams
    */
   public static void migrateOutboundEndpointStructure(ApplicationModel appModel, Element outboundEndpoint, MigrationReport report,
                                                       boolean outputsAttributes, boolean consumeStreams) {
@@ -279,8 +279,8 @@ public final class TransportsUtils {
   /**
    * Extract inbound children configuration into the flow
    *
-   * @param inbound
-   * @param appModel
+   * @param inbound the inbound processor
+   * @param appModel the application model representation
    */
   public static void extractInboundChildren(Element inbound, ApplicationModel appModel) {
     extractInboundChildren(inbound, 2, inbound.getParentElement(), appModel);
@@ -289,10 +289,10 @@ public final class TransportsUtils {
   /**
    * Extract inbound children configuration into the flow
    *
-   * @param inbound
-   * @param index
-   * @param target
-   * @param appModel
+   * @param inbound the inbound processor
+   * @param index the position where to extract the child elements
+   * @param target the location where to extract the child elements
+   * @param appModel the application model representation
    */
   public static void extractInboundChildren(Element inbound, final int index,
                                             final Element target, ApplicationModel appModel) {
@@ -312,8 +312,8 @@ public final class TransportsUtils {
   /**
    * Extract outbound children configuration into the flow
    *
-   * @param outbound
-   * @param appModel
+   * @param outbound the outbound processor
+   * @param appModel the application model representation
    */
   public static void extractOutboundChildren(Element outbound, ApplicationModel appModel) {
     outbound.getParentElement().addContent(outbound.getParentElement().indexOf(outbound), fetchContent(outbound, appModel));
@@ -390,7 +390,7 @@ public final class TransportsUtils {
    * The endpoint may already have a {@code scheduling-strategy} because it was migrated from a Quartz transport. If not, the
    * default values are set.
    *
-   * @param endpoint
+   * @param endpoint the endpoint to migrate the scheduling strategy
    */
   public static void migrateSchedulingStrategy(Element endpoint, OptionalInt defaultFreq) {
     Element schedulingStr = endpoint.getChild("scheduling-strategy", CORE_NAMESPACE);

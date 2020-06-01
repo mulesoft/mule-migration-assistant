@@ -30,7 +30,7 @@ public class MigrationStepException extends RuntimeException {
    * Create a new migration exception
    *
    * @param message the message to display on exception
-   * @param cause the exception to thrown
+   * @param cause the exception to be thrown
    */
   public MigrationStepException(String message, Throwable cause) {
     super(message, cause);

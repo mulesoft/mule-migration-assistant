@@ -29,7 +29,7 @@ public class MigrationTaskException extends Exception {
    * Create a new migration exception
    *
    * @param message the message to display on exception
-   * @param exception the exception to thrown
+   * @param exception the exception to be thrown
    */
   public MigrationTaskException(String message, Exception exception) {
     super(message, exception);

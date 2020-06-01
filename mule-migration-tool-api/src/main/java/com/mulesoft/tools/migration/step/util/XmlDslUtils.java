@@ -63,8 +63,8 @@ public final class XmlDslUtils {
    * Sets the given {@code text} on the given {@code element}, wrapping it in a {@code CDATA} for readability if it contains
    * special characters.
    *
-   * @param element
-   * @param text
+   * @param element the element where to add text
+   * @param text the text to add on the element
    * @return
    */
   public static Element setText(Element element, String text) {
@@ -92,9 +92,9 @@ public final class XmlDslUtils {
   /**
    * Migrate a field for which the default value was changed.
    *
-   * @param oldDefaultValue
-   * @param newDefaultValue
-   * @param currentValue
+   * @param oldDefaultValue the old value
+   * @param newDefaultValue the new value
+   * @param currentValue the actual value on the element
    * @return the value to set in the new version, or null if {@code currentValue} is already the new default.
    */
   public static String changeDefault(String oldDefaultValue, String newDefaultValue, String currentValue) {
@@ -110,9 +110,9 @@ public final class XmlDslUtils {
   /**
    * Add the required compatibility elements to the flow for a migrated source to work correctly.
    *
-   * @param appModel
-   * @param element
-   * @param report
+   * @param appModel the application model representation
+   * @param element the source element to migrate using compatibility module
+   * @param report the migration report
    */
   public static void migrateSourceStructure(ApplicationModel appModel, Element element, MigrationReport report) {
     migrateSourceStructure(appModel, element, report, true, false);
@@ -121,11 +121,11 @@ public final class XmlDslUtils {
   /**
    * Add the required compatibility elements to the flow for a migrated source to work correctly.
    *
-   * @param appModel
-   * @param element
-   * @param report
-   * @param expectsOutboundProperties
-   * @param consumeStreams
+   * @param appModel the application model representation
+   * @param element the source element to migrate using compatibility module
+   * @param report the migration report
+   * @param expectsOutboundProperties should it declare outbound properties
+   * @param consumeStreams should properties be declared as streams
    */
   public static void migrateSourceStructure(ApplicationModel appModel, Element element, MigrationReport report,
                                             boolean expectsOutboundProperties, boolean consumeStreams) {
@@ -151,9 +151,9 @@ public final class XmlDslUtils {
   /**
    * Add the required compatibility elements to the flow for a migrated operation to work correctly.
    *
-   * @param appModel
-   * @param element
-   * @param report
+   * @param appModel the application model representation
+   * @param element the processor to migrate using compatibility module
+   * @param report the migration report
    */
   public static void migrateOperationStructure(ApplicationModel appModel, Element element, MigrationReport report) {
     migrateOperationStructure(appModel, element, report, true, null, null, false);
@@ -162,12 +162,12 @@ public final class XmlDslUtils {
   /**
    * Add the required compatibility elements to the flow for a migrated operation to work correctly.
    *
-   * @param appModel
-   * @param element
-   * @param report
-   * @param outputsAttributes
-   * @param expressionMigrator
-   * @param resolver
+   * @param appModel the application model representation
+   * @param element the processor to migrate using compatibility module
+   * @param report the migration report
+   * @param outputsAttributes should it declare attributes
+   * @param expressionMigrator the expressions migration engine
+   * @param resolver the compatibility module resolver
    */
   public static void migrateOperationStructure(ApplicationModel appModel, Element element, MigrationReport report,
                                                boolean outputsAttributes, ExpressionMigrator expressionMigrator,
@@ -178,13 +178,13 @@ public final class XmlDslUtils {
   /**
    * Add the required compatibility elements to the flow for a migrated operation to work correctly.
    *
-   * @param appModel
-   * @param element
-   * @param report
-   * @param outputsAttributes
-   * @param expressionMigrator
-   * @param resolver
-   * @param consumeStreams
+   * @param appModel the application model representation
+   * @param element the processor to migrate using compatibility module
+   * @param report the migration report
+   * @param outputsAttributes should it declare attributes
+   * @param expressionMigrator the expressions migration engine
+   * @param resolver the compatibility module resolver
+   * @param consumeStreams  should properties be declared as streams
    */
   public static void migrateOperationStructure(ApplicationModel appModel, Element element, MigrationReport report,
                                                boolean outputsAttributes, ExpressionMigrator expressionMigrator,
@@ -207,22 +207,22 @@ public final class XmlDslUtils {
   /**
    * Migrate enricher expressions
    *
-   * @param element
-   * @param expressionMigrator
-   * @param resolver
-   * @param model
-   * @param resolver
-   * @param report
+   * @param element the enricher element
+   * @param expressionMigrator he expressions migration engine
+   * @param resolver the compatibility module resolver
+   * @param appModel the application model representation
+   * @param resolver the compatibility module resolver
+   * @param report the migration report
    */
   public static void migrateEnrichers(Element element, ExpressionMigrator expressionMigrator,
-                                      CompatibilityResolver<String> resolver, ApplicationModel model,
+                                      CompatibilityResolver<String> resolver, ApplicationModel appModel,
                                       MigrationReport report) {
     String targetValue = element.getAttributeValue("target");
     if (isNotBlank(targetValue)) {
       String migratedExpression = expressionMigrator.migrateExpression(targetValue, true, element, true);
       element.setAttribute("target", expressionMigrator.unwrap(migratedExpression));
       if (resolver.canResolve(expressionMigrator.unwrap(targetValue))) {
-        addOutboundPropertySetter(expressionMigrator.unwrap(migratedExpression), element, model, element);
+        addOutboundPropertySetter(expressionMigrator.unwrap(migratedExpression), element, appModel, element);
         report.report("message.outboundPropertyEnricher", element, element);
       }
     }
@@ -231,12 +231,12 @@ public final class XmlDslUtils {
   /**
    * Add the compatibility element to convert properties to outbound properties
    *
-   * @param propertyName
-   * @param element
-   * @param model
-   * @param after
+   * @param propertyName the name of the outbound property
+   * @param element the current element that will use the outbound property
+   * @param appModel the application model representation
+   * @param after the element after the new set-property processor will be added
    */
-  public static Element addOutboundPropertySetter(String propertyName, Element element, ApplicationModel model,
+  public static Element addOutboundPropertySetter(String propertyName, Element element, ApplicationModel appModel,
                                                   Element after) {
     addCompatibilityNamespace(element.getDocument());
     Element setProperty = new Element("set-property", COMPATIBILITY_NAMESPACE);
@@ -250,9 +250,9 @@ public final class XmlDslUtils {
   /**
    * Add the compatibility element to convert attributes to outbound properties
    *
-   * @param report
-   * @param parent
-   * @param index
+   * @param report the migration report
+   * @param parent the top level element on the configuration
+   * @param index the position where to add the attributes-to-inbound-properties processor
    */
   private static Element buildAttributesToInboundProperties(MigrationReport report, Parent parent, int index) {
     Element a2ip = new Element("attributes-to-inbound-properties", COMPATIBILITY_NAMESPACE);
@@ -265,10 +265,10 @@ public final class XmlDslUtils {
   /**
    * Add the compatibility element to convert outbound properties to vars
    *
-   * @param report
-   * @param parent
-   * @param index
-   * @param consumeStreams
+   * @param report the migration report
+   * @param parent the top level element on the configuration
+   * @param index the position where to add the outbound-properties-to-var processor
+   * @param consumeStreams should properties be declared as streams
    */
   private static Element buildOutboundPropertiesToVar(MigrationReport report, Parent parent, int index, boolean consumeStreams) {
     Element op2v = new Element("outbound-properties-to-var", COMPATIBILITY_NAMESPACE);
@@ -287,8 +287,8 @@ public final class XmlDslUtils {
   /**
    * Migrate redelivery policy of Mule 3 into the new REDELIVERY_EXHAUSTED method on Mule 4
    *
-   * @param redeliveryPolicy
-   * @param report
+   * @param redeliveryPolicy the Mule 3 redelivery policy element
+   * @param report the migration report
    */
   public static void migrateRedeliveryPolicyChildren(Element redeliveryPolicy, MigrationReport report) {
     Element dlq = redeliveryPolicy.getChild("dead-letter-queue", CORE_NAMESPACE);
@@ -320,7 +320,7 @@ public final class XmlDslUtils {
   /**
    * Add the required compatibility namespace declaration on document.
    *
-   * @param document
+   * @param document the mule configuration file
    */
   public static void addCompatibilityNamespace(Document document) {
     addNameSpace(COMPATIBILITY_NAMESPACE, COMPATIBILITY_NS_SCHEMA_LOC, document);
@@ -438,8 +438,8 @@ public final class XmlDslUtils {
   /**
    * Check that the element contains an attribute
    *
-   * @param source
-   * @param sourceAttributeName
+   * @param source the element
+   * @param sourceAttributeName the attribute name
    * @return {@link Boolean}
    */
   public static boolean hasAttribute(final Element source, final String sourceAttributeName) {
@@ -449,8 +449,8 @@ public final class XmlDslUtils {
   /**
    * Add new element before some existing element.
    *
-   * @param newElement
-   * @param element
+   * @param newElement the new element to be added
+   * @param element the element before the new element will be added
    */
   public static void addElementBefore(Element newElement, Element element) {
     Integer elementIndex = element.getParentElement().indexOf(element);
@@ -460,8 +460,8 @@ public final class XmlDslUtils {
   /**
    * Add new element after some existing element.
    *
-   * @param newElement
-   * @param element
+   * @param newElement the new element to be added
+   * @param element the element after the new element will be added
    */
   public static void addElementAfter(Element newElement, Element element) {
     Integer elementIndex = element.getParentElement().indexOf(element);
@@ -471,8 +471,8 @@ public final class XmlDslUtils {
   /**
    * Add new element after some existing element.
    *
-   * @param newElements
-   * @param element
+   * @param newElements the new elements to be added
+   * @param element the element after the new element will be added
    */
   public static void addElementsAfter(Collection<? extends Content> newElements, Element element) {
     Integer elementIndex = element.getParentElement().indexOf(element);
@@ -482,7 +482,7 @@ public final class XmlDslUtils {
   /**
    * Get the top level element in the configuration file that contains the procesor
    *
-   * @param processor
+   * @param processor the element which you need to get the top level element
    */
   public static Element getContainerElement(Element processor) {
     while (processor != null && !"flow".equals(processor.getName()) && !"sub-flow".equals(processor.getName())
@@ -496,7 +496,7 @@ public final class XmlDslUtils {
   /**
    * Check if the processor is a top level element in the configuration file
    *
-   * @param element
+   * @param element the element to check if it is a top level element
    */
   public static boolean isTopLevelElement(Element element) {
     return (element.getParentElement().equals(element.getDocument().getRootElement()));
@@ -505,7 +505,7 @@ public final class XmlDslUtils {
   /**
    * Create top level error handler section on configuration file
    *
-   * @param element
+   * @param element the element to check if it is an error handler top level element
    */
   public static void createErrorHandlerParent(Element element) {
     Element parent = element.getParentElement();
@@ -527,8 +527,8 @@ public final class XmlDslUtils {
   /**
    * Remove an attribute from element
    *
-   * @param element
-   * @param attributeName
+   * @param element the element where the attribute will be removed
+   * @param attributeName the attribute name to be removed
    */
   public static void removeAttribute(Element element, String attributeName) {
     if (hasAttribute(element, attributeName)) {
@@ -539,7 +539,7 @@ public final class XmlDslUtils {
   /**
    * Remove all attributes from element
    *
-   * @param element
+   * @param element the element where all the attributes will be removed
    */
   public static void removeAllAttributes(Element element) {
     List<Attribute> attributes = element.getAttributes().stream().collect(toList());
@@ -549,8 +549,8 @@ public final class XmlDslUtils {
   /**
    * Add a new attribute to identify for particular post-migration actions
    *
-   * @param element
-   * @param attribute
+   * @param element the element where this attribute will be added
+   * @param attribute the attribute to be added
    */
   public static void addMigrationAttributeToElement(Element element, Attribute attribute) {
     attribute.setNamespace(Namespace.getNamespace("migration", "migration"));
@@ -560,7 +560,7 @@ public final class XmlDslUtils {
   /**
    * Check if the element is a mule 3 error handling element
    *
-   * @param element
+   * @param element the element to check if it is an error handler element
    */
   public static boolean isErrorHanldingElement(Element element) {
     return element.getName()
@@ -570,7 +570,7 @@ public final class XmlDslUtils {
   /**
    * Get the exception handler element for the selected flow
    *
-   * @param flow
+   * @param flow the element to check if it is a flow
    */
   public static Element getFlowExceptionHandlingElement(Element flow) {
     return flow.getChildren().stream().filter(e -> isErrorHanldingElement(e)).findFirst().orElse(null);
@@ -579,8 +579,8 @@ public final class XmlDslUtils {
   /**
    * Add element at the end of the flow before the exception handling components.
    *
-   * @param flow
-   * @param newElement
+   * @param flow the top level element that will contain this new element
+   * @param newElement the new element to be added
    */
   public static void addElementToBottom(Element flow, Element newElement) {
     Element exceptionHandling = getFlowExceptionHandlingElement(flow);
@@ -591,8 +591,8 @@ public final class XmlDslUtils {
   /**
    * Add new top level element after all the existing ones.
    *
-   * @param element
-   * @param document
+   * @param element the new element to be added
+   * @param document the document where it will be added
    */
   public static void addTopLevelElement(Element element, Document document) {
     Integer elementIndex = document.getRootElement().getContent().indexOf(document.getRootElement().getChildren().stream()
@@ -608,9 +608,9 @@ public final class XmlDslUtils {
   /**
    * Migrate reconnection section of Mule 3 to new Mule 4 strategy
    *
-   * @param m4Connection
-   * @param m3Connector
-   * @param report
+   * @param m4Connection the migrated connection
+   * @param m3Connector the connector that uses that connection
+   * @param report the migration report
    */
   public static void migrateReconnection(Element m4Connection, Element m3Connector, MigrationReport report) {
     String failsDeployment = changeDefault("true", "false", m3Connector.getAttributeValue("validateConnections"));
@@ -671,7 +671,7 @@ public final class XmlDslUtils {
   /**
    * Return JDOM document from a file path.
    *
-   * @param filePath
+   * @param filePath the path of the file
    * @return the jdom document.
    */
   public static Document generateDocument(Path filePath) throws JDOMException, IOException {
@@ -683,8 +683,8 @@ public final class XmlDslUtils {
   /**
    * Check if the file is a Mule configuration file
    *
-   * @param fileName
-   * @param appBasePath
+   * @param fileName the file name
+   * @param appBasePath the application path
    * @return
    */
   public static boolean isMuleConfigFile(String fileName, Path appBasePath) {
@@ -708,8 +708,8 @@ public final class XmlDslUtils {
   /**
    * Get Xpath expression to select elements on the configuration file
    *
-   * @param namespaceUri
-   * @param elementName
+   * @param namespaceUri the namespace URI
+   * @param elementName the element name
    * @return a String with the expression
    */
   public static String getXPathSelector(String namespaceUri, String elementName) {
@@ -719,8 +719,8 @@ public final class XmlDslUtils {
   /**
    * Get Xpath expression to select top level elements on the configuration file
    *
-   * @param namespaceUri
-   * @param elementName
+   * @param namespaceUri the namespace URI
+   * @param elementName the element name
    * @return a String with the expression
    */
   public static String getTopLevelXPathSelector(String namespaceUri, String elementName) {
@@ -730,9 +730,9 @@ public final class XmlDslUtils {
   /**
    * Get Xpath expression to select elements on the configuration file
    *
-   * @param namespaceUri
-   * @param elementName
-   * @param topLevel
+   * @param namespaceUri the namespace URI
+   * @param elementName the element name
+   * @param topLevel is a top level element
    * @return a String with the expression
    */
   public static String getXPathSelector(String namespaceUri, String elementName, boolean topLevel) {
@@ -742,7 +742,7 @@ public final class XmlDslUtils {
   /**
    * Get Xpath expression to select Mule core elements on the configuration file
    *
-   * @param elementName
+   * @param elementName the element name
    * @return a String with the expression
    */
   public static String getCoreXPathSelector(String elementName) {
@@ -752,7 +752,7 @@ public final class XmlDslUtils {
   /**
    * Get Xpath expression to select Mule core top level elements on the configuration file
    *
-   * @param elementName
+   * @param elementName the element name
    * @return a String with the expression
    */
   public static String getTopLevelCoreXPathSelector(String elementName) {
@@ -762,8 +762,8 @@ public final class XmlDslUtils {
   /**
    * Get Xpath expression to select Mule core elements on the configuration file
    *
-   * @param elementName
-   * @param topLevel
+   * @param elementName the element name
+   * @param topLevel is a top level element
    * @return a String with the expression
    */
   private static String getCoreXPathSelector(String elementName, boolean topLevel) {
@@ -773,7 +773,7 @@ public final class XmlDslUtils {
   /**
    * Remove nested comments on element to avoid having the same entrance more than one time
    *
-   * @param element
+   * @param element the element to remove comments
    */
   public static void removeNestedComments(Element element) {
     Iterator<Content> contentIterator = element.getContent().iterator();
