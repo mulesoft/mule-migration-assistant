@@ -25,7 +25,6 @@ import java.util.List;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-
 public abstract class AbstractApplicationModelMigrationStep implements ApplicationModelContribution {
 
   private XPathExpression appliedTo;

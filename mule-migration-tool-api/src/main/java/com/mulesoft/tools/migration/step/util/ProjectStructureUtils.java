@@ -20,6 +20,14 @@ import java.nio.file.Path;
  */
 public final class ProjectStructureUtils {
 
+  /**
+   * Method to rename/move an existing file on the application
+   *
+   * @param fileName the path of the file
+   * @param newFileName the new path of the file
+   * @param applicationModel the {@link ApplicationModel} of the application
+   * @param report the {@link MigrationReport} to update the existing entries on the file
+   */
   public static void renameFile(Path fileName, Path newFileName, ApplicationModel applicationModel, MigrationReport report) {
     File fileRename = fileName.toFile();
     if (fileRename.exists()) {

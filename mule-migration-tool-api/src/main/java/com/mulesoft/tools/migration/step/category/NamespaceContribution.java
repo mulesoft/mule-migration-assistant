@@ -10,7 +10,7 @@ import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
 /**
- * Migration Step that works over the application model adding namespaces.
+ * Migration Step that works over the application model adding new namespaces.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0

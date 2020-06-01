@@ -17,10 +17,21 @@ import com.mulesoft.tools.migration.step.MigrationStep;
  */
 public class MigrationStepException extends RuntimeException {
 
+  /**
+   * Create a new migration exception
+   *
+   * @param message the message to display on exception
+   */
   public MigrationStepException(String message) {
     super(message);
   }
 
+  /**
+   * Create a new migration exception
+   *
+   * @param message the message to display on exception
+   * @param cause the exception to thrown
+   */
   public MigrationStepException(String message, Throwable cause) {
     super(message, cause);
   }

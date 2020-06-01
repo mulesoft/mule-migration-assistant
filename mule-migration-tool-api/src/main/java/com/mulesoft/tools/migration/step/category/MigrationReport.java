@@ -51,8 +51,8 @@ public interface MigrationReport<T> {
   /**
    * Sets some basic metadata about the project to be populated into the report.
    *
-   * @param projectType
-   * @param projectName
+   * @param projectType a {@link ProjectType}
+   * @param projectName the project name
    */
   void initialize(ProjectType projectType, String projectName);
 
@@ -76,7 +76,7 @@ public interface MigrationReport<T> {
    * @param documentationLinks the links to the Mule documentation that contain the explanation of any changes needed in the
    *        migrated app.
    *
-   * @deprecated Use {@link #report(String, Element, Element)} instead.
+   * @deprecated Use {@link #report(String, Element, Element, String...)} instead.
    */
   @Deprecated
   void report(Level level, Element element, Element elementToComment, String message, String... documentationLinks);
@@ -86,15 +86,15 @@ public interface MigrationReport<T> {
    * <p>
    * This value is later used as the denominator to calculate the migration ratio.
    *
-   * @param processedElements
+   * @param processedElements the amount of elements processed
    */
   void addProcessedElements(int processedElements);
 
   /**
    * Update file reference on report
    *
-   * @param oldFileName
-   * @param newFileName
+   * @param oldFileName the previous name of the file
+   * @param newFileName the new name of the file
    */
   void updateReportEntryFilePath(Path oldFileName, Path newFileName);
 

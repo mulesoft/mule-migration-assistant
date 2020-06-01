@@ -14,11 +14,21 @@ package com.mulesoft.tools.migration.exception;
  */
 public class MigrationException extends Exception {
 
-
+  /**
+   * Create a new migration exception
+   *
+   * @param message to display on exception
+   */
   public MigrationException(String message) {
     super(message);
   }
 
+  /**
+   * Create a new migration exception
+   *
+   * @param message the message to display on exception
+   * @param cause the exception to thrown
+   */
   public MigrationException(String message, Throwable cause) {
     super(String.format("$s %n %s", message, cause.getStackTrace()), cause);
   }

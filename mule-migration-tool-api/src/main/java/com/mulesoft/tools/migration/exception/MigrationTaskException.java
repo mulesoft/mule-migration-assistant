@@ -16,11 +16,22 @@ import com.mulesoft.tools.migration.task.AbstractMigrationTask;
  */
 public class MigrationTaskException extends Exception {
 
+  /**
+   * Create a new migration exception
+   *
+   * @param message the message to display on exception
+   */
   public MigrationTaskException(String message) {
     super(message);
   }
 
-  public MigrationTaskException(String message, Exception e) {
-    super(message, e);
+  /**
+   * Create a new migration exception
+   *
+   * @param message the message to display on exception
+   * @param exception the exception to thrown
+   */
+  public MigrationTaskException(String message, Exception exception) {
+    super(message, exception);
   }
 }

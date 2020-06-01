@@ -58,6 +58,9 @@ public final class TransportsUtils {
   /**
    * In the case the address can't be parsed (it may be a property reference), it will be used as the host as to continue with the
    * migration.
+   *
+   * @param endpoint the endpoint processor
+   * @param report the migration report where to add a reference in case of failure
    */
   public static Optional<EndpointAddress> processAddress(Element endpoint, MigrationReport report) {
     if (endpoint.getAttribute("address") == null) {
@@ -137,6 +140,14 @@ public final class TransportsUtils {
     migrateReconnection(connection, mule3Connector, report);
   }
 
+  /**
+   * Migrate child elements for all the transports processors to Mule 4 configuration
+   *
+   * @param object
+   * @param m4Config
+   * @param connection
+   * @param report
+   */
   public static void handleConnectorChildElements(Element object, Element m4Config, Element connection, MigrationReport report) {
     Element receiverThreadingProfile = object.getChild("receiver-threading-profile", CORE_NAMESPACE);
     if (receiverThreadingProfile != null) {
@@ -178,6 +189,11 @@ public final class TransportsUtils {
 
   /**
    * Add the required compatibility elements to the flow for a migrated inbound endpoint to work correctly.
+   *
+   * @param appModel
+   * @param inboundEndpoint
+   * @param report
+   * @param expectsOutboundProperties
    */
   public static void migrateInboundEndpointStructure(ApplicationModel appModel, Element inboundEndpoint, MigrationReport report,
                                                      boolean expectsOutboundProperties) {
@@ -186,6 +202,12 @@ public final class TransportsUtils {
 
   /**
    * Add the required compatibility elements to the flow for a migrated inbound endpoint to work correctly.
+   *
+   * @param appModel
+   * @param inboundEndpoint
+   * @param report
+   * @param expectsOutboundProperties
+   * @param consumeStreams
    */
   public static void migrateInboundEndpointStructure(ApplicationModel appModel, Element inboundEndpoint, MigrationReport report,
                                                      boolean expectsOutboundProperties, boolean consumeStreams) {
@@ -197,6 +219,11 @@ public final class TransportsUtils {
 
   /**
    * Add the required compatibility elements to the flow for a migrated outbound endpoint to work correctly.
+   *
+   * @param appModel
+   * @param outboundEndpoint
+   * @param report
+   * @param outputsAttributes
    */
   public static void migrateOutboundEndpointStructure(ApplicationModel appModel, Element outboundEndpoint, MigrationReport report,
                                                       boolean outputsAttributes) {
@@ -205,6 +232,12 @@ public final class TransportsUtils {
 
   /**
    * Add the required compatibility elements to the flow for a migrated outbound endpoint to work correctly.
+   *
+   * @param appModel
+   * @param outboundEndpoint
+   * @param report
+   * @param outputsAttributes
+   * @param consumeStreams
    */
   public static void migrateOutboundEndpointStructure(ApplicationModel appModel, Element outboundEndpoint, MigrationReport report,
                                                       boolean outputsAttributes, boolean consumeStreams) {
@@ -243,10 +276,24 @@ public final class TransportsUtils {
     migrateOperationStructure(appModel, outboundEndpoint, report, outputsAttributes, null, null, consumeStreams);
   }
 
+  /**
+   * Extract inbound children configuration into the flow
+   *
+   * @param inbound
+   * @param appModel
+   */
   public static void extractInboundChildren(Element inbound, ApplicationModel appModel) {
     extractInboundChildren(inbound, 2, inbound.getParentElement(), appModel);
   }
 
+  /**
+   * Extract inbound children configuration into the flow
+   *
+   * @param inbound
+   * @param index
+   * @param target
+   * @param appModel
+   */
   public static void extractInboundChildren(Element inbound, final int index,
                                             final Element target, ApplicationModel appModel) {
     target.addContent(index, fetchContent(inbound, appModel));
@@ -262,6 +309,12 @@ public final class TransportsUtils {
     }
   }
 
+  /**
+   * Extract outbound children configuration into the flow
+   *
+   * @param outbound
+   * @param appModel
+   */
   public static void extractOutboundChildren(Element outbound, ApplicationModel appModel) {
     outbound.getParentElement().addContent(outbound.getParentElement().indexOf(outbound), fetchContent(outbound, appModel));
     outbound.getParentElement().addContent(outbound.getParentElement().indexOf(outbound) + 1,
