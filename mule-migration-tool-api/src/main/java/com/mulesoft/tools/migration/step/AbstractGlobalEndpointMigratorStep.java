@@ -83,11 +83,11 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
     }
   }
 
-  protected Set<Element> getRefs(Element object) {
+  protected Set<Element> getRefs(Element element) {
     Set<Element> refsToGlobal = new HashSet<>();
     refsToGlobal
         .addAll(getApplicationModel().getNodes("//" + getNamespace().getPrefix() + ":endpoint[@ref='"
-            + object.getAttributeValue("name") + "']"));
+            + element.getAttributeValue("name") + "']"));
     return refsToGlobal;
   }
 

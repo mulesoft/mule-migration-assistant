@@ -82,6 +82,12 @@ public class PomModelUtils {
     return repository;
   }
 
+  /**
+   * Add shared libraries on the mule maven plugin configuration
+   *
+   * @param model {@link PomModel}  the pom representation model
+   * @param dependencies the list of {@link Dependency} to add as shared libraries
+   */
   public static void addSharedLibs(PomModel model, Dependency... dependencies) {
     model.getPlugins().stream()
         .filter(plugin -> "org.mule.tools.maven".equals(plugin.getGroupId())
