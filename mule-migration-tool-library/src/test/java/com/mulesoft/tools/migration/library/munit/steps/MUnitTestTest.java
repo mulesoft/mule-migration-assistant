@@ -33,7 +33,7 @@ import org.junit.Test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class MoveMUnitProcessorsToSectionsTest {
+public class MUnitTestTest {
 
   private static final String MUNIT_SAMPLE_XML = "munit-move-processors.xml";
   private static final Path MUNIT_EXAMPLES_PATH = Paths.get("munit/examples");
@@ -42,24 +42,24 @@ public class MoveMUnitProcessorsToSectionsTest {
   @Rule
   public ReportVerification report = new ReportVerification();
 
-  private MoveMUnitProcessorsToSections moveMUnitProcessorsToSections;
+  private MUnitTest munitTest;
   private Element node;
 
   @Before
   public void setUp() throws Exception {
-    moveMUnitProcessorsToSections = new MoveMUnitProcessorsToSections();
+    munitTest = new MUnitTest();
   }
 
   @Test(expected = MigrationStepException.class)
   public void executeWithNullElement() throws Exception {
-    moveMUnitProcessorsToSections.execute(null, report.getReport());
+    munitTest.execute(null, report.getReport());
   }
 
   @Test
-  public void execute() throws Exception {
+  public void validateTestStructure() throws Exception {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(MUNIT_SAMPLE_PATH.toString()).toURI().getPath());
-    node = getElementsFromDocument(doc, moveMUnitProcessorsToSections.getAppliedTo().getExpression()).get(0);
-    moveMUnitProcessorsToSections.execute(node, report.getReport());
+    node = getElementsFromDocument(doc, munitTest.getAppliedTo().getExpression()).get(0);
+    munitTest.execute(node, report.getReport());
 
     assertThat("The munit test not contains sections.", node.getChildren().size(), is(3));
     assertThat("The munit test not contains sections.", node.getChildren().get(0).getName(), is("behavior"));

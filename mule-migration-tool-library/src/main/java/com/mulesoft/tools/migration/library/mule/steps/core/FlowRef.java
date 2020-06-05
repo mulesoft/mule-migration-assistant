@@ -16,14 +16,14 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-
 import org.jdom2.Element;
+
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 
 /**
  * Migrate flow-ref components
@@ -33,7 +33,7 @@ import org.jdom2.Element;
  */
 public class FlowRef extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-  public static final String XPATH_SELECTOR = "//mule:flow-ref";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("flow-ref");
 
   private ExpressionMigrator expressionMigrator;
 

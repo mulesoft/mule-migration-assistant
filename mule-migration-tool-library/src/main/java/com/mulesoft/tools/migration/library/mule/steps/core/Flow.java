@@ -18,6 +18,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getTopLevelCoreXPathSelector;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isErrorHanldingElement;
 import static java.util.Collections.reverse;
 
@@ -39,7 +40,8 @@ import java.util.List;
  */
 public class Flow extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "/*/mule:flow";
+  public static final String XPATH_SELECTOR = getTopLevelCoreXPathSelector("flow");
+
 
   @Override
   public String getDescription() {
