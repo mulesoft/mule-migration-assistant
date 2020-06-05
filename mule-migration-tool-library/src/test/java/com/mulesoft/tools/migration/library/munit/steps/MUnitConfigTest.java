@@ -54,15 +54,15 @@ public class MUnitConfigTest {
   @Test
   public void removeMockConnectionsAttribute() throws Exception {
     assertThat("The mock-connectors attribute is present on munit config",
-            node.getAttribute("mock-connectors"),
-            equalTo(null));
+               node.getAttribute("mock-connectors"),
+               equalTo(null));
   }
 
   @Test
   public void removeMockInboundsAttribute() throws Exception {
     assertThat("The mock-inbounds attribute is present on munit config",
-            node.getAttribute("mock-inbounds"),
-            equalTo(null));
+               node.getAttribute("mock-inbounds"),
+               equalTo(null));
   }
 
 }
