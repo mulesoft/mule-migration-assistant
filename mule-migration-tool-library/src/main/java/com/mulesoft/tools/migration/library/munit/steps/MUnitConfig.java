@@ -28,6 +28,8 @@ public class MUnitConfig extends AbstractApplicationModelMigrationStep {
 
   private static final String XPATH_SELECTOR = getXPathSelector("http://www.mulesoft.org/schema/mule/munit", "config", true);
   private static final String ATTRIBUTE_NAME = "name";
+  private static final String ATTRIBUTE_MOCK_CONNECTORS = "mock-connectors";
+  private static final String ATTRIBUTE_MOCK_INBOUNDS = "mock-inbounds";
 
   @Override
   public String getDescription() {
@@ -46,5 +48,20 @@ public class MUnitConfig extends AbstractApplicationModelMigrationStep {
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());
     }
+
+    if (element.getAttribute(ATTRIBUTE_MOCK_CONNECTORS) != null) {
+      if (element.getAttributeValue(ATTRIBUTE_MOCK_CONNECTORS).equals("true")) {
+        report.report("munit.mockConnectors", element, element.getParentElement());
+      }
+      element.removeAttribute(ATTRIBUTE_MOCK_CONNECTORS);
+    }
+
+    if (element.getAttribute(ATTRIBUTE_MOCK_INBOUNDS) != null) {
+      if (element.getAttributeValue(ATTRIBUTE_MOCK_INBOUNDS).equals("true")) {
+        report.report("munit.mockInbounds", element, element.getParentElement());
+      }
+      element.removeAttribute(ATTRIBUTE_MOCK_INBOUNDS);
+    }
+
   }
 }

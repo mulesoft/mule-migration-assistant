@@ -34,20 +34,35 @@ public class MUnitConfigTest {
 
   private MUnitConfig munitConfig;
   private Element node;
+  private Document doc;
 
   @Before
   public void setUp() throws Exception {
     munitConfig = new MUnitConfig();
+    doc = getDocument(this.getClass().getClassLoader().getResource(MUNIT_SAMPLE_PATH.toString()).toURI().getPath());
+    node = getElementsFromDocument(doc, munitConfig.getAppliedTo().getExpression()).get(0);
+    munitConfig.execute(node, report.getReport());
   }
 
   @Test
-  public void execute() throws Exception {
-    Document doc = getDocument(this.getClass().getClassLoader().getResource(MUNIT_SAMPLE_PATH.toString()).toURI().getPath());
-    node = getElementsFromDocument(doc, munitConfig.getAppliedTo().getExpression()).get(0);
-    munitConfig.execute(node, report.getReport());
-
+  public void migrateConfigName() throws Exception {
     assertThat("The munit:config name attribute should be equals to the test-suite file name",
                node.getAttribute("name").getValue(),
                equalTo(FilenameUtils.getBaseName(MUNIT_SAMPLE_XML)));
   }
+
+  @Test
+  public void removeMockConnectionsAttribute() throws Exception {
+    assertThat("The mock-connectors attribute is present on munit config",
+               node.getAttribute("mock-connectors"),
+               equalTo(null));
+  }
+
+  @Test
+  public void removeMockInboundsAttribute() throws Exception {
+    assertThat("The mock-inbounds attribute is present on munit config",
+               node.getAttribute("mock-inbounds"),
+               equalTo(null));
+  }
+
 }
