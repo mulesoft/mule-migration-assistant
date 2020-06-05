@@ -7,6 +7,7 @@
 package com.mulesoft.tools.migration.project.model.artifact;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mule.runtime.api.deployment.meta.Product.MULE_EE;
@@ -18,6 +19,7 @@ import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptor;
 import org.mule.runtime.api.deployment.meta.MuleArtifactLoaderDescriptorBuilder;
 import org.mule.runtime.api.deployment.persistence.MuleApplicationModelJsonSerializer;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -106,8 +108,12 @@ public class MuleArtifactJsonModelUtils {
    * @return a {@link MuleArtifactJsonModel}
    */
   public static MuleArtifactJsonModel buildMuleArtifactJson(Path muleArtifactJson) throws IOException {
-    String muleApplicationModelJson = Files.toString(muleArtifactJson.toFile(), MULE_ARTIFACT_DEFAULT_CHARSET);
-    return new MuleArtifactJsonModel(muleApplicationModelJson);
+    File muleArtifactJsonFile = muleArtifactJson.toFile();
+    if (muleArtifactJsonFile.exists()) {
+      String muleApplicationModelJson = Files.toString(muleArtifactJsonFile, MULE_ARTIFACT_DEFAULT_CHARSET);
+      return new MuleArtifactJsonModel(muleApplicationModelJson);
+    } else {
+      return buildMinimalMuleArtifactJson(MIN_MULE4_VALID_VERSION);
+    }
   }
-
 }
