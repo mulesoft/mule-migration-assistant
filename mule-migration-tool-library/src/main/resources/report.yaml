@@ -928,3 +928,15 @@ configuration:
     message: "The 'configuration' element no longer has a 'defaultProcessingStrategy' attribute."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.1/intro-engine
+
+munit:
+  mockInbounds:
+    type: ERROR
+    message: "This parameter was deprecated on MUnit 2. You should enable connections using Enable Flow feature."
+    docLinks:
+      - https://docs.mulesoft.com/munit/latest/enable-flow-sources-concept
+  mockConnectors:
+    type: ERROR
+    message: "This parameter was deprecated on MUnit 2. You should mock each processor instead."
+    docLinks:
+      - https://docs.mulesoft.com/munit/latest/mock-event-processor
