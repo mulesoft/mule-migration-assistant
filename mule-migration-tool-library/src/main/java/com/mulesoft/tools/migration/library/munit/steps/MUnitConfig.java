@@ -51,7 +51,7 @@ public class MUnitConfig extends AbstractApplicationModelMigrationStep {
 
     if (element.getAttribute(ATTRIBUTE_MOCK_CONNECTORS) != null) {
       if (element.getAttributeValue(ATTRIBUTE_MOCK_CONNECTORS).equals("true")) {
-        report.report("munit.mockInbounds", element, element.getParentElement());
+        report.report("munit.mockConnectors", element, element.getParentElement());
       }
       element.removeAttribute(ATTRIBUTE_MOCK_CONNECTORS);
     }
