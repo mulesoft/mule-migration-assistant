@@ -67,10 +67,17 @@ $ cd runner/target
 Run the tool:
 
 ```
-$ java -jar mule-migration-assistant-runner-*CURRENT VERSION*.jar [options]
+$ java -jar mule-migration-assistant-runner-*CURRENT VERSION*.jar [parameters]
 ```
 
-// TODO list options
+| Parameter                  |      Description                                 |  Required |
+|----------------------------|:------------------------------------------------:|----------:|
+| projectBasePath            | Path of the application to be migrated           | Yes       |
+| destinationProjectBasePath | Path where to generate the migrated application  | Yes       |
+| muleVersion                | Mule 4 version to define on the application      | Yes       |
+| parentDomainBasePath       | Path of the domain to be migrated                | No        |  
+| help                       | Show all the parameters to define on MMA         | No        |
+
 
 ### Contributing
 
