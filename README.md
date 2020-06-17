@@ -1,7 +1,6 @@
 # Mule Migration Assistant
 
-Mule Migration Assistant is a command-line assistant that assists customers in the migration process by creating a best-effort translated Mule 4 app from a Mule 3 app.
-This assistant will not complete 100% migration – user adjustment will be required, and the migration report is provided after the assistant is run. It makes the best effort to translate every component in the base application.
+Mule Migration Assistant is a command-line tool that helps migrate Mule 3.x applications to Mule 4.x. This tool works on a "best-effort" basis to translate every component in the base application. This means that it does not complete 100% of the migration, manual adjustments are required. A migration report generated when the assistant is ran can help with those adjustments.
 
 ## Overview
 
@@ -40,33 +39,18 @@ These are the instructions to have the project up and running.
 - Java 8
 - Maven 3.3.9
 
-### Check out
+### Build and Run
+
+See the following commands in order to clone, build and run this project
 
 ```
-git clone --recursive git@github.com:mulesoft/mule-migration-tool.git
-```
-
-### Build
-
-Go to the project root and type
-
-```
+$ git clone --recursive git@github.com:mulesoft/mule-migration-tool.git
+$ cd mule-migration-tool/
 $ mvn clean package
-```
-
-### Run
-
-Go to the runner module target directory:
-
-```
 $ cd runner/target
-```
-
-Run the tool:
-
-```
 $ java -jar mule-migration-assistant-runner-*CURRENT VERSION*.jar [parameters]
 ```
+#### Mule Migration Assistant accepted parameters
 
 | Parameter                  |      Description                                 |  Required |
 |----------------------------|:------------------------------------------------:|----------:|
@@ -79,4 +63,4 @@ $ java -jar mule-migration-assistant-runner-*CURRENT VERSION*.jar [parameters]
 
 ### Contributing
 
-This project is Open Source, if you wish to contribute please check our [contribution guide](https://github.com/mulesoft/mule-migration-assistant/blob/master/CONTRIBUTING.md)
+This project is Open Source and therefor welcome contributions, in case you wish to contribute please check our [contribution guide](https://github.com/mulesoft/mule-migration-assistant/blob/master/CONTRIBUTING.md)
