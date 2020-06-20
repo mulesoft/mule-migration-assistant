@@ -42,8 +42,12 @@ public class AbstractFilterMigrator extends ValidationMigration {
   protected void handleFilter(Element filter) {
     if (filter.getAttribute("name") != null) {
       Attribute nameAttribute = filter.getAttribute("name");
-      filter.getDocument().getRootElement().addNamespaceDeclaration(DOCS_NAMESPACE);
-      nameAttribute.setNamespace(DOCS_NAMESPACE);
+      if (filter.getAttribute("name", DOCS_NAMESPACE) != null) {
+        nameAttribute.detach();
+      } else {
+        filter.getDocument().getRootElement().addNamespaceDeclaration(DOCS_NAMESPACE);
+        nameAttribute.setNamespace(DOCS_NAMESPACE);
+      }
     }
     if (!(filter.getParentElement().getNamespace().equals(VALIDATION_NAMESPACE)
         && filter.getParentElement().getName().endsWith("filter"))) {

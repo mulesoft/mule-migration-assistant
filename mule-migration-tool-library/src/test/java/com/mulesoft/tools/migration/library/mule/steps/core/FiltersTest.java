@@ -90,7 +90,8 @@ public class FiltersTest {
         "filter-16",
         "filter-17",
         "filter-18",
-        "filter-19"
+        "filter-19",
+        "filter-20"
     };
   }
 
