@@ -3,6 +3,8 @@
 
 Really, thank you. Thank you for taking some of your precious time helping the Mule Migration Assistant (MMA) project move forward.
 
+If you have not done so already, please sign our MuleSoft [CLA](https://api-notebook.anypoint.mulesoft.com/notebooks#380297ed0e474010ff43).
+
 This guide will help you get started with Mule Migration Assistant's development environment. You'll also find the set of rules you're expected to follow in order to submit improvements/fixes to the migration assistant or to contribute with new migration tasks.
 
 In this guide you will find:
