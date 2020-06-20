@@ -18,6 +18,7 @@ package com.mulesoft.tools.migration.library.mule.steps.json;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -48,6 +49,7 @@ public class JsonXsltTransformer extends AbstractApplicationModelMigrationStep i
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     report.report("json.xslt", element, element);
+    getApplicationModel().addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, element.getDocument());
     element.removeContent();
 
     element.setName("transform");
