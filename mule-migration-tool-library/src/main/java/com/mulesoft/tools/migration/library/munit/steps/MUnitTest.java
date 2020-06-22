@@ -31,10 +31,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This steps migrates the MUnit 1.x assert-true
+ * This step migrates the MUnit test structure
  * @author Mulesoft Inc.
  */
-public class MoveMUnitProcessorsToSections extends AbstractApplicationModelMigrationStep {
+public class MUnitTest extends AbstractApplicationModelMigrationStep {
 
   private static final String MUNIT_TOOLS_PREFIX = "munit-tools";
   private static final String MUNIT_TOOLS_URI = "http://www.mulesoft.org/schema/mule/munit-tools";
@@ -48,10 +48,10 @@ public class MoveMUnitProcessorsToSections extends AbstractApplicationModelMigra
 
   @Override
   public String getDescription() {
-    return "Update Assert True to new MUnit Assertion component";
+    return "Migrate MUnit test structure";
   }
 
-  public MoveMUnitProcessorsToSections() {
+  public MUnitTest() {
     this.setAppliedTo(XPATH_SELECTOR);
     this.setNamespacesContributions(newArrayList(MUNIT_NS, MUNIT_TOOLS_NS));
   }
@@ -59,6 +59,12 @@ public class MoveMUnitProcessorsToSections extends AbstractApplicationModelMigra
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     try {
+      element.setAttribute("name", element.getAttributeValue("name")
+          .replaceAll("/", "\\\\")
+          .replaceAll("\\[|\\{", "(")
+          .replaceAll("\\]|\\}", ")")
+          .replaceAll("#", "_"));
+
       List<Element> childNodes = element.getChildren();
       createBehaviorSection(childNodes, element);
       createExecutionSection(childNodes, element);

@@ -69,7 +69,9 @@ public class FlowTest {
         "flow-11",
         "flow-12",
         "flow-13",
-        "flow-14"
+        "flow-14",
+        "flow-15",
+        "flow-16"
     };
   }
 

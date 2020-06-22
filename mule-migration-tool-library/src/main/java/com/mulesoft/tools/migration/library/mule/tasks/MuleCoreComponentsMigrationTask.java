@@ -31,6 +31,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.Enricher;
 import com.mulesoft.tools.migration.library.mule.steps.core.ExceptionStrategyRef;
 import com.mulesoft.tools.migration.library.mule.steps.core.FirstSuccessful;
 import com.mulesoft.tools.migration.library.mule.steps.core.Flow;
+import com.mulesoft.tools.migration.library.mule.steps.core.FlowRef;
 import com.mulesoft.tools.migration.library.mule.steps.core.ForEachExpressions;
 import com.mulesoft.tools.migration.library.mule.steps.core.ForEachScope;
 import com.mulesoft.tools.migration.library.mule.steps.core.GenericGlobalEndpoint;
@@ -98,6 +99,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new ScatterGather(),
                         new Enricher(),
                         new Flow(),
+                        new FlowRef(),
                         new CompositeSource(),
                         new Async(),
                         new FirstSuccessful(),
