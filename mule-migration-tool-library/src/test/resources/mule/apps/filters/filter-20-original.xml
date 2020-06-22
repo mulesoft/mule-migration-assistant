@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
       xsi:schemaLocation="
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <flow name="test-filterFlow">
-        <message-filter>
-            <expression-filter expression="#[flowVars.currency == 'USD']" name="currencyFilter"/>
-        </message-filter>
+    <payload-type-filter name="global-filter" doc:name="Payload Filter" expectedType="java.lang.String"/>
+
+    <flow name="flow">
+        <filter ref="global-filter" name="Filter Ref" doc:name="Filter Reference"/>
     </flow>
 
-</mule> 
+</mule>

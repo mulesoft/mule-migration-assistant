@@ -1,20 +1,19 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
       xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
       xsi:schemaLocation="
                http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 
-    <flow name="test-filterFlow">
-        <validation:is-true expression="#[vars.currency == 'USD']" doc:name="currencyFilter"/>
+    <flow name="flow">
+        <validation:is-true doc:name="Payload Filter" expression="#[payload.^class == 'java.lang.String']"/>
         <error-handler>
-            <on-error-propagate logException="false" type="MULE:VALIDATION">
-                <set-variable value="#[true]" variableName="filtered"/>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]"/>
             </on-error-propagate>
         </error-handler>
     </flow>
 
-</mule> 
+</mule>
