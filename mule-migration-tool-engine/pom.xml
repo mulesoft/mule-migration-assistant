@@ -15,7 +15,7 @@
         <licensePath>../LICENSE_HEADER.txt</licensePath>
 
         <freemarker.version>2.3.28</freemarker.version>
-        <snakeyaml.version>1.23</snakeyaml.version>
+        <snakeyaml.version>1.26</snakeyaml.version>
     </properties>
     <build>
         <plugins>
