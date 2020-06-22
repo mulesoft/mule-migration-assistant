@@ -16,15 +16,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.json;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
 import org.jdom2.Element;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 
 /**
  * Migrate JSON to XML transformer
