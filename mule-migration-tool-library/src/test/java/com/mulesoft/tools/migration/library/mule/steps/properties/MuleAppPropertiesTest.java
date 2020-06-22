@@ -60,7 +60,9 @@ public class MuleAppPropertiesTest {
     return new Object[] {
         "properties-01",
         "properties-02",
-        "properties-03"
+        "properties-03",
+        "properties-04",
+        "properties-05"
     };
   }
 

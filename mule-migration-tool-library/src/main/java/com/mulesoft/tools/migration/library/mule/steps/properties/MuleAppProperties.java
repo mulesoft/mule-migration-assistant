@@ -61,6 +61,10 @@ public class MuleAppProperties implements NamespaceContribution {
         properties.forEach(p -> {
           appModel.getDocumentsContainString("${" + p + "}")
               .forEach(n -> addConfigFileReference(n, appModel));
+          appModel.getDocumentsContainString("p(\\\"" + p + "\\\")")
+              .forEach(n -> addConfigFileReference(n, appModel));
+          appModel.getDocumentsContainString("p('" + p + "')")
+              .forEach(n -> addConfigFileReference(n, appModel));
         });
       }
     } catch (IOException e) {
