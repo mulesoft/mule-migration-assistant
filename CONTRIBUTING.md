@@ -11,7 +11,7 @@ In this guide you will find:
 
 - [Before you begin](#before-you-begin) 
     - [Getting to know better Mule Migration Assistant](#getting-to-know-better-mule-migration-assistant)     
-    - [Understanding the different types of contributions](#understanding-the-migration-task-locator-mechanisms)
+    - [Visiting the community meeting points](#visiting-the-community-meeting-points)
 - [Setting up the development environment](#setting-up-the-development-environment) 
     - [Installing Prerequisites](#installing-prerequisites) 
     - [Getting the Source Code](#getting-the-source-code) 
@@ -45,18 +45,17 @@ Here you can find useful sources to understand better the Mule Migration Assista
 - MuleSoft's [Docs Site](https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.3/migration-tool). The fastest way of knowing about new features and missing scenarios. 
 - The Mule Migration Assistant Github [repository](https://github.com/mulesoft/mule-migration-tool/blob/master/README.md). You can see detailed information about the Mule Migration Assistant architecture.
 
-## Understanding the migration task locator mechanisms (TBD)
-Explain different types of contribution: fix on the assistant or new component migration.
-
 ## Visiting the community meeting points
 
 If you are here reading this document, you probably have already in mind a new feature or a bug fix to work on. This is great, however there could be other members of the community with the same idea.  
 
 Before you begin, please take a few minutes to review community meeting points to make sure someone else hasn't already taken on your challenge:
 
-1. Review [existing JIRAs](http://www.mulesoft.org/jira/browse/MMT) to see if a bug has already been logged.
+1. Review [existing Issues](https://github.com/mulesoft/mule-migration-assistant/issues) to see if a bug/feature has already been logged.
 2. Follow the [Mule forum](http://forum.mulesoft.org/mulesoft) chatter to see if anyone else has begun to resolve the problem or initiate the improvement. 
-If, in the above-listed resources, no-one else has initiated your improvement or fix, log the issue by creating a [MMA JIRA](http://www.mulesoft.org/jira/browse/MMT).  JIRA issues a identifier for your issue; keep this handy as you will use it to create a branch later if you decide to fix it yourself.
+If, in the above-listed resources, no-one else has initiated your improvement or fix, log the issue by creating a [GitHub Issue](https://github.com/mulesoft/mule-migration-assistant/issues/new).
+
+When working on an existing issue, please ensure to reference the branch on the issue. Please follow these [guidelines](https://help.github.com/en/github/writing-on-github/autolinked-references-and-urls) for it.
  
 # Setting up the development environment
 
