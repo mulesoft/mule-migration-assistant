@@ -54,11 +54,12 @@ Next, you need to make sure your deployment environment is ready. Depending on w
 | PCF does not support Mule 4.
 |===
 
-[[write_code]]
-== Writing the Code
+== Understand the Migration process
 
-That's it! You're ready to start building and deploying Mule 4 applications.
+Review these topics to get an overview of the migration process and understand changes introduced in Mule 4:
 
-You should review these topics to get an overview of the migration process and understand changes introduced in Mule 4:
+* https://docs.mulesoft.com/mule-runtime/4.3/intro-overview[Introduction to Mule 4] (external link)
 
-https://docs.mulesoft.com/mule-runtime/4.3/intro-overview[Introduction to Mule 4] (external link)
+Understand the MMA migration process:
+
+* xref:../migration-intro.adoc#migration_process[Migration to Mule 4]

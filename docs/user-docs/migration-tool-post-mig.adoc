@@ -335,7 +335,7 @@ As described in previous sections, Mule 4 attributes replace Inbound properties.
 Mule 4 event variables replace Mule 3 variables, such as Flow, Session, and
 Record variables. They also replace the Message Enricher component.
 +
-https://docs.mulesoft.com/mule-runtime/4.1/dataweave-quickstart#med_large_payload[This example] (external link), starting at step 4, loads the
+https://docs.mulesoft.com/mule-runtime/4.3/dataweave-quickstart#med_large_payload[This example] (external link), starting at step 4, loads the
 content of an example JSON file as a custom metadata type for the payload
 of a Mule message.
 +
@@ -428,3 +428,7 @@ In the Mule 3 example above, the `port` is configured on the endpoint, so
 when the connector is in a domain, it is necessary to migrate the Mule 4
 configuration manually. Review the documentation of the equivalent Mule 3 and
 Mule 4 connectors for details on migrating specific configurations.
+
+== See Also
+
+* xref:../migration-intro.adoc[Migration to Mule 4]

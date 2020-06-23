@@ -34,7 +34,7 @@ _before_ running the Mule Migration Assistant (MMA). See <<datamapper>>.
 == Running the Mule Migration Assistant
 
 Mule Migration Assistant (MMA) is a command-line
-utility (packaged as an executable JAR file). After the Beta program, 
+utility (packaged as an executable JAR file). After the Beta program,
 MMA will be released as part of Studio. You will then
 be able to perform migrations through Studio, rather than from the command line.
 
@@ -188,7 +188,7 @@ the project.
 
 Automatic migration of MUnit tests is supported the Mule Migration Assistant
 (MMA), so the first step is to run those migrated tests. Once all those tests
-pass, you can perform any additional testing that you were 
+pass, you can perform any additional testing that you were
 performing on the original version of the app.
 
 In either case, expect some of these tests to fail. Manual intervention might
@@ -259,6 +259,6 @@ migration.
 
 == See Also
 
-xref:migration-tool.adoc[Migration to Mule 4]
-
-xref:migration-tool-post-mig.adoc[Post-Migration Tasks]
+* xref:migration-tool.adoc[Migration to Mule 4]
+* xref:migration-tool-post-mig.adoc[Post-Migration Tasks]
+* xref:../migration-intro.adoc[Migration to Mule 4]

@@ -192,13 +192,13 @@ migrated app:
 <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
   <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
   <!--    For more information refer to:-->
-  <!--        * https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties-->
+  <!--        * https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.3/migration-tool-post-mig.html#outbound_properties-->
   <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
 </http:response>
 <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
   <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
   <!--    For more information refer to:-->
-  <!--        * https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties-->
+  <!--        * https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.3/migration-tool-post-mig.html#outbound_properties-->
   <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
 </http:response>
 ----
@@ -255,7 +255,7 @@ query the message 'attributes'. Remove this component if there are no uses of
   components that rely on 'inboundProperties' (such as 'copy-properties').-->
     <!--    For more information refer to:-->
     <!--
-    https://docs.mulesoft.com/mule-runtime/4.1/intro-mule-message#inbound-properties-are-now-attributes-->
+    https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
 </compatibility:attributes-to-inbound-properties>
 ----
 +
@@ -287,7 +287,7 @@ The XML element for the *Outbound Properties to var* component looks like this:
       expression.-->
     <!--    For more information refer to:-->
     <!--
-    https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.1/migration-tool-post-mig.html#outbound_properties-->
+    https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.3/migration-tool-post-mig.html#outbound_properties-->
 </compatibility:outbound-properties-to-var>
 ----
 
@@ -622,3 +622,4 @@ OS name: "mac os x", version: "10.14.6", arch: "x86_64", family: "mac"
 
 * xref:migration-tool.adoc[Migration to Mule 4]
 * https://docs.mulesoft.com/studio/7.5/import-export-packages[Importing and Exporting Projects] (external link)
+* xref:../migration-intro.adoc[Migration to Mule 4]
