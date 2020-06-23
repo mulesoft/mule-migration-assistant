@@ -55,7 +55,7 @@ Note that you can try out MMA by following the steps in the xref:migration-tutor
 == Compatibility Module
 
 Important::
-The Compatibility module is subject to conditions described for https://www.mulesoft.com/legal/versioning-back-support-policy#community[Community] connectors.
+*The Compatibility module is subject to the terms and conditions described for https://www.mulesoft.com/legal/versioning-back-support-policy#community[Community] connectors.*
 
 Some components or patterns cannot be migrated automatically by transforming
 the app's XML. For such cases, MMA adds the Compatibility
