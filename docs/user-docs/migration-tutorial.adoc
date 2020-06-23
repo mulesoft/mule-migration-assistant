@@ -18,10 +18,6 @@ with Mule 4.x runtimes.
 * MMA: https://repository.mulesoft.org/nexus/service/local/repositories/releases/content/com/mulesoft/tools/mule-migration-assistant-runner/1.0.0/mule-migration-assistant-runner-1.0.0.zip[Mule Migration Assistant (Zip file)]
 * https://www.mulesoft.com/lp/dl/studio/previous[Anypoint Studio 6] (external link)
 * https://www.mulesoft.com/lp/dl/studio[Anypoint Studio 7] (external link): The minimum requirement is version 7.3.0.
-//* <<maven_install, Maven>>: Maven version 3.3.9 or later supports manual steps in Studio 7, after running MMA.
-//NOT NEEDED FOR GA: ESTEBAN SAYS PROB NOT NEEDED BC COMPAT MODULES WILL BE AVAILABLE AT GA. TBD:
-//* `releases-ee` repository credentials: You will set these credentials so that Studio 7 can properly display compatibility components in your migrated Mule 4 app.
-//NOT NEEDED FOR GA: If you do not know your credentials, contact your CSM.
 
 This tutorial uses Studio version 6.6.4 for the Mule 3 app and Studio 7.5.0 for
 the migrated Mule 4 app.
@@ -32,7 +28,7 @@ the migrated Mule 4 app.
 Start by downloading a Mule 3 app from Anypoint Exchange, then importing it
 into Studio 6. In subsequent sections, you will migrate this app to Mule 4.
 
-image::images/mmt-exchange.png[Exchange: Querying a MySQL Database]
+image::../images/mmt-exchange.png[Exchange: Querying a MySQL Database]
 
 . Download version 1.4.0 of the https://anypoint.mulesoft.com/exchange/org.mule.examples/querying-a-mysql-database/1.4.0/[Querying a MySQL Database] (external link)
 asset from Exchange.
@@ -77,7 +73,7 @@ need to append the name of the project, as shown in the example above. The
 `-destinationProjectBasePath` can be any local path. For details, see
 xref:migration-tool-procedure.adoc#options[Command-line Options].
 +
-//WORKAROUND FOR 0.5.1 (TODO: TBD IF VALID)
+//WORKAROUND
 .Windows only:
 Note that if you are on a Windows machine and receive the message
 `Exception: Cannot read mule project.`, try using forward slashes (`/`)
@@ -113,11 +109,7 @@ Import the migrated app into Studio 7. In subsequent steps, you will perform the
 +
 The app is in the *querying-a-mysql-database-mule4* project. All the app's components are in a single flow called *database-to-jsonFlow*.
 +
-image::images/mmt-migrated-app.png[Imported App]
-+
-// If the migrated app contains *Unknown* components, go to <<step_maven>> to adjust the configuration for your Studio project _before_ proceeding to <<step_4>>.
-//+
-//image::images/mmt-migrated-app-mvn-config-issue.png[Imported App][Imported App with Maven Configuration Issue]
+image::../images/mmt-migrated-app.png[Imported App]
 +
 . Proceed to <<step_4>>
 
@@ -132,7 +124,7 @@ the app.
 A migration report identifies items that remain to complete the migration to
 Mule 4. For the sample app, the migration report looks like this:
 
-image::images/mmt-report.png[Mule Migration Assistant Report]
+image::../images/mmt-report.png[Mule Migration Assistant Report]
 
 The warnings (WARN messages) in this report are associated with
 components in the
@@ -162,7 +154,7 @@ for example:
 
 When you complete the modifications, the flow will look like this:
 
-image::images/mmt-resulting-flow.png[Flow: Database To JSON]
+image::../images/mmt-resulting-flow.png[Flow: Database To JSON]
 
 [[warning_1]]
 === Migrate HTTP Listener Components
@@ -294,7 +286,7 @@ The XML element for the *Outbound Properties to var* component looks like this:
 . To understand this issue, double-click the *Outbound Properties to var* icon
 in the *Message Flow* view, and go to the *Help* tab in the configuration area.
 +
-image::images/mmt-outbound-properties-to-var.png[Outbound Properties to var]
+image::../images/mmt-outbound-properties-to-var.png[Outbound Properties to var]
 +
 This note indicates that the component is intended to emulate the use of
 outbound properties in a Mule 3 App. Because there are no outbound properties
@@ -326,21 +318,21 @@ and its settings to a *MySQL Connection*.
 configuration tab.
 . In the *General* tab, click the green plus sign (*&#43;*) located to the right of the *Connector configuration* text field. (If you mouse over the *&#43;*, you see the word *Add*.)
 +
-image::images/mmt-db-open-db-config.png[Database Configuration: Opening Database Config Window]
+image::../images/mmt-db-open-db-config.png[Database Configuration: Opening Database Config Window]
 +
 . In the *Database Config* window that opens, click the *Connection* field, and change the value from *Generic Connection* to *MySQL Connection*.
 +
-image::images/mmt-db-mysql.png[Database Configuration: MySQL Connection]
+image::../images/mmt-db-mysql.png[Database Configuration: MySQL Connection]
 +
 . To add the recommended JDBC driver for this database, click the *Configure*
 button and select *Add recommended library* to replace any existing driver.
 +
-image::images/mmt-db-add-recommended-lib.png[Database Configuration: Add Recommended Libraries]
+image::../images/mmt-db-add-recommended-lib.png[Database Configuration: Add Recommended Libraries]
 +
 . If you have access to a MySQL server into which you can import a database, specify your *Connection* settings, and use `company` for the *Database*
 setting, for example:
 +
-image::images/mmt-db-set-properties.png[Database Configuration: Set Properties]
+image::../images/mmt-db-set-properties.png[Database Configuration: Set Properties]
 +
 You can skip this step if you do not have access to a MySQL database server.
 +
@@ -392,7 +384,7 @@ Be sure to _remove_ the hash mark and square brackets (`#[]`).
 {'lastName' : attributes.queryParams.lastname}
 ----
 +
-image::images/mmt-db-query.png[Perform A Query in MySQL]
+image::../images/mmt-db-query.png[Perform A Query in MySQL]
 +
 . Proceed to <<warning_6>>, also for the *Perform a query in MySQL* component.
 
@@ -447,13 +439,13 @@ payload
 +
 The configuration should look like this:
 +
-image::images/mmt-dataweave.png[Transform Message]
+image::../images/mmt-dataweave.png[Transform Message]
 +
 . Go to the Configuration XML view in Studio to verify that there are no
 remaining comments that contain WARN messages.
 . By the end of the migration, the flow should look like this:
 +
-image::images/mmt-resulting-flow.png[Flow: Database To JSON]
+image::../images/mmt-resulting-flow.png[Flow: Database To JSON]
 +
 . Proceed to <<test_app>>.
 
@@ -521,102 +513,6 @@ configuration.
 
 Note that you can also download and import the Mule 4 version of
 https://anypoint.mulesoft.com/exchange/org.mule.examples/querying-a-mysql-database/2.1.4/[Querying a MySQL Database app for Mule 4] (external link) from Exchange and compare your results.
-
-////
-REMOVES MAVEN CONFIGURATION, NOT NEEDED FOR GA 1.0.0
-== Maven Configuration
-
-After migrating a Mule 3 app to Mule 4 with MMA, you need to perform manual migration tasks that replace compatibility modules in the migrated app with Mule 4 components. It is easier to perform these tasks if you install Maven locally and apply a Maven configuration to the Studio 7 project for your migrated Mule 4 app.
-
-// TODO: DETERMINE IF THIS IS NEEDED, SEE NOTE ABOVE RE ESTEBAN'S COMMENTS
-[[step_maven]]
-=== Configure a Connection to the `releases-ee` Repository
-
-To address any *Unknown* components in a migrated Mule 4 app that you import to Studio 7, make sure that Maven 3.3.9 or later is installed that the Studio 7 project for your migrated app can find and connect to the `releases-ee` repository. After Studio establishes the connection to the `releases-ee` repository and loads the appropriate resources, the components will display the proper names and appearance.
-
-image::images/mmt-migrated-app-mvn-config-issue.png[Imported App][Imported App with Maven Configuration Issue]
-
-After the connection to the repository is established, the imported app will no longer contain the *Unknown* components (see <<step_3>> for the fix).
-
-. Make sure that Maven is installed. See <<maven_install>> for details.
-. Provide the Studio 7 project with your credentials to the `releases-ee` repository.
-+
-You can provide the credentials directly to Studio 7 UI, or you can add XML with the credentials to your Maven `settings.xml` file:
-+
-* Option 1: In Studio 7, navigate from the main *Anypoint Studio* menu to  *Preferences* -> *Anypoint Studio* -> *Maven* -> *User Settings*, and in
-the *User Settings* window, click edit to add the *Server Id* `releases-ee` with your credentials to the repository, for example:
-+
-images:images/mmt-maven-repo-credentials.png[Configure Maven Repository Credentials]
-+
-//If you do not know your *User Id* or *Password*, contact your TODO
-+
-Note that you can configure *Global Settings* instead of *User Settings* if you prefer.
-* Option 2: In Maven `settings.xml`, provide the following XML configuration,
-replacing the `user` and `password` values with your credentials:
-+
-[souce,xml,linenums]
-----
-<server>
-  <id>releases-ee</id>
-  <username>user</username>
-  <password>password</password>
-</server>
-----
-+
-. Add the following `<repository/>` configuration to the `pom.xml` for the Studio
-7 project:
-+
-[souce,xml,linenums]
-----
-<repositories>
-  <repository>
-    <id>releases-ee</id>
-    <url>https://repository.mulesoft.org/nexus/content/repositories/releases-ee</url>
-   </repository>
-   <!-- any other repositories above or below -->
-</repositories>
-----
-+
-. Restart Studio.
-. Reopen the project.
-+
-After Studio processes the configuration, the compatibility components replace the *Unknown* components:
-+
-image::images/mmt-migrated-app.png[Imported App]
-+
-. To complete the manual portion of the Mule 4 migration, proceed to <<step_4>>.
-////
-////
-REMOVES MAVEN INSTALLATION STEPS. NOT NEEDED FOR GA.
-[[maven_install]]
-=== Download and Install Maven
-
-Maven version 3.3.9 or later is required to complete the migration process.
-
-. Check that Maven version 3.3.9 or later is installed by running the following command from your command console:
-+
-`mvn --version`
-+
-If you receive a response such as `-bash: mvn: command not found` or if you version is lower than version 3.3.9, download the *Link* to the latest version of Maven at http://maven.apache.org/download.cgi[Maven `zip` file] (external link), and install Maven by following the instructions on the Maven site: http://maven.apache.org/install.html[Maven (version 3.3.9 or later)]  (external link)
-+
-. Set the PATH environment variable to the Maven installation, for example, if Maven is in your `Downloads` directory:
-+
-// DON'T HAVE WINDOWS MACHINE TO TEST THIS:
-* Windows: `$ set PATH=%PATH%;C:\Downloads\apache-maven-3.6.3\bin`
-* Mac: `$ export PATH=~/Downloads/apache-maven-3.6.3/bin:$PATH`
-+
-When the PATH is set correctly, `mvn --version` returns something like this on a Mac:
-+
-[souce,console,linenums]
-----
-$ mvn --version
-Apache Maven 3.6.3 (cecedd343002696d0abb50b32b541b8a6ba2883f)
-Maven home: /Users/me/Downloads/apache-maven-3.6.3
-Java version: 1.8.0_232, vendor: AdoptOpenJDK, runtime: /Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre
-Default locale: en_US, platform encoding: UTF-8
-OS name: "mac os x", version: "10.14.6", arch: "x86_64", family: "mac"
-----
-////
 
 == See Also
 

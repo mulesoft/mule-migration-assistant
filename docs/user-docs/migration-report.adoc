@@ -15,7 +15,7 @@ without following the best practices.
 Inside each migrated project, the MMA generates a report that
 contains a list of migration errors and warnings, for example:
 
-image::images/migrator-report.png[Mule Migration Assistant Report]
+image::../images/migrator-report.png[Mule Migration Assistant Report]
 
 * Warning (`WARN`): For these issues, the Compatibility module can serve as a
 temporary workaround until you migrate them manually.
@@ -67,7 +67,7 @@ migrated Choice router:
 The Migration report links to information on any post-migration steps you need
 to perform, for example:
 
-image::images/migrator-issue-found.png[Mule Migration Assistant Report - Issue Found]
+image::../images/migrator-issue-found.png[Mule Migration Assistant Report - Issue Found]
 
 == See Also
 

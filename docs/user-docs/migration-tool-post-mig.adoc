@@ -3,9 +3,6 @@ ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 
-//TODO: FOR GA, REMOVE *Beta* FROM GA VERSION
-*Beta Release: Mule Migration Assistant (MMA) and Compatibility Module*
-
 The Mule Migration Assistant (MMA) performs migrations on individual components, connectors, and modules. In some cases, you can make improvements to the migrated app by taking into account the flow or project as a whole.
 
 This section focuses on *recommended* post-migration tasks to perform after
@@ -133,8 +130,6 @@ For example, you can remove the `status` attribute from an HTTP listener and
 rely on the default for the listener _if_ an `http.status` outbound property is
 never set in the flow.
 
-//TODO: A BEFORE/AFTER EXAMPLE HERE WOULD HELP NICE.
-
 If a property is set in the flow, you need to move the expression that sets the
 property into the attribute of the operation or source where it is used. For
 example, you might modify the XML output of the Mule Migration Assistant (MMA):
@@ -251,7 +246,6 @@ example, replacing `<logger message="#[mel:sessionVars['token']]"/>` with
 `<logger message="#[vars.token]"/>`, as shown above.
 * In the connectors migrated from transports (for example, File, VM, JMS, HTTP connectors), make sure to pass these migrated variables to the operation or the response builder (for example, within `<http:response/>`) of the source.
 +
-//TODO: DO WE HAVE/SHOULD WE ADD EXAMPLES FOR MORE CONNECTORS?
 The way to accomplish this varies by connector. For HTTP, you can use headers
 (`<http:headers/>`). For JMS, you can use message properties. For VM, you can
 use the body expression.

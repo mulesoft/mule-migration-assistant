@@ -3,7 +3,6 @@ ifndef::env-site,env-github[]
 include::_attributes.adoc[]
 endif::[]
 
-// Contacts/SMEs: Esteban Wasinger, Ana Felisatti, Mariano Gonzalez
 
 Mule 4 introduces many changes, so plan accordingly before attempting to migrate from Mule 3.
 
@@ -28,7 +27,6 @@ Migrate your applications if any one of the following conditions is met:
 == Setting up Your Local Development Environment
 
 First, you need to download Studio 7 and install it. If you're deploying locally, you also need to download the Mule 4 standalone runtime, if the runtime that comes with Studio does not match the one you want to use for runtime purposes.
-// TODO link to pages
 
 [[prepare_to_deploy]]
 == Getting Ready to Deploy
