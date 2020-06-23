@@ -221,7 +221,7 @@ The MMA does not currently support the following components:
 ** `<pooled-component>`
 ** `<invoke>`
 ** Anything that implements the `org.mule.api.lifecycle.Callable` interface
-* DataMapper: Use the DataWeave Migration tool. See
+* DataMapper: Use the DataWeave Migration assistant. See
 xref:migration-tool-procedure#datamapper[Migrating from the DataMapper to DataWeave].
 * Custom types defined in Studio
 * `<expression-component>`
@@ -268,6 +268,6 @@ For future releases, MuleSoft will also support these:
 
 == See Also
 
-* xref:migration-tutorial.adoc[Mule Migration Tool Tutorial]
+* xref:migration-tutorial.adoc[Mule Migration Assistant Tutorial]
 * xref:migration-report.adoc[Mule Migration Report]
 * xref:migration-tool-post-mig.adoc[Post-Migration Tasks]

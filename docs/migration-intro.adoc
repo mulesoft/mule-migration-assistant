@@ -43,14 +43,15 @@ MMA helps with such tasks, but it does not deliver a fully functional app. Some 
 * Manual migration of unsupported components.
 * Manual migration of complex MEL expressions to DataWeave that cannot be automatically converted by MMA.
 * Manual migration of complex DataWeave transformations that cannot be automatically converted by MMA.
-* Prior migration of the DataMapper with the DataWeave Migration tool, before running the MMA.
+* Prior migration of the DataMapper with the _DataWeave_ Migration tool, before running the MMA.
 
 It is also important to note that the MMA does not support incremental migrations.
 
-////
-== See Also
 
-* xref:migration-tutorial.adoc[Mule Migration Tool Tutorial]
+== Migration Documentation
+
+* xref:migration-tutorial.adoc[Mule Migration Assistant Tutorial]
+* xref:migration-tool.adoc[Using the Mule Migration Assistant to Support Migration to Mule 4]
+* xref: migration-tool-procedure.adoc[Perform a Migration to Mule 4]
 * xref:migration-report.adoc[Mule Migration Report]
 * xref:migration-tool-post-mig.adoc[Post-Migration Tasks]
-////
