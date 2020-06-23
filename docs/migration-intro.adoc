@@ -6,9 +6,9 @@ endif::[]
 Mule 4 introduces a number of improvements over Mule 3, including:
 
 * Easier and faster app development
-* Seamless access and data mapping 
+* Seamless access and data mapping
 * Simplified connectivity
-* Auto-tuned and highly performant runtime 
+* Auto-tuned and highly performant runtime
 * Seamless upgrades of runtime and connector versions
 * Up to 50% fewer steps and concepts to learn than Mule 3
 
@@ -18,7 +18,7 @@ For your Mule 3 apps to take advantage of these and other benefits, you can migr
 * A partially automated migration by using the Mule Migration Assistant (MMA), which
 is available as an open source project on https://github.com/mulesoft/mule-migration-assistant[GitHub].
 
-MuleSoft suggests that you try MMA to determine whether you prefer it to a fully manual migration. 
+MuleSoft suggests that you try MMA to determine whether you prefer it to a fully manual migration.
 
 == Understand the Migration Process
 
