@@ -106,20 +106,16 @@ SOAP Router
 // (`<ws:consumer-config/>`)
 ** Web Service Consumer
 
-//TODO: CLARIFY AS NEEDED
 * Error Handling
 
 * Filters: And, Custom, Exception, Expression, Indempotent Message, Message, Message Property, Not, Or, Payload, Regex, Schema Validation, and Wildcard global element configurations migrate to validation operations in the Validations module for Mule 4.
 
-//TODO: CLARIFY AS NEEDED
 * GZip transformers: GZip Compress and GZip Uncompress
 
 * Mule apps and domains only
 
-//WAS * xref:migration-api-gateways-proxies.adoc[HTTP Proxy apps]
 * https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-proxies[HTTP Proxy apps] (external)
 
-//WAS * xref:migration-api-gateways-policies.adoc[Custom Policies]
 * https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies[Custom Policies] (external)
 
 * Mule Expression Language (MEL) to DataWeave 2.0 expressions (simple cases only)
@@ -174,7 +170,6 @@ SOAP Router
 
 * Script component (DSL only, no migration of the script itself) migrates to the Scripting module for Mule 4.
 
-//TODO: CLARIFY AS NEEDED
 * Spring Beans definition
 
 * Transform Message component (`<dw:transform-message/>` for DataWeave 1.0) migrates to
@@ -246,28 +241,6 @@ generate the following ERROR in the Migration report:
 Such connectors require manual migration.
 
 To manually migrate them, see xref:migration-tool-procedure#migrating_unsupported_connectors[Migrating Unsupported Connectors].
-
-////
-TODO: ARE WE GOING TO SUPPORT THESE IN THE FUTURE?
-[[supported_future]]
-== Supported in the Future
-
-For future releases, MuleSoft will also support these:
-
-* Documentation on how to migrate DataMapper transformations
-* Encryption/Decryption components
-* Tracking component
-* XML module
-////
-
-////
-* Documentation on how to migrate DataMapper transformations
-*  elements
-* Security Module
-* Watermark
-* XML and JSON module
-* Splitter and aggregator pattern
-////
 
 == See Also
 
