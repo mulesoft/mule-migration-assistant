@@ -61,4 +61,4 @@ That's it! You're ready to start building and deploying Mule 4 applications.
 
 You should review these topics to get an overview of the migration process and understand changes introduced in Mule 4:
 
-xref:intro-overview.adoc[Introduction to Mule 4]
+https://docs.mulesoft.com/mule-runtime/4.3/intro-overview[Introduction to Mule 4] (external link)
