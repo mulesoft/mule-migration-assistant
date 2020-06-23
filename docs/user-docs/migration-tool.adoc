@@ -7,7 +7,7 @@ This section provides guidance on migrating a Mule 3 app to Mule 4 with the
 Mule Migration Assistant (MMA).
 
 Important::
-MMA is subject to the terms and conditions described for https://www.mulesoft.com/legal/versioning-back-support-policy#community[Community] connectors.
+*Mule Migration Assistant (MMA) is subject to the terms and conditions described for https://www.mulesoft.com/legal/versioning-back-support-policy#community[Community] connectors.*
 
 The migration process is a multi-part procedure, where you:
 
