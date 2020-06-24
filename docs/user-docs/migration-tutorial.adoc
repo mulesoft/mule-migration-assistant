@@ -461,7 +461,7 @@ import and query the `employees` database, and you need working database and
 HTTP listener connections.
 
 . Run this script into your MySQL server:
-link:{attachmentsdir}/create.sample.db.sql[Sample MySQL Script]
+link:../attachments/create.sample.db.sql[Sample MySQL Script]
 +
 This script creates a database called `company` with an `employees` table that
 contains data needed to test the SELECT query defined in <<warning_5>>.
