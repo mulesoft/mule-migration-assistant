@@ -24,22 +24,19 @@ For your Mule 3 apps to take advantage of these and other benefits, you can migr
 is available as an open source project here on GitHub, in this https://github.com/mulesoft/mule-migration-assistant[mule-migration-assistant] repository.
 
 MuleSoft suggests that you try MMA to determine whether you prefer it to a fully manual migration.
+Note that you can try out MMA on a sample application by following the steps
+in the xref:user-docs/migration-tutorial.adoc[Mule Migration Assistant Tutorial].
 
-== Understand the Migration Process
+== Understand the MMA Migration Process
 
 Before beginning the migration process on your Mule 3 apps, review documentation on how to
 prepare for the migration and understand the basic steps of the migration.
 
-* xref:user-docs/migration-prep.adoc[Preparing for a Migration to Mule 4]: Both migration scenarios require the same preparation.
+* xref:user-docs/migration-prep.adoc[Preparing for a Migration to Mule 4]
 
 [[migration_process]]
 * MMA migration process:
 ** xref:user-docs/migration-tool.adoc[Using the Mule Migration Assistant to Support Migration to Mule 4]
-+
-Note that you can try out MMA on a sample application by following the steps
-in the xref:user-docs/migration-tutorial.adoc[Mule Migration Assistant Tutorial].
-+
 ** xref:user-docs/migration-tool-procedure.adoc[Perform a Migration to Mule 4]
 ** xref:user-docs/migration-report.adoc[Mule Migration Report]
 ** xref:user-docs/migration-tool-post-mig.adoc[Post-Migration Tasks]
-* https://docs.mulesoft.com/mule-runtime/4.3/migration-process[Manual Migration Process (external link)]
