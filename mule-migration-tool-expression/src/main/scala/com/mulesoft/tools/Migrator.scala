@@ -85,8 +85,8 @@ object Migrator {
           case "currentTimeMillis" => toNow(candidateToCanonicalName)
           case "toString" => toString(candidateToCanonicalName)
           case "contains" => toContainsInvocation(mel.VariableReferenceNode(candidateToCanonicalName), arguments.head)
-          case "causedBy" => toExceptionFunction(name, arguments.head)
-          case "causedExactlyBy" => toExceptionFunction(name, arguments.head)
+          case "causedBy" => toExceptionFunction(name, arguments.head, false)
+          case "causedExactlyBy" => toExceptionFunction(name, arguments.head, true)
           case _ => {
             counter += 1
             val reference = "$" + counter
@@ -150,10 +150,14 @@ object Migrator {
     new MigrationResult(dw.functions.FunctionCallNode(variableReferenceNode, FunctionCallParametersNode(Seq(lRes.dwAstNode, classNameNode))), DefaultMigrationMetadata(JavaModuleRequired() +: metadata))
   }
 
-  private def toExceptionFunction(functionName: String, parametersNode: MelExpressionNode) = {
+  private def toExceptionFunction(functionName: String, parametersNode: MelExpressionNode, strictMatch: Boolean) = {
     val parameters = toDataweaveAst(parametersNode)
-    val classNameNode = dw.structure.StringNode(parameters.getGeneratedCode(HeaderNode(Seq())).replaceFirst("---\nvars\\.", ""))
-    new MigrationResult(dw.functions.FunctionCallNode(VariableReferenceNode(NameIdentifier(functionName)), FunctionCallParametersNode(Seq(classNameNode))))
+    val metadata = parameters.metadata.children
+    val variableReferenceNode = VariableReferenceNode(NameIdentifier("Java::isCausedBy"))
+    val classNameNode = dw.structure.StringNode(parameters.getGeneratedCode(HeaderNode(Seq())).replaceFirst("---\nvars\\.", "")).annotate(QuotedStringAnnotation('''))
+    val errorCauseNode = dw.structure.StringNode("error.cause")
+    val strictMatchNode = dw.structure.BooleanNode(strictMatch.toString)
+    new MigrationResult(dw.functions.FunctionCallNode(variableReferenceNode, FunctionCallParametersNode(Seq(errorCauseNode, classNameNode, strictMatchNode))),DefaultMigrationMetadata(JavaModuleRequired() +: metadata))
   }
 
   private def toDataweaveBinaryOperatorNode(left: MelExpressionNode, right: MelExpressionNode, operatorType: Int): MigrationResult = {
