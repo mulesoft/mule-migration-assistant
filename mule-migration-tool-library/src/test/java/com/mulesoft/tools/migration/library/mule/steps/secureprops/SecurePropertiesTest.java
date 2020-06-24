@@ -1,8 +1,7 @@
 /*
- * Copyright (c) 2020 MuleSoft, Inc. This software is protected under international
- * copyright law. All use of this software is subject to MuleSoft's Master Subscription
- * Agreement (or other master license agreement) separately entered into in writing between
- * you and MuleSoft. If such an agreement is not in place, you may not use the software.
+ * Copyright (c) 2020, Mulesoft, LLC. All rights reserved.
+ * Use of this source code is governed by a BSD 3-Clause License
+ * license that can be found in the LICENSE.txt file.
  */
 package com.mulesoft.tools.migration.library.mule.steps.secureprops;
 
