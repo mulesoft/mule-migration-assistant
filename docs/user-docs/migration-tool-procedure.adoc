@@ -205,7 +205,7 @@ can use the DataWeave Migrator _prior to running MMA_.
 
 . Before migrating to Mule 4, migrate your DataMapper transformations to
 DataWeave using the
-https://docs.mulesoft.com/mule-runtime/3.9/dataweave-migrator[DataWeave Migrator] (external link), which is available for Mule 3.7, 3.8, and 3.9.
+https://docs.mulesoft.com/mule-runtime/3.9/dataweave-migrator[DataWeave Migrator (external link)], which is available for Mule 3.7, 3.8, and 3.9.
 . Run the MMA following instructions in <<run_tool>>.
 
 [[migrating_unsupported_connectors]]
@@ -218,7 +218,7 @@ migrate the connector manually:
 
 To manually migrate such a connector:
 
-. https://docs.mulesoft.com/studio/7.5/add-modules-in-studio-to[Add the equivalent connector] (external link) for
+. https://docs.mulesoft.com/studio/7.5/add-modules-in-studio-to[Add the equivalent connector (external link)] for
 Mule 4 to the app.
 . Refer to the connector documentation for both Mule 3 and Mule 4 to determine
 the correct mappings for the connector:
@@ -239,7 +239,7 @@ For custom connectors built with DevKit, see <<devkit, Migrating Custom DevKit C
 
 Mule apps might contain custom-made DevKit connectors. Though the Mule Migration
 Assistant (MMA) cannot migrate them, the
-https://docs.mulesoft.com/mule-sdk/1.1/dmt[DevKit Migrator] (external link)
+https://docs.mulesoft.com/mule-sdk/1.1/dmt[DevKit Migrator (external link)]
 is available to convert DevKit projects to Mule 4 SDK projects. After
 migrating them, you then need to:
 

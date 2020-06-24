@@ -56,7 +56,7 @@ Next, you need to make sure your deployment environment is ready. Depending on w
 
 Review the following topics to understand changes introduced in Mule 4:
 
-* https://docs.mulesoft.com/mule-runtime/4.3/intro-overview[Introduction to Mule 4] (external link)
+* https://docs.mulesoft.com/mule-runtime/4.3/intro-overview[Introduction to Mule 4 (external link)]
 
 Review the MMA migration process:
 

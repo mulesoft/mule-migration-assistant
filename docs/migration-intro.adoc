@@ -19,7 +19,7 @@ Mule 4 introduces a number of improvements over Mule 3, including:
 
 For your Mule 3 apps to take advantage of these and other benefits, you can migrate your apps to Mule 4 through one of the following processes:
 
-* A fully manual migration of connectors, modules, transports, expressions, and API gateways to their Mule 4 counterparts (see https://docs.mulesoft.com/mule-runtime/4.3/migration-process[Manual Migration Process Overview] (external link)).
+* A fully manual migration of connectors, modules, transports, expressions, and API gateways to their Mule 4 counterparts (see https://docs.mulesoft.com/mule-runtime/4.3/migration-process[Manual Migration Process Overview (external link)]).
 * A partially automated migration by using the Mule Migration Assistant (MMA), which
 is available as an open source project here on GitHub, in this https://github.com/mulesoft/mule-migration-assistant[mule-migration-assistant] repository.
 
@@ -42,4 +42,4 @@ in the xref:user-docs/migration-tutorial.adoc[Mule Migration Assistant Tutorial]
 ** xref:user-docs/migration-tool-procedure.adoc[Perform a Migration to Mule 4]
 ** xref:user-docs/migration-report.adoc[Mule Migration Report]
 ** xref:user-docs/migration-tool-post-mig.adoc[Post-Migration Tasks]
-* https://docs.mulesoft.com/mule-runtime/4.3/migration-process[Manual Migration Process] (external link)
+* https://docs.mulesoft.com/mule-runtime/4.3/migration-process[Manual Migration Process (external link)]

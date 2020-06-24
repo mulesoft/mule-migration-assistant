@@ -16,8 +16,8 @@ Studio 6 is compatible with Mule 3.x runtime versions. Studio 7 is compatible
 with Mule 4.x runtimes.
 
 * MMA: https://repository.mulesoft.org/nexus/service/local/repositories/releases/content/com/mulesoft/tools/mule-migration-assistant-runner/1.0.0/mule-migration-assistant-runner-1.0.0.zip[Mule Migration Assistant (Zip file)]
-* https://www.mulesoft.com/lp/dl/studio/previous[Anypoint Studio 6] (external link)
-* https://www.mulesoft.com/lp/dl/studio[Anypoint Studio 7] (external link): The minimum requirement is version 7.3.0.
+* https://www.mulesoft.com/lp/dl/studio/previous[Anypoint Studio 6 (external link)]
+* https://www.mulesoft.com/lp/dl/studio[Anypoint Studio 7 (external link)]: The minimum requirement is version 7.3.0.
 
 This tutorial uses Studio version 6.6.4 for the Mule 3 app and Studio 7.5.0 for
 the migrated Mule 4 app.
@@ -30,7 +30,7 @@ into Studio 6. In subsequent sections, you will migrate this app to Mule 4.
 
 image::../images/mmt-exchange.png[Exchange: Querying a MySQL Database]
 
-. Download version 1.4.0 of the https://anypoint.mulesoft.com/exchange/org.mule.examples/querying-a-mysql-database/1.4.0/[Querying a MySQL Database] (external link)
+. Download version 1.4.0 of the https://anypoint.mulesoft.com/exchange/org.mule.examples/querying-a-mysql-database/1.4.0/[Querying a MySQL Database (external link)]
 asset from Exchange.
 +
 Note that the 1.4.0 asset is a Mule 3 app that runs on Mule Runtime 3.x. Its
@@ -512,10 +512,10 @@ Notice that the URL includes query parameters defined in the HTTP listener
 configuration.
 
 Note that you can also download and import the Mule 4 version of
-https://anypoint.mulesoft.com/exchange/org.mule.examples/querying-a-mysql-database/2.1.4/[Querying a MySQL Database app for Mule 4] (external link) from Exchange and compare your results.
+https://anypoint.mulesoft.com/exchange/org.mule.examples/querying-a-mysql-database/2.1.4/[Querying a MySQL Database app for Mule 4 (external link)] from Exchange and compare your results.
 
 == See Also
 
 * xref:migration-tool.adoc[Migration to Mule 4]
-* https://docs.mulesoft.com/studio/7.5/import-export-packages[Importing and Exporting Projects] (external link)
+* https://docs.mulesoft.com/studio/7.5/import-export-packages[Importing and Exporting Projects (external link)]
 * xref:../migration-intro.adoc[Migration to Mule 4]

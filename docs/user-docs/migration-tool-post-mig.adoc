@@ -13,7 +13,7 @@ performing any manual migration steps indicated in the Migration report.
 [[mel_expressions]]
 == MEL Expressions (Manual Post-Migration Steps)
 
-Most MEL expressions are migrated to https://docs.mulesoft.com/mule-runtime/4.3/dataweave[DataWeave] (external link) by the
+Most MEL expressions are migrated to https://docs.mulesoft.com/mule-runtime/4.3/dataweave[DataWeave (external link)] by the
 Mule Migration Assistant (MMA). However, some operators and MEL constructs are
 not supported by the MMA to generate the equivalent DataWeave automatically.
 
@@ -50,14 +50,14 @@ the same pair is a simple JSON object:
 #[{‘key’, ‘value’}]
 ----
 
-See also, https://docs.mulesoft.com/mule-runtime/4.3/migration-mel[Migrate from MEL to DataWeave] (external link).
+See also, https://docs.mulesoft.com/mule-runtime/4.3/migration-mel[Migrate from MEL to DataWeave (external link)].
 
 === Using the Scripting Module to Migrate procedural MEL Expressions
 
 Some MEL expressions are not simply expressions but actually procedural scripts,
 so they cannot be migrated seamlessly to a functional language such as DataWeave.
 For these cases, you should use the
-https://docs.mulesoft.com/connectors/scripting/scripting-module[Scripting module] (external link) and
+https://docs.mulesoft.com/connectors/scripting/scripting-module[Scripting module (external link)] and
 migrate the MEL script to a language supported by the Scripting module.
 
 .Example: MMA Output
@@ -94,7 +94,7 @@ is maintained.
 == Inbound Properties (Manual Post-Migration Steps)
 
 Instead of relying on the Compatibility module to handle inbound properties (see
-https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes[Inbound Properties Are Now Attributes] (external link))
+https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes[Inbound Properties Are Now Attributes (external link)])
 and on the `mel:` syntax to allow MEL expressions in Mule 4, it is recommended that you follow each of these steps on Mule Migration Assistant (MMA) output:
 
 . Remove `<compatibility:attributes-to-inbound-properties/>` elements.
@@ -125,7 +125,7 @@ This example shows modifications to inbound properties from an HTTP listener:
 
 If an outbound property is _not_ set in a flow, you can safely remove any
 usage of that outbound property (see
-https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#outbound-properties[Outbound Properties] (external link)).
+https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#outbound-properties[Outbound Properties (external link)]).
 For example, you can remove the `status` attribute from an HTTP listener and
 rely on the default for the listener _if_ an `http.status` outbound property is
 never set in the flow.
@@ -275,7 +275,7 @@ handling multipart data formats.
 #[payload.parts.myAttachment.headers.'Content-Disposition'.filename]
 ----
 
-See https://docs.mulesoft.com/mule-runtime/4.3/dataweave-formats-multipart[Multipart (Form-Data)] (external link).
+See https://docs.mulesoft.com/mule-runtime/4.3/dataweave-formats-multipart[Multipart (Form-Data) (external link)].
 
 [[outbound_attachments]]
 == Outbound Attachments (Manual Post-Migration Steps)
@@ -287,9 +287,9 @@ for later reference in an expression.
 
 Refer to the documentation of each connector for details on how to declare
 attachments to be sent. For example, see
-https://docs.mulesoft.com/connectors/email/email-list#getting-data-from-emails[Getting Data from Emails] (external link)
+https://docs.mulesoft.com/connectors/email/email-list#getting-data-from-emails[Getting Data from Emails (external link)]
 and the section on _Attachments_
-in https://docs.mulesoft.com/connectors/web-service/web-service-consumer-consume[Consume a Web Service - Mule 4] (external link).
+in https://docs.mulesoft.com/connectors/web-service/web-service-consumer-consume[Consume a Web Service - Mule 4 (external link)].
 
 == Migrating Custom Metadata Types
 
@@ -304,7 +304,7 @@ your Mule 3 app, such as `src/main/resources`.
 *Prerequisite*: Please review sections on migrating Inbound and Outbound
 properties, Session properties, Inbound and Outbound attachments,
 and on
-https://docs.mulesoft.com/mule-runtime/4.3/migration-core-enricher[Migrating the Enricher to a Target Variable] (external link)
+https://docs.mulesoft.com/mule-runtime/4.3/migration-core-enricher[Migrating the Enricher to a Target Variable (external link)]
 before starting this procedure. They cover important uses of Mule event
 attributes and variables in a Mule 4 app.
 
@@ -329,7 +329,7 @@ As described in previous sections, Mule 4 attributes replace Inbound properties.
 Mule 4 event variables replace Mule 3 variables, such as Flow, Session, and
 Record variables. They also replace the Message Enricher component.
 +
-https://docs.mulesoft.com/mule-runtime/4.3/dataweave-quickstart#med_large_payload[This example] (external link), starting at step 4, loads the
+https://docs.mulesoft.com/mule-runtime/4.3/dataweave-quickstart#med_large_payload[This example (external link)], starting at step 4, loads the
 content of an example JSON file as a custom metadata type for the payload
 of a Mule message.
 +
