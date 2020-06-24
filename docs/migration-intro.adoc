@@ -43,19 +43,3 @@ in the xref:user-docs/migration-tutorial.adoc[Mule Migration Assistant Tutorial]
 ** xref:user-docs/migration-report.adoc[Mule Migration Report]
 ** xref:user-docs/migration-tool-post-mig.adoc[Post-Migration Tasks]
 * https://docs.mulesoft.com/mule-runtime/4.3/migration-process[Manual Migration Process] (external link)
-
-A benefit of using MMA is that it automates part of the migration of Mule 3 apps to Mule 4. Though the MMA does not migrate the app entirely, it provides significant help with the following tasks:
-
-* Migrating the project structure.
-* Automatically creating descriptor files, such as `pom.xml` or `mule-artifact.json`.
-* Automatically performing many adaptations of the app’s code.
-* Providing guidance on how to manually migrate components and patterns that cannot be migrated automatically.
-
-MMA helps with such tasks, but it does not deliver a fully functional app. Some additional steps are required. Those steps include testing and can also include:
-
-* Manual migration of unsupported components.
-* Manual migration of complex MEL expressions to DataWeave that cannot be automatically converted by MMA.
-* Manual migration of complex DataWeave transformations that cannot be automatically converted by MMA.
-* Prior migration of the DataMapper with the _DataWeave_ Migration tool, before running the MMA.
-
-It is also important to note that the MMA does not support incremental migrations.

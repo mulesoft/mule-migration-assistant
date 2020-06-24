@@ -34,9 +34,7 @@ _before_ running the Mule Migration Assistant (MMA). See <<datamapper>>.
 == Running the Mule Migration Assistant
 
 Mule Migration Assistant (MMA) is a command-line
-utility (packaged as an executable JAR file). After the Beta program,
-MMA will be released as part of Studio. You will then
-be able to perform migrations through Studio, rather than from the command line.
+utility (packaged as an executable JAR file).
 
 Note that the xref:migration-tutorial.adoc[Mule Migration Tutorial] covers the
 use of the MMA, as well as post-migration tasks, on a sample Mule 3 application.
@@ -68,6 +66,9 @@ Note that for `-destinationProjectBasePath` option, the folder (for example,
 `my-migrated-project`) in which to place the migrated must _not_ exist. The MMA
 will create it. If you point to a folder that exists already, the migration will
 fail an error like this: `Exception: Destination folder already exists.`
++
+If your app is associated with a domain, you also need to set the <<options, parentDomainBasePath>> option
+(see <<domains>>).
 +
 When MMA runs successfully, you will see a message something like this:
 +
@@ -141,7 +142,7 @@ $ java -jar mule-migration-assistant-runner-1.0.0.jar \
  -destinationProjectBasePath /Users/me/my-dir/my-migrated-domain-project
 ----
 +
-. For each application that belongs to that domain run MMA with the additional parameter `parentDomainBasePath` pointing to the unmigrated parent domain:
+. For each application that belongs to that domain, run MMA with an additional parameter, `parentDomainBasePath`, that points to the unmigrated parent domain:
 +
 .Command-line Invocation
 [source,console,linenums]
@@ -168,6 +169,7 @@ example, `/path/to/my/destination-folder`. The MMA will create the
 exists.
 | `-help` | For displaying the help.
 | `-muleVersion <arg>` | Required. The Mule version to which you are migrating: `4.3.0`.
+| `-parentDomainBasePath` | Required _only if the app is associated with a domain_.
 | `-projectBasePath <arg>` a| Required. Directory of the project to migrate.
 
 To discover the path to your Mule 3 project from Studio, you can go to
