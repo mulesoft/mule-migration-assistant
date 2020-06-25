@@ -69,7 +69,7 @@ $ java -jar mule-migration-assistant-runner-*CURRENT VERSION*.jar [parameters]
 
 ### User Documentation
 
-For guidance using MMA to assist in a migration, see [MMA user documentation](./docs).
+For guidance using MMA to assist in a migration, see the [user documentation](./docs).
 
 ### Contributing
 
