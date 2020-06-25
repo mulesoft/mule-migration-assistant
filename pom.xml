@@ -55,6 +55,8 @@
         <maven.help.plugin.version>3.0.1</maven.help.plugin.version>
         <maven.dependency.version>2.10</maven.dependency.version>
         <maven.site.plugin.version>3.3</maven.site.plugin.version>
+        <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
+        <checksum.plugin.version>1.9</checksum.plugin.version>
 
         <jacoco.maven.plugin.version>0.8.2</jacoco.maven.plugin.version>
         <jacoco.report.location>${session.executionRootDirectory}/target/jacoco.exec</jacoco.report.location>
@@ -314,7 +316,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>${maven.assembly.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>net.nicoulaj.maven.plugins</groupId>
+                    <artifactId>checksum-maven-plugin</artifactId>
+                    <version>${checksum.plugin.version}</version>
                 </plugin>
                 <!--TODO this we need to make it run-->
                 <!--<plugin>-->
