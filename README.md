@@ -6,7 +6,7 @@ Mule Migration Assistant is a command-line tool that helps migrate Mule 3.x appl
 
 Mule Migration Assistant is distributed under the terms of the [3-Clause BSD License](https://github.com/mulesoft/mule-migration-assistant/blob/master/LICENSE.txt)
 
-Important: 
+Important:
 Mule Migration Assistant (MMA) is subject to the terms and conditions described for [Community](https://www.mulesoft.com/legal/versioning-back-support-policy#community) connectors.
 
 ## Overview
@@ -67,7 +67,10 @@ $ java -jar mule-migration-assistant-runner-*CURRENT VERSION*.jar [parameters]
 | parentDomainBasePath       | Path of the domain to be migrated                | No        |  
 | help                       | Show all the parameters to define on MMA         | No        |
 
+### User Documentation
+
+For guidance using MMA to assist in a migration, see [MMA user documentation](./docs).
 
 ### Contributing
 
-This project is Open Source and therefor welcome contributions, in case you wish to contribute please check our [contribution guide](https://github.com/mulesoft/mule-migration-assistant/blob/master/CONTRIBUTING.md)
+This project is Open Source and therefore welcome contributions, in case you wish to contribute please check our [contribution guide](https://github.com/mulesoft/mule-migration-assistant/blob/master/CONTRIBUTING.md)
