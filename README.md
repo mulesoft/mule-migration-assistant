@@ -1,12 +1,12 @@
 # Mule Migration Assistant
 
-Mule Migration Assistant is a command-line tool that helps migrate Mule 3.x applications to Mule 4.x. This tool works on a "best-effort" basis to translate every component in the base application. This means that it does not complete 100% of the migration, manual adjustments are required. A migration report generated when the assistant is ran can help with those adjustments.
+Mule Migration Assistant is a command-line tool that helps migrate Mule 3.x applications to Mule 4.x. This tool works on a "best-effort" basis to translate every component in the base application. This means that if it does not complete 100% of the migration, manual adjustments are required. A migration report generated when the assistant is ran can help with those adjustments.
 
 ## License
 
 Mule Migration Assistant is distributed under the terms of the [3-Clause BSD License](https://github.com/mulesoft/mule-migration-assistant/blob/master/LICENSE.txt)
 
-Important
+Important: 
 Mule Migration Assistant (MMA) is subject to the terms and conditions described for [Community](https://www.mulesoft.com/legal/versioning-back-support-policy#community) connectors.
 
 ## Overview
