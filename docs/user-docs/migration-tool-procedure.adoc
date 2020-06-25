@@ -67,8 +67,7 @@ Note that for `-destinationProjectBasePath` option, the folder (for example,
 will create it. If you point to a folder that exists already, the migration will
 fail an error like this: `Exception: Destination folder already exists.`
 +
-If your app is associated with a domain, you also need to set the <<options, parentDomainBasePath>> option
-(see <<domains>>).
+If your app is associated with a domain, you also need to set the <<options, parentDomainBasePath>> option.
 +
 When MMA runs successfully, you will see a message something like this:
 +
