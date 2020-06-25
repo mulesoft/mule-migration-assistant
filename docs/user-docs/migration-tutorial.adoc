@@ -184,13 +184,13 @@ migrated app:
 <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
   <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
   <!--    For more information refer to:-->
-  <!--        * https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.3/migration-tool-post-mig.html#outbound_properties-->
+  <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
   <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
 </http:response>
 <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
   <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
   <!--    For more information refer to:-->
-  <!--        * https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.3/migration-tool-post-mig.html#outbound_properties-->
+  <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
   <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
 </http:response>
 ----
@@ -279,7 +279,7 @@ The XML element for the *Outbound Properties to var* component looks like this:
       expression.-->
     <!--    For more information refer to:-->
     <!--
-    https://beta.docs.stgx.mulesoft.com/beta-mule-migration-tool/mule-runtime/4.3/migration-tool-post-mig.html#outbound_properties-->
+    https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
 </compatibility:outbound-properties-to-var>
 ----
 

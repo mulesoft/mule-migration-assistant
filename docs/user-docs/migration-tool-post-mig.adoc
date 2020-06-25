@@ -57,7 +57,7 @@ See also, https://docs.mulesoft.com/mule-runtime/4.3/migration-mel[Migrate from 
 Some MEL expressions are not simply expressions but actually procedural scripts,
 so they cannot be migrated seamlessly to a functional language such as DataWeave.
 For these cases, you should use the
-https://docs.mulesoft.com/connectors/scripting/scripting-module[Scripting module (external link)] and
+https://docs.mulesoft.com/scripting-module/1.1/[Scripting module (external link)] and
 migrate the MEL script to a language supported by the Scripting module.
 
 .Example: MMA Output
@@ -287,9 +287,9 @@ for later reference in an expression.
 
 Refer to the documentation of each connector for details on how to declare
 attachments to be sent. For example, see
-https://docs.mulesoft.com/connectors/email/email-list#getting-data-from-emails[Getting Data from Emails (external link)]
+https://docs.mulesoft.com/email-connector/1.2/email-list#getting-data-from-emails[Getting Data from Emails (external link)]
 and the section on _Attachments_
-in https://docs.mulesoft.com/connectors/web-service/web-service-consumer-consume[Consume a Web Service - Mule 4 (external link)].
+in https://docs.mulesoft.com/web-service-consumer-connector/1.5/web-service-consumer-consume[Consume a Web Service - Mule 4 (external link)].
 
 == Migrating Custom Metadata Types
 

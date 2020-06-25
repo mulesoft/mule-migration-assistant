@@ -110,9 +110,9 @@ SOAP Router
 
 * Mule apps and domains only
 
-* https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-proxies[HTTP Proxy apps] (external)
+* https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-proxies[HTTP Proxy apps (external link)]
 
-* https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies[Custom Policies] (external)
+* https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies[Custom Policies (external link)]
 
 * Mule Expression Language (MEL) to DataWeave 2.0 expressions (simple cases only)
 
