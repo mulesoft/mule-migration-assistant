@@ -26,7 +26,7 @@
     </flow>
 
     <error-handler name="global-rollback">
-        <on-error-propagate when="#[mel:exception.causedBy(java.lang.IllegalStateException)]">
+        <on-error-propagate when="#[Java::isCausedBy(error.cause, 'java.lang.IllegalStateException', false)]">
             <logger message="#['IllegalStateException']" />
         </on-error-propagate>
         <on-error-propagate type="REDELIVERY_EXHAUSTED">

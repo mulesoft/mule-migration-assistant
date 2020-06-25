@@ -704,7 +704,14 @@ public class MelToDwExpressionMigratorTest {
   public void migrateExceptionCausedExactlyBy() {
     String script = "#[exception.causedExactlyBy(java.util.concurrent.TimeoutException)]";
     String result = expressionMigrator.migrateExpression(script, true, null);
-    assertThat(result, is("#[mel:exception.causedExactlyBy(java.util.concurrent.TimeoutException)]"));
+    assertThat(result, is("#[Java::isCausedBy(error.cause, 'java.util.concurrent.TimeoutException', true)]"));
+  }
+
+  @Test
+  public void migrateExceptionCausedBy() {
+    String script = "#[exception.causedBy(java.util.concurrent.TimeoutException)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result, is("#[Java::isCausedBy(error.cause, 'java.util.concurrent.TimeoutException', false)]"));
   }
 
   @Test
@@ -713,7 +720,16 @@ public class MelToDwExpressionMigratorTest {
         "#[exception instanceof org.mule.api.MessagingException && exception.causedExactlyBy(java.util.concurrent.TimeoutException)]";
     String result = expressionMigrator.migrateExpression(script, true, null);
     assertThat(result,
-               is("#[Java::isInstanceOf(exception, 'org.mule.api.MessagingException') and mel:exception.causedExactlyBy(java.util.concurrent.TimeoutException)]"));
+               is("#[Java::isInstanceOf(exception, 'org.mule.api.MessagingException') and Java::isCausedBy(error.cause, 'java.util.concurrent.TimeoutException', true)]"));
+  }
+
+  @Test
+  public void migrateNestedExceptionExpression2() {
+    String script =
+        "#[exception instanceof org.mule.api.MessagingException && exception.causedBy(java.util.concurrent.TimeoutException)]";
+    String result = expressionMigrator.migrateExpression(script, true, null);
+    assertThat(result,
+               is("#[Java::isInstanceOf(exception, 'org.mule.api.MessagingException') and Java::isCausedBy(error.cause, 'java.util.concurrent.TimeoutException', false)]"));
   }
 
   @Test

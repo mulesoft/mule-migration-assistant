@@ -30,11 +30,11 @@ http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema
         <logger/>
         <compatibility:outbound-properties-to-var/>
         <error-handler>
-            <on-error-continue when="#[mel:exception.causedBy(java.lang.IllegalArgumentException)]">
+            <on-error-continue when="#[Java::isCausedBy(error.cause, 'java.lang.IllegalArgumentException', false)]">
                 <logger message="#['IllegalArgumentException']"/>
                 <compatibility:outbound-properties-to-var/>
             </on-error-continue>
-            <on-error-propagate when="#[mel:exception.causedBy(java.lang.IllegalStateException)]">
+            <on-error-propagate when="#[Java::isCausedBy(error.cause, 'java.lang.IllegalStateException', false)]">
                 <logger message="#['IllegalStateException']"/>
                 <compatibility:outbound-properties-to-var/>
             </on-error-propagate>

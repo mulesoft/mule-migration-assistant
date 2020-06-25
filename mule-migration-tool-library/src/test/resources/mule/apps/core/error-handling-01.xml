@@ -6,10 +6,10 @@
     <flow name="matchesCorrectExceptionStrategyUsingExceptionType">
         <logger/>
         <error-handler>
-            <on-error-continue when="#[mel:exception.causedBy(java.lang.IllegalArgumentException)]">
+            <on-error-continue when="#[Java::isCausedBy(error.cause, 'java.lang.IllegalArgumentException', false)]">
                 <logger message="#['IlegalArgument']" />
             </on-error-continue>
-            <on-error-continue when="#[mel:exception.causedBy(java.lang.IllegalStateException)]">
+            <on-error-continue when="#[Java::isCausedBy(error.cause, 'java.lang.IllegalStateException', false)]">
                 <logger message="#['IlegalState']" />
             </on-error-continue>
         </error-handler>

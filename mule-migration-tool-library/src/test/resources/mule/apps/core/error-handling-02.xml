@@ -26,7 +26,7 @@
         <logger/>
         <compatibility:outbound-properties-to-var/>
         <error-handler>
-            <on-error-propagate when="#[mel:exception.causedBy(java.lang.IllegalStateException)]">
+            <on-error-propagate when="#[Java::isCausedBy(error.cause, 'java.lang.IllegalStateException', false)]">
                 <logger message="#['IlegalState']" />
             </on-error-propagate>
             <on-error-propagate type="REDELIVERY_EXHAUSTED">
