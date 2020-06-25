@@ -161,6 +161,7 @@ The Mule Migration Assistant (MMA) is a command-line tool. You simply input a
 Mule 3 project and target version and then output the results.
 
 .Command-line Options
+[cols="2,3"]
 |===
 | `-destinationProjectBasePath <arg>` | Required. Directory for the migrated
 project that includes a destination folder for the migrated project, for
@@ -169,7 +170,7 @@ example, `/path/to/my/destination-folder`. The MMA will create the
 exists.
 | `-help` | For displaying the help.
 | `-muleVersion <arg>` | Required. The Mule version to which you are migrating: `4.3.0`.
-| `-parentDomainBasePath` | Required _only if the app is associated with a domain_.
+| `-parentDomainBasePath` <arg>| Required _only if the app is associated with a domain_.
 | `-projectBasePath <arg>` a| Required. Directory of the project to migrate.
 
 To discover the path to your Mule 3 project from Studio, you can go to
