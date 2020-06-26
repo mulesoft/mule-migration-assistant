@@ -465,11 +465,12 @@ link:../attachments/create.sample.db.sql[Sample MySQL Script]
 +
 This script creates a database called `company` with an `employees` table that
 contains data needed to test the SELECT query defined in <<warning_5>>.
++
 One way to import the script is through the *Data Import/Restore* area of the
-MySQL Workbench too using the *Import from Self-Contained File* field to point
+MySQL Workbench tool using the *Import from Self-Contained File* field to point
 to the script.
 +
-For example, after logging into your MySQL server on a Mac (for example, with `mysql --user=root -p`), you might run this command to run the script:
+Alternatively, after logging into your MySQL server on a Mac (for example, with `mysql --user=root -p`), you might run this command to run the script:
 `mysql> source /usr/local/mysql/bin/create.sample.db.sql`
 +
 . In Studio, test your *Connection* to the MySQL database.
