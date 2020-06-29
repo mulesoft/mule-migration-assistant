@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.mulesoft.tools</groupId>
         <artifactId>mule-migration-tool</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>mule-migration-tool-contribution</artifactId>
     <name>Mule Migration Assistant Contribution</name>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>com.mulesoft.tools</groupId>
             <artifactId>mule-migration-tool-gateway-plugin</artifactId>
-            <version>1.0.0-RC</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 </project>
