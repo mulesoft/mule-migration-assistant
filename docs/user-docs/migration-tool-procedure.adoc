@@ -168,7 +168,7 @@ example, `/path/to/my/destination-folder`. The MMA will create the
 `destination-folder`. It will produce an error if `destination-folder` already
 exists.
 | `-help` | For displaying the help.
-| `-muleVersion <arg>` | Required. The Mule version to which you are migrating: `4.3.0`.
+| `-muleVersion <arg>` | Required. The Mule version to which you are migrating: `4.3.0`. MMA supports migrations to Mule 4.2.0 and later, but MuleSoft recommends that you migrate to a minimum of Mule 4.3.0 to take advantage of significant enhancements to performance and stability.
 | `-parentDomainBasePath` <arg>| Required _only if the app is associated with a domain_.
 | `-projectBasePath <arg>` a| Required. Directory of the project to migrate.
 
