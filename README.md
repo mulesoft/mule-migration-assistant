@@ -41,6 +41,8 @@ The Mule Migration Assistant workflow is designed as follows:
 
 These are the instructions to have the project up and running.
 
+If you would just like to download/access the MMA tool (compiled version), you can download/access available versions from the [releases](https://github.com/mulesoft/mule-migration-assistant/releases) location.
+
 ### Minimum requirements
 
 - Java 8
