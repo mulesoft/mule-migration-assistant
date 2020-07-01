@@ -103,7 +103,7 @@
 
         <maven.model.version>3.5.0</maven.model.version>
 
-        <mule.runtime.version>4.1.5</mule.runtime.version>
+        <mule.runtime.version>4.3.0-20200622</mule.runtime.version>
         <munit.version>2.2.1</munit.version>
 
         <mule.api.version>1.1.5</mule.api.version>
