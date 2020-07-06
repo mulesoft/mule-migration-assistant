@@ -43,6 +43,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication
 import com.mulesoft.tools.migration.library.mule.tasks.PropertiesMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.QuartzMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.RequestReplyMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.SalesforceMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.ScriptingMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SecurePropertiesMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.SecurityCrc32MigrationTask;
@@ -152,6 +153,8 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new JsonMigrationTask());
 
     coreMigrationTasks.add(new SecurityOAuth2ProviderMigrationTask());
+
+    coreMigrationTasks.add(new SalesforceMigrationTask());
 
     coreMigrationTasks.add(new DomainAppMigrationTask());
     coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask());
