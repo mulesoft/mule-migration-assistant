@@ -1,12 +1,1 @@
 # Contributed tasks here
-com.mulesoft.tools.migration.gateway.task.ProxyMigrationTask
-com.mulesoft.tools.migration.gateway.task.RamlProxyMigrationTask
-com.mulesoft.tools.migration.gateway.task.IpFilterMigrationTask
-com.mulesoft.tools.migration.gateway.task.ThreatProtectionMigrationTask
-com.mulesoft.tools.migration.gateway.task.ThrottlingMigrationTask
-com.mulesoft.tools.migration.gateway.task.ClientIdEnforcementMigrationTask
-com.mulesoft.tools.migration.gateway.task.FederationMigrationTask
-com.mulesoft.tools.migration.gateway.task.HttpMigrationTask
-com.mulesoft.tools.migration.gateway.task.MuleElementsMigrationTask
-com.mulesoft.tools.migration.gateway.task.PolicyUtilsMigrationTask
-com.mulesoft.tools.migration.gateway.task.BasicStructureMigrationTask

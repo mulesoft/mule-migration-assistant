@@ -940,3 +940,121 @@ munit:
     message: "This parameter was deprecated on MUnit 2. You should mock each processor instead."
     docLinks:
       - https://docs.mulesoft.com/munit/latest/mock-event-processor
+
+basicStructure:
+  beforeExceptionMigrationStep:
+    type: WARN
+    message: Before exception element will not be migrated.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#not_migrated_elements
+  pointcutMigrationStepResolvedByRuntime:
+    type: INFO
+    message: '{pointcutType} pointcut is resolved by the Mule runtime engine automatically.'
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#not_migrated_elements
+  pointcutMigrationStepNoEquivalent:
+    type: WARN
+    message: '{pointcutType} pointcut has no equivalent in Mule 4.'
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#not_migrated_elements
+  pointcutMigrationStepUnknown:
+    type: WARN
+    message: 'Unknown pointcut will not be migrated.'
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#not_migrated_elements
+  dataMigrationStep:
+    type: WARN
+    message: Data element will not be migrated.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#not_migrated_elements
+  errorEditingYaml:
+    type: ERROR
+    message: Error editing policy YAML.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#yaml_migration_issues
+  multipleYamlsFound:
+    type: WARN
+    message: More than one YAML file found for policy, no file will be edited.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#yaml_migration_issues
+  noYamlFound:
+    type: WARN
+    message: No YAML found for policy.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#yaml_migration_issues
+  noPomModel:
+    type: WARN
+    message: "No Pom Model found for policy {policyName}."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#pom_migration_issues
+  defaultPolicyName:
+    type: WARN
+    message: "No policy name was found during migration, it was set by default to '{defaultPolicyName}'."
+  defaultPolicyYamlValue:
+    type: WARN
+    message: "Policy YAML property '{propertyName}' was not found, it was set by default to value '{defaultValue}'."
+  defaultPolicyConfigurationYamlValue:
+    type: WARN
+    message: "Configuration item in policy YAML does not have property '{propertyName}', it was set by default to value '{defaultValue}'."
+
+proxy:
+  descriptionTagMigrationStep:
+    type: WARN
+    message: Description element will not be migrated.
+  tagsTagMigrationStep:
+    type: WARN
+    message: Tags element will not be migrated.
+  unknownAttributeValue:
+    type: WARN
+    message: "Attribute value '{attributeName}' is unknown. Value will not be tranformed."
+  wsdlPropertyAttribute:
+    type: WARN
+    message: "There is no equivalent for '{propertyValueMule3}', which extracts the value of the property. Therefore, it is set by default to config property '{propertyValueMule4}' which needs to be set up in the app configuration."
+    docsLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-proxies#wsdl_proxy_migration
+  functionWsdlPropertyAttribute:
+    type: WARN
+    message: "When migrating '{propertyValueMule3}', it's equivalent in mule 4 needs the values for service name and port. Such values must be defined in the app configuration under the names 'serrice.name' and 'service.port'."
+    docsLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-proxies#wsdl_proxy_migration
+
+threatProtection:
+  missingElement:
+    type: WARN
+    message: "Element '{elementName}' could not be found in migration process. Migration result might not be correct."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#threat_protection_migration_issues
+  unknownPolicyType:
+    type: ERROR
+    message: Could not determine if policy is XML or JSON threat protection type. Please verify policy structure.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#threat_protection_migration_issues
+clientIdEnforcement:
+  invalidMigrationElement:
+    type: WARN
+    message: Invalid element with no matching migration. Please review element structure.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#client_id_enforcement_migration_issues
+
+throttling:
+  throttlingMultipleTiersNotSupported:
+    type: WARN
+    message: Throttling policy no longer supports multiple tiers, policy will be migrated to Rate Limit format.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#elements_migrated_to_other_structures
+  throttlingSLANotSupported:
+    type: WARN
+    message: Throttling SLA policy is no longer supported, policy will be migrated to Rate Limit SLA format.
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#elements_migrated_to_other_structures
+
+raml:
+  autocompletedConfigAttribute:
+    type: WARN
+    message: "Attribute '{attributeName}' in RAML config was not found, default value '{defaultValue}' was set for it."
+  autocompletedOnErrorContinueElement:
+    type: WARN
+    message: "Element 'onErrorContinue' with type '{type}' was added by default while migrating."
+  noMatchingConfig:
+    type: ERROR
+    message: No matching config was found for RAML element.
