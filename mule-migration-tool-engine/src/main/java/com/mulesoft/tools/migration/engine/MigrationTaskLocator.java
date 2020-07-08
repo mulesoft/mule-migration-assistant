@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGr
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
+import com.mulesoft.tools.migration.library.apikit.tasks.ApikitMigrationTask;
 import com.mulesoft.tools.migration.library.mule.steps.compression.CompressionMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.AmqpMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.BatchMigrationTask;
@@ -52,6 +53,7 @@ import com.mulesoft.tools.migration.library.mule.tasks.ValidationMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.VmDomainMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.WscMigrationTask;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
+import com.mulesoft.tools.migration.library.soapkit.tasks.SoapkitMigrationTask;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationTask;
 
@@ -151,6 +153,9 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new MunitMigrationTask());
     coreMigrationTasks.add(new TransformersMigrationTask());
     coreMigrationTasks.add(new ExpressionTransformerMigrationTask());
+
+    coreMigrationTasks.add(new ApikitMigrationTask());
+    coreMigrationTasks.add(new SoapkitMigrationTask());
     // Spring has to run after MUnit, since MUnit in Mule 3 has some custom spring components that are removed by the migrator
 
     return coreMigrationTasks;
