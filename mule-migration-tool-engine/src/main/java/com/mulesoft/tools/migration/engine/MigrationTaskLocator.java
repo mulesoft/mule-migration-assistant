@@ -11,6 +11,17 @@ import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGr
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
+import com.mulesoft.tools.migration.library.gateway.tasks.BasicStructureMigrationTask;
+import com.mulesoft.tools.migration.library.gateway.tasks.ClientIdEnforcementMigrationTask;
+import com.mulesoft.tools.migration.library.gateway.tasks.FederationMigrationTask;
+import com.mulesoft.tools.migration.library.gateway.tasks.HttpMigrationTask;
+import com.mulesoft.tools.migration.library.gateway.tasks.IpFilterMigrationTask;
+import com.mulesoft.tools.migration.library.gateway.tasks.MuleElementsMigrationTask;
+import com.mulesoft.tools.migration.library.gateway.tasks.PolicyUtilsMigrationTask;
+import com.mulesoft.tools.migration.library.gateway.tasks.ProxyMigrationTask;
+import com.mulesoft.tools.migration.library.gateway.tasks.RamlProxyMigrationTask;
+import com.mulesoft.tools.migration.library.gateway.tasks.ThreatProtectionMigrationTask;
+import com.mulesoft.tools.migration.library.gateway.tasks.ThrottlingMigrationTask;
 import com.mulesoft.tools.migration.library.mule.steps.compression.CompressionMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.AmqpMigrationTask;
 import com.mulesoft.tools.migration.library.mule.tasks.BatchMigrationTask;
@@ -81,14 +92,9 @@ public class MigrationTaskLocator {
   public List<AbstractMigrationTask> locate() {
     List<AbstractMigrationTask> migrationTasks = newArrayList(new PreprocessMuleApplication());
     migrationTasks.addAll(getCoreMigrationTasks());
-    migrationTasks.addAll(getMigrationTasks());
+    migrationTasks.addAll(getGatewayMigrationTasks());
     migrationTasks.addAll(getCoreAfterMigrationTasks());
     return migrationTasks.stream().filter(mt -> shouldNotFilterTask(mt)).collect(Collectors.toList());
-  }
-
-  protected List<AbstractMigrationTask> getMigrationTasks() {
-    ServiceLoader<AbstractMigrationTask> load = ServiceLoader.load(AbstractMigrationTask.class);
-    return newArrayList(load);
   }
 
   private Boolean shouldNotFilterTask(MigrationTask migrationTask) {
@@ -168,6 +174,23 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new PostprocessGeneral());
     coreMigrationTasks.add(new PostprocessMuleApplication());
     return coreMigrationTasks;
+  }
+
+  protected List<AbstractMigrationTask> getGatewayMigrationTasks() {
+    List<AbstractMigrationTask> gatewayMigrationTasks = new ArrayList<>();
+
+    gatewayMigrationTasks.add(new ProxyMigrationTask());
+    gatewayMigrationTasks.add(new RamlProxyMigrationTask());
+    gatewayMigrationTasks.add(new IpFilterMigrationTask());
+    gatewayMigrationTasks.add(new ThreatProtectionMigrationTask());
+    gatewayMigrationTasks.add(new ThrottlingMigrationTask());
+    gatewayMigrationTasks.add(new ClientIdEnforcementMigrationTask());
+    gatewayMigrationTasks.add(new FederationMigrationTask());
+    gatewayMigrationTasks.add(new HttpMigrationTask());
+    gatewayMigrationTasks.add(new MuleElementsMigrationTask());
+    gatewayMigrationTasks.add(new PolicyUtilsMigrationTask());
+    gatewayMigrationTasks.add(new BasicStructureMigrationTask());
+    return gatewayMigrationTasks;
   }
 }
 

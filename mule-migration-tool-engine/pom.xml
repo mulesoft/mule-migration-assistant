@@ -15,7 +15,6 @@
         <licensePath>../LICENSE_HEADER.txt</licensePath>
 
         <freemarker.version>2.3.28</freemarker.version>
-        <snakeyaml.version>1.26</snakeyaml.version>
     </properties>
     <build>
         <plugins>
@@ -96,7 +95,6 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>${snakeyaml.version}</version>
         </dependency>
         <dependency>
             <groupId>org.freemarker</groupId>
