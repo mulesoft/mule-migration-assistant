@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <error-handler name="Global_Mapping_Exception_Strategy">
+        <on-error-propagate type="APIKIT:BAD_REQUEST">
+            <set-variable variableName="httpStatus" value="400"/>
+            <set-payload value="bad request"/>
+        </on-error-propagate>
+        <on-error-propagate type="APIKIT:NOT_FOUND">
+            <set-variable variableName="httpStatus" value="404"/>
+            <set-payload value="resource not found"/>
+        </on-error-propagate>
+        <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+            <set-variable variableName="httpStatus" value="405"/>
+            <set-payload value="method not allowed"/>
+        </on-error-propagate>
+        <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+            <set-variable variableName="httpStatus" value="406"/>
+            <set-payload value="not acceptable"/>
+        </on-error-propagate>
+        <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+            <set-variable variableName="httpStatus" value="415"/>
+            <set-payload value="unsupported media type"/>
+        </on-error-propagate>
+        <on-error-propagate when="#[mel:exception.causedBy(java.lang.ClassNotFoundException)]">
+            <set-variable variableName="httpStatus" value="500"/>
+            <set-payload value="unexpected error"/>
+        </on-error-propagate>
+    </error-handler>
+
+</mule>

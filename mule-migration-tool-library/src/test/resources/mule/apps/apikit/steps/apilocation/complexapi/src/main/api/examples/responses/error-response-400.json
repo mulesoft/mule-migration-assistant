@@ -1,0 +1,10 @@
+ {
+  "response" :{
+    "status": "error",
+    "http-status" : 400,
+    "message_ID": "a7a756040 10/07/2017-14:40:01.6Z",
+    "summary": "Bad request",
+    "description" : "The request was invalid. A number of required fields were missing.",
+    "timestamp" : "2017-09-20T14:31:21.0Z"
+  }
+}

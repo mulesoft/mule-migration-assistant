@@ -20,16 +20,6 @@
         <!-- CONTRIBUTIONS SHOULD BE ADDED HERE -->
         <dependency>
             <groupId>com.mulesoft.tools</groupId>
-            <artifactId>mule-migration-tool-apikit</artifactId>
-            <version>0.1.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.mulesoft.tools</groupId>
-            <artifactId>mule-migration-tool-soapkit</artifactId>
-            <version>0.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.mulesoft.tools</groupId>
             <artifactId>mule-migration-tool-gateway-plugin</artifactId>
             <version>1.0.0</version>
         </dependency>

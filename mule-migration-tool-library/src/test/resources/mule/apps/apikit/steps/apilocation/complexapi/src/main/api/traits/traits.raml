@@ -1,0 +1,17 @@
+  secured:
+    queryParameters:
+      <<tokenName>>:
+        description: Valid <<tokenName>> required
+  paged:
+    queryParameters:
+      pages:
+        description: Number of pages, not to exceed <<maxPages>>
+        
+  authorized:
+    headers:
+      x-client-id:
+        type: string
+        description: unique id to access api
+      x-client-secret:
+        type: string
+        description: unique secret to access api

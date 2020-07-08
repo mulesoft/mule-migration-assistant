@@ -1,0 +1,9 @@
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd">
+
+    <apikit-soap:fault config-ref="api-config" operation="OrderTshirt" fault="TshirtFault"/>
+
+</mule>

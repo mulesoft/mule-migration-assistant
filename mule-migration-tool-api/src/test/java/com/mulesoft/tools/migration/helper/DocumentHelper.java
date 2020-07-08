@@ -22,7 +22,12 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO This class is no longer valid, we can have something similar but to obtain an application model
+/**
+ * Helper class to work with JDOM Documents
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
 public class DocumentHelper {
 
   public static Document getDocument(String path) throws Exception {

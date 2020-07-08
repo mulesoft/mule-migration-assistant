@@ -1,0 +1,9 @@
+ {
+  "response" :{
+    "status": "success",
+    "http-status" : 201,
+    "message_ID": "a7a756040 10/07/2017-14:40:01.6Z",
+    "summary": "The new customer record was written successfully",
+    "timestamp" : "2000-01-01T00:00:00.0Z"
+  }
+}

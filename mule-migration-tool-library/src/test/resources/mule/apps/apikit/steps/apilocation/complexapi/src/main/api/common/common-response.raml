@@ -1,0 +1,25 @@
+description: This is generic common response to an API method invocation and can be used to report technical or business errors, information where the business transaction has been accepted but not processed and successful where the business transaction has been successfully processed
+properties:
+  response:
+    type: object
+    properties:
+      status: 
+        type: string
+        required: true
+      http-status:
+        type: number
+        required: true
+      message-id:
+        type: string
+        required: false
+      summary:
+        type: string
+        description: A short message to state success or describing the error
+      description:
+        type: string
+        description: A more detailed message providing enough information to the client to identify the error
+        required: false
+      timestamp:
+        type: datetime
+        required: true
+

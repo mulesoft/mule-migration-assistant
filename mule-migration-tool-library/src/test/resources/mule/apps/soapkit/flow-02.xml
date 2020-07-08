@@ -1,0 +1,26 @@
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd">
+
+    <apikit-soap:config name="ndfdXML-ndfdXMLPort-api-config" wsdlLocation="https://graphical.weather.gov/xml/SOAP_server/ndfdXMLserver.php?wsdl" service="ndfdXML" port="ndfdXMLPort"/>
+
+    <flow name="NDFDgen:\ndfdXML-ndfdXMLPort-api-config">
+        <set-payload value="some payload"/>
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+import migration::Soapkit
+---
+{
+    body: Soapkit::soapBody(payload),
+    headers: Soapkit::soapHeaders(vars),
+    attachments: Soapkit::soapAttachments(vars)
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+
+</mule>

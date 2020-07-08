@@ -1,0 +1,52 @@
+#%RAML 1.0
+title: Sample API
+mediaType: application/json
+
+traits:
+  secured:
+    headers:
+      auth-token:
+        description: A code to track API calls end to end
+        pattern: ^\w{16}$
+        example: abcdefghijklmnop
+        required: false
+
+types:
+  Product:
+    properties:
+      name: string
+      code: string
+      category: Category
+      price: number
+
+  Category:
+    properties:
+      code: string
+      name: string
+
+
+/products:
+  get:
+    queryParameters:
+      category?: string
+    responses:
+      200:
+        body: Product[]
+  post:
+    is: [ secured ]
+    body:
+      application/json: Product
+      application/xml: Product
+    responses:
+      201:
+        body:
+          application/json: ~
+          application/xml: ~
+
+  /{productId}:
+    uriParameters:
+      productId: integer
+    get:
+      responses:
+        200:
+          body: Product
