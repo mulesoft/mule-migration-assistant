@@ -33,61 +33,61 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 @RunWith(Parameterized.class)
 public class SalesforceTest {
 
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
+  @Rule
+  public TemporaryFolder temp = new TemporaryFolder();
 
-    @Rule
-    public ReportVerification report = new ReportVerification();
+  @Rule
+  public ReportVerification report = new ReportVerification();
 
-    private static final Path SALESFORCE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/salesforce");
+  private static final Path SALESFORCE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/salesforce");
 
-    @Parameterized.Parameters(name = "{0}")
-    public static Object[] params() {
-        return new Object[] {
-                "salesforce-create",
-                "salesforce-createWithoutType",
-                "salesforce-createWithoutHeaders",
-                "salesforce-createWithoutConfig",
-                "salesforce-createWithAccessTokenId"
-        };
-    }
+  @Parameterized.Parameters(name = "{0}")
+  public static Object[] params() {
+    return new Object[] {
+        "salesforce-create",
+        "salesforce-createWithoutType",
+        "salesforce-createWithoutHeaders",
+        "salesforce-createWithoutConfig",
+        "salesforce-createWithAccessTokenId"
+    };
+  }
 
-    private final Path configPath;
-    private final Path targetPath;
-    private CreateOperation createOperation;
-    private Document doc;
-    private ApplicationModel appModel;
+  private final Path configPath;
+  private final Path targetPath;
+  private CreateOperation createOperation;
+  private Document doc;
+  private ApplicationModel appModel;
 
-    public SalesforceTest(String filePrefix) {
-        this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
-        this.targetPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
-    }
+  public SalesforceTest(String filePrefix) {
+    this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
+    this.targetPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
+  }
 
-    @Before
-    public void setUp() throws Exception {
-        doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
-        appModel = mockApplicationModel(doc, temp);
+  @Before
+  public void setUp() throws Exception {
+    doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
+    appModel = mockApplicationModel(doc, temp);
 
-        createOperation = new CreateOperation();
+    createOperation = new CreateOperation();
 
-        MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
-        createOperation.setExpressionMigrator(expressionMigrator);
-    }
+    MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
+    createOperation.setExpressionMigrator(expressionMigrator);
+  }
 
-    public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
-        getElementsFromDocument(doc, migrationStep.getAppliedTo().getExpression())
-                .forEach(node -> migrationStep.execute(node, report.getReport()));
-    }
+  public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
+    getElementsFromDocument(doc, migrationStep.getAppliedTo().getExpression())
+        .forEach(node -> migrationStep.execute(node, report.getReport()));
+  }
 
-    @Test
-    public void execute() throws Exception {
-        migrate(createOperation);
+  @Test
+  public void execute() throws Exception {
+    migrate(createOperation);
 
-        XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
-        String xmlString = outputter.outputString(doc);
+    XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+    String xmlString = outputter.outputString(doc);
 
-        assertThat(xmlString,
-                isSimilarTo(IOUtils.toString(this.getClass().getClassLoader().getResource(targetPath.toString()).toURI(), UTF_8))
-                        .ignoreComments().normalizeWhitespace());
-    }
+    assertThat(xmlString,
+               isSimilarTo(IOUtils.toString(this.getClass().getClassLoader().getResource(targetPath.toString()).toURI(), UTF_8))
+                   .ignoreComments().normalizeWhitespace());
+  }
 }
