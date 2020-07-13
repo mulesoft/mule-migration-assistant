@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020, Mulesoft, LLC. All rights reserved.
+ * Use of this source code is governed by a BSD 3-Clause License
+ * license that can be found in the LICENSE.txt file.
+ */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateOperation;
@@ -10,24 +15,31 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
+/**
+ * Migration definition for Batch
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.1
+ */
 public class SalesforceMigrationTask extends AbstractMigrationTask {
-    @Override
-    public String getDescription() {
-        return "Migrate Salesforce connector operations/configurations";
-    }
 
-    @Override
-    public String getTo() {
-        return MULE_4_VERSION;
-    }
+  @Override
+  public String getDescription() {
+    return "Migrate Salesforce connector operations/configurations";
+  }
 
-    @Override
-    public String getFrom() {
-        return MULE_3_VERSION;
-    }
+  @Override
+  public String getTo() {
+    return MULE_4_VERSION;
+  }
 
-    @Override
-    public List<MigrationStep> getSteps() {
-        return newArrayList(new CreateOperation());
-    }
+  @Override
+  public String getFrom() {
+    return MULE_3_VERSION;
+  }
+
+  @Override
+  public List<MigrationStep> getSteps() {
+    return newArrayList(new CreateOperation());
+  }
 }

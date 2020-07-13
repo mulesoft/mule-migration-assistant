@@ -1,63 +1,104 @@
+/*
+ * Copyright (c) 2020, Mulesoft, LLC. All rights reserved.
+ * Use of this source code is governed by a BSD 3-Clause License
+ * license that can be found in the LICENSE.txt file.
+ */
 package com.mulesoft.tools.migration.library.mule.steps.salesforce;
 
+import com.mulesoft.tools.migration.library.tools.SalesforceConstants;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
+import org.jdom2.CDATA;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.util.Optional;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class CreateOperation extends AbstractApplicationModelMigrationStep {
+/**
+ * Migrate BatchJob component
+ *
+ * @author Mulesoft Inc.
+ * @since 1.0.0
+ */
+public class CreateOperation extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
-    public static final String MULE3_SALESFORCE_NAMESPACE_PREFIX = "sfdc";
-    public static final String MULE4_SALESFORCE_NAMESPACE_PREFIX = "salesforce";
-    public static final String MULE3_SALESFORCE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/sfdc";
-    public static final String MULE4_SALESFORCE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/salesforce";
-    private static final Namespace MULE3_SALESFORCE_NAMESPACE = Namespace.getNamespace(MULE3_SALESFORCE_NAMESPACE_PREFIX, MULE3_SALESFORCE_NAMESPACE_URI);
-    private static final Namespace MULE4_SALESFORCE_NAMESPACE = Namespace.getNamespace(MULE4_SALESFORCE_NAMESPACE_PREFIX, MULE4_SALESFORCE_NAMESPACE_URI);
-    public static final String XPATH_SELECTOR = "/*/*[namespace-uri()='" + MULE3_SALESFORCE_NAMESPACE_URI + "' and local-name()='create']";
+  private static final String name = "create";
 
-    public CreateOperation() {
-        this.setAppliedTo(XPATH_SELECTOR);
-        this.setNamespacesContributions(newArrayList(MULE3_SALESFORCE_NAMESPACE));
+  private ExpressionMigrator expressionMigrator;
+
+  public CreateOperation() {
+    this.setAppliedTo(XmlDslUtils.getXPathSelector(SalesforceConstants.MULE3_SALESFORCE_NAMESPACE_URI, name, false));
+    this.setNamespacesContributions(newArrayList(SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
+  }
+
+  @Override
+  public void execute(Element mule3CreateOperation, MigrationReport report) throws RuntimeException {
+    Element mule4CreateOperation = new Element(name, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
+    setAttributes(mule3CreateOperation, mule4CreateOperation, report);
+
+    if (mule3CreateOperation.getAttribute("accessTokenId") != null) {
+      report.report("salesforce.accessTokenId", mule4CreateOperation, mule4CreateOperation);
     }
 
-    @Override
-    public void execute(Element originalCreateOperation, MigrationReport report) throws RuntimeException {
-        Element mule4CreateOperation = new Element("create", MULE4_SALESFORCE_NAMESPACE);
-        setAttributes(originalCreateOperation, mule4CreateOperation);
-        Optional<Element> mule3Headers =
-                Optional.ofNullable(originalCreateOperation.getChild("headers", MULE3_SALESFORCE_NAMESPACE));
+    Optional<Element> mule3Headers =
+        Optional.ofNullable(mule3CreateOperation.getChild("headers", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
 
-        mule3Headers.ifPresent(headers -> {
-            originalCreateOperation.removeContent(headers);
-            String refHeaders = headers.getAttributeValue("ref");
-            if (refHeaders != null) {
-                mule4CreateOperation.setAttribute("headers", refHeaders);
-            }
-            report.report("salesforce.create", originalCreateOperation, mule4CreateOperation);
-        });
+    mule3Headers.ifPresent(headers -> {
+      String refHeaders = headers.getAttributeValue("ref");
+      if (refHeaders != null) {
+        String expression = expressionMigrator.migrateExpression(refHeaders, true, headers);
+        mule4CreateOperation.setAttribute("headers", expression);
+      }
+    });
 
-        Optional<Element> objects =
-                Optional.ofNullable(originalCreateOperation.getChild("objects", MULE3_SALESFORCE_NAMESPACE));
+    Optional<Element> objects =
+        Optional.ofNullable(mule3CreateOperation.getChild("objects", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
 
-        objects.ifPresent(records -> {
-            originalCreateOperation.removeContent(records);
-            Element recordsChild = new Element("records", MULE4_SALESFORCE_NAMESPACE);
-            recordsChild.setAttribute("ref", originalCreateOperation.getAttributeValue("ref"));
-            mule4CreateOperation.addContent(recordsChild);
-        });
+    objects.ifPresent(records -> {
+      Element recordsChild = new Element("records", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
+      Optional.ofNullable(records.getAttributeValue("ref")).ifPresent(value -> {
+        String expression = expressionMigrator.migrateExpression(value, true, records);
+        recordsChild.setContent(new CDATA(expression));
+      });
+      mule4CreateOperation.addContent(recordsChild);
+    });
 
-        originalCreateOperation.addContent(mule4CreateOperation);
-        originalCreateOperation.setName("create");
-        originalCreateOperation.setNamespace(MULE4_SALESFORCE_NAMESPACE);
+    XmlDslUtils.addElementAfter(mule4CreateOperation, mule3CreateOperation);
+    mule3CreateOperation.getParentElement().removeContent(mule3CreateOperation);
+  }
+
+  private void setAttributes(Element mule3CreateOperation, Element mule4CreateOperation, MigrationReport report) {
+    String docName = mule3CreateOperation.getAttributeValue("name", SalesforceConstants.DOC_NAMESPACE);
+    if (docName != null) {
+      mule4CreateOperation.setAttribute("name", docName, SalesforceConstants.DOC_NAMESPACE);
     }
 
-    private void setAttributes(Element mule3CreateOperation, Element mule4CreateOperation) {
-        mule4CreateOperation.setAttribute("doc:name", mule3CreateOperation.getAttributeValue("doc:name"));
-        mule4CreateOperation.setAttribute("config-ref", mule3CreateOperation.getAttributeValue("config-ref"));
-        mule4CreateOperation.setAttribute("type", mule3CreateOperation.getAttributeValue("type"));
+    String configRef = mule3CreateOperation.getAttributeValue("config-ref");
+    if (configRef != null && !configRef.isEmpty()) {
+      mule4CreateOperation.setAttribute("config-ref", configRef);
+    } else {
+      report.report("salesforce.create", mule4CreateOperation, mule4CreateOperation);
     }
+
+    String type = mule3CreateOperation.getAttributeValue("type");
+    if (type != null && !type.isEmpty()) {
+      mule4CreateOperation.setAttribute("type", type);
+    } else {
+      report.report("salesforce.create", mule4CreateOperation, mule4CreateOperation);
+    }
+  }
+
+  @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
+
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return expressionMigrator;
+  }
 }
