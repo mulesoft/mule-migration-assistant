@@ -15,5 +15,5 @@
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
     </properties>
-    
+
 </project>
