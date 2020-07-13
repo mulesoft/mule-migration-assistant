@@ -5,8 +5,10 @@
  */
 package com.mulesoft.tools.migration.library.gateway.tasks;
 
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_POLICY;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
+import static java.util.Collections.singleton;
 
 import com.mulesoft.tools.migration.library.gateway.steps.proxy.ApiTagMigrationStep;
 import com.mulesoft.tools.migration.library.gateway.steps.proxy.DWPropertyAttributeValueMigrationStep;
@@ -16,11 +18,13 @@ import com.mulesoft.tools.migration.library.gateway.steps.proxy.PropertyPlacehol
 import com.mulesoft.tools.migration.library.gateway.steps.proxy.ProxyRequestHeadersProcessorMigrationStep;
 import com.mulesoft.tools.migration.library.gateway.steps.proxy.ProxyResponseHeadersProcessorMigrationStep;
 import com.mulesoft.tools.migration.library.gateway.steps.proxy.TagsTagMigrationStep;
+import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Proxy migration task
@@ -42,6 +46,11 @@ public class ProxyMigrationTask extends AbstractMigrationTask {
   @Override
   public String getFrom() {
     return MULE_3_VERSION;
+  }
+
+  @Override
+  public Set<ProjectType> getApplicableProjectTypes() {
+    return singleton(MULE_FOUR_POLICY);
   }
 
   @Override
