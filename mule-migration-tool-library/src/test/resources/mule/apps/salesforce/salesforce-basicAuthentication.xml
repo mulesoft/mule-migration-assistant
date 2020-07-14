@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <salesforce:sfdc-config name="Salesforce__Basic_Authentication" doc:name="Salesforce: Basic Authentication">
+        <salesforce:basic-connection username="username" password="password" securityToken="securityToken">
+            <salesforce:proxy-configuration host="proxyHost" username="proxyUsername" password="proxyPassword" port="proxyPort" />
+        </salesforce:basic-connection>
+    </salesforce:sfdc-config>
+
+</mule>

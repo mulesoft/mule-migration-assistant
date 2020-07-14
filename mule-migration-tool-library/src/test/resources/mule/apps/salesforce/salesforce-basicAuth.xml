@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <salesforce:sfdc-config name="Salesforce__Basic_Authentication" doc:name="Salesforce: Basic Authentication" fetchAllApexSoapMetadata="true" fetchAllApexRestMetadata="true">
+        <salesforce:basic-connection username="username" password="password" securityToken="securityToken" readTimeout="20" connectionTimeout="30" assignmentRuleId="40" clientId="50" timeObjectStore="#[vars.timeObjectStore]" sessionId="sessionId" serviceEndpoint="serviceEndpoint" allowFieldTruncationSupport="true" useDefaultRule="true" clearNullFields="true">
+            <salesforce:proxy-configuration host="proxyHost" username="proxyUsername" password="proxyPassword" port="proxyPort" />
+            <reconnection xmlns="">
+                <reconnect />
+            </reconnection>
+        </salesforce:basic-connection>
+        <salesforce:apex-class-names>
+            <salesforce:apex-class-name value="ApexClass" />
+        </salesforce:apex-class-names>
+    </salesforce:sfdc-config>
+
+</mule>
