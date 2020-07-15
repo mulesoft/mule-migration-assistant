@@ -32,6 +32,7 @@ in the xref:user-docs/migration-tutorial.adoc[Mule Migration Assistant Tutorial]
 Before beginning the migration process on your Mule 3 apps, review documentation on how to
 prepare for the migration and understand the basic steps of the migration.
 
+* xref:user-docs/migration-tool-procedure.adoc#min_reqs[Requirements]
 * xref:user-docs/migration-prep.adoc[Preparing for a Migration to Mule 4]
 
 [[migration_process]]
