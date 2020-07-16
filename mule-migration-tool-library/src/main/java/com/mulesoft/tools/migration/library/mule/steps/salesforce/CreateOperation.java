@@ -14,9 +14,13 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.CDATA;
 import org.jdom2.Element;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 
 /**
  * Migrate BatchJob component
@@ -37,6 +41,9 @@ public class CreateOperation extends AbstractApplicationModelMigrationStep imple
 
   @Override
   public void execute(Element mule3CreateOperation, MigrationReport report) throws RuntimeException {
+    getApplicationModel().addNameSpace(SalesforceConstants.MULE4_SALESFORCE_NAMESPACE,
+                                       SalesforceConstants.MULE4_SALESFORCE_NAMESPACE_URI, mule3CreateOperation.getDocument());
+
     Element mule4CreateOperation = new Element(name, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
     setAttributes(mule3CreateOperation, mule4CreateOperation, report);
 
@@ -59,12 +66,35 @@ public class CreateOperation extends AbstractApplicationModelMigrationStep imple
         Optional.ofNullable(mule3CreateOperation.getChild("objects", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
 
     objects.ifPresent(records -> {
-      Element recordsChild = new Element("records", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
       Optional.ofNullable(records.getAttributeValue("ref")).ifPresent(value -> {
+        Element recordsChild = new Element("records", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
+
         String expression = expressionMigrator.migrateExpression(value, true, records);
         recordsChild.setContent(new CDATA(expression));
+
+        mule4CreateOperation.addContent(recordsChild);
       });
-      mule4CreateOperation.addContent(recordsChild);
+
+      List<Element> children = records.getChildren();
+      if (children.size() > 0) {
+        String transformBody = children.stream()
+            .map(object -> object.getChildren().stream()
+                .map(innerObject -> innerObject.getAttributeValue("key") + " : \"" + innerObject.getText() + "\"")
+                .collect(Collectors.joining(",\n")))
+            .collect(Collectors.joining("\n},\n{"));
+
+
+        getApplicationModel().addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, mule3CreateOperation.getDocument());
+        Element element = new Element("transform");
+        element.setName("transform");
+        element.setNamespace(CORE_EE_NAMESPACE);
+        element.removeContent();
+        element.addContent(new Element("message", CORE_EE_NAMESPACE)
+            .addContent(new Element("set-payload", CORE_EE_NAMESPACE)
+                .setText("%dw 2.0 output application/json\n---\n[{\n" + transformBody + "\n}]")));
+
+        XmlDslUtils.addElementBefore(element, mule3CreateOperation);
+      }
     });
 
     XmlDslUtils.addElementAfter(mule4CreateOperation, mule3CreateOperation);

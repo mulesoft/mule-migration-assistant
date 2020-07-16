@@ -48,7 +48,8 @@ public class SalesforceTest {
         "salesforce-createWithoutType",
         "salesforce-createWithoutHeaders",
         "salesforce-createWithoutConfig",
-        "salesforce-createWithAccessTokenId"
+        "salesforce-createWithAccessTokenId",
+        "salesforce-createWithCreateObjectsManually"
     };
   }
 
