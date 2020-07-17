@@ -1065,6 +1065,11 @@ salesforce:
     message: "Fail during migrating create operation"
     docLinks:
       - https://docs.mulesoft.com/salesforce-connector/10.2/salesforce-connector-reference#create
+  update:
+    type: ERROR
+    message: "Fail during migrating update operation"
+    docLinks:
+      - https://docs.mulesoft.com/salesforce-connector/10.2/salesforce-connector-reference#update
   accessTokenId:
     type: INFO
     message: "The access token id parameter was removed in salesforce 10.x"

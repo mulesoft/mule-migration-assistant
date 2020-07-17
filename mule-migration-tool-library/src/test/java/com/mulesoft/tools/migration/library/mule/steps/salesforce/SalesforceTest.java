@@ -50,13 +50,19 @@ public class SalesforceTest {
         "salesforce-createWithoutConfig",
         "salesforce-createWithAccessTokenId",
         "salesforce-createWithCreateObjectsManually",
-        "salesforce-createWithEditInlineHeaders"
+        "salesforce-createWithEditInlineHeaders",
+        "salesforce-update",
+        "salesforce-updateManuallyObjectsAndHeaders",
+        "salesforce-updateWithAccessTokenId",
+        "salesforce-updateWithoutConfig",
+        "salesforce-updateWithoutType"
     };
   }
 
   private final Path configPath;
   private final Path targetPath;
   private CreateOperation createOperation;
+  private UpdateOperation updateOperation;
   private Document doc;
   private ApplicationModel appModel;
 
@@ -71,9 +77,11 @@ public class SalesforceTest {
     appModel = mockApplicationModel(doc, temp);
 
     createOperation = new CreateOperation();
+    updateOperation = new UpdateOperation();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
+    updateOperation.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -84,6 +92,7 @@ public class SalesforceTest {
   @Test
   public void execute() throws Exception {
     migrate(createOperation);
+    migrate(updateOperation);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
