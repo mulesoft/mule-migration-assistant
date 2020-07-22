@@ -45,9 +45,7 @@ public class SalesforceTest {
   public static Object[] params() {
     return new Object[] {
         "salesforce-create",
-        "salesforce-createWithoutType",
         "salesforce-createWithoutHeaders",
-        "salesforce-createWithoutConfig",
         "salesforce-createWithAccessTokenId",
         "salesforce-createWithCreateObjectsManually",
         "salesforce-createWithEditInlineHeaders",
@@ -99,7 +97,7 @@ public class SalesforceTest {
     String xmlString = outputter.outputString(doc);
 
     if (doc.getBaseURI().contains("AccessTokenId")) {
-      this.report.expectReportEntry("salesforce.accessTokenId");
+      report.expectReportEntry("salesforce.accessTokenId");
     }
 
     assertThat(xmlString,
