@@ -50,7 +50,13 @@ public class SalesforceTest {
         "salesforce-createWithoutConfig",
         "salesforce-createWithAccessTokenId",
         "salesforce-createWithCreateObjectsManually",
-        "salesforce-createWithEditInlineHeaders"
+        "salesforce-createWithEditInlineHeaders",
+        "salesforce-upsert",
+        "salesforce-upsertWithAccessTokenId",
+        "salesforce-upsertWithoutHeaders",
+        "salesforce-upsertWithCreateObjectsManually",
+        "salesforce-upsertWithEditInlineHeaders",
+        "salesforce-upsertWithoutExternalIdFieldName"
     };
   }
 
@@ -59,6 +65,7 @@ public class SalesforceTest {
   private CreateOperation createOperation;
   private Document doc;
   private ApplicationModel appModel;
+  private UpsertOperation upsertOperation;
 
   public SalesforceTest(String filePrefix) {
     this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -71,9 +78,11 @@ public class SalesforceTest {
     appModel = mockApplicationModel(doc, temp);
 
     createOperation = new CreateOperation();
+    upsertOperation = new UpsertOperation();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
+    upsertOperation.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -84,12 +93,17 @@ public class SalesforceTest {
   @Test
   public void execute() throws Exception {
     migrate(createOperation);
+    migrate(upsertOperation);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
 
+    if (doc.getBaseURI().contains("AccessTokenId")) {
+      this.report.expectReportEntry("salesforce.accessTokenId");
+    }
+
     assertThat(xmlString,
-               isSimilarTo(IOUtils.toString(this.getClass().getClassLoader().getResource(targetPath.toString()).toURI(), UTF_8))
-                   .ignoreComments().normalizeWhitespace());
+            isSimilarTo(IOUtils.toString(this.getClass().getClassLoader().getResource(targetPath.toString()).toURI(), UTF_8))
+                    .ignoreComments().normalizeWhitespace());
   }
 }
