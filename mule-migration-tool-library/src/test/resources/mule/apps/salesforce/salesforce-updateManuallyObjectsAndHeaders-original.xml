@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
-    <flow name="salesforce-8.xFlow">
+    <flow name="salesforce-updateManuallyObjectsAndHeaders-flow">
         <sfdc:update config-ref="Salesforce_Config" type="Account" doc:name="Salesforce">
             <sfdc:objects>
                 <sfdc:object>

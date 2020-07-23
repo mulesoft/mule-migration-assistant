@@ -22,7 +22,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 
 /**
- * Migrate BatchJob component
+ * Migrate Update Operation
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -44,7 +44,7 @@ public class UpdateOperation extends AbstractApplicationModelMigrationStep imple
                                        SalesforceConstants.MULE4_SALESFORCE_NAMESPACE_URI, mule3UpdateOperation.getDocument());
 
     Element mule4UpdateOperation = new Element(name, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-    setAttributes(mule3UpdateOperation, mule4UpdateOperation, report);
+    setAttributes(mule3UpdateOperation, mule4UpdateOperation);
 
     if (mule3UpdateOperation.getAttribute("accessTokenId") != null) {
       report.report("salesforce.accessTokenId", mule4UpdateOperation, mule4UpdateOperation);
@@ -112,24 +112,25 @@ public class UpdateOperation extends AbstractApplicationModelMigrationStep imple
     mule3UpdateOperation.getParentElement().removeContent(mule3UpdateOperation);
   }
 
-  private void setAttributes(Element mule3UpdateOperation, Element mule4UpdateOperation, MigrationReport report) {
+  private void setAttributes(Element mule3UpdateOperation, Element mule4UpdateOperation) {
     String docName = mule3UpdateOperation.getAttributeValue("name", SalesforceConstants.DOC_NAMESPACE);
     if (docName != null) {
       mule4UpdateOperation.setAttribute("name", docName, SalesforceConstants.DOC_NAMESPACE);
     }
 
+    String notes = mule3UpdateOperation.getAttributeValue("description", SalesforceConstants.DOC_NAMESPACE);
+    if (notes != null) {
+      mule4UpdateOperation.setAttribute("description", notes, SalesforceConstants.DOC_NAMESPACE);
+    }
+
     String configRef = mule3UpdateOperation.getAttributeValue("config-ref");
     if (configRef != null && !configRef.isEmpty()) {
       mule4UpdateOperation.setAttribute("config-ref", configRef);
-    } else {
-      report.report("salesforce.update", mule4UpdateOperation, mule4UpdateOperation);
     }
 
     String type = mule3UpdateOperation.getAttributeValue("type");
     if (type != null && !type.isEmpty()) {
       mule4UpdateOperation.setAttribute("type", type);
-    } else {
-      report.report("salesforce.update", mule4UpdateOperation, mule4UpdateOperation);
     }
   }
 

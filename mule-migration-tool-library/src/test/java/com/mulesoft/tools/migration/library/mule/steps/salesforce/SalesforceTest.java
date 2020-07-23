@@ -51,9 +51,7 @@ public class SalesforceTest {
         "salesforce-createWithEditInlineHeaders",
         "salesforce-update",
         "salesforce-updateManuallyObjectsAndHeaders",
-        "salesforce-updateWithAccessTokenId",
-        "salesforce-updateWithoutConfig",
-        "salesforce-updateWithoutType"
+        "salesforce-updateWithAccessTokenId"
     };
   }
 
