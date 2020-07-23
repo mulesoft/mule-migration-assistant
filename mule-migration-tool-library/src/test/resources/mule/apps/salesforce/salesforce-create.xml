@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <flow name="salesforce-8.xFlow">
-        <salesforce:create doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" type="Account" headers="#[vars.headers]">
+    <flow name="salesforce-create-flow">
+        <salesforce:create doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" type="Account" doc:description="Notes" headers="#[vars.headers]">
             <salesforce:records><![CDATA[#[payload]]]></salesforce:records>
         </salesforce:create>
 

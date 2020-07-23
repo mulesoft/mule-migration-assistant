@@ -17,7 +17,7 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 /**
- * Migration definition for Batch
+ * Migration definition for Salesforce
  *
  * @author Mulesoft Inc.
  * @since 1.0.1
@@ -41,8 +41,7 @@ public class SalesforceMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(
-                        new CreateOperation(),
+    return newArrayList(new CreateOperation(),
                         new CachedBasicConfiguration());
   }
 }

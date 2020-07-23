@@ -44,16 +44,13 @@ public class SalesforceTest {
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "salesforce-create",
-        "salesforce-createWithoutType",
-        "salesforce-createWithoutHeaders",
-        "salesforce-createWithoutConfig",
-        "salesforce-createWithAccessTokenId",
-        "salesforce-createWithCreateObjectsManually",
-        "salesforce-createWithEditInlineHeaders",
-        "salesforce-createWithAccessTokenId",
-        "salesforce-basicAuthentication",
-        "salesforce-basicAuth"
+            "salesforce-create",
+            "salesforce-createWithoutHeaders",
+            "salesforce-createWithAccessTokenId",
+            "salesforce-createWithCreateObjectsManually",
+            "salesforce-createWithEditInlineHeaders",
+            "salesforce-basicAuthentication",
+            "salesforce-basicAuth"
     };
   }
 
@@ -94,6 +91,10 @@ public class SalesforceTest {
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
+
+    if (doc.getBaseURI().contains("AccessTokenId")) {
+      report.expectReportEntry("salesforce.accessTokenId");
+    }
 
     assertThat(xmlString,
                isSimilarTo(IOUtils.toString(this.getClass().getClassLoader().getResource(targetPath.toString()).toURI(), UTF_8))

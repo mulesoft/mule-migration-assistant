@@ -23,7 +23,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPA
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 
 /**
- * Migrate BatchJob component
+ * Migrate Create operation
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -45,10 +45,10 @@ public class CreateOperation extends AbstractApplicationModelMigrationStep imple
                                        SalesforceConstants.MULE4_SALESFORCE_NAMESPACE_URI, mule3CreateOperation.getDocument());
 
     Element mule4CreateOperation = new Element(name, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-    setAttributes(mule3CreateOperation, mule4CreateOperation, report);
+    setAttributes(mule3CreateOperation, mule4CreateOperation);
 
     if (mule3CreateOperation.getAttribute("accessTokenId") != null) {
-      report.report("salesforce.accessTokenId", mule4CreateOperation, mule4CreateOperation);
+      report.report("salesforce.accessTokenId", mule3CreateOperation, mule4CreateOperation);
     }
 
     Optional<Element> mule3Headers =
@@ -65,11 +65,11 @@ public class CreateOperation extends AbstractApplicationModelMigrationStep imple
       if (children.size() > 0) {
         Element mule4Headers = new Element("headers", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
         children.stream()
-          .forEach(header -> {
-            mule4Headers.addContent(
-              new Element("header", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE)
-                .setAttribute("key", header.getText())
-                .setAttribute("value", header.getText()));
+            .forEach(header -> {
+              mule4Headers.addContent(
+                                      new Element("header", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE)
+                                          .setAttribute("key", header.getText())
+                                          .setAttribute("value", header.getText()));
             });
         mule4CreateOperation.addContent(mule4Headers);
       }
@@ -114,24 +114,25 @@ public class CreateOperation extends AbstractApplicationModelMigrationStep imple
     mule3CreateOperation.getParentElement().removeContent(mule3CreateOperation);
   }
 
-  private void setAttributes(Element mule3CreateOperation, Element mule4CreateOperation, MigrationReport report) {
+  private void setAttributes(Element mule3CreateOperation, Element mule4CreateOperation) {
     String docName = mule3CreateOperation.getAttributeValue("name", SalesforceConstants.DOC_NAMESPACE);
     if (docName != null) {
       mule4CreateOperation.setAttribute("name", docName, SalesforceConstants.DOC_NAMESPACE);
     }
 
+    String notes = mule3CreateOperation.getAttributeValue("description", SalesforceConstants.DOC_NAMESPACE);
+    if (notes != null) {
+      mule4CreateOperation.setAttribute("description", notes, SalesforceConstants.DOC_NAMESPACE);
+    }
+
     String configRef = mule3CreateOperation.getAttributeValue("config-ref");
     if (configRef != null && !configRef.isEmpty()) {
       mule4CreateOperation.setAttribute("config-ref", configRef);
-    } else {
-      report.report("salesforce.create", mule4CreateOperation, mule4CreateOperation);
     }
 
     String type = mule3CreateOperation.getAttributeValue("type");
     if (type != null && !type.isEmpty()) {
       mule4CreateOperation.setAttribute("type", type);
-    } else {
-      report.report("salesforce.create", mule4CreateOperation, mule4CreateOperation);
     }
   }
 

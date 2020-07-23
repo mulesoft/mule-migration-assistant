@@ -1060,16 +1060,11 @@ raml:
     message: No matching config was found for RAML element.
 
 salesforce:
-  create:
-    type: ERROR
-    message: "Fail during migrating create operation"
-    docLinks:
-      - https://docs.mulesoft.com/salesforce-connector/10.2/salesforce-connector-reference#create
+  accessTokenId:
+    type: INFO
+    message: "The access token id parameter was removed in salesforce 10.x"
   cachedBasicConfig:
     type: ERROR
     message: "Fail during migrating cached basic configuration"
     docLinks:
       - https://docs.mulesoft.com/salesforce-connector/0.3.9/salesforce-connector-authentication#basic-authentication
-  accessTokenId:
-    type: INFO
-    message: "The access token id parameter was removed in salesforce 10.x"
