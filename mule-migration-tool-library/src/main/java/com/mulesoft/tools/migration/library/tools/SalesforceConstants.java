@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.library.tools;
 import org.jdom2.Namespace;
 
 /**
- * Migrate BatchJob component
+ * Salesforce constants class
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
