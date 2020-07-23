@@ -13,7 +13,7 @@ import com.mulesoft.tools.migration.step.category.PomContribution;
 import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
 
 /**
- * Adds the Email Connector dependency
+ * Adds the Salesforce Connector dependency
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
