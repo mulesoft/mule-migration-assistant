@@ -19,7 +19,7 @@ import java.util.Optional;
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
- * Migrate BatchJob component
+ * Migrate Cached Basic configuration
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -31,9 +31,7 @@ public class CachedBasicConfiguration extends AbstractApplicationModelMigrationS
   private static final String MULE4_NAME = "basic-connection";
   private static final String MULE4_PROXY = "proxy-configuration";
 
-  private
-
-  ExpressionMigrator expressionMigrator;
+  private ExpressionMigrator expressionMigrator;
 
   public CachedBasicConfiguration() {
     this.setAppliedTo(XmlDslUtils.getXPathSelector(SalesforceConstants.MULE3_SALESFORCE_NAMESPACE_URI, MULE3_NAME, false));
@@ -46,16 +44,32 @@ public class CachedBasicConfiguration extends AbstractApplicationModelMigrationS
                                        SalesforceConstants.MULE4_SALESFORCE_NAMESPACE_URI, mule3CachedBasicConfig.getDocument());
 
     Element mule4Config = new Element(MULE4_CONFIG, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-    setAttributes(mule3CachedBasicConfig, mule4Config, report);
+
+    setConfigAttributes(mule3CachedBasicConfig, mule4Config);
+    setConnectionAttributes(mule3CachedBasicConfig, mule4Config);
+
+    Optional<Element> mule3ApexConfiguration =
+        Optional.ofNullable(mule3CachedBasicConfig.getChild("apex-class-names", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
+    mule3ApexConfiguration.ifPresent(apexClassNames -> {
+      Element apexClassNameChild = apexClassNames.getChild("apex-class-name", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE);
+      String apexClassNameValue = apexClassNameChild.getText();
+      if (apexClassNameValue != null) {
+        Element mule4ApexClassNames = new Element("apex-class-names", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
+        Element mule4ApexClassNameChild = new Element("apex-class-name", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
+        mule4ApexClassNameChild.setAttribute("value", apexClassNameValue);
+        mule4ApexClassNames.addContent(mule4ApexClassNameChild);
+        mule4Config.addContent(mule4ApexClassNames);
+      }
+    });
+
+    XmlDslUtils.addElementAfter(mule4Config, mule3CachedBasicConfig);
+    mule3CachedBasicConfig.getParentElement().removeContent(mule3CachedBasicConfig);
   }
 
-  private void setAttributes(Element mule3CachedBasicConfig, Element mule4Config, MigrationReport report) {
-    //salesforce:sfdc-config
+  private void setConfigAttributes(Element mule3CachedBasicConfig, Element mule4Config) {
     String nameValue = mule3CachedBasicConfig.getAttributeValue("name");
     if (nameValue != null) {
       mule4Config.setAttribute("name", nameValue);
-    } else {
-      report.report("salesforce.cachedBasicConfiguration", mule4Config, mule4Config);
     }
 
     String docName = mule3CachedBasicConfig.getAttributeValue("name", SalesforceConstants.DOC_NAMESPACE);
@@ -72,39 +86,24 @@ public class CachedBasicConfiguration extends AbstractApplicationModelMigrationS
     if (fetchAllApexRestMetadataValue != null) {
       mule4Config.setAttribute("fetchAllApexRestMetadata", fetchAllApexRestMetadataValue);
     }
+  }
 
-    //salesforce:cached-basic-connection
+  private void setConnectionAttributes(Element mule3CachedBasicConfig, Element mule4Config) {
     Element mule4BasicConnection = new Element(MULE4_NAME, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
 
     String usernameValue = mule3CachedBasicConfig.getAttributeValue("username");
     if (usernameValue != null) {
       mule4BasicConnection.setAttribute("username", usernameValue);
-    } else {
-      report.report("salesforce.cachedBasicConfiguration", mule4Config, mule4Config);
     }
 
     String passwordValue = mule3CachedBasicConfig.getAttributeValue("password");
     if (passwordValue != null) {
       mule4BasicConnection.setAttribute("password", passwordValue);
-    } else {
-      report.report("salesforce.cachedBasicConfiguration", mule4Config, mule4Config);
     }
 
     String securityTokenValue = mule3CachedBasicConfig.getAttributeValue("securityToken");
     if (securityTokenValue != null) {
       mule4BasicConnection.setAttribute("securityToken", securityTokenValue);
-    } else {
-      report.report("salesforce.cachedBasicConfiguration", mule4BasicConnection, mule4BasicConnection);
-    }
-
-    String proxyHostValue = mule3CachedBasicConfig.getAttributeValue("proxyHost");
-    if (proxyHostValue != null && !proxyHostValue.isEmpty()) {
-      Element mule4ProxyBasicConfig = new Element(MULE4_PROXY, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-      mule4ProxyBasicConfig.setAttribute("host", proxyHostValue);
-      mule4ProxyBasicConfig.setAttribute("username", mule3CachedBasicConfig.getAttributeValue("proxyUsername"));
-      mule4ProxyBasicConfig.setAttribute("password", mule3CachedBasicConfig.getAttributeValue("proxyPassword"));
-      mule4ProxyBasicConfig.setAttribute("port", mule3CachedBasicConfig.getAttributeValue("proxyPort"));
-      mule4BasicConnection.addContent(mule4ProxyBasicConfig);
     }
 
     String readTimeoutValue = mule3CachedBasicConfig.getAttributeValue("readTimeout");
@@ -158,7 +157,21 @@ public class CachedBasicConfiguration extends AbstractApplicationModelMigrationS
       mule4BasicConnection.setAttribute("clearNullFields", clearNullFieldsValue);
     }
 
+    setProxyConfiguration(mule3CachedBasicConfig, mule4BasicConnection);
+
     mule4Config.addContent(mule4BasicConnection);
+  }
+
+  private void setProxyConfiguration(Element mule3CachedBasicConfig, Element mule4BasicConnection) {
+    String proxyHostValue = mule3CachedBasicConfig.getAttributeValue("proxyHost");
+    if (proxyHostValue != null && !proxyHostValue.isEmpty()) {
+      Element mule4ProxyBasicConfig = new Element(MULE4_PROXY, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
+      mule4ProxyBasicConfig.setAttribute("host", proxyHostValue);
+      mule4ProxyBasicConfig.setAttribute("username", mule3CachedBasicConfig.getAttributeValue("proxyUsername"));
+      mule4ProxyBasicConfig.setAttribute("password", mule3CachedBasicConfig.getAttributeValue("proxyPassword"));
+      mule4ProxyBasicConfig.setAttribute("port", mule3CachedBasicConfig.getAttributeValue("proxyPort"));
+      mule4BasicConnection.addContent(mule4ProxyBasicConfig);
+    }
 
     Optional<Element> reconnectElement = Optional.ofNullable(mule3CachedBasicConfig
         .getChild("reconnect", Namespace.getNamespace("http://www.mulesoft.org/schema/mule/core")));
@@ -179,23 +192,6 @@ public class CachedBasicConfiguration extends AbstractApplicationModelMigrationS
       mule4Reconnection.addContent(mule4Reconnect);
       mule4BasicConnection.addContent(mule4Reconnection);
     });
-
-    Optional<Element> mule3ApexConfiguration =
-        Optional.ofNullable(mule3CachedBasicConfig.getChild("apex-class-names", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
-    mule3ApexConfiguration.ifPresent(apexClassNames -> {
-      Element apexClassNameChild = apexClassNames.getChild("apex-class-name", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE);
-      String apexClassNameValue = apexClassNameChild.getText();
-      if (apexClassNameValue != null) {
-        Element mule4ApexClassNames = new Element("apex-class-names", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-        Element mule4ApexClassNameChild = new Element("apex-class-name", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-        mule4ApexClassNameChild.setAttribute("value", apexClassNameValue);
-        mule4ApexClassNames.addContent(mule4ApexClassNameChild);
-        mule4Config.addContent(mule4ApexClassNames);
-      }
-    });
-
-    XmlDslUtils.addElementAfter(mule4Config, mule3CachedBasicConfig);
-    mule3CachedBasicConfig.getParentElement().removeContent(mule3CachedBasicConfig);
   }
 
   @Override

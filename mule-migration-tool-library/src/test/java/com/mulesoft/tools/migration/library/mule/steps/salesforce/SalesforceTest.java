@@ -44,13 +44,13 @@ public class SalesforceTest {
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-            "salesforce-create",
-            "salesforce-createWithoutHeaders",
-            "salesforce-createWithAccessTokenId",
-            "salesforce-createWithCreateObjectsManually",
-            "salesforce-createWithEditInlineHeaders",
-            "salesforce-basicAuthentication",
-            "salesforce-basicAuth"
+        "salesforce-create",
+        "salesforce-createWithoutHeaders",
+        "salesforce-createWithAccessTokenId",
+        "salesforce-createWithCreateObjectsManually",
+        "salesforce-createWithEditInlineHeaders",
+        "salesforce-basicAuthentication",
+        "salesforce-basicAuth"
     };
   }
 
