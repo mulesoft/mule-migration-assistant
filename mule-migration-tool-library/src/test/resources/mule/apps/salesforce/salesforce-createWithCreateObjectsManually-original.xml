@@ -7,7 +7,7 @@
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd">
 
-    <flow name="salesforce-8.xFlow">
+    <flow name="salesforce-createWithCreateObjectsManually-flow">
         <sfdc:create config-ref="Salesforce__Basic_Authentication" type="Account"  doc:name="Salesforce">
             <sfdc:objects>
                 <sfdc:object>

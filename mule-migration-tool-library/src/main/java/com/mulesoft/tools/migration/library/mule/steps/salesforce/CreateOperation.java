@@ -23,7 +23,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPA
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 
 /**
- * Migrate BatchJob component
+ * Migrate Create operation
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
