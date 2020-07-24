@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <flow name="salesforce-updateManuallyObjectsAndHeaders-flow">
+        <sfdc:update config-ref="Salesforce_Config" type="Account" doc:name="Salesforce">
+            <sfdc:objects>
+                <sfdc:object>
+                    <sfdc:inner-object key="BillingCity">FirstCity</sfdc:inner-object>
+                    <sfdc:inner-object key="Name">FirstObject</sfdc:inner-object>
+                </sfdc:object>
+                <sfdc:object>
+                    <sfdc:inner-object key="BillingCity">SecondCity</sfdc:inner-object>
+                    <sfdc:inner-object key="Name">SecondObject</sfdc:inner-object>
+                </sfdc:object>
+            </sfdc:objects>
+            <sfdc:headers>
+                <sfdc:header key="secondHeader">secondValue</sfdc:header>
+                <sfdc:header key="firstHeader">firstValue</sfdc:header>
+            </sfdc:headers>
+        </sfdc:update>
+    </flow>
+
+
+</mule>

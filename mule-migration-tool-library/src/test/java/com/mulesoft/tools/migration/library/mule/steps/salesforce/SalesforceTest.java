@@ -50,13 +50,24 @@ public class SalesforceTest {
         "salesforce-createWithCreateObjectsManually",
         "salesforce-createWithEditInlineHeaders",
         "salesforce-basicAuthentication",
-        "salesforce-basicAuth"
+        "salesforce-basicAuth",
+        "salesforce-update",
+        "salesforce-updateManuallyObjectsAndHeaders",
+        "salesforce-updateWithAccessTokenId",
+        "salesforce-upsert",
+        "salesforce-upsertWithAccessTokenId",
+        "salesforce-upsertWithoutHeaders",
+        "salesforce-upsertWithCreateObjectsManually",
+        "salesforce-upsertWithEditInlineHeaders",
+        "salesforce-upsertWithoutExternalIdFieldName"
     };
   }
 
   private final Path configPath;
   private final Path targetPath;
   private CreateOperation createOperation;
+  private UpdateOperation updateOperation;
+  private UpsertOperation upsertOperation;
   private CachedBasicConfiguration cachedBasicConfiguration;
   private Document doc;
   private ApplicationModel appModel;
@@ -72,10 +83,14 @@ public class SalesforceTest {
     appModel = mockApplicationModel(doc, temp);
 
     createOperation = new CreateOperation();
+    updateOperation = new UpdateOperation();
+    upsertOperation = new UpsertOperation();
     cachedBasicConfiguration = new CachedBasicConfiguration();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
+    updateOperation.setExpressionMigrator(expressionMigrator);
+    upsertOperation.setExpressionMigrator(expressionMigrator);
     cachedBasicConfiguration.setExpressionMigrator(expressionMigrator);
   }
 
@@ -87,6 +102,8 @@ public class SalesforceTest {
   @Test
   public void execute() throws Exception {
     migrate(createOperation);
+    migrate(updateOperation);
+    migrate(upsertOperation);
     migrate(cachedBasicConfiguration);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
