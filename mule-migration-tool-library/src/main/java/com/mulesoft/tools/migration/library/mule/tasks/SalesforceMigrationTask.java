@@ -7,6 +7,8 @@ package com.mulesoft.tools.migration.library.mule.tasks;
 
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.SalesforcePomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.salesforce.UpdateOperation;
+import com.mulesoft.tools.migration.library.mule.steps.salesforce.UpsertOperation;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
@@ -41,7 +43,10 @@ public class SalesforceMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new CreateOperation(),
+    return newArrayList(
+                        new CreateOperation(),
+                        new UpdateOperation(),
+                        new UpsertOperation()
                         new SalesforcePomContribution());
   }
 }

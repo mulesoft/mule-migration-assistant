@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="salesforce-updateManuallyObjectsAndHeaders-flow">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+            <ee:message>
+                <ee:set-payload>%dw 2.0 output application/json
+                    ---
+                    [{
+                    BillingCity : "FirstCity",
+                    Name : "FirstObject"
+                    },
+                    {BillingCity : "SecondCity",
+                    Name : "SecondObject"
+                    }]</ee:set-payload>
+            </ee:message>
+        </ee:transform>
+
+        <salesforce:update doc:name="Salesforce" config-ref="Salesforce_Config" type="Account">
+            <salesforce:headers>
+                <salesforce:header key="secondValue" value="secondValue" />
+                <salesforce:header key="firstValue" value="firstValue" />
+            </salesforce:headers>
+        </salesforce:update>
+
+    </flow>
+
+
+</mule>
