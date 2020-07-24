@@ -51,7 +51,13 @@ public class SalesforceTest {
         "salesforce-createWithEditInlineHeaders",
         "salesforce-update",
         "salesforce-updateManuallyObjectsAndHeaders",
-        "salesforce-updateWithAccessTokenId"
+        "salesforce-updateWithAccessTokenId",
+        "salesforce-upsert",
+        "salesforce-upsertWithAccessTokenId",
+        "salesforce-upsertWithoutHeaders",
+        "salesforce-upsertWithCreateObjectsManually",
+        "salesforce-upsertWithEditInlineHeaders",
+        "salesforce-upsertWithoutExternalIdFieldName"
     };
   }
 
@@ -61,6 +67,7 @@ public class SalesforceTest {
   private UpdateOperation updateOperation;
   private Document doc;
   private ApplicationModel appModel;
+  private UpsertOperation upsertOperation;
 
   public SalesforceTest(String filePrefix) {
     this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -74,10 +81,12 @@ public class SalesforceTest {
 
     createOperation = new CreateOperation();
     updateOperation = new UpdateOperation();
+    upsertOperation = new UpsertOperation();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
     updateOperation.setExpressionMigrator(expressionMigrator);
+    upsertOperation.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -89,6 +98,7 @@ public class SalesforceTest {
   public void execute() throws Exception {
     migrate(createOperation);
     migrate(updateOperation);
+    migrate(upsertOperation);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
