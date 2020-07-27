@@ -42,7 +42,7 @@ public class CreateOperation extends AbstractApplicationModelMigrationStep imple
   @Override
   public void execute(Element mule3CreateOperation, MigrationReport report) throws RuntimeException {
     getApplicationModel().addNameSpace(SalesforceConstants.MULE4_SALESFORCE_NAMESPACE,
-                                       SalesforceConstants.MULE4_SALESFORCE_NAMESPACE_URI, mule3CreateOperation.getDocument());
+            SalesforceConstants.MULE4_SALESFORCE_NAMESPACE_URI, mule3CreateOperation.getDocument());
 
     Element mule4CreateOperation = new Element(name, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
     setAttributes(mule3CreateOperation, mule4CreateOperation);
@@ -52,7 +52,7 @@ public class CreateOperation extends AbstractApplicationModelMigrationStep imple
     }
 
     Optional<Element> mule3Headers =
-        Optional.ofNullable(mule3CreateOperation.getChild("headers", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
+            Optional.ofNullable(mule3CreateOperation.getChild("headers", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
 
     mule3Headers.ifPresent(headers -> {
       String refHeaders = headers.getAttributeValue("ref");
@@ -65,18 +65,18 @@ public class CreateOperation extends AbstractApplicationModelMigrationStep imple
       if (children.size() > 0) {
         Element mule4Headers = new Element("headers", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
         children.stream()
-            .forEach(header -> {
-              mule4Headers.addContent(
-                                      new Element("header", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE)
-                                          .setAttribute("key", header.getText())
-                                          .setAttribute("value", header.getText()));
-            });
+                .forEach(header -> {
+                  mule4Headers.addContent(
+                          new Element("header", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE)
+                                  .setAttribute("key", header.getText())
+                                  .setAttribute("value", header.getText()));
+                });
         mule4CreateOperation.addContent(mule4Headers);
       }
     });
 
     Optional<Element> objects =
-        Optional.ofNullable(mule3CreateOperation.getChild("objects", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
+            Optional.ofNullable(mule3CreateOperation.getChild("objects", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
 
     objects.ifPresent(records -> {
       Optional.ofNullable(records.getAttributeValue("ref")).ifPresent(value -> {
@@ -91,10 +91,10 @@ public class CreateOperation extends AbstractApplicationModelMigrationStep imple
       List<Element> children = records.getChildren();
       if (children.size() > 0) {
         String transformBody = children.stream()
-            .map(object -> object.getChildren().stream()
-                .map(innerObject -> innerObject.getAttributeValue("key") + " : \"" + innerObject.getText() + "\"")
-                .collect(Collectors.joining(",\n")))
-            .collect(Collectors.joining("\n},\n{"));
+                .map(object -> object.getChildren().stream()
+                        .map(innerObject -> innerObject.getAttributeValue("key") + " : \"" + innerObject.getText() + "\"")
+                        .collect(Collectors.joining(",\n")))
+                .collect(Collectors.joining("\n},\n{"));
 
 
         getApplicationModel().addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, mule3CreateOperation.getDocument());
@@ -103,8 +103,8 @@ public class CreateOperation extends AbstractApplicationModelMigrationStep imple
         element.setNamespace(CORE_EE_NAMESPACE);
         element.removeContent();
         element.addContent(new Element("message", CORE_EE_NAMESPACE)
-            .addContent(new Element("set-payload", CORE_EE_NAMESPACE)
-                .setText("%dw 2.0 output application/json\n---\n[{\n" + transformBody + "\n}]")));
+                .addContent(new Element("set-payload", CORE_EE_NAMESPACE)
+                        .setText("%dw 2.0 output application/json\n---\n[{\n" + transformBody + "\n}]")));
 
         XmlDslUtils.addElementBefore(element, mule3CreateOperation);
       }

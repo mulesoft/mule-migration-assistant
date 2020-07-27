@@ -21,8 +21,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,15 +41,15 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 @RunWith(Parameterized.class)
 public class ApikitMigrationTest {
 
-  private static String BASE_PATH = "mule/apps/apikit";
+  private static Path BASE_PATH = Paths.get("mule/apps/apikit");
 
   private final Path configPath;
   private final Path targetPath;
 
   @Parameterized.Parameters(name = "{0}")
-  public static Object[] params() throws IOException {
-    final URL resource = ApikitMigrationTest.class.getResource("/" + BASE_PATH);
-    return Files.walk(Paths.get(resource.getPath()))
+  public static Object[] params() throws Exception {
+    final URI resource = ApikitMigrationTest.class.getClassLoader().getResource(BASE_PATH.toString()).toURI();
+    return Files.walk(Paths.get(new File(resource).getAbsolutePath()))
         .filter(s -> s.toString().endsWith("-original.xml"))
         .map(p -> new File(p.toUri()).getName().replaceAll("-original.xml", ""))
         .sorted()
@@ -59,9 +58,8 @@ public class ApikitMigrationTest {
   }
 
   public ApikitMigrationTest(String filePrefix) {
-    final Path path = Paths.get(BASE_PATH);
-    configPath = path.resolve(filePrefix + "-original.xml");
-    targetPath = path.resolve(filePrefix + ".xml");
+    configPath = BASE_PATH.resolve(filePrefix + "-original.xml");
+    targetPath = BASE_PATH.resolve(filePrefix + ".xml");
   }
 
   private List<MigrationStep> steps;
