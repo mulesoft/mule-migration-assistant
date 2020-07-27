@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <flow name="salesforce-retrieveWithIdsAndFieldsAddedManually">
-        <sfdc:retrieve config-ref="Salesforce__Basic_Authentication" type="Account" doc:name="Salesforce" doc:description="notes">
-            <sfdc:ids>
-                <sfdc:id>id1</sfdc:id>
-                <sfdc:id>id2</sfdc:id>
-            </sfdc:ids>
-            <sfdc:fields >
-                <sfdc:field>Id</sfdc:field>
-                <sfdc:field>Name</sfdc:field>
-            </sfdc:fields>
-        </sfdc:retrieve>
+    <flow name="salesforce-retrieveWithAccessTokenId">
+
+        <ee:transform >
+            <ee:message >
+                <ee:set-payload ><![CDATA[
+                    %dw 2.0
+                    output application/java
+                    ---
+                    {
+                        fields: ["Id","Name"],
+                        ids: ["id1","id2"]
+
+                    } as Object { class : "org.mule.extension.salesforce.api.core.RetrieveRequest" }]]>
+                </ee:set-payload>
+            </ee:message>
+        </ee:transform>
+
+        <salesforce:retrieve doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" type="Account" doc:description="notes">
+            <!--Migration INFO: The access token id parameter was removed in salesforce 10.x-->
+        </salesforce:retrieve>
     </flow>
 </mule>

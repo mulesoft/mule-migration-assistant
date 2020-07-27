@@ -44,18 +44,23 @@ public class SalesforceTest {
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        //        "salesforce-create",
-        //        "salesforce-createWithoutHeaders",
-        //        "salesforce-createWithAccessTokenId",
-        //        "salesforce-createWithCreateObjectsManually" ,
-        //        "salesforce-createWithEditInlineHeaders",
-        //        "salesforce-upsert",
-        //        "salesforce-upsertWithAccessTokenId",
-        //        "salesforce-upsertWithoutHeaders",
-        //        "salesforce-upsertWithCreateObjectsManually",
-        //        "salesforce-upsertWithEditInlineHeaders",
-        //        "salesforce-upsertWithoutExternalIdFieldName",
-        "salesforce-retrieveWithIdsAndFieldsAddedManually"
+        "salesforce-create",
+        "salesforce-createWithoutHeaders",
+        "salesforce-createWithAccessTokenId",
+        "salesforce-createWithCreateObjectsManually",
+        "salesforce-createWithEditInlineHeaders",
+        "salesforce-upsert",
+        "salesforce-upsertWithAccessTokenId",
+        "salesforce-upsertWithoutHeaders",
+        "salesforce-upsertWithCreateObjectsManually",
+        "salesforce-upsertWithEditInlineHeaders",
+        "salesforce-upsertWithoutExternalIdFieldName",
+        "salesforce-retrieveWithIdsAndFieldsAddedManually",
+        "salesforce-retrieveWithIdsAndFieldsFromExpression",
+        "salesforce-retrieveWithIdsAddedManuallyAndFieldsFromExpression",
+        "salesforce-retrieveWithEditInLineHeaders",
+        "salesforce-retrieveWithAccessTokenId",
+        "salesforce-retrieveWithoutIds"
     };
   }
 
@@ -84,6 +89,7 @@ public class SalesforceTest {
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
     upsertOperation.setExpressionMigrator(expressionMigrator);
+    retrieveOperation.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
