@@ -67,7 +67,7 @@ public class UpdateOperation extends AbstractApplicationModelMigrationStep imple
             .forEach(header -> {
               mule4Headers.addContent(
                                       new Element("header", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE)
-                                          .setAttribute("key", header.getText())
+                                          .setAttribute("key", header.getAttributeValue("key"))
                                           .setAttribute("value", header.getText()));
             });
         mule4UpdateOperation.addContent(mule4Headers);
