@@ -80,7 +80,7 @@ public class UpsertOperation extends AbstractApplicationModelMigrationStep imple
             .forEach(header -> {
               mule4Headers.addContent(
                                       new Element("header", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE)
-                                          .setAttribute("key", header.getText())
+                                          .setAttribute("key", header.getAttributeValue("key"))
                                           .setAttribute("value", header.getText()));
             });
         mule4UpsertOperation.addContent(mule4Headers);

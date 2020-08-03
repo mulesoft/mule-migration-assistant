@@ -4,8 +4,8 @@
     <flow name="salesforce-upsertWithEditInlineHeaders-flow">
         <salesforce:upsert doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" objectType="Account" externalIdFieldName="ExternalID__c">
             <salesforce:headers>
-                <salesforce:header key="secondValue" value="secondValue" />
-                <salesforce:header key="firstValue" value="firstValue" />
+                <salesforce:header key="secondHeader" value="secondValue" />
+                <salesforce:header key="firstHeader" value="firstValue" />
             </salesforce:headers>
             <salesforce:records><![CDATA[#[payload]]]></salesforce:records>
         </salesforce:upsert>

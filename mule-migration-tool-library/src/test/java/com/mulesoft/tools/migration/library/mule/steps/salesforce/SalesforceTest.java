@@ -59,18 +59,33 @@ public class SalesforceTest {
         "salesforce-upsertWithoutHeaders",
         "salesforce-upsertWithCreateObjectsManually",
         "salesforce-upsertWithEditInlineHeaders",
-        "salesforce-upsertWithoutExternalIdFieldName"
+        "salesforce-upsertWithoutExternalIdFieldName",
+        "salesforce-retrieveWithIdsAndFieldsAddedManually",
+        "salesforce-retrieveWithIdsAndFieldsFromExpression",
+        "salesforce-retrieveWithIdsAddedManuallyAndFieldsFromExpression",
+        "salesforce-retrieveWithEditInLineHeaders",
+        "salesforce-retrieveWithAccessTokenId",
+        "salesforce-retrieveWithoutIds",
+        "salesforce-queryDsqlDefaultFetchSize",
+        "salesforce-queryNativeNotDefaultFetchSize",
+        "salesforce-queryWithAccessTokenId",
+        "salesforce-queryWithEditInlineHeadersNotDefaultFetchSize",
+        "salesforce-queryWithEditInlineHeadersDefaultFetchSize",
+        "salesforce-queryWithoutHeadersNotDefaultFetchSize",
+        "salesforce-queryWithoutHeadersDefaultFetchSize"
     };
   }
 
   private final Path configPath;
   private final Path targetPath;
-  private CreateOperation createOperation;
-  private UpdateOperation updateOperation;
-  private UpsertOperation upsertOperation;
-  private CachedBasicConfiguration cachedBasicConfiguration;
   private Document doc;
   private ApplicationModel appModel;
+  private CreateOperation createOperation;
+  private UpsertOperation upsertOperation;
+  private RetrieveOperation retrieveOperation;
+  private UpdateOperation updateOperation;
+  private QueryOperation queryOperation;
+  private CachedBasicConfiguration cachedBasicConfiguration;
 
   public SalesforceTest(String filePrefix) {
     this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -83,14 +98,18 @@ public class SalesforceTest {
     appModel = mockApplicationModel(doc, temp);
 
     createOperation = new CreateOperation();
-    updateOperation = new UpdateOperation();
     upsertOperation = new UpsertOperation();
+    retrieveOperation = new RetrieveOperation();
+    updateOperation = new UpdateOperation();
+    queryOperation = new QueryOperation();
     cachedBasicConfiguration = new CachedBasicConfiguration();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
-    updateOperation.setExpressionMigrator(expressionMigrator);
     upsertOperation.setExpressionMigrator(expressionMigrator);
+    retrieveOperation.setExpressionMigrator(expressionMigrator);
+    updateOperation.setExpressionMigrator(expressionMigrator);
+    queryOperation.setExpressionMigrator(expressionMigrator);
     cachedBasicConfiguration.setExpressionMigrator(expressionMigrator);
   }
 
@@ -102,8 +121,10 @@ public class SalesforceTest {
   @Test
   public void execute() throws Exception {
     migrate(createOperation);
-    migrate(updateOperation);
     migrate(upsertOperation);
+    migrate(retrieveOperation);
+    migrate(updateOperation);
+    migrate(queryOperation);
     migrate(cachedBasicConfiguration);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
@@ -111,6 +132,9 @@ public class SalesforceTest {
 
     if (doc.getBaseURI().contains("AccessTokenId")) {
       report.expectReportEntry("salesforce.accessTokenId");
+    }
+    if (doc.getBaseURI().contains("FetchSize")) {
+      report.expectReportEntry("salesforce.fetchSize");
     }
 
     assertThat(xmlString,

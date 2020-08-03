@@ -7,10 +7,9 @@
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd">
 
-    <flow name="salesforce-createWithoutConfig-flow">
-        <sfdc:create type="Account" doc:name="Salesforce">
-            <sfdc:objects ref="#[payload]"/>
-            <sfdc:headers ref="#[flowVars.headers]"/>
-        </sfdc:create>
+    <flow name="salesforce-queryWithoutHeadersNotDefaultFetchSize-flow">
+        <sfdc:query config-ref="Salesforce__Basic_Authentication"  doc:name="Salesforce" doc:description="Notes" query="SELECT Id,Name FROM Account"  fetchSize="1500">
+        </sfdc:query>
     </flow>
+
 </mule>

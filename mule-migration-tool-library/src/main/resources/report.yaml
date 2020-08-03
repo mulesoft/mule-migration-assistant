@@ -1063,8 +1063,8 @@ salesforce:
   accessTokenId:
     type: INFO
     message: "The access token id parameter was removed in salesforce 10.x"
-  cachedBasicConfig:
-    type: ERROR
-    message: "Fail during migrating cached basic configuration"
+  fetchSize:
+    type: INFO
+    message: "Fetch size parameter does not exists in Salesforce 10.x. As an alternative, the batchSize header can be set along with all the other headers."
     docLinks:
-      - https://docs.mulesoft.com/salesforce-connector/0.3.9/salesforce-connector-authentication#basic-authentication
+      - https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_header_queryoptions.htm#topic-title

@@ -18,8 +18,8 @@
 
         <salesforce:update doc:name="Salesforce" config-ref="Salesforce_Config" type="Account">
             <salesforce:headers>
-                <salesforce:header key="secondValue" value="secondValue" />
-                <salesforce:header key="firstValue" value="firstValue" />
+                <salesforce:header key="secondHeader" value="secondValue" />
+                <salesforce:header key="firstHeader" value="firstValue" />
             </salesforce:headers>
         </salesforce:update>
 
