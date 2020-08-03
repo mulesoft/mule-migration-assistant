@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 
@@ -51,12 +52,10 @@ public class UpsertOperation extends AbstractApplicationModelMigrationStep imple
 
   @Override
   public void execute(Element mule3UpsertOperation, MigrationReport report) throws RuntimeException {
-
-    getApplicationModel().addNameSpace(SalesforceConstants.MULE4_SALESFORCE_NAMESPACE,
+    addNameSpace(SalesforceConstants.MULE4_SALESFORCE_NAMESPACE,
                                        SalesforceConstants.MULE4_SALESFORCE_NAMESPACE_URI, mule3UpsertOperation.getDocument());
 
     Element mule4UpsertOperation = new Element(name, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-
     setAttributes(mule3UpsertOperation, mule4UpsertOperation);
 
     if (mule3UpsertOperation.getAttribute("accessTokenId") != null) {
@@ -77,12 +76,10 @@ public class UpsertOperation extends AbstractApplicationModelMigrationStep imple
       if (children.size() > 0) {
         Element mule4Headers = new Element("headers", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
         children.stream()
-            .forEach(header -> {
-              mule4Headers.addContent(
-                                      new Element("header", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE)
-                                          .setAttribute("key", header.getAttributeValue("key"))
-                                          .setAttribute("value", header.getText()));
-            });
+            .forEach(header -> mule4Headers.addContent(
+                                    new Element("header", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE)
+                                        .setAttribute("key", header.getAttributeValue("key"))
+                                        .setAttribute("value", header.getText())));
         mule4UpsertOperation.addContent(mule4Headers);
       }
     });
@@ -109,7 +106,7 @@ public class UpsertOperation extends AbstractApplicationModelMigrationStep imple
             .collect(Collectors.joining("\n},\n{"));
 
 
-        getApplicationModel().addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, mule3UpsertOperation.getDocument());
+        addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, mule3UpsertOperation.getDocument());
         Element element = new Element("transform");
         element.setName("transform");
         element.setNamespace(CORE_EE_NAMESPACE);

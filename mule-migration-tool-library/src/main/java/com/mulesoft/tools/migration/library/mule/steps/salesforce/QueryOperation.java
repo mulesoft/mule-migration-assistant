@@ -17,6 +17,7 @@ import org.jdom2.Element;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
 
 /**
  * Migrate Query operation
@@ -36,8 +37,18 @@ public class QueryOperation extends AbstractApplicationModelMigrationStep implem
   }
 
   @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
+
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return this.expressionMigrator;
+  }
+
+  @Override
   public void execute(Element mule3QueryOperation, MigrationReport report) throws RuntimeException {
-    getApplicationModel().addNameSpace(SalesforceConstants.MULE4_SALESFORCE_NAMESPACE,
+    addNameSpace(SalesforceConstants.MULE4_SALESFORCE_NAMESPACE,
                                        SalesforceConstants.MULE4_SALESFORCE_NAMESPACE_URI, mule3QueryOperation.getDocument());
 
     Element mule4QueryOperation = new Element(name, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
@@ -126,15 +137,5 @@ public class QueryOperation extends AbstractApplicationModelMigrationStep implem
     if (configRef != null && !configRef.isEmpty()) {
       mule4QueryOperation.setAttribute("config-ref", configRef);
     }
-  }
-
-  @Override
-  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
-    this.expressionMigrator = expressionMigrator;
-  }
-
-  @Override
-  public ExpressionMigrator getExpressionMigrator() {
-    return this.expressionMigrator;
   }
 }

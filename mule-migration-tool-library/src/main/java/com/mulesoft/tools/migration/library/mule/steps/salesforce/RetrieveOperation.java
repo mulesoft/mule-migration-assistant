@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 
@@ -51,12 +52,10 @@ public class RetrieveOperation extends AbstractApplicationModelMigrationStep imp
 
   @Override
   public void execute(Element mule3RetrieveOperation, MigrationReport report) throws RuntimeException {
-
-    getApplicationModel().addNameSpace(SalesforceConstants.MULE4_SALESFORCE_NAMESPACE,
+    addNameSpace(SalesforceConstants.MULE4_SALESFORCE_NAMESPACE,
                                        SalesforceConstants.MULE4_SALESFORCE_NAMESPACE_URI, mule3RetrieveOperation.getDocument());
 
     Element mule4RetrieveOperation = new Element(name, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-
     setAttributes(mule3RetrieveOperation, mule4RetrieveOperation);
 
     if (mule3RetrieveOperation.getAttribute("accessTokenId") != null) {
