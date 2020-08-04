@@ -11,11 +11,11 @@
                 <sfdc:header key="header1">value1</sfdc:header>
             </sfdc:headers>
         </sfdc:query>-->
-            <salesforce:salesforce-query><![CDATA[SELECT Id,Name FROM Account]]></salesforce:salesforce-query>
             <salesforce:headers>
                 <salesforce:header key="header1" value="value1" />
                 <salesforce:header key="batchSize" value="1500" />
             </salesforce:headers>
+            <salesforce:salesforce-query><![CDATA[SELECT Id,Name FROM Account]]></salesforce:salesforce-query>
         </salesforce:query>
 
     </flow>

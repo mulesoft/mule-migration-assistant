@@ -3,7 +3,6 @@
 
     <flow name="salesforce-queryWithEditInlineHeadersDefaultFetchSize-flow">
         <salesforce:query doc:name="Salesforce" doc:description="Notes" config-ref="Salesforce__Basic_Authentication">
-            <salesforce:salesforce-query><![CDATA[SELECT Id,Name FROM Account]]></salesforce:salesforce-query>
             <!--Migration INFO: Fetch size parameter does not exists in Salesforce 10.x. As an alternative, the batchSize header can be set along with all the other headers.-->
             <!--    For more information refer to:-->
             <!--        * https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_header_queryoptions.htm#topic-title-->
@@ -14,6 +13,7 @@
                 <salesforce:header key="header1" value="value1" />
                 <salesforce:header key="batchSize" value="2000" />
             </salesforce:headers>
+            <salesforce:salesforce-query><![CDATA[SELECT Id,Name FROM Account]]></salesforce:salesforce-query>
         </salesforce:query>
 
     </flow>
