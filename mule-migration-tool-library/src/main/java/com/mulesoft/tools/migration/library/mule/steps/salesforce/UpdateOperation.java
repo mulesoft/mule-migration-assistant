@@ -54,7 +54,7 @@ public class UpdateOperation extends AbstractSalesforceOperationMigrationStep im
                 .collect(Collectors.joining(",\n")))
             .collect(Collectors.joining("\n},\n{"));
 
-        SalesforceUtils.createTransformBeforeElement(mule3Operation, transformBody);
+        SalesforceUtils.createTransformBeforeElement(mule3Operation,  SalesforceUtils.START_TRANSFORM_BODY_TYPE_JSON + transformBody + SalesforceUtils.CLOSE_TRANSFORM_BODY_TYPE_JSON);
       }
     });
 

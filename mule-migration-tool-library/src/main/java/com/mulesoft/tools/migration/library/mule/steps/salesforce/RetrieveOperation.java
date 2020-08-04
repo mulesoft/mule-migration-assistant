@@ -9,7 +9,6 @@ import com.mulesoft.tools.migration.library.tools.SalesforceUtils;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
-import org.jdom2.CDATA;
 import org.jdom2.Element;
 
 import java.util.List;
@@ -17,9 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
+import static com.mulesoft.tools.migration.library.tools.SalesforceUtils.START_TRANSFORM_BODY_TYPE_JAVA;
 
 /**
  * Migrate Retrieve operation
@@ -110,17 +107,10 @@ public class RetrieveOperation extends AbstractSalesforceOperationMigrationStep 
         }
       });
 
-      addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, mule3RetrieveOperation.getDocument());
-      Element element = new Element("transform");
-      element.setName("transform");
-      element.setNamespace(CORE_EE_NAMESPACE);
-      element.removeContent();
-      element.addContent(new Element("message", CORE_EE_NAMESPACE)
-          .addContent(new Element("set-payload", CORE_EE_NAMESPACE)
-              .setContent(new CDATA("%dw 2.0 output application/java\n---\n{\n" + transformBody
-                  + "\n} as Object { class : \"org.mule.extension.salesforce.api.core.RetrieveRequest\" }"))));
+      transformBody.insert(0, START_TRANSFORM_BODY_TYPE_JAVA);
+      transformBody.append("\n} as Object { class : \"org.mule.extension.salesforce.api.core.RetrieveRequest\" }");
 
-      XmlDslUtils.addElementBefore(element, mule3RetrieveOperation);
+      SalesforceUtils.createTransformBeforeElement(mule3RetrieveOperation, transformBody.toString());
     });
   }
 }

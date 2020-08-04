@@ -38,6 +38,10 @@ public class SalesforceUtils {
   public static final String DOC_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/documentation";
   public static final Namespace DOC_NAMESPACE = Namespace.getNamespace(DOC_NAMESPACE_PREFIX, DOC_NAMESPACE_URI);
 
+  public static final String START_TRANSFORM_BODY_TYPE_JSON = "%dw 2.0 output application/json\n---\n[{\n";
+  public static final String START_TRANSFORM_BODY_TYPE_JAVA = "%dw 2.0 output application/java\n---\n{\n";
+  public static final String CLOSE_TRANSFORM_BODY_TYPE_JSON = "\n}]";
+
   public static void migrateRecordsFromExpression(Element records, Element mule4Operation,
                                                   ExpressionMigrator expressionMigrator) {
     Optional.ofNullable(records.getAttributeValue("ref")).ifPresent(value -> {
@@ -56,7 +60,7 @@ public class SalesforceUtils {
     element.removeContent();
     element.addContent(new Element("message", CORE_EE_NAMESPACE)
             .addContent(new Element("set-payload", CORE_EE_NAMESPACE)
-                    .setText("%dw 2.0 output application/json\n---\n[{\n" + transformBody + "\n}]")));
+                    .setText(transformBody)));
 
     XmlDslUtils.addElementBefore(element, mule3Operation);
   }

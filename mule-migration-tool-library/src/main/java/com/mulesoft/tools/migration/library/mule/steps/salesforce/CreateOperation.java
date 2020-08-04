@@ -57,7 +57,7 @@ public class CreateOperation extends AbstractSalesforceOperationMigrationStep im
 
 
         addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, mule3Operation.getDocument());
-        SalesforceUtils.createTransformBeforeElement(mule3Operation, transformBody);
+        SalesforceUtils.createTransformBeforeElement(mule3Operation, SalesforceUtils.START_TRANSFORM_BODY_TYPE_JSON + transformBody + SalesforceUtils.CLOSE_TRANSFORM_BODY_TYPE_JSON);
       }
     });
 
