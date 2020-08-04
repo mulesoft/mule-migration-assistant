@@ -5,12 +5,10 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.salesforce;
 
-import com.mulesoft.tools.migration.library.tools.SalesforceConstants;
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.library.tools.SalesforceUtils;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.CDATA;
 import org.jdom2.Element;
 
@@ -29,73 +27,26 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SC
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class UpsertOperation extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
+public class UpsertOperation extends AbstractSalesforceOperationMigrationStep implements ExpressionMigratorAware {
 
   private static final String name = "upsert";
 
-  private ExpressionMigrator expressionMigrator;
-
   public UpsertOperation() {
-    this.setAppliedTo(XmlDslUtils.getXPathSelector(SalesforceConstants.MULE3_SALESFORCE_NAMESPACE_URI, name, false));
-    this.setNamespacesContributions(newArrayList(SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
+    super(name);
+    this.setAppliedTo(XmlDslUtils.getXPathSelector(SalesforceUtils.MULE3_SALESFORCE_NAMESPACE_URI, name, false));
+    this.setNamespacesContributions(newArrayList(SalesforceUtils.MULE3_SALESFORCE_NAMESPACE));
   }
 
   @Override
-  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
-    this.expressionMigrator = expressionMigrator;
-  }
-
-  @Override
-  public ExpressionMigrator getExpressionMigrator() {
-    return expressionMigrator;
-  }
-
-  @Override
-  public void execute(Element mule3UpsertOperation, MigrationReport report) throws RuntimeException {
-    addNameSpace(SalesforceConstants.MULE4_SALESFORCE_NAMESPACE,
-                                       SalesforceConstants.MULE4_SALESFORCE_NAMESPACE_URI, mule3UpsertOperation.getDocument());
-
-    Element mule4UpsertOperation = new Element(name, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-    setAttributes(mule3UpsertOperation, mule4UpsertOperation);
-
-    if (mule3UpsertOperation.getAttribute("accessTokenId") != null) {
-      report.report("salesforce.accessTokenId", mule3UpsertOperation, mule4UpsertOperation);
-    }
-
-    Optional<Element> mule3Headers =
-        Optional.ofNullable(mule3UpsertOperation.getChild("headers", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
-
-    mule3Headers.ifPresent(headers -> {
-      String refHeaders = headers.getAttributeValue("ref");
-      if (refHeaders != null) {
-        String expression = expressionMigrator.migrateExpression(refHeaders, true, headers);
-        mule4UpsertOperation.setAttribute("headers", expression);
-      }
-
-      List<Element> children = headers.getChildren();
-      if (children.size() > 0) {
-        Element mule4Headers = new Element("headers", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-        children.stream()
-            .forEach(header -> mule4Headers.addContent(
-                                    new Element("header", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE)
-                                        .setAttribute("key", header.getAttributeValue("key"))
-                                        .setAttribute("value", header.getText())));
-        mule4UpsertOperation.addContent(mule4Headers);
-      }
-    });
+  public void execute(Element mule3Operation, MigrationReport report) throws RuntimeException {
+    super.execute(mule3Operation, report);
+    resolveAttributes(mule3Operation, mule4Operation, report);
 
     Optional<Element> objects =
-        Optional.ofNullable(mule3UpsertOperation.getChild("objects", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
+        Optional.ofNullable(mule3Operation.getChild("objects", SalesforceUtils.MULE3_SALESFORCE_NAMESPACE));
 
     objects.ifPresent(records -> {
-      Optional.ofNullable(records.getAttributeValue("ref")).ifPresent(value -> {
-        Element recordsChild = new Element("records", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-
-        String expression = expressionMigrator.migrateExpression(value, true, records);
-        recordsChild.setContent(new CDATA(expression));
-
-        mule4UpsertOperation.addContent(recordsChild);
-      });
+      SalesforceUtils.migrateRecordsFromExpression(records, mule4Operation, expressionMigrator);
 
       List<Element> children = records.getChildren();
       if (children.size() > 0) {
@@ -106,48 +57,29 @@ public class UpsertOperation extends AbstractApplicationModelMigrationStep imple
             .collect(Collectors.joining("\n},\n{"));
 
 
-        addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, mule3UpsertOperation.getDocument());
-        Element element = new Element("transform");
-        element.setName("transform");
-        element.setNamespace(CORE_EE_NAMESPACE);
-        element.removeContent();
-        element.addContent(new Element("message", CORE_EE_NAMESPACE)
-            .addContent(new Element("set-payload", CORE_EE_NAMESPACE)
-                .setText("%dw 2.0 output application/json\n---\n[{\n" + transformBody + "\n}]")));
-
-        XmlDslUtils.addElementBefore(element, mule3UpsertOperation);
+        addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, mule3Operation.getDocument());
+        SalesforceUtils.createTransformBeforeElement(mule3Operation, transformBody);
       }
     });
 
-    XmlDslUtils.addElementAfter(mule4UpsertOperation, mule3UpsertOperation);
-    mule3UpsertOperation.getParentElement().removeContent(mule3UpsertOperation);
+    XmlDslUtils.addElementAfter(mule4Operation, mule3Operation);
+    mule3Operation.getParentElement().removeContent(mule3Operation);
   }
 
-  private void setAttributes(Element mule3UpsertOperation, Element mule4UpsertOperation) {
+  private void resolveAttributes(Element mule3Operation, Element mule4Operation, MigrationReport report) {
 
-    String docName = mule3UpsertOperation.getAttributeValue("name", SalesforceConstants.DOC_NAMESPACE);
-    if (docName != null) {
-      mule4UpsertOperation.setAttribute("name", docName, SalesforceConstants.DOC_NAMESPACE);
-    }
-
-    String configRef = mule3UpsertOperation.getAttributeValue("config-ref");
-    if (configRef != null && !configRef.isEmpty()) {
-      mule4UpsertOperation.setAttribute("config-ref", configRef);
-    }
-
-    String type = mule3UpsertOperation.getAttributeValue("type");
+    String type = mule3Operation.getAttributeValue("type");
     if (type != null && !type.isEmpty()) {
-      mule4UpsertOperation.setAttribute("objectType", type);
+      mule4Operation.setAttribute("objectType", type);
     }
 
-    String externalIdFieldName = mule3UpsertOperation.getAttributeValue("externalIdFieldName");
+    String externalIdFieldName = mule3Operation.getAttributeValue("externalIdFieldName");
     if (externalIdFieldName != null && !externalIdFieldName.isEmpty()) {
-      mule4UpsertOperation.setAttribute("externalIdFieldName", externalIdFieldName);
+      mule4Operation.setAttribute("externalIdFieldName", externalIdFieldName);
     }
 
-    String notes = mule3UpsertOperation.getAttributeValue("description", SalesforceConstants.DOC_NAMESPACE);
-    if (notes != null) {
-      mule4UpsertOperation.setAttribute("description", notes, SalesforceConstants.DOC_NAMESPACE);
+    if (mule3Operation.getAttribute("accessTokenId") != null) {
+      report.report("salesforce.accessTokenId", mule3Operation, this.mule4Operation);
     }
   }
 }
