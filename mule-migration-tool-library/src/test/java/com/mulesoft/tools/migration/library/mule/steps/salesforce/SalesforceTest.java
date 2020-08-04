@@ -49,6 +49,8 @@ public class SalesforceTest {
         "salesforce-createWithAccessTokenId",
         "salesforce-createWithCreateObjectsManually",
         "salesforce-createWithEditInlineHeaders",
+        "salesforce-basicAuthentication",
+        "salesforce-basicAuth",
         "salesforce-update",
         "salesforce-updateManuallyObjectsAndHeaders",
         "salesforce-updateWithAccessTokenId",
@@ -83,6 +85,7 @@ public class SalesforceTest {
   private RetrieveOperation retrieveOperation;
   private UpdateOperation updateOperation;
   private QueryOperation queryOperation;
+  private CachedBasicConfiguration cachedBasicConfiguration;
 
   public SalesforceTest(String filePrefix) {
     this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -99,6 +102,7 @@ public class SalesforceTest {
     retrieveOperation = new RetrieveOperation();
     updateOperation = new UpdateOperation();
     queryOperation = new QueryOperation();
+    cachedBasicConfiguration = new CachedBasicConfiguration();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
@@ -106,6 +110,7 @@ public class SalesforceTest {
     retrieveOperation.setExpressionMigrator(expressionMigrator);
     updateOperation.setExpressionMigrator(expressionMigrator);
     queryOperation.setExpressionMigrator(expressionMigrator);
+    cachedBasicConfiguration.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -120,7 +125,7 @@ public class SalesforceTest {
     migrate(retrieveOperation);
     migrate(updateOperation);
     migrate(queryOperation);
-
+    migrate(cachedBasicConfiguration);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
