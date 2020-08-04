@@ -5,7 +5,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.salesforce;
 
-import com.mulesoft.tools.migration.library.tools.SalesforceConstants;
+import com.mulesoft.tools.migration.library.tools.SalesforceUtils;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -17,6 +17,7 @@ import org.jdom2.Namespace;
 import java.util.Optional;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
 
 /**
  * Migrate Cached Basic configuration
@@ -34,28 +35,28 @@ public class CachedBasicConfiguration extends AbstractApplicationModelMigrationS
   private ExpressionMigrator expressionMigrator;
 
   public CachedBasicConfiguration() {
-    this.setAppliedTo(XmlDslUtils.getXPathSelector(SalesforceConstants.MULE3_SALESFORCE_NAMESPACE_URI, MULE3_NAME, false));
-    this.setNamespacesContributions(newArrayList(SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
+    this.setAppliedTo(XmlDslUtils.getXPathSelector(SalesforceUtils.MULE3_SALESFORCE_NAMESPACE_URI, MULE3_NAME, false));
+    this.setNamespacesContributions(newArrayList(SalesforceUtils.MULE3_SALESFORCE_NAMESPACE));
   }
 
   @Override
   public void execute(Element mule3CachedBasicConfig, MigrationReport report) throws RuntimeException {
-    getApplicationModel().addNameSpace(SalesforceConstants.MULE4_SALESFORCE_NAMESPACE,
-                                       SalesforceConstants.MULE4_SALESFORCE_NAMESPACE_URI, mule3CachedBasicConfig.getDocument());
+    addNameSpace(SalesforceUtils.MULE4_SALESFORCE_NAMESPACE,
+                                       SalesforceUtils.MULE4_SALESFORCE_NAMESPACE_URI, mule3CachedBasicConfig.getDocument());
 
-    Element mule4Config = new Element(MULE4_CONFIG, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
+    Element mule4Config = new Element(MULE4_CONFIG, SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
 
     setConfigAttributes(mule3CachedBasicConfig, mule4Config);
     setConnectionAttributes(mule3CachedBasicConfig, mule4Config);
 
     Optional<Element> mule3ApexConfiguration =
-        Optional.ofNullable(mule3CachedBasicConfig.getChild("apex-class-names", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE));
+        Optional.ofNullable(mule3CachedBasicConfig.getChild("apex-class-names", SalesforceUtils.MULE3_SALESFORCE_NAMESPACE));
     mule3ApexConfiguration.ifPresent(apexClassNames -> {
-      Element apexClassNameChild = apexClassNames.getChild("apex-class-name", SalesforceConstants.MULE3_SALESFORCE_NAMESPACE);
+      Element apexClassNameChild = apexClassNames.getChild("apex-class-name", SalesforceUtils.MULE3_SALESFORCE_NAMESPACE);
       String apexClassNameValue = apexClassNameChild.getText();
       if (apexClassNameValue != null) {
-        Element mule4ApexClassNames = new Element("apex-class-names", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
-        Element mule4ApexClassNameChild = new Element("apex-class-name", SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
+        Element mule4ApexClassNames = new Element("apex-class-names", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
+        Element mule4ApexClassNameChild = new Element("apex-class-name", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
         mule4ApexClassNameChild.setAttribute("value", apexClassNameValue);
         mule4ApexClassNames.addContent(mule4ApexClassNameChild);
         mule4Config.addContent(mule4ApexClassNames);
@@ -72,9 +73,9 @@ public class CachedBasicConfiguration extends AbstractApplicationModelMigrationS
       mule4Config.setAttribute("name", nameValue);
     }
 
-    String docName = mule3CachedBasicConfig.getAttributeValue("name", SalesforceConstants.DOC_NAMESPACE);
+    String docName = mule3CachedBasicConfig.getAttributeValue("name", SalesforceUtils.DOC_NAMESPACE);
     if (docName != null) {
-      mule4Config.setAttribute("name", docName, SalesforceConstants.DOC_NAMESPACE);
+      mule4Config.setAttribute("name", docName, SalesforceUtils.DOC_NAMESPACE);
     }
 
     String fetchAllApexSoapMetadataValue = mule3CachedBasicConfig.getAttributeValue("fetchAllApexSoapMetadata");
@@ -89,7 +90,7 @@ public class CachedBasicConfiguration extends AbstractApplicationModelMigrationS
   }
 
   private void setConnectionAttributes(Element mule3CachedBasicConfig, Element mule4Config) {
-    Element mule4BasicConnection = new Element(MULE4_NAME, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
+    Element mule4BasicConnection = new Element(MULE4_NAME, SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
 
     String usernameValue = mule3CachedBasicConfig.getAttributeValue("username");
     if (usernameValue != null) {
@@ -165,7 +166,7 @@ public class CachedBasicConfiguration extends AbstractApplicationModelMigrationS
   private void setProxyConfiguration(Element mule3CachedBasicConfig, Element mule4BasicConnection) {
     String proxyHostValue = mule3CachedBasicConfig.getAttributeValue("proxyHost");
     if (proxyHostValue != null && !proxyHostValue.isEmpty()) {
-      Element mule4ProxyBasicConfig = new Element(MULE4_PROXY, SalesforceConstants.MULE4_SALESFORCE_NAMESPACE);
+      Element mule4ProxyBasicConfig = new Element(MULE4_PROXY, SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
       mule4ProxyBasicConfig.setAttribute("host", proxyHostValue);
       mule4ProxyBasicConfig.setAttribute("username", mule3CachedBasicConfig.getAttributeValue("proxyUsername"));
       mule4ProxyBasicConfig.setAttribute("password", mule3CachedBasicConfig.getAttributeValue("proxyPassword"));
