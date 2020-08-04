@@ -35,17 +35,13 @@ public class QueryOperation extends AbstractSalesforceOperationMigrationStep imp
   @Override
   public void execute(Element mule3Operation, MigrationReport report) throws RuntimeException {
     super.execute(mule3Operation, report);
-    resolveAttributes(mule3Operation, mule4Operation, report);
+    resolveAttributes(mule3Operation, mule4Operation);
 
     XmlDslUtils.addElementAfter(mule4Operation, mule3Operation);
     mule3Operation.getParentElement().removeContent(mule3Operation);
   }
 
-  private void resolveAttributes(Element mule3Operation, Element mule4Operation, MigrationReport report) {
-    if (mule3Operation.getAttribute("accessTokenId") != null) {
-      report.report("salesforce.accessTokenId", mule3Operation, this.mule4Operation);
-    }
-
+  private void resolveAttributes(Element mule3Operation, Element mule4Operation) {
     String query = mule3Operation.getAttributeValue("query");
     if (query != null) {
       Element mule4Query = new Element("salesforce-query", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
@@ -81,22 +77,22 @@ public class QueryOperation extends AbstractSalesforceOperationMigrationStep imp
       if (children.size() > 0) {
         Element mule4Headers = new Element("headers", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
         children.stream()
-                .forEach(header -> {
-                  mule4Headers.addContent(
-                          new Element("header", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE)
-                                  .setAttribute("key", header.getAttributeValue("key"))
-                                  .setAttribute("value", header.getText()));
-                });
+            .forEach(header -> {
+              mule4Headers.addContent(
+                                      new Element("header", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE)
+                                          .setAttribute("key", header.getAttributeValue("key"))
+                                          .setAttribute("value", header.getText()));
+            });
         mule4Operation.addContent(mule4Headers);
 
         if (fetchSize != null) {
           mule4Headers.addContent(new Element("header", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE)
-                  .setAttribute("key", "batchSize")
-                  .setAttribute("value", fetchSize));
+              .setAttribute("key", "batchSize")
+              .setAttribute("value", fetchSize));
         } else {
           mule4Headers.addContent(new Element("header", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE)
-                  .setAttribute("key", "batchSize")
-                  .setAttribute("value", "2000"));
+              .setAttribute("key", "batchSize")
+              .setAttribute("value", "2000"));
         }
       }
     } else {

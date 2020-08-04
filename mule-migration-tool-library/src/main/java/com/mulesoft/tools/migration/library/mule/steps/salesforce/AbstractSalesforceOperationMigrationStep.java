@@ -37,13 +37,13 @@ public class AbstractSalesforceOperationMigrationStep extends AbstractApplicatio
   @Override
   public void execute(Element mule3Operation, MigrationReport report) throws RuntimeException {
     addNameSpace(SalesforceUtils.MULE4_SALESFORCE_NAMESPACE,
-            SalesforceUtils.MULE4_SALESFORCE_NAMESPACE_URI, mule3Operation.getDocument());
+                 SalesforceUtils.MULE4_SALESFORCE_NAMESPACE_URI, mule3Operation.getDocument());
     mule4Operation = new Element(getName(), SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
-    setDefaultAttributes(mule3Operation, mule4Operation);
+    setDefaultAttributes(mule3Operation, mule4Operation, report);
     migrateHeaders(mule3Operation, mule4Operation, report);
   }
 
-  private void setDefaultAttributes(Element mule3Operation, Element mule4Operation) {
+  private void setDefaultAttributes(Element mule3Operation, Element mule4Operation, MigrationReport report) {
     String docName = mule3Operation.getAttributeValue("name", SalesforceUtils.DOC_NAMESPACE);
     if (docName != null) {
       mule4Operation.setAttribute("name", docName, SalesforceUtils.DOC_NAMESPACE);
@@ -57,6 +57,10 @@ public class AbstractSalesforceOperationMigrationStep extends AbstractApplicatio
     String configRef = mule3Operation.getAttributeValue("config-ref");
     if (configRef != null && !configRef.isEmpty()) {
       mule4Operation.setAttribute("config-ref", configRef);
+    }
+
+    if (mule3Operation.getAttribute("accessTokenId") != null) {
+      report.report("salesforce.accessTokenId", mule3Operation, mule4Operation);
     }
   }
 
@@ -75,11 +79,11 @@ public class AbstractSalesforceOperationMigrationStep extends AbstractApplicatio
       if (children.size() > 0) {
         Element mule4Headers = new Element("headers", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
         children.forEach(header -> {
-              mule4Headers.addContent(
-                                      new Element("header", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE)
-                                          .setAttribute("key", header.getAttributeValue("key"))
-                                          .setAttribute("value", header.getText()));
-            });
+          mule4Headers.addContent(
+                                  new Element("header", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE)
+                                      .setAttribute("key", header.getAttributeValue("key"))
+                                      .setAttribute("value", header.getText()));
+        });
         mule4Operation.addContent(mule4Headers);
       }
     });

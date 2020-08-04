@@ -38,7 +38,7 @@ public class UpdateOperation extends AbstractSalesforceOperationMigrationStep im
   @Override
   public void execute(Element mule3Operation, MigrationReport report) throws RuntimeException {
     super.execute(mule3Operation, report);
-    resolveAttributes(mule3Operation, mule4Operation, report);
+    resolveAttributes(mule3Operation, mule4Operation);
 
     Optional<Element> objects =
         Optional.ofNullable(mule3Operation.getChild("objects", SalesforceUtils.MULE3_SALESFORCE_NAMESPACE));
@@ -54,7 +54,8 @@ public class UpdateOperation extends AbstractSalesforceOperationMigrationStep im
                 .collect(Collectors.joining(",\n")))
             .collect(Collectors.joining("\n},\n{"));
 
-        SalesforceUtils.createTransformBeforeElement(mule3Operation,  SalesforceUtils.START_TRANSFORM_BODY_TYPE_JSON + transformBody + SalesforceUtils.CLOSE_TRANSFORM_BODY_TYPE_JSON);
+        SalesforceUtils.createTransformBeforeElement(mule3Operation, SalesforceUtils.START_TRANSFORM_BODY_TYPE_JSON
+            + transformBody + SalesforceUtils.CLOSE_TRANSFORM_BODY_TYPE_JSON);
       }
     });
 
@@ -62,14 +63,10 @@ public class UpdateOperation extends AbstractSalesforceOperationMigrationStep im
     mule3Operation.getParentElement().removeContent(mule3Operation);
   }
 
-  private void resolveAttributes(Element mule3Operation, Element mule4Operation, MigrationReport report) {
+  private void resolveAttributes(Element mule3Operation, Element mule4Operation) {
     String type = mule3Operation.getAttributeValue("type");
     if (type != null && !type.isEmpty()) {
       mule4Operation.setAttribute("type", type);
-    }
-
-    if (mule3Operation.getAttribute("accessTokenId") != null) {
-      report.report("salesforce.accessTokenId", this.mule4Operation, this.mule4Operation);
     }
   }
 }
