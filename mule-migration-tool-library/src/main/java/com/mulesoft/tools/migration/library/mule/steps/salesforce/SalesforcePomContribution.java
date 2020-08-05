@@ -28,7 +28,7 @@ public class SalesforcePomContribution implements PomContribution {
   @Override
   public void execute(PomModel object, MigrationReport report) throws RuntimeException {
     object.addDependency(new DependencyBuilder()
-        .withGroupId("com.mulesoft.connector")
+        .withGroupId("com.mulesoft.connectors")
         .withArtifactId("mule-salesforce-connector")
         .withVersion(targetVersion("mule-salesforce-connector"))
         .withClassifier("mule-plugin")

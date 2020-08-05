@@ -72,7 +72,12 @@ public class SalesforceTest {
         "salesforce-queryWithEditInlineHeadersNotDefaultFetchSize",
         "salesforce-queryWithEditInlineHeadersDefaultFetchSize",
         "salesforce-queryWithoutHeadersNotDefaultFetchSize",
-        "salesforce-queryWithoutHeadersDefaultFetchSize"
+        "salesforce-queryWithoutHeadersDefaultFetchSize",
+        "salesforce-querySingleDsql",
+        "salesforce-querySingleNative",
+        "salesforce-querySingleWithAccessTokenId",
+        "salesforce-querySingleWithEditInlineHeaders",
+        "salesforce-querySingleWithoutHeaders"
     };
   }
 
@@ -85,6 +90,7 @@ public class SalesforceTest {
   private RetrieveOperation retrieveOperation;
   private UpdateOperation updateOperation;
   private QueryOperation queryOperation;
+  private QuerySingleOperation querySingleOperation;
   private CachedBasicConfiguration cachedBasicConfiguration;
 
   public SalesforceTest(String filePrefix) {
@@ -102,6 +108,7 @@ public class SalesforceTest {
     retrieveOperation = new RetrieveOperation();
     updateOperation = new UpdateOperation();
     queryOperation = new QueryOperation();
+    querySingleOperation = new QuerySingleOperation();
     cachedBasicConfiguration = new CachedBasicConfiguration();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
@@ -110,6 +117,7 @@ public class SalesforceTest {
     retrieveOperation.setExpressionMigrator(expressionMigrator);
     updateOperation.setExpressionMigrator(expressionMigrator);
     queryOperation.setExpressionMigrator(expressionMigrator);
+    querySingleOperation.setExpressionMigrator(expressionMigrator);
     cachedBasicConfiguration.setExpressionMigrator(expressionMigrator);
   }
 
@@ -125,6 +133,7 @@ public class SalesforceTest {
     migrate(retrieveOperation);
     migrate(updateOperation);
     migrate(queryOperation);
+    migrate(querySingleOperation);
     migrate(cachedBasicConfiguration);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
