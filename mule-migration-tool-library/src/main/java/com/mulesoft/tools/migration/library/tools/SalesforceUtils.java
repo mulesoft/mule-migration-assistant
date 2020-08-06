@@ -59,9 +59,17 @@ public class SalesforceUtils {
     element.setNamespace(CORE_EE_NAMESPACE);
     element.removeContent();
     element.addContent(new Element("message", CORE_EE_NAMESPACE)
-            .addContent(new Element("set-payload", CORE_EE_NAMESPACE)
-                    .setText(transformBody)));
+        .addContent(new Element("set-payload", CORE_EE_NAMESPACE)
+            .setText(transformBody)));
 
     XmlDslUtils.addElementBefore(element, mule3Operation);
   }
+
+  public static void resolveTypeAttribute(Element mule3Operation, Element mule4Operation) {
+    String type = mule3Operation.getAttributeValue("type");
+    if (type != null && !type.isEmpty()) {
+      mule4Operation.setAttribute("type", type);
+    }
+  }
+
 }

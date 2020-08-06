@@ -84,7 +84,13 @@ public class SalesforceTest {
         "salesforce-queryAllWithEditInlineHeadersNotDefaultFetchSize",
         "salesforce-queryAllWithEditInlineHeadersDefaultFetchSize",
         "salesforce-queryAllWithoutHeadersNotDefaultFetchSize",
-        "salesforce-queryAllWithoutHeadersDefaultFetchSize"
+        "salesforce-queryAllWithoutHeadersDefaultFetchSize",
+        "salesforce-createJob",
+        "salesforce-createJobWithoutRequest",
+        "salesforce-createJobWithAccessTokenId",
+        "salesforce-createJobWithConcurrencyMode",
+        "salesforce-createJobWithConcurrencyModeAndContentType",
+        "salesforce-createJobWithEditInlineHeaders"
     };
   }
 
@@ -100,6 +106,7 @@ public class SalesforceTest {
   private QuerySingleOperation querySingleOperation;
   private QueryAllOperation queryAllOperation;
   private CachedBasicConfiguration cachedBasicConfiguration;
+  private CreateJobOperation createJobOperation;
 
   public SalesforceTest(String filePrefix) {
     this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -119,6 +126,7 @@ public class SalesforceTest {
     querySingleOperation = new QuerySingleOperation();
     queryAllOperation = new QueryAllOperation();
     cachedBasicConfiguration = new CachedBasicConfiguration();
+    createJobOperation = new CreateJobOperation();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
@@ -129,6 +137,7 @@ public class SalesforceTest {
     querySingleOperation.setExpressionMigrator(expressionMigrator);
     queryAllOperation.setExpressionMigrator(expressionMigrator);
     cachedBasicConfiguration.setExpressionMigrator(expressionMigrator);
+    createJobOperation.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -146,6 +155,7 @@ public class SalesforceTest {
     migrate(querySingleOperation);
     migrate(queryAllOperation);
     migrate(cachedBasicConfiguration);
+    migrate(createJobOperation);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

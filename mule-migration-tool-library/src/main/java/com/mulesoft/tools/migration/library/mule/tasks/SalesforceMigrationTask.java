@@ -6,6 +6,7 @@
 package com.mulesoft.tools.migration.library.mule.tasks;
 
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CachedBasicConfiguration;
+import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateJobOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryAllOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryOperation;
@@ -57,6 +58,7 @@ public class SalesforceMigrationTask extends AbstractMigrationTask {
                         new QuerySingleOperation(),
                         new QueryAllOperation(),
                         new CachedBasicConfiguration(),
-                        new SalesforcePomContribution());
+                        new SalesforcePomContribution(),
+                        new CreateJobOperation());
   }
 }
