@@ -77,7 +77,14 @@ public class SalesforceTest {
         "salesforce-querySingleNative",
         "salesforce-querySingleWithAccessTokenId",
         "salesforce-querySingleWithEditInlineHeaders",
-        "salesforce-querySingleWithoutHeaders"
+        "salesforce-querySingleWithoutHeaders",
+        "salesforce-queryAllDsqlDefaultFetchSize",
+        "salesforce-queryAllNativeNotDefaultFetchSize",
+        "salesforce-queryAllWithAccessTokenId",
+        "salesforce-queryAllWithEditInlineHeadersNotDefaultFetchSize",
+        "salesforce-queryAllWithEditInlineHeadersDefaultFetchSize",
+        "salesforce-queryAllWithoutHeadersNotDefaultFetchSize",
+        "salesforce-queryAllWithoutHeadersDefaultFetchSize"
     };
   }
 
@@ -91,6 +98,7 @@ public class SalesforceTest {
   private UpdateOperation updateOperation;
   private QueryOperation queryOperation;
   private QuerySingleOperation querySingleOperation;
+  private QueryAllOperation queryAllOperation;
   private CachedBasicConfiguration cachedBasicConfiguration;
 
   public SalesforceTest(String filePrefix) {
@@ -109,6 +117,7 @@ public class SalesforceTest {
     updateOperation = new UpdateOperation();
     queryOperation = new QueryOperation();
     querySingleOperation = new QuerySingleOperation();
+    queryAllOperation = new QueryAllOperation();
     cachedBasicConfiguration = new CachedBasicConfiguration();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
@@ -118,6 +127,7 @@ public class SalesforceTest {
     updateOperation.setExpressionMigrator(expressionMigrator);
     queryOperation.setExpressionMigrator(expressionMigrator);
     querySingleOperation.setExpressionMigrator(expressionMigrator);
+    queryAllOperation.setExpressionMigrator(expressionMigrator);
     cachedBasicConfiguration.setExpressionMigrator(expressionMigrator);
   }
 
@@ -134,6 +144,7 @@ public class SalesforceTest {
     migrate(updateOperation);
     migrate(queryOperation);
     migrate(querySingleOperation);
+    migrate(queryAllOperation);
     migrate(cachedBasicConfiguration);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());

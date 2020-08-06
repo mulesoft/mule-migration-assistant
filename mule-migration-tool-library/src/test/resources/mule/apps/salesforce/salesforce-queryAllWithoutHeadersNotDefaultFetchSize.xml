@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="salesforce-queryAllWithoutHeadersNotDefaultFetchSize-flow">
+        <salesforce:query-all doc:name="Salesforce" doc:description="Notes" config-ref="Salesforce__Basic_Authentication" headers="#[{'batchSize':&quot;1500&quot;}]">
+            <!--Migration INFO: Fetch size parameter does not exists in Salesforce 10.x. As an alternative, the batchSize header can be set along with all the other headers.-->
+            <!--    For more information refer to:-->
+            <!--        * https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_header_queryoptions.htm#topic-title-->
+            <!--<sfdc:query-all xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" config-ref="Salesforce__Basic_Authentication" doc:name="Salesforce" doc:description="Notes" query="dsql:SELECT Id, Name FROM Account">
+            <sfdc:headers ref="flowVars.headers" />
+        </sfdc:query-all>-->
+            <salesforce:salesforce-query><![CDATA[SELECT Id,Name FROM Account]]></salesforce:salesforce-query>
+        </salesforce:query-all>
+
+    </flow>
+
+</mule>
