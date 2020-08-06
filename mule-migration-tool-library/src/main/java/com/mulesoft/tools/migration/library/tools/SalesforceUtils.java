@@ -24,15 +24,15 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPA
 public class SalesforceUtils {
 
   public static final String MULE3_SALESFORCE_NAMESPACE_PREFIX = "sfdc";
-  public static final String MULE4_SALESFORCE_NAMESPACE_PREFIX = "salesforce";
-
   public static final String MULE3_SALESFORCE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/sfdc";
-  public static final String MULE4_SALESFORCE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/salesforce";
-
   public static final Namespace MULE3_SALESFORCE_NAMESPACE =
       Namespace.getNamespace(MULE3_SALESFORCE_NAMESPACE_PREFIX, MULE3_SALESFORCE_NAMESPACE_URI);
+
+  public static final String MULE4_SALESFORCE_NAMESPACE_PREFIX = "salesforce";
+  public static final String MULE4_SALESFORCE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/salesforce";
   public static final Namespace MULE4_SALESFORCE_NAMESPACE =
       Namespace.getNamespace(MULE4_SALESFORCE_NAMESPACE_PREFIX, MULE4_SALESFORCE_NAMESPACE_URI);
+  public static final String MULE4_SALESFORCE_SCHEMA_LOCATION = "http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd";
 
   public static final String DOC_NAMESPACE_PREFIX = "doc";
   public static final String DOC_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/documentation";
@@ -59,9 +59,17 @@ public class SalesforceUtils {
     element.setNamespace(CORE_EE_NAMESPACE);
     element.removeContent();
     element.addContent(new Element("message", CORE_EE_NAMESPACE)
-            .addContent(new Element("set-payload", CORE_EE_NAMESPACE)
-                    .setText(transformBody)));
+        .addContent(new Element("set-payload", CORE_EE_NAMESPACE)
+            .setText(transformBody)));
 
     XmlDslUtils.addElementBefore(element, mule3Operation);
   }
+
+  public static void resolveTypeAttribute(Element mule3Operation, Element mule4Operation) {
+    String type = mule3Operation.getAttributeValue("type");
+    if (type != null && !type.isEmpty()) {
+      mule4Operation.setAttribute("type", type);
+    }
+  }
+
 }
