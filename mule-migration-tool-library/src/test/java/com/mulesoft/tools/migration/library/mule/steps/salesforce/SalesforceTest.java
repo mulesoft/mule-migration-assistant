@@ -60,6 +60,12 @@ public class SalesforceTest {
         "salesforce-upsertWithCreateObjectsManually",
         "salesforce-upsertWithEditInlineHeaders",
         "salesforce-upsertWithoutExternalIdFieldName",
+        "salesforce-upsertBulk",
+        "salesforce-upsertBulkWithAccessTokenId",
+        "salesforce-upsertBulkWithoutHeaders",
+        "salesforce-upsertBulkWithCreateObjectsManually",
+        "salesforce-upsertBulkWithEditInlineHeaders",
+        "salesforce-upsertBulkWithoutExternalIdFieldName",
         "salesforce-retrieveWithIdsAndFieldsAddedManually",
         "salesforce-retrieveWithIdsAndFieldsFromExpression",
         "salesforce-retrieveWithIdsAddedManuallyAndFieldsFromExpression",
@@ -100,6 +106,7 @@ public class SalesforceTest {
   private ApplicationModel appModel;
   private CreateOperation createOperation;
   private UpsertOperation upsertOperation;
+  private UpsertBulkOperation upsertBulkOperation;
   private RetrieveOperation retrieveOperation;
   private UpdateOperation updateOperation;
   private QueryOperation queryOperation;
@@ -120,6 +127,7 @@ public class SalesforceTest {
 
     createOperation = new CreateOperation();
     upsertOperation = new UpsertOperation();
+    upsertBulkOperation = new UpsertBulkOperation();
     retrieveOperation = new RetrieveOperation();
     updateOperation = new UpdateOperation();
     queryOperation = new QueryOperation();
@@ -131,6 +139,7 @@ public class SalesforceTest {
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
     upsertOperation.setExpressionMigrator(expressionMigrator);
+    upsertBulkOperation.setExpressionMigrator(expressionMigrator);
     retrieveOperation.setExpressionMigrator(expressionMigrator);
     updateOperation.setExpressionMigrator(expressionMigrator);
     queryOperation.setExpressionMigrator(expressionMigrator);
@@ -149,6 +158,7 @@ public class SalesforceTest {
   public void execute() throws Exception {
     migrate(createOperation);
     migrate(upsertOperation);
+    migrate(upsertBulkOperation);
     migrate(retrieveOperation);
     migrate(updateOperation);
     migrate(queryOperation);
