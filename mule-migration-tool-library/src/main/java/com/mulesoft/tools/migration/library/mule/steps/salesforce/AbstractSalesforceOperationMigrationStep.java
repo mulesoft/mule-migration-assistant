@@ -37,7 +37,7 @@ public class AbstractSalesforceOperationMigrationStep extends AbstractApplicatio
   @Override
   public void execute(Element mule3Operation, MigrationReport report) throws RuntimeException {
     addNameSpace(SalesforceUtils.MULE4_SALESFORCE_NAMESPACE,
-                 SalesforceUtils.MULE4_SALESFORCE_NAMESPACE_URI, mule3Operation.getDocument());
+                 SalesforceUtils.MULE4_SALESFORCE_SCHEMA_LOCATION, mule3Operation.getDocument());
     mule4Operation = new Element(getName(), SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
     setDefaultAttributes(mule3Operation, mule4Operation, report);
     migrateHeaders(mule3Operation, mule4Operation, report);

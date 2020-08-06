@@ -38,7 +38,7 @@ public class UpdateOperation extends AbstractSalesforceOperationMigrationStep im
   @Override
   public void execute(Element mule3Operation, MigrationReport report) throws RuntimeException {
     super.execute(mule3Operation, report);
-    resolveAttributes(mule3Operation, mule4Operation);
+    SalesforceUtils.resolveTypeAttribute(mule3Operation, mule4Operation);
 
     Optional<Element> objects =
         Optional.ofNullable(mule3Operation.getChild("objects", SalesforceUtils.MULE3_SALESFORCE_NAMESPACE));
@@ -63,10 +63,4 @@ public class UpdateOperation extends AbstractSalesforceOperationMigrationStep im
     mule3Operation.getParentElement().removeContent(mule3Operation);
   }
 
-  private void resolveAttributes(Element mule3Operation, Element mule4Operation) {
-    String type = mule3Operation.getAttributeValue("type");
-    if (type != null && !type.isEmpty()) {
-      mule4Operation.setAttribute("type", type);
-    }
-  }
 }

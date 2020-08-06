@@ -77,7 +77,13 @@ public class SalesforceTest {
         "salesforce-querySingleNative",
         "salesforce-querySingleWithAccessTokenId",
         "salesforce-querySingleWithEditInlineHeaders",
-        "salesforce-querySingleWithoutHeaders"
+        "salesforce-querySingleWithoutHeaders",
+        "salesforce-createJob",
+        "salesforce-createJobWithoutRequest",
+        "salesforce-createJobWithAccessTokenId",
+        "salesforce-createJobWithConcurrencyMode",
+        "salesforce-createJobWithConcurrencyModeAndContentType",
+        "salesforce-createJobWithEditInlineHeaders"
     };
   }
 
@@ -92,6 +98,7 @@ public class SalesforceTest {
   private QueryOperation queryOperation;
   private QuerySingleOperation querySingleOperation;
   private CachedBasicConfiguration cachedBasicConfiguration;
+  private CreateJobOperation createJobOperation;
 
   public SalesforceTest(String filePrefix) {
     this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -110,6 +117,7 @@ public class SalesforceTest {
     queryOperation = new QueryOperation();
     querySingleOperation = new QuerySingleOperation();
     cachedBasicConfiguration = new CachedBasicConfiguration();
+    createJobOperation = new CreateJobOperation();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
@@ -119,6 +127,7 @@ public class SalesforceTest {
     queryOperation.setExpressionMigrator(expressionMigrator);
     querySingleOperation.setExpressionMigrator(expressionMigrator);
     cachedBasicConfiguration.setExpressionMigrator(expressionMigrator);
+    createJobOperation.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -135,6 +144,7 @@ public class SalesforceTest {
     migrate(queryOperation);
     migrate(querySingleOperation);
     migrate(cachedBasicConfiguration);
+    migrate(createJobOperation);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
