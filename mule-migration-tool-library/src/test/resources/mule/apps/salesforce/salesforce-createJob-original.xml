@@ -10,7 +10,7 @@ http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfd
     <flow name="salesforce-createJob-flow">
         <sfdc:create-job config-ref="Salesforce__Basic_Authentication" type="Account" operation="upsert" doc:name="Salesforce" doc:description="Notes"
                          externalIdFieldName="Id" concurrencyMode="Parallel" contentType="JSON" >
-
+            <sfdc:headers ref="#[flowVars.headers]"/>
         </sfdc:create-job>
     </flow>
 

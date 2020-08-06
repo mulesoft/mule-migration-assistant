@@ -32,7 +32,8 @@ public class SalesforceUtils {
   public static final String MULE4_SALESFORCE_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/salesforce";
   public static final Namespace MULE4_SALESFORCE_NAMESPACE =
       Namespace.getNamespace(MULE4_SALESFORCE_NAMESPACE_PREFIX, MULE4_SALESFORCE_NAMESPACE_URI);
-  public static final String MULE4_SALESFORCE_SCHEMA_LOCATION = "http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd";
+  public static final String MULE4_SALESFORCE_SCHEMA_LOCATION =
+      "http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd";
 
   public static final String DOC_NAMESPACE_PREFIX = "doc";
   public static final String DOC_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/documentation";
