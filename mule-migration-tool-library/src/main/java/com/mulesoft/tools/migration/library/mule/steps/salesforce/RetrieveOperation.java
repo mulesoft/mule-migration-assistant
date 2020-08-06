@@ -37,18 +37,11 @@ public class RetrieveOperation extends AbstractSalesforceOperationMigrationStep 
   @Override
   public void execute(Element mule3Operation, MigrationReport report) throws RuntimeException {
     super.execute(mule3Operation, report);
-    resolveAttributes(mule3Operation, mule4Operation);
+    SalesforceUtils.resolveTypeAttribute(mule3Operation, mule4Operation);
     setIdsAndFieldsElement(mule3Operation, mule4Operation);
 
     XmlDslUtils.addElementAfter(mule4Operation, mule3Operation);
     mule3Operation.getParentElement().removeContent(mule3Operation);
-  }
-
-  private void resolveAttributes(Element mule3Operation, Element mule4Operation) {
-    String type = mule3Operation.getAttributeValue("type");
-    if (type != null && !type.isEmpty()) {
-      mule4Operation.setAttribute("type", type);
-    }
   }
 
   private void setIdsAndFieldsElement(Element mule3RetrieveOperation, Element mule4RetrieveOperation) {

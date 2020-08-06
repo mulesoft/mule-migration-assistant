@@ -64,4 +64,12 @@ public class SalesforceUtils {
 
     XmlDslUtils.addElementBefore(element, mule3Operation);
   }
+
+  public static void resolveTypeAttribute(Element mule3Operation, Element mule4Operation) {
+    String type = mule3Operation.getAttributeValue("type");
+    if (type != null && !type.isEmpty()) {
+      mule4Operation.setAttribute("type", type);
+    }
+  }
+
 }
