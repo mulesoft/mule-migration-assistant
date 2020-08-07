@@ -21,7 +21,8 @@ jobs:
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v10
       with:
-        repositories: '[{ "id": "mulesoft-public", "url": "https://repository.mulesoft.org/nexus/content/repositories/public" }]'
+        repositories: '[{ "id": "mulesoft-public", "url": "https://repository.mulesoft.org/nexus/content/repositories/public" },
+                        { "id": "mule-releases", "url": "https://repository.mulesoft.org/releases" }]'
 
     - name: log-settings
       run: cat \/home\/runner\/.m2\/settings.xml
