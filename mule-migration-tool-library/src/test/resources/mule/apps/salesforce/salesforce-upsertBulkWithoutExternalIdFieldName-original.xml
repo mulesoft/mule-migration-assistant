@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfd
 
     <flow name="salesforce-upsertBulkWithoutExternalIdFieldName-flow">
         <sfdc:upsert-bulk config-ref="Salesforce__Basic_Authentication" type="Account" doc:name="Salesforce">
-            <sfdc:objects ref="#[payload]"/>
+            <sfdc:objects ref="#[flowVars.accountToBeUpserted]"/>
             <sfdc:headers ref="#[flowVars.headers]"/>
         </sfdc:upsert-bulk>
     </flow>

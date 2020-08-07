@@ -44,9 +44,9 @@ public class SalesforceUtils {
   public static final String CLOSE_TRANSFORM_BODY_TYPE_JSON = "\n}]";
 
   public static void migrateRecordsFromExpression(Element records, Element mule4Operation,
-                                                  ExpressionMigrator expressionMigrator) {
+                                                  ExpressionMigrator expressionMigrator, String mule4ElementName) {
     Optional.ofNullable(records.getAttributeValue("ref")).ifPresent(value -> {
-      Element recordsChild = new Element("records", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
+      Element recordsChild = new Element(mule4ElementName, SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
       String expression = expressionMigrator.migrateExpression(value, true, records);
       recordsChild.setContent(new CDATA(expression));
 
