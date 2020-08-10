@@ -45,7 +45,7 @@ public class CreateOperation extends AbstractSalesforceOperationMigrationStep im
         Optional.ofNullable(mule3Operation.getChild("objects", SalesforceUtils.MULE3_SALESFORCE_NAMESPACE));
 
     objects.ifPresent(records -> {
-      SalesforceUtils.migrateRecordsFromExpression(records, mule4Operation, expressionMigrator);
+      SalesforceUtils.migrateRecordsFromExpression(records, mule4Operation, expressionMigrator, "records");
 
       List<Element> children = records.getChildren();
       if (children.size() > 0) {
