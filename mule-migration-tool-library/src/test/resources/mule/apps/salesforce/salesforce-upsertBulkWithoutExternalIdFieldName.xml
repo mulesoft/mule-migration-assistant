@@ -4,9 +4,11 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="salesforce-upsertBulkWithoutExternalIdFieldName-flow">
-        <salesforce:upsert doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" objectType="Account" headers="#[vars.headers]">
-            <salesforce:records ><![CDATA[#[payload]]]></salesforce:records>
-        </salesforce:upsert>
+        <salesforce:create-job config-ref="Salesforce__Basic_Authentication" type="Account" doc:name="Salesforce" headers="#[vars.headers]" operation="upsert" />
+
+        <salesforce:create-batch config-ref="Salesforce__Basic_Authentication" jobInfoBatch="#[payload]">
+            <salesforce:objects><![CDATA[#[vars.accountToBeUpserted]]]></salesforce:objects>
+        </salesforce:create-batch>
     </flow>
 
 </mule>

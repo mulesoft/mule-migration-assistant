@@ -2,14 +2,24 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="salesforce-upsertBulkWithEditInlineHeaders-flow">
-        <salesforce:upsert doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" objectType="Account" externalIdFieldName="ExternalID__c">
+        <salesforce:create-job config-ref="Salesforce__Basic_Authentication" doc:name="Salesforce" type="Account" operation="upsert">
             <salesforce:headers>
                 <salesforce:header key="secondHeader" value="secondValue" />
                 <salesforce:header key="firstHeader" value="firstValue" />
             </salesforce:headers>
-            <salesforce:records><![CDATA[#[payload]]]></salesforce:records>
-        </salesforce:upsert>
+            <salesforce:create-job-request><![CDATA[%dw 2.0
+                output application/java
+                ---
+                {
+                    externalIdFieldName: "ExternalID__c"
+                } as Object {
+                    class : "org.mule.extension.salesforce.api.bulk.CreateJobRequest"
+                }]]></salesforce:create-job-request>
+        </salesforce:create-job>
 
+        <salesforce:create-batch config-ref="Salesforce__Basic_Authentication" jobInfoBatch="#[payload]">
+            <salesforce:objects><![CDATA[#[vars.accountToBeUpserted]]]></salesforce:objects>
+        </salesforce:create-batch>
     </flow>
 
 </mule>
