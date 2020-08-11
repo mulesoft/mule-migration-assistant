@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd">
     <flow name="salesforce-upsertBulkWithAccesTokenId-flow">
         <sfdc:upsert-bulk config-ref="Salesforce_Config" type="Account" externalIdFieldName="ExternalID__c" doc:name="Salesforce" accessTokenId="access-token-id">
-            <sfdc:objects ref="#[payload]"/>
+            <sfdc:objects ref="#[flowVars.accountToBeUpserted]"/>
         </sfdc:upsert-bulk>
     </flow>
 </mule>
