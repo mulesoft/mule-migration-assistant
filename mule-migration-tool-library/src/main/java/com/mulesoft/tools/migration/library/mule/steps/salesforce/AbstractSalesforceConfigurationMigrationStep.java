@@ -66,7 +66,7 @@ public class AbstractSalesforceConfigurationMigrationStep extends AbstractApplic
     }
   }
 
-  private void setDefaultConnectionAttributes(Element mule3Config, Element mule4Config, String mule4Name){
+  private void setDefaultConnectionAttributes(Element mule3Config, Element mule4Config, String mule4Name) {
     mule4Connection = new Element(mule4Name, SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
 
     String usernameValue = mule3Config.getAttributeValue("username");
@@ -93,7 +93,6 @@ public class AbstractSalesforceConfigurationMigrationStep extends AbstractApplic
     if (connectionTimeoutValue != null) {
       mule4Connection.setAttribute("connectionTimeout", connectionTimeoutValue);
     }
-
 
 
 

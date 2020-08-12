@@ -42,9 +42,6 @@ public class OauthUsernamePasswordConfiguration extends AbstractSalesforceConfig
 
 
 
-
-
-
   }
 
 
