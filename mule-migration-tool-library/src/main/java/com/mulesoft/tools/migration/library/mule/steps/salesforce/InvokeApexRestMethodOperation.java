@@ -82,7 +82,6 @@ public class InvokeApexRestMethodOperation extends AbstractSalesforceOperationMi
 
 
 
-
     XmlDslUtils.addElementAfter(mule4Operation, mule3Operation);
     mule3Operation.getParentElement().removeContent(mule3Operation);
   }
