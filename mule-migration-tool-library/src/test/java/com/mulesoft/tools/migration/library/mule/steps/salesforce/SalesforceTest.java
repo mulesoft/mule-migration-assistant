@@ -44,59 +44,63 @@ public class SalesforceTest {
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "salesforce-create",
-        "salesforce-createWithoutHeaders",
-        "salesforce-createWithAccessTokenId",
-        "salesforce-createWithCreateObjectsManually",
-        "salesforce-createWithEditInlineHeaders",
-        "salesforce-basicAuthentication",
-        "salesforce-basicAuth",
-        "salesforce-update",
-        "salesforce-updateManuallyObjectsAndHeaders",
-        "salesforce-updateWithAccessTokenId",
-        "salesforce-upsert",
-        "salesforce-upsertWithAccessTokenId",
-        "salesforce-upsertWithoutHeaders",
-        "salesforce-upsertWithCreateObjectsManually",
-        "salesforce-upsertWithEditInlineHeaders",
-        "salesforce-upsertWithoutExternalIdFieldName",
-        "salesforce-upsertBulk",
-        "salesforce-upsertBulkWithAccessTokenId",
-        "salesforce-upsertBulkWithoutHeaders",
-        "salesforce-upsertBulkWithCreateObjectsManually",
-        "salesforce-upsertBulkWithEditInlineHeaders",
-        "salesforce-upsertBulkWithoutExternalIdFieldName",
-        "salesforce-retrieveWithIdsAndFieldsAddedManually",
-        "salesforce-retrieveWithIdsAndFieldsFromExpression",
-        "salesforce-retrieveWithIdsAddedManuallyAndFieldsFromExpression",
-        "salesforce-retrieveWithEditInLineHeaders",
-        "salesforce-retrieveWithAccessTokenId",
-        "salesforce-retrieveWithoutIds",
-        "salesforce-queryDsqlDefaultFetchSize",
-        "salesforce-queryNativeNotDefaultFetchSize",
-        "salesforce-queryWithAccessTokenId",
-        "salesforce-queryWithEditInlineHeadersNotDefaultFetchSize",
-        "salesforce-queryWithEditInlineHeadersDefaultFetchSize",
-        "salesforce-queryWithoutHeadersNotDefaultFetchSize",
-        "salesforce-queryWithoutHeadersDefaultFetchSize",
-        "salesforce-querySingleDsql",
-        "salesforce-querySingleNative",
-        "salesforce-querySingleWithAccessTokenId",
-        "salesforce-querySingleWithEditInlineHeaders",
-        "salesforce-querySingleWithoutHeaders",
-        "salesforce-queryAllDsqlDefaultFetchSize",
-        "salesforce-queryAllNativeNotDefaultFetchSize",
-        "salesforce-queryAllWithAccessTokenId",
-        "salesforce-queryAllWithEditInlineHeadersNotDefaultFetchSize",
-        "salesforce-queryAllWithEditInlineHeadersDefaultFetchSize",
-        "salesforce-queryAllWithoutHeadersNotDefaultFetchSize",
-        "salesforce-queryAllWithoutHeadersDefaultFetchSize",
-        "salesforce-createJob",
-        "salesforce-createJobWithoutRequest",
-        "salesforce-createJobWithAccessTokenId",
-        "salesforce-createJobWithConcurrencyMode",
-        "salesforce-createJobWithConcurrencyModeAndContentType",
-        "salesforce-createJobWithEditInlineHeaders"
+//        "salesforce-create",
+//        "salesforce-createWithoutHeaders",
+//        "salesforce-createWithAccessTokenId",
+//        "salesforce-createWithCreateObjectsManually",
+//        "salesforce-createWithEditInlineHeaders",
+//        "salesforce-basicAuthentication",
+//        "salesforce-basicAuth",
+//        "salesforce-update",
+//        "salesforce-updateManuallyObjectsAndHeaders",
+//        "salesforce-updateWithAccessTokenId",
+//        "salesforce-upsert",
+//        "salesforce-upsertWithAccessTokenId",
+//        "salesforce-upsertWithoutHeaders",
+//        "salesforce-upsertWithCreateObjectsManually",
+//        "salesforce-upsertWithEditInlineHeaders",
+//        "salesforce-upsertWithoutExternalIdFieldName",
+//        "salesforce-upsertBulk",
+//        "salesforce-upsertBulkWithAccessTokenId",
+//        "salesforce-upsertBulkWithoutHeaders",
+//        "salesforce-upsertBulkWithCreateObjectsManually",
+//        "salesforce-upsertBulkWithEditInlineHeaders",
+//        "salesforce-upsertBulkWithoutExternalIdFieldName",
+//        "salesforce-retrieveWithIdsAndFieldsAddedManually",
+//        "salesforce-retrieveWithIdsAndFieldsFromExpression",
+//        "salesforce-retrieveWithIdsAddedManuallyAndFieldsFromExpression",
+//        "salesforce-retrieveWithEditInLineHeaders",
+//        "salesforce-retrieveWithAccessTokenId",
+//        "salesforce-retrieveWithoutIds",
+//        "salesforce-queryDsqlDefaultFetchSize",
+//        "salesforce-queryNativeNotDefaultFetchSize",
+//        "salesforce-queryWithAccessTokenId",
+//        "salesforce-queryWithEditInlineHeadersNotDefaultFetchSize",
+//        "salesforce-queryWithEditInlineHeadersDefaultFetchSize",
+//        "salesforce-queryWithoutHeadersNotDefaultFetchSize",
+//        "salesforce-queryWithoutHeadersDefaultFetchSize",
+//        "salesforce-querySingleDsql",
+//        "salesforce-querySingleNative",
+//        "salesforce-querySingleWithAccessTokenId",
+//        "salesforce-querySingleWithEditInlineHeaders",
+//        "salesforce-querySingleWithoutHeaders",
+//        "salesforce-queryAllDsqlDefaultFetchSize",
+//        "salesforce-queryAllNativeNotDefaultFetchSize",
+//        "salesforce-queryAllWithAccessTokenId",
+//        "salesforce-queryAllWithEditInlineHeadersNotDefaultFetchSize",
+//        "salesforce-queryAllWithEditInlineHeadersDefaultFetchSize",
+//        "salesforce-queryAllWithoutHeadersNotDefaultFetchSize",
+//        "salesforce-queryAllWithoutHeadersDefaultFetchSize",
+//        "salesforce-createJob",
+//        "salesforce-createJobWithoutRequest",
+//        "salesforce-createJobWithAccessTokenId",
+//        "salesforce-createJobWithConcurrencyMode",
+//        "salesforce-createJobWithConcurrencyModeAndContentType",
+//        "salesforce-createJobWithEditInlineHeaders",
+            "salesforce-invokeApexRestMethod"
+            //cu query params adaugati manual
+            //cu access token id
+            //headers -  se poate numai expresie oricum!!
     };
   }
 
@@ -114,6 +118,7 @@ public class SalesforceTest {
   private QueryAllOperation queryAllOperation;
   private CachedBasicConfiguration cachedBasicConfiguration;
   private CreateJobOperation createJobOperation;
+  private InvokeApexRestMethodOperation invokeApexRestMethodOperation;
 
   public SalesforceTest(String filePrefix) {
     this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -135,6 +140,7 @@ public class SalesforceTest {
     queryAllOperation = new QueryAllOperation();
     cachedBasicConfiguration = new CachedBasicConfiguration();
     createJobOperation = new CreateJobOperation();
+    invokeApexRestMethodOperation = new InvokeApexRestMethodOperation();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
@@ -147,6 +153,7 @@ public class SalesforceTest {
     queryAllOperation.setExpressionMigrator(expressionMigrator);
     cachedBasicConfiguration.setExpressionMigrator(expressionMigrator);
     createJobOperation.setExpressionMigrator(expressionMigrator);
+    invokeApexRestMethodOperation.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -166,6 +173,7 @@ public class SalesforceTest {
     migrate(queryAllOperation);
     migrate(cachedBasicConfiguration);
     migrate(createJobOperation);
+    migrate(invokeApexRestMethodOperation);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
