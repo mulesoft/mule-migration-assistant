@@ -96,7 +96,12 @@ public class SalesforceTest {
         "salesforce-createJobWithAccessTokenId",
         "salesforce-createJobWithConcurrencyMode",
         "salesforce-createJobWithConcurrencyModeAndContentType",
-        "salesforce-createJobWithEditInlineHeaders"
+        "salesforce-createJobWithEditInlineHeaders",
+        "salesforce-nonPaginatedQueryDsql",
+        "salesforce-nonPaginatedQueryNative",
+        "salesforce-nonPaginatedQueryWithAccessTokenId",
+        "salesforce-nonPaginatedQueryWithEditInlineHeaders",
+        "salesforce-nonPaginatedQueryWithoutHeaders"
     };
   }
 
@@ -114,6 +119,7 @@ public class SalesforceTest {
   private QueryAllOperation queryAllOperation;
   private CachedBasicConfiguration cachedBasicConfiguration;
   private CreateJobOperation createJobOperation;
+  private NonPaginatedQueryOperation nonPaginatedQueryOperation;
 
   public SalesforceTest(String filePrefix) {
     this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -135,6 +141,7 @@ public class SalesforceTest {
     queryAllOperation = new QueryAllOperation();
     cachedBasicConfiguration = new CachedBasicConfiguration();
     createJobOperation = new CreateJobOperation();
+    nonPaginatedQueryOperation = new NonPaginatedQueryOperation();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
@@ -147,6 +154,7 @@ public class SalesforceTest {
     queryAllOperation.setExpressionMigrator(expressionMigrator);
     cachedBasicConfiguration.setExpressionMigrator(expressionMigrator);
     createJobOperation.setExpressionMigrator(expressionMigrator);
+    nonPaginatedQueryOperation.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -166,6 +174,7 @@ public class SalesforceTest {
     migrate(queryAllOperation);
     migrate(cachedBasicConfiguration);
     migrate(createJobOperation);
+    migrate(nonPaginatedQueryOperation);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
