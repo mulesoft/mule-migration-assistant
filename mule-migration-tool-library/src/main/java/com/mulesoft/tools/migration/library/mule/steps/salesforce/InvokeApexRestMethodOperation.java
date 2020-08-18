@@ -17,9 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
+import static com.mulesoft.tools.migration.library.tools.SalesforceUtils.START_TRANSFORM_BODY_TYPE_JSON;
 
 /**
  * Migrate Invoke Apex Rest Method operation
@@ -42,45 +40,59 @@ public class InvokeApexRestMethodOperation extends AbstractSalesforceOperationMi
     super.execute(mule3Operation, report);
     resolveAttributes(mule3Operation, mule4Operation);
 
-//in request se construieste cu
-//    body: payload, -> adica input-ref - DONE?
-//            headers: vars.headers, -> adica requestHeaders-ref
-//            cookies: vars.cookies, -> de unde le ia???
-//            queryParameters: vars.queryParameters -> adica <sfdc:query-parameters>
-
-    //  	<sfdc:invoke-apex-rest-method  requestHeaders-ref="#[flowvars.headers]">
-//			<sfdc:query-parameters ref="#[vars.queryParameters-pot sa fei si adaugati manual]"/>
-//        </sfdc:invoke-apex-rest-method>
-//  devine
-//      <salesforce:invoke-apex-rest-method
-//			<salesforce:request ><![CDATA[#[payload-request]]]></salesforce:request>
-//		</salesforce:invoke-apex-rest-method>
-//
-//  				<salesforce:request ><![CDATA[#[%dw 2.0
-//  output application/json
-//---
-//  {
-//    queryParams: {
-//      queryParam: "query"
-//    },
-//    body: {
-//      bodyParam: "body"
-//    }
-//  }]]]></salesforce:request>
-
     StringBuilder requestContents = new StringBuilder();
 
     String body = mule3Operation.getAttributeValue("input-ref");
     if (body != null && !body.isEmpty()) {
       String expression = expressionMigrator.migrateExpression(body, true, mule3Operation); // ?
-      requestContents.append("body: { " + body + " } ");
+      requestContents.append("body: " + expressionMigrator.unwrap(expression));
     }
 
+    String headers = mule3Operation.getAttributeValue("requestHeaders-ref");
+    if (headers != null && !headers.isEmpty()) {
+      String expression = expressionMigrator.migrateExpression(headers, true, mule3Operation);
+      if (requestContents != null && !requestContents.equals("")) {
+        requestContents.append(", \n");
+      }
+      requestContents.append("headers: " + expressionMigrator.unwrap(expression));
+    }
 
+    Optional<Element> mule3QueryParams =
+        Optional.ofNullable(mule3Operation.getChild("query-parameters", SalesforceUtils.MULE3_SALESFORCE_NAMESPACE));
 
+    mule3QueryParams.ifPresent(queryParams -> {
+      String refHeaders = queryParams.getAttributeValue("ref");
+      if (refHeaders != null) {
+        String expression = expressionMigrator.migrateExpression(refHeaders, true, queryParams);
+        if (requestContents != null && !requestContents.equals("")) {
+          requestContents.append(", \n");
+        }
+        requestContents.append("queryParams: " + expressionMigrator.unwrap(expression));
+      }
 
+      List<Element> children = queryParams.getChildren();
 
+      if (children.size() > 0) {
+        String queryParam = children.stream()
+            .map(object -> object.getContent().stream()
+                .map(innerObject -> object.getAttributeValue("key") + ": "
+                    + "\"" + innerObject.getValue() + "\"")
+                .collect(Collectors.joining("")))
+            .collect(Collectors.joining(", "));
 
+        if (requestContents != null && !requestContents.equals("")) {
+          requestContents.append(", \n");
+        }
+        requestContents.append("queryParams: { " + queryParam + " }");
+      }
+    });
+
+    if (requestContents != null && requestContents.length() != 0) {
+      Element request = new Element("request", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
+      request.setContent(new CDATA(START_TRANSFORM_BODY_TYPE_JSON + requestContents.toString()
+          + SalesforceUtils.CLOSE_TRANSFORM_BODY_TYPE_JSON));
+      mule4Operation.addContent(request);
+    }
 
     XmlDslUtils.addElementAfter(mule4Operation, mule3Operation);
     mule3Operation.getParentElement().removeContent(mule3Operation);

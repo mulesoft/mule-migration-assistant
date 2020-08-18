@@ -63,6 +63,6 @@ public class SalesforceMigrationTask extends AbstractMigrationTask {
                         new CachedBasicConfiguration(),
                         new SalesforcePomContribution(),
                         new CreateJobOperation(),
-            new InvokeApexRestMethodOperation());
+                        new InvokeApexRestMethodOperation());
   }
 }
