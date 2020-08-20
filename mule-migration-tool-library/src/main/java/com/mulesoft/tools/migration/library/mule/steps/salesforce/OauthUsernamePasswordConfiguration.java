@@ -26,7 +26,7 @@ public class OauthUsernamePasswordConfiguration extends AbstractSalesforceConfig
   private static final String MULE3_NAME = "cached-config-oauth-user-pass";
   private static final String MULE4_CONFIG = "sfdc-config";
   private static final String MULE4_NAME = "oauth-user-pass-connection";
-  private static final String MULE4_PROXY = "proxy-configuration";
+  //  private static final String MULE4_PROXY = "proxy-configuration";
 
   private ExpressionMigrator expressionMigrator;
 
@@ -40,18 +40,8 @@ public class OauthUsernamePasswordConfiguration extends AbstractSalesforceConfig
   public void execute(Element mule3Config, MigrationReport report) throws RuntimeException {
     super.execute(mule3Config, report);
 
-
-
-  }
-
-
-
-  private void setConnectionAttributes(Element mule3Config, Element mule4Config) {
-
-
-  }
-
-  private void setProxyConfiguration(Element mule3Config, Element mule4Connection) {
+    XmlDslUtils.addElementAfter(mule4Config, mule3Config);
+    mule3Config.getParentElement().removeContent(mule3Config);
 
   }
 

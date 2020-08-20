@@ -11,6 +11,9 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
+import org.jdom2.Namespace;
+
+import java.util.Optional;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
 
@@ -28,6 +31,7 @@ public class AbstractSalesforceConfigurationMigrationStep extends AbstractApplic
   protected Element mule4Config;
   protected Element mule4Connection;
   private final String mule4Name;
+  private static final String MULE4_PROXY = "proxy-configuration";
 
   public AbstractSalesforceConfigurationMigrationStep(String name, String mule4Name) {
     this.name = name;
@@ -94,8 +98,92 @@ public class AbstractSalesforceConfigurationMigrationStep extends AbstractApplic
       mule4Connection.setAttribute("connectionTimeout", connectionTimeoutValue);
     }
 
+    String assignmentRuleIdValue = mule3Config.getAttributeValue("assignmentRuleId");
+    if (assignmentRuleIdValue != null) {
+      mule4Connection.setAttribute("assignmentRuleId", assignmentRuleIdValue);
+    }
 
+    String clientIdValue = mule3Config.getAttributeValue("clientId");
+    if (clientIdValue != null) {
+      mule4Connection.setAttribute("clientId", clientIdValue);
+    }
 
+    String timeObjectStoreValue = mule3Config.getAttributeValue("timeObjectStore-ref");
+    if (timeObjectStoreValue != null) {
+      String expression = expressionMigrator.migrateExpression(timeObjectStoreValue, true, mule3Config);
+      mule4Connection.setAttribute("timeObjectStore", expression);
+    }
+
+    String sessionIdValue = mule3Config.getAttributeValue("sessionId");
+    if (sessionIdValue != null) {
+      mule4Connection.setAttribute("sessionId", sessionIdValue);
+    }
+
+    String serviceEndpointValue = mule3Config.getAttributeValue("serviceEndpoint");
+    if (serviceEndpointValue != null) {
+      mule4Connection.setAttribute("serviceEndpoint", serviceEndpointValue);
+    }
+
+    String allowFieldTruncationSupportValue = mule3Config.getAttributeValue("allowFieldTruncationSupport");
+    if (allowFieldTruncationSupportValue != null) {
+      mule4Connection.setAttribute("allowFieldTruncationSupport", allowFieldTruncationSupportValue);
+    }
+
+    String useDefaultRuleValue = mule3Config.getAttributeValue("useDefaultRule");
+    if (useDefaultRuleValue != null) {
+      mule4Connection.setAttribute("useDefaultRule", useDefaultRuleValue);
+    }
+
+    String clearNullFieldsValue = mule3Config.getAttributeValue("clearNullFields");
+    if (clearNullFieldsValue != null) {
+      mule4Connection.setAttribute("clearNullFields", clearNullFieldsValue);
+    }
+
+    String consumerKey = mule3Config.getAttributeValue("consumerKey");
+    if (consumerKey != null) {
+      mule4Connection.setAttribute("consumerKey", consumerKey);
+    }
+
+    String consumerSecret = mule3Config.getAttributeValue("consumerSecret");
+    if (consumerSecret != null) {
+      mule4Connection.setAttribute("consumerSecret", consumerSecret);
+    }
+
+    setProxyConfiguration(mule3Config, mule4Connection);
+    mule4Config.addContent(mule4Connection);
+
+  }
+
+  private void setProxyConfiguration(Element mule3Config, Element mule4Connection) {
+    String proxyHostValue = mule3Config.getAttributeValue("proxyHost");
+    if (proxyHostValue != null && !proxyHostValue.isEmpty()) {
+      Element mule4ProxyBasicConfig = new Element(MULE4_PROXY, SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
+      mule4ProxyBasicConfig.setAttribute("host", proxyHostValue);
+      mule4ProxyBasicConfig.setAttribute("username", mule3Config.getAttributeValue("proxyUsername"));
+      mule4ProxyBasicConfig.setAttribute("password", mule3Config.getAttributeValue("proxyPassword"));
+      mule4ProxyBasicConfig.setAttribute("port", mule3Config.getAttributeValue("proxyPort"));
+      mule4Connection.addContent(mule4ProxyBasicConfig);
+    }
+
+    Optional<Element> reconnectElement = Optional.ofNullable(mule3Config
+        .getChild("reconnect", Namespace.getNamespace("http://www.mulesoft.org/schema/mule/core")));
+    reconnectElement.ifPresent(reconnect -> {
+      Element mule4Reconnection = new Element("reconnection");
+      Element mule4Reconnect = new Element("reconnect");
+
+      String frequency = reconnect.getAttributeValue("frequency");
+      if (frequency != null) {
+        mule4Reconnect.setAttribute("frequency", frequency);
+      }
+
+      String count = reconnect.getAttributeValue("count");
+      if (count != null) {
+        mule4Reconnect.setAttribute("count", count);
+      }
+
+      mule4Reconnection.addContent(mule4Reconnect);
+      mule4Connection.addContent(mule4Reconnection);
+    });
   }
 
   public String getName() {
