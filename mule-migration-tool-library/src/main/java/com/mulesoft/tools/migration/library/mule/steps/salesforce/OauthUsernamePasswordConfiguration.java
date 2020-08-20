@@ -26,9 +26,6 @@ public class OauthUsernamePasswordConfiguration extends AbstractSalesforceConfig
   private static final String MULE3_NAME = "cached-config-oauth-user-pass";
   private static final String MULE4_CONFIG = "sfdc-config";
   private static final String MULE4_NAME = "oauth-user-pass-connection";
-  //  private static final String MULE4_PROXY = "proxy-configuration";
-
-  private ExpressionMigrator expressionMigrator;
 
   public OauthUsernamePasswordConfiguration() {
     super(MULE4_CONFIG, MULE4_NAME);

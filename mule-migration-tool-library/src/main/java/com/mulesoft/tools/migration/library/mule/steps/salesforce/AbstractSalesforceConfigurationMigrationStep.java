@@ -46,6 +46,20 @@ public class AbstractSalesforceConfigurationMigrationStep extends AbstractApplic
     mule4Config = new Element(getName(), SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
     setDefaultAttributes(mule3Config, mule4Config, report);
     setDefaultConnectionAttributes(mule3Config, mule4Config, mule4Name);
+
+    Optional<Element> mule3ApexConfiguration =
+        Optional.ofNullable(mule3Config.getChild("apex-class-names", SalesforceUtils.MULE3_SALESFORCE_NAMESPACE));
+    mule3ApexConfiguration.ifPresent(apexClassNames -> {
+      Element apexClassNameChild = apexClassNames.getChild("apex-class-name", SalesforceUtils.MULE3_SALESFORCE_NAMESPACE);
+      String apexClassNameValue = apexClassNameChild.getText();
+      if (apexClassNameValue != null) {
+        Element mule4ApexClassNames = new Element("apex-class-names", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
+        Element mule4ApexClassNameChild = new Element("apex-class-name", SalesforceUtils.MULE4_SALESFORCE_NAMESPACE);
+        mule4ApexClassNameChild.setAttribute("value", apexClassNameValue);
+        mule4ApexClassNames.addContent(mule4ApexClassNameChild);
+        mule4Config.addContent(mule4ApexClassNames);
+      }
+    });
   }
 
   private void setDefaultAttributes(Element mule3Config, Element mule4Config, MigrationReport report) {
