@@ -13,8 +13,11 @@ import com.mulesoft.tools.migration.library.mule.steps.salesforce.NonPaginatedQu
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryAllOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QuerySingleOperation;
+import com.mulesoft.tools.migration.library.mule.steps.salesforce.ReplayStreamingChannelSource;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.RetrieveOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.SalesforcePomContribution;
+import com.mulesoft.tools.migration.library.mule.steps.salesforce.SubscribeStreamingChannelSource;
+import com.mulesoft.tools.migration.library.mule.steps.salesforce.SubscribeTopicSource;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.UpdateOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.UpsertBulkOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.UpsertOperation;
@@ -65,6 +68,9 @@ public class SalesforceMigrationTask extends AbstractMigrationTask {
                         new SalesforcePomContribution(),
                         new CreateJobOperation(),
                         new InvokeApexRestMethodOperation(),
+                        new ReplayStreamingChannelSource(),
+                        new SubscribeTopicSource(),
+                        new SubscribeStreamingChannelSource(),
                         new NonPaginatedQueryOperation());
   }
 }

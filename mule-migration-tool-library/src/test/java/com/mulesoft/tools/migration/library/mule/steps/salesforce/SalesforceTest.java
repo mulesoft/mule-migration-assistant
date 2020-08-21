@@ -101,6 +101,9 @@ public class SalesforceTest {
         "salesforce-invokeApexRestMethodWithQueryParamsAddedManually",
         "salesforce-invokeApexRestMethodWithAccessTokenId",
         "salesforce-invokeApexRestMethodWithoutRequest",
+        "salesforce-replayStreamingChannel",
+        "salesforce-subscribeTopic",
+        "salesforce-subscribeStreamingChannel",
         "salesforce-nonPaginatedQueryDsql",
         "salesforce-nonPaginatedQueryNative",
         "salesforce-nonPaginatedQueryWithAccessTokenId",
@@ -124,6 +127,9 @@ public class SalesforceTest {
   private CachedBasicConfiguration cachedBasicConfiguration;
   private CreateJobOperation createJobOperation;
   private InvokeApexRestMethodOperation invokeApexRestMethodOperation;
+  private ReplayStreamingChannelSource replayStreamingChannelSource;
+  private SubscribeTopicSource subscribeTopicSource;
+  private SubscribeStreamingChannelSource subscribeStreamingChannelSource;
   private NonPaginatedQueryOperation nonPaginatedQueryOperation;
 
   public SalesforceTest(String filePrefix) {
@@ -147,6 +153,9 @@ public class SalesforceTest {
     cachedBasicConfiguration = new CachedBasicConfiguration();
     createJobOperation = new CreateJobOperation();
     invokeApexRestMethodOperation = new InvokeApexRestMethodOperation();
+    replayStreamingChannelSource = new ReplayStreamingChannelSource();
+    subscribeTopicSource = new SubscribeTopicSource();
+    subscribeStreamingChannelSource = new SubscribeStreamingChannelSource();
     nonPaginatedQueryOperation = new NonPaginatedQueryOperation();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
@@ -161,6 +170,9 @@ public class SalesforceTest {
     cachedBasicConfiguration.setExpressionMigrator(expressionMigrator);
     createJobOperation.setExpressionMigrator(expressionMigrator);
     invokeApexRestMethodOperation.setExpressionMigrator(expressionMigrator);
+    replayStreamingChannelSource.setExpressionMigrator(expressionMigrator);
+    subscribeTopicSource.setExpressionMigrator(expressionMigrator);
+    subscribeStreamingChannelSource.setExpressionMigrator(expressionMigrator);
     nonPaginatedQueryOperation.setExpressionMigrator(expressionMigrator);
   }
 
@@ -182,6 +194,9 @@ public class SalesforceTest {
     migrate(cachedBasicConfiguration);
     migrate(createJobOperation);
     migrate(invokeApexRestMethodOperation);
+    migrate(replayStreamingChannelSource);
+    migrate(subscribeTopicSource);
+    migrate(subscribeStreamingChannelSource);
     migrate(nonPaginatedQueryOperation);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
