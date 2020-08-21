@@ -102,6 +102,9 @@ public class SalesforceTest {
         "salesforce-oauthJwtBearer",
         "salesforce-oauthJwtBearerWithApexClassesAddedManually",
         "salesforce-oauthJwtBearerWithReconnectForever",
+        "salesforce-replayStreamingChannel",
+        "salesforce-subscribeTopic",
+        "salesforce-subscribeStreamingChannel",
         "salesforce-nonPaginatedQueryDsql",
         "salesforce-nonPaginatedQueryNative",
         "salesforce-nonPaginatedQueryWithAccessTokenId",
@@ -126,6 +129,9 @@ public class SalesforceTest {
   private CreateJobOperation createJobOperation;
   private OauthUsernamePasswordConfiguration oauthUsernamePasswordConfiguration;
   private OAuthJwtBearerConfiguration oAuthJwtBearerConfiguration;
+  private ReplayStreamingChannelSource replayStreamingChannelSource;
+  private SubscribeTopicSource subscribeTopicSource;
+  private SubscribeStreamingChannelSource subscribeStreamingChannelSource;
   private NonPaginatedQueryOperation nonPaginatedQueryOperation;
 
   public SalesforceTest(String filePrefix) {
@@ -150,6 +156,9 @@ public class SalesforceTest {
     createJobOperation = new CreateJobOperation();
     oauthUsernamePasswordConfiguration = new OauthUsernamePasswordConfiguration();
     oAuthJwtBearerConfiguration = new OAuthJwtBearerConfiguration();
+    replayStreamingChannelSource = new ReplayStreamingChannelSource();
+    subscribeTopicSource = new SubscribeTopicSource();
+    subscribeStreamingChannelSource = new SubscribeStreamingChannelSource();
     nonPaginatedQueryOperation = new NonPaginatedQueryOperation();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
@@ -165,6 +174,9 @@ public class SalesforceTest {
     createJobOperation.setExpressionMigrator(expressionMigrator);
     oauthUsernamePasswordConfiguration.setExpressionMigrator(expressionMigrator);
     oAuthJwtBearerConfiguration.setExpressionMigrator(expressionMigrator);
+    replayStreamingChannelSource.setExpressionMigrator(expressionMigrator);
+    subscribeTopicSource.setExpressionMigrator(expressionMigrator);
+    subscribeStreamingChannelSource.setExpressionMigrator(expressionMigrator);
     nonPaginatedQueryOperation.setExpressionMigrator(expressionMigrator);
   }
 
@@ -187,6 +199,9 @@ public class SalesforceTest {
     migrate(createJobOperation);
     migrate(oauthUsernamePasswordConfiguration);
     migrate(oAuthJwtBearerConfiguration);
+    migrate(replayStreamingChannelSource);
+    migrate(subscribeTopicSource);
+    migrate(subscribeStreamingChannelSource);
     migrate(nonPaginatedQueryOperation);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
