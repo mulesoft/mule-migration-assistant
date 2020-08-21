@@ -9,6 +9,7 @@ import com.mulesoft.tools.migration.library.tools.SalesforceUtils;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -23,7 +24,7 @@ import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNam
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class AbstractSalesforceConfigurationMigrationStep extends AbstractApplicationModelMigrationStep
+public abstract class AbstractSalesforceConfigurationMigrationStep extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
   private final String name;
@@ -180,7 +181,7 @@ public class AbstractSalesforceConfigurationMigrationStep extends AbstractApplic
     }
 
     Optional<Element> reconnectElement = Optional.ofNullable(mule3Config
-        .getChild("reconnect", Namespace.getNamespace("http://www.mulesoft.org/schema/mule/core")));
+        .getChild("reconnect", Namespace.getNamespace(XmlDslUtils.CORE_NS_URI)));
     reconnectElement.ifPresent(reconnect -> {
       Element mule4Reconnection = new Element("reconnection");
       Element mule4Reconnect = new Element("reconnect");
