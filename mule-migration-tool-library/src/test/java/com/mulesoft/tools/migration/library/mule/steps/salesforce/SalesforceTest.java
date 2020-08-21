@@ -101,7 +101,12 @@ public class SalesforceTest {
         "salesforce-oauthUsernamePasswordWithApexClassesAddedManually",
         "salesforce-oauthJwtBearer",
         "salesforce-oauthJwtBearerWithApexClassesAddedManually",
-        "salesforce-oauthJwtBearerWithReconnectForever"
+        "salesforce-oauthJwtBearerWithReconnectForever",
+        "salesforce-nonPaginatedQueryDsql",
+        "salesforce-nonPaginatedQueryNative",
+        "salesforce-nonPaginatedQueryWithAccessTokenId",
+        "salesforce-nonPaginatedQueryWithEditInlineHeaders",
+        "salesforce-nonPaginatedQueryWithoutHeaders"
     };
   }
 
@@ -121,6 +126,7 @@ public class SalesforceTest {
   private CreateJobOperation createJobOperation;
   private OauthUsernamePasswordConfiguration oauthUsernamePasswordConfiguration;
   private OAuthJwtBearerConfiguration oAuthJwtBearerConfiguration;
+  private NonPaginatedQueryOperation nonPaginatedQueryOperation;
 
   public SalesforceTest(String filePrefix) {
     this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -144,6 +150,7 @@ public class SalesforceTest {
     createJobOperation = new CreateJobOperation();
     oauthUsernamePasswordConfiguration = new OauthUsernamePasswordConfiguration();
     oAuthJwtBearerConfiguration = new OAuthJwtBearerConfiguration();
+    nonPaginatedQueryOperation = new NonPaginatedQueryOperation();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
@@ -158,6 +165,7 @@ public class SalesforceTest {
     createJobOperation.setExpressionMigrator(expressionMigrator);
     oauthUsernamePasswordConfiguration.setExpressionMigrator(expressionMigrator);
     oAuthJwtBearerConfiguration.setExpressionMigrator(expressionMigrator);
+    nonPaginatedQueryOperation.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -179,6 +187,7 @@ public class SalesforceTest {
     migrate(createJobOperation);
     migrate(oauthUsernamePasswordConfiguration);
     migrate(oAuthJwtBearerConfiguration);
+    migrate(nonPaginatedQueryOperation);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
