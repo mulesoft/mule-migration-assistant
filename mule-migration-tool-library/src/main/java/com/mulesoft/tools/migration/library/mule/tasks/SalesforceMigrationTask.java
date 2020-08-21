@@ -9,6 +9,7 @@ import com.mulesoft.tools.migration.library.mule.steps.salesforce.CachedBasicCon
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateJobOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.InvokeApexRestMethodOperation;
+import com.mulesoft.tools.migration.library.mule.steps.salesforce.NonPaginatedQueryOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryAllOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QuerySingleOperation;
@@ -63,6 +64,7 @@ public class SalesforceMigrationTask extends AbstractMigrationTask {
                         new CachedBasicConfiguration(),
                         new SalesforcePomContribution(),
                         new CreateJobOperation(),
-                        new InvokeApexRestMethodOperation());
+                        new InvokeApexRestMethodOperation(),
+                        new NonPaginatedQueryOperation());
   }
 }
