@@ -20,7 +20,7 @@ import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNam
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class AbstractSalesforceSourcesMigrationStep extends AbstractApplicationModelMigrationStep
+public abstract class AbstractSalesforceSourcesMigrationStep extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
   private final String mule3Name;
