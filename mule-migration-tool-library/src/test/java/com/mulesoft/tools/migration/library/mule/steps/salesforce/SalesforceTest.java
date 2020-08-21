@@ -102,8 +102,6 @@ public class SalesforceTest {
         "salesforce-oauthJwtBearer",
         "salesforce-oauthJwtBearerWithApexClassesAddedManually",
         "salesforce-oauthJwtBearerWithReconnectForever"
-
-        //cu reconnect forever
     };
   }
 
