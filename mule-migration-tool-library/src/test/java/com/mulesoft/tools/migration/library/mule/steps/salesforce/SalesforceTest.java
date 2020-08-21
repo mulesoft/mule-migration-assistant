@@ -99,7 +99,12 @@ public class SalesforceTest {
         "salesforce-createJobWithEditInlineHeaders",
         "salesforce-replayStreamingChannel",
         "salesforce-subscribeTopic",
-        "salesforce-subscribeStreamingChannel"
+        "salesforce-subscribeStreamingChannel",
+        "salesforce-nonPaginatedQueryDsql",
+        "salesforce-nonPaginatedQueryNative",
+        "salesforce-nonPaginatedQueryWithAccessTokenId",
+        "salesforce-nonPaginatedQueryWithEditInlineHeaders",
+        "salesforce-nonPaginatedQueryWithoutHeaders"
     };
   }
 
@@ -120,6 +125,7 @@ public class SalesforceTest {
   private ReplayStreamingChannelSource replayStreamingChannelSource;
   private SubscribeTopicSource subscribeTopicSource;
   private SubscribeStreamingChannelSource subscribeStreamingChannelSource;
+  private NonPaginatedQueryOperation nonPaginatedQueryOperation;
 
   public SalesforceTest(String filePrefix) {
     this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -144,6 +150,7 @@ public class SalesforceTest {
     replayStreamingChannelSource = new ReplayStreamingChannelSource();
     subscribeTopicSource = new SubscribeTopicSource();
     subscribeStreamingChannelSource = new SubscribeStreamingChannelSource();
+    nonPaginatedQueryOperation = new NonPaginatedQueryOperation();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
@@ -159,6 +166,7 @@ public class SalesforceTest {
     replayStreamingChannelSource.setExpressionMigrator(expressionMigrator);
     subscribeTopicSource.setExpressionMigrator(expressionMigrator);
     subscribeStreamingChannelSource.setExpressionMigrator(expressionMigrator);
+    nonPaginatedQueryOperation.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -181,6 +189,7 @@ public class SalesforceTest {
     migrate(replayStreamingChannelSource);
     migrate(subscribeTopicSource);
     migrate(subscribeStreamingChannelSource);
+    migrate(nonPaginatedQueryOperation);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

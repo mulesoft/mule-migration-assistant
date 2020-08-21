@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.tasks;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CachedBasicConfiguration;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateJobOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateOperation;
+import com.mulesoft.tools.migration.library.mule.steps.salesforce.NonPaginatedQueryOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryAllOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QuerySingleOperation;
@@ -67,6 +68,7 @@ public class SalesforceMigrationTask extends AbstractMigrationTask {
                         new CreateJobOperation(),
                         new ReplayStreamingChannelSource(),
                         new SubscribeTopicSource(),
-                        new SubscribeStreamingChannelSource());
+                        new SubscribeStreamingChannelSource(),
+                        new NonPaginatedQueryOperation());
   }
 }
