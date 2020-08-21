@@ -98,7 +98,12 @@ public class SalesforceTest {
         "salesforce-createJobWithConcurrencyModeAndContentType",
         "salesforce-createJobWithEditInlineHeaders",
         "salesforce-oauthUsernamePassword",
-        "salesforce-oauthUsernamePasswordWithApexClassesAddedManually"
+        "salesforce-oauthUsernamePasswordWithApexClassesAddedManually",
+        "salesforce-oauthJwtBearer",
+        "salesforce-oauthJwtBearerWithApexClassesAddedManually",
+        "salesforce-oauthJwtBearerWithReconnectForever"
+
+        //cu reconnect forever
     };
   }
 
@@ -117,6 +122,7 @@ public class SalesforceTest {
   private CachedBasicConfiguration cachedBasicConfiguration;
   private CreateJobOperation createJobOperation;
   private OauthUsernamePasswordConfiguration oauthUsernamePasswordConfiguration;
+  private OAuthJwtBearerConfiguration oAuthJwtBearerConfiguration;
 
   public SalesforceTest(String filePrefix) {
     this.configPath = SALESFORCE_CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
@@ -139,6 +145,7 @@ public class SalesforceTest {
     cachedBasicConfiguration = new CachedBasicConfiguration();
     createJobOperation = new CreateJobOperation();
     oauthUsernamePasswordConfiguration = new OauthUsernamePasswordConfiguration();
+    oAuthJwtBearerConfiguration = new OAuthJwtBearerConfiguration();
 
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), appModel);
     createOperation.setExpressionMigrator(expressionMigrator);
@@ -152,6 +159,7 @@ public class SalesforceTest {
     cachedBasicConfiguration.setExpressionMigrator(expressionMigrator);
     createJobOperation.setExpressionMigrator(expressionMigrator);
     oauthUsernamePasswordConfiguration.setExpressionMigrator(expressionMigrator);
+    oAuthJwtBearerConfiguration.setExpressionMigrator(expressionMigrator);
   }
 
   public void migrate(AbstractApplicationModelMigrationStep migrationStep) {
@@ -172,6 +180,7 @@ public class SalesforceTest {
     migrate(cachedBasicConfiguration);
     migrate(createJobOperation);
     migrate(oauthUsernamePasswordConfiguration);
+    migrate(oAuthJwtBearerConfiguration);
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

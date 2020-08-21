@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sfdc http://www.mulesoft.org/schema/mule/sfdc/current/mule-sfdc.xsd">
+    <sfdc:cached-config-oauth-jwt-bearer name="Salesforce_Config" consumerKey="consumerKey" keyStore="keyStore.jks"
+                                         storePassword="storePassword" principal="principal" disableSessionInvalidation="true" readTimeout="100"
+                                         connectionTimeout="200" assignmentRuleId="assignmentRuleId"
+                                         clientId="clientID" allowFieldTruncationSupport="true" useDefaultRule="true" clearNullFields="true"
+                                         timeObjectStore-ref="timeObStoreReference" batchSobjectMaxDepth="50" useKeepAlive="true" initialDelay="200"
+                                         fetchAllApexSoapMetadata="true" fetchAllApexRestMetadata="true"
+                                         proxyHost="proxyHost" proxyPort="proxyPort" proxyUsername="proxyUsername" proxyPassword="proxyPassword" apiVersion="48">
+        <reconnect frequency="4000"/>
+    </sfdc:cached-config-oauth-jwt-bearer>
+
+</mule>

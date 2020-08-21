@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <salesforce:sfdc-config name="Salesforce_Config" fetchAllApexSoapMetadata="true" fetchAllApexRestMetadata="true">
+        <salesforce:jwt-connection consumerKey="consumerKey" keyStore="keyStore.jks" storePassword="storePassword" principal="principal"
+                                   connectionTimeout="200" apiVersion="48"
+                                   allowFieldTruncationSupport="true" assignmentRuleId="assignmentRuleId" clearNullFields="true"
+                                   clientId="clientID" readTimeout="100" timeObjectStore="timeObStoreReference" useDefaultRule="true">
+            <salesforce:proxy-configuration host="proxyHost" port="proxyPort" username="proxyUsername" password="proxyPassword" />
+            <reconnection xmlns="">
+                <reconnect frequency="4000" />
+            </reconnection>
+        </salesforce:jwt-connection>
+        <salesforce:apex-class-names>
+            <salesforce:apex-class-name value="ApexClass" />
+        </salesforce:apex-class-names>
+    </salesforce:sfdc-config>
+
+</mule>
