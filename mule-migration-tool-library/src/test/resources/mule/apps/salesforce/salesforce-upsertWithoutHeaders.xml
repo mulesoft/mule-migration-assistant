@@ -2,7 +2,7 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="salesforce-upsertWithoutHeaders-flow">
-        <salesforce:upsert doc:name="Salesforce" config-ref="Salesforce_Config" objectType="Account" externalIdFieldName="ExternalID__c">
+        <salesforce:upsert doc:name="Salesforce" config-ref="Salesforce_Config" objectType="Account" externalIdFieldName="ExternalID__c" target="payload" targetValue="#[payload.items]">
             <salesforce:records><![CDATA[#[payload]]]></salesforce:records>
         </salesforce:upsert>
 

@@ -4,7 +4,7 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="salesforce-upsertWithoutExternalIdFieldName-flow">
-        <salesforce:upsert doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" objectType="Account" headers="#[vars.headers]">
+        <salesforce:upsert doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" objectType="Account" headers="#[vars.headers]" target="payload" targetValue="#[payload.items]">
             <salesforce:records ><![CDATA[#[payload]]]></salesforce:records>
         </salesforce:upsert>
     </flow>

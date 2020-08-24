@@ -16,7 +16,7 @@
             </ee:message>
         </ee:transform>
 
-        <salesforce:upsert doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" objectType="Account" externalIdFieldName="ExternalID__c"/>
+        <salesforce:upsert doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" objectType="Account" externalIdFieldName="ExternalID__c" target="payload" targetValue="#[payload.items]"/>
 
     </flow>
 
