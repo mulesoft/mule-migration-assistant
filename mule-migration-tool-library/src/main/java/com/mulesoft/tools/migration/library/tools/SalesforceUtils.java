@@ -73,4 +73,9 @@ public class SalesforceUtils {
     }
   }
 
+  public static void setPayloadToPayloadItems(Element mule4Operation) {
+    mule4Operation.setAttribute("target", "payload");
+    mule4Operation.setAttribute("targetValue", "#[payload.items]");
+  }
+
 }

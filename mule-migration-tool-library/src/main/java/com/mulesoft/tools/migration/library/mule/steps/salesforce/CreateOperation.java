@@ -61,6 +61,7 @@ public class CreateOperation extends AbstractSalesforceOperationMigrationStep im
             + transformBody + SalesforceUtils.CLOSE_TRANSFORM_BODY_TYPE_JSON);
       }
     });
+    SalesforceUtils.setPayloadToPayloadItems(mule4Operation);
 
     XmlDslUtils.addElementAfter(mule4Operation, mule3Operation);
     mule3Operation.getParentElement().removeContent(mule3Operation);

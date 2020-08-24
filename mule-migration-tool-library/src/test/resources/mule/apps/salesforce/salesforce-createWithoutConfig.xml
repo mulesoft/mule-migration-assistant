@@ -2,7 +2,7 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="salesforce-createWithoutConfig-flow">
-        <salesforce:create doc:name="Salesforce" type="Account" headers="#[vars.headers]">
+        <salesforce:create doc:name="Salesforce" type="Account" headers="#[vars.headers]" target="payload" targetValue="#[payload.items]">
             <!--Migration ERROR: Fail during migrating create operation-->
             <!--    For more information refer to:-->
             <!--        * https://docs.mulesoft.com/salesforce-connector/10.2/salesforce-connector-reference#create-->
