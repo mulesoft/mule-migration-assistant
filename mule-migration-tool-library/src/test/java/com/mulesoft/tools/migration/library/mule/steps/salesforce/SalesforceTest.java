@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,7 +42,7 @@ public class SalesforceTest {
 
   private static final Path SALESFORCE_CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/salesforce");
 
-  @Parameterized.Parameters(name = "{0}")
+  @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
         "salesforce-create",
@@ -69,7 +70,7 @@ public class SalesforceTest {
         "salesforce-retrieveWithIdsAndFieldsAddedManually",
         "salesforce-retrieveWithIdsAndFieldsFromExpression",
         "salesforce-retrieveWithIdsAddedManuallyAndFieldsFromExpression",
-        "salesforce-retrieveWithEditInLineHeaders",
+        "salesforce-retrieveWithEditInlineHeaders",
         "salesforce-retrieveWithAccessTokenId",
         "salesforce-retrieveWithoutIds",
         "salesforce-queryDsqlDefaultFetchSize",
