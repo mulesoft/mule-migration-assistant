@@ -44,5 +44,4 @@ public class CachedBasicConfiguration extends AbstractSalesforceConfigurationMig
     XmlDslUtils.addElementAfter(mule4Config, mule3CachedBasicConfig);
     mule3CachedBasicConfig.getParentElement().removeContent(mule3CachedBasicConfig);
   }
-
 }

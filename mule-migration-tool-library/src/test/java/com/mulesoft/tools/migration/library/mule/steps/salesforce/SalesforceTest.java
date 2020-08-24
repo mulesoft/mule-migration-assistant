@@ -102,6 +102,10 @@ public class SalesforceTest {
         "salesforce-oauthJwtBearer",
         "salesforce-oauthJwtBearerWithApexClassesAddedManually",
         "salesforce-oauthJwtBearerWithReconnectForever",
+        "salesforce-invokeApexRestMethod",
+        "salesforce-invokeApexRestMethodWithQueryParamsAddedManually",
+        "salesforce-invokeApexRestMethodWithAccessTokenId",
+        "salesforce-invokeApexRestMethodWithoutRequest",
         "salesforce-replayStreamingChannel",
         "salesforce-subscribeTopic",
         "salesforce-subscribeStreamingChannel",
@@ -129,6 +133,7 @@ public class SalesforceTest {
   private CreateJobOperation createJobOperation;
   private OauthUsernamePasswordConfiguration oauthUsernamePasswordConfiguration;
   private OAuthJwtBearerConfiguration oAuthJwtBearerConfiguration;
+  private InvokeApexRestMethodOperation invokeApexRestMethodOperation;
   private ReplayStreamingChannelSource replayStreamingChannelSource;
   private SubscribeTopicSource subscribeTopicSource;
   private SubscribeStreamingChannelSource subscribeStreamingChannelSource;
@@ -156,6 +161,7 @@ public class SalesforceTest {
     createJobOperation = new CreateJobOperation();
     oauthUsernamePasswordConfiguration = new OauthUsernamePasswordConfiguration();
     oAuthJwtBearerConfiguration = new OAuthJwtBearerConfiguration();
+    invokeApexRestMethodOperation = new InvokeApexRestMethodOperation();
     replayStreamingChannelSource = new ReplayStreamingChannelSource();
     subscribeTopicSource = new SubscribeTopicSource();
     subscribeStreamingChannelSource = new SubscribeStreamingChannelSource();
@@ -174,6 +180,7 @@ public class SalesforceTest {
     createJobOperation.setExpressionMigrator(expressionMigrator);
     oauthUsernamePasswordConfiguration.setExpressionMigrator(expressionMigrator);
     oAuthJwtBearerConfiguration.setExpressionMigrator(expressionMigrator);
+    invokeApexRestMethodOperation.setExpressionMigrator(expressionMigrator);
     replayStreamingChannelSource.setExpressionMigrator(expressionMigrator);
     subscribeTopicSource.setExpressionMigrator(expressionMigrator);
     subscribeStreamingChannelSource.setExpressionMigrator(expressionMigrator);
@@ -199,6 +206,7 @@ public class SalesforceTest {
     migrate(createJobOperation);
     migrate(oauthUsernamePasswordConfiguration);
     migrate(oAuthJwtBearerConfiguration);
+    migrate(invokeApexRestMethodOperation);
     migrate(replayStreamingChannelSource);
     migrate(subscribeTopicSource);
     migrate(subscribeStreamingChannelSource);

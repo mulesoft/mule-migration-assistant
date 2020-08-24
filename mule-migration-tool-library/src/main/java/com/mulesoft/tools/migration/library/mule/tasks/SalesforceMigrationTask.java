@@ -10,6 +10,7 @@ import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateJobOpera
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.OAuthJwtBearerConfiguration;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.OauthUsernamePasswordConfiguration;
+import com.mulesoft.tools.migration.library.mule.steps.salesforce.InvokeApexRestMethodOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.NonPaginatedQueryOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryAllOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryOperation;
@@ -70,6 +71,7 @@ public class SalesforceMigrationTask extends AbstractMigrationTask {
                         new CreateJobOperation(),
                         new OauthUsernamePasswordConfiguration(),
                         new OAuthJwtBearerConfiguration(),
+                        new InvokeApexRestMethodOperation(),
                         new ReplayStreamingChannelSource(),
                         new SubscribeTopicSource(),
                         new SubscribeStreamingChannelSource(),

@@ -183,7 +183,7 @@ public abstract class AbstractSalesforceConfigurationMigrationStep extends Abstr
     if (principal != null) {
       mule4Connection.setAttribute("principal", principal);
     }
-
+    
     setProxyConfiguration(mule3Config, mule4Connection);
     mule4Config.addContent(mule4Connection);
 

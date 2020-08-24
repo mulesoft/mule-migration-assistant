@@ -41,5 +41,4 @@ public class OauthUsernamePasswordConfiguration extends AbstractSalesforceConfig
     mule3Config.getParentElement().removeContent(mule3Config);
 
   }
-
 }
