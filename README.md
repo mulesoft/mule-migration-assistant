@@ -1,6 +1,6 @@
 # Mule Migration Assistant
 
-[![MMA Build Actions Status](https://github.com/mulesoft/mule-migration-assistant/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/mulesoft/mule-migration-assistant/actions)
+[![MMA Build Actions Status](https://github.com/mulesoft/mule-migration-assistant/workflows/Mule%20Migration%20Assistant%20Build/badge.svg)](https://github.com/mulesoft/mule-migration-assistant/actions)
 
 Mule Migration Assistant is a command-line tool that helps migrate Mule 3.x applications to Mule 4.x. This tool works on a "best-effort" basis to translate every component in the base application. This means that if it does not complete 100% of the migration, manual adjustments are required. A migration report generated when the assistant is ran can help with those adjustments.
 
