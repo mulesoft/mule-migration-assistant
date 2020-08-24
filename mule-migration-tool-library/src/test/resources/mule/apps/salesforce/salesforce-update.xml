@@ -2,7 +2,7 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="salesforce-update-flow">
-        <salesforce:update config-ref="Salesforce_Config" type="Account" doc:name="Salesforce" headers="#[vars.headers]">
+        <salesforce:update config-ref="Salesforce_Config" type="Account" doc:name="Salesforce" headers="#[vars.headers]" target="payload" targetValue="#[payload.items]">
             <salesforce:records><![CDATA[#[payload]]]></salesforce:records>
         </salesforce:update>
     </flow>

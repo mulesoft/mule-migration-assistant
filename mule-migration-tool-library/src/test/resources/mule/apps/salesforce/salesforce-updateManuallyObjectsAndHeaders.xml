@@ -16,7 +16,7 @@
             </ee:message>
         </ee:transform>
 
-        <salesforce:update doc:name="Salesforce" config-ref="Salesforce_Config" type="Account">
+        <salesforce:update doc:name="Salesforce" config-ref="Salesforce_Config" type="Account" target="payload" targetValue="#[payload.items]">
             <salesforce:headers>
                 <salesforce:header key="secondHeader" value="secondValue" />
                 <salesforce:header key="firstHeader" value="firstValue" />
