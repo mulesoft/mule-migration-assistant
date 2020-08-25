@@ -18,6 +18,23 @@
 
         <salesforce:create doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" type="Account" />
 
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload.items map ( item , indexOfItem ) -> {
+	success: item.successful default true,
+	wrapped: {
+		success: item.payload.success default true,
+		errors: item.payload.errors map ( error , indexOfError ) -> error,
+		id: item.payload.id default ""
+	},
+	errors: item.payload.errors map ( error , indexOfError ) -> error,
+	id: item.id as String default ""
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
     </flow>
 
 </mule>
