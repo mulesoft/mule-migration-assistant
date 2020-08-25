@@ -1068,3 +1068,7 @@ salesforce:
     message: "Fetch size parameter does not exists in Salesforce 10.x. As an alternative, the batchSize header can be set along with all the other headers."
     docLinks:
       - https://developer.salesforce.com/docs/atlas.en-us.api.meta/api/sforce_api_header_queryoptions.htm#topic-title
+  outputMatch:
+    type: INFO
+    message: "The output for this operation changed from mule 3 to mule 4. Please check the transform message that maps the output to see if it matches the flow logic."
+

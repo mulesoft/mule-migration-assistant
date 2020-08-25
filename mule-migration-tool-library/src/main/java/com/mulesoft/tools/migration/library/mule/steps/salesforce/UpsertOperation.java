@@ -67,6 +67,7 @@ public class UpsertOperation extends AbstractSalesforceOperationMigrationStep im
 
     SalesforceUtils.createTransformAfterElementToMatchOutputs(mule4Operation,
                                                               SalesforceUtils.getTransformBodyToMatchUpsertOutputs());
+    report.report("salesforce.outputMatch", mule4Operation, null);
   }
 
   private void resolveAttributes(Element mule3Operation, Element mule4Operation) {

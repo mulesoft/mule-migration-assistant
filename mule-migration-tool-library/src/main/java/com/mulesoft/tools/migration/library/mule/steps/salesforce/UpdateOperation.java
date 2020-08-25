@@ -67,6 +67,7 @@ public class UpdateOperation extends AbstractSalesforceOperationMigrationStep im
 
     SalesforceUtils.createTransformAfterElementToMatchOutputs(mule4Operation,
                                                               SalesforceUtils.getTransformBodyToMatchCreateAndUpdateOutputs());
+    report.report("salesforce.outputMatch", mule4Operation, null);
   }
 
 }
