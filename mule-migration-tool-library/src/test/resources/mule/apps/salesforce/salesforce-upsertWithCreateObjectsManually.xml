@@ -18,6 +18,22 @@
 
         <salesforce:upsert doc:name="Salesforce" config-ref="Salesforce__Basic_Authentication" objectType="Account" externalIdFieldName="ExternalID__c"/>
 
+        <ee:transform >
+            <ee:message >
+                <ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.items map ( item , indexOfItem ) -> {
+	created: item.payload.created default true,
+	success: item.successful default true,
+	payload: {
+		id: item.id as String default ""
+	},
+	errors: item.payload.errors map ( error , indexOfError ) -> error,
+	id: item.id as String default ""
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
     </flow>
 
 </mule>

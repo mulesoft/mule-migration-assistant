@@ -66,6 +66,49 @@ public class SalesforceUtils {
     XmlDslUtils.addElementBefore(element, mule3Operation);
   }
 
+  public static void createTransformAfterElementToMatchOutputs(Element mule4Operation, String transformBody) {
+    Element element = new Element("transform");
+    element.setName("transform");
+    element.setNamespace(CORE_EE_NAMESPACE);
+    element.removeContent();
+    element.addContent(new Element("message", CORE_EE_NAMESPACE)
+        .addContent(new Element("set-payload", CORE_EE_NAMESPACE)
+            .setText(transformBody)));
+
+    XmlDslUtils.addElementAfter(element, mule4Operation);
+  }
+
+  public static String getTransformBodyToMatchCreateAndUpdateOutputs() {
+    return "%dw 2.0\n" +
+        "output application/json\n" +
+        "---\n" +
+        "payload.items map ( item , indexOfItem ) -> {\n" +
+        "\tsuccess: item.successful default true,\n" +
+        "\twrapped: {\n" +
+        "\t\tsuccess: item.payload.success default true,\n" +
+        "\t\terrors: item.payload.errors map ( error , indexOfError ) -> error,\n" +
+        "\t\tid: item.payload.id default \"\"\n" +
+        "\t},\n" +
+        "\terrors: item.payload.errors map ( error , indexOfError ) -> error,\n" +
+        "\tid: item.id as String default \"\"\n" +
+        "}";
+  }
+
+  public static String getTransformBodyToMatchUpsertOutputs() {
+    return "%dw 2.0\n" +
+        "output application/json\n" +
+        "---\n" +
+        "payload.items map ( item , indexOfItem ) -> {\n" +
+        "\tcreated: item.payload.created default true,\n" +
+        "\tsuccess: item.successful default true,\n" +
+        "\tpayload: {\n" +
+        "\t\tid: item.id as String default \"\"\n" +
+        "\t},\n" +
+        "\terrors: item.payload.errors map ( error , indexOfError ) -> error,\n" +
+        "\tid: item.id as String default \"\"\n" +
+        "}";
+  }
+
   public static void resolveTypeAttribute(Element mule3Operation, Element mule4Operation) {
     String type = mule3Operation.getAttributeValue("type");
     if (type != null && !type.isEmpty()) {

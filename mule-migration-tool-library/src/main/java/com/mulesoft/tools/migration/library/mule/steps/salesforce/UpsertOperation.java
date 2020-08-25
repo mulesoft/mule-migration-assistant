@@ -40,6 +40,7 @@ public class UpsertOperation extends AbstractSalesforceOperationMigrationStep im
   @Override
   public void execute(Element mule3Operation, MigrationReport report) throws RuntimeException {
     super.execute(mule3Operation, report);
+    addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, mule3Operation.getDocument());
     resolveAttributes(mule3Operation, mule4Operation);
 
     Optional<Element> objects =
@@ -56,8 +57,6 @@ public class UpsertOperation extends AbstractSalesforceOperationMigrationStep im
                 .collect(Collectors.joining(",\n")))
             .collect(Collectors.joining("\n},\n{"));
 
-
-        addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, mule3Operation.getDocument());
         SalesforceUtils.createTransformBeforeElement(mule3Operation, SalesforceUtils.START_TRANSFORM_BODY_TYPE_JSON
             + transformBody + SalesforceUtils.CLOSE_TRANSFORM_BODY_TYPE_JSON);
       }
@@ -65,6 +64,9 @@ public class UpsertOperation extends AbstractSalesforceOperationMigrationStep im
 
     XmlDslUtils.addElementAfter(mule4Operation, mule3Operation);
     mule3Operation.getParentElement().removeContent(mule3Operation);
+
+    SalesforceUtils.createTransformAfterElementToMatchOutputs(mule4Operation,
+                                                              SalesforceUtils.getTransformBodyToMatchUpsertOutputs());
   }
 
   private void resolveAttributes(Element mule3Operation, Element mule4Operation) {
