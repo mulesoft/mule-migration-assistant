@@ -17,7 +17,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
 
 /**
  * Migrate Update Operation
@@ -38,6 +40,7 @@ public class UpdateOperation extends AbstractSalesforceOperationMigrationStep im
   @Override
   public void execute(Element mule3Operation, MigrationReport report) throws RuntimeException {
     super.execute(mule3Operation, report);
+    addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, mule3Operation.getDocument());
     SalesforceUtils.resolveTypeAttribute(mule3Operation, mule4Operation);
 
     Optional<Element> objects =
@@ -61,6 +64,9 @@ public class UpdateOperation extends AbstractSalesforceOperationMigrationStep im
 
     XmlDslUtils.addElementAfter(mule4Operation, mule3Operation);
     mule3Operation.getParentElement().removeContent(mule3Operation);
+
+    SalesforceUtils.createTransformAfterElementToMatchOutputs(mule4Operation,
+                                                              SalesforceUtils.getTransformBodyToMatchCreateAndUpdateOutputs());
   }
 
 }
