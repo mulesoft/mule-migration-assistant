@@ -293,7 +293,7 @@
                         <execution>
                             <id>default-prepare-agent</id>
                             <goals>
-                                <goal>test</goal>
+                                <goal>prepare-agent</goal>
                             </goals>
                         </execution>
                     </executions>
