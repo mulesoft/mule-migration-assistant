@@ -62,6 +62,7 @@ import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.library.soapkit.tasks.SoapkitMigrationTask;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationTask;
+import com.obi.tools.migration.library.smartgate.tasks.PreprocessSmartgateMuleApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +94,9 @@ public class MigrationTaskLocator {
 
   public List<AbstractMigrationTask> locate() {
     List<AbstractMigrationTask> migrationTasks = newArrayList(new PreprocessMuleApplication());
+    // Add Smartgate
+    migrationTasks.add(new PreprocessSmartgateMuleApplication());
+    // Smartgate
     migrationTasks.addAll(getCoreMigrationTasks());
     migrationTasks.addAll(getGatewayMigrationTasks());
     migrationTasks.addAll(getCoreAfterMigrationTasks());
