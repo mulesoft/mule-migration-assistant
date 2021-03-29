@@ -21,7 +21,7 @@ import com.obi.tools.migration.library.smartgate.steps.pom.SetSmartgateProjectDe
 import com.obi.tools.migration.library.smartgate.steps.pom.SmartgateExceptionStrategyRef;
 import com.obi.tools.migration.library.smartgate.steps.pom.UpdateProjectParent;
 import com.obi.tools.migration.library.smartgate.steps.pom.UpdateProjectProperties;
-import com.obi.tools.migration.library.smartgate.steps.properties.SmartgateStageAppProperties;
+import com.obi.tools.migration.library.smartgate.steps.properties.ReplaceStageAppPropertiesWithSecureProperties;
 
 /**
  * Preprocess Smartgate Mule Application Migration Task
@@ -50,7 +50,8 @@ public class PreprocessSmartgateMuleApplication extends AbstractMigrationTask {
   public List<MigrationStep> getSteps() {
     return newArrayList(new AddSmartgateAPIPomContribution(), new RemoveMuleRepositories(), new RemoveSmartgateDependencies(),
                         new SetSmartgateProjectDescription(), new UpdateProjectParent(), new UpdateProjectProperties(),
-                        new AddSmartgateAndMuleDependencies(), new SmartgateExceptionStrategyRef());
+                        new AddSmartgateAndMuleDependencies(), new SmartgateExceptionStrategyRef(),
+                        new ReplaceStageAppPropertiesWithSecureProperties());
   }
 
 }
