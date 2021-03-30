@@ -23,7 +23,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 
 /**
- * Migrate all properties placeholders as secure placeholders.
+ * Migrate all properties placeholders with secure placeholders.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -36,7 +36,7 @@ public class ReplaceStageAppPropertiesWithSecureProperties implements NamespaceC
 
   @Override
   public String getDescription() {
-    return "Migrate all properties placeholders as secure placeholders.";
+    return "Migrate all properties placeholders with secure placeholders.";
   }
 
   @Override
@@ -47,9 +47,9 @@ public class ReplaceStageAppPropertiesWithSecureProperties implements NamespaceC
         properties.forEach(p -> {
           appModel.getDocumentsContainString("${" + p + "}").forEach(n -> preplaceProperties(n, appModel, p, report));
         });
-      } 
+      }
     } catch (IOException e) {
-      throw new MigrationStepException("Could not update properties inside a mule file.", e);
+      throw new MigrationStepException("Could not update placholders inside a mule application file.", e);
 
     }
   }
