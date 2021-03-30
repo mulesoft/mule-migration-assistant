@@ -37,7 +37,7 @@ import java.util.TreeSet;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrationStep {
+public abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrationStep {
 
   private static final String SPRING_FOLDER =
       "src" + File.separator + "main" + File.separator + "resources" + File.separator + "spring" + File.separator;
