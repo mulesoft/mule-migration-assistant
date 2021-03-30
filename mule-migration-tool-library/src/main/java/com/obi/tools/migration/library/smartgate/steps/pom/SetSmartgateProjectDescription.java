@@ -27,9 +27,9 @@ public class SetSmartgateProjectDescription implements PomContribution {
   public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
     String name = pomModel.getName();
     if (name != null) {
-      pomModel.setDescription(name + "Application migrated with MMA");
+      pomModel.setDescription(name + " Application migrated with Smartgate MMA");
     } else {
-      pomModel.setDescription(pomModel.getArtifactId() + "Application migrated with MMA");
+      pomModel.setDescription(pomModel.getArtifactId() + " Application migrated with Smartgate MMA");
     }
   }
 

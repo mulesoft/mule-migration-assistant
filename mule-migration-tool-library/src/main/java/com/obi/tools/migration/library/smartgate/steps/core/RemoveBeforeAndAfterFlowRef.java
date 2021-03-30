@@ -38,8 +38,6 @@ public class RemoveBeforeAndAfterFlowRef extends AbstractApplicationModelMigrati
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
 
-    System.out.println("RemoveBeforeAndAfterFlowRef: " + element.getAttributeValue("name"));
-
     if (API_MAIN_BEFORE_APIKIT_FLOW.equals(element.getAttributeValue("name"))) {
       final Parent parent = element.getParent();
       parent.removeContent(element);
