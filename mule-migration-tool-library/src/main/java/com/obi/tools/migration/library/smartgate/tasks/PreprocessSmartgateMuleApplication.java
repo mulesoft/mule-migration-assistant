@@ -13,6 +13,8 @@ import java.util.List;
 
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import com.obi.tools.migration.library.smartgate.steps.core.RemoveBeforeAndAfterFlowRef;
+import com.obi.tools.migration.library.smartgate.steps.core.RemovedCustomInterceptorsElements;
 import com.obi.tools.migration.library.smartgate.steps.pom.AddSmartgateAPIPomContribution;
 import com.obi.tools.migration.library.smartgate.steps.pom.AddSmartgateAndMuleDependencies;
 import com.obi.tools.migration.library.smartgate.steps.pom.RemoveMuleRepositories;
@@ -52,7 +54,8 @@ public class PreprocessSmartgateMuleApplication extends AbstractMigrationTask {
     return newArrayList(new AddSmartgateAPIPomContribution(), new RemoveMuleRepositories(), new RemoveSmartgateDependencies(),
                         new SetSmartgateProjectDescription(), new UpdateProjectParent(), new UpdateProjectProperties(),
                         new AddSmartgateAndMuleDependencies(), new SmartgateExceptionStrategyRef(),
-                        new ReplaceStageAppPropertiesWithSecureProperties(), new UpdateAutodicoveryStageProperties());
+                        new ReplaceStageAppPropertiesWithSecureProperties(), new UpdateAutodicoveryStageProperties(),
+                        new RemovedCustomInterceptorsElements(), new RemoveBeforeAndAfterFlowRef());
   }
 
 }
