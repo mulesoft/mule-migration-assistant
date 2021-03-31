@@ -37,7 +37,7 @@ public class AddSmartgateAndMuleDependencies implements PomContribution {
         .withClassifier("mule-plugin")
         .build());
     pomModel.addDependency(new DependencyBuilder()
-        .withGroupId("org.mule.modules")
+        .withGroupId("org.mule.module")
         .withArtifactId("mule-java-module")
         .withVersion("1.2.7")
         .withClassifier("mule-plugin")

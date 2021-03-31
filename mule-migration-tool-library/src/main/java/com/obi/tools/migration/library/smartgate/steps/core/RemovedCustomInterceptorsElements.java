@@ -5,6 +5,8 @@
  */
 package com.obi.tools.migration.library.smartgate.steps.core;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
+
 import org.jdom2.Element;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -18,10 +20,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
  */
 public class RemovedCustomInterceptorsElements extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = ""
-      + "//*["
-      + "local-name()='interceptor-stack'"
-      + "]";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("custom-interceptor");
 
   @Override
   public String getDescription() {
@@ -35,6 +34,7 @@ public class RemovedCustomInterceptorsElements extends AbstractApplicationModelM
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
+    report.report("components.removed", object, object, object.getName());
     object.getParent().removeContent(object);
   }
 }

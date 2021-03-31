@@ -5,6 +5,16 @@
  */
 package com.mulesoft.tools.migration.engine;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.mulesoft.tools.migration.library.apikit.tasks.ApikitMigrationTask;
 import com.mulesoft.tools.migration.library.gateway.tasks.BasicStructureMigrationTask;
 import com.mulesoft.tools.migration.library.gateway.tasks.ClientIdEnforcementMigrationTask;
@@ -62,17 +72,8 @@ import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.library.soapkit.tasks.SoapkitMigrationTask;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.task.MigrationTask;
+import com.obi.tools.migration.library.smartgate.tasks.PostProcessSmartgateMuleApplication;
 import com.obi.tools.migration.library.smartgate.tasks.PreprocessSmartgateMuleApplication;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionGreaterOrEquals;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 
 /**
  * The goal of this class is to locate migration tasks
@@ -100,6 +101,9 @@ public class MigrationTaskLocator {
     migrationTasks.addAll(getCoreMigrationTasks());
     migrationTasks.addAll(getGatewayMigrationTasks());
     migrationTasks.addAll(getCoreAfterMigrationTasks());
+    // Add Smartgate
+    migrationTasks.add(new PostProcessSmartgateMuleApplication());
+    // Smartgate
     return migrationTasks.stream().filter(mt -> shouldNotFilterTask(mt)).collect(Collectors.toList());
   }
 
