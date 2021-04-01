@@ -94,10 +94,9 @@ public class AddSmartgateAPIPomContribution implements PomContribution {
             if (!"${project.artifactId}".equals(arifactId)) {
               final Dependency apiDependency = new DependencyBuilder()
                   .withGroupId(groupId)
-                  .withArtifactId(arifactId)
+                  .withArtifactId("mule-plugin-" + arifactId)
                   .withVersion(version)
-                  .withClassifier("raml")
-                  .withType("zip")
+                  .withClassifier("mule-plugin")
                   .build();
               pomModel.addDependency(apiDependency);
 

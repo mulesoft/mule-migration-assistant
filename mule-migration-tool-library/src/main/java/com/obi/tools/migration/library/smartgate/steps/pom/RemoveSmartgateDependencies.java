@@ -30,7 +30,7 @@ public class RemoveSmartgateDependencies implements PomContribution {
 
     List<Dependency> dependencies = pomModel.getDependencies();
     dependencies.removeIf(d -> (d.getGroupId().startsWith("com.obi.smartgate.smartgate-common")
-        && d.getArtifactId().equals("lobal-exception-strategy-rest")));
+        && d.getArtifactId().equals("global-exception-strategy-rest")));
     pomModel.setDependencies(dependencies);
 
 
