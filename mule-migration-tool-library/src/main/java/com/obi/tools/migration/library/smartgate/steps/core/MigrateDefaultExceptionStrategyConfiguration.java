@@ -6,7 +6,6 @@
 package com.obi.tools.migration.library.smartgate.steps.core;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 
 import org.jdom2.Attribute;
@@ -42,6 +41,7 @@ public class MigrateDefaultExceptionStrategyConfiguration extends AbstractApplic
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
+    final Element parentElement = element.getParentElement();
     Attribute attribute = element.getAttribute(DEFAULT_EXCEPTION_STRATEGY_REF);
     if (attribute != null && attribute.getValue().equals("global-exception-strategy")) {
       element.removeAttribute(attribute);
@@ -52,10 +52,33 @@ public class MigrateDefaultExceptionStrategyConfiguration extends AbstractApplic
         .getElementsFromDocument(XPathFactory.instance().compile("//*[@file = '" + GLOBAL_ERROR_HANDLER_XML + "']"),
                                  element.getDocument())
         .isEmpty()) {
+      // <import doc:name="Import" file="global-error-handler.xml" />
       Element configProperties = new Element("import", CORE_NAMESPACE);
       configProperties.setAttribute("file", GLOBAL_ERROR_HANDLER_XML);
-      addTopLevelElement(configProperties, element.getDocument());
+
+      parentElement.addContent(configProperties);
+      // addTopLevelElement(configProperties, element.getDocument());
     }
-    // <import doc:name="Import" file="global-error-handler.xml" />
+
+    // add Toplevel
+    // <global-property name="mule.env" value="local"/>
+    // <global-property name="encryptionKey" value="1234567890123456"/>
+
+    Element globalPropertyMuleENV = new Element("global-property", CORE_NAMESPACE);
+    globalPropertyMuleENV.setAttribute("name",
+                                       "mule.env");
+    globalPropertyMuleENV.setAttribute("value", "local");
+    parentElement.addContent(globalPropertyMuleENV);
+    //
+    //
+    Element globalPropertyEencryptionKey = new Element("global-property", CORE_NAMESPACE);
+    globalPropertyEencryptionKey.setAttribute("name", "encryptionKey");
+    globalPropertyEencryptionKey.setAttribute("value",
+                                              "1234567890123456");
+    parentElement.addContent(globalPropertyEencryptionKey);
+
+    report.report("smartgate.globalProperty", globalPropertyEencryptionKey, globalPropertyEencryptionKey);
+
+
   }
 }
