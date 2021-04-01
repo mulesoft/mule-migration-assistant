@@ -36,7 +36,7 @@ public class UpdateAutodicoveryStageProperties implements NamespaceContribution 
   private static final String API_AUTODISCOVERY_NAME = "api.autodiscovery.name";
   private static final String API_AUTODISCOVERY_VERSION = "api.autodiscovery.version";
   private static final List<String> SMARGATE_STAGE_PROD_FILE_NAME =
-      Arrays.asList("prod.properties", "fqa.properties", "fqa.properties", "devtest.properties", "local.properties");
+      Arrays.asList("prod.properties", "fqa.properties", "test.properties", "devtest.properties", "local.properties");
   private static final String SMARTGATE_FILE_PATH = "src" + File.separator + "main" + File.separator + "resources";
 
   @Override

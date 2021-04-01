@@ -53,12 +53,21 @@ public class PreprocessSmartgateMuleApplication extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new RemoveSmartgateDependencies(), new AddSmartgateAPIPomContribution(), new RemoveMuleRepositories(),
-                        new SetSmartgateProjectDescription(), new UpdateProjectParent(), new UpdateProjectProperties(),
-                        new AddSmartgateAndMuleDependencies(), new SmartgateExceptionStrategyRef(),
-                        new ReplaceStageAppPropertiesWithSecureProperties(), new UpdateAutodicoveryStageProperties(),
-                        new RemovedCustomInterceptorsElements(), new RemoveBeforeAndAfterFlowRef(),
-                        new RemoveSpringBeansImport(), new ApiTagMigrationStep());
+    return newArrayList(
+                        new RemoveSmartgateDependencies(),
+                        new AddSmartgateAPIPomContribution(),
+                        new RemoveMuleRepositories(),
+                        new SetSmartgateProjectDescription(),
+                        new UpdateProjectParent(),
+                        new UpdateProjectProperties(),
+                        new AddSmartgateAndMuleDependencies(),
+                        new SmartgateExceptionStrategyRef(),
+                        new ReplaceStageAppPropertiesWithSecureProperties(),
+                        new UpdateAutodicoveryStageProperties(),
+                        new RemovedCustomInterceptorsElements(),
+                        new RemoveBeforeAndAfterFlowRef(),
+                        new RemoveSpringBeansImport(),
+                        new ApiTagMigrationStep());
   }
 
 }
