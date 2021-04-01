@@ -5,6 +5,9 @@
  */
 package com.obi.tools.migration.library.smartgate.steps.pom;
 
+import java.util.List;
+
+import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
@@ -23,5 +26,13 @@ public class RemoveSmartgateDependencies implements PomContribution {
   }
 
   @Override
-  public void execute(PomModel pomModel, MigrationReport report) {}
+  public void execute(PomModel pomModel, MigrationReport report) {
+
+    List<Dependency> dependencies = pomModel.getDependencies();
+    dependencies.removeIf(d -> (d.getGroupId().startsWith("com.obi.smartgate.smartgate-common")
+        && d.getArtifactId().equals("lobal-exception-strategy-rest")));
+    pomModel.setDependencies(dependencies);
+
+
+  }
 }

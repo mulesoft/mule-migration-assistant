@@ -15,6 +15,7 @@ import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.obi.tools.migration.library.smartgate.steps.core.RemoveBeforeAndAfterFlowRef;
 import com.obi.tools.migration.library.smartgate.steps.core.RemovedCustomInterceptorsElements;
+import com.obi.tools.migration.library.smartgate.steps.gateway.ApiTagMigrationStep;
 import com.obi.tools.migration.library.smartgate.steps.pom.AddSmartgateAPIPomContribution;
 import com.obi.tools.migration.library.smartgate.steps.pom.AddSmartgateAndMuleDependencies;
 import com.obi.tools.migration.library.smartgate.steps.pom.RemoveMuleRepositories;
@@ -52,12 +53,12 @@ public class PreprocessSmartgateMuleApplication extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new AddSmartgateAPIPomContribution(), new RemoveMuleRepositories(), new RemoveSmartgateDependencies(),
+    return newArrayList(new RemoveSmartgateDependencies(), new AddSmartgateAPIPomContribution(), new RemoveMuleRepositories(),
                         new SetSmartgateProjectDescription(), new UpdateProjectParent(), new UpdateProjectProperties(),
                         new AddSmartgateAndMuleDependencies(), new SmartgateExceptionStrategyRef(),
                         new ReplaceStageAppPropertiesWithSecureProperties(), new UpdateAutodicoveryStageProperties(),
                         new RemovedCustomInterceptorsElements(), new RemoveBeforeAndAfterFlowRef(),
-                        new RemoveSpringBeansImport());
+                        new RemoveSpringBeansImport(), new ApiTagMigrationStep());
   }
 
 }
