@@ -5,12 +5,12 @@
  */
 package com.mulesoft.tools.migration.engine.project.structure.util;
 
+import java.io.File;
+
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourDomain;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeDomain;
-
-import java.io.File;
 
 /**
  * Files/Folders excluded from migration.
@@ -22,7 +22,7 @@ public enum Exclusions {
 
   CLASSPATH(File.separator + ".classpath"),
 
-  GIT(File.separator + ".gitignore"),
+  // GIT(File.separator + ".gitignore"),
 
   PROJECT(File.separator + ".project"),
 
