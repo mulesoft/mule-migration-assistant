@@ -14,7 +14,7 @@ import java.util.List;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.obi.tools.migration.library.smartgate.steps.core.MigrateDefaultExceptionStrategyConfiguration;
-import com.obi.tools.migration.library.smartgate.steps.core.RemoveMuleAppFileConfiguration;
+import com.obi.tools.migration.library.smartgate.steps.core.PostGlobalsMigrations;
 import com.obi.tools.migration.library.smartgate.steps.pom.AddMavenPomContributionMigrationStep;
 import com.obi.tools.migration.library.smartgate.steps.pom.RemoveMavenPlugins;
 import com.obi.tools.migration.library.smartgate.steps.pom.UpdateMuleDependencies;
@@ -44,7 +44,7 @@ public class PostProcessSmartgateMuleApplication extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new RemoveMuleAppFileConfiguration(), new MigrateDefaultExceptionStrategyConfiguration(),
+    return newArrayList(new PostGlobalsMigrations(), new MigrateDefaultExceptionStrategyConfiguration(),
                         new UpdateMuleDependencies(), new AddMavenPomContributionMigrationStep(), new RemoveMavenPlugins());
   }
 

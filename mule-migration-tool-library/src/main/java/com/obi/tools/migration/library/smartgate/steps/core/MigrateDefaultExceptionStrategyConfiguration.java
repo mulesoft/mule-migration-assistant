@@ -8,12 +8,12 @@ package com.obi.tools.migration.library.smartgate.steps.core;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.xpath.XPathFactory;
-
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * Migrate defaultExceptionStrategy-ref components
@@ -59,26 +59,5 @@ public class MigrateDefaultExceptionStrategyConfiguration extends AbstractApplic
       parentElement.addContent(configProperties);
       // addTopLevelElement(configProperties, element.getDocument());
     }
-
-    // add Toplevel
-    // <global-property name="mule.env" value="local"/>
-    // <global-property name="encryptionKey" value="1234567890123456"/>
-
-    Element globalPropertyMuleENV = new Element("global-property", CORE_NAMESPACE);
-    globalPropertyMuleENV.setAttribute("name",
-                                       "mule.env");
-    globalPropertyMuleENV.setAttribute("value", "local");
-    parentElement.addContent(globalPropertyMuleENV);
-    //
-    //
-    Element globalPropertyEencryptionKey = new Element("global-property", CORE_NAMESPACE);
-    globalPropertyEencryptionKey.setAttribute("name", "encryptionKey");
-    globalPropertyEencryptionKey.setAttribute("value",
-                                              "1234567890123456");
-    parentElement.addContent(globalPropertyEencryptionKey);
-
-    report.report("smartgate.globalProperty", globalPropertyEencryptionKey, globalPropertyEencryptionKey);
-
-
   }
 }
