@@ -54,6 +54,23 @@
 				<module>compatibility</module>
 			</modules>
 		</profile>
+		<profile>
+			<id>build-profile</id>
+			<distributionManagement>
+				<repository>
+					<id>artifactory-build</id>
+					<name>intern-release</name>
+					<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common/release_v1</url>
+				</repository>
+				<snapshotRepository>
+					<id>artifactory-build</id>
+					<name>intern-snapshot</name>
+					<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common/snapshot_v1</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+		
+
 	</profiles>
 
 	<properties>
@@ -591,7 +608,7 @@
 		<name>MuleSoft Inc</name>
 		<url>https://www.mulesoft.com/</url>
 	</organization>
-
+	<!--
 	<repositories>
 		<repository>
 			<id>mulesoft-public</id>
@@ -612,25 +629,12 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
+	-->
 
 	<!-- <distributionManagement> <repository> <id>mule-releases</id> <name>MuleSoft 
 		Releases Repository</name> <url>https://repository.mulesoft.org/releases/</url> 
 		</repository> <snapshotRepository> <id>mule-snapshots</id> <name>MuleSoft 
 		Snapshots Repository</name> <url>https://repository-master.mulesoft.org/snapshots/</url> 
 		</snapshotRepository> </distributionManagement> -->
-
-	<distributionManagement>
-		<repository>
-			<id>artifactory-build</id>
-			<name>intern-release</name>
-			<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common/release_v1</url>
-		</repository>
-		<snapshotRepository>
-			<id>artifactory-build</id>
-			<name>intern-snapshot</name>
-			<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common/snapshot_v1</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 </project>
