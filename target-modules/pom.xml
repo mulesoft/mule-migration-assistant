@@ -150,16 +150,16 @@
     <!-- Cannot put the root project as parent pom because it will bring its own dependency management, and that will mess up other 
         projects that use this module's dependency managemnt. -->
     <!-- So, we need to duplicate the distributionManagement here so this artifact can be published. -->
-    <distributionManagement>
-        <repository>
-            <id>mule-releases</id>
-            <name>MuleSoft Releases Repository</name>
-            <url>https://repository-master.mulesoft.org/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>mule-snapshots</id>
-            <name>MuleSoft Snapshots Repository</name>
-            <url>https://repository-master.mulesoft.org/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>artifactory-build</id>
+			<name>intern-release</name>
+			<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common/release_v1</url>
+		</repository>
+		<snapshotRepository>
+			<id>artifactory-build</id>
+			<name>intern-snapshot</name>
+			<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common/snapshot_v1</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
