@@ -1,0 +1,3 @@
+include:
+- project: 'Smartgate/devops/cicd-pipline/gitlab'
+  file: '/maven-build.yml'
