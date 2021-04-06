@@ -7,14 +7,17 @@ package com.obi.tools.migration.library.smartgate.steps.core;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 
+import java.io.File;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
- * Remove MULE_APP_FILE_NAME configuration
+ * Remove MULE_APP_FILE_NAME configuration and Replace it with mule.env properties
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
@@ -23,6 +26,8 @@ public class RemoveMuleAppFileConfiguration extends AbstractApplicationModelMigr
 
   private static final String FILE = "file";
   private static final String MULE_APP_FILE_NAME = "mule-app.properties";
+  private static final String MULE_APP_FILE_PATH =
+      "src" + File.separator + "main" + File.separator + "resources" + File.separator + MULE_APP_FILE_NAME;
   public static final String XPATH_SELECTOR = getCoreXPathSelector("configuration-properties");
 
 
@@ -41,7 +46,11 @@ public class RemoveMuleAppFileConfiguration extends AbstractApplicationModelMigr
 
     final Attribute attribute = element.getAttribute(FILE);
     if (attribute != null && attribute.getValue().equals(MULE_APP_FILE_NAME)) {
-      element.getParent().removeContent(element);
+      attribute.setValue("${mule.env}.properties");
     }
+    final ApplicationModel applicationModel = getApplicationModel();
+
+    File muleAppProperties = new File(applicationModel.getProjectBasePath().toFile(), MULE_APP_FILE_PATH);
+    muleAppProperties.delete();
   }
 }
