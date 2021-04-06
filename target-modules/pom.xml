@@ -154,12 +154,12 @@
 		<repository>
 			<id>artifactory-build</id>
 			<name>intern-release</name>
-			<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common/release_v1</url>
+			<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common-release_v1</url>
 		</repository>
 		<snapshotRepository>
 			<id>artifactory-build</id>
 			<name>intern-snapshot</name>
-			<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common/snapshot_v1</url>
+			<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common-snapshot_v1</url>
 		</snapshotRepository>
 	</distributionManagement>
 </project>
