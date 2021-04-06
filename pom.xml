@@ -624,14 +624,13 @@
 		<repository>
 			<id>artifactory-build</id>
 			<name>intern-release</name>
-			<url>${obi.smartgate.parent.aggregator.maven.repo.businessgroup.release}</url>
+			<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common/release_v1</url>
 		</repository>
 		<snapshotRepository>
 			<id>artifactory-build</id>
 			<name>intern-snapshot</name>
-			<url>${obi.smartgate.parent.aggregator.maven.repo.businessgroup.snapshot}</url>
+			<url>https://smartgate-artifacts.de.obi.net:443/artifactory/smartgate-common/snapshot_v1</url>
 		</snapshotRepository>
 	</distributionManagement>
-
 
 </project>
