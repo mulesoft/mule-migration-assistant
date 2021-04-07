@@ -5,11 +5,6 @@
  */
 package com.obi.tools.migration.library.smartgate.steps.pom;
 
-import java.util.Optional;
-import java.util.Properties;
-
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.Plugin;
@@ -17,6 +12,11 @@ import com.mulesoft.tools.migration.project.model.pom.PluginExecution;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
+
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+
+import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Adds APIkit dependency
@@ -49,57 +49,58 @@ public class AddSmartgateAPIPomContribution implements PomContribution {
     Properties properties = pomModel.getProperties();
     String tempBG = properties.getProperty(OBI_SMARTGATE_ANYPOINT_EXCHANGE_ASSET_BUSINESSGROUPID);
     String tempAssetVersion = properties.getProperty(OBI_SMARTGATE_ANYPOINT_EXCHANGE_ASSET_VERSION);
+    if (tempBG != null) {
+      Dependency dependency = new DependencyBuilder()
+          .withGroupId(tempBG)
+          .withArtifactId(tArtifactId)
+          .withVersion(tempAssetVersion)
+          .withClassifier("raml")
+          .withType("zip")
+          .build();
+      pomModel.addDependency(dependency);
 
-    Dependency dependency = new DependencyBuilder()
-        .withGroupId(tempBG)
-        .withArtifactId(tArtifactId)
-        .withVersion(tempAssetVersion)
-        .withClassifier("raml")
-        .withType("zip")
-        .build();
-    pomModel.addDependency(dependency);
 
+      final Optional<Plugin> tempPlugin =
+          pomModel.getPlugins().stream().filter(plugin -> plugin.getArtifactId().equals(MAVEN_DEPENDENCY_PLUGIN)).findFirst();
+      if (tempPlugin.isPresent()) {
+        Plugin plugin = tempPlugin.get();
+        final Optional<PluginExecution> execution = plugin.getExecutions().stream()
+            .filter(pluginExecution -> pluginExecution.getId().equals(UNPACK_SHARED_RESOURCES)).findFirst();
+        if (execution.isPresent()) {
+          final PluginExecution pluginExecution = execution.get();
+          final Xpp3Dom configuration = pluginExecution.getConfiguration();
+          if (configuration != null) {
+            final Xpp3Dom allArtifactItems = configuration.getChild(ARTIFACT_ITEMS);
 
-    final Optional<Plugin> tempPlugin =
-        pomModel.getPlugins().stream().filter(plugin -> plugin.getArtifactId().equals(MAVEN_DEPENDENCY_PLUGIN)).findFirst();
-    if (tempPlugin.isPresent()) {
-      Plugin plugin = tempPlugin.get();
-      final Optional<PluginExecution> execution = plugin.getExecutions().stream()
-          .filter(pluginExecution -> pluginExecution.getId().equals(UNPACK_SHARED_RESOURCES)).findFirst();
-      if (execution.isPresent()) {
-        final PluginExecution pluginExecution = execution.get();
-        final Xpp3Dom configuration = pluginExecution.getConfiguration();
-        if (configuration != null) {
-          final Xpp3Dom allArtifactItems = configuration.getChild(ARTIFACT_ITEMS);
-
-          final Xpp3Dom[] artifactItem = allArtifactItems.getChildren();
-          for (Xpp3Dom children : artifactItem) {
-            final Xpp3Dom[] children2 = children.getChildren();
-            String arifactId = null;
-            String groupId = null;
-            String version = null;
-            String outputDirectory = null;
-            for (Xpp3Dom xpp3Dom : children2) {
-              String name = xpp3Dom.getName();
-              if (name.equals(ARTIFACT_ID)) {
-                arifactId = xpp3Dom.getValue();
-              } else if (name.equals(GROUP_ID)) {
-                groupId = xpp3Dom.getValue();
-              } else if (name.equals(VERSION)) {
-                version = xpp3Dom.getValue();
-              } else if (name.equals(outputDirectory)) {
-                outputDirectory = xpp3Dom.getValue();
+            final Xpp3Dom[] artifactItem = allArtifactItems.getChildren();
+            for (Xpp3Dom children : artifactItem) {
+              final Xpp3Dom[] children2 = children.getChildren();
+              String arifactId = null;
+              String groupId = null;
+              String version = null;
+              String outputDirectory = null;
+              for (Xpp3Dom xpp3Dom : children2) {
+                String name = xpp3Dom.getName();
+                if (name.equals(ARTIFACT_ID)) {
+                  arifactId = xpp3Dom.getValue();
+                } else if (name.equals(GROUP_ID)) {
+                  groupId = xpp3Dom.getValue();
+                } else if (name.equals(VERSION)) {
+                  version = xpp3Dom.getValue();
+                } else if (name.equals(outputDirectory)) {
+                  outputDirectory = xpp3Dom.getValue();
+                }
               }
-            }
-            if (!"${project.artifactId}".equals(arifactId)) {
-              final Dependency apiDependency = new DependencyBuilder()
-                  .withGroupId(groupId)
-                  .withArtifactId("mule-plugin-" + arifactId)
-                  .withVersion(version)
-                  .withClassifier("mule-plugin")
-                  .build();
-              pomModel.addDependency(apiDependency);
+              if (!"${project.artifactId}".equals(arifactId)) {
+                final Dependency apiDependency = new DependencyBuilder()
+                    .withGroupId(groupId)
+                    .withArtifactId("mule-plugin-" + arifactId)
+                    .withVersion(version)
+                    .withClassifier("mule-plugin")
+                    .build();
+                pomModel.addDependency(apiDependency);
 
+              }
             }
           }
         }

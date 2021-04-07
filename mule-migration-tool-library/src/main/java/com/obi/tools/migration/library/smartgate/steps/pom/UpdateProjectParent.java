@@ -28,9 +28,11 @@ public class UpdateProjectParent implements PomContribution {
   public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
 
     final Parent parent = pomModel.getParent();
-    parent.setArtifactId("smartgate-parent-mule-api");
-    parent.setGroupId("com.obi.smartgate.maven.parent");
-    parent.setVersion("2.1.0");
-    pomModel.setParent(parent);
+    if (parent != null) {
+      parent.setArtifactId("smartgate-parent-mule-api");
+      parent.setGroupId("com.obi.smartgate.maven.parent");
+      parent.setVersion("2.1.0");
+      pomModel.setParent(parent);
+    }
   }
 }
