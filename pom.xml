@@ -158,6 +158,12 @@
 
 	</properties>
 
+	<scm>
+		<url>https://smartgate-git.de.obi.net/smartgate/tools/mule-migration-assistant</url>
+		<connection>scm:git:git@smartgate-git.de.obi.net:smartgate/tools/mule-migration-assistant.git</connection>
+		<tag>HEAD</tag>
+	</scm>
+	
 	<build>
 		<pluginManagement>
 			<plugins>
