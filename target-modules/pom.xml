@@ -12,6 +12,7 @@
     <description>Provide a dependency management of modules to use in behavior tests (i.e.: Compatibility module integration tests)</description>
 
     <properties>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
 
