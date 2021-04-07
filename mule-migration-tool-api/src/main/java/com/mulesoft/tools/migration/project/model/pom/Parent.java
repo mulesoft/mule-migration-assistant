@@ -6,8 +6,8 @@
 package com.mulesoft.tools.migration.project.model.pom;
 
 /**
- * Represents a Parent in the pom model. By default its type is jar.
- * contributor Rainer Drexler
+ * Represents a Parent in the pom model. By default its type is jar. contributor Rainer Drexler
+ * 
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
@@ -20,7 +20,7 @@ public class Parent {
   }
 
   /**
-   * Retrieves the parent model represented by a maven core object. 
+   * Retrieves the parent model represented by a maven core object.
    *
    * @return the parent inner model
    */
@@ -60,7 +60,7 @@ public class Parent {
   }
 
   /**
-   * Retrieves the  parent relativePath version.
+   * Retrieves the parent relativePath version.
    *
    * @return a {@link String}
    */
@@ -74,7 +74,8 @@ public class Parent {
    * @param artifactId
    */
   public void setArtifactId(String artifactId) {
-    parent.setArtifactId(artifactId);
+    if (parent != null)
+      parent.setArtifactId(artifactId);
   }
 
   /**
@@ -83,7 +84,8 @@ public class Parent {
    * @param groupId
    */
   public void setGroupId(String groupId) {
-    parent.setGroupId(groupId);
+    if (parent != null)
+      parent.setGroupId(groupId);
   }
 
   /**
@@ -92,7 +94,8 @@ public class Parent {
    * @param version
    */
   public void setVersion(String version) {
-    parent.setVersion(version);
+    if (parent != null)
+      parent.setVersion(version);
   }
 
   /**
@@ -101,6 +104,7 @@ public class Parent {
    * @return a {@link String}
    */
   public void setRelativePath(String relativePath) {
-    parent.setRelativePath(relativePath);
+    if (parent != null)
+      parent.setRelativePath(relativePath);
   }
 }
