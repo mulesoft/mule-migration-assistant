@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import com.obi.tools.migration.library.smartgate.steps.apikit.ApiKitConfigMigrationStep;
 import com.obi.tools.migration.library.smartgate.steps.core.MigrateDefaultExceptionStrategyConfiguration;
 import com.obi.tools.migration.library.smartgate.steps.core.PostGlobalsMigrations;
 import com.obi.tools.migration.library.smartgate.steps.pom.AddMavenPomContributionMigrationStep;
@@ -49,7 +50,7 @@ public class PostProcessSmartgateMuleApplication extends AbstractMigrationTask {
     final ArrayList<MigrationStep> arrayList =
         newArrayList(new PostGlobalsMigrations(), new MigrateDefaultExceptionStrategyConfiguration(),
                      new UpdateMuleDependencies(), new AddMavenPomContributionMigrationStep(), new RemoveMavenPlugins(),
-                     new RemoveApiApiLocation());
+                     new RemoveApiApiLocation(), new ApiKitConfigMigrationStep());
     return arrayList;
   }
 
