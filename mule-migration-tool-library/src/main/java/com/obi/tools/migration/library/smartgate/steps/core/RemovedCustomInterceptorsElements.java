@@ -7,10 +7,11 @@ package com.obi.tools.migration.library.smartgate.steps.core;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 
-import org.jdom2.Element;
-
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Element;
+import org.jdom2.output.XMLOutputter;
 
 /**
  * Remove elements from 3.x that have no replacement in 4.x.
@@ -34,7 +35,14 @@ public class RemovedCustomInterceptorsElements extends AbstractApplicationModelM
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report.report("components.removed", object, object, object.getName());
+
+    XMLOutputter outputter = new XMLOutputter();
+    final String outputString = outputter.outputString(object);
+
+    report.report("smartgate.customeinterceptor-removed", object.getParentElement(), object.getParentElement(),
+                  outputString);
+
     object.getParent().removeContent(object);
+
   }
 }
