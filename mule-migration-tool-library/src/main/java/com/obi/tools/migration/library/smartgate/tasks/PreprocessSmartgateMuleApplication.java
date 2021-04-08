@@ -9,8 +9,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
-import java.util.List;
-
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.obi.tools.migration.library.smartgate.steps.core.RemoveBeforeAndAfterFlowRef;
@@ -27,6 +25,8 @@ import com.obi.tools.migration.library.smartgate.steps.pom.UpdateProjectProperti
 import com.obi.tools.migration.library.smartgate.steps.properties.ReplaceStageAppPropertiesWithSecureProperties;
 import com.obi.tools.migration.library.smartgate.steps.properties.UpdateAutodicoveryStageProperties;
 import com.obi.tools.migration.library.smartgate.steps.spring.RemoveSpringBeansImport;
+
+import java.util.List;
 
 /**
  * Preprocess Smartgate Mule Application Migration Task
