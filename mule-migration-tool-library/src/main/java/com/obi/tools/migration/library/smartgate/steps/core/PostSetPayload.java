@@ -13,30 +13,32 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 
 /**
- * Post Migrate set-variable "smartgastae_transaction_id"
+ * Post Migrate set-payload empty mimetype
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class PostSetValue extends AbstractApplicationModelMigrationStep {
+public class PostSetPayload extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = getCoreXPathSelector("set-variable");
+  private static final String NULL = "null";
+  private static final String MIMETYPE = "mimeType";
+  public static final String XPATH_SELECTOR = getCoreXPathSelector("set-payload");
 
   @Override
   public String getDescription() {
-    return "Post Migrate set-variable \"smartgastae_transaction_id\"";
+    return "ost Migrate set-payload  empty mimetype";
   }
 
-  public PostSetValue() {
+  public PostSetPayload() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
 
-    if ("smartgate_transaction_id".equals(element.getAttributeValue("variableName"))
-        && "#[vars.correlationId]".equals(element.getAttributeValue("value"))) {
-      element.setAttribute("value", "#[correlationId]");
+    if (NULL.equals(element.getAttributeValue(MIMETYPE))) {
+      element.removeAttribute(MIMETYPE);
     }
   }
+
 }
