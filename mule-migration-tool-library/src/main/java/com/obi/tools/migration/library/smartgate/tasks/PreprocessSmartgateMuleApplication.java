@@ -24,7 +24,7 @@ import com.obi.tools.migration.library.smartgate.steps.pom.UpdateProjectParent;
 import com.obi.tools.migration.library.smartgate.steps.pom.UpdateProjectProperties;
 import com.obi.tools.migration.library.smartgate.steps.properties.ReplaceStageAppPropertiesWithSecureProperties;
 import com.obi.tools.migration.library.smartgate.steps.properties.UpdateAutodicoveryStageProperties;
-import com.obi.tools.migration.library.smartgate.steps.spring.RemoveSpringBeansImport;
+import com.obi.tools.migration.library.smartgate.steps.spring.SpringBeansImport;
 
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class PreprocessSmartgateMuleApplication extends AbstractMigrationTask {
                         new UpdateAutodicoveryStageProperties(),
                         new RemovedCustomInterceptorsElements(),
                         new RemoveBeforeAndAfterFlowRef(),
-                        new RemoveSpringBeansImport(),
+                        new SpringBeansImport(),
                         new ApiTagMigrationStep());
   }
 

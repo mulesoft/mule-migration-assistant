@@ -6,18 +6,19 @@
 package com.obi.tools.migration.library.smartgate.steps.spring;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static org.jdom2.Namespace.getNamespace;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.mulesoft.tools.migration.library.mule.steps.spring.AbstractSpringMigratorStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.Parent;
 
-import com.mulesoft.tools.migration.library.mule.steps.spring.AbstractSpringMigratorStep;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Migrates the spring beans imports.
@@ -25,7 +26,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class RemoveSpringBeansImport extends AbstractSpringMigratorStep {
+public class SpringBeansImport extends AbstractSpringMigratorStep {
 
   private static final String SPRING_BEANS_NS_PREFIX = "spring";
   public static final String SPRING_BEANS_NS_URI = "http://www.springframework.org/schema/beans";
@@ -39,15 +40,17 @@ public class RemoveSpringBeansImport extends AbstractSpringMigratorStep {
     return "Migrates the spring beans imports.";
   }
 
-  public RemoveSpringBeansImport() {
+  public SpringBeansImport() {
     this.setAppliedTo(XPATH_SELECTOR);
     this.setNamespacesContributions(newArrayList(SPRING_BEANS_NS));
   }
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    List<Element> childrens = object.getChildren();
-    List<Element> toBeRemoved = new ArrayList<Element>();
+    final List<Element> childrens = object.getChildren();
+    final Parent parent = object.getParent();
+    final List<Element> toBeRemoved = new ArrayList<Element>();
+    final List<String> newElement = new ArrayList<String>();
     for (Element element : childrens) {
 
       /**
@@ -61,17 +64,26 @@ public class RemoveSpringBeansImport extends AbstractSpringMigratorStep {
           || attribute.getValue().equals("classpath:api-main-after-apikit.xml")
           || attribute.getValue().equals("classpath:global-exception-strategy-rest.xml"))) {
         toBeRemoved.add(element);
+      } else if (attribute != null) {
+        final String value = attribute.getValue().replaceAll("classpath:", "");
+        toBeRemoved.add(element);
       }
     }
+
     if (childrens.size() == toBeRemoved.size()) {
-      Parent parent = object.getParent();
       parent.removeContent(object);
+
 
     } else {
       for (Element element : toBeRemoved) {
         object.removeContent(element);
       }
     }
-
+    if (newElement.size() > 0) {
+      for (String importFileName : newElement) {
+        Element element = new Element("import", CORE_NAMESPACE);
+        element.setAttribute("file", importFileName);
+      }
+    }
   }
 }
