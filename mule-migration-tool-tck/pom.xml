@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.mulesoft.tools</groupId>
         <artifactId>mule-migration-tool</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>mule-migration-tool-tck</artifactId>
     <name>Mule Migration Assistant Test utilities</name>
