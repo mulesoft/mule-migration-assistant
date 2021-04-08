@@ -67,6 +67,7 @@ public class SpringBeansImport extends AbstractSpringMigratorStep {
       } else if (attribute != null) {
         final String value = attribute.getValue().replaceAll("classpath:", "");
         toBeRemoved.add(element);
+        newElement.add(value);
       }
     }
 
@@ -83,6 +84,7 @@ public class SpringBeansImport extends AbstractSpringMigratorStep {
       for (String importFileName : newElement) {
         Element element = new Element("import", CORE_NAMESPACE);
         element.setAttribute("file", importFileName);
+        parent.addContent(element);
       }
     }
   }
