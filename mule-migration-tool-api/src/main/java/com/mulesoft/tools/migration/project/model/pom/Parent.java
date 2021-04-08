@@ -6,7 +6,7 @@
 package com.mulesoft.tools.migration.project.model.pom;
 
 /**
- * Represents a Parent in the pom model. By default its type is jar. contributor Rainer Drexler
+ * Represents a Parent in the pom model. By default its type is jar.
  * 
  * @author Mulesoft Inc.
  * @since 1.0.0

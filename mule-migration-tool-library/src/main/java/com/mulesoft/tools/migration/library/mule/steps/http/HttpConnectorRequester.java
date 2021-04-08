@@ -237,7 +237,6 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
       handleReferencedRequestBuilder(builder, httpNamespace);
       List<Element> builderContent = ImmutableList.copyOf(builder.getChildren()).asList();
       builder.setContent(emptyList());
-      builder.getParent().removeContent(builder);
 
       object.addContent(idx, builderContent);
       idx += builderContent.size();
