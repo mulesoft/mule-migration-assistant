@@ -22,7 +22,7 @@ public enum Exclusions {
 
   CLASSPATH(File.separator + ".classpath"),
 
-  GIT(File.separator + ".gitignore"),
+  // GIT(File.separator + ".gitignore"),
 
   PROJECT(File.separator + ".project"),
 
