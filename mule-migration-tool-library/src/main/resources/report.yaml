@@ -1072,3 +1072,13 @@ salesforce:
     type: INFO
     message: "The output for this operation changed from mule 3 to mule 4. Please check the transform message that maps the output to see if it matches the flow logic."
 
+smartgate:
+  globalProperty:
+    type: INFO
+    message: "Never set the real production encryptionKey, as it could be checked in by mistake. It is only needed for designtime."
+  customeinterceptor-removed:
+    type: WARN
+    message: "Custom Interceptor are incompatible with Mule4 they have to be Migrated with a manuel step. {value}"
+    docLinks:
+      - http://wiki.obi.info/x/Z4KMK
+

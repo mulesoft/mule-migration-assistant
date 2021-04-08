@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Mule Migration Assistant Report</title>
+    <title>Smartgate Mule3 Migration Assistant Report</title>
     <link rel="stylesheet" type="text/css" href="assets/styles/mulesoft-styles.css">
     <link rel="stylesheet" type="text/css" href="assets/styles/tsorter.css">
 </head>
@@ -10,7 +10,7 @@
 <div class="mulesoft-topbar">
     <div class="mulesoft-appbar">
         <div class="muleicon muleicon-logo"></div>
-        <div class="anypoint-brand">Mule Migration Assistant ${version}</div>
+        <div class="anypoint-brand">Smartgate Mule3 Mule Migration Assistant ${version}</div>
     </div>
 </div>
 <div class="col-md-8">
