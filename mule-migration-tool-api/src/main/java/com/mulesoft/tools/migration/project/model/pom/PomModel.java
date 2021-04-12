@@ -8,13 +8,6 @@ package com.mulesoft.tools.migration.project.model.pom;
 import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.buildMinimalMule4ApplicationPom;
 import static java.util.stream.Collectors.toList;
 
-import org.apache.maven.model.Build;
-import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Profile;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -24,6 +17,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
+
+import org.apache.maven.model.Build;
+import org.apache.maven.model.DistributionManagement;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Profile;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * The pom model.
@@ -154,6 +154,24 @@ public class PomModel {
    */
   public void setArtifactId(String artifactId) {
     model.setArtifactId(artifactId);
+  }
+
+  /**
+   * Retrieves the artifact id declared in the pom.
+   *
+   * @return a {@link String}
+   */
+  public Parent getParent() {
+    return new Parent(model.getParent());
+  }
+
+  /**
+   * Sets the artifact id in the pom.
+   *
+   * @param artifactId
+   */
+  public void setParent(Parent parent) {
+    model.setParent(parent.getInnerModel());
   }
 
   /**
@@ -368,6 +386,15 @@ public class PomModel {
   }
 
   /**
+   * Adds a {@link Repository} to the {@link PomModel} in the repository section.
+   *
+   * @param repository
+   */
+  public void removeRepository(Repository repository) {
+    model.removeRepository(repository.getInnerModel());
+  }
+
+  /**
    * Retrieves the list of reapositories plugin repository section.
    */
   public List<Repository> getPluginRepositories() {
@@ -382,6 +409,7 @@ public class PomModel {
   public void addPluginRepository(Repository repository) {
     model.addPluginRepository(repository.getInnerModel());
   }
+
 
   /**
    * The pom model builder. It builds the pom model based on the pom location in the filesystem.
