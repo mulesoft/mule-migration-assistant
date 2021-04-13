@@ -11,6 +11,10 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
+import com.mulesoft.tools.JavaModuleRequired;
+import com.mulesoft.tools.MigrationResult;
+import com.mulesoft.tools.Migrator;
+import com.mulesoft.tools.NonMigratable;
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
 import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
