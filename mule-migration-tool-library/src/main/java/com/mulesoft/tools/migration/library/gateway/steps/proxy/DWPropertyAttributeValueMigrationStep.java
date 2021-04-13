@@ -5,11 +5,11 @@
  */
 package com.mulesoft.tools.migration.library.gateway.steps.proxy;
 
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-
 import com.mulesoft.tools.migration.library.gateway.steps.GatewayMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 /**
  * Migrate DW properties values

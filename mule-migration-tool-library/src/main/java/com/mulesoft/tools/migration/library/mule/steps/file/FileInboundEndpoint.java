@@ -23,15 +23,15 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
+
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the inbound endpoints of the file transport

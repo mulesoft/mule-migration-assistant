@@ -5,11 +5,11 @@
  */
 package com.mulesoft.tools.migration.library.tools;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.*;
 
 public class TemplateParserTest {
 

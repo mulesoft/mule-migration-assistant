@@ -19,10 +19,10 @@ import static java.lang.Integer.parseInt;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.Optional;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-
-import java.util.Optional;
 
 /**
  * Migrates the inbound endpoint of the VM Transport

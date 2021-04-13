@@ -10,13 +10,13 @@ import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICA
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
 
 public class ApplicationModelUtils {
 

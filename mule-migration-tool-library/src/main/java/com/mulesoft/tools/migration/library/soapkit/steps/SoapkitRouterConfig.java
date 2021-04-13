@@ -5,8 +5,18 @@
  */
 package com.mulesoft.tools.migration.library.soapkit.steps;
 
+import static com.mulesoft.tools.migration.library.soapkit.helpers.DataWeaveHelper.getMigrationScriptFolder;
+import static com.mulesoft.tools.migration.library.soapkit.helpers.DataWeaveHelper.library;
+import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.renameAttribute;
+import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.replaceAttributeValue;
+import static java.lang.System.lineSeparator;
+
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import java.io.IOException;
+import java.util.List;
+
 import org.jdom2.CDATA;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -14,15 +24,6 @@ import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-
-import java.io.IOException;
-import java.util.List;
-
-import static com.mulesoft.tools.migration.library.soapkit.helpers.DataWeaveHelper.getMigrationScriptFolder;
-import static com.mulesoft.tools.migration.library.soapkit.helpers.DataWeaveHelper.library;
-import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.renameAttribute;
-import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.replaceAttributeValue;
-import static java.lang.System.lineSeparator;
 
 /**
  * Migrates the router configuration of APIkit for SOAP

@@ -31,15 +31,15 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the inbound endpoint of the HTTP Transport

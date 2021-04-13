@@ -5,16 +5,16 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.jdom2.Element;
-
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jdom2.Element;
 
 /**
  * Resolver for encodeBase64 method

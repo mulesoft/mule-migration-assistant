@@ -13,13 +13,13 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Common stuff for migrators of HTTP Connector elements

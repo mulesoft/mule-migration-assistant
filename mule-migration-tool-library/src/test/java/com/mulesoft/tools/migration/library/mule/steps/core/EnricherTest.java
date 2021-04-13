@@ -18,6 +18,10 @@ import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -28,10 +32,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 @RunWith(Parameterized.class)
 public class EnricherTest {

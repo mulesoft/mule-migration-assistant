@@ -10,9 +10,16 @@ import static com.mulesoft.tools.migration.utils.ApplicationModelUtils.generateA
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import com.google.common.collect.Iterables;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Document;
@@ -20,14 +27,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import com.google.common.collect.Iterables;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class RemoveJsonTransformerNamespaceTest {
 

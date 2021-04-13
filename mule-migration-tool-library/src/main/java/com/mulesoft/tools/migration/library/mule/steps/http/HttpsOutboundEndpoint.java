@@ -14,9 +14,9 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIf
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Element;
-
 import java.util.Optional;
+
+import org.jdom2.Element;
 
 /**
  * Migrates the outbound endpoint of the HTTP Transport

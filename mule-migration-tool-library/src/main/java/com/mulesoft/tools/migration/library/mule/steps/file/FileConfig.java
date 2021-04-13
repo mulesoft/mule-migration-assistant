@@ -19,11 +19,11 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import java.util.List;
 import java.util.stream.Stream;
+
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the file connector of the file transport

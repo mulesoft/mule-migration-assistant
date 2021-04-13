@@ -5,19 +5,20 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.expression;
 
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import org.jdom2.Element;
-
-import java.util.Optional;
-import java.util.StringJoiner;
-
 import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
+import java.util.Optional;
+import java.util.StringJoiner;
+
+import org.jdom2.Element;
 
 /**
  * Migrate <expression-transformer expression="" /> to <set-payload value=#[expression] />.

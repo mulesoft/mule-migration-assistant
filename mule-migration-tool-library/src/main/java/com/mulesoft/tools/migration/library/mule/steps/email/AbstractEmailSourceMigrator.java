@@ -10,11 +10,11 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInbo
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Element;
-
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.jdom2.Element;
 
 /**
  * Support for migrating sources of the email connector

@@ -14,11 +14,11 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
 
-import org.jdom2.Document;
-import org.jdom2.Namespace;
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jdom2.Document;
+import org.jdom2.Namespace;
 
 /**
  * Check for component with no defined migration task yet.

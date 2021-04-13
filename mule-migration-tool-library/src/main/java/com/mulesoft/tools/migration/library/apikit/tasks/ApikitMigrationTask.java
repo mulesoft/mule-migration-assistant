@@ -5,9 +5,9 @@
  */
 package com.mulesoft.tools.migration.library.apikit.tasks;
 
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
 
 import com.mulesoft.tools.migration.library.apikit.steps.ApikitApiLocation;
 import com.mulesoft.tools.migration.library.apikit.steps.ApikitErrorHandler;
@@ -16,11 +16,11 @@ import com.mulesoft.tools.migration.library.apikit.steps.ApikitMigrationTaskPomC
 import com.mulesoft.tools.migration.library.apikit.steps.ApikitNamespace;
 import com.mulesoft.tools.migration.library.apikit.steps.ApikitRouterConfig;
 import com.mulesoft.tools.migration.project.ProjectType;
-import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.step.MigrationStep;
+import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Migration Task for APIkit components

@@ -5,13 +5,14 @@
  */
 package com.mulesoft.tools.migration.library.apikit.steps;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isTopLevelElement;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isTopLevelElement;
 
 /**
  * Migrates http mappings made by APIkit

@@ -5,16 +5,17 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel;
 
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import org.jdom2.Element;
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
+
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
+import org.jdom2.Element;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FunctionExpressionEvaluatorResolverTest {
 

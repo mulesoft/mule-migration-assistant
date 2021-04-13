@@ -5,12 +5,13 @@
  */
 package com.mulesoft.tools.migration.library.soapkit.steps;
 
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-
 import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.replaceSlashesByBackSlashes;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 /**
  * Migrates the router configuration of APIkit for SOAP

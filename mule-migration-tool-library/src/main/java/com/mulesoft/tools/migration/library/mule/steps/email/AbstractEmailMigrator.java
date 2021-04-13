@@ -12,10 +12,10 @@ import static org.jdom2.Namespace.getNamespace;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 
+import java.util.Optional;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.Optional;
 
 /**
  * Support for migrating elements of the email connector

@@ -5,11 +5,31 @@
  */
 package com.mulesoft.tools.migration.library.soapkit;
 
+import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.getDocument;
+import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.getElementsFromDocument;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
+
 import com.mulesoft.tools.migration.library.soapkit.steps.AbstractSoapkitMigrationStep;
 import com.mulesoft.tools.migration.library.soapkit.tasks.SoapkitMigrationTask;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import java.io.File;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.Namespace;
@@ -19,25 +39,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.io.File;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.getDocument;
-import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.getElementsFromDocument;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 @RunWith(Parameterized.class)
 public class SoapkitMigrationTest {

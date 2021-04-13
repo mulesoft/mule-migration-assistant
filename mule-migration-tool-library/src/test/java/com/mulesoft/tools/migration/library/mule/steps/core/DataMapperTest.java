@@ -5,17 +5,16 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.junit.Before;
-import org.junit.Test;
-import org.jdom2.Element;
-
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Element;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DataMapperTest {
 

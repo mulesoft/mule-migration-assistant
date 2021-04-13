@@ -16,10 +16,10 @@ import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import java.util.Optional;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.Optional;
 
 
 /**

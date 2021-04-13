@@ -14,9 +14,9 @@ import static java.lang.Boolean.parseBoolean;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Element;
-
 import java.util.Optional;
+
+import org.jdom2.Element;
 
 /**
  * Migration for Amqp Outbound.

@@ -9,13 +9,13 @@ import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.project.model.pom.Repository;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Predicate;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 
 public class UpdateRepositoriesTest {
 

@@ -9,10 +9,10 @@ import static com.mulesoft.tools.migration.library.mule.steps.spring.SpringBeans
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.ArrayList;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
-
-import java.util.ArrayList;
 
 /**
  * Migrates the spring configuration containing a mule config to its own file.

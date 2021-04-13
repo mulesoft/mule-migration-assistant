@@ -5,15 +5,15 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
+import static java.util.Arrays.asList;
+
 import com.mulesoft.tools.migration.library.mule.steps.expression.SimpleExpressionTransformer;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import java.util.List;
-
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
-import static java.util.Arrays.asList;
 
 /**
  * Migration definition for expression-transformer component

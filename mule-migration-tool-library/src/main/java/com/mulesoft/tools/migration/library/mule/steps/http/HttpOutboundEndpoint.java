@@ -22,20 +22,19 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpressi
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.util.Collections.emptyList;
 
+import com.google.common.collect.ImmutableList;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import com.google.common.collect.ImmutableList;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Migrates the outbound endpoint of the HTTP Transport

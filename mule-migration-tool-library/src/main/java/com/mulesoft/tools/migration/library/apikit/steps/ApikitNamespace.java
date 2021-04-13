@@ -7,6 +7,7 @@ package com.mulesoft.tools.migration.library.apikit.steps;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;

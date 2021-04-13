@@ -17,9 +17,9 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.jdom2.Element;
-
 import java.io.IOException;
+
+import org.jdom2.Element;
 
 /**
  * Migrates the outbound endpoints of the file transport

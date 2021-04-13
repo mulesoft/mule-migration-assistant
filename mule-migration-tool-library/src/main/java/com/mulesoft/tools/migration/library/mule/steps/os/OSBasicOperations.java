@@ -5,10 +5,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.os;
 
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.jdom2.Element;
-
 import static com.google.common.collect.Lists.newArrayList;
+
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Element;
 
 /**
  * Migration of basic operations.

@@ -10,12 +10,12 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * Search for all .dwl files on app and migrate them to DW v2.0

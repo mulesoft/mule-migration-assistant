@@ -21,14 +21,14 @@ import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Content;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.jdom2.Content;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the requester operation of the HTTP Connector
@@ -236,6 +236,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
       handleReferencedRequestBuilder(builder, httpNamespace);
       List<Element> builderContent = ImmutableList.copyOf(builder.getChildren()).asList();
       builder.setContent(emptyList());
+      builder.getParent().removeContent(builder);
 
       object.addContent(idx, builderContent);
       idx += builderContent.size();

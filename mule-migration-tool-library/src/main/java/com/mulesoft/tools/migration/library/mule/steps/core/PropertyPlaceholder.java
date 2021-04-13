@@ -5,14 +5,15 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 
 /**
  * Migrate Property Placeholder component.

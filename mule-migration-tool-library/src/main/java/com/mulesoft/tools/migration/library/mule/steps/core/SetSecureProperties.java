@@ -14,8 +14,6 @@ import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * Add secureProperties to mule-artifact.json based on the mule-app.properties file

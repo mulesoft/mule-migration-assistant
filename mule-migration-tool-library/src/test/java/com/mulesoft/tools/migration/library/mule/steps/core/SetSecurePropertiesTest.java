@@ -15,17 +15,17 @@ import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModelUtils;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Properties;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class SetSecurePropertiesTest {
 

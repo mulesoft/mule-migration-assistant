@@ -9,10 +9,10 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.stream.Stream;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.stream.Stream;
 
 /**
  * Migrates the ftp connector of the fto-ee transport

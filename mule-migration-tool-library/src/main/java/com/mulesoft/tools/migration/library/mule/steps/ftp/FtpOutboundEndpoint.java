@@ -16,11 +16,11 @@ import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-
 import java.io.IOException;
 import java.util.Optional;
+
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 /**
  * Migrates the outbound endpoints of the ftp transport

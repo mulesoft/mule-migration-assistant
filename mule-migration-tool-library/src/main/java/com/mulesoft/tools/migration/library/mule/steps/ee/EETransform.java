@@ -21,13 +21,13 @@ import static org.jdom2.Namespace.getNamespace;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Migrate EE Transform DW 1.0 Script to DW 2.0

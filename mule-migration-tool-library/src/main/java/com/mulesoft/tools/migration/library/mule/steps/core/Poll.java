@@ -13,8 +13,8 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementToBottom;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 import static java.util.stream.Collectors.toList;
 import static org.jdom2.Namespace.getNamespace;
 
@@ -23,13 +23,13 @@ import com.mulesoft.tools.migration.library.mule.steps.os.AbstractOSMigrator;
 import com.mulesoft.tools.migration.library.tools.mel.WatermarkSelectorMigrator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Migration step for poll component

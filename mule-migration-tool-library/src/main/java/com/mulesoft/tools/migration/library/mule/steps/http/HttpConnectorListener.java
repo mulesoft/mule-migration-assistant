@@ -14,19 +14,18 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 
+import com.google.common.collect.ImmutableList;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
-import com.google.common.collect.ImmutableList;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the listener source of the HTTP Connector
