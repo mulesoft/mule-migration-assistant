@@ -519,6 +519,16 @@
                 <version>${mule.runtime.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.ibm.jdbc</groupId>
+                        <artifactId>db2jcc</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.microsoft.jdbc</groupId>
+                        <artifactId>sqljdbc4</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.mule.tests</groupId>
