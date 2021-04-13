@@ -26,11 +26,11 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerEle
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.Optional;
+
 import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.Optional;
 
 /**
  * Migrates the request-reply construct

@@ -9,7 +9,6 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSynthet
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static java.lang.Math.abs;
 import static java.nio.file.Paths.get;
-import org.mule.runtime.api.util.LazyValue;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
@@ -19,6 +18,7 @@ import java.util.Optional;
 import org.jdom2.Attribute;
 import org.jdom2.DataConversionException;
 import org.jdom2.Element;
+import org.mule.runtime.api.util.LazyValue;
 
 /**
  * POJO to store information about the splitter being migrated.

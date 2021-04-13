@@ -21,16 +21,16 @@ import com.mulesoft.tools.migration.library.mule.steps.core.AttributesToInboundP
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class HttpListenerAttributesMappingTest {
 

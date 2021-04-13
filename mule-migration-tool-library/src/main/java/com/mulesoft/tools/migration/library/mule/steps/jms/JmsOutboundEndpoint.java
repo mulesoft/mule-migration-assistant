@@ -15,11 +15,11 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.Optional;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.Optional;
 
 /**
  * Migrates the inbound endpoint of the JMS Transport

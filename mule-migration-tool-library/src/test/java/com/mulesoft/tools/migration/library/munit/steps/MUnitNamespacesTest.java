@@ -11,12 +11,12 @@ import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class MUnitNamespacesTest {
 

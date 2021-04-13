@@ -13,14 +13,6 @@ import static org.jdom2.Namespace.getNamespace;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jdom2.Attribute;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.Namespace;
-import org.jdom2.input.SAXBuilder;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -30,6 +22,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.input.SAXBuilder;
 
 /**
  * Common stuff for migrators of Spring elements

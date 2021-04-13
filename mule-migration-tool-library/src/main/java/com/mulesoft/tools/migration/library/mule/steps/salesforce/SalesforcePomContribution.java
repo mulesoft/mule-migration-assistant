@@ -5,12 +5,12 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.salesforce;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
-
-import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
 
 /**
  * Adds the Salesforce Connector dependency

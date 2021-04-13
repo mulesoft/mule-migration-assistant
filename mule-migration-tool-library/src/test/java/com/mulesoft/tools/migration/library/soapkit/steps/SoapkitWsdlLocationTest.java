@@ -5,15 +5,13 @@
  */
 package com.mulesoft.tools.migration.library.soapkit.steps;
 
+import static com.mulesoft.tools.migration.library.soapkit.steps.SoapkitWsdlLocation.MULE_3_API_FOLDER;
+import static com.mulesoft.tools.migration.library.soapkit.steps.SoapkitWsdlLocation.MULE_4_API_FOLDER;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.apache.commons.io.FileUtils;
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,11 +24,14 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
-import static com.mulesoft.tools.migration.library.soapkit.steps.SoapkitWsdlLocation.MULE_3_API_FOLDER;
-import static com.mulesoft.tools.migration.library.soapkit.steps.SoapkitWsdlLocation.MULE_4_API_FOLDER;
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
+import org.apache.commons.io.FileUtils;
+import org.hamcrest.Matchers;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class SoapkitWsdlLocationTest {

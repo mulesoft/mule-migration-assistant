@@ -18,11 +18,11 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-
 import java.util.Optional;
 import java.util.OptionalInt;
+
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 /**
  * Migrates the Pop3 inbound endpoint of the Email Transport

@@ -5,15 +5,16 @@
  */
 package com.mulesoft.tools.migration.library.tools;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
+
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import org.jdom2.CDATA;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.util.Optional;
 
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
+import org.jdom2.CDATA;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Salesforce constants class

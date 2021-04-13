@@ -8,10 +8,11 @@ package com.mulesoft.tools.migration.library.munit.steps;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import org.jdom2.Attribute;
-import org.jdom2.Element;
 
 import java.util.function.Function;
+
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 /**
  * Common stuff for migrators of Assertions elements

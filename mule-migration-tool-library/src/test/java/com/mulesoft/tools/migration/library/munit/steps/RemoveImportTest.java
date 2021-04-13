@@ -16,16 +16,16 @@ import com.mulesoft.tools.migration.library.mule.steps.core.SpringImport;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class RemoveImportTest {
 

@@ -5,13 +5,14 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import org.jdom2.Element;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import org.jdom2.Element;
 
 /**
  * Resolver for session variable message enrichers

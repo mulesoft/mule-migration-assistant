@@ -16,9 +16,9 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.jdom2.Element;
-
 import java.util.Optional;
+
+import org.jdom2.Element;
 
 /**
  * Support for the migration of endpoints of the ftp transport

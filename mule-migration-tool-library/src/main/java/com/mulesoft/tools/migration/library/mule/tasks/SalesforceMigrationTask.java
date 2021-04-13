@@ -5,13 +5,17 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
+
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CachedBasicConfiguration;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateJobOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.CreateOperation;
-import com.mulesoft.tools.migration.library.mule.steps.salesforce.OAuthJwtBearerConfiguration;
-import com.mulesoft.tools.migration.library.mule.steps.salesforce.OauthUsernamePasswordConfiguration;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.InvokeApexRestMethodOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.NonPaginatedQueryOperation;
+import com.mulesoft.tools.migration.library.mule.steps.salesforce.OAuthJwtBearerConfiguration;
+import com.mulesoft.tools.migration.library.mule.steps.salesforce.OauthUsernamePasswordConfiguration;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryAllOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QueryOperation;
 import com.mulesoft.tools.migration.library.mule.steps.salesforce.QuerySingleOperation;
@@ -27,10 +31,6 @@ import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 /**
  * Migration definition for Salesforce

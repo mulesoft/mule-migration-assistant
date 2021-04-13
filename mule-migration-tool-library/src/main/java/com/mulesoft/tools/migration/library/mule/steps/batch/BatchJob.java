@@ -13,12 +13,12 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrate BatchJob component

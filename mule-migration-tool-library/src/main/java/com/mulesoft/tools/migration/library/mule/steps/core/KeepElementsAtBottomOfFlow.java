@@ -11,6 +11,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 

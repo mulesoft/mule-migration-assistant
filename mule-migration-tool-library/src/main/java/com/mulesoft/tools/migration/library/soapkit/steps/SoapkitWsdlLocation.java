@@ -5,14 +5,14 @@
  */
 package com.mulesoft.tools.migration.library.soapkit.steps;
 
+import static org.apache.commons.io.FileUtils.moveDirectory;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-
-import static org.apache.commons.io.FileUtils.moveDirectory;
 
 /**
  * Move api folder to the right location

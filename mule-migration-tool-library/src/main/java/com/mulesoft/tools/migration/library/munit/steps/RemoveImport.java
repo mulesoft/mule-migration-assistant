@@ -9,12 +9,9 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSel
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
-
-import java.io.File;
 
 /**
  * Remove spring beans import since no longer needed on MUnit 2

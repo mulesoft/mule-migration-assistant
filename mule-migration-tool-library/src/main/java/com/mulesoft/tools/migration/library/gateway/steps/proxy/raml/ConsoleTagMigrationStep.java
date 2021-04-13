@@ -11,11 +11,9 @@ import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespac
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.MULE_4_CORE_NAMESPACE_NO_PREFIX;
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.REST_VALIDATOR_NAMESPACE;
 
-import java.util.Optional;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * Migrate console tag

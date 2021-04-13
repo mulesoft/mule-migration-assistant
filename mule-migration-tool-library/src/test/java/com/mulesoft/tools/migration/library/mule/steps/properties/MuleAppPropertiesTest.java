@@ -5,10 +5,23 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.properties;
 
+import static com.mulesoft.tools.migration.utils.ApplicationModelUtils.generateAppModel;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
+
 import com.google.common.collect.Iterables;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.tck.ReportVerification;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jdom2.output.Format;
@@ -19,18 +32,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static com.mulesoft.tools.migration.utils.ApplicationModelUtils.generateAppModel;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 @RunWith(Parameterized.class)
 public class MuleAppPropertiesTest {

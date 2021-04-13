@@ -5,15 +5,16 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.jdom2.Element;
-
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isTopLevelElement;
+
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Element;
 
 /**
  * Migration step for Processor Chain component

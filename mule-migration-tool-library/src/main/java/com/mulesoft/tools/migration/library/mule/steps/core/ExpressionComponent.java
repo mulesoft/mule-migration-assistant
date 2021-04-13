@@ -5,11 +5,12 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.jdom2.Element;
 
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
+import org.jdom2.Element;
 
 /**
  * expression-component processor migration strategy

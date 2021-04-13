@@ -17,10 +17,10 @@ import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.List;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.List;
 
 /**
  * This steps migrates the MUnit 1.x mock

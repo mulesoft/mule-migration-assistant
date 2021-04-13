@@ -28,12 +28,12 @@ import static org.jdom2.Namespace.getNamespace;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.Optional;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.filter.ElementFilter;
-
-import java.util.Optional;
 
 /**
  * Migrates the inbound endpoints of the quartz transport

@@ -12,9 +12,9 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerEle
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Element;
-
 import java.util.ArrayList;
+
+import org.jdom2.Element;
 
 /**
  * Migrate composite sources

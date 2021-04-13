@@ -5,14 +5,15 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.salesforce;
 
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
+
 import com.mulesoft.tools.migration.library.tools.SalesforceUtils;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import org.jdom2.Element;
 
-import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
+import org.jdom2.Element;
 
 /**
  * Migrate Abstract Salesforce Application Migration Step

@@ -10,10 +10,10 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import java.util.List;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-
-import java.util.List;
 
 /**
  * Migrate expressions on Choice router

@@ -15,21 +15,20 @@ import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
-import org.jdom2.Content;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.jdom2.Content;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the requester operation of the HTTP Connector

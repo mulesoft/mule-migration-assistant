@@ -5,6 +5,13 @@
  */
 package com.mulesoft.tools.migration.library.soapkit.helpers;
 
+import static java.util.Collections.emptyList;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -13,13 +20,6 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
-import static java.util.Collections.emptyList;
 
 /**
  * Helper class to work with JDOM Documents

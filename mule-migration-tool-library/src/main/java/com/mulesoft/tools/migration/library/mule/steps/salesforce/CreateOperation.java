@@ -5,20 +5,21 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.salesforce;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
+
 import com.mulesoft.tools.migration.library.tools.SalesforceUtils;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
-import org.jdom2.Element;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.model.ApplicationModel.addNameSpace;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.EE_NAMESPACE_SCHEMA;
+import org.jdom2.Element;
 
 /**
  * Migrate Create operation

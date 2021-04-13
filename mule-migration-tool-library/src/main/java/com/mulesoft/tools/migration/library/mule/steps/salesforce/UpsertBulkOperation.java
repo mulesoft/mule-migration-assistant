@@ -5,20 +5,21 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.salesforce;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.library.tools.SalesforceUtils.MULE4_SALESFORCE_NAMESPACE;
+import static com.mulesoft.tools.migration.library.tools.SalesforceUtils.START_TRANSFORM_BODY_TYPE_JAVA;
+
 import com.mulesoft.tools.migration.library.tools.SalesforceUtils;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
-import org.jdom2.CDATA;
-import org.jdom2.Element;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.library.tools.SalesforceUtils.MULE4_SALESFORCE_NAMESPACE;
-import static com.mulesoft.tools.migration.library.tools.SalesforceUtils.START_TRANSFORM_BODY_TYPE_JAVA;
+import org.jdom2.CDATA;
+import org.jdom2.Element;
 
 /**
  * Migrate Upsert Bulk operation

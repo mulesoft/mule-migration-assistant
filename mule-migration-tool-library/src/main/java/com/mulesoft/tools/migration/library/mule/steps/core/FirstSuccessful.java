@@ -14,10 +14,10 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.jdom2.Element;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jdom2.Element;
 
 /**
  * Migrate First Successful

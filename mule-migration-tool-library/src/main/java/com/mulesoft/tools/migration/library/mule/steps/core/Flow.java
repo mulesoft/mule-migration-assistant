@@ -14,12 +14,12 @@ import static java.util.Collections.reverse;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jdom2.Attribute;
 import org.jdom2.Content;
 import org.jdom2.Element;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Migrate flow definitions

@@ -12,10 +12,6 @@ import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.NamespaceContribution;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.xpath.XPathFactory;
-import scala.App;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,6 +20,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.xpath.XPathFactory;
 
 /**
  * Migrate mule-app.properties references on Config files.

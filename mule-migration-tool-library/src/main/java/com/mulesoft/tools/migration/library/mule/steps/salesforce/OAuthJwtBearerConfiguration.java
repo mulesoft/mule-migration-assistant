@@ -5,13 +5,14 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.salesforce;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import com.mulesoft.tools.migration.library.tools.SalesforceUtils;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
-import org.jdom2.Element;
 
-import static com.google.common.collect.Lists.newArrayList;
+import org.jdom2.Element;
 
 /**
  * Migrate Oauth Jwt Bearer configuration

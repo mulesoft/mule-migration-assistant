@@ -5,16 +5,16 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
+import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
+
 import com.mulesoft.tools.migration.library.mule.steps.core.ByteArrayToStringTransformer;
 import com.mulesoft.tools.migration.library.mule.steps.xml.XmlToDomTransformer;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
-import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 
 /**
  * Migration definition for deprecated/removed Mule Transformers

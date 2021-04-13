@@ -5,10 +5,11 @@
  */
 package com.mulesoft.tools.migration.library.soapkit.steps;
 
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.jdom2.Element;
-
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isTopLevelElement;
+
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import org.jdom2.Element;
 
 /**
  * Migrates http mappings made by APIkit

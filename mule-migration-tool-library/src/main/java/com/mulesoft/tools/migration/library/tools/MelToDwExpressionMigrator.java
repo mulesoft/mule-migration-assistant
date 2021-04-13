@@ -10,10 +10,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilit
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.join;
 
-import com.mulesoft.tools.*;
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
 import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -21,16 +18,16 @@ import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jdom2.Element;
-import scala.collection.JavaConverters;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Element;
+
+import scala.collection.JavaConverters;
 
 /**
  * Migrate mel expressions to dw expression

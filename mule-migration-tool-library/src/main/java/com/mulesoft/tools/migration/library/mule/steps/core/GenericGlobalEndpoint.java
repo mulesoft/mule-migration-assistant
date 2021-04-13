@@ -10,11 +10,11 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import com.mulesoft.tools.migration.step.AbstractGlobalEndpointMigratorStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the global endpoints of the file transport

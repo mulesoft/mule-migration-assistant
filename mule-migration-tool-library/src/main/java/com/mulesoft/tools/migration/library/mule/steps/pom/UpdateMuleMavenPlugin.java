@@ -17,12 +17,12 @@ import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-
 import java.util.HashSet;
 import java.util.OptionalInt;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Update Mule Maven Plugin in pom

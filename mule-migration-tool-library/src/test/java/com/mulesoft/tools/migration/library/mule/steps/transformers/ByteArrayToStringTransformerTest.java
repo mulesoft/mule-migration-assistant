@@ -5,8 +5,18 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.transformers;
 
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
+
 import com.mulesoft.tools.migration.library.mule.steps.core.ByteArrayToStringTransformer;
 import com.mulesoft.tools.migration.tck.ReportVerification;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -17,15 +27,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFromDocument;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 @RunWith(Parameterized.class)
 public class ByteArrayToStringTransformerTest {

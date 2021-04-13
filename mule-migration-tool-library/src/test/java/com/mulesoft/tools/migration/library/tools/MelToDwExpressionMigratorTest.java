@@ -9,24 +9,24 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModelUtils;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
 import java.util.List;
 import java.util.Optional;
 
-import com.mulesoft.tools.migration.project.model.pom.PomModel;
-import com.mulesoft.tools.migration.project.model.pom.PomModelUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
-import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 public class MelToDwExpressionMigratorTest {
 

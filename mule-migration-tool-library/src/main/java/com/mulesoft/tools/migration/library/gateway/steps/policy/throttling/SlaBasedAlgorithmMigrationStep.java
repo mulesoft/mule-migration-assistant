@@ -11,10 +11,10 @@ import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespac
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.THROTTLING_GW_MULE_3_NAMESPACE;
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.THROTTLING_MULE_4_NAMESPACE;
 
+import com.mulesoft.tools.migration.library.gateway.steps.policy.PolicyMigrationStep;
 import com.mulesoft.tools.migration.library.gateway.steps.policy.utils.ForbiddenClientOnErrorContinueElementWriter;
 import com.mulesoft.tools.migration.library.gateway.steps.policy.utils.QuotaExceededOnErrorContinueElementWriter;
 import com.mulesoft.tools.migration.library.gateway.steps.policy.utils.UnknownApiOnErrorContinueElementWriter;
-import com.mulesoft.tools.migration.library.gateway.steps.policy.PolicyMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import java.util.List;

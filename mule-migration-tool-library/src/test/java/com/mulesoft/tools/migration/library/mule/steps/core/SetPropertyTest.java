@@ -17,15 +17,15 @@ import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class SetPropertyTest {
 
