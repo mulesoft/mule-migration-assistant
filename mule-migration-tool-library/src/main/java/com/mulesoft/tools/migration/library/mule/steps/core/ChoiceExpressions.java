@@ -48,6 +48,9 @@ public class ChoiceExpressions extends AbstractApplicationModelMigrationStep imp
     if (expression != null) {
       String migratedExpression = getExpressionMigrator().migrateExpression(expression.getValue(), true, element);
       migratedExpression = expressionMigrator.wrap(migratedExpression);
+      if (migratedExpression.contains("flowVars")) {
+        migratedExpression = migratedExpression.replaceAll("flowVars", "vars");
+      }
       expression.setValue(migratedExpression);
     }
   }
