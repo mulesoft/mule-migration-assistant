@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mulesoft.tools</groupId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.1.1-SNAPSHOT</version>
     <artifactId>mule-migration-tool-target-modules</artifactId>
     <name>Mule Migration Assistant Library - Target Modules dependencies</name>
     <packaging>jar</packaging>
