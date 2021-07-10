@@ -12,7 +12,8 @@ def pipelineParams = [
   "agent": "windows10",
   "jdk": params.JDK,
   "maven": params.maven,
-  "projectKey": "mule-migration-assistant"
+  "projectKey": "mule-migration-assistant",
+  "protectedBranches" : ["master", "develop" ]
 ]
 
 performBuild(pipelineParams)
