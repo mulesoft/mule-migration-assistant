@@ -157,24 +157,6 @@ public class PomModel {
   }
 
   /**
-   * Retrieves the artifact id declared in the pom.
-   *
-   * @return a {@link String}
-   */
-  public Parent getParent() {
-    return new Parent(model.getParent());
-  }
-
-  /**
-   * Sets the artifact id in the pom.
-   *
-   * @param artifactId
-   */
-  public void setParent(Parent parent) {
-    model.setParent(parent.getInnerModel());
-  }
-
-  /**
    * Retrieves the group id declared in the pom.
    *
    * @return a {@link String}
