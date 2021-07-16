@@ -150,7 +150,7 @@ public class ApplicationModel {
   /**
    * Retrieves all elements in the document that have the specified namespace
    *
-   * @param document  the document where the elements are going to be searched through
+   * @param document the document where the elements are going to be searched through
    * @param namespace the namespace of the elements that should be retrieved
    * @return a list of elements within the document that have that namespace
    */
@@ -192,8 +192,8 @@ public class ApplicationModel {
 
     Attribute schemaLocationAttribute =
         document.getRootElement().getAttribute("schemaLocation", document.getRootElement().getNamespace("xsi"));
-    if (!schemaLocationAttribute.getValue().contains(namespace.getURI() + " ")
-        && !schemaLocationAttribute.getValue().contains(schemaLocation)) {
+    if (schemaLocationAttribute != null && (!schemaLocationAttribute.getValue().contains(namespace.getURI() + " ")
+        && !schemaLocationAttribute.getValue().contains(schemaLocation))) {
 
       StringBuilder value = new StringBuilder(schemaLocationAttribute.getValue());
       value.append(" " + namespace.getURI());
@@ -230,7 +230,7 @@ public class ApplicationModel {
 
     Attribute schemaLocationAttribute = rootElement.getAttribute("schemaLocation", rootElement.getNamespace("xsi"));
 
-    if (schemaLocationAttribute.getValue().contains(namespace.getURI())
+    if (schemaLocationAttribute != null && schemaLocationAttribute.getValue().contains(namespace.getURI())
         && schemaLocationAttribute.getValue().contains(schemaLocation)) {
 
       String value = schemaLocationAttribute.getValue();
@@ -356,7 +356,7 @@ public class ApplicationModel {
   }
 
   /**
-   * Sets the  {@link MuleArtifactJsonModel} that represents the mule-artifact.json file
+   * Sets the {@link MuleArtifactJsonModel} that represents the mule-artifact.json file
    *
    * @param muleArtifactJsonModel
    */
@@ -374,7 +374,7 @@ public class ApplicationModel {
   }
 
   /**
-   * Sets the  {@link List<Namespace>} that represents the supported namespaces for the tool.
+   * Sets the {@link List<Namespace>} that represents the supported namespaces for the tool.
    *
    * @param supportedNamespaces
    */
@@ -542,7 +542,8 @@ public class ApplicationModel {
      * Build the {@link ApplicationModel}
      *
      * @return an {@link ApplicationModel} instance
-     * @throws Exception if project base path is null; if pom.xml or mule-artifact.json file do not exist in the provided path or are invalid
+     * @throws Exception if project base path is null; if pom.xml or mule-artifact.json file do not exist in the provided path or
+     *         are invalid
      */
     public ApplicationModel build() throws Exception {
       checkArgument(projectBasePath != null, "Project base path cannot be null");

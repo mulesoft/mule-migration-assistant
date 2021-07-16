@@ -12,14 +12,10 @@ import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.c
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +25,15 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Mulesoft Inc.
@@ -76,6 +81,43 @@ public class ApplicationModelTest {
         .andThen(changeAttribute("condition", of("expression"), empty()))
         .andThen(addAttribute("is", "#[equalTo(true)]"))
         .apply(n));
+  }
+
+  @Test
+  public void testAddNameSpace_schemaLocationAttribute_isNull() throws Exception {
+
+
+    Document document = mock(Document.class);
+    Element element = mock(Element.class);
+    Namespace namespace = Namespace.getNamespace("mock", "http://www.mulesoft.org/schema/mule/mock");
+
+    when(document.getRootElement()).thenReturn(element);
+
+    ApplicationModel.addNameSpace(namespace,
+                                  "http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd", document);
+
+  }
+
+  @Test
+  public void testremoveNameSpace_schemaLocationAttribute_isNull() throws Exception {
+
+    ApplicationModel applicationModel = new ApplicationModelBuilder()
+        .withProjectBasePath(originalProjectPath)
+        .withConfigurationFiles(getFiles(originalProjectPath.resolve("src").resolve("main").resolve("app")))
+        .withMuleVersion(MULE_VERSION)
+        .withSupportedNamespaces(newArrayList())
+        .withProjectType(MULE_THREE_APPLICATION)
+        .withPom(originalProjectPath.resolve("pom.xml")).build();
+
+    Document document = mock(Document.class);
+    Element element = mock(Element.class);
+    Namespace namespace = Namespace.getNamespace("mock", "http://www.mulesoft.org/schema/mule/mock");
+
+    when(document.getRootElement()).thenReturn(element);
+
+    applicationModel.removeNameSpace(namespace,
+                                     "http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd", document);
+
   }
 
   private void buildOriginalProject() throws IOException {
