@@ -70,6 +70,8 @@
         <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
         <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
+        <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
+        
         <checkstyle.plugin.version>2.17</checkstyle.plugin.version>
         <javaFormatter.plugin.version>1.9.2</javaFormatter.plugin.version>
         <maven.enforcer.plugin.version>3.0.0-M1</maven.enforcer.plugin.version>
@@ -243,7 +245,7 @@
                     <version>${maven.enforcer.plugin.version}</version>
                     <executions>
                         <execution>
-                            <id>enforce-plugin-versions</id>
+                            <id>default-cli</id>
                             <goals>
                                 <goal>enforce</goal>
                             </goals>
@@ -346,6 +348,22 @@
                     <artifactId>checksum-maven-plugin</artifactId>
                     <version>${checksum.plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven.jar.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven.source.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven.deploy.plugin.version}</version>
+                </plugin>
+                
                 <!--TODO this we need to make it run-->
                 <!--<plugin>-->
                 <!--<groupId>org.apache.maven.plugins</groupId>-->
