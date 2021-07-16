@@ -98,6 +98,28 @@ public class ApplicationModelTest {
 
   }
 
+  @Test
+  public void testremoveNameSpace_schemaLocationAttribute_isNull() throws Exception {
+
+    ApplicationModel applicationModel = new ApplicationModelBuilder()
+        .withProjectBasePath(originalProjectPath)
+        .withConfigurationFiles(getFiles(originalProjectPath.resolve("src").resolve("main").resolve("app")))
+        .withMuleVersion(MULE_VERSION)
+        .withSupportedNamespaces(newArrayList())
+        .withProjectType(MULE_THREE_APPLICATION)
+        .withPom(originalProjectPath.resolve("pom.xml")).build();
+
+    Document document = mock(Document.class);
+    Element element = mock(Element.class);
+    Namespace namespace = Namespace.getNamespace("mock", "http://www.mulesoft.org/schema/mule/mock");
+
+    when(document.getRootElement()).thenReturn(element);
+
+    applicationModel.removeNameSpace(namespace,
+                                     "http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd", document);
+
+  }
+
   private void buildOriginalProject() throws IOException {
     originalProjectPath = temporaryFolder.newFolder(ORIGINAL_PROJECT_NAME).toPath();
 
