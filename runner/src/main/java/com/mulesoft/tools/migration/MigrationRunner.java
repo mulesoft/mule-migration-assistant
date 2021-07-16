@@ -9,21 +9,18 @@ import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
 import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationError;
 import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
 import static java.lang.Integer.parseInt;
-import static java.lang.String.format;
 import static java.lang.System.exit;
-import static java.lang.System.getProperty;
-import static java.net.URLEncoder.encode;
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.apache.http.HttpVersion.HTTP_1_1;
-import static org.apache.http.client.fluent.Executor.newInstance;
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
+import com.google.common.base.Stopwatch;
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
 import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+
+import java.nio.file.Paths;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -31,15 +28,6 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.http.HttpHost;
-import org.apache.http.client.fluent.Executor;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.impl.client.HttpClients;
-
-import com.google.common.base.Stopwatch;
-import com.google.gson.Gson;
-
-import java.nio.file.Paths;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
@@ -57,11 +45,13 @@ public class MigrationRunner {
   private final static String MULE_VERSION = "muleVersion";
   private final static String REPORT_HOME = "summary.html";
   public static final String MULE_3_VERSION = "3.*.*";
+  private final static String DRY_RUN = "dryRun";
 
   private String projectBasePath;
   private String parentDomainProjectBasePath;
   private String destinationProjectBasePath;
   private String muleVersion;
+  private boolean dryRun = true;
 
   private String userId;
   private String sessionId;
@@ -104,6 +94,7 @@ public class MigrationRunner {
         .withOutputProject(Paths.get(destinationProjectBasePath))
         .withInputVersion(MULE_3_VERSION)
         .withOuputVersion(muleVersion)
+        .withDryRun(dryRun)
         .build();
   }
 
@@ -121,6 +112,7 @@ public class MigrationRunner {
     options.addOption(PARENT_DOMAIN_BASE_PATH, true, "Base directory of the parent domain of the project to be migrated, if any");
     options.addOption(DESTINATION_PROJECT_BASE_PATH, true, "Base directory of the migrated project");
     options.addOption(MULE_VERSION, true, "Mule version where to migrate project");
+    options.addOption(DRY_RUN, true, "Use dryRun to test a migration. Default is true");
 
     options.addOption("userId", true, "The userId to send for the usage statistics");
     options.addOption("sessionId", true, "The sessionId to send for the usage statistics");
@@ -153,6 +145,16 @@ public class MigrationRunner {
         this.muleVersion = line.getOptionValue(MULE_VERSION);
       } else {
         throw new ConsoleOptionsException("You must specify a destination project base path");
+      }
+
+      if (line.hasOption(DRY_RUN)) {
+        final String value = line.getOptionValue(DRY_RUN);
+        if ("true".equals(value) || "false".equals(value)) {
+          this.dryRun = Boolean.getBoolean(value);
+        } else {
+          throw new ConsoleOptionsException("Option dryRun have to be a boolean: true or false");
+        }
+
       }
 
       if (line.hasOption(HELP)) {
