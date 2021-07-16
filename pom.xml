@@ -76,7 +76,7 @@
         <checkstyle.version>8.0</checkstyle.version>
         <maven.help.plugin.version>3.0.1</maven.help.plugin.version>
         <maven.dependency.version>2.10</maven.dependency.version>
-        <maven.site.plugin.version>3.3</maven.site.plugin.version>
+        <maven.site.plugin.version>3.9.1</maven.site.plugin.version>
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
         <checksum.plugin.version>1.9</checksum.plugin.version>
 
