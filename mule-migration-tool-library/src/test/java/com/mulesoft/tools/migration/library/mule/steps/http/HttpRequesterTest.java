@@ -60,8 +60,8 @@ public class HttpRequesterTest {
         "http-requester-12",
         "http-requester-13",
         "http-requester-14",
-        //TODO MMT-172
-        //"http-requester-15"
+        // TODO MMT-172
+        // "http-requester-15"
         "http-requester-16"
     };
   }
@@ -79,6 +79,7 @@ public class HttpRequesterTest {
   private HttpConnectorHeaders httpHeaders;
   private HttpConnectorUriParams httpUriParams;
   private HttpConnectorQueryParams httpQueryParams;
+  private HttpGlobalBuilders httpGlobalBuilders;
 
   private Document doc;
   private ApplicationModel appModel;
@@ -100,6 +101,7 @@ public class HttpRequesterTest {
     httpUriParams.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
     httpQueryParams = new HttpConnectorQueryParams();
     httpQueryParams.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
+    httpGlobalBuilders = new HttpGlobalBuilders();
   }
 
   @Ignore
@@ -120,6 +122,8 @@ public class HttpRequesterTest {
         .forEach(node -> httpUriParams.execute(node, report.getReport()));
     getElementsFromDocument(doc, httpQueryParams.getAppliedTo().getExpression())
         .forEach(node -> httpQueryParams.execute(node, report.getReport()));
+    getElementsFromDocument(doc, httpGlobalBuilders.getAppliedTo().getExpression())
+        .forEach(node -> httpGlobalBuilders.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
