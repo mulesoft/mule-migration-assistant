@@ -54,21 +54,24 @@ public class CleanNamespaces implements NamespaceContribution {
 
     Map<String, String> schemas = new HashMap<>();
 
-    String[] schemaValue = schemaLocationAttribute.getValue().split("\\s+");
-    for (int i = 0; i < schemaValue.length; i++) {
-      if (!schemaValue[i].equals("")) {
-        schemas.put(schemaValue[i], schemaValue[i + 1]);
-        i++;
+    if (schemaLocationAttribute != null) {
+      String[] schemaValue = schemaLocationAttribute.getValue().split("\\s+");
+
+      for (int i = 0; i < schemaValue.length; i++) {
+        if (!schemaValue[i].equals("")) {
+          schemas.put(schemaValue[i], schemaValue[i + 1]);
+          i++;
+        }
       }
+      unusedNamespaces.forEach(n -> schemas.remove(n.getURI()));
+
+      StringBuilder usedSchemas = new StringBuilder();
+      schemas.forEach((url, schema) -> {
+        usedSchemas.append(url);
+        usedSchemas.append(" " + schema + " ");
+      });
+
+      schemaLocationAttribute.setValue(usedSchemas.toString().trim());
     }
-    unusedNamespaces.forEach(n -> schemas.remove(n.getURI()));
-
-    StringBuilder usedSchemas = new StringBuilder();
-    schemas.forEach((url, schema) -> {
-      usedSchemas.append(url);
-      usedSchemas.append(" " + schema + " ");
-    });
-
-    schemaLocationAttribute.setValue(usedSchemas.toString().trim());
   }
 }
