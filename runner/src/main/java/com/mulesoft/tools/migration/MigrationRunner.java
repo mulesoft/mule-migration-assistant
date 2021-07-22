@@ -9,15 +9,9 @@ import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
 import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationError;
 import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
 import static java.lang.Integer.parseInt;
-import static java.lang.String.format;
 import static java.lang.System.exit;
-import static java.lang.System.getProperty;
-import static java.net.URLEncoder.encode;
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.apache.http.HttpVersion.HTTP_1_1;
-import static org.apache.http.client.fluent.Executor.newInstance;
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
@@ -25,21 +19,15 @@ import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
 import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
+import java.nio.file.Paths;
+
+import com.google.common.base.Stopwatch;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.http.HttpHost;
-import org.apache.http.client.fluent.Executor;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.impl.client.HttpClients;
-
-import com.google.common.base.Stopwatch;
-import com.google.gson.Gson;
-
-import java.nio.file.Paths;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
@@ -152,7 +140,7 @@ public class MigrationRunner {
       if (line.hasOption(MULE_VERSION)) {
         this.muleVersion = line.getOptionValue(MULE_VERSION);
       } else {
-        throw new ConsoleOptionsException("You must specify a destination project base path");
+        throw new ConsoleOptionsException("You must specify a target mule version");
       }
 
       if (line.hasOption(HELP)) {
