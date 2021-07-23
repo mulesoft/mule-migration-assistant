@@ -5,6 +5,8 @@
  */
 package com.mulesoft.tools.migration.library.apikit.steps;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -27,7 +29,7 @@ public class ApikitMigrationTaskPomContribution implements PomContribution {
     pomModel.addDependency(new DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-apikit-module")
-        .withVersion("1.3.9")
+        .withVersion(targetVersion("mule-apikit-module"))
         .withClassifier("mule-plugin")
         .build());
   }

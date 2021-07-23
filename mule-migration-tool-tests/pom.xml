@@ -12,7 +12,8 @@
     <properties>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
-        
+        <!--API version should match Runtime version in tests-->
+        <mule.api.version>1.3.0</mule.api.version>
         <e2e.tests.forkCount>1</e2e.tests.forkCount>
     </properties>
 
@@ -81,6 +82,20 @@
     
     <profiles>
         <profile>
+            <id>mule_4_1</id>
+            <activation>
+                <property>
+                    <name>testMuleVersion</name>
+                    <value>4.1</value>
+                </property>
+            </activation>
+
+            <properties>
+                <mule.runtime.version>4.1.6</mule.runtime.version>
+                <mule.api.version>1.1.6</mule.api.version>
+            </properties>
+        </profile>
+        <profile>
             <id>mule_4_2</id>
             <activation>
                 <property>
@@ -90,8 +105,8 @@
             </activation>
             
             <properties>
-                <mule.runtime.version>4.2.0</mule.runtime.version>
-                <mule.api.version>1.2.0</mule.api.version>
+                <mule.runtime.version>4.2.2</mule.runtime.version>
+                <mule.api.version>1.2.2</mule.api.version>
             </properties>
         </profile>
     </profiles>
@@ -158,6 +173,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.mulesoft.mule.distributions</groupId>
             <artifactId>mule-ee-distribution-standalone</artifactId>
             <type>zip</type>
@@ -190,7 +210,7 @@
         <dependency>
             <groupId>com.icegreen</groupId>
             <artifactId>greenmail</artifactId>
-            <version>1.5.13</version>
+            <version>1.6.4</version>
             <scope>test</scope>
         </dependency>
 

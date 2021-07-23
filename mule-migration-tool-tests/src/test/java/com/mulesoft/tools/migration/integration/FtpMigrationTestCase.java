@@ -5,10 +5,14 @@
  */
 package com.mulesoft.tools.migration.integration;
 
-import org.mule.runtime.core.api.util.FileUtils;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.infrastructure.server.ftp.EmbeddedFtpServer;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,9 +20,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import java.io.File;
-import java.nio.file.Paths;
 
 @RunWith(Parameterized.class)
 public class FtpMigrationTestCase extends EndToEndTestCase {
@@ -61,13 +62,13 @@ public class FtpMigrationTestCase extends EndToEndTestCase {
     ftpDestinationServer.start();
   }
 
-  private void createFtpServerBaseDir() {
+  private void createFtpServerBaseDir() throws IOException {
     this.deleteFtpServerBaseDir();
     this.serverBaseDir.mkdirs();
   }
 
-  private void deleteFtpServerBaseDir() {
-    FileUtils.deleteTree(this.serverBaseDir);
+  private void deleteFtpServerBaseDir() throws IOException {
+    FileUtils.deleteDirectory(serverBaseDir);
   }
 
   @After
