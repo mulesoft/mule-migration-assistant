@@ -23,13 +23,6 @@ import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.powermock.reflect.Whitebox;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -37,6 +30,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.powermock.reflect.Whitebox;
 
 /**
  * @author Mulesoft Inc.
@@ -134,6 +134,27 @@ public class MigrationJobTest {
     Whitebox.setInternalState(migrationJob, "migrationTasks", migrationTasks);
     migrationJob.execute(new DefaultMigrationReport());
     verify(migrationTask, times(1)).execute(any(MigrationReport.class));
+  }
+
+  @Test(expected = MigrationTaskException.class)
+  public void executeWithTaskThatFailsAndStopExecution() throws Exception {
+    migrationJob = new MigrationJob.MigrationJobBuilder()
+        .withProject(originalProjectPath)
+        .withOutputProject(migratedProjectPath)
+        .withInputVersion(MULE_380_VERSION)
+        .withOuputVersion(MULE_413_VERSION)
+        .withCancelOnError(true)
+        .build();
+
+    AbstractMigrationTask migrationTask = mock(AbstractMigrationTask.class);
+    doThrow(MigrationTaskException.class)
+        .when(migrationTask)
+        .execute(any(MigrationReport.class));
+    when(migrationTask.getApplicableProjectTypes()).thenReturn(singleton(MULE_FOUR_APPLICATION));
+
+    migrationTasks.add(migrationTask);
+    Whitebox.setInternalState(migrationJob, "migrationTasks", migrationTasks);
+    migrationJob.execute(new DefaultMigrationReport());
   }
 
   @Test

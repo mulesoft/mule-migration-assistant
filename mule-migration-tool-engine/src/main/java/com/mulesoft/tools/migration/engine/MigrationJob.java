@@ -34,12 +34,12 @@ import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * It represent a migration job which is composed by one or more {@link AbstractMigrationTask}
@@ -58,16 +58,19 @@ public class MigrationJob implements Executable {
   private final Path reportPath;
   private final List<AbstractMigrationTask> migrationTasks;
   private final String muleVersion;
+  private final boolean cancelOnError;
   private String runnerVersion;
 
+
   private MigrationJob(Path project, Path parentDomainProject, Path outputProject, List<AbstractMigrationTask> migrationTasks,
-                       String muleVersion) {
+                       String muleVersion, boolean cancelOnError) {
     this.migrationTasks = migrationTasks;
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
     this.project = project;
     this.parentDomainProject = parentDomainProject;
     this.reportPath = outputProject.resolve(HTML_REPORT_FOLDER);
+    this.cancelOnError = cancelOnError;
     this.runnerVersion = this.getClass().getPackage().getImplementationVersion();
     if (this.runnerVersion == null) {
       this.runnerVersion = "n/a";
@@ -84,23 +87,30 @@ public class MigrationJob implements Executable {
     persistApplicationModel(applicationModel);
     ProjectType targetProjectType = applicationModel.getProjectType().getTargetType();
     applicationModel = generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath);
-    for (AbstractMigrationTask task : migrationTasks) {
-      if (task.getApplicableProjectTypes().contains(targetProjectType)) {
-        task.setApplicationModel(applicationModel);
-        task.setExpressionMigrator(new MelToDwExpressionMigrator(report, applicationModel));
-        try {
-          task.execute(report);
-          persistApplicationModel(applicationModel);
-          applicationModel = generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath);
-        } catch (MigrationTaskException ex) {
-          logger.error("Failed to apply task, rolling back and continuing with the next one.", ex);
-        } catch (Exception e) {
-          throw new MigrationJobException("Failed to continue executing migration: " + e.getClass().getName() + ": "
-              + e.getMessage(), e);
+    try {
+      for (AbstractMigrationTask task : migrationTasks) {
+        if (task.getApplicableProjectTypes().contains(targetProjectType)) {
+          task.setApplicationModel(applicationModel);
+          task.setExpressionMigrator(new MelToDwExpressionMigrator(report, applicationModel));
+          try {
+            task.execute(report);
+            persistApplicationModel(applicationModel);
+            applicationModel = generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath);
+          } catch (MigrationTaskException ex) {
+            if (cancelOnError) {
+              throw ex;
+            } else {
+              logger.error("Failed to apply task, rolling back and continuing with the next one.", ex);
+            }
+          } catch (RuntimeException e) {
+            throw new MigrationJobException("Failed to continue executing migration: " + e.getClass().getName() + ": "
+                + e.getMessage(), e);
+          }
         }
       }
+    } finally {
+      generateReport(report);
     }
-    generateReport(report);
   }
 
   private void persistApplicationModel(ApplicationModel applicationModel) throws Exception {
@@ -195,6 +205,7 @@ public class MigrationJob implements Executable {
     private Path outputProject;
     private String inputVersion;
     private String outputVersion;
+    private boolean cancelOnError = false;
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
 
     public MigrationJobBuilder withProject(Path project) {
@@ -219,6 +230,11 @@ public class MigrationJob implements Executable {
 
     public MigrationJobBuilder withOuputVersion(String outputVersion) {
       this.outputVersion = outputVersion;
+      return this;
+    }
+
+    public MigrationJobBuilder withCancelOnError(boolean cancelOnError) {
+      this.cancelOnError = cancelOnError;
       return this;
     }
 
@@ -256,7 +272,8 @@ public class MigrationJob implements Executable {
       MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion);
       migrationTasks = migrationTaskLocator.locate();
 
-      return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion.toString());
+      return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion.toString(),
+                              this.cancelOnError);
     }
   }
 
