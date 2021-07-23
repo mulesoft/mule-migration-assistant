@@ -13,6 +13,7 @@ import static java.lang.System.exit;
 import static java.util.UUID.randomUUID;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import com.google.common.base.Stopwatch;
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
@@ -21,7 +22,6 @@ import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
 import java.nio.file.Paths;
 
-import com.google.common.base.Stopwatch;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -61,8 +61,8 @@ public class MigrationRunner {
   private String proxyPass;
 
   public static void main(String args[]) throws Exception {
-    
-    stopwatch = Stopwatch.createStarted();
+
+    Stopwatch stopwatch = Stopwatch.createStarted();
 
     MigrationRunner migrationRunner = buildRunner(args);
     MigrationJob job = migrationRunner.buildMigrationJob();
