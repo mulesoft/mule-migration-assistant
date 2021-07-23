@@ -110,13 +110,15 @@ public class ApplicationPersister {
       Path baseFolder = muleProject.baseFolder;
       if (baseFolder.toFile().exists()) {
         InputStream gitignoreResourceStream = null;
+        OutputStream outputStream = null;
         try {
           gitignoreResourceStream = getClass().getClassLoader().getResourceAsStream("gitignore-maven-template");
           File gitIgnore = new File(baseFolder.toFile(), ".gitignore");
-          OutputStream outputStream = new FileOutputStream(gitIgnore);
+          outputStream = new FileOutputStream(gitIgnore);
           IOUtils.copy(gitignoreResourceStream, outputStream);
         } finally {
           IOUtils.closeQuietly(gitignoreResourceStream);
+          IOUtils.closeQuietly(outputStream);
         }
       }
     }
