@@ -45,13 +45,13 @@ public class MigrationRunner {
   private final static String MULE_VERSION = "muleVersion";
   private final static String REPORT_HOME = "summary.html";
   public static final String MULE_3_VERSION = "3.*.*";
-  private final static String DRY_RUN = "dryRun";
+  private final static String CANCEL_ON_ERROR = "cancelOnError";
 
   private String projectBasePath;
   private String parentDomainProjectBasePath;
   private String destinationProjectBasePath;
   private String muleVersion;
-  private boolean dryRun = true;
+  private boolean cancelOnError = false;
 
   private String userId;
   private String sessionId;
@@ -94,7 +94,7 @@ public class MigrationRunner {
         .withOutputProject(Paths.get(destinationProjectBasePath))
         .withInputVersion(MULE_3_VERSION)
         .withOuputVersion(muleVersion)
-        .withDryRun(dryRun)
+        .withCancelOnError(cancelOnError)
         .build();
   }
 
@@ -112,7 +112,7 @@ public class MigrationRunner {
     options.addOption(PARENT_DOMAIN_BASE_PATH, true, "Base directory of the parent domain of the project to be migrated, if any");
     options.addOption(DESTINATION_PROJECT_BASE_PATH, true, "Base directory of the migrated project");
     options.addOption(MULE_VERSION, true, "Mule version where to migrate project");
-    options.addOption(DRY_RUN, true, "Use dryRun to test a migration. Default is true");
+    options.addOption(CANCEL_ON_ERROR, true, "Use cancelOnError to stop the migration. Default is false");
 
     options.addOption("userId", true, "The userId to send for the usage statistics");
     options.addOption("sessionId", true, "The sessionId to send for the usage statistics");
@@ -147,12 +147,12 @@ public class MigrationRunner {
         throw new ConsoleOptionsException("You must specify a destination project base path");
       }
 
-      if (line.hasOption(DRY_RUN)) {
-        final String value = line.getOptionValue(DRY_RUN);
+      if (line.hasOption(CANCEL_ON_ERROR)) {
+        final String value = line.getOptionValue(CANCEL_ON_ERROR);
         if ("true".equals(value) || "false".equals(value)) {
-          this.dryRun = Boolean.getBoolean(value);
+          this.cancelOnError = Boolean.getBoolean(value);
         } else {
-          throw new ConsoleOptionsException("You must specify a boolean value (true or false) for the dryRun option");
+          throw new ConsoleOptionsException("You must specify a boolean value (true or false) for the 'cancelOnError' option");
         }
 
       }

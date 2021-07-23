@@ -143,7 +143,7 @@ public class MigrationJobTest {
         .withOutputProject(migratedProjectPath)
         .withInputVersion(MULE_380_VERSION)
         .withOuputVersion(MULE_413_VERSION)
-        .withDryRun(false)
+        .withCancelOnError(true)
         .build();
 
     AbstractMigrationTask migrationTask = mock(AbstractMigrationTask.class);

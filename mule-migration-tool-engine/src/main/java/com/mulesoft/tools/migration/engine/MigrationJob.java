@@ -58,19 +58,19 @@ public class MigrationJob implements Executable {
   private final Path reportPath;
   private final List<AbstractMigrationTask> migrationTasks;
   private final String muleVersion;
-  private final boolean dryRun;
+  private final boolean cancelOnError;
   private String runnerVersion;
 
 
   private MigrationJob(Path project, Path parentDomainProject, Path outputProject, List<AbstractMigrationTask> migrationTasks,
-                       String muleVersion, boolean dryRun) {
+                       String muleVersion, boolean cancelOnError) {
     this.migrationTasks = migrationTasks;
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
     this.project = project;
     this.parentDomainProject = parentDomainProject;
     this.reportPath = outputProject.resolve(HTML_REPORT_FOLDER);
-    this.dryRun = dryRun;
+    this.cancelOnError = cancelOnError;
     this.runnerVersion = this.getClass().getPackage().getImplementationVersion();
     if (this.runnerVersion == null) {
       this.runnerVersion = "n/a";
@@ -97,10 +97,10 @@ public class MigrationJob implements Executable {
             persistApplicationModel(applicationModel);
             applicationModel = generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath);
           } catch (MigrationTaskException ex) {
-            if (dryRun) {
-              logger.error("Failed to apply task, rolling back and continuing with the next one.", ex);
-            } else {
+            if (cancelOnError) {
               throw ex;
+            } else {
+              logger.error("Failed to apply task, rolling back and continuing with the next one.", ex);
             }
           } catch (RuntimeException e) {
             throw new MigrationJobException("Failed to continue executing migration: " + e.getClass().getName() + ": "
@@ -205,7 +205,7 @@ public class MigrationJob implements Executable {
     private Path outputProject;
     private String inputVersion;
     private String outputVersion;
-    private boolean dryRun = true;
+    private boolean cancelOnError = false;
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
 
     public MigrationJobBuilder withProject(Path project) {
@@ -233,8 +233,8 @@ public class MigrationJob implements Executable {
       return this;
     }
 
-    public MigrationJobBuilder withDryRun(boolean dryRun) {
-      this.dryRun = dryRun;
+    public MigrationJobBuilder withCancelOnError(boolean cancelOnError) {
+      this.cancelOnError = cancelOnError;
       return this;
     }
 
@@ -272,7 +272,8 @@ public class MigrationJob implements Executable {
       MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion);
       migrationTasks = migrationTaskLocator.locate();
 
-      return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion.toString(), this.dryRun);
+      return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion.toString(),
+                              this.cancelOnError);
     }
   }
 
