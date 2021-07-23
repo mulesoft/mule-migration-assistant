@@ -137,6 +137,27 @@ public class MigrationJobTest {
     verify(migrationTask, times(1)).execute(any(MigrationReport.class));
   }
 
+  @Test(expected = MigrationTaskException.class)
+  public void executeWithTaskThatFailsAndStopExecution() throws Exception {
+    migrationJob = new MigrationJob.MigrationJobBuilder()
+        .withProject(originalProjectPath)
+        .withOutputProject(migratedProjectPath)
+        .withInputVersion(MULE_380_VERSION)
+        .withOuputVersion(MULE_413_VERSION)
+        .withCancelOnError(true)
+        .build();
+
+    AbstractMigrationTask migrationTask = mock(AbstractMigrationTask.class);
+    doThrow(MigrationTaskException.class)
+        .when(migrationTask)
+        .execute(any(MigrationReport.class));
+    when(migrationTask.getApplicableProjectTypes()).thenReturn(singleton(MULE_FOUR_APPLICATION));
+
+    migrationTasks.add(migrationTask);
+    Whitebox.setInternalState(migrationJob, "migrationTasks", migrationTasks);
+    migrationJob.execute(new DefaultMigrationReport());
+  }
+
   @Test
   public void executeWithEmptyTaskList() throws Exception {
     migrationJob = new MigrationJob.MigrationJobBuilder()
