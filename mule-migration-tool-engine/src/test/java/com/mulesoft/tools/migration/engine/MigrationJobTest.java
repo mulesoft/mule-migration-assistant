@@ -10,6 +10,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.singleton;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -23,13 +24,6 @@ import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.powermock.reflect.Whitebox;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -37,6 +31,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.powermock.reflect.Whitebox;
 
 /**
  * @author Mulesoft Inc.
@@ -175,6 +176,20 @@ public class MigrationJobTest {
 
     assertThat("The application model generated is wrong.", migrationTask.getApplicationModel().getApplicationDocuments().size(),
                is(2));
+
+  }
+
+  @Test
+  public void execute_assertGitIgnoreFile() throws Exception {
+    migrationJob = new MigrationJob.MigrationJobBuilder()
+        .withProject(originalProjectPath)
+        .withOutputProject(migratedProjectPath)
+        .withInputVersion(MULE_370_VERSION)
+        .withOuputVersion(MULE_413_VERSION)
+        .build();
+    migrationJob.execute(new DefaultMigrationReport());
+    File gitIgnore = new File(migratedProjectPath.toFile(), ".gitignore");
+    assertTrue(gitIgnore.exists());
 
   }
 }
