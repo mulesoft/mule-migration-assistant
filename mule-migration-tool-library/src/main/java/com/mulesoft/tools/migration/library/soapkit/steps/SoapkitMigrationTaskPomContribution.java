@@ -5,6 +5,8 @@
  */
 package com.mulesoft.tools.migration.library.soapkit.steps;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -27,7 +29,7 @@ public class SoapkitMigrationTaskPomContribution implements PomContribution {
     pomModel.addDependency(new Dependency.DependencyBuilder()
         .withGroupId("org.mule.modules")
         .withArtifactId("mule-soapkit-module")
-        .withVersion("1.2.6")
+        .withVersion(targetVersion("mule-soapkit-module"))
         .withClassifier("mule-plugin")
         .build());
   }
