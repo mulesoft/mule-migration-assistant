@@ -24,6 +24,8 @@ public enum Exclusions {
 
   GIT(File.separator + ".gitignore"),
 
+  CATALOG_FOLDER(File.separator + "catalog"),
+
   PROJECT(File.separator + ".project"),
 
   MULE(File.separator + ".mule"),

@@ -41,10 +41,7 @@ public class TransformTestCase extends EndToEndTestCase {
     assertThat(baseMigratedPath.resolve("randomFileInRoot.txt").toFile().exists(), is(true));
 
     assertThat(baseMigratedPath
-        .resolve(Paths.get("src", "main", "resources", "catalog", "types", "custom", "myType__md__custom_type__.xml")).toFile()
-        .exists(), is(true));
-    assertThat(baseMigratedPath
-        .resolve(Paths.get("src", "main", "resources", "catalog", "types", "custom", "myOtherType__md__custom_type__.xml"))
-        .toFile().exists(), is(true));
+        .resolve(Paths.get("src", "main", "resources", "catalog")).toFile()
+        .exists(), is(false));
   }
 }
