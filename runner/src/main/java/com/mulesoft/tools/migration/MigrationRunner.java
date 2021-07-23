@@ -152,7 +152,7 @@ public class MigrationRunner {
         if ("true".equals(value) || "false".equals(value)) {
           this.dryRun = Boolean.getBoolean(value);
         } else {
-          throw new ConsoleOptionsException("Option dryRun have to be a boolean: true or false");
+          throw new ConsoleOptionsException("You must specify a boolean value (true or false) for the dryRun option");
         }
 
       }
