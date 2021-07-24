@@ -157,7 +157,7 @@ public class PomModel {
   }
 
   /**
-   * Retrieves the artifact id declared in the pom.
+   * Retrieves the parent declared in the pom.
    *
    * @return a {@link String}
    */
