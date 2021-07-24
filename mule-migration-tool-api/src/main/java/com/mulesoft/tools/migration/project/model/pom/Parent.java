@@ -74,8 +74,8 @@ public class Parent {
    * @param artifactId
    */
   public void setArtifactId(String artifactId) {
-    if (parent != null)
-      parent.setArtifactId(artifactId);
+
+    parent.setArtifactId(artifactId);
   }
 
   /**
@@ -84,8 +84,7 @@ public class Parent {
    * @param groupId
    */
   public void setGroupId(String groupId) {
-    if (parent != null)
-      parent.setGroupId(groupId);
+    parent.setGroupId(groupId);
   }
 
   /**
@@ -94,8 +93,7 @@ public class Parent {
    * @param version
    */
   public void setVersion(String version) {
-    if (parent != null)
-      parent.setVersion(version);
+    parent.setVersion(version);
   }
 
   /**
@@ -104,7 +102,6 @@ public class Parent {
    * @return a {@link String}
    */
   public void setRelativePath(String relativePath) {
-    if (parent != null)
-      parent.setRelativePath(relativePath);
+    parent.setRelativePath(relativePath);
   }
 }
