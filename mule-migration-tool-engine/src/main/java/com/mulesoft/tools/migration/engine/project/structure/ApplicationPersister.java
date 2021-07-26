@@ -26,24 +26,28 @@ import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.jdom2.Document;
-import org.jdom2.Text;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.output.XMLOutputter;
-
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.jdom2.Document;
+import org.jdom2.Text;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 
 /**
  * Will save all the changes applied on the application after each task execution
@@ -89,6 +93,34 @@ public class ApplicationPersister {
       persistMuleArtifactJson();
       persistPom();
       persistMuleAppProperties();
+      persistGitIgnoreFile();
+    }
+  }
+
+  /**
+   * persist a .gitIgnore File from gitignore-maven-template
+   * 
+   * @throws FileNotFoundException in case of a FileNotFoundException
+   * @throws IOException in case of a IOException
+   */
+  private void persistGitIgnoreFile() throws FileNotFoundException, IOException {
+
+    if (projectOutput instanceof MuleProject) {
+      MuleProject muleProject = (MuleProject) projectOutput;
+      Path baseFolder = muleProject.baseFolder;
+      if (baseFolder.toFile().exists()) {
+        InputStream gitignoreResourceStream = null;
+        OutputStream outputStream = null;
+        try {
+          gitignoreResourceStream = getClass().getClassLoader().getResourceAsStream("gitignore-maven-template");
+          File gitIgnore = new File(baseFolder.toFile(), ".gitignore");
+          outputStream = new FileOutputStream(gitIgnore);
+          IOUtils.copy(gitignoreResourceStream, outputStream);
+        } finally {
+          IOUtils.closeQuietly(gitignoreResourceStream);
+          IOUtils.closeQuietly(outputStream);
+        }
+      }
     }
   }
 

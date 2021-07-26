@@ -8,11 +8,15 @@ package com.mulesoft.tools.migration.integration;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.infrastructure.server.ftp.EmbeddedFtpServer;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -20,14 +24,12 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class FtpMigrationTestCase extends EndToEndTestCase {
 
-  @Rule
-  public TemporaryFolder sourceTemp = new TemporaryFolder();
+  private final String FTP_SERVER_BASE_DIR = Paths.get("target", "ftpserver").toString();
+  private final String WORKING_DIR = "base";
+  private final File serverBaseDir = new File(FTP_SERVER_BASE_DIR, WORKING_DIR);
 
   @Rule
   public final DynamicPort ftpSourcePort = new DynamicPort("ftpPort");
-
-  @Rule
-  public TemporaryFolder destinationTemp = new TemporaryFolder();
 
   @Rule
   public final DynamicPort ftpDestinationPort = new DynamicPort("ftpDestinationPort");
@@ -51,11 +53,22 @@ public class FtpMigrationTestCase extends EndToEndTestCase {
 
   @Before
   public void before() throws Exception {
+    createFtpServerBaseDir();
+
     ftpSourceServer = new EmbeddedFtpServer(ftpSourcePort.getNumber());
     ftpDestinationServer = new EmbeddedFtpServer(ftpDestinationPort.getNumber());
 
     ftpSourceServer.start();
     ftpDestinationServer.start();
+  }
+
+  private void createFtpServerBaseDir() throws IOException {
+    this.deleteFtpServerBaseDir();
+    this.serverBaseDir.mkdirs();
+  }
+
+  private void deleteFtpServerBaseDir() throws IOException {
+    FileUtils.deleteDirectory(serverBaseDir);
   }
 
   @After
