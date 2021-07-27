@@ -293,9 +293,12 @@ public class PomModelTestCase {
 
     @Test
     public void setParent() {
-      Parent parent = new Parent();
+
+      final Parent parent = new Parent.ParentBuilder().withGroupId("myGroupId").withArtifactId("myArtifactId").withVersion("1.0.0").build();
+      assertNotNull(model.getParent());
       model.setParent(parent);
       assertNotNull(model.getParent());
+      assertThat("Parent is not the expected", parent.getInnerModel(), equalTo(model.getParent().getInnerModel()));
     }
   }
 }
