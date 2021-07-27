@@ -68,7 +68,7 @@ public class CleanNamespacesTest {
   }
 
   @Test
-  public void execute_withSchemaLocationAttributeIs_null() throws Exception {
+  public void executeWithSchemaLocationAttributeIsNull() throws Exception {
     Document document = Iterables.get(applicationModel.getApplicationDocuments().values(), 0);
     document.getRootElement().removeAttribute("schemaLocation", document.getRootElement().getNamespace("xsi"));
     cleanNamespaces.execute(applicationModel, report.getReport());
