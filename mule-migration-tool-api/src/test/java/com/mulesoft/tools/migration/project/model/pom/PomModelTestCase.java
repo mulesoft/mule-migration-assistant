@@ -294,7 +294,8 @@ public class PomModelTestCase {
     @Test
     public void setParent() {
 
-      final Parent parent = new Parent.ParentBuilder().withGroupId("myGroupId").withArtifactId("myArtifactId").withVersion("1.0.0").build();
+      final Parent parent =
+          new Parent.ParentBuilder().withGroupId("myGroupId").withArtifactId("myArtifactId").withVersion("1.0.0").build();
       assertNotNull(model.getParent());
       model.setParent(parent);
       assertNotNull(model.getParent());
