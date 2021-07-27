@@ -11,21 +11,20 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.google.common.collect.Iterables;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jdom2.Document;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import com.google.common.collect.Iterables;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 public class CleanNamespacesTest {
 
@@ -66,5 +65,12 @@ public class CleanNamespacesTest {
     assertThat("The namespace wasn't removed.", document.getRootElement().getAdditionalNamespaces().size(), is(2));
     assertThat("The schemas weren't removed.", document.getRootElement()
         .getAttribute("schemaLocation", document.getRootElement().getNamespace("xsi")).getValue().split("\\s+").length, is(2));
+  }
+
+  @Test
+  public void executeWithSchemaLocationAttributeIsNull() throws Exception {
+    Document document = Iterables.get(applicationModel.getApplicationDocuments().values(), 0);
+    document.getRootElement().removeAttribute("schemaLocation", document.getRootElement().getNamespace("xsi"));
+    cleanNamespaces.execute(applicationModel, report.getReport());
   }
 }
