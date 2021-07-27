@@ -13,6 +13,12 @@ package com.mulesoft.tools.migration.project.model.pom;
  */
 public class Parent {
 
+  /**
+   * The ParentBuilder. It builds the Parent Wrapper.
+   *
+   * @author Mulesoft Inc.
+   * @since 1.0.0
+   */
   public static class ParentBuilder {
 
     private String groupId;
@@ -34,6 +40,11 @@ public class Parent {
       return this;
     }
 
+    /**
+     * Builds the a Parent for a PomModel.
+     *
+     * @return a Parent
+     */
     public Parent build() {
       Parent parent = new Parent();
       parent.setArtifactId(artifactId);
