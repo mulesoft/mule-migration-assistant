@@ -13,6 +13,47 @@ package com.mulesoft.tools.migration.project.model.pom;
  */
 public class Parent {
 
+  /**
+   * The ParentBuilder. It builds the Parent Wrapper.
+   *
+   * @author Mulesoft Inc.
+   * @since 1.0.0
+   */
+  public static class ParentBuilder {
+
+    private String groupId;
+    private String artifactId;
+    private String version;
+
+    ParentBuilder withGroupId(String groupId) {
+      this.groupId = groupId;
+      return this;
+    }
+
+    public ParentBuilder withArtifactId(String artifactId) {
+      this.artifactId = artifactId;
+      return this;
+    }
+
+    public ParentBuilder withVersion(String version) {
+      this.version = version;
+      return this;
+    }
+
+    /**
+     * Builds the a Parent for a PomModel.
+     *
+     * @return a Parent
+     */
+    public Parent build() {
+      Parent parent = new Parent();
+      parent.setArtifactId(artifactId);
+      parent.setGroupId(groupId);
+      parent.setVersion(version);
+      return parent;
+    }
+  }
+
   private final org.apache.maven.model.Parent parent;
 
   protected Parent(org.apache.maven.model.Parent parent) {
@@ -104,4 +145,5 @@ public class Parent {
   public void setRelativePath(String relativePath) {
     parent.setRelativePath(relativePath);
   }
+
 }
