@@ -66,4 +66,11 @@ public class CleanNamespacesTest {
     assertThat("The schemas weren't removed.", document.getRootElement()
         .getAttribute("schemaLocation", document.getRootElement().getNamespace("xsi")).getValue().split("\\s+").length, is(2));
   }
+
+  @Test
+  public void executeWithSchemaLocationAttributeIsNull() throws Exception {
+    Document document = Iterables.get(applicationModel.getApplicationDocuments().values(), 0);
+    document.getRootElement().removeAttribute("schemaLocation", document.getRootElement().getNamespace("xsi"));
+    cleanNamespaces.execute(applicationModel, report.getReport());
+  }
 }
