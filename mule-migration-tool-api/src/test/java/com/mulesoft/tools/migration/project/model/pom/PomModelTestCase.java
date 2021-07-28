@@ -5,6 +5,35 @@
  */
 package com.mulesoft.tools.migration.project.model.pom;
 
+import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.buildDependency;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.getPomModelDependencies;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isIn;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.core.Every.everyItem;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.powermock.api.mockito.PowerMockito.verifyPrivate;
+import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.reflect.Whitebox.getInternalState;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.model.DeploymentRepository;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
@@ -15,23 +44,6 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-
-import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.buildDependency;
-import static com.mulesoft.tools.migration.project.model.pom.PomModelTestCaseUtils.getPomModelDependencies;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Every.everyItem;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.powermock.api.mockito.PowerMockito.*;
-import static org.powermock.reflect.Whitebox.getInternalState;
 
 
 @RunWith(Enclosed.class)
@@ -105,6 +117,35 @@ public class PomModelTestCase {
     public void getPackaging() {
       assertThat("Packaging is not the expected", model.getPackaging(), equalTo("simple-pom-packaging"));
     }
+
+    @Test
+    public void getParentGroupId() {
+      assertThat("GroupId is not the expected", model.getParent().getGroupId(), equalTo("org.simple.pom.parent"));
+    }
+
+    @Test
+    public void getParentArtifactId() {
+      assertThat("ArtifactId is not the expected", model.getParent().getArtifactId(), equalTo("parent-mule-api"));
+    }
+
+    @Test
+    public void getParentVersion() {
+      assertThat("Version is not the expected", model.getParent().getVersion(), equalTo("1.0.0"));
+    }
+
+    @Test
+    public void getParentRelativePath() {
+      assertThat("RelativePath is not the expected", model.getParent().getRelativePath(), equalTo("../pom.xml"));
+    }
+
+    @Test
+    public void getParentInnerModel() {
+
+      assertThat("InnerModelId is not the expected", model.getParent().getInnerModel().getId(),
+                 equalTo("org.simple.pom.parent:parent-mule-api:pom:1.0.0"));
+    }
+
+
 
     @Test
     public void getProperties() {
@@ -224,6 +265,41 @@ public class PomModelTestCase {
       model.setDescription(value);
 
       assertThat("Description should exist on the pom model", model.getDescription(), equalTo(value));
+    }
+
+    @Test
+    public void setParentGroupId() {
+      model.getParent().setGroupId("new-group-id");
+      assertThat("GroupId is not the expected", model.getParent().getGroupId(), equalTo("new-group-id"));
+    }
+
+    @Test
+    public void setParentArtifactId() {
+      model.getParent().setArtifactId("new-artifact-id");
+      assertThat("GroupId is not the expected", model.getParent().getArtifactId(), equalTo("new-artifact-id"));
+    }
+
+    @Test
+    public void setParentVersion() {
+      model.getParent().setVersion("2.0.0");
+      assertThat("GroupId is not the expected", model.getParent().getVersion(), equalTo("2.0.0"));
+    }
+
+    @Test
+    public void setParentRelativePath() {
+      model.getParent().setRelativePath("new-path");
+      assertThat("RelativePath is not the expected", model.getParent().getRelativePath(), equalTo("new-path"));
+    }
+
+    @Test
+    public void setParent() {
+
+      final Parent parent =
+          new Parent.ParentBuilder().withGroupId("myGroupId").withArtifactId("myArtifactId").withVersion("1.0.0").build();
+      assertNotNull(model.getParent());
+      model.setParent(parent);
+      assertNotNull(model.getParent());
+      assertThat("Parent is not the expected", parent.getInnerModel(), equalTo(model.getParent().getInnerModel()));
     }
   }
 }

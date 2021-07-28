@@ -10,6 +10,12 @@
     <packaging>simple-pom-packaging</packaging>
 
     <name>Simple Pom</name>
+    
+    <parent>
+        <groupId>org.simple.pom.parent</groupId>
+        <artifactId>parent-mule-api</artifactId>
+        <version>1.0.0</version>
+    </parent>
 
     <properties>
         <key1>value1</key1>
