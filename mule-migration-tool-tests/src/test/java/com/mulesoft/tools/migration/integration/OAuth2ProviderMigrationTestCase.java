@@ -18,6 +18,8 @@ public class OAuth2ProviderMigrationTestCase extends EndToEndTestCase {
 
   @Rule
   public final DynamicPort httpPort = new DynamicPort("httpPort");
+  @Rule
+  public final DynamicPort httpPort2 = new DynamicPort("httpPort2");
 
   @Parameters(name = "{0}")
   public static Object[] params() {
@@ -34,6 +36,6 @@ public class OAuth2ProviderMigrationTestCase extends EndToEndTestCase {
 
   @Test
   public void test() throws Exception {
-    simpleCase(appToMigrate, "-M-DhttpPort=" + httpPort.getValue());
+    simpleCase(appToMigrate, "-M-DhttpPort=" + httpPort.getValue() + " -M-DhttpPort2=" + httpPort2.getValue());
   }
 }
