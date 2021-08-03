@@ -36,6 +36,6 @@ public class OAuth2ProviderMigrationTestCase extends EndToEndTestCase {
 
   @Test
   public void test() throws Exception {
-    simpleCase(appToMigrate, "-M-DhttpPort=" + httpPort.getValue() + " -M-DhttpPort2=" + httpPort2.getValue());
+    simpleCase(appToMigrate, "-M-DhttpPort=" + httpPort.getValue(), "-M-DhttpPort2=" + httpPort2.getValue());
   }
 }
