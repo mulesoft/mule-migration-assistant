@@ -63,14 +63,14 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
     </oauth2-provider:config>
 
     <flow name="publicProfile">
-        <http:inbound-endpoint address="http://localhost:8084/tweetbook/api/profile" exchange-pattern="request-response" doc:name="Profile API"/>
+        <http:inbound-endpoint address="http://localhost:${httpPort2}/tweetbook/api/profile" exchange-pattern="request-response" doc:name="Profile API"/>
         <oauth2-provider:validate scopes="READ_PROFILE" />
 <!--         <component class="org.mule.security.examples.oauth2.ProfileLookupComponent" doc:name="Profile Lookup"/> -->
         <logger/>
     </flow>
 
     <flow name="publicBookshelf">
-        <http:inbound-endpoint address="http://localhost:8084/tweetbook/api/bookshelf" exchange-pattern="request-response" doc:name="Bookshelf API"/>
+        <http:inbound-endpoint address="http://localhost:${httpPort2}/tweetbook/api/bookshelf" exchange-pattern="request-response" doc:name="Bookshelf API"/>
         <oauth2-provider:validate scopes="READ_BOOKSHELF" />
         <set-payload value="The Lord of the Rings,The Hitchhiker's Guide to the Galaxy" doc:name="Retrieve Bookshelf"/>
     </flow>
