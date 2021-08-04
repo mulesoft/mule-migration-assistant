@@ -101,7 +101,7 @@ public class ApikitHttpListenerMapping extends AbstractApikitMigrationStep {
     if ("flow".equalsIgnoreCase(parent.getName()))
       return parent;
 
-    return getParentFlow(element);
+    return getParentFlow(parent);
   }
 
   private static String getExpressionValue(String str) {
