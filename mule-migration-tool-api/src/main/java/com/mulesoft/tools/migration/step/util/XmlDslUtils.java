@@ -136,7 +136,6 @@ public final class XmlDslUtils {
     if (expectsOutboundProperties) {
       Element errorHandlerElement = getFlowExceptionHandlingElement(element.getParentElement());
       if (errorHandlerElement != null) {
-        System.out.println("FOUND EXCEPTION HANDLER");
         buildOutboundPropertiesToVar(report, element.getParent(), element.getParentElement().indexOf(errorHandlerElement) - 1,
                                      consumeStreams);
 
