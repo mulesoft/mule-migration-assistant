@@ -17,6 +17,14 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
@@ -29,14 +37,6 @@ import org.jdom2.Namespace;
 import org.jdom2.Parent;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Provides reusable methods for common migration scenarios.
@@ -136,6 +136,7 @@ public final class XmlDslUtils {
     if (expectsOutboundProperties) {
       Element errorHandlerElement = getFlowExceptionHandlingElement(element.getParentElement());
       if (errorHandlerElement != null) {
+        System.out.println("FOUND EXCEPTION HANDLER");
         buildOutboundPropertiesToVar(report, element.getParent(), element.getParentElement().indexOf(errorHandlerElement) - 1,
                                      consumeStreams);
 
@@ -581,7 +582,7 @@ public final class XmlDslUtils {
    * @param flow the top level element that will contain this new element
    * @param newElement the new element to be added
    */
-  public static void addElementToBottom(Element flow, Element newElement) {
+  public static void addElementToBottom(Element flow, Content newElement) {
     Element exceptionHandling = getFlowExceptionHandlingElement(flow);
     Integer newElementIndex = exceptionHandling != null ? flow.indexOf(exceptionHandling) : flow.getContentSize();
     flow.addContent(newElementIndex, newElement);
