@@ -7,6 +7,9 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     <apikit:config name="api-config" raml="api.raml" consoleEnabled="false"/>
     <flow name="global-kafka-sys-api-main">
         <http:listener config-ref="httpListenerConfig" path="/api/*"/>
+        <response>
+          <set-property propertyName="test" value="test"/>
+        </response>
         <apikit:router config-ref="api-config"/>
         <exception-strategy ref="apiKitGlobalExceptionMapping"/>
     </flow>
