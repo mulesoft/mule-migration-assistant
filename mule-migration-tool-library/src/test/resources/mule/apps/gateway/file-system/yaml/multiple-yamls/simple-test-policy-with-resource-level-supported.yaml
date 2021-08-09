@@ -1,0 +1,4 @@
+id: simple-test-policy-with-resource-level-supported
+name: Policy
+description: Description of a simple policy
+resourceLevelSupported: true

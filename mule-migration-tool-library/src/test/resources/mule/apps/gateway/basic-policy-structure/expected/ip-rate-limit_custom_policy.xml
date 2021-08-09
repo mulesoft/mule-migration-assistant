@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule   
+
+
+        xmlns="http://www.mulesoft.org/schema/mule/core" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:spring="http://www.springframework.org/schema/beans"
+        xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+        xmlns:util="http://www.springframework.org/schema/util"
+        xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw" 
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd             
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+            http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-current.xsd
+            http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+            http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd 
+            http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd"
+        xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"    >
+    <spring:beans>
+        <spring:bean id="ipCacheBuilder{{ proxy_app.name }}{{ proxy_app.version }}" 
+                    class="com.google.common.cache.CacheBuilder" 
+                    factory-method="from">
+            <spring:constructor-arg value="expireAfterWrite=1m, concurrencyLevel=1" />
+        </spring:bean>
+        <spring:bean id="threshold{{ proxy_app.name }}{{ proxy_app.version }}" class="java.lang.Integer">
+            <spring:constructor-arg index="0" value="{{ config.rt_value }}"/>
+        </spring:bean>
+        <util:list id="unprotectedEndpoints" value-type="java.lang.String">
+        {% for endpoint in config.unprotected_endpoints %}
+            <spring:value>{{ endpoint }}</spring:value>
+        {% endfor %}
+            <spring:value>{{ proxy_app.name }}/v{{ proxy_app.version }}/ping</spring:value>
+        </util:list>
+    </spring:beans>
+
+    <mule:processor-chain name="blockedIpProcessorChain{{ proxy_app.name }}{{ proxy_app.version }}">
+        <mule:logger message="#[flowVars['errorMessage']]" level="DEBUG"/>
+        <mule:set-payload value="#[flowVars['errorMessage']]" />
+        <mule:set-property propertyName="http.status" value="429"/>
+        <mule:set-property propertyName="Content-Type" value="application/json;charset=UTF-8"/>
+    </mule:processor-chain>
+    <http-policy:proxy name="RestCachingPolicy">
+        <http-policy:source>
+            <scripting:component>
+                <scripting:script engine="Groovy"><![CDATA[import org.mule.module.http.api.HttpConstants;
+                    import org.mule.api.config.MuleProperties;
+                    import java.util.concurrent.atomic.AtomicInteger;
+                    import com.google.common.cache.CacheLoader;
+                    import java.util.concurrent.TimeUnit;
+
+                    def unprotectedEndpoints = muleContext.getRegistry().get("unprotectedEndpoints")
+                    def requestPath = message.getInboundProperty('http.request.path')
+                    for (String endpoint : unprotectedEndpoints) {
+                        if(requestPath.matches("(.*)?" + endpoint)) {
+                            message.setInvocationProperty("healthCheck", true)
+                            message.setInvocationProperty("allowedIp", true)
+                            if (message.payload != null) {
+                                return message.payload
+                            }
+                            return
+                        }
+                    }
+                    def registry = muleContext.getRegistry()
+                    def threshold = registry.get("threshold{{ proxy_app.name }}{{ proxy_app.version }}")
+
+                    def cache = null
+                    if(registry.get("cacheDefined{{ proxy_app.name }}{{ proxy_app.version }}") == null) {
+                        def cacheBuilder = registry.get("ipCacheBuilder{{ proxy_app.name }}{{ proxy_app.version }}")
+                        cache = cacheBuilder.build(new CacheLoader() {
+                            public Object load(Object key) {
+                                return new AtomicInteger();
+                            }
+                        })
+
+                        registry.registerObject("ipCache{{ proxy_app.name }}{{ proxy_app.version }}", cache)
+                        registry.registerObject("cacheDefined{{ proxy_app.name }}{{ proxy_app.version }}", true)
+                    } else {
+                        cache = registry.get("ipCache{{ proxy_app.name }}{{ proxy_app.version }}")
+                    }
+
+                    def xForwardedForIps = message.getInboundProperty('X-Forwarded-For')
+
+                    def currentTimeMillis = System.currentTimeMillis()
+                    def window = TimeUnit.MILLISECONDS.toMinutes(currentTimeMillis)
+                    def remaining = 60000 - currentTimeMillis % 60000
+                    def customerCounter = null
+
+                    def clientIp = null
+                    if(xForwardedForIps != null && cache != null) {
+                        clientIp = xForwardedForIps.split(',')[0]
+                        if(clientIp != null) {
+                            clientIp = clientIp.trim()
+                            customerCounter = cache.get(clientIp + window)
+                        }
+                    }
+
+                    if(customerCounter == null || customerCounter.get() >= threshold) {
+                        message.setInvocationProperty("allowedIp", false)
+                        message.setInvocationProperty("errorMessage", clientIp != null ? "{\"status\": \"failure\",\n\"reason\": \"ip " + clientIp + " can not perform more requests in this time window\"}" : "{\"status\": \"failure\",\n\"reason\": \"IP was not provided, unable to execute request\"}")
+                        message.setOutboundProperty("X-Ratelimit-Remaining", 0)
+                        message.setOutboundProperty("X-Ratelimit-Limit", threshold)
+                        message.setOutboundProperty("X-Ratelimit-Reset", remaining)
+                    } else {
+                        message.setInvocationProperty("customerCounter", customerCounter)
+                        message.setInvocationProperty("X-Ratelimit-Limit", threshold)
+                        message.setInvocationProperty("X-Ratelimit-Reset", remaining)
+                        message.setInvocationProperty("allowedIp", true)
+
+                        //in case of message failure we don't increment counter
+                        message.setOutboundProperty("X-Ratelimit-Remaining", threshold - customerCounter.get())
+                        message.setOutboundProperty("X-Ratelimit-Limit", threshold)
+                        message.setOutboundProperty("X-Ratelimit-Reset", remaining)
+                    }
+                    if (message.payload != null) { 
+                        return message.payload
+                    }
+                    return]]></scripting:script>
+            </scripting:component>
+            <message-filter onUnaccepted="blockedIpProcessorChain{{ proxy_app.name }}{{ proxy_app.version }}">
+                <mule:expression-filter expression="#[flowVars['allowedIp']]" />
+            </message-filter>
+            <http-policy:execute-next />
+            <choice>
+                <mule:when expression="#[flowVars['healthCheck'] != empty]">
+                    <mule:logger message="hit healthcheck endpoint" level="DEBUG" />
+                </mule:when>
+                <mule:otherwise>
+                    <mule:set-property propertyName="X-Ratelimit-Remaining" value="#[flowVars['X-Ratelimit-Limit'] - flowVars['customerCounter'].incrementAndGet() ]" />
+                    <mule:set-property propertyName="X-Ratelimit-Limit" value="#[flowVars['X-Ratelimit-Limit']]" />
+                    <mule:set-property propertyName="X-Ratelimit-Reset" value="#[flowVars['X-Ratelimit-Reset']]" />
+                </mule:otherwise>
+            </choice>
+        </http-policy:source>
+    </http-policy:proxy>
+</mule>

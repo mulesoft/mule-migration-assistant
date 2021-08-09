@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:threat-protection-json="http://www.mulesoft.org/schema/mule/json-threat-protection"
+      xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+      xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+      xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http-policy
+        http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd
+        http://www.mulesoft.org/schema/mule/core
+        http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/json-threat-protection
+        http://www.mulesoft.org/schema/mule/json-threat-protection/current/mule-xml-threat-protection.xsd
+        http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd
+        http://www.mulesoft.org/schema/mule/http-policy-transform http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd
+        http://www.mulesoft.org/schema/mule/api-platform-gw
+        http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd">
+
+    <mule:sub-flow name="{{policyId}}-build-response">
+        <compatibility:set-property propertyName="http.status" value="400"/>
+        <compatibility:set-property propertyName="Content-Type" value="application/json"/>
+        <mule:set-payload value="#[flowVars._threatViolationMessage]"/>
+        <compatibility:outbound-properties-to-var />
+        <http-transform:set-response
+                statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+            <http-transform:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]
+            </http-transform:headers>
+        </http-transform:set-response>
+    </mule:sub-flow>
+
+    <threat-protection-json:json-config name="json-threat-protection-config"
+                                        maxContainerDepth="{{maxContainerDepth}}"
+                                        maxObjectEntryCount="{{maxObjectEntryCount}}"
+                                        maxObjectEntryNameLength="{{maxObjectEntryNameLength}}"
+                                        maxArrayElementCount="{{maxArrayElementCount}}"
+                                        maxStringValueLength="{{maxStringValueLength}}"/>
+
+    <http-policy:proxy name="JSON Threat Protection">
+        <http-policy:source>
+            <threat-protection-json:secure-json-request config-ref="json-threat-protection-config"
+                                                        contentType="#[attributes.headers['content-type']]"/>
+            <http-policy:execute-next/>
+        </http-policy:source>
+    </http-policy:proxy>
+
+    {{#pointcutData.length}}
+    {{#pointcutData}}
+    {{/pointcutData}}
+    {{/pointcutData.length}}
+    {{^pointcutData.length}}
+    {{/pointcutData.length}}
+
+</mule>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy policyName="Mule HTTP Error Response Builder Policy"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:http="http://www.mulesoft.org/schema/mule/http"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+        http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+        http://www.mulesoft.org/schema/mule/http
+        http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+    <after>
+        <http:error-response-builder status="793" contentType="application/json">
+            <http:set-cookie name="addedCookieName" value="addedCookieValue" />
+            <http:headers><![CDATA[#[{'testHeaderName' : 'testHeaderValue'}]]]></http:headers>
+            <http:cache-control maxAge="#[header:inbound:cacheControl]"/>
+            <http:expires value="Thu, 01 Dec 2014 16:00:00 GMT" />
+            <http:location value="http://localhost:9090"/>
+            <http:set-cookie name="#[header:inbound:cookie1]" value="#[header:inbound:value1]" domain="#[header:inbound:domain]" path="#[header:inbound:path]" expiryDate="#[header:inbound:expiryDate]" secure="#[header:inbound:secure]" maxAge="#[header:inbound:maxAge]"/>
+        </http:error-response-builder>
+    </after>
+
+</policy>

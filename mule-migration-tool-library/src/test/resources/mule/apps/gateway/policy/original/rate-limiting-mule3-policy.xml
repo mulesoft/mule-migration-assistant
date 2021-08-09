@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy online="true"
+        id="{{policyId}}"
+        policyName="Rate Limiting"
+        violationCategory="qos"
+        order="{{order}}"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:spring="http://www.springframework.org/schema/beans"
+        xmlns:throttling-gw="http://www.mulesoft.org/schema/mule/throttling-gw"
+        xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+          http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+          http://www.mulesoft.org/schema/mule/throttling-gw
+          http://www.mulesoft.org/schema/mule/throttling-gw/current/mule-throttling-gw.xsd
+          http://www.mulesoft.org/schema/mule/api-platform-gw
+          http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd">
+
+    <throttling-gw:policy enableStatistics="true" notifyEveryExceededRequest="true" id="{{policyId}}">
+        <throttling-gw:discard-response/>
+        <throttling-gw:fixed-time-frame-algorithm>
+            {{#rateLimits}}
+            <throttling-gw:rate-limit maximumRequestsPerPeriod="{{maximumRequests}}"
+                                      timePeriodMillis="{{timePeriodInMilliseconds}}"/>
+            {{/rateLimits}}
+        </throttling-gw:fixed-time-frame-algorithm>
+    </throttling-gw:policy>
+
+    <before>
+        <throttling-gw:throttle throttling-policy-ref="{{policyId}}"/>
+    </before>
+
+    {{#pointcutData.length}}
+    {{#pointcutData}}
+    <pointcut>
+        <api-platform-gw:api-pointcut apiName="{{apiName}}" apiVersion="{{apiVersionName}}"/>
+        <resource methodRegex="{{methodRegex}}" uriTemplateRegex="{{uriTemplateRegex}}"/>
+    </pointcut>
+    {{/pointcutData}}
+    {{/pointcutData.length}}
+    {{^pointcutData.length}}
+    <pointcut>
+        <api-platform-gw:api-pointcut apiName="{{apiName}}" apiVersion="{{apiVersionName}}"/>
+    </pointcut>
+    {{/pointcutData.length}}
+
+</policy>

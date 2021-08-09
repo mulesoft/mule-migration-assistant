@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy id="{{policyId}}"
+        policyName="before-raw-test"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd"
+        online="true" >
+        <before>
+        </before>
+</policy>

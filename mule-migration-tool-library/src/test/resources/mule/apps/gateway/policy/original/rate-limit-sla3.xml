@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy online="true"
+        id="{{policyId}}"
+        policyName="Rate Limiting SLA Based"
+        violationCategory="qos"
+        order="{{order}}"
+        requiresContracts="true"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+        xmlns:throttling-gw="http://www.mulesoft.org/schema/mule/throttling-gw"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+        http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+        http://www.mulesoft.org/schema/mule/api-platform-gw
+        http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
+        http://www.mulesoft.org/schema/mule/throttling-gw
+        http://www.mulesoft.org/schema/mule/throttling-gw/current/mule-throttling-gw.xsd">
+
+    <throttling-gw:policy enableStatistics="true" notifyEveryExceededRequest="false"
+                          id="{{policyId}}-throttling-policy">
+        <throttling-gw:discard-response/>
+        <api-platform-gw:sla-based-algorithm clientIdExpression="{{clientIdExpression}}"
+                                             clientSecretExpression="{{clientSecretExpression}}"/>
+    </throttling-gw:policy>
+
+    <before>
+        <throttling-gw:throttle throttling-policy-ref="{{policyId}}-throttling-policy"/>
+    </before>
+
+    <data>
+        <collection name="slas">
+            {{#tiers}}
+            <api-platform-gw:sla slaId="{{id}}">
+                {{#limits}}
+                <throttling-gw:rate-limit maximumRequestsPerPeriod="{{maximumRequests}}"
+                                          timePeriodMillis="{{timePeriodInMilliseconds}}"/>
+                {{/limits}}
+            </api-platform-gw:sla>
+            {{/tiers}}
+        </collection>
+    </data>
+
+    {{#pointcutData.length}}
+    {{#pointcutData}}
+    <pointcut>
+        <api-platform-gw:api-pointcut apiName="{{apiName}}" apiVersion="{{apiVersionName}}"/>
+        <resource methodRegex="{{methodRegex}}" uriTemplateRegex="{{uriTemplateRegex}}"/>
+    </pointcut>
+    {{/pointcutData}}
+    {{/pointcutData.length}}
+    {{^pointcutData.length}}
+    <pointcut>
+        <api-platform-gw:api-pointcut apiName="{{apiName}}" apiVersion="{{apiVersionName}}"/>
+    </pointcut>
+    {{/pointcutData.length}}
+
+</policy>

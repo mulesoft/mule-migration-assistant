@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy online="true"
+        id="{{policyId}}"
+        policyName="Client Id Enforcement"
+        violationCategory="authentication"
+        order="{{order}}"
+        requiresContracts="true"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+        xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+        xmlns:client-id-enforcement="http://www.mulesoft.org/schema/mule/client-id-enforcement"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+          http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+          http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+          http://www.mulesoft.org/schema/mule/api-platform-gw
+          http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
+          http://www.mulesoft.org/schema/mule/client-id-enforcement http://www.mulesoft.org/schema/mule/client-id-enforcement/current/mule-client-id-enforcement.xsd
+          http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd">
+
+    <client-id-enforcement:config name="clientEnforcementConfig"/>
+
+    <http-policy:proxy name="Client Id Enforcement">
+        <http-policy:source>
+            <try xmlns="http://www.mulesoft.org/schema/mule/core">
+                <http-policy:execute-next/>
+                <error-handler>
+                    <on-error-continue
+                            type="CLIENT-ID-ENFORCEMENT:INVALID_API, CLIENT-ID-ENFORCEMENT:INVALID_CLIENT, CLIENT-ID-ENFORCEMENT:INVALID_CREDENTIALS"
+                            logException="false">
+                        <mule:set-property propertyName="http.status" value="403"/>
+                        {{#isWsdlEndpoint}}
+                        <mule:set-property propertyName="Content-Type" value="text/xml"/>
+                        <mule:set-payload value="#[soapFault('client', flowVars._invalidClientMessage)]"/>
+                        {{/isWsdlEndpoint}}
+                        {{^isWsdlEndpoint}}
+                        <mule:set-property propertyName="Content-Type" value="application/json"/>
+                        <mule:set-payload value="#[error.description]"/>
+                        {{/isWsdlEndpoint}}
+                    </on-error-continue>
+                </error-handler>
+            </try>
+        </http-policy:source>
+    </http-policy:proxy>
+
+    <before>
+
+        {{#credentialsOriginHasHttpBasicAuthenticationHeader}}
+        <api-platform-gw:validate-client onUnaccepted="{{policyId}}-build-response"/>
+        {{/credentialsOriginHasHttpBasicAuthenticationHeader}}
+
+        {{! for custom expression or default case (this could happen in migration) }}
+        {{^credentialsOriginHasHttpBasicAuthenticationHeader}}
+        <client-id-enforcement:validate-client config-ref="clientEnforcementConfig"
+                                               clientId="{{clientIdExpression}}"
+                                               clientSecret="{{clientSecretExpression}}"/>
+        {{/credentialsOriginHasHttpBasicAuthenticationHeader}}
+        {{! for custom expression or default case (this could happen in migration) }}
+
+    </before>
+
+    {{#pointcutData.length}}
+    {{#pointcutData}}
+    <pointcut>
+        <api-platform-gw:api-pointcut apiName="{{apiName}}" apiVersion="{{apiVersionName}}"/>
+        <resource methodRegex="{{methodRegex}}" uriTemplateRegex="{{uriTemplateRegex}}"/>
+    </pointcut>
+    {{/pointcutData}}
+    {{/pointcutData.length}}
+    {{^pointcutData.length}}
+    <pointcut>
+        <api-platform-gw:api-pointcut apiName="{{apiName}}" apiVersion="{{apiVersionName}}"/>
+    </pointcut>
+    {{/pointcutData.length}}
+
+</policy>

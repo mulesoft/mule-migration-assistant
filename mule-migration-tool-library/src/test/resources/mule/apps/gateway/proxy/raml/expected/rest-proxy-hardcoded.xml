@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:proxy="http://www.mulesoft.org/schema/mule/proxy"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+      xmlns:rest-validator="http://www.mulesoft.org/schema/mule/rest-validator"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+        http://www.mulesoft.org/schema/mule/proxy http://www.mulesoft.org/schema/mule/proxy/current/mule-proxy.xsd
+        http://www.mulesoft.org/schema/mule/rest-validator http://www.mulesoft.org/schema/mule/rest-validator/current/mule-rest-validator.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <rest-validator:config name="proxy-config"
+                           api="com/mulesoft/anypoint/gw/test.raml"
+                           parser="AUTO"
+                           disableValidations="true"
+                           queryParamsStrictValidation="false"
+                           headersStrictValidation="false"/>
+
+    <flow name="proxy">
+        <rest-validator:validate-request config-ref="proxy-config"/>
+
+
+        <error-handler>
+            <on-error-continue type="REST-VALIDATOR:BAD_REQUEST" logException="false">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload>output application/json --- {"error": "$(error.description)"}</ee:set-payload>
+                        <ee:set-attributes>
+                            {
+                            statusCode: 400
+                            }
+                        </ee:set-attributes>
+                    </ee:message>
+                </ee:transform>
+            </on-error-continue>
+            <on-error-continue type="REST-VALIDATOR:RESOURCE_NOT_FOUND" logException="false">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload>output application/json --- {"error": "$(error.description)"}</ee:set-payload>
+                        <ee:set-attributes>
+                            {
+                            statusCode: 404
+                            }
+                        </ee:set-attributes>
+                    </ee:message>
+                </ee:transform>
+            </on-error-continue>
+            <on-error-continue type="REST-VALIDATOR:METHOD_NOT_ALLOWED" logException="false">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload>output application/json --- {"error": "$(error.description)"}</ee:set-payload>
+                        <ee:set-attributes>
+                            {
+                            statusCode: 405
+                            }
+                        </ee:set-attributes>
+                    </ee:message>
+                </ee:transform>
+            </on-error-continue>
+            <on-error-continue type="HTTP:TIMEOUT" logException="false">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-attributes>
+                            {
+                            statusCode: 504
+                            }
+                        </ee:set-attributes>
+                    </ee:message>
+                </ee:transform>
+            </on-error-continue>
+        </error-handler>
+
+    </flow>
+
+    <flow name="console">
+        <rest-validator:console config-ref="proxy-config"/>
+    </flow>
+</mule>

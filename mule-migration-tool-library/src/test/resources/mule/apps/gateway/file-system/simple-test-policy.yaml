@@ -1,0 +1,20 @@
+id: simple-test-policy
+name: Policy
+description: Description of a simple policy
+category: Security
+type: system
+standalone: true
+requiresConnectivity: false
+providedCharacteristics: []
+requiredCharacteristics: []
+configuration:
+- propertyName: property1
+  name: prop
+  description: |
+    Description of the property
+  type: string
+  defaultValue: null
+  optional: false
+  sensitive: false
+  allowMultiple: false
+resourceLevelSupported: false

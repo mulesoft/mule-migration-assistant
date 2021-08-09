@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule:mule 
+        xmlns="http://www.mulesoft.org/schema/mule/core"
+        xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+              http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
+              http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+              http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+        <http-policy:proxy name="finally-exception-on-after-exception">
+            <http-policy:source>
+                <try>
+                    <mule:append-string-transformer message="|The before block with exception on after exception|"/>
+                    <mule:logger level="INFO" message="|The before block with exception on after exception|" />
+                    <http-policy:execute-next/>
+                    <mule:append-string-transformer message="|The after block with exception on after exception|"/>
+                    <mule:logger level="INFO" message="|The after block with exception on after exception|" />
+                    <error-handler>
+                        <on-error-continue>
+                            <scripting:transformer name="stringReplace">
+                                <scripting:script engine="groovy">
+                                    throw new RuntimeException("blow up on after exception block");
+                                </scripting:script>
+                            </scripting:transformer>
+                            <mule:append-string-transformer message="|The after exception block with exception on after exception|"/>
+                            <mule:logger level="INFO" message="|The after exception block with exception on after exception|" />
+                        </on-error-continue>
+                    </error-handler>
+                </try>
+            </http-policy:source>
+        </http-policy:proxy>
+</mule:mule>

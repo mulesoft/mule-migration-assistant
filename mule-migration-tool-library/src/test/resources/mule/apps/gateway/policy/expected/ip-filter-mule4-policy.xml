@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+        xmlns="http://www.mulesoft.org/schema/mule/core"
+        xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+        xmlns:ip-filter="http://www.mulesoft.org/schema/mule/ip"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform"
+        xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd
+            http://www.mulesoft.org/schema/mule/ip http://www.mulesoft.org/schema/mule/ip/current/mule-ip.xsd 
+            http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd
+            http://www.mulesoft.org/schema/mule/http-policy-transform http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd">
+
+    <http-policy:proxy name="IP Whitelist">
+        <http-policy:source>
+            <try>
+                <ip-filter:whitelist config-ref="whitelist_config" ipAddress="{{ipExpression}}"/>
+                <http-policy:execute-next/>
+                <set-payload>123</set-payload>
+                <error-handler>
+                    <on-error-continue type="IP:REJECTED" logException="false">
+                        <compatibility:set-property propertyName="http.status" value="403"/>
+                        {{#isWsdlEndpoint}}
+                            <compatibility:set-property propertyName="Content-Type" value="text/xml"/>
+                            <mule:set-payload value="#[soapFault('client', flowVars._ipViolationMessage)]"/>
+                        {{/isWsdlEndpoint}}
+                        {{^isWsdlEndpoint}}
+                            <compatibility:set-property propertyName="Content-Type" value="application/json"/>
+                            <mule:set-payload value="#[flowVars._ipViolationMessage]"/>
+                        {{/isWsdlEndpoint}}
+                        <compatibility:outbound-properties-to-var />
+                        <http-transform:set-response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                            <http-transform:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http-transform:headers>
+                        </http-transform:set-response>
+                    </on-error-continue>
+                    <set-payload>456</set-payload>
+                </error-handler>
+            </try>
+        </http-policy:source>
+    </http-policy:proxy>
+
+    {{#pointcutData.length}}
+    {{#pointcutData}}
+    {{/pointcutData}}
+    {{/pointcutData.length}}
+    {{^pointcutData.length}}
+    {{/pointcutData.length}}
+    <ip-filter:config name="whitelist_config">
+        <ip-filter:ips>
+            {{#ips}}
+            <ip-filter:ip value="{{.}}"/>
+            {{/ips}}
+        </ip-filter:ips>
+    </ip-filter:config>
+
+</mule>

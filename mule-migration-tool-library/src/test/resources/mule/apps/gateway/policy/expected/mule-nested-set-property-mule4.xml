@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+      xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+      xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+      xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+          http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd
+          http://www.mulesoft.org/schema/mule/http-policy-transform http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd
+          http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd">
+
+    <mule:sub-flow name="{{policyId}}-build-response">
+        <compatibility:set-property propertyName="http.status" value="403"/>
+        <try>
+            <compatibility:set-property propertyName="http.status" value="406"/>
+            <mule:set-payload value="#[flowVars._invalidClientMessage]"/>
+            <compatibility:set-property propertyName="http.status" value="406"/>
+            <compatibility:outbound-properties-to-var/>
+            <http-transform:set-response
+                    statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <http-transform:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]
+                </http-transform:headers>
+            </http-transform:set-response>
+        </try>
+        <compatibility:outbound-properties-to-var/>
+        <http-transform:set-response
+                statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+            <http-transform:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]
+            </http-transform:headers>
+        </http-transform:set-response>
+    </mule:sub-flow>
+
+    <http-policy:proxy name="Client Id Enforcement">
+        <http-policy:source>
+            <compatibility:set-property propertyName="http.status" value="403"/>
+            <mule:set-payload value="#[flowVars._invalidClientMessage]"/>
+            <try>
+                <compatibility:set-property propertyName="http.status" value="404"/>
+                <compatibility:outbound-properties-to-var/>
+                <http-transform:set-response
+                        statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                    <http-transform:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]
+                    </http-transform:headers>
+                </http-transform:set-response>
+            </try>
+            <compatibility:outbound-properties-to-var/>
+            <http-transform:set-response
+                    statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <http-transform:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]
+                </http-transform:headers>
+            </http-transform:set-response>
+            <http-policy:execute-next/>
+        </http-policy:source>
+    </http-policy:proxy>
+
+</mule>
