@@ -997,6 +997,11 @@ basicStructure:
     type: WARN
     message: "Configuration item in policy YAML does not have property '{propertyName}', it was set by default to value '{defaultValue}'."
 
+apiDiscovery:
+  apiId:
+    type: WARN
+    message: "APIs in Mule 4 have an identifier, the equivalent should be: '{apiName}:{apiVersion}'."
+
 proxy:
   descriptionTagMigrationStep:
     type: WARN

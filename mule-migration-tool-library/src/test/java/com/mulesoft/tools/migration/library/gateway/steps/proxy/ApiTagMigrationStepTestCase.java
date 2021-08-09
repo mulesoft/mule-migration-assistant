@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.GENERIC
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -86,5 +87,6 @@ public class ApiTagMigrationStepTestCase {
     step.execute(element, reportMock);
 
     assertAutodiscoveryElement(element);
+    verify(reportMock).report("apiDiscovery.apiId", element, element);
   }
 }
