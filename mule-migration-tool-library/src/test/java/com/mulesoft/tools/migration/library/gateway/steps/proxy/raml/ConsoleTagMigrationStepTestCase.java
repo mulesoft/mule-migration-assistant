@@ -10,8 +10,9 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.CONFIG_
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.FLOW_TAG_NAME;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_4_NAMESPACE;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_TAG_NAME;
+import static com.mulesoft.tools.migration.library.gateway.TestConstants.PROXY_NAMESPACE;
+import static com.mulesoft.tools.migration.library.gateway.TestConstants.RAML;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.REST_VALIDATOR_NAMESPACE;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.VALIDATE_REQUEST_TAG_NAME;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -46,9 +47,9 @@ public class ConsoleTagMigrationStepTestCase {
     return consoleElement;
   }
 
-  private void setRestValidatorElement(Element rootElement) {
+  private void setRamlElement(Element rootElement) {
     rootElement.addContent(new Element(FLOW_TAG_NAME, MULE_4_NAMESPACE)
-        .addContent(new Element(VALIDATE_REQUEST_TAG_NAME, REST_VALIDATOR_NAMESPACE)
+        .addContent(new Element(RAML, PROXY_NAMESPACE)
             .setAttribute(CONFIG_REF, CONFIG_REF_ATTR_VALUE)));
   }
 
@@ -56,11 +57,11 @@ public class ConsoleTagMigrationStepTestCase {
   public void migrateConsoleTag() {
     ConsoleTagMigrationStep step = new ConsoleTagMigrationStep();
     Element consoleElement = getTestElement();
-    setRestValidatorElement(consoleElement.getDocument().getRootElement());
+    setRamlElement(consoleElement.getDocument().getRootElement());
 
     step.execute(consoleElement, reportMock);
 
-    assertConsoleElement(consoleElement, REST_VALIDATOR_NAMESPACE);
+    assertConsoleElement(consoleElement, REST_VALIDATOR_NAMESPACE, "rest-validator-config");
   }
 
   @Test
@@ -70,14 +71,14 @@ public class ConsoleTagMigrationStepTestCase {
 
     step.execute(consoleElement, reportMock);
 
-    assertConsoleElement(consoleElement, APIKIT_NAMESPACE);
+    assertConsoleElement(consoleElement, APIKIT_NAMESPACE, CONFIG_REF_ATTR_VALUE);
   }
 
-  private void assertConsoleElement(Element consoleElement, Namespace targetNamespace) {
+  private void assertConsoleElement(Element consoleElement, Namespace targetNamespace, String targetRef) {
     assertThat(consoleElement.getName(), is(CONSOLE_TAG_NAME));
     assertThat(consoleElement.getNamespace(), is(targetNamespace));
     assertThat(consoleElement.getAttributes().size(), is(1));
-    assertThat(consoleElement.getAttributeValue(CONFIG_REF), is(CONFIG_REF_ATTR_VALUE));
+    assertThat(consoleElement.getAttributeValue(CONFIG_REF), is(targetRef));
   }
 
 }

@@ -15,7 +15,7 @@
         http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
         http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
-    <rest-validator:config name="proxy-config"
+    <rest-validator:config name="rest-validator-config"
                            api="${raml.location}"
                            parser="AUTO"
                            disableValidations="${validation.disable}"
@@ -23,7 +23,7 @@
                            headersStrictValidation="false"/>
 
     <flow name="proxy">
-        <rest-validator:validate-request config-ref="proxy-config"/>
+        <rest-validator:validate-request config-ref="rest-validator-config"/>
 
 
         <error-handler>

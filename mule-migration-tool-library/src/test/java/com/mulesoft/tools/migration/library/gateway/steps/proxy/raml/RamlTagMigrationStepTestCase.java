@@ -297,12 +297,12 @@ public class RamlTagMigrationStepTestCase {
     assertThat(ramlElement.getName(), is(VALIDATE_REQUEST_TAG_NAME));
     assertThat(ramlElement.getNamespace(), is(REST_VALIDATOR_NAMESPACE));
     assertThat(ramlElement.getAttributes().size(), is(1));
-    assertThat(ramlElement.getAttributeValue(CONFIG_REF), is(CONFIG_REF_ATTR_VALUE));
+    assertThat(ramlElement.getAttributeValue(CONFIG_REF), is("rest-validator-config"));
   }
 
   private void assertConfigElement(Element configElement, boolean hardCodedProperties) {
     assertThat(configElement, notNullValue());
-    assertThat(configElement.getAttributeValue(NAME), is(CONFIG_REF_ATTR_VALUE));
+    assertThat(configElement.getAttributeValue(NAME), is("rest-validator-config"));
     assertThat(configElement.getAttributeValue(API_ATTR_NAME),
                is(hardCodedProperties ? RAML_ATTR_VALUE_3X_HC : "${" + RAML_LOCATION + "}"));
     assertThat(configElement.getAttributeValue(PARSER_ATTR_VALUE), is(AUTO));

@@ -22,7 +22,7 @@ public class ProxyMigrationTestCase extends EndToEndTestCase {
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "proxy"
+        "proxy", "raml-proxy"
     };
   }
 
