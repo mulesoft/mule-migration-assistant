@@ -71,6 +71,8 @@ $ java -jar mule-migration-assistant-runner-*CURRENT VERSION*.jar [parameters]
 | parentDomainBasePath       | Path of the domain to be migrated                | No        |  
 | help                       | Show all the parameters to define on MMA         | No        |
 | cancelOnError              | Use cancelOnError = true the MMA stop migration if a exception occurs (default false)        | No        |
+| projectParentGAV           | Use projectParentGAV 'groupId:artifactId:version' to migrate your parent inside the pom.xml  | No        |
+
 
 ### User Documentation
 

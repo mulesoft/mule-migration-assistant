@@ -28,6 +28,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.mule.metadata.internal.utils.StringUtils;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
@@ -46,12 +47,14 @@ public class MigrationRunner {
   private final static String REPORT_HOME = "summary.html";
   public static final String MULE_3_VERSION = "3.*.*";
   private final static String CANCEL_ON_ERROR = "cancelOnError";
+  private final static String PROJECT_PARENT_GAV = "projectParentGAV";
 
   private String projectBasePath;
   private String parentDomainProjectBasePath;
   private String destinationProjectBasePath;
   private String muleVersion;
   private boolean cancelOnError = false;
+  private String projectParentGAV;
 
   private String userId;
   private String sessionId;
@@ -96,6 +99,7 @@ public class MigrationRunner {
         .withInputVersion(MULE_3_VERSION)
         .withOuputVersion(muleVersion)
         .withCancelOnError(cancelOnError)
+        .withProjectParentGAV(projectParentGAV)
         .build();
   }
 
@@ -114,6 +118,7 @@ public class MigrationRunner {
     options.addOption(DESTINATION_PROJECT_BASE_PATH, true, "Base directory of the migrated project");
     options.addOption(MULE_VERSION, true, "Mule version where to migrate project");
     options.addOption(CANCEL_ON_ERROR, true, "Use cancelOnError to stop the migration. Default is false");
+    options.addOption(PROJECT_PARENT_GAV, true, "Use projectParentGAV to migration parent in your pom.xml");
 
     options.addOption("userId", true, "The userId to send for the usage statistics");
     options.addOption("sessionId", true, "The sessionId to send for the usage statistics");
@@ -154,6 +159,16 @@ public class MigrationRunner {
           this.cancelOnError = Boolean.getBoolean(value);
         } else {
           throw new ConsoleOptionsException("You must specify a boolean value (true or false) for the 'cancelOnError' option");
+        }
+
+      }
+
+      if (line.hasOption(PROJECT_PARENT_GAV)) {
+        final String value = line.getOptionValue(PROJECT_PARENT_GAV);
+        if (StringUtils.isNotEmpty(value) && value.split(":").length == 3) {
+          this.projectParentGAV = value;
+        } else {
+          throw new ConsoleOptionsException("You must specify the GAV (groupId, artifactId and version) for the 'projectParentGAV' option");
         }
 
       }

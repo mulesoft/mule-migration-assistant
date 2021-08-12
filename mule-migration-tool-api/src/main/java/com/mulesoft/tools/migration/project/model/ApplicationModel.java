@@ -62,6 +62,9 @@ public class ApplicationModel {
   private Path projectBasePath;
   private MuleArtifactJsonModel muleArtifactJsonModel;
   private List<Namespace> supportedNamespaces;
+  private String projectParentGAV;
+
+
 
   protected ApplicationModel(Map<Path, Document> applicationDocuments) {
     this(applicationDocuments, emptyMap());
@@ -392,6 +395,26 @@ public class ApplicationModel {
   }
 
   /**
+   * Retrieves the Project Parent GAV (artifactId:groupId:version). It is optional since the pom is not mandatory in a Mule 3.x
+   * application
+   *
+   * @return tan optional {@link PomModel}
+   */
+
+  public Optional<String> getProjectParentGAV() {
+    return Optional.ofNullable(projectParentGAV);
+  }
+
+  /**
+   * Set the Project Parent GAV (artifactId:groupId:version)
+   * 
+   * @param projectParentGAV as (artifactId:groupId:version) String
+   */
+  private void setProjectParentGAV(String projectParentGAV) {
+    this.projectParentGAV = projectParentGAV;
+  }
+
+  /**
    * Updates a reference on the application documents map
    *
    * @param fileName
@@ -427,6 +450,7 @@ public class ApplicationModel {
     private ProjectType projectType;
     private String muleVersion;
     private List<Namespace> supportedNamespaces;
+    private String projectParentGAV;
 
     /**
      * Collection of paths to project configuration files
@@ -539,6 +563,16 @@ public class ApplicationModel {
     }
 
     /**
+     * 
+     * @param projectParentGAV
+     * @return
+     */
+    public ApplicationModelBuilder withProjectParentGAV(String projectParentGAV) {
+      this.projectParentGAV = projectParentGAV;
+      return this;
+    }
+
+    /**
      * Build the {@link ApplicationModel}
      *
      * @return an {@link ApplicationModel} instance
@@ -619,6 +653,8 @@ public class ApplicationModel {
       applicationModel.setPomModel(pomModel);
       applicationModel.setSourceProjectBasePath(sourceProjectBasePath);
       applicationModel.setProjectBasePath(projectBasePath);
+      applicationModel.setProjectParentGAV(projectParentGAV);
+      // applicationModel.setP
       // Eliminate duplicates, makes for easier debugging inside
       applicationModel.setSupportedNamespaces(supportedNamespaces != null ? new ArrayList<>(new HashSet<>(supportedNamespaces))
           : emptyList());
