@@ -16,6 +16,9 @@ import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -27,9 +30,6 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @RunWith(Parameterized.class)
 public class FlowTest {
@@ -60,7 +60,9 @@ public class FlowTest {
         "flow-13",
         "flow-14",
         "flow-15",
-        "flow-16"
+        "flow-16",
+        "flow-17-multiple-response-elements",
+        "flow-18-response-error-handling"
     };
   }
 
@@ -75,6 +77,7 @@ public class FlowTest {
   private Flow flow;
   private SubFlow subFlow;
   private FlowRef flowRef;
+  private CatchExceptionStrategy exceptionStrategy;
 
   private Document doc;
   private ApplicationModel appModel;
@@ -89,11 +92,15 @@ public class FlowTest {
     subFlow = new SubFlow();
     flowRef = new FlowRef();
     flowRef.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
+    exceptionStrategy = new CatchExceptionStrategy();
+    exceptionStrategy.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), appModel));
   }
 
 
   @Test
   public void execute() throws Exception {
+    getElementsFromDocument(doc, exceptionStrategy.getAppliedTo().getExpression())
+        .forEach(node -> exceptionStrategy.execute(node, report.getReport()));
     getElementsFromDocument(doc, flow.getAppliedTo().getExpression())
         .forEach(node -> flow.execute(node, report.getReport()));
     getElementsFromDocument(doc, subFlow.getAppliedTo().getExpression())
