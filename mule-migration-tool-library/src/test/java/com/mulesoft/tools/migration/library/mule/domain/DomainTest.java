@@ -42,6 +42,13 @@ import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -55,13 +62,6 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RunWith(Parameterized.class)
 public class DomainTest {
@@ -160,8 +160,14 @@ public class DomainTest {
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocuments((String) invocation.getArguments()[0]));
     when(appModel.getNode(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocuments((String) invocation.getArguments()[0]).iterator()
-            .next());
+        .thenAnswer(invocation -> {
+          List<Element> elementsFromDocument = getElementsFromDocuments((String) invocation.getArguments()[0]);
+          if (elementsFromDocument.isEmpty()) {
+            return null;
+          } else {
+            return elementsFromDocument.iterator().next();
+          }
+        });
     when(appModel.getNodeOptional(any(String.class)))
         .thenAnswer(invocation -> {
           List<Element> elementsFromDocument = getElementsFromDocuments((String) invocation.getArguments()[0]);

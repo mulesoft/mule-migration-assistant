@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 import static java.util.Collections.singleton;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.AttributesToInboundPropertiesScriptGenerator;
+import com.mulesoft.tools.migration.library.mule.steps.core.MigrateApiConfigFlows;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -49,7 +50,7 @@ public class PostprocessMuleApplication extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new AttributesToInboundPropertiesScriptGenerator());
+    return newArrayList(new AttributesToInboundPropertiesScriptGenerator(), new MigrateApiConfigFlows());
   }
 
 }
