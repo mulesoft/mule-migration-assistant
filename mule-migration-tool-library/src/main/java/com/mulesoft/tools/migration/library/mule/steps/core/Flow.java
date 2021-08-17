@@ -7,6 +7,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementToBottom;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getTopLevelCoreXPathSelector;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isErrorHanldingElement;
 import static java.util.Collections.reverse;
@@ -14,12 +15,12 @@ import static java.util.Collections.reverse;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jdom2.Attribute;
 import org.jdom2.Content;
 import org.jdom2.Element;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Migrate flow definitions
@@ -82,9 +83,12 @@ public class Flow extends AbstractApplicationModelMigrationStep {
 
       addElementAfter(wrappingTry, response);
 
-      List<Content> content = response.cloneContent();
+      List<Content> contents = response.cloneContent();
       response.detach();
-      element.addContent(content);
+      for (Content content : contents) {
+        // error handlers are always last
+        addElementToBottom(element, content);
+      }
     }
   }
 
