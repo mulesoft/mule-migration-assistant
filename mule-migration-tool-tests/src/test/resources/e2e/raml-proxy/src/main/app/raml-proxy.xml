@@ -16,7 +16,7 @@
 
     <configuration defaultProcessingStrategy="non-blocking" />
 
-    <expression-language:property-placeholder location="config.properties" />
+    <expression-language:property-placeholder location="config.properties" system-properties-mode="OVERRIDE"/>
 
     <http:listener-config name="http-lc-0.0.0.0-8081" host="0.0.0.0" port="${httpPort}" protocol="HTTP"/>
 

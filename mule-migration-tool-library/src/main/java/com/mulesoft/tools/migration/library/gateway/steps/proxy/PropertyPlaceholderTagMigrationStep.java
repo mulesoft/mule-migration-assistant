@@ -6,9 +6,9 @@
 package com.mulesoft.tools.migration.library.gateway.steps.proxy;
 
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.EXPRESSION_LANGUAGE_NAMESPACE;
-import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.MULE_4_CORE_NAMESPACE_NO_PREFIX;
 
 import com.mulesoft.tools.migration.library.gateway.steps.GatewayMigrationStep;
+import com.mulesoft.tools.migration.library.mule.steps.spring.SpringPropertiesPlaceholder;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -20,11 +20,7 @@ import org.jdom2.Element;
  */
 public class PropertyPlaceholderTagMigrationStep extends GatewayMigrationStep {
 
-  private static final String CONFIGURATION_PROPERTIES_TAG_NAME = "configuration-properties";
   private static final String PROPERTY_PLACEHOLDER_TAG_NAME = "property-placeholder";
-
-  private static final String LOCATION = "location";
-  private static final String FILE = "file";
 
   private static final String EXPRESSION_LANGUAGE_XSI_SCHEMA_LOCATION_URI_MULE3 =
       "http://www.mulesoft.org/schema/mule/expression-language-gw";
@@ -33,6 +29,8 @@ public class PropertyPlaceholderTagMigrationStep extends GatewayMigrationStep {
   private static final String POLICY_XSI_SCHEMA_LOCATION_URI_MULE4 = "http://www.mulesoft.org/schema/mule/core";
   private static final String POLICY_XSI_SCHEMA_LOCATION_URI_MULE4_XSD =
       "http://www.mulesoft.org/schema/mule/core/current/mule.xsd";
+
+  private final SpringPropertiesPlaceholder propertiesPlaceholder = new SpringPropertiesPlaceholder();
 
   public PropertyPlaceholderTagMigrationStep() {
     super(EXPRESSION_LANGUAGE_NAMESPACE, PROPERTY_PLACEHOLDER_TAG_NAME);
@@ -49,9 +47,6 @@ public class PropertyPlaceholderTagMigrationStep extends GatewayMigrationStep {
       removeSchemaLocationNamespace(root, EXPRESSION_LANGUAGE_XSI_SCHEMA_LOCATION_URI_MULE3,
                                     POLICY_XSI_SCHEMA_LOCATION_URI_MULE4);
     }
-    element.setName(CONFIGURATION_PROPERTIES_TAG_NAME);
-    element.setNamespace(MULE_4_CORE_NAMESPACE_NO_PREFIX);
-    element.getAttribute(LOCATION).setName(FILE);
-    element.removeContent();
+    propertiesPlaceholder.execute(element, migrationReport);
   }
 }

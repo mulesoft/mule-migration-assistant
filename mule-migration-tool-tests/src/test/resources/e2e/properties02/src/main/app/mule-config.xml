@@ -6,7 +6,7 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="sample.properties"/>
+    <context:property-placeholder location="sample.properties" system-properties-mode="OVERRIDE"/>
 
     <flow name="flow1">
         <logger message="${sample}" />
