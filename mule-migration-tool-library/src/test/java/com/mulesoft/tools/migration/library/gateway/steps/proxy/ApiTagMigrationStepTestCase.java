@@ -11,6 +11,8 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.GENERIC
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.GENERIC_TAG_VALUE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -21,6 +23,7 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 
 public class ApiTagMigrationStepTestCase {
 
@@ -87,6 +90,25 @@ public class ApiTagMigrationStepTestCase {
     step.execute(element, reportMock);
 
     assertAutodiscoveryElement(element);
-    verify(reportMock).report("apiDiscovery.apiId", element, element);
+    IsElement mule3Matcher = new IsElement(API_TAG_NAME, API_GW_MULE_3_NAMESPACE);
+    IsElement mule4Matcher = new IsElement(AUTODISCOVERY_TAG_NAME, API_GW_MULE_4_NAMESPACE);
+    verify(reportMock).report(eq("apiDiscovery.apiId"), argThat(mule3Matcher), argThat(mule4Matcher));
+  }
+
+  private static class IsElement implements ArgumentMatcher<Element> {
+
+    private String name;
+    private Namespace ns;
+
+    public IsElement(String name, Namespace ns) {
+      this.name = name;
+      this.ns = ns;
+    }
+
+    @Override
+    public boolean matches(Element element) {
+      return name.equals(element.getName()) && ns.equals(element.getNamespace());
+    }
+
   }
 }

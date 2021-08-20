@@ -9,6 +9,7 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.CONFIG;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -71,6 +72,7 @@ public abstract class ProxyHeadersProcessorTestCase {
     assertThat(config.getNamespace(), is(PROXY_NAMESPACE));
     assertThat(config.getAttributes().size(), is(1));
     assertThat(config.getAttribute(NAME).getValue(), is(PROXY_CONFIG));
+    verify(reportMock).report("proxy.templates", element, config);
   }
 
   protected abstract Element getTestElement();
