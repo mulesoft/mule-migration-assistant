@@ -109,7 +109,7 @@
         <mule.runtime.version>4.3.0</mule.runtime.version>
         <munit.version>2.2.1</munit.version>
 
-        <mule.api.version>1.1.5</mule.api.version>
+        <mule.api.version>1.4.0-20210623</mule.api.version>
         <migrant.version>2.1.10</migrant.version>
         <parser.version>2.1.3</parser.version>
 
