@@ -1070,6 +1070,9 @@ raml:
   noMatchingConfig:
     type: ERROR
     message: No matching config was found for RAML element.
+  invalid:
+    type: ERROR
+    message: "Ramlfile invalid: '{syntax}' Please, verify the raml syntax."
 
 salesforce:
   accessTokenId:

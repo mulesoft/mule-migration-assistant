@@ -72,7 +72,7 @@ public class MigrateApiConfigFlows extends AbstractApikitMigrationStep {
 
       if (flowName.endsWith(":" + apiConfig)) {
 
-        List<String> uriParams = getResourceByFlowName(flowName.replaceAll(":" + apiConfig, ""));
+        List<String> uriParams = getResourceByFlowName(flowName.replaceAll(":" + apiConfig, ""), report, element);
         if (uriParams != null && uriParams.size() > 0) {
           Element transformElement = new Element("transform", CORE_EE_NAMESPACE);
           transformElement.removeContent();
@@ -94,7 +94,8 @@ public class MigrateApiConfigFlows extends AbstractApikitMigrationStep {
     }
   }
 
-  private List<String> getResourceByFlowName(final String flowName) throws RuntimeException {
+  private List<String> getResourceByFlowName(final String flowName, MigrationReport migrationReport, Element element)
+      throws RuntimeException {
     List<String> uriParams = null;
     File ramlFile = null;
     if (builder == null) {
@@ -106,6 +107,9 @@ public class MigrateApiConfigFlows extends AbstractApikitMigrationStep {
     }
 
     if (result.getApiV10() == null) {
+
+      migrationReport.report("raml.invalid", element, element,
+                             result.getValidationResults().toString());
       throw new RuntimeException("Ramlfile invalid: " + result.getValidationResults().toString());
     }
 
