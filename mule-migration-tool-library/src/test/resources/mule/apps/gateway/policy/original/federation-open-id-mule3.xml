@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy online="true"
+        id="{{policyId}}"
+        policyName="OpenID Connect Access Token Enforcement"
+        violationCategory="authentication"
+        order="{{order}}"
+        requiresContracts="true"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:openidconnect-gw="http://www.mulesoft.org/schema/mule/openidconnect-gw"
+        xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+        http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+        http://www.mulesoft.org/schema/mule/core
+        http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/api-platform-gw
+        http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
+        http://www.mulesoft.org/schema/mule/openidconnect-gw
+        http://www.mulesoft.org/schema/mule/openidconnect-gw/current/mule-openidconnect-gw.xsd">
+
+    <mule:sub-flow name="openIdConnectErrorResponse">
+        <mule:set-property propertyName="http.status" value="#[flowVars._agwStatus]"/>
+        {{#isWsdlEndpoint}}
+        <mule:set-property propertyName="Content-Type" value="text/xml"/>
+        <mule:set-payload value="#[soapFault('client', flowVars._agwError)]"/>
+        {{/isWsdlEndpoint}}
+        {{^isWsdlEndpoint}}
+        <mule:set-property propertyName="Content-Type" value="application/json"/>
+        <mule:set-payload value="#[flowVars._agwError]"/>
+        {{/isWsdlEndpoint}}
+    </mule:sub-flow>
+
+    <before>
+        <openidconnect-gw:validate tokenUrl="{{identityManagementTokenUrl}}"
+                                   clientId="{{identityManagementClientId}}" clientSecret="{{identityManagementClientSecret}}"
+                                   throwOnUnaccepted="true" onUnaccepted="openIdConnectErrorResponse"/>
+    </before>
+
+    {{#pointcutData.length}}
+    {{#pointcutData}}
+    <pointcut>
+        <api-platform-gw:api-pointcut apiName="{{apiName}}" apiVersion="{{apiVersionName}}"/>
+        <resource methodRegex="{{methodRegex}}" uriTemplateRegex="{{uriTemplateRegex}}"/>
+    </pointcut>
+    {{/pointcutData}}
+    {{/pointcutData.length}}
+    {{^pointcutData.length}}
+    <pointcut>
+        <api-platform-gw:api-pointcut apiName="{{apiName}}" apiVersion="{{apiVersionName}}"/>
+    </pointcut>
+    {{/pointcutData.length}}
+
+</policy>

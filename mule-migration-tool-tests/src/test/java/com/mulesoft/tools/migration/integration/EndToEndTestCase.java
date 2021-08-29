@@ -9,6 +9,7 @@ import static java.io.File.separator;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.System.getProperty;
+import static org.apache.commons.io.FileUtils.copyDirectory;
 import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.junit.Assert.fail;
@@ -18,11 +19,6 @@ import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArti
 import org.mule.runtime.module.artifact.api.descriptor.BundleDescriptor;
 
 import com.mulesoft.mule.distributions.server.AbstractEeAppControl;
-
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,6 +31,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests the whole migration process, starting with a Mule 3 source config, migrating it to Mule 4, packaging and deploying it to
@@ -58,6 +62,11 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
 
   private static File mmaBinaryFolder;
 
+  private static Logger logger = LoggerFactory.getLogger(EndToEndTestCase.class);
+
+  @Rule
+  public TemporaryFolder migrationResult = new TemporaryFolder();
+
   @BeforeClass
   public static void prepareMma() throws IOException {
     mmaBinaryFolder = mmaBinary.newFolder();
@@ -79,9 +88,6 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     }
 
   }
-
-  @Rule
-  public TemporaryFolder migrationResult = new TemporaryFolder();
 
   public void simpleCase(String appName, String... muleArgs) throws Exception {
     String outPutPath = migrate(appName);
@@ -185,6 +191,16 @@ public abstract class EndToEndTestCase extends AbstractEeAppControl {
     command.add(RUNTIME_VERSION);
 
     return command;
+  }
+
+  @After
+  public void copyMigrationResult() {
+    File migratedApps = new File("apps", getClass().getSimpleName());
+    try {
+      copyDirectory(migrationResult.getRoot(), migratedApps);
+    } catch (IOException e) {
+      logger.warn("Could not copy migration result.");
+    }
   }
 
   @Override

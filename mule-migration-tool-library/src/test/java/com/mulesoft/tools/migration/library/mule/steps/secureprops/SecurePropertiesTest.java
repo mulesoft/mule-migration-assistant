@@ -17,6 +17,10 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -27,10 +31,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
 
 @RunWith(Parameterized.class)
 public class SecurePropertiesTest {
@@ -46,7 +46,8 @@ public class SecurePropertiesTest {
         {"secure-props-01", "4.1.3"},
         {"secure-props-02", "4.1.3"},
         {"secure-props-03", "4.1.3"},
-        {"secure-props-04", "4.2.0"}
+        {"secure-props-04", "4.2.0"},
+        {"secure-props-05", "4.2.0"}
     });
   }
 

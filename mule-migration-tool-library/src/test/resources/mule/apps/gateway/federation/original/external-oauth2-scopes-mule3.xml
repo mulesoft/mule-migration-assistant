@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy online="true"
+        id="{{policyId}}"
+        policyName="External OAuth2 Access Token Enforcement"
+        violationCategory="authentication"
+        order="{{order}}"
+        requiresContracts="true"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:oauth2-gw="http://www.mulesoft.org/schema/mule/oauth2-gw"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+          http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+          http://www.mulesoft.org/schema/mule/oauth2-gw
+          http://www.mulesoft.org/schema/mule/oauth2-gw/current/mule-oauth2-gw.xsd
+          http://www.mulesoft.org/schema/mule/core
+          http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <mule:sub-flow name="buildResponse">
+        <mule:set-property propertyName="http.status" value="#[flowVars._agwStatus]"/>
+        {{#isWsdlEndpoint}}
+        <mule:set-property propertyName="Content-Type" value="text/xml"/>
+        <mule:set-payload value="#[soapFault('client', flowVars._agwError)]"/>
+        {{/isWsdlEndpoint}}
+        {{^isWsdlEndpoint}}
+        <mule:set-property propertyName="Content-Type" value="application/json"/>
+        <mule:set-payload value="#[flowVars._agwError]"/>
+        {{/isWsdlEndpoint}}
+    </mule:sub-flow>
+
+    <before>
+        <oauth2-gw:validate tokenUrl="{{tokenUrl}}" scopes="{{scopes}}"
+                            throwOnUnaccepted="true" onUnaccepted="buildResponse"/>
+    </before>
+
+</policy>

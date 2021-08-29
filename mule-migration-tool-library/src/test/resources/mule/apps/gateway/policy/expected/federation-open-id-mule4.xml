@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+      xmlns:federation="http://www.mulesoft.org/schema/mule/federation"
+      xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd
+               http://www.mulesoft.org/schema/mule/http-policy-transform http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd
+               http://www.mulesoft.org/schema/mule/federation http://www.mulesoft.org/schema/mule/federation/current/mule-federation.xsd">
+
+    {{#pointcutData.length}}
+    {{#pointcutData}}
+    {{/pointcutData}}
+    {{/pointcutData.length}}
+    {{^pointcutData.length}}
+    {{/pointcutData.length}}
+
+    <federation:open-id-config tokenUrl="{{identityManagementTokenUrl}}"
+                               clientId="{{identityManagementClientId}}"
+                               clientSecret="{{identityManagementClientSecret}}"
+                               name="config"/>
+
+    <http-policy:proxy name="OpenID Connect Access Token Enforcement">
+        <http-policy:source>
+            <try>
+                <federation:authenticate-open-id accessToken="#[attributes.queryParams['access_token']]"
+                                                 authorization="#[attributes.headers['authorization']]" config-ref="config"/>
+
+                <set-variable variableName="federationProperties" value="#[authentication.properties.userProperties]"/>
+
+                <http-policy:execute-next/>
+                <error-handler>
+                    <on-error-continue type="FEDERATION:NOT_AUTHORIZED, FEDERATION:CONNECTION_ERROR" logException="false">
+                        <http-transform:set-response statusCode="401">
+                            <http-transform:body>#[
+                                output application/json
+                                ---
+                                {"error": "$(error.description)"}
+                                ]</http-transform:body>
+                            <http-transform:headers>#[{'WWW-Authenticate': 'Bearer realm="OpenId Client Realm"'}]</http-transform:headers>
+                        </http-transform:set-response>
+                    </on-error-continue>
+                    <on-error-continue type="FEDERATION:INVALID_TOKEN" logException="false">
+                        <http-transform:set-response statusCode="400">
+                            <http-transform:body>#[
+                                output application/json
+                                ---
+                                {"error": "$(error.description)"}
+                                ]</http-transform:body>
+                        </http-transform:set-response>
+                    </on-error-continue>
+                    <on-error-continue type="FEDERATION:FORBIDDEN_ERROR" logException="false">
+                        <http-transform:set-response statusCode="403">
+                            <http-transform:body>#[
+                                output application/json
+                                ---
+                                {"error": "$(error.description)"}
+                                ]</http-transform:body>
+                        </http-transform:set-response>
+                    </on-error-continue>
+                    <on-error-continue type="FEDERATION:BAD_RESPONSE_ERROR" logException="false">
+                        <http-transform:set-response statusCode="500">
+                            <http-transform:body>#[
+                                output application/json
+                                ---
+                                {"error": "$(error.description)"}
+                                ]</http-transform:body>
+                        </http-transform:set-response>
+                    </on-error-continue>
+                </error-handler>
+            </try>
+        </http-policy:source>
+
+        <http-policy:operation>
+            <http-transform:add-request-headers>
+                <http-transform:headers>#[vars.federationProperties filterObject ( not ($ is Object or $ is Array)) mapObject (("X-AGW-" ++ ($$ replace ' ' with '-')):$)]</http-transform:headers>
+            </http-transform:add-request-headers>
+
+            <http-policy:execute-next/>
+        </http-policy:operation>
+    </http-policy:proxy>
+
+</mule>

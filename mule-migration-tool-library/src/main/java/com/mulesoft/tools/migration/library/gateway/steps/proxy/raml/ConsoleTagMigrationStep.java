@@ -9,13 +9,12 @@ import static com.mulesoft.tools.migration.library.gateway.steps.ElementFinder.f
 import static com.mulesoft.tools.migration.library.gateway.steps.ElementFinder.findChildElementWithMatchingAttributeValue;
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.APIKIT_NAMESPACE;
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.MULE_4_CORE_NAMESPACE_NO_PREFIX;
+import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.PROXY_NAMESPACE;
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.REST_VALIDATOR_NAMESPACE;
 
-import java.util.Optional;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * Migrate console tag
@@ -38,13 +37,13 @@ public class ConsoleTagMigrationStep extends RamlMigrationStep {
     String configRef = element.getAttributeValue(CONFIG_REF_ATTR_NAME);
     if (hasMatchingRamlProxyConfig(getRootElement(element), configRef)) {
       element.setNamespace(REST_VALIDATOR_NAMESPACE);
+      element.setAttribute(CONFIG_REF_ATTR_NAME, "rest-validator-config");
     }
   }
 
   private boolean hasMatchingRamlProxyConfig(Element rootElement, String configRefValue) {
     return findChildElement(rootElement, FLOW_TAG_NAME, MULE_4_CORE_NAMESPACE_NO_PREFIX,
-                            flowElement -> findChildElementWithMatchingAttributeValue(flowElement, VALIDATE_REQUEST_TAG_NAME,
-                                                                                      REST_VALIDATOR_NAMESPACE,
+                            flowElement -> findChildElementWithMatchingAttributeValue(flowElement, RAML, PROXY_NAMESPACE,
                                                                                       CONFIG_REF_ATTR_NAME, configRefValue)
                                                                                           .isPresent()).isPresent();
   }

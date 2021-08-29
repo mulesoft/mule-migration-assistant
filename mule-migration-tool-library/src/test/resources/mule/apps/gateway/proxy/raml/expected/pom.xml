@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.mule.examples</groupId>
+    <artifactId>api-gateway-sample-raml-proxy</artifactId>
+    <version>1.2.1-SNAPSHOT</version>
+
+    <packaging>mule-application</packaging>
+    <name>API Gateway Sample RAML Proxy</name>
+
+    <properties>
+        <ramlValidatorVersion>1.2.0</ramlValidatorVersion>
+
+        <attachMuleSources>true</attachMuleSources>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.mulesoft.anypoint</groupId>
+            <artifactId>mule-raml-validator-extension</artifactId>
+            <version>${ramlValidatorVersion}</version>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.mule.tools.maven</groupId>
+                <artifactId>mule-maven-plugin</artifactId>
+                <version>${muleMavenPluginVersion}</version>
+                <extensions>true</extensions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>mule</id>
+            <name>Mule Public Repository</name>
+            <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>MuleRepository</id>
+            <name>Mule Release EE Repository</name>
+            <url>https://repository.mulesoft.org/nexus/content/repositories/releases-ee/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>mulesoft-plugin-releases</id>
+            <name>MuleSoft Release Repository</name>
+            <url>http://repository.mulesoft.org/releases/</url>
+            <layout>default</layout>
+        </pluginRepository>
+        <pluginRepository>
+            <id>mulesoft-plugin-snapshots</id>
+            <name>MuleSoft Snapshots Repository</name>
+            <url>http://repository.mulesoft.org/snapshots/</url>
+            <layout>default</layout>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <downloadUrl>http://www.mulesoft.com/mule-esb-enterprise-trial-download</downloadUrl>
+        <repository>
+            <id>mule-ee-releases</id>
+            <name>Mule Release Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>mule-ee-snapshots</id>
+            <name>Mule Snapshot Repository</name>
+            <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

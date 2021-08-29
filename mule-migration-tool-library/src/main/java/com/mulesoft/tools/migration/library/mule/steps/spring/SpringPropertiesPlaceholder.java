@@ -36,6 +36,7 @@ public class SpringPropertiesPlaceholder extends AbstractSpringMigratorStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     int idx = 1;
+    Element elementToComment = null;
     for (String location : object.getAttributeValue("location").split("\\,")) {
       Element confProp = new Element("configuration-properties", CORE_NAMESPACE);
       confProp.setAttribute("file", location);
@@ -49,17 +50,20 @@ public class SpringPropertiesPlaceholder extends AbstractSpringMigratorStep {
       }
 
       object.getDocument().getRootElement().addContent(idx, confProp);
+      if (elementToComment == null) {
+        elementToComment = confProp;
+      }
     }
 
     if (object.getAttribute("order") != null) {
-      report.report("configProperties.order", object, object);
+      report.report("configProperties.order", object, elementToComment);
     }
     if (object.getAttributeValue("properties-ref") != null
         || parseBoolean(object.getAttributeValue("ignore-resource-not-found", "false"))
         || parseBoolean(object.getAttributeValue("ignore-unresolvable", "false"))
         || parseBoolean(object.getAttributeValue("local-override", "false"))
-        || parseBoolean(object.getAttributeValue("system-properties-mode", "false"))) {
-      report.report("configProperties.springAttributes", object, object);
+        || object.getAttributeValue("system-properties-mode") != null) {
+      report.report("configProperties.springAttributes", object, elementToComment);
     }
 
     object.detach();

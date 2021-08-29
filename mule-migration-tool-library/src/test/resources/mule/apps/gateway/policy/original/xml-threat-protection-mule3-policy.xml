@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy online="true"
+        id="{{policyId}}"
+        policyName="XML Threat Protection"
+        violationCategory="content"
+        order="{{order}}"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:threat-protection-gw="http://www.mulesoft.org/schema/mule/threat-protection-gw"
+        xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+        xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+        http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+        http://www.mulesoft.org/schema/mule/core
+        http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/threat-protection-gw
+        http://www.mulesoft.org/schema/mule/threat-protection-gw/current/mule-threat-protection-gw.xsd
+        http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd
+        http://www.mulesoft.org/schema/mule/api-platform-gw
+        http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd">
+
+    <mule:sub-flow name="{{policyId}}-build-response">
+        <compatibility:set-property propertyName="http.status" value="400"/>
+        {{#isWsdlEndpoint}}
+        <compatibility:set-property propertyName="Content-Type" value="text/xml"/>
+        <mule:set-payload value="#[soapFault('client', flowVars._threatViolationMessage)]"/>
+        {{/isWsdlEndpoint}}
+        {{^isWsdlEndpoint}}
+        <compatibility:set-property propertyName="Content-Type" value="application/json"/>
+        <mule:set-payload value="#[flowVars._threatViolationMessage]"/>
+        {{/isWsdlEndpoint}}
+    </mule:sub-flow>
+
+    <threat-protection-gw:xml-policy id="{{policyId}}">
+        <threat-protection-gw:structure maxNodeDepth="{{maxNodeDepth}}"
+                                        maxAttributeCountPerElement="{{maxAttributeCountPerElement}}"
+                                        maxChildCount="{{maxChildCount}}"/>
+        <threat-protection-gw:values maxTextLength="{{maxTextLength}}" maxAttributeLength="{{maxAttributeLength}}"
+                                     maxCommentLength="{{maxCommentLength}}"/>
+    </threat-protection-gw:xml-policy>
+
+    <before>
+        <threat-protection-gw:protect threat-protection-policy-ref="{{policyId}}"
+                                      onUnaccepted="{{policyId}}-build-response"/>
+    </before>
+
+    {{#pointcutData.length}}
+    {{#pointcutData}}
+    <pointcut>
+        <api-platform-gw:api-pointcut apiName="{{apiName}}" apiVersion="{{apiVersionName}}"/>
+        <resource methodRegex="{{methodRegex}}" uriTemplateRegex="{{uriTemplateRegex}}"/>
+    </pointcut>
+    {{/pointcutData}}
+    {{/pointcutData.length}}
+    {{^pointcutData.length}}
+    <pointcut>
+        <api-platform-gw:api-pointcut apiName="{{apiName}}" apiVersion="{{apiVersionName}}"/>
+    </pointcut>
+    {{/pointcutData.length}}
+
+</policy>

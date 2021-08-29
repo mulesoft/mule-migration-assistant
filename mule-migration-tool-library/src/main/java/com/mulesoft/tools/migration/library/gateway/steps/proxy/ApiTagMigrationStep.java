@@ -60,6 +60,7 @@ public class ApiTagMigrationStep extends GatewayMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport migrationReport) throws RuntimeException {
+    Element original = element.clone();
     migrateRootElement(element, API_PLATFORM_GW_MULE_3_NAMESPACE, API_GW_MULE_4_NAMESPACE,
                        API_GATEWAY_XSI_SCHEMA_LOCATION_URI_MULE3_XSD,
                        API_GATEWAY_XSI_SCHEMA_LOCATION_URI_MULE4_XSD, API_GATEWAY_XSI_SCHEMA_LOCATION_URI_MULE3,
@@ -69,5 +70,6 @@ public class ApiTagMigrationStep extends GatewayMigrationStep {
     element.setAttribute(new Attribute(API_ID, API_ID_VALUE));
     removeAttributes(ATTRIBUTES_TO_REMOVE, element);
     element.removeContent();
+    migrationReport.report("apiDiscovery.apiId", original, element);
   }
 }

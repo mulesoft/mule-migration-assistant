@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy id="{{policyId}}"
+policyName="policy-name"
+xmlns="http://www.mulesoft.org/schema/mule/policy"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd"
+online="true" >
+	<after-exception>
+		<transformer name="stringReplace"/>
+	</after-exception>
+	<pointcut>
+		<api-pointcut apiName="{{ apiName }}" apiVersion="{{ apiVersionName }}"/>
+	</pointcut>
+	<after>
+		<set-payload value="${apiId}" />
+	</after>
+</policy>

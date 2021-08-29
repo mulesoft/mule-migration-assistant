@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy online="true"
+        id="{{policyId}}"
+        policyName="OpenAM Access Token Enforcement"
+        violationCategory="authentication"
+        order="{{order}}"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:openam-gw="http://www.mulesoft.org/schema/mule/openam-gw"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+        http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+        http://www.mulesoft.org/schema/mule/core
+        http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/openam-gw
+        http://www.mulesoft.org/schema/mule/openam-gw/current/mule-openam-gw.xsd">
+
+    <mule:sub-flow name="buildResponse">
+        <mule:set-property propertyName="http.status" value="#[flowVars._agwStatus]"/>
+        {{#isWsdlEndpoint}}
+        <mule:set-property propertyName="Content-Type" value="text/xml"/>
+        <mule:set-payload value="#[soapFault('client', flowVars._agwError)]"/>
+        {{/isWsdlEndpoint}}
+        {{^isWsdlEndpoint}}
+        <mule:set-property propertyName="Content-Type" value="application/json"/>
+        <mule:set-payload value="#[flowVars._agwError]"/>
+        {{/isWsdlEndpoint}}
+    </mule:sub-flow>
+
+    <before>
+        <openam-gw:validate tokenUrl="{{identityManagementTokenUrl}}"
+                            scopes="{{scopes}}"
+                            throwOnUnaccepted="true"
+                            onUnaccepted="buildResponse"/>
+    </before>
+
+</policy>

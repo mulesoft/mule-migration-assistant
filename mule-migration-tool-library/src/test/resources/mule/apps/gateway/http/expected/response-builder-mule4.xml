@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy policyName="Mule HTTP Response Builder Policy"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:http="http://www.mulesoft.org/schema/mule/http"
+        xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+        http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+        http://www.mulesoft.org/schema/mule/http
+        http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/http-policy-transform
+        http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd">
+
+    <after>
+        <http-transform:set-response statusCode="793">
+            <http-transform:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'Content-Type': 'application/json', 'Set-Cookie': 'addedCookieName=addedCookieValue', 'Set-Cookie': '#[header:inbound:cookie1]=#[header:inbound:value1]; Domain=#[header:inbound:domain]; Path=#[header:inbound:path]; Expires=#[header:inbound:expiryDate]; Secure; Max-Age=#[header:inbound:maxAge]', 'Cache-Control': 'max-age=#[header:inbound:cacheControl]', 'Expires': 'Thu, 01 Dec 2014 16:00:00 GMT', 'Location': 'http://localhost:9090'} ++ {'testHeaderName' : 'testHeaderValue'}]</http-transform:headers>
+        </http-transform:set-response>
+    </after>
+
+</policy>

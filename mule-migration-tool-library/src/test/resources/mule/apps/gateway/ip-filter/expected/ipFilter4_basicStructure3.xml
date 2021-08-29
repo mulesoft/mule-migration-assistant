@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy policyName="IP Blacklist"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ip-filter="http://www.mulesoft.org/schema/mule/ip"
+        xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+        http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+        http://www.mulesoft.org/schema/mule/ip
+        http://www.mulesoft.org/schema/mule/ip/current/mule-ip.xsd
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd">
+
+    <http-policy:proxy name="IP Blacklist">
+        <http-policy:source>
+            <try xmlns="http://www.mulesoft.org/schema/mule/core">
+                <http-policy:execute-next/>
+                <error-handler>
+                    <on-error-continue type="IP:REJECTED" logException="false">
+                        <mule:set-property propertyName="http.status" value="403"/>
+                        {{#isWsdlEndpoint}}
+                        <mule:set-property propertyName="Content-Type" value="text/xml"/>
+                        <mule:set-payload value="#[soapFault('client', flowVars._ipViolationMessage)]"/>
+                        {{/isWsdlEndpoint}}
+                        {{^isWsdlEndpoint}}
+                        <mule:set-property propertyName="Content-Type" value="application/json"/>
+                        <mule:set-payload value="#[flowVars._ipViolationMessage]"/>
+                        {{/isWsdlEndpoint}}
+
+                    </on-error-continue>
+                </error-handler>
+            </try>
+        </http-policy:source>
+    </http-policy:proxy>
+
+    <before>
+        <ip-filter:blacklist config-ref="blacklist_config" ipAddress="{{{ipExpression}}}" />
+    </before>
+
+    <ip-filter:config name="blacklist_config">
+        <ip-filter:ips>
+            {{#ips}}
+            <ip-filter:ip value="{{.}}"/>
+            {{/ips}}
+        </ip-filter:ips>
+    </ip-filter:config>
+
+</policy>

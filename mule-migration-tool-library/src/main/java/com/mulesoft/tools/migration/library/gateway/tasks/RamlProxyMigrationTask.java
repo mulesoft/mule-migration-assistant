@@ -5,21 +5,17 @@
  */
 package com.mulesoft.tools.migration.library.gateway.tasks;
 
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_POLICY;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_3_VERSION;
 import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
-import static java.util.Collections.singleton;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 import com.mulesoft.tools.migration.library.gateway.steps.proxy.raml.ConsoleTagMigrationStep;
 import com.mulesoft.tools.migration.library.gateway.steps.proxy.raml.RamlTagMigrationStep;
 import com.mulesoft.tools.migration.library.gateway.steps.proxy.raml.RamlValidatorPomContributionMigrationStep;
-import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * RAML Proxy migration tool
@@ -44,16 +40,11 @@ public class RamlProxyMigrationTask extends AbstractMigrationTask {
   }
 
   @Override
-  public Set<ProjectType> getApplicableProjectTypes() {
-    return singleton(MULE_FOUR_POLICY);
-  }
-
-  @Override
   public List<MigrationStep> getSteps() {
     ConsoleTagMigrationStep consoleTagMigrationStep = new ConsoleTagMigrationStep();
     consoleTagMigrationStep.setApplicationModel(getApplicationModel());
-    return Arrays.asList(new RamlTagMigrationStep(),
-                         consoleTagMigrationStep,
+    return Arrays.asList(consoleTagMigrationStep,
+                         new RamlTagMigrationStep(),
                          new RamlValidatorPomContributionMigrationStep());
   }
 }
