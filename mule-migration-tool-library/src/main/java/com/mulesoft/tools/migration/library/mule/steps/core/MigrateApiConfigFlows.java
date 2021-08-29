@@ -56,56 +56,40 @@ public class MigrateApiConfigFlows extends AbstractApikitMigrationStep {
   public void execute(Element element, MigrationReport report) throws RuntimeException {
 
     // resolve config-ref
-    String apiConfig = "api-config";
+    String apiConfig = null;
 
     final Element node = getApplicationModel().getNode(XPATH_SELECTOR_ROUTER);
     if (node != null && node.getAttribute("config-ref") != null) {
       apiConfig = node.getAttribute("config-ref").getValue();
 
     }
-    addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, element.getDocument());
+    if (apiConfig != null) {
+      // API Kit Router found
+      addNameSpace(CORE_EE_NAMESPACE, EE_NAMESPACE_SCHEMA, element.getDocument());
 
 
+      final String flowName = element.getAttributeValue("name");
 
-    final String flowName = element.getAttributeValue("name");
+      if (flowName.endsWith(":" + apiConfig)) {
 
-    if (flowName.endsWith(":api-config")) {
+        List<String> uriParams = getResourceByFlowName(flowName.replaceAll(":" + apiConfig, ""));
+        if (uriParams != null && uriParams.size() > 0) {
+          Element transformElement = new Element("transform", CORE_EE_NAMESPACE);
+          transformElement.removeContent();
+          final Element variablesElement = new Element("variables", CORE_EE_NAMESPACE);
+          variablesElement.removeContent();
+          transformElement.addContent(variablesElement);
 
-      List<String> uriParams = getResourceByFlowName(flowName.replaceAll(":" + apiConfig, ""));
-      if (uriParams != null && uriParams.size() > 0) {
-        Element transformElement = new Element("transform", CORE_EE_NAMESPACE);
-        transformElement.removeContent();
-        final Element variablesElement = new Element("variables", CORE_EE_NAMESPACE);
-        variablesElement.removeContent();
-        transformElement.addContent(variablesElement);
+          for (String name : uriParams) {
+            final Element variableElement = new Element("set-variable", CORE_EE_NAMESPACE);
+            variableElement.setAttribute("variableName", name);
+            variableElement.setContent(new CDATA("attributes.uriParams." + name));
+            variablesElement.addContent(variableElement);
+          }
 
-        for (String name : uriParams) {
-          final Element variableElement = new Element("set-variable", CORE_EE_NAMESPACE);
-          variableElement.setAttribute("variableName", name);
-          variableElement.setContent(new CDATA("attributes.uriParams." + name));
-          variablesElement.addContent(variableElement);
+          // Add at index 0 to be the first element
+          element.addContent(0, transformElement);
         }
-
-
-        final List<Element> childrensCopy = new ArrayList<Element>();
-        final List<Element> childrens = element.getChildren();
-
-        // copy childs
-        for (Element children : childrens) {
-          childrensCopy.add(children);
-        }
-        // remove childs
-        for (Element children : childrensCopy) {
-          children.detach();
-          element.removeContent(children);
-        }
-        // Add new new Child Transform
-        element.addContent(transformElement);
-        // reAdd exiting childs
-        for (Element children : childrensCopy) {
-          element.addContent(children);
-        }
-
       }
     }
   }
