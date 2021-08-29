@@ -997,6 +997,13 @@ basicStructure:
     type: WARN
     message: "Configuration item in policy YAML does not have property '{propertyName}', it was set by default to value '{defaultValue}'."
 
+apiDiscovery:
+  apiId:
+    type: WARN
+    message: "APIs in Mule 4 have an identifier, the equivalent should be: '{apiName}:{apiVersion}'."
+    docLinks:
+      - https://docs.mulesoft.com/api-manager/2.x/configure-autodiscovery-4-task
+
 proxy:
   descriptionTagMigrationStep:
     type: WARN
@@ -1017,6 +1024,11 @@ proxy:
     message: "When migrating '{propertyValueMule3}', it's equivalent in mule 4 needs the values for service name and port. Such values must be defined in the app configuration under the names 'serrice.name' and 'service.port'."
     docsLinks:
       - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-proxies#wsdl_proxy_migration
+  templates:
+    type: WARN
+    message: "Proxy templates have changed in Mule 4. You can review them in Exchange to compare them to this migrated proxy."
+    docLinks:
+      - https://docs.mulesoft.com/api-manager/2.x/api-proxy-landing-page
 
 threatProtection:
   missingElement:

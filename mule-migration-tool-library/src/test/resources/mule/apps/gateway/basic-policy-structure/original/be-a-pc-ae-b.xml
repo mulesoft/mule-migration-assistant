@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy id="{{policyId}}"
+policyName="policy-name"
+xmlns="http://www.mulesoft.org/schema/mule/policy"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd"
+online="true" >
+	<before-exception>
+		<script engine="groovy">
+			throw new RuntimeException("blow up on after exception block");
+		</script>
+	</before-exception>
+	<after>
+		<set-payload value="${apiId}" />
+	</after>
+	<pointcut>
+		<api-pointcut apiName="{{ apiName }}" apiVersion="{{ apiVersionName }}"/>
+	</pointcut>
+	<after-exception>
+		<transformer name="stringReplace"/>
+	</after-exception>
+	<before>
+		<append-string-transformer message="|The before block with exception on after exception|"/>
+		<logger level="INFO" message="|The before block with exception on after exception|" />
+	</before>
+</policy>

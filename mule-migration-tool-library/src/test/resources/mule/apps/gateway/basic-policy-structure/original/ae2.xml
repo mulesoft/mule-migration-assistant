@@ -1,0 +1,3 @@
+<after-exception>
+		<transformer name="stringReplace"/>
+	</after-exception>

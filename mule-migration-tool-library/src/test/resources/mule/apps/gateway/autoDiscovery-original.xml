@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd">
+
+    <api-platform-gw:api apiName="groupId:b6f9702d-3143-4cac-8433-ea59ce0ee334:assetId:javierapp" version="v3:123324" flowRef="migration-testFlow1" create="true" doc:name="API Autodiscovery">
+        <api-platform-gw:description>...</api-platform-gw:description>
+        <api-platform-gw:tags>...</api-platform-gw:tags>
+    </api-platform-gw:api>
+
+</mule>

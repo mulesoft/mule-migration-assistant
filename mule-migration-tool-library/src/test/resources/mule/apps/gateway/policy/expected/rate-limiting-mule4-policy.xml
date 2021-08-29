@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:throttling="http://www.mulesoft.org/schema/mule/throttling"
+      xmlns:throttling-gw="http://www.mulesoft.org/schema/mule/throttling-gw"
+      xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+      xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core
+          http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+          http://www.mulesoft.org/schema/mule/throttling
+          http://www.mulesoft.org/schema/mule/throttling/current/mule-throttling.xsd
+          http://www.mulesoft.org/schema/mule/throttling-gw
+          http://www.mulesoft.org/schema/mule/throttling-gw/current/mule-throttling-gw.xsd
+          http://www.mulesoft.org/schema/mule/http-policy
+          http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd
+          http://www.mulesoft.org/schema/mule/api-platform-gw
+          http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd">
+
+    <throttling:config name="rateLimitConfig" clusterizable="{{clusterizable}}">
+        <throttling:tier-provider>
+            <throttling:explicit>
+                <throttling:keys>
+                    <throttling:key>
+                        <throttling:tiers>
+                            <throttling:tier maximumRequestsPerPeriod="{{maximumRequests}}"
+                                             timePeriodMillis="{{timePeriodInMilliseconds}}"/>
+                        </throttling:tiers>
+                    </throttling:key>
+                </throttling:keys>
+            </throttling:explicit>
+        </throttling:tier-provider>
+    </throttling:config>
+
+    <throttling-gw:policy enableStatistics="true" notifyEveryExceededRequest="true" id="{{policyId}}">
+        <throttling-gw:discard-response/>
+        <throttling-gw:fixed-time-frame-algorithm>
+            {{#rateLimits}}
+            {{/rateLimits}}
+        </throttling-gw:fixed-time-frame-algorithm>
+    </throttling-gw:policy>
+
+    <http-policy:proxy name="Rate Limiting">
+        <http-policy:source>
+          <try>
+            <throttling-gw:throttle throttling-policy-ref="{{policyId}}"/>
+            <throttling:rate-limit id="{{{policyId}}}-rate-limit" config-ref="rateLimitConfig" target="throttlingResponse"/>
+            <http-policy:execute-next/>
+          </try>
+        </http-policy:source>
+    </http-policy:proxy>
+
+    {{#pointcutData.length}}
+    {{#pointcutData}}
+    {{/pointcutData}}
+    {{/pointcutData.length}}
+    {{^pointcutData.length}}
+    {{/pointcutData.length}}
+
+</mule>

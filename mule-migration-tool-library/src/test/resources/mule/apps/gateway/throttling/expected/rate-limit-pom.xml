@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.mulesoft.anypoint.policy.template</groupId>
+        <artifactId>mule-rate-limit-policy</artifactId>
+        <version>1.2.3-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>rate-limiting</artifactId>
+
+    <name>API Gateway Rate Limiting Policy Template</name>
+
+    <packaging>mule-policy</packaging>
+
+    <properties>
+        <formatterConfigPath>../formatter.xml</formatterConfigPath>
+        <licensePath>../LICENSE_HEADER.txt</licensePath>
+        <soapFaultVersion>1.1.2-SNAPSHOT</soapFaultVersion>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.mule.tools.maven</groupId>
+                <artifactId>mule-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

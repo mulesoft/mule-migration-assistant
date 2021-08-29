@@ -14,6 +14,9 @@ import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespac
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.PROXY_NAMESPACE;
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.REST_VALIDATOR_NAMESPACE;
 
+import com.mulesoft.tools.migration.library.gateway.steps.GatewayMigrationStep;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +24,6 @@ import java.util.Optional;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import com.mulesoft.tools.migration.library.gateway.steps.GatewayMigrationStep;
-import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 /**
  * Migrate raml tag
@@ -99,6 +99,8 @@ public class RamlTagMigrationStep extends GatewayMigrationStep {
       Element ramlProxyConfig = ramlProxyConfigOptional.get();
       ramlProxyConfig.setName(CONFIG_TAG_NAME);
       ramlProxyConfig.setNamespace(REST_VALIDATOR_NAMESPACE);
+      ramlProxyConfig.setAttribute(NAME_ATTR_NAME, "rest-validator-config");
+      element.setAttribute(CONFIG_REF_ATTR_NAME, "rest-validator-config");
       migrateConfigAttributes(ramlProxyConfig, migrationReport);
       migrateErrorHandlerElement(element.getParentElement(), migrationReport);
       addNamespaceDeclaration(getRootElement(element), REST_VALIDATOR_NAMESPACE,

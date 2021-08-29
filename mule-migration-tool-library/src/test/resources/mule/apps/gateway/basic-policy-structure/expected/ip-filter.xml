@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule   violationCategory="routing"
+        
+          order="{{order}}"
+        
+        xmlns="http://www.mulesoft.org/schema/mule/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:spring="http://www.springframework.org/schema/beans"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:ip-filter-gw="http://www.mulesoft.org/schema/mule/ip-filter-gw"
+        xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+        xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+          http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+          http://www.mulesoft.org/schema/mule/core
+          http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+          http://www.mulesoft.org/schema/mule/ip-filter-gw
+          http://www.mulesoft.org/schema/mule/ip-filter-gw/current/mule-ip-filter-gw.xsd
+          http://www.mulesoft.org/schema/mule/api-platform-gw
+          http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd
+          http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd">
+
+    <mule:processor-chain name="{{policyId}}-build-response">
+        <mule:set-property propertyName="http.status" value="403"/>
+        {{#isWsdlEndpoint}}
+          <mule:set-property propertyName="Content-Type" value="text/xml"/>
+          <mule:set-payload value="#[soapFault('client', flowVars._ipViolationMessage)]"/>
+        {{/isWsdlEndpoint}}
+        {{^isWsdlEndpoint}}
+          <mule:set-property propertyName="Content-Type" value="application/json"/>
+          <mule:set-payload value="#[flowVars._ipViolationMessage]"/>
+        {{/isWsdlEndpoint}}
+    </mule:processor-chain>
+
+    <http-policy:proxy name="IP Whitelist">
+      <http-policy:source>
+        <ip-filter-gw:filter ipAddress="{{ipExpression}}" onUnaccepted="{{policyId}}-build-response">
+            <ip-filter-gw:whitelist>
+              {{#ips}}
+              <ip-filter-gw:ip>{{.}}</ip-filter-gw:ip>
+              {{/ips}}
+            </ip-filter-gw:whitelist>
+          </ip-filter-gw:filter>
+        <http-policy:execute-next/>
+      </http-policy:source>
+    </http-policy:proxy>
+
+    {{#pointcutData.length}}
+      {{#pointcutData}}
+      {{/pointcutData}}
+    {{/pointcutData.length}}
+    {{^pointcutData.length}}
+    {{/pointcutData.length}}
+
+</mule>

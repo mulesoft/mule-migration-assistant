@@ -35,7 +35,7 @@ public class ProxyRequestHeadersProcessorMigrationStep extends ProxyHeadersProce
   @Override
   public void execute(Element element, MigrationReport migrationReport) throws RuntimeException {
     new ProxyPomContributionMigrationStep(true).execute(getApplicationModel().getPomModel().get(), migrationReport);
-    addConfigElement(element);
+    addConfigElement(element, migrationReport);
     element.setName(REQUEST_HEADERS);
     element.setNamespace(PROXY_NAMESPACE);
     element.removeAttribute(CLASS);

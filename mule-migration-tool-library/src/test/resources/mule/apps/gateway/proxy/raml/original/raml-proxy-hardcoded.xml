@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+      xmlns:proxy="http://www.mulesoft.org/schema/mule/proxy"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+        http://www.mulesoft.org/schema/mule/proxy http://www.mulesoft.org/schema/mule/proxy/current/mule-proxy.xsd">
+
+    <proxy:raml-proxy-config name="proxy-config" raml="com/mulesoft/anypoint/gw/test.raml" disableValidations="true"/>
+
+    <flow name="proxy" >
+        <proxy:raml config-ref="proxy-config"/>
+        <error-handler ref="defaultExceptionStrategy"/>
+    </flow>
+
+    <flow name="console">
+        <apikit:console config-ref="proxy-config"/>
+    </flow>
+
+    <error-handler name="defaultExceptionStrategy">
+        <on-error-propagate type="APIKIT:NOT_FOUND">
+            <set-variable variableName="httpStatus" value="404" />
+            <set-payload value="resource not found" />
+        </on-error-propagate>
+        <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+            <set-variable variableName="httpStatus" value="405" />
+            <set-payload value="method not allowed" />
+        </on-error-propagate>
+        <on-error-propagate when="#[mel:exception.causedBy(java.util.concurrent.TimeoutException)]">
+            <set-variable variableName="httpStatus" value="504" />
+            <set-payload value="Gateway timeout" />
+        </on-error-propagate>
+    </error-handler>
+</mule>

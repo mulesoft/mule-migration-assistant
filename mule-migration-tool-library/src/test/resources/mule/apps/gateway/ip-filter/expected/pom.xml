@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.mulesoft.anypoint.policy.template</groupId>
+        <artifactId>mule-ip-filter-policies</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ip-whitelist</artifactId>
+
+    <name>API Gateway IP Whitelist Policy Template</name>
+
+    <packaging>mule-policy</packaging>
+
+    <properties>
+        <formatterConfigPath>../formatter.xml</formatterConfigPath>
+        <licensePath>../LICENSE_HEADER.txt</licensePath>
+        <ipFilterExtensionVersion>1.2.0-SNAPSHOT</ipFilterExtensionVersion>
+        <soapFaultVersion>1.1.2-SNAPSHOT</soapFaultVersion>
+        <httpPolicyTransformVersion>1.1.0</httpPolicyTransformVersion>
+        <securePropertyModuleVersion>1.0.2</securePropertyModuleVersion>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.mule.tools.maven</groupId>
+                <artifactId>mule-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.mulesoft.anypoint</groupId>
+            <artifactId>api-gateway-tita-unit</artifactId>
+            <version>${titaVersion}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mulesoft.anypoint</groupId>
+            <artifactId>mule-soap-fault</artifactId>
+            <version>${soapFaultVersion}</version>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.mulesoft.modules</groupId>
+            <artifactId>mule-secure-configuration-property-module</artifactId>
+            <version>${securePropertyModuleVersion}</version>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+    </dependencies>
+</project>

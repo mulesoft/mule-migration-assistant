@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy policyName="Mule HTTP Error Response Builder Policy"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:http="http://www.mulesoft.org/schema/mule/http"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+        http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+        http://www.mulesoft.org/schema/mule/http
+        http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+    <after>
+        <http:error-response-builder status="793" contentType="application/json" />
+    </after>
+
+</policy>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy policyName="Mule HTTP Response Builder Policy"
+        xmlns="http://www.mulesoft.org/schema/mule/policy"
+        xmlns:http="http://www.mulesoft.org/schema/mule/http"
+        xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+        http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+        http://www.mulesoft.org/schema/mule/http
+        http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/http-policy-transform
+        http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd">
+
+    <after>
+        <http-transform:set-response statusCode="793">
+            <http-transform:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'Content-Type': 'application/json'}]</http-transform:headers>
+        </http-transform:set-response>
+    </after>
+
+</policy>

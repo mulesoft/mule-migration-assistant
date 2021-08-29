@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule  xmlns="http://www.mulesoft.org/schema/mule/core"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:spring="http://www.springframework.org/schema/beans"
+        xmlns:throttling-gw="http://www.mulesoft.org/schema/mule/throttling-gw"
+        xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw"
+        xmlns:throttling="http://www.mulesoft.org/schema/mule/throttling"
+        xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy"
+        xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform"
+        xsi:schemaLocation="http://www.mulesoft.org/schema/mule/policy
+        http://www.mulesoft.org/schema/mule/policy/current/mule-policy.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.mulesoft.org/schema/mule/throttling-gw
+        http://www.mulesoft.org/schema/mule/throttling-gw/current/mule-throttling-gw.xsd
+        http://www.mulesoft.org/schema/mule/api-platform-gw
+        http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
+        http://www.mulesoft.org/schema/mule/http-policy
+        http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd
+        http://www.mulesoft.org/schema/mule/throttling
+        http://www.mulesoft.org/schema/mule/throttling/current/mule-throttling.xsd
+        http://www.mulesoft.org/schema/mule/http-policy-transform
+        http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd">
+
+    {{#pointcutData.length}}
+    {{#pointcutData}}
+    {{/pointcutData}}
+    {{/pointcutData.length}}
+    {{^pointcutData.length}}
+    {{/pointcutData.length}}
+
+    <throttling:config name="throttlingConfig" clusterizable="false" queuingLimit="5">
+        <throttling:tier-provider>
+            <throttling:explicit>
+                <throttling:tiers>
+                    {{#rateLimits}}
+                    <throttling:tier maximumRequestsPerPeriod="{{maximumRequests}}"
+                                     timePeriodMillis="{{timePeriodInMilliseconds}}"/>
+                    {{/rateLimits}}
+                </throttling:tiers>
+            </throttling:explicit>
+        </throttling:tier-provider>
+    </throttling:config>
+
+    <http-policy:proxy name="Throttling">
+        <http-policy:source>
+            <try>
+                <throttling:throttle id="{{policyId}}-throttle"
+                                     reattempts="{{delayAttempts}}" reattemptsDelay="{{delayTimeInMillis}}"
+                                     config-ref="throttlingConfig" target="throttlingResponse"/>
+
+                <http-policy:execute-next/>
+
+                <http-transform:add-headers outputType="response">
+                    <http-transform:headers>#[
+                        {
+                        'x-ratelimit-remaining': vars.throttlingResponse.availableQuota as String,
+                        'x-ratelimit-limit': vars.throttlingResponse.maximumAllowedRequests as String,
+                        'x-ratelimit-reset': vars.throttlingResponse.remainingFrame as String
+                        }
+                        ]</http-transform:headers>
+                </http-transform:add-headers>
+
+                <error-handler>
+                    <on-error-continue type="THROTTLING:QUOTA_EXCEEDED, THROTTLING:QUEUING_LIMIT_REACHED" logException="false">
+                        <http-transform:set-response statusCode="429">
+                            <http-transform:body>#[
+                                output application/json --- {"error": "$(error.description)"}
+                                ]</http-transform:body>
+                            <http-transform:headers>#[
+                                {
+                                'x-ratelimit-remaining': error.exception.availableQuota as String,
+                                'x-ratelimit-limit': error.exception.maximumAllowedRequests as String,
+                                'x-ratelimit-reset': error.exception.remainingFrame as String
+                                }
+                                ]</http-transform:headers>
+                        </http-transform:set-response>
+                    </on-error-continue>
+
+                    <on-error-propagate>
+                        <http-transform:add-headers outputType="response">
+                            <http-transform:headers>#[
+                                {
+                                'x-ratelimit-remaining': vars.throttlingResponse.availableQuota as String,
+                                'x-ratelimit-limit': vars.throttlingResponse.maximumAllowedRequests as String,
+                                'x-ratelimit-reset': vars.throttlingResponse.remainingFrame as String
+                                }
+                                ]</http-transform:headers>
+                        </http-transform:add-headers>
+                    </on-error-propagate>
+                </error-handler>
+            </try>
+        </http-policy:source>
+    </http-policy:proxy>
+
+</mule>
