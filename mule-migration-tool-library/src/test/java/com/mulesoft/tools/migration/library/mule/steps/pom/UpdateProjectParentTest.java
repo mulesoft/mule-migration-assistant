@@ -47,6 +47,7 @@ public class UpdateProjectParentTest {
 
     try {
       updateProjectParent.execute(model, report.getReport());
+      assertTrue(!model.getParent().isPresent());
     } catch (RuntimeException e) {
       fail("no exception have to be thrown");
     }
@@ -63,6 +64,10 @@ public class UpdateProjectParentTest {
     PomModel model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     try {
       updateProjectParent.execute(model, report.getReport());
+      assertTrue(model.getParent().isPresent());
+      assertEquals("com.mule.parent", model.getParent().get().getGroupId());
+      assertEquals("parent-rest", model.getParent().get().getArtifactId());
+      assertEquals("1.0.0", model.getParent().get().getVersion());
     } catch (RuntimeException e) {
       fail("no exception have to be thrown");
     }
