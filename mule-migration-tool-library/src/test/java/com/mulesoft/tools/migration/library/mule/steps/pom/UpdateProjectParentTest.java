@@ -38,7 +38,7 @@ public class UpdateProjectParentTest {
   public void executeWithoutProjectParentGavAndWithoutParent() throws IOException, XmlPullParserException, URISyntaxException {
     UpdateProjectParent updateProjectParent = new UpdateProjectParent();
     final ApplicationModel applicationModelMock = mock(ApplicationModel.class);
-    when(applicationModelMock.getProjectParentGAV()).thenReturn(Optional.ofNullable(null));
+    when(applicationModelMock.getProjectPomParent()).thenReturn(Optional.empty());
     updateProjectParent.setApplicationModel(applicationModelMock);
 
     Path pomPath = Paths.get(getClass().getResource(POM).toURI());
@@ -55,7 +55,7 @@ public class UpdateProjectParentTest {
   public void executeWithoutProjectParentGavAndWithParent() throws URISyntaxException, IOException, XmlPullParserException {
     UpdateProjectParent updateProjectParent = new UpdateProjectParent();
     final ApplicationModel applicationModelMock = mock(ApplicationModel.class);
-    when(applicationModelMock.getProjectParentGAV()).thenReturn(Optional.ofNullable(null));
+    when(applicationModelMock.getProjectPomParent()).thenReturn(Optional.empty());
     updateProjectParent.setApplicationModel(applicationModelMock);
 
     Path pomPath = Paths.get(getClass().getResource(PARENT_POM).toURI());
@@ -71,7 +71,8 @@ public class UpdateProjectParentTest {
   public void executeWithProjectParentGavAndWithoutParent() throws URISyntaxException, IOException, XmlPullParserException {
     UpdateProjectParent updateProjectParent = new UpdateProjectParent();
     final ApplicationModel applicationModelMock = mock(ApplicationModel.class);
-    when(applicationModelMock.getProjectParentGAV()).thenReturn(Optional.ofNullable("com.mulesoft:parent:2.0.0"));
+    Parent parent = new Parent.ParentBuilder().withGroupId("com.mule").withArtifactId("rest-parent").withVersion("2.0.0").build();
+    when(applicationModelMock.getProjectPomParent()).thenReturn(Optional.of(parent));
     updateProjectParent.setApplicationModel(applicationModelMock);
 
     Path pomPath = Paths.get(getClass().getResource(POM).toURI());
@@ -87,21 +88,22 @@ public class UpdateProjectParentTest {
   public void executeWithGavAndParent() throws URISyntaxException, IOException, XmlPullParserException {
     UpdateProjectParent updateProjectParent = new UpdateProjectParent();
     final ApplicationModel applicationModelMock = mock(ApplicationModel.class);
-    when(applicationModelMock.getProjectParentGAV()).thenReturn(Optional.ofNullable("com.mule:rest-parent:2.0.0"));
+    Parent parent = new Parent.ParentBuilder().withGroupId("com.mule").withArtifactId("rest-parent").withVersion("2.0.0").build();
+    when(applicationModelMock.getProjectPomParent()).thenReturn(Optional.of(parent));
     updateProjectParent.setApplicationModel(applicationModelMock);
 
     Path pomPath = Paths.get(getClass().getResource(PARENT_POM).toURI());
     PomModel model = new PomModel.PomModelBuilder().withPom(pomPath).build();
-    Parent beforeMigration = model.getParent().get();
-    assertEquals(beforeMigration.getGroupId(), "com.mule.parent");
-    assertEquals(beforeMigration.getArtifactId(), "parent-rest");
-    assertEquals(beforeMigration.getVersion(), "1.0.0");
+    parent = model.getParent().get();
+    assertEquals(parent.getGroupId(), "com.mule.parent");
+    assertEquals(parent.getArtifactId(), "parent-rest");
+    assertEquals(parent.getVersion(), "1.0.0");
     try {
       updateProjectParent.execute(model, report.getReport());
-      Parent afterMigration = model.getParent().get();
-      assertEquals(beforeMigration.getGroupId(), "com.mule");
-      assertEquals(beforeMigration.getArtifactId(), "rest-parent");
-      assertEquals(beforeMigration.getVersion(), "2.0.0");
+      Parent afterParent = model.getParent().get();
+      assertEquals(afterParent.getGroupId(), "com.mule");
+      assertEquals(afterParent.getArtifactId(), "rest-parent");
+      assertEquals(afterParent.getVersion(), "2.0.0");
     } catch (RuntimeException e) {
       fail("no exception have to be thrown");
     }

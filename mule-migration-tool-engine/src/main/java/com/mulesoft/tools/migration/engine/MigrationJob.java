@@ -29,6 +29,7 @@ import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
+import com.mulesoft.tools.migration.project.model.pom.Parent;
 import com.mulesoft.tools.migration.report.html.HTMLReport;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -60,10 +61,10 @@ public class MigrationJob implements Executable {
   private final String muleVersion;
   private final boolean cancelOnError;
   private String runnerVersion;
-  private final String projectParentGAV;
+  private final Parent projectParentGAV;
 
   private MigrationJob(Path project, Path parentDomainProject, Path outputProject, List<AbstractMigrationTask> migrationTasks,
-                       String muleVersion, boolean cancelOnError, String projectParentGAV) {
+                       String muleVersion, boolean cancelOnError, Parent projectParentGAV) {
     this.migrationTasks = migrationTasks;
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
@@ -139,13 +140,13 @@ public class MigrationJob implements Executable {
   }
 
   private ApplicationModel generateTargetApplicationModel(Path project, ProjectType type, Path sourceProjectBasePath,
-                                                          String projectParentGAV)
+                                                          Parent projectParentGAV)
       throws Exception {
     ApplicationModelBuilder appModelBuilder = new ApplicationModelBuilder()
         .withMuleVersion(muleVersion)
         .withSupportedNamespaces(getTasksDeclaredNamespaces(migrationTasks))
         .withSourceProjectBasePath(sourceProjectBasePath)
-        .withProjectParentGAV(projectParentGAV);
+        .withProjectPomParent(projectParentGAV);
 
     if (type.equals(MULE_FOUR_APPLICATION)) {
       MuleFourApplication application = new MuleFourApplication(project);
@@ -211,7 +212,7 @@ public class MigrationJob implements Executable {
     private String outputVersion;
     private boolean cancelOnError = false;
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
-    private String projectParentGAV = null;
+    private Parent projectParentGAV = null;
 
     public MigrationJobBuilder withProject(Path project) {
       this.project = project;
@@ -243,7 +244,7 @@ public class MigrationJob implements Executable {
       return this;
     }
 
-    public MigrationJobBuilder withProjectParentGAV(String projectParentGAV) {
+    public MigrationJobBuilder withProjectParentGAV(Parent projectParentGAV) {
       this.projectParentGAV = projectParentGAV;
       return this;
     }

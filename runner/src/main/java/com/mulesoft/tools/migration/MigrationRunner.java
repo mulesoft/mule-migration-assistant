@@ -17,6 +17,8 @@ import com.google.common.base.Stopwatch;
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
+import com.mulesoft.tools.migration.project.model.pom.Parent;
+import com.mulesoft.tools.migration.project.model.pom.Parent.ParentBuilder;
 import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
@@ -28,7 +30,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.mule.metadata.internal.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
@@ -54,7 +56,8 @@ public class MigrationRunner {
   private String destinationProjectBasePath;
   private String muleVersion;
   private boolean cancelOnError = false;
-  private String projectParentGAV;
+  private Parent projectParentGAV;
+
 
   private String userId;
   private String sessionId;
@@ -166,11 +169,11 @@ public class MigrationRunner {
       if (line.hasOption(PROJECT_PARENT_GAV)) {
         final String value = line.getOptionValue(PROJECT_PARENT_GAV);
         if (StringUtils.isNotEmpty(value) && value.split(":").length == 3) {
-          this.projectParentGAV = value;
+          this.projectParentGAV = new ParentBuilder().withGroupId(value.split(":")[0]).withArtifactId(value.split(":")[1])
+              .withVersion(value.split(":")[2]).build();
         } else {
           throw new ConsoleOptionsException("You must specify the GAV (groupId, artifactId and version) for the 'projectParentGAV' option");
         }
-
       }
 
       if (line.hasOption(HELP)) {

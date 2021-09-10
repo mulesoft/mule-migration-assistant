@@ -35,21 +35,15 @@ public class UpdateProjectParent implements PomContribution {
 
   @Override
   public String getDescription() {
-    return "Update project version";
+    return "Update Project Parent if present";
   }
 
   @Override
   public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
 
-    final Optional<String> projectParentGAV = getApplicationModel().getProjectParentGAV();
-    final Optional<Parent> optionalParent = pomModel.getParent();
-    if (optionalParent.isPresent() && projectParentGAV.isPresent()) {
-      String[] gav = projectParentGAV.get().split(":");
-      Parent parent = optionalParent.get();
-      parent.setGroupId(gav[0]);
-      parent.setArtifactId(gav[1]);
-      parent.setVersion(gav[2]);
-      pomModel.setParent(parent);
+    final Optional<Parent> projectPomParent = getApplicationModel().getProjectPomParent();
+    if (pomModel.getParent().isPresent() && projectPomParent.isPresent()) {
+      pomModel.setParent(projectPomParent.get());
     }
   }
 }
