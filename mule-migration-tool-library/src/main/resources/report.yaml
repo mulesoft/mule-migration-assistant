@@ -1073,7 +1073,9 @@ raml:
   invalid:
     type: ERROR
     message: "API specification could not be analyzed: URI parameters variables will not be introduced in corresponding flows. Ramlfile invalid: '{syntax}' Please, verify the raml syntax."
-
+  uriParam:
+    type: INFO
+    message: "Mule 4 provides access to URI parameters via the 'attributes.uriParams' map instead of variables. Please review usages of the '{uriParam}' variable and validate whether setting it is still required or it could be replaced with a reference to attributes.uriParams.{uriParam}."
 salesforce:
   accessTokenId:
     type: INFO
