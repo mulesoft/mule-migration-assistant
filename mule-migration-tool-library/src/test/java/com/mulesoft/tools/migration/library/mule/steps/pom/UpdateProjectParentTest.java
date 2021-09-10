@@ -6,6 +6,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.pom;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -79,6 +80,7 @@ public class UpdateProjectParentTest {
     PomModel model = new PomModel.PomModelBuilder().withPom(pomPath).build();
     try {
       updateProjectParent.execute(model, report.getReport());
+      assertTrue(!model.getParent().isPresent());
     } catch (RuntimeException e) {
       fail("no exception have to be thrown");
     }
