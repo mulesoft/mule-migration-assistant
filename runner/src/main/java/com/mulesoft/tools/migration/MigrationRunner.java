@@ -169,8 +169,12 @@ public class MigrationRunner {
       if (line.hasOption(PROJECT_PARENT_GAV)) {
         final String value = line.getOptionValue(PROJECT_PARENT_GAV);
         if (StringUtils.isNotEmpty(value) && value.split(":").length == 3) {
-          this.projectParentGAV = new ParentBuilder().withGroupId(value.split(":")[0]).withArtifactId(value.split(":")[1])
-              .withVersion(value.split(":")[2]).build();
+          String[] gav = value.split(":");
+          this.projectParentGAV = new ParentBuilder()
+              .withGroupId(gav[0])
+              .withArtifactId(gav[1])
+              .withVersion(gav[2])
+              .build();
         } else {
           throw new ConsoleOptionsException("You must specify the GAV (groupId, artifactId and version) for the 'projectParentGAV' option");
         }
