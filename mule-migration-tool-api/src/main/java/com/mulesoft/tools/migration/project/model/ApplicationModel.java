@@ -18,6 +18,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
+import com.mulesoft.tools.migration.project.model.pom.Parent;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 
 import java.io.File;
@@ -62,6 +63,9 @@ public class ApplicationModel {
   private Path projectBasePath;
   private MuleArtifactJsonModel muleArtifactJsonModel;
   private List<Namespace> supportedNamespaces;
+  private Parent projectPomParent;
+
+
 
   protected ApplicationModel(Map<Path, Document> applicationDocuments) {
     this(applicationDocuments, emptyMap());
@@ -392,6 +396,26 @@ public class ApplicationModel {
   }
 
   /**
+   * Retrieves the Project Parent GAV (artifactId:groupId:version). It is optional since the pom is not mandatory in a Mule 3.x
+   * application
+   *
+   * @return tan optional {@link PomModel}
+   */
+
+  public Optional<Parent> getProjectPomParent() {
+    return Optional.ofNullable(projectPomParent);
+  }
+
+  /**
+   * Set the Project Parent GAV (artifactId:groupId:version)
+   * 
+   * @param projectParent as (artifactId:groupId:version) String
+   */
+  private void setProjectPomParent(Parent projectPomParent) {
+    this.projectPomParent = projectPomParent;
+  }
+
+  /**
    * Updates a reference on the application documents map
    *
    * @param fileName
@@ -427,6 +451,7 @@ public class ApplicationModel {
     private ProjectType projectType;
     private String muleVersion;
     private List<Namespace> supportedNamespaces;
+    private Parent projectPomParent;
 
     /**
      * Collection of paths to project configuration files
@@ -539,6 +564,17 @@ public class ApplicationModel {
     }
 
     /**
+     * Set projectPomParent for th
+     * 
+     * @param projectParentGAV
+     * @return the builder
+     */
+    public ApplicationModelBuilder withProjectPomParent(Parent projectPomParent) {
+      this.projectPomParent = projectPomParent;
+      return this;
+    }
+
+    /**
      * Build the {@link ApplicationModel}
      *
      * @return an {@link ApplicationModel} instance
@@ -619,6 +655,8 @@ public class ApplicationModel {
       applicationModel.setPomModel(pomModel);
       applicationModel.setSourceProjectBasePath(sourceProjectBasePath);
       applicationModel.setProjectBasePath(projectBasePath);
+      applicationModel.setProjectPomParent(projectPomParent);
+
       // Eliminate duplicates, makes for easier debugging inside
       applicationModel.setSupportedNamespaces(supportedNamespaces != null ? new ArrayList<>(new HashSet<>(supportedNamespaces))
           : emptyList());
