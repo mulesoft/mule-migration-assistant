@@ -25,7 +25,7 @@
         <mule.jms.connector.version>1.7.5</mule.jms.connector.version>
         <mule.vm.connector.version>2.0.0</mule.vm.connector.version>
         <mule.amqp.connector.version>1.7.2</mule.amqp.connector.version>
-        <mule.aggregators.module.version>1.0.4</mule.aggregators.module.version>
+        <mule.aggregators.module.version>1.0.5</mule.aggregators.module.version>
 
         <mule.validation.module.version>1.4.5</mule.validation.module.version>
         <mule.secureProps.module.version>1.2.3</mule.secureProps.module.version>
