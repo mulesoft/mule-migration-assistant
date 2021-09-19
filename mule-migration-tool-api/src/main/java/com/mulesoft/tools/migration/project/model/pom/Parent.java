@@ -25,7 +25,7 @@ public class Parent {
     private String artifactId;
     private String version;
 
-    ParentBuilder withGroupId(String groupId) {
+    public ParentBuilder withGroupId(String groupId) {
       this.groupId = groupId;
       return this;
     }

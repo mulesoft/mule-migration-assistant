@@ -159,16 +159,16 @@ public class PomModel {
   /**
    * Retrieves the parent declared in the pom.
    *
-   * @return a {@link String}
+   * @return a Optional<Parent>
    */
-  public Parent getParent() {
-    return new Parent(model.getParent());
+  public Optional<Parent> getParent() {
+    return Optional.ofNullable(model.getParent() != null ? new Parent(model.getParent()) : null);
   }
 
   /**
-   * Sets the artifact id in the pom.
+   * Sets the Parent id in the pom.
    *
-   * @param artifactId
+   * @param parent
    */
   public void setParent(Parent parent) {
     model.setParent(parent.getInnerModel());

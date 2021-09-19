@@ -120,28 +120,28 @@ public class PomModelTestCase {
 
     @Test
     public void getParentGroupId() {
-      assertThat("GroupId is not the expected", model.getParent().getGroupId(), equalTo("org.simple.pom.parent"));
+      assertThat("GroupId is not the expected", model.getParent().get().getGroupId(), equalTo("org.simple.pom.parent"));
     }
 
     @Test
     public void getParentArtifactId() {
-      assertThat("ArtifactId is not the expected", model.getParent().getArtifactId(), equalTo("parent-mule-api"));
+      assertThat("ArtifactId is not the expected", model.getParent().get().getArtifactId(), equalTo("parent-mule-api"));
     }
 
     @Test
     public void getParentVersion() {
-      assertThat("Version is not the expected", model.getParent().getVersion(), equalTo("1.0.0"));
+      assertThat("Version is not the expected", model.getParent().get().getVersion(), equalTo("1.0.0"));
     }
 
     @Test
     public void getParentRelativePath() {
-      assertThat("RelativePath is not the expected", model.getParent().getRelativePath(), equalTo("../pom.xml"));
+      assertThat("RelativePath is not the expected", model.getParent().get().getRelativePath(), equalTo("../pom.xml"));
     }
 
     @Test
     public void getParentInnerModel() {
 
-      assertThat("InnerModelId is not the expected", model.getParent().getInnerModel().getId(),
+      assertThat("InnerModelId is not the expected", model.getParent().get().getInnerModel().getId(),
                  equalTo("org.simple.pom.parent:parent-mule-api:pom:1.0.0"));
     }
 
@@ -269,26 +269,26 @@ public class PomModelTestCase {
 
     @Test
     public void setParentGroupId() {
-      model.getParent().setGroupId("new-group-id");
-      assertThat("GroupId is not the expected", model.getParent().getGroupId(), equalTo("new-group-id"));
+      model.getParent().get().setGroupId("new-group-id");
+      assertThat("GroupId is not the expected", model.getParent().get().getGroupId(), equalTo("new-group-id"));
     }
 
     @Test
     public void setParentArtifactId() {
-      model.getParent().setArtifactId("new-artifact-id");
-      assertThat("GroupId is not the expected", model.getParent().getArtifactId(), equalTo("new-artifact-id"));
+      model.getParent().get().setArtifactId("new-artifact-id");
+      assertThat("GroupId is not the expected", model.getParent().get().getArtifactId(), equalTo("new-artifact-id"));
     }
 
     @Test
     public void setParentVersion() {
-      model.getParent().setVersion("2.0.0");
-      assertThat("GroupId is not the expected", model.getParent().getVersion(), equalTo("2.0.0"));
+      model.getParent().get().setVersion("2.0.0");
+      assertThat("GroupId is not the expected", model.getParent().get().getVersion(), equalTo("2.0.0"));
     }
 
     @Test
     public void setParentRelativePath() {
-      model.getParent().setRelativePath("new-path");
-      assertThat("RelativePath is not the expected", model.getParent().getRelativePath(), equalTo("new-path"));
+      model.getParent().get().setRelativePath("new-path");
+      assertThat("RelativePath is not the expected", model.getParent().get().getRelativePath(), equalTo("new-path"));
     }
 
     @Test
@@ -299,7 +299,7 @@ public class PomModelTestCase {
       assertNotNull(model.getParent());
       model.setParent(parent);
       assertNotNull(model.getParent());
-      assertThat("Parent is not the expected", parent.getInnerModel(), equalTo(model.getParent().getInnerModel()));
+      assertThat("Parent is not the expected", parent.getInnerModel(), equalTo(model.getParent().get().getInnerModel()));
     }
   }
 }
