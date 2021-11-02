@@ -724,6 +724,11 @@ untilSuccessful:
     message: Threading Profile is no longer needed in Mule 4.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.3/intro-engine
+  secondsBetweenRetries:
+    type: WARN
+    message: "Update the property '{prop}' to specify the period between retries in milliseconds."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-core-until-successful
 
 json:
   mapper:
