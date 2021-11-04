@@ -49,7 +49,9 @@ public class UntilSuccessfulTest {
         "until-successful-04",
         //      TODO MMT-258
         //      "until-successful-05",
-        "until-successful-06"
+        "until-successful-06",
+        "until-successful-07",
+        "until-successful-08"
     };
   }
 

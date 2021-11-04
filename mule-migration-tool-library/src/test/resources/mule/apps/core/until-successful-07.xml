@@ -7,6 +7,5 @@
         <until-successful millisBetweenRetries="10000">
             <logger message="#[1]"/>
         </until-successful>
-        <set-payload value="#['test']"/>
     </flow>
 </mule>

@@ -20,6 +20,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptionHandlingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.removeAttribute;
+import static java.lang.Integer.parseInt;
 
 /**
  * Migrate Until Successful
@@ -80,8 +81,14 @@ public class UntilSuccessful extends AbstractApplicationModelMigrationStep
     }
 
     if (element.getAttribute("secondsBetweenRetries") != null) {
-      Integer retries = Integer.valueOf(element.getAttributeValue("secondsBetweenRetries")) * 1000;
-      element.setAttribute("millisBetweenRetries", retries.toString());
+      String retries = element.getAttributeValue("secondsBetweenRetries");
+      try {
+        retries = String.valueOf(parseInt(retries) * 1000);
+      } catch (NumberFormatException nfe) {
+        String propertyName = retries.startsWith("${") ? retries.substring(2, retries.length() - 1) : retries;
+        report.report("untilSuccessful.secondsBetweenRetries", element, element, propertyName);
+      }
+      element.setAttribute("millisBetweenRetries", retries);
       removeAttribute(element, "secondsBetweenRetries");
     }
 

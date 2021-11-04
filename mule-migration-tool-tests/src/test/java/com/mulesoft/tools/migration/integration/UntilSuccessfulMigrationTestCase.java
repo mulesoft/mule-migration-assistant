@@ -34,6 +34,6 @@ public class UntilSuccessfulMigrationTestCase extends EndToEndTestCase {
 
   @Test
   public void test() throws Exception {
-    simpleCase(appToMigrate, "-M-DhttpPort=" + httpPort.getValue());
+    simpleCase(appToMigrate, "-M-DhttpPort=" + httpPort.getValue(), "-M-Dsecs=30");
   }
 }
