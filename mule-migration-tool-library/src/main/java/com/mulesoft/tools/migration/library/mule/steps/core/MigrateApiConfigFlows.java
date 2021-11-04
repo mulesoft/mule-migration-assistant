@@ -49,7 +49,7 @@ public class MigrateApiConfigFlows extends AbstractApikitMigrationStep {
   }
 
   public MigrateApiConfigFlows() {
-    this.setAppliedTo(XPATH_SELECTOR);
+    this.setAppliedTo(XPATH_SELECTOR_ROUTER);
   }
 
   @Override
