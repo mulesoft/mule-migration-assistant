@@ -58,7 +58,7 @@ public class MigrateApiConfigFlows extends AbstractApikitMigrationStep {
     // resolve config-ref
     String apiConfig = null;
 
-    final Element node = getApplicationModel().getNode(XPATH_SELECTOR_ROUTER);
+    final Element node = getApplicationModel().getNodes(XPATH_SELECTOR);
     if (node != null && node.getAttribute("config-ref") != null) {
       apiConfig = node.getAttribute("config-ref").getValue();
 
