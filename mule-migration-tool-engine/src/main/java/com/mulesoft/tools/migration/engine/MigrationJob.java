@@ -62,9 +62,10 @@ public class MigrationJob implements Executable {
   private final boolean cancelOnError;
   private String runnerVersion;
   private final Parent projectParentGAV;
+  private final String projectGAV;
 
   private MigrationJob(Path project, Path parentDomainProject, Path outputProject, List<AbstractMigrationTask> migrationTasks,
-                       String muleVersion, boolean cancelOnError, Parent projectParentGAV) {
+                       String muleVersion, boolean cancelOnError, Parent projectParentGAV, String projectGAV) {
     this.migrationTasks = migrationTasks;
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
@@ -73,6 +74,7 @@ public class MigrationJob implements Executable {
     this.reportPath = outputProject.resolve(HTML_REPORT_FOLDER);
     this.cancelOnError = cancelOnError;
     this.projectParentGAV = projectParentGAV;
+    this.projectGAV = projectGAV;
     this.runnerVersion = this.getClass().getPackage().getImplementationVersion();
     if (this.runnerVersion == null) {
       this.runnerVersion = "n/a";
@@ -88,7 +90,8 @@ public class MigrationJob implements Executable {
     Path sourceProjectBasePath = applicationModel.getProjectBasePath();
     persistApplicationModel(applicationModel);
     ProjectType targetProjectType = applicationModel.getProjectType().getTargetType();
-    applicationModel = generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV);
+    applicationModel =
+        generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV, projectGAV);
     try {
       for (AbstractMigrationTask task : migrationTasks) {
         if (task.getApplicableProjectTypes().contains(targetProjectType)) {
@@ -98,7 +101,8 @@ public class MigrationJob implements Executable {
             task.execute(report);
             persistApplicationModel(applicationModel);
             applicationModel =
-                generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV);
+                generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV,
+                                               projectGAV);
           } catch (MigrationTaskException ex) {
             if (cancelOnError) {
               throw ex;
@@ -131,6 +135,7 @@ public class MigrationJob implements Executable {
         .withProjectType(type)
         .withMuleVersion(muleVersion)
         .withPom(muleProject.pom())
+        .withProjectPomGAV(projectGAV)
         .withProjectBasePath(muleProject.getBaseFolder())
         .withSupportedNamespaces(getTasksDeclaredNamespaces(migrationTasks));
     if (muleProject.srcTestConfiguration().toFile().exists()) {
@@ -140,13 +145,14 @@ public class MigrationJob implements Executable {
   }
 
   private ApplicationModel generateTargetApplicationModel(Path project, ProjectType type, Path sourceProjectBasePath,
-                                                          Parent projectParentGAV)
+                                                          Parent projectParentGAV, String projectGAV)
       throws Exception {
     ApplicationModelBuilder appModelBuilder = new ApplicationModelBuilder()
         .withMuleVersion(muleVersion)
         .withSupportedNamespaces(getTasksDeclaredNamespaces(migrationTasks))
         .withSourceProjectBasePath(sourceProjectBasePath)
-        .withProjectPomParent(projectParentGAV);
+        .withProjectPomParent(projectParentGAV)
+        .withProjectPomGAV(projectGAV);
 
     if (type.equals(MULE_FOUR_APPLICATION)) {
       MuleFourApplication application = new MuleFourApplication(project);
@@ -213,6 +219,7 @@ public class MigrationJob implements Executable {
     private boolean cancelOnError = false;
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
     private Parent projectParentGAV = null;
+    private String projectGAV;
 
     public MigrationJobBuilder withProject(Path project) {
       this.project = project;
@@ -246,6 +253,11 @@ public class MigrationJob implements Executable {
 
     public MigrationJobBuilder withProjectParentGAV(Parent projectParentGAV) {
       this.projectParentGAV = projectParentGAV;
+      return this;
+    }
+
+    public MigrationJobBuilder withProjectGAV(String projectGAV) {
+      this.projectGAV = projectGAV;
       return this;
     }
 
@@ -284,7 +296,7 @@ public class MigrationJob implements Executable {
       migrationTasks = migrationTaskLocator.locate();
 
       return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion.toString(),
-                              this.cancelOnError, this.projectParentGAV);
+                              this.cancelOnError, this.projectParentGAV, this.projectGAV);
     }
   }
 

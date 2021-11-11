@@ -5,6 +5,10 @@
  */
 package com.mulesoft.tools.migration.project.model.pom;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
+import java.util.Optional;
+
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
@@ -112,5 +116,29 @@ public class PomModelUtils {
             sharedLibraries.addChild(sharedLib);
           }
         });
+  }
+
+  public static Optional<String> getGroupId(String gav) {
+    return getCoordinate(gav, 0);
+  }
+
+  public static Optional<String> getArtifactId(String gav) {
+    return getCoordinate(gav, 1);
+  }
+
+  public static Optional<String> getVersion(String gav) {
+    return getCoordinate(gav, 2);
+  }
+
+  private static Optional<String> getCoordinate(String gav, int index) {
+    if (gav == null || !gav.matches(".*:.*:.*")) {
+      return Optional.empty();
+    }
+    String[] coordinates = gav.split(":");
+    if (index >= coordinates.length) {
+      return Optional.empty();
+    }
+    String coordinate = coordinates[index];
+    return Optional.ofNullable(isEmpty(coordinate) ? null : coordinate);
   }
 }
