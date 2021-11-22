@@ -99,7 +99,7 @@ public class MigrateApiConfigFlows extends AbstractApikitMigrationStep {
     List<String> uriParams = null;
     File ramlFile = null;
     if (builder == null) {
-      // should use raml attirbute if exists
+      // should use raml attirbute if exists see comment from @afelisatti
       final String ramlLocation = getApplicationModel().getPomModel().get().getArtifactId() + ".raml";
       ramlFile =
           getApplicationModel().getProjectBasePath().resolve(MULE_4_API_FOLDER + File.separator + ramlLocation).toFile();
