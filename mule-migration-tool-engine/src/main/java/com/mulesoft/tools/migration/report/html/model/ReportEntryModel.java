@@ -94,32 +94,34 @@ public class ReportEntryModel {
   private void setElementLocation(Document document) {
     String xpathExpression = "";
     Element currentElement = element;
+    try {
+      // element may be null of a report entry is not generated for an XML element (such as a DW script in its own DWL file, the
+      // pom, etc.).
+      if (element == null || element.getDocument() == null) {
+        // This shouldn't happen, but we still have to validate in unit tests that the steps don't cause this.
+        this.lineNumber = -1;
+        this.columnNumber = -1;
+        return;
+      }
 
-    // element may be null of a report entry is not generated for an XML element (such as a DW script in its own DWL file, the
-    // pom, etc.).
-    if (element == null || element.getDocument() == null) {
-      // This shouldn't happen, but we still have to validate in unit tests that the steps don't cause this.
-      this.lineNumber = -1;
-      this.columnNumber = -1;
-      return;
-    }
+      while (currentElement != element.getDocument().getRootElement()) {
+        xpathExpression =
+            "/*[" + (1 + currentElement.getParentElement().getChildren().indexOf(currentElement)) + "]" + xpathExpression;
+        currentElement = currentElement.getParentElement();
+      }
 
-    while (currentElement != element.getDocument().getRootElement()) {
-      xpathExpression =
-          "/*[" + (1 + currentElement.getParentElement().getChildren().indexOf(currentElement)) + "]" + xpathExpression;
-      currentElement = currentElement.getParentElement();
-    }
+      xpathExpression = "/*" + xpathExpression;
 
-    xpathExpression = "/*" + xpathExpression;
-
-    List<Element> elements =
-        XPathFactory.instance()
-            .compile(xpathExpression, Filters.element(), null,
-                     document.getRootElement().getAdditionalNamespaces())
-            .evaluate(document);
-    if (elements.size() > 0) {
-      this.lineNumber = ((LocatedElement) elements.get(0)).getLine();
-      this.columnNumber = ((LocatedElement) elements.get(0)).getColumn();
+      List<Element> elements =
+          XPathFactory.instance()
+              .compile(xpathExpression, Filters.element()).evaluate(document);
+      if (elements.size() > 0) {
+        this.lineNumber = ((LocatedElement) elements.get(0)).getLine();
+        this.columnNumber = ((LocatedElement) elements.get(0)).getColumn();
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Report Generation Error - Fail to set element location. Element name: " + element.getName()
+          + ", xpath expression:" + xpathExpression, e);
     }
   }
 
