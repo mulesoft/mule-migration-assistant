@@ -15,6 +15,7 @@ import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Comment;
 import org.jdom2.Element;
 import org.jdom2.output.XMLOutputter;
@@ -38,6 +39,12 @@ import java.util.Set;
  * @since 1.0.0
  */
 public class DefaultMigrationReport implements MigrationReport {
+
+  private static final String PROPERTY_PLACEHOLDER_REGEX_PATTERN = "\\$\\{.*?\\}";
+  private static final String PROPERTY_PLACEHOLDER_START_DELIM = "${";
+  private static final String PROPERTY_PLACEHOLDER_ESCAPED_START_DELIM = "\\$\\{";
+  private static final String PROPERTY_PLACEHOLDER_END_DELIM = "}";
+  private static final CharSequence PROPERTY_PLACEHOLDER_ESCAPED_END_DELIM = "\\}";
 
   private transient Map<String, Map<String, Map<String, Object>>> possibleEntries;
 
@@ -80,11 +87,27 @@ public class DefaultMigrationReport implements MigrationReport {
     final Level level = Level.valueOf((String) entryData.get("type"));
     String message = (String) entryData.get("message");
     for (String messageParam : messageParams) {
-      message = message.replaceFirst("\\{\\w*\\}", messageParam);
+      try {
+        message = message.replaceFirst("\\{\\w*\\}", escapePropertyPlaceholderDelimiters(messageParam));
+      } catch (Exception e) {
+        throw new RuntimeException("Could not generate report: error while replacing message placeholder with '" + messageParam
+            + "' in message '" + message + "'", e);
+      }
     }
 
     final List<String> docLinks = entryData.get("docLinks") != null ? (List<String>) entryData.get("docLinks") : emptyList();
     report(level, element, elementToComment, message, docLinks.toArray(new String[docLinks.size()]));
+  }
+
+  private String escapePropertyPlaceholderDelimiters(String value) {
+    String result = value;
+
+    if (!StringUtils.isBlank(result) && result.matches(PROPERTY_PLACEHOLDER_REGEX_PATTERN)) {
+      result = result
+          .replace(PROPERTY_PLACEHOLDER_START_DELIM, PROPERTY_PLACEHOLDER_ESCAPED_START_DELIM)
+          .replace(PROPERTY_PLACEHOLDER_END_DELIM, PROPERTY_PLACEHOLDER_ESCAPED_END_DELIM);
+    }
+    return result;
   }
 
   @Override
