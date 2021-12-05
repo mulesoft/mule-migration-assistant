@@ -50,7 +50,7 @@ public class ApikitMigrationTest {
   public static Object[] params() throws Exception {
     final URI resource = ApikitMigrationTest.class.getClassLoader().getResource(BASE_PATH.toString()).toURI();
     return Files.walk(Paths.get(new File(resource).getAbsolutePath()))
-        .filter(s -> s.toString().endsWith("-original.xml"))
+        .filter(s -> s.toString().endsWith("-original.xml") && !s.toString().contains("/steps/"))
         .map(p -> new File(p.toUri()).getName().replaceAll("-original.xml", ""))
         .sorted()
         .collect(toList())
