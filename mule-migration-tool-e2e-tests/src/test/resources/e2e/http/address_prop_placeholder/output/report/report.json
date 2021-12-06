@@ -1,0 +1,50 @@
+[
+  {
+    "level": "ERROR",
+    "lineNumber": 9,
+    "columnNumber": 66,
+    "message": "Unable to parse endpoint address '${http.address}'.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 10,
+    "columnNumber": 113,
+    "message": "Avoid using an outbound property to determine the status code.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 19,
+    "columnNumber": 141,
+    "message": "Avoid using an outbound property to determine the status code.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 27,
+    "columnNumber": 17,
+    "message": "This replicates logic from the HTTP transport. Remove it if it is not needed.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 34,
+    "columnNumber": 57,
+    "message": "Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 43,
+    "columnNumber": 51,
+    "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  }
+]

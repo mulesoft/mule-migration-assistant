@@ -5,33 +5,9 @@
  */
 package com.mulesoft.tools.migration.e2e;
 
-import static java.io.File.separator;
-import static java.lang.System.getProperty;
-import static org.apache.commons.io.FileUtils.copyDirectory;
-import static org.apache.commons.io.FileUtils.copyInputStreamToFile;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.mulesoft.tools.migration.MigrationRunner;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -44,6 +20,26 @@ import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static java.lang.System.getProperty;
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.io.FileUtils.copyDirectory;
+import static org.junit.Assert.*;
+
 /**
  * Tests the whole migration process, starting with a Mule 3 source config, migrating it to Mule 4, and comparing the expected output files.
  */
@@ -51,41 +47,16 @@ public abstract class AbstractEndToEndTestCase {
 
   protected static final String ONLY_MIGRATE = getProperty("mule.test.migratorOnly");
 
-  private static final String RUNTIME_VERSION = getProperty("mule.version");
-
-  private static final String DEBUG_RUNNER = getProperty("mule.test.debugRunner");
+  private static final String RUNTIME_VERSION = ofNullable(getProperty("mule.version")).orElse("4.3.0");
 
   @ClassRule
   public static TemporaryFolder mmaBinary = new TemporaryFolder();
-
-  private static File mmaBinaryFolder;
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractEndToEndTestCase.class);
 
   @Rule
   public TemporaryFolder migrationResult = new TemporaryFolder();
 
-  @BeforeClass
-  public static void prepareMma() throws IOException {
-    mmaBinaryFolder = mmaBinary.newFolder();
-
-    try (ZipFile zip = new ZipFile(new File(getProperty("migrator.runner")))) {
-      Enumeration<? extends ZipEntry> zipFileEntries = zip.entries();
-      ZipEntry root = zipFileEntries.nextElement();
-      File mmaRootFile = new File(mmaBinaryFolder, root.getName());
-      mmaRootFile.mkdirs();
-      while (zipFileEntries.hasMoreElements()) {
-        ZipEntry entry = zipFileEntries.nextElement();
-        File destFile = new File(mmaBinaryFolder, entry.getName());
-        if (entry.isDirectory()) {
-          destFile.mkdir();
-        } else {
-          copyInputStreamToFile(zip.getInputStream(entry), destFile);
-        }
-      }
-    }
-
-  }
 
   public void simpleCase(String appName, String... additionalParams) throws Exception {
     String outputPath = migrate(appName, additionalParams);
@@ -104,44 +75,20 @@ public abstract class AbstractEndToEndTestCase {
    * @return the path where the migrated project is located.
    */
   protected String migrate(String projectName, String... additionalParams) throws Exception {
-    String projectBasePath = new File(getResourceUri("e2e/" + projectName + "/input")).getAbsolutePath();
+    final String projectBasePath = new File(getResourceUri("e2e/" + projectName + "/input")).getAbsolutePath();
 
-    String outPutPath = migrationResult.getRoot().toPath().resolve(projectName).toAbsolutePath().toString();
-
+    final String outPutPath = migrationResult.getRoot().toPath().resolve(projectName).toAbsolutePath().toString();
+    System.setProperty(MigrationRunner.JSON_REPORT_PROP_NAME, "true");
     // Run migration tool
-    final List<String> command = buildRunnerCommand(projectBasePath, outPutPath, projectName);
+    final List<String> command = buildMigratorArgs(projectBasePath, outPutPath, projectName);
     Collections.addAll(command, additionalParams);
-    ProcessBuilder pb = new ProcessBuilder(command);
-
-    pb.redirectErrorStream(true);
-    Process p = pb.start();
-
-    Runtime.getRuntime().addShutdownHook(new Thread(p::destroy));
-
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        System.out.println("Migrator: " + line);
-      }
-    }
-
-    if (p.waitFor() != 0) {
-      fail("Migration failed");
-    }
+    int run = MigrationRunner.run(command.toArray(new String[0]));
+    assertEquals("Migration Failed", 0, run);
     return outPutPath;
   }
 
-  private List<String> buildRunnerCommand(String projectBasePath, String outPutPath, String projectName) {
+  private List<String> buildMigratorArgs(String projectBasePath, String outPutPath, String projectName) {
     final List<String> command = new ArrayList<>();
-    command.add("java");
-
-    if (DEBUG_RUNNER != null) {
-      command.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000");
-    }
-
-    command.add("-jar");
-    command.add(mmaBinaryFolder.getAbsolutePath() + separator
-        + "mule-migration-assistant-runner-" + getProperty("mma.version") + ".jar");
     command.add("-projectBasePath");
     command.add(projectBasePath);
     command.add("-destinationProjectBasePath");
@@ -165,6 +112,8 @@ public abstract class AbstractEndToEndTestCase {
           logger.info("Checking migrated file: {}", expectedOutputBasePath.getParent().relativize(expectedPath));
           if (migratedPath.toFile().getName().endsWith(".xml")) {
             compareXml(expectedPath, migratedPath);
+          } else if (migratedPath.toFile().getName().endsWith(".json")) {
+            compareJson(expectedPath, migratedPath);
           } else {
             compareChars(expectedPath, migratedPath);
           }
@@ -173,6 +122,16 @@ public abstract class AbstractEndToEndTestCase {
         }
       }
     });
+  }
+
+  private void compareJson(Path expected, Path migratedPath) {
+    try {
+      JsonElement expectedJson = JsonParser.parseString(IOUtils.toString(expected.toUri(), StandardCharsets.UTF_8));
+      JsonElement actualJson = JsonParser.parseString(IOUtils.toString(migratedPath.toUri(), StandardCharsets.UTF_8));
+      assertEquals(expectedJson, actualJson);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   protected URI getResourceUri(String path) throws URISyntaxException {
