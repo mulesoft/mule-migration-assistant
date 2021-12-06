@@ -6,16 +6,6 @@
 package com.mulesoft.tools.migration.engine;
 
 
-import static com.google.common.base.Preconditions.checkState;
-import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
-import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_DOMAIN;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_POLICY;
-import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
-import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionValid;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTasksDeclaredNamespaces;
-
 import com.mulesoft.tools.migration.Executable;
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.project.ProjectTypeFactory;
@@ -32,15 +22,23 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationMo
 import com.mulesoft.tools.migration.project.model.pom.Parent;
 import com.mulesoft.tools.migration.report.html.HTMLReport;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
+import com.mulesoft.tools.migration.report.json.JSONReport;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.google.common.base.Preconditions.checkState;
+import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
+import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
+import static com.mulesoft.tools.migration.project.ProjectType.*;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionValid;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTasksDeclaredNamespaces;
 
 /**
  * It represent a migration job which is composed by one or more {@link AbstractMigrationTask}
@@ -51,6 +49,7 @@ import org.slf4j.LoggerFactory;
 public class MigrationJob implements Executable {
 
   private static final String HTML_REPORT_FOLDER = "report";
+  private final boolean jsonReportEnabled;
   private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private final Path project;
@@ -65,7 +64,8 @@ public class MigrationJob implements Executable {
   private final String projectGAV;
 
   private MigrationJob(Path project, Path parentDomainProject, Path outputProject, List<AbstractMigrationTask> migrationTasks,
-                       String muleVersion, boolean cancelOnError, Parent projectParentGAV, String projectGAV) {
+                       String muleVersion, boolean cancelOnError, Parent projectParentGAV, String projectGAV,
+                       boolean jsonReportEnabled) {
     this.migrationTasks = migrationTasks;
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
@@ -75,6 +75,7 @@ public class MigrationJob implements Executable {
     this.cancelOnError = cancelOnError;
     this.projectParentGAV = projectParentGAV;
     this.projectGAV = projectGAV;
+    this.jsonReportEnabled = jsonReportEnabled;
     this.runnerVersion = this.getClass().getPackage().getImplementationVersion();
     if (this.runnerVersion == null) {
       this.runnerVersion = "n/a";
@@ -182,7 +183,7 @@ public class MigrationJob implements Executable {
     }
   }
 
-  private void generateReport(MigrationReport report) throws Exception {
+  private void generateReport(MigrationReport<ReportEntryModel> report) throws Exception {
     List<ReportEntryModel> reportEntries = report.getReportEntries();
     for (ReportEntryModel entry : reportEntries) {
       try {
@@ -193,6 +194,10 @@ public class MigrationJob implements Executable {
     }
     HTMLReport htmlReport = new HTMLReport(report.getReportEntries(), reportPath.toFile(), this.getRunnerVersion());
     htmlReport.printReport();
+    if (jsonReportEnabled) {
+      JSONReport jsonReport = new JSONReport(report.getReportEntries(), reportPath.toFile(), outputProject);
+      jsonReport.printReport();
+    }
   }
 
   public Path getReportPath() {
@@ -217,6 +222,7 @@ public class MigrationJob implements Executable {
     private String inputVersion;
     private String outputVersion;
     private boolean cancelOnError = false;
+    private boolean jsonReportEnabled = false;
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
     private Parent projectParentGAV = null;
     private String projectGAV;
@@ -261,6 +267,11 @@ public class MigrationJob implements Executable {
       return this;
     }
 
+    public MigrationJobBuilder withJsonReport(Boolean jsonReportEnabled) {
+      this.jsonReportEnabled = jsonReportEnabled;
+      return this;
+    }
+
     public MigrationJob build() throws Exception {
       checkState(project != null, "The project must not be null");
       if (!project.toFile().exists()) {
@@ -296,7 +307,7 @@ public class MigrationJob implements Executable {
       migrationTasks = migrationTaskLocator.locate();
 
       return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion.toString(),
-                              this.cancelOnError, this.projectParentGAV, this.projectGAV);
+                              this.cancelOnError, this.projectParentGAV, this.projectGAV, this.jsonReportEnabled);
     }
   }
 

@@ -58,9 +58,7 @@
                     <workingDirectory>${project.build.directory}</workingDirectory>
                     <systemPropertyVariables>
                         <mule.test.timeoutSecs>600</mule.test.timeoutSecs>
-                        <migrator.runner>${com.mulesoft.tools:mule-migration-assistant-runner:zip}</migrator.runner>
                         <mule.version>${mule.runtime.version}</mule.version>
-                        <mma.version>${project.version}</mma.version>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -95,7 +93,6 @@
             <groupId>com.mulesoft.tools</groupId>
             <artifactId>mule-migration-assistant-runner</artifactId>
             <version>${project.version}</version>
-            <type>zip</type>
         </dependency>
 
         <!-- Test Dependencies -->
