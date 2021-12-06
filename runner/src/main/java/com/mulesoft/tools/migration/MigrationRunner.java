@@ -50,6 +50,7 @@ public class MigrationRunner {
   public static final String MULE_3_VERSION = "3.*.*";
   private final static String CANCEL_ON_ERROR = "cancelOnError";
   private final static String PROJECT_PARENT_GAV = "projectParentGAV";
+  private final static String PROJECT_GAV = "projectGAV";
 
   private String projectBasePath;
   private String parentDomainProjectBasePath;
@@ -57,6 +58,7 @@ public class MigrationRunner {
   private String muleVersion;
   private boolean cancelOnError = false;
   private Parent projectParentGAV;
+  private String projectGAV;
 
 
   private String userId;
@@ -103,6 +105,7 @@ public class MigrationRunner {
         .withOuputVersion(muleVersion)
         .withCancelOnError(cancelOnError)
         .withProjectParentGAV(projectParentGAV)
+        .withProjectGAV(projectGAV)
         .build();
   }
 
@@ -122,6 +125,7 @@ public class MigrationRunner {
     options.addOption(MULE_VERSION, true, "Mule version where to migrate project");
     options.addOption(CANCEL_ON_ERROR, true, "Use cancelOnError to stop the migration. Default is false");
     options.addOption(PROJECT_PARENT_GAV, true, "Use projectParentGAV to migration parent in your pom.xml");
+    options.addOption(PROJECT_GAV, true, "Use projectGAV to override default GAV coordinates when a pom.xml is not provided");
 
     options.addOption("userId", true, "The userId to send for the usage statistics");
     options.addOption("sessionId", true, "The sessionId to send for the usage statistics");
@@ -177,6 +181,15 @@ public class MigrationRunner {
               .build();
         } else {
           throw new ConsoleOptionsException("You must specify the GAV (groupId, artifactId and version) for the 'projectParentGAV' option");
+        }
+      }
+
+      if (line.hasOption(PROJECT_GAV)) {
+        final String value = line.getOptionValue(PROJECT_GAV);
+        if (StringUtils.isNotEmpty(value) && value.matches(".*:.*:.*")) {
+          this.projectGAV = value;
+        } else {
+          throw new ConsoleOptionsException("You must specify the GAV (groupId:artifactId:version) for the 'projectGAV' option");
         }
       }
 

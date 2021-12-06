@@ -26,3 +26,4 @@ target/
 testout.xml
 logs/
 servers/
+tmp/

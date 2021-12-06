@@ -6,6 +6,11 @@
 package com.mulesoft.tools.migration.project.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.mulesoft.tools.migration.project.model.pom.PomModel.DEFAULT_GROUP_ID;
+import static com.mulesoft.tools.migration.project.model.pom.PomModel.DEFAULT_VERSION;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.getArtifactId;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.getGroupId;
+import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.getVersion;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.generateDocument;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getDocumentNamespaces;
 import static java.io.File.separator;
@@ -409,7 +414,7 @@ public class ApplicationModel {
   /**
    * Set the Project Parent GAV (artifactId:groupId:version)
    * 
-   * @param projectParent as (artifactId:groupId:version) String
+   * @param projectPomParent as (artifactId:groupId:version) String
    */
   private void setProjectPomParent(Parent projectPomParent) {
     this.projectPomParent = projectPomParent;
@@ -452,6 +457,7 @@ public class ApplicationModel {
     private String muleVersion;
     private List<Namespace> supportedNamespaces;
     private Parent projectPomParent;
+    private String projectGAV;
 
     /**
      * Collection of paths to project configuration files
@@ -564,13 +570,24 @@ public class ApplicationModel {
     }
 
     /**
-     * Set projectPomParent for th
+     * The project parent POM
      * 
-     * @param projectParentGAV
+     * @param projectPomParent the parent POM
      * @return the builder
      */
     public ApplicationModelBuilder withProjectPomParent(Parent projectPomParent) {
       this.projectPomParent = projectPomParent;
+      return this;
+    }
+
+    /**
+     * POM GAV coordinates used to override auto-generated POM values
+     *
+     * @param projectGAV GAV coordinates
+     * @return the builder
+     */
+    public ApplicationModelBuilder withProjectPomGAV(String projectGAV) {
+      this.projectGAV = projectGAV;
       return this;
     }
 
@@ -646,7 +663,9 @@ public class ApplicationModel {
             .build();
       } else {
         pomModel = new PomModel.PomModelBuilder()
-            .withArtifactId(projectBasePath.getFileName().toString())
+            .withGroupId(getGroupId(projectGAV).orElse(DEFAULT_GROUP_ID))
+            .withArtifactId(getArtifactId(projectGAV).orElse(projectBasePath.getFileName().toString()))
+            .withVersion(getVersion(projectGAV).orElse(DEFAULT_VERSION))
             .withPackaging(projectType.getPackaging())
             .build();
       }

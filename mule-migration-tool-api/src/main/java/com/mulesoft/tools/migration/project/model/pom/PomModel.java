@@ -33,6 +33,9 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 public class PomModel {
 
+  public static final String DEFAULT_GROUP_ID = "org.mule.migrated";
+  public static final String DEFAULT_ARTIFACT_ID = "migrated-project";
+  public static final String DEFAULT_VERSION = "1.0.0-SNAPSHOT";
   private final Model model;
 
   private PomModel(Model model) {
@@ -421,7 +424,9 @@ public class PomModel {
 
     private final MavenXpp3Reader mavenReader = new MavenXpp3Reader();
     private Path pomPath;
-    private String artifactId = "migrated-project";
+    private String groupId = DEFAULT_GROUP_ID;
+    private String artifactId = DEFAULT_ARTIFACT_ID;
+    private String version = DEFAULT_VERSION;
     private String packaging = "mule-application";
 
     public PomModelBuilder withPom(Path pomPath) {
@@ -429,8 +434,18 @@ public class PomModel {
       return this;
     }
 
+    public PomModelBuilder withGroupId(String groupId) {
+      this.groupId = groupId;
+      return this;
+    }
+
     public PomModelBuilder withArtifactId(String artifactId) {
       this.artifactId = artifactId;
+      return this;
+    }
+
+    public PomModelBuilder withVersion(String version) {
+      this.version = version;
       return this;
     }
 
@@ -448,8 +463,7 @@ public class PomModel {
      */
     public PomModel build() throws IOException, XmlPullParserException {
       if (pomPath == null || !pomPath.toFile().exists()) {
-        // TODO: NEED TO DEFINE HOW TO COME UP WITH THE POM GAV COORDINATES
-        return buildMinimalMule4ApplicationPom("org.mule.migrated", artifactId, "1.0.0-SNAPSHOT", packaging);
+        return buildMinimalMule4ApplicationPom(groupId, artifactId, version, packaging);
       }
       Model model = getModel(pomPath);
       return new PomModel(model);
