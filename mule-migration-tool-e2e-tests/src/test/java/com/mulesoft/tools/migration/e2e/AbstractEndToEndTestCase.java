@@ -5,24 +5,25 @@
  */
 package com.mulesoft.tools.migration.e2e;
 
+import static java.lang.System.getProperty;
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.io.FileUtils.copyDirectory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import com.mulesoft.tools.migration.MigrationRunner;
+import com.mulesoft.tools.migration.engine.project.structure.ApplicationPersister;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
+import com.mulesoft.tools.migration.project.model.pom.PomModel.PomModelBuilder;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.mulesoft.tools.migration.MigrationRunner;
-import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xmlunit.builder.DiffBuilder;
-import org.xmlunit.builder.Input;
-import org.xmlunit.diff.Diff;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -33,12 +34,20 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import static java.lang.System.getProperty;
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.io.FileUtils.copyDirectory;
-import static org.junit.Assert.*;
+import junitx.framework.FileAssert;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.junit.After;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.builder.Input;
+import org.xmlunit.diff.Diff;
 
 /**
  * Tests the whole migration process, starting with a Mule 3 source config, migrating it to Mule 4, and comparing the expected output files.
@@ -79,6 +88,7 @@ public abstract class AbstractEndToEndTestCase {
 
     final String outPutPath = migrationResult.getRoot().toPath().resolve(projectName).toAbsolutePath().toString();
     System.setProperty(MigrationRunner.JSON_REPORT_PROP_NAME, "true");
+
     // Run migration tool
     final List<String> command = buildMigratorArgs(projectBasePath, outPutPath, projectName);
     Collections.addAll(command, additionalParams);
@@ -110,7 +120,9 @@ public abstract class AbstractEndToEndTestCase {
         Path migratedPath = outputBasePath.resolve(expectedOutputBasePath.relativize(expectedPath));
         if (Files.exists(migratedPath)) {
           logger.info("Checking migrated file: {}", expectedOutputBasePath.getParent().relativize(expectedPath));
-          if (migratedPath.toFile().getName().endsWith(".xml")) {
+          if (migratedPath.toFile().getName().endsWith("pom.xml")) {
+            comparePom(expectedPath, migratedPath);
+          } else if (migratedPath.toFile().getName().endsWith(".xml")) {
             compareXml(expectedPath, migratedPath);
           } else if (migratedPath.toFile().getName().endsWith(".json")) {
             compareJson(expectedPath, migratedPath);
@@ -122,6 +134,22 @@ public abstract class AbstractEndToEndTestCase {
         }
       }
     });
+  }
+
+  private void comparePom(Path expectedPath, Path migratedPath) {
+    try {
+      MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
+      StringWriter expectedOutput = new StringWriter();
+      StringWriter migratedOutput = new StringWriter();
+      mavenWriter.write(expectedOutput, new PomModelBuilder().withPom(expectedPath).build().getMavenModelCopy());
+      mavenWriter.write(migratedOutput, new PomModelBuilder().withPom(migratedPath).build().getMavenModelCopy());
+      Diff d = DiffBuilder.compare(Input.fromString(expectedOutput.toString()))
+          .withTest(Input.fromString(migratedOutput.toString()))
+          .build();
+      assertFalse(d.toString(), d.hasDifferences());
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void compareJson(Path expected, Path migratedPath) {
@@ -152,7 +180,10 @@ public abstract class AbstractEndToEndTestCase {
 
   private void compareChars(Path output, Path expected) {
     try {
-      assertTrue(IOUtils.contentEquals(new FileReader(output.toFile()), new FileReader(expected.toFile())));
+      FileAssert
+          .assertEquals(String.format("Comparison mismatch at resource %s: ",
+                                      new File("test-classes").getAbsoluteFile().toPath().relativize(output)),
+                        expected.toFile(), output.toFile());
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
