@@ -22,6 +22,7 @@ import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourP
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeApplication;
 import com.mulesoft.tools.migration.engine.project.structure.mule.three.MuleThreeDomain;
 import com.mulesoft.tools.migration.engine.project.structure.util.CopyFileVisitor;
+import com.mulesoft.tools.migration.engine.project.structure.util.SortedProperties;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
@@ -57,6 +58,7 @@ import org.jdom2.output.XMLOutputter;
  */
 public class ApplicationPersister {
 
+  public static final String POM_PROPERTIES_SORTED = "pom.properties.sorted";
   private static ProjectTypeFactory projectFactory = new ProjectTypeFactory();
 
   private ApplicationModel appModel;
@@ -245,6 +247,10 @@ public class ApplicationPersister {
     Path pomLocation = ((MavenProject) projectOutput).pom();
     BufferedWriter writer = new BufferedWriter(new FileWriter(pomLocation.toFile()));
     if (appModel.getPomModel().isPresent()) {
+      if (Boolean.getBoolean(POM_PROPERTIES_SORTED)
+          && (!(appModel.getPomModel().get().getProperties() instanceof SortedProperties))) {
+        appModel.getPomModel().get().setProperties(new SortedProperties(appModel.getPomModel().get().getProperties()));
+      }
       mavenWriter.write(writer, appModel.getPomModel().get().getMavenModelCopy());
     }
   }
