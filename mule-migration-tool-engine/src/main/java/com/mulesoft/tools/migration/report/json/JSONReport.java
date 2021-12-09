@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -86,9 +87,23 @@ public class JSONReport {
     }
 
     public static JSONReportModel fromReportModel(ReportEntryModel rem, Path outputFolder) {
-      final String filePath = rem.getFilePath();
-      final String relativePath = filePath == null ? "" : outputFolder.relativize(new File(filePath).toPath()).toString();
-      return new JSONReportModel(rem.getLevel(), rem.getLineNumber(), rem.getColumnNumber(), rem.getMessage(), relativePath);
+      String filePath = relativizePath(rem.getFilePath(), outputFolder);
+      return new JSONReportModel(rem.getLevel(), rem.getLineNumber(), rem.getColumnNumber(), rem.getMessage(), filePath);
+    }
+
+    private static String relativizePath(String filePath, Path basePath) {
+      if (filePath == null) {
+        return "";
+      }
+      Path path = new File(filePath).toPath();
+      if (path.startsWith(basePath)) {
+        return basePath.relativize(path).toString();
+      }
+      String parentDomainBasePath = System.getProperty("parentDomainBasePath");
+      if (parentDomainBasePath != null && path.startsWith(parentDomainBasePath)) {
+        return "{parentDomainBasePath}:/" + Paths.get(parentDomainBasePath).relativize(path);
+      }
+      return filePath;
     }
 
     public MigrationReport.Level getLevel() {

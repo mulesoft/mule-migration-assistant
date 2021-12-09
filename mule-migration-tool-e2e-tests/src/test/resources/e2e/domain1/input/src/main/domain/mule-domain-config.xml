@@ -13,6 +13,8 @@
                http://www.mulesoft.org/schema/mule/ee/domain http://www.mulesoft.org/schema/mule/ee/domain/current/mule-domain-ee.xsd">
 
     <!-- configure here resource to be shared within the domain -->
-    <http:listener-config name="HTTP_Listener_Configuration_in_domain1" host="0.0.0.0" port="${httpPort}" doc:name="HTTP Listener Configuration"/>
+    <http:listener-config name="HTTP_Listener_Configuration_in_domain1" host="0.0.0.0" port="${httpPort}" doc:name="HTTP Listener Configuration">
+        <http:worker-threading-profile maxThreadsActive="256" />
+    </http:listener-config>
 
 </domain:mule-domain>
