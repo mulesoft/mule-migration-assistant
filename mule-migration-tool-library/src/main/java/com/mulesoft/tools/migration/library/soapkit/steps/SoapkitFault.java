@@ -11,6 +11,7 @@ import org.jdom2.Element;
 
 import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.replaceSlashesByBackSlashes;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static java.util.Arrays.asList;
 
 /**
  * Migrates the router configuration of APIkit for SOAP
@@ -28,6 +29,7 @@ public class SoapkitFault extends AbstractSoapkitMigrationStep {
 
   public SoapkitFault() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(asList(SOAPKIT_NAMESPACE));
   }
 
   @Override

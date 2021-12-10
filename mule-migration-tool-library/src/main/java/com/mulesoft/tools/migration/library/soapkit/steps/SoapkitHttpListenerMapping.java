@@ -9,6 +9,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isTopLevelElement;
+import static java.util.Arrays.asList;
 
 /**
  * Migrates http mappings made by APIkit
@@ -27,6 +28,7 @@ public class SoapkitHttpListenerMapping extends AbstractSoapkitMigrationStep {
 
   public SoapkitHttpListenerMapping() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(asList(SOAPKIT_NAMESPACE));
   }
 
   @Override
