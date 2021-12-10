@@ -1,0 +1,42 @@
+[
+  {
+    "level": "WARN",
+    "lineNumber": 6,
+    "columnNumber": 113,
+    "message": "Avoid using an outbound property to determine the status code.",
+    "filePath": "src/main/mule/domain1app1.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 12,
+    "columnNumber": 141,
+    "message": "Avoid using an outbound property to determine the status code.",
+    "filePath": "src/main/mule/domain1app1.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 16,
+    "columnNumber": 146,
+    "message": "Threading profiles do not exist in Mule 4. You can replace them with a \u0027maxConcurrency\u0027 value in the flow.",
+    "filePath": "{parentDomainBasePath}:/src/main/domain/mule-domain-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 20,
+    "columnNumber": 57,
+    "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
+    "filePath": "src/main/mule/domain1app1.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 29,
+    "columnNumber": 51,
+    "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+    "filePath": "src/main/mule/domain1app1.xml",
+    "documentationLinks": []
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "level": "WARN",
+    "lineNumber": 5,
+    "columnNumber": 112,
+    "message": "Threading profiles do not exist in Mule 4. You can replace them with a \u0027maxConcurrency\u0027 value in the flow.",
+    "filePath": "src/main/mule/mule-domain-config.xml",
+    "documentationLinks": []
+  }
+]

@@ -14,8 +14,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import com.mulesoft.tools.migration.MigrationRunner;
-import com.mulesoft.tools.migration.engine.project.structure.ApplicationPersister;
-import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel.PomModelBuilder;
 
 import com.google.gson.JsonElement;
@@ -38,7 +36,6 @@ import java.util.List;
 import junitx.framework.FileAssert;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -92,6 +89,10 @@ public abstract class AbstractEndToEndTestCase {
     // Run migration tool
     final List<String> command = buildMigratorArgs(projectBasePath, outPutPath, projectName);
     Collections.addAll(command, additionalParams);
+    int idx = command.indexOf("-parentDomainBasePath");
+    if (idx != -1) {
+      System.setProperty("parentDomainBasePath", command.get(idx + 1));
+    }
     int run = MigrationRunner.run(command.toArray(new String[0]));
     assertEquals("Migration Failed", 0, run);
     return outPutPath;
