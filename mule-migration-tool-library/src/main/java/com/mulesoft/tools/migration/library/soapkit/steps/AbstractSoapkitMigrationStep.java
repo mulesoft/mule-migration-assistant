@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.soapkit.steps;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+import org.jdom2.Namespace;
 
 /**
  * Common stuff for migrators of APIkit elements
@@ -18,7 +19,10 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 public abstract class AbstractSoapkitMigrationStep extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
 
+  static final String SOAPKIT_NS_PREFIX = "apikit-soap";
   static final String SOAPKIT_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/apikit-soap";
+
+  static final Namespace SOAPKIT_NAMESPACE = Namespace.getNamespace(SOAPKIT_NS_PREFIX, SOAPKIT_NAMESPACE_URI);
 
   private ExpressionMigrator expressionMigrator;
 

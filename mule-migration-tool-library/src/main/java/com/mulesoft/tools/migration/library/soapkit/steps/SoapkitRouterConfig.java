@@ -23,6 +23,7 @@ import static com.mulesoft.tools.migration.library.soapkit.helpers.DataWeaveHelp
 import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.renameAttribute;
 import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.replaceAttributeValue;
 import static java.lang.System.lineSeparator;
+import static java.util.Arrays.asList;
 
 /**
  * Migrates the router configuration of APIkit for SOAP
@@ -55,6 +56,7 @@ public class SoapkitRouterConfig extends AbstractSoapkitMigrationStep {
 
   public SoapkitRouterConfig() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(asList(SOAPKIT_NAMESPACE));
   }
 
   @Override

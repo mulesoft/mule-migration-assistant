@@ -10,6 +10,7 @@ import org.jdom2.Element;
 
 import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.addElement;
 import static com.mulesoft.tools.migration.library.soapkit.helpers.DocumentHelper.replaceSlashesByBackSlashes;
+import static java.util.Arrays.asList;
 
 /**
  * Migrates the router of APIkit for SOAP
@@ -27,6 +28,7 @@ public class SoapkitRouter extends AbstractSoapkitMigrationStep {
 
   public SoapkitRouter() {
     this.setAppliedTo(XPATH_SELECTOR);
+    this.setNamespacesContributions(asList(SOAPKIT_NAMESPACE));
   }
 
   @Override
