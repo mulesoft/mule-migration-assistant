@@ -6,6 +6,7 @@
 package com.mulesoft.tools.migration.e2e;
 
 import static java.lang.System.getProperty;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.io.FileUtils.copyDirectory;
 import static org.junit.Assert.assertEquals;
@@ -25,7 +26,6 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -155,11 +155,30 @@ public abstract class AbstractEndToEndTestCase {
 
   private void compareJson(Path expected, Path migratedPath) {
     try {
-      JsonElement expectedJson = JsonParser.parseString(IOUtils.toString(expected.toUri(), StandardCharsets.UTF_8));
-      JsonElement actualJson = JsonParser.parseString(IOUtils.toString(migratedPath.toUri(), StandardCharsets.UTF_8));
+      JsonElement expectedJson = JsonParser.parseString(IOUtils.toString(expected.toUri(), UTF_8));
+      JsonElement actualJson = JsonParser.parseString(IOUtils.toString(migratedPath.toUri(), UTF_8));
+      if (migratedPath.getFileName().endsWith("report.json")) {
+        normalizeFilePath(expectedJson);
+        normalizeFilePath(actualJson);
+      }
       assertEquals(expectedJson, actualJson);
     } catch (IOException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  private void normalizeFilePath(JsonElement report) {
+    if (report.isJsonArray()) {
+      report.getAsJsonArray().forEach(e -> {
+        String filePathKey = "filePath";
+        if (e.isJsonObject() && e.getAsJsonObject().has(filePathKey)) {
+          String filePath = e.getAsJsonObject().get(filePathKey).getAsString();
+          if (filePath.contains("\\")) {
+            e.getAsJsonObject().remove(filePathKey);
+            e.getAsJsonObject().addProperty(filePathKey, filePath.replaceAll("\\\\", "/"));
+          }
+        }
+      });
     }
   }
 
