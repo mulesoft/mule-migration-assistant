@@ -1,0 +1,42 @@
+[
+  {
+    "level": "WARN",
+    "lineNumber": 4,
+    "columnNumber": 111,
+    "message": "In Mule 4, property keys referencing secure properties must contain the 'secure::' prefix. For example, a secure property called 'db.password' must be referenced as ${secure::db.password}. Review the usage of the secure properties defined in the referenced file and add the 'secure::' prefix accordingly.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 18,
+    "columnNumber": 113,
+    "message": "Avoid using an outbound property to determine the status code.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 24,
+    "columnNumber": 141,
+    "message": "Avoid using an outbound property to determine the status code.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 32,
+    "columnNumber": 57,
+    "message": "Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 41,
+    "columnNumber": 51,
+    "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  }
+]
