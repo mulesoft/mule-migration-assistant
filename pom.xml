@@ -139,7 +139,7 @@
         <scalatest.maven.plugin.version>2.0.2</scalatest.maven.plugin.version>
 
         <java.version>1.8</java.version>
-        <scala.version>2.12.7</scala.version>
+        <scala.version>2.13.7</scala.version>
         <parboiled.version>2.1.4</parboiled.version>
         <scalatest.version>3.0.1</scalatest.version>
 
@@ -172,7 +172,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -191,7 +191,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -212,7 +212,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
