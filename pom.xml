@@ -97,7 +97,7 @@
         <commons.cli.version>1.4</commons.cli.version>
         <commons.lang3.version>3.12.0</commons.lang3.version>
         <log4j.version>2.16.0</log4j.version>
-        <disruptor.version>3.3.7</disruptor.version>
+        <disruptor.version>3.4.4</disruptor.version>
 
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
