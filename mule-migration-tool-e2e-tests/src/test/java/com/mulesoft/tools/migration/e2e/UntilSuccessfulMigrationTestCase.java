@@ -17,8 +17,8 @@ public class UntilSuccessfulMigrationTestCase extends AbstractEndToEndTestCase {
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "until-successful-01",
-        "until-successful-02"
+        "until_successful/until_successful_01",
+        "until_successful/until_successful_02"
     };
   }
 

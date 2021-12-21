@@ -29,7 +29,7 @@ public class DefaultMelCompatibilityResolver implements CompatibilityResolver<St
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
                         ExpressionMigrator expressionMigrator) {
     report.report("expressions.melToDw", element, element);
-
+    report.melExpressionFailure(original);
     return "mel:" + original;
   }
 

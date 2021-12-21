@@ -36,19 +36,22 @@ public class MigrateDWScriptFiles implements ProjectStructureContribution {
     List<File> dwFiles = (List<File>) FileUtils.listFiles(basePath.toFile(), extensions, true);
     dwFiles.forEach(f -> {
       try {
-        migrateFile(f);
+        migrateFile(f, report);
       } catch (Exception ex) {
         report.report("dataWeave.migrationErrorFile", null, null, f.getPath(), ex.getMessage());
       }
     });
   }
 
-  private void migrateFile(File file) {
+  private void migrateFile(File file, MigrationReport report) {
+    String dwScript = null;
     try {
-      String dwScript = new String(Files.readAllBytes(file.toPath()));
+      dwScript = new String(Files.readAllBytes(file.toPath()));
       dwScript = migrateDWToV2(dwScript);
       Files.write(file.toPath(), dwScript.getBytes());
+      report.dwTransformsSuccess(dwScript);
     } catch (Exception ex) {
+      report.dwTransformsFailure(dwScript == null ? String.format("Error trying to read script %s -- %s", file, ex) : dwScript);
       throw new RuntimeException(ex);
     }
 

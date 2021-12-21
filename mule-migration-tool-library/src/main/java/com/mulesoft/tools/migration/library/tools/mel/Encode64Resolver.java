@@ -44,11 +44,13 @@ public class Encode64Resolver implements CompatibilityResolver<String> {
         innerExpression =
             ((MelToDwExpressionMigrator) expressionMigrator).translateSingleExpression(innerExpression, true, element, false);
         if (!innerExpression.startsWith("mel:")) {
+          report.melExpressionSuccess(original);
           return "dw::core::Binaries::toBase64(" + innerExpression + ")";
         }
       }
     }
     report.report("expressions.encodeBase64", element, element);
+    report.melExpressionFailure(original);
     return original;
   }
 }
