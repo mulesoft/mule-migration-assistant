@@ -6,16 +6,6 @@
 package com.mulesoft.tools.migration.engine;
 
 
-import static com.google.common.base.Preconditions.checkState;
-import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
-import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_DOMAIN;
-import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_POLICY;
-import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
-import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionValid;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTasksDeclaredNamespaces;
-
 import com.mulesoft.tools.migration.Executable;
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.project.ProjectTypeFactory;
@@ -32,15 +22,23 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationMo
 import com.mulesoft.tools.migration.project.model.pom.Parent;
 import com.mulesoft.tools.migration.report.html.HTMLReport;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
+import com.mulesoft.tools.migration.report.json.JSONReport;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.google.common.base.Preconditions.checkState;
+import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
+import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
+import static com.mulesoft.tools.migration.project.ProjectType.*;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionValid;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTasksDeclaredNamespaces;
 
 /**
  * It represent a migration job which is composed by one or more {@link AbstractMigrationTask}
@@ -51,6 +49,7 @@ import org.slf4j.LoggerFactory;
 public class MigrationJob implements Executable {
 
   private static final String HTML_REPORT_FOLDER = "report";
+  private final boolean jsonReportEnabled;
   private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private final Path project;
@@ -62,9 +61,11 @@ public class MigrationJob implements Executable {
   private final boolean cancelOnError;
   private String runnerVersion;
   private final Parent projectParentGAV;
+  private final String projectGAV;
 
   private MigrationJob(Path project, Path parentDomainProject, Path outputProject, List<AbstractMigrationTask> migrationTasks,
-                       String muleVersion, boolean cancelOnError, Parent projectParentGAV) {
+                       String muleVersion, boolean cancelOnError, Parent projectParentGAV, String projectGAV,
+                       boolean jsonReportEnabled) {
     this.migrationTasks = migrationTasks;
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
@@ -73,6 +74,8 @@ public class MigrationJob implements Executable {
     this.reportPath = outputProject.resolve(HTML_REPORT_FOLDER);
     this.cancelOnError = cancelOnError;
     this.projectParentGAV = projectParentGAV;
+    this.projectGAV = projectGAV;
+    this.jsonReportEnabled = jsonReportEnabled;
     this.runnerVersion = this.getClass().getPackage().getImplementationVersion();
     if (this.runnerVersion == null) {
       this.runnerVersion = "n/a";
@@ -88,7 +91,8 @@ public class MigrationJob implements Executable {
     Path sourceProjectBasePath = applicationModel.getProjectBasePath();
     persistApplicationModel(applicationModel);
     ProjectType targetProjectType = applicationModel.getProjectType().getTargetType();
-    applicationModel = generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV);
+    applicationModel =
+        generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV, projectGAV);
     try {
       for (AbstractMigrationTask task : migrationTasks) {
         if (task.getApplicableProjectTypes().contains(targetProjectType)) {
@@ -98,7 +102,8 @@ public class MigrationJob implements Executable {
             task.execute(report);
             persistApplicationModel(applicationModel);
             applicationModel =
-                generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV);
+                generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV,
+                                               projectGAV);
           } catch (MigrationTaskException ex) {
             if (cancelOnError) {
               throw ex;
@@ -131,6 +136,7 @@ public class MigrationJob implements Executable {
         .withProjectType(type)
         .withMuleVersion(muleVersion)
         .withPom(muleProject.pom())
+        .withProjectPomGAV(projectGAV)
         .withProjectBasePath(muleProject.getBaseFolder())
         .withSupportedNamespaces(getTasksDeclaredNamespaces(migrationTasks));
     if (muleProject.srcTestConfiguration().toFile().exists()) {
@@ -140,13 +146,14 @@ public class MigrationJob implements Executable {
   }
 
   private ApplicationModel generateTargetApplicationModel(Path project, ProjectType type, Path sourceProjectBasePath,
-                                                          Parent projectParentGAV)
+                                                          Parent projectParentGAV, String projectGAV)
       throws Exception {
     ApplicationModelBuilder appModelBuilder = new ApplicationModelBuilder()
         .withMuleVersion(muleVersion)
         .withSupportedNamespaces(getTasksDeclaredNamespaces(migrationTasks))
         .withSourceProjectBasePath(sourceProjectBasePath)
-        .withProjectPomParent(projectParentGAV);
+        .withProjectPomParent(projectParentGAV)
+        .withProjectPomGAV(projectGAV);
 
     if (type.equals(MULE_FOUR_APPLICATION)) {
       MuleFourApplication application = new MuleFourApplication(project);
@@ -176,7 +183,7 @@ public class MigrationJob implements Executable {
     }
   }
 
-  private void generateReport(MigrationReport report) throws Exception {
+  private void generateReport(MigrationReport<ReportEntryModel> report) throws Exception {
     List<ReportEntryModel> reportEntries = report.getReportEntries();
     for (ReportEntryModel entry : reportEntries) {
       try {
@@ -187,6 +194,10 @@ public class MigrationJob implements Executable {
     }
     HTMLReport htmlReport = new HTMLReport(report.getReportEntries(), reportPath.toFile(), this.getRunnerVersion());
     htmlReport.printReport();
+    if (jsonReportEnabled) {
+      JSONReport jsonReport = new JSONReport(report.getReportEntries(), reportPath.toFile(), outputProject);
+      jsonReport.printReport();
+    }
   }
 
   public Path getReportPath() {
@@ -211,8 +222,10 @@ public class MigrationJob implements Executable {
     private String inputVersion;
     private String outputVersion;
     private boolean cancelOnError = false;
+    private boolean jsonReportEnabled = false;
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
     private Parent projectParentGAV = null;
+    private String projectGAV;
 
     public MigrationJobBuilder withProject(Path project) {
       this.project = project;
@@ -246,6 +259,16 @@ public class MigrationJob implements Executable {
 
     public MigrationJobBuilder withProjectParentGAV(Parent projectParentGAV) {
       this.projectParentGAV = projectParentGAV;
+      return this;
+    }
+
+    public MigrationJobBuilder withProjectGAV(String projectGAV) {
+      this.projectGAV = projectGAV;
+      return this;
+    }
+
+    public MigrationJobBuilder withJsonReport(Boolean jsonReportEnabled) {
+      this.jsonReportEnabled = jsonReportEnabled;
       return this;
     }
 
@@ -284,7 +307,7 @@ public class MigrationJob implements Executable {
       migrationTasks = migrationTaskLocator.locate();
 
       return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion.toString(),
-                              this.cancelOnError, this.projectParentGAV);
+                              this.cancelOnError, this.projectParentGAV, this.projectGAV, this.jsonReportEnabled);
     }
   }
 

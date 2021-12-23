@@ -5,15 +5,10 @@
  */
 package com.mulesoft.tools.migration.report;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.list;
-
 import com.mulesoft.tools.migration.exception.MigrationAbortException;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.jdom2.Comment;
 import org.jdom2.Element;
@@ -24,12 +19,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.list;
 
 /**
  * Default implementation of a {@link MigrationReport}.
@@ -37,8 +33,9 @@ import java.util.Set;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class DefaultMigrationReport implements MigrationReport {
+public class DefaultMigrationReport implements MigrationReport<ReportEntryModel> {
 
+  public static final Pattern WORD_MESSAGE_REPLACEMENT_EXPRESSION = Pattern.compile("\\{\\w*\\}");
   private transient Map<String, Map<String, Map<String, Object>>> possibleEntries;
 
   private transient XMLOutputter outp = new XMLOutputter();
@@ -78,13 +75,26 @@ public class DefaultMigrationReport implements MigrationReport {
     final Map<String, Object> entryData = possibleEntries.get(splitEntryKey[0]).get(splitEntryKey[1]);
 
     final Level level = Level.valueOf((String) entryData.get("type"));
-    String message = (String) entryData.get("message");
-    for (String messageParam : messageParams) {
-      message = message.replaceFirst("\\{\\w*\\}", messageParam);
+    final String message = (String) entryData.get("message");
+    final Matcher matcher = WORD_MESSAGE_REPLACEMENT_EXPRESSION.matcher(message);
+    final StringBuilder result = new StringBuilder();
+
+    int i = 0;
+    int currentIndex = 0;
+    while (matcher.find(currentIndex)) {
+      int start = matcher.start();
+      result.append(message, currentIndex, start);
+      if (messageParams.length > i) {
+        result.append(messageParams[i]);
+      }
+      currentIndex = matcher.end();
+      i++;
     }
 
+    result.append(message.substring(currentIndex));
+
     final List<String> docLinks = entryData.get("docLinks") != null ? (List<String>) entryData.get("docLinks") : emptyList();
-    report(level, element, elementToComment, message, docLinks.toArray(new String[docLinks.size()]));
+    report(level, element, elementToComment, result.toString(), docLinks.toArray(new String[docLinks.size()]));
   }
 
   @Override

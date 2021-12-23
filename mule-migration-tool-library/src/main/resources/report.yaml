@@ -617,8 +617,8 @@ configProperties:
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.3/configuring-properties
   securePrefix:
-    type: ERROR
-    message: "Review uses of properties defined in the referenced file, and add the 'secure' prefix to them."
+    type: WARN
+    message: "In Mule 4, property keys referencing secure properties must contain the 'secure::' prefix. For example, a secure property called 'db.password' must be referenced as ${secure::db.password}. Review the usage of the secure properties defined in the referenced file and add the 'secure::' prefix accordingly."
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.3/migration-secure-properties-placeholder
       - https://docs.mulesoft.com/mule-runtime/4.3/secure-configuration-properties#usage

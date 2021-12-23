@@ -5,14 +5,6 @@
  */
 package com.mulesoft.tools.migration;
 
-import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
-import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationError;
-import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
-import static java.lang.Integer.parseInt;
-import static java.lang.System.exit;
-import static java.util.UUID.randomUUID;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
 import com.google.common.base.Stopwatch;
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
@@ -21,16 +13,17 @@ import com.mulesoft.tools.migration.project.model.pom.Parent;
 import com.mulesoft.tools.migration.project.model.pom.Parent.ParentBuilder;
 import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+import org.apache.commons.cli.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Paths;
+import java.util.Optional;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.lang3.StringUtils;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.*;
+import static java.lang.Integer.parseInt;
+import static java.lang.System.exit;
+import static java.util.UUID.randomUUID;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
@@ -50,6 +43,8 @@ public class MigrationRunner {
   public static final String MULE_3_VERSION = "3.*.*";
   private final static String CANCEL_ON_ERROR = "cancelOnError";
   private final static String PROJECT_PARENT_GAV = "projectParentGAV";
+  private final static String PROJECT_GAV = "projectGAV";
+  public static final String JSON_REPORT_PROP_NAME = "jsonReport";
 
   private String projectBasePath;
   private String parentDomainProjectBasePath;
@@ -57,6 +52,7 @@ public class MigrationRunner {
   private String muleVersion;
   private boolean cancelOnError = false;
   private Parent projectParentGAV;
+  private String projectGAV;
 
 
   private String userId;
@@ -67,11 +63,17 @@ public class MigrationRunner {
   private String proxyPass;
 
   public static void main(String args[]) throws Exception {
+    exit(run(args));
+  }
 
+  public static int run(String[] args) throws Exception {
     Stopwatch stopwatch = Stopwatch.createStarted();
 
-    MigrationRunner migrationRunner = buildRunner(args);
-    MigrationJob job = migrationRunner.buildMigrationJob();
+    Optional<MigrationRunner> migrationRunner = buildRunner(args);
+    if (!migrationRunner.isPresent()) {
+      return -1;
+    }
+    MigrationJob job = migrationRunner.get().buildMigrationJob();
 
     try {
       DefaultMigrationReport report = new DefaultMigrationReport();
@@ -80,18 +82,20 @@ public class MigrationRunner {
 
       printMigrationSummary(job.getReportPath().resolve(REPORT_HOME).toAbsolutePath().toString(),
                             stopwatch.stop().elapsed(MILLISECONDS), report);
-      exit(0);
+      return 0;
     } catch (Exception ex) {
       printMigrationError(ex, stopwatch.stop().elapsed(MILLISECONDS));
-      exit(-1);
+      return -1;
     }
   }
 
-  protected static MigrationRunner buildRunner(String[] args) throws Exception {
+  protected static Optional<MigrationRunner> buildRunner(String[] args) throws Exception {
     MigrationRunner migrationRunner = new MigrationRunner();
-    migrationRunner.initializeOptions(args);
-
-    return migrationRunner;
+    if (!migrationRunner.initializeOptions(args)) {
+      return Optional.empty();
+    } else {
+      return Optional.of(migrationRunner);
+    }
   }
 
   private MigrationJob buildMigrationJob() throws Exception {
@@ -103,6 +107,8 @@ public class MigrationRunner {
         .withOuputVersion(muleVersion)
         .withCancelOnError(cancelOnError)
         .withProjectParentGAV(projectParentGAV)
+        .withProjectGAV(projectGAV)
+        .withJsonReport(Boolean.getBoolean(JSON_REPORT_PROP_NAME))
         .build();
   }
 
@@ -110,8 +116,9 @@ public class MigrationRunner {
    * Initialises the console options with Apache Command Line
    *
    * @param args
+   * @return
    */
-  private void initializeOptions(String[] args) {
+  private boolean initializeOptions(String[] args) {
 
     Options options = new Options();
 
@@ -122,6 +129,7 @@ public class MigrationRunner {
     options.addOption(MULE_VERSION, true, "Mule version where to migrate project");
     options.addOption(CANCEL_ON_ERROR, true, "Use cancelOnError to stop the migration. Default is false");
     options.addOption(PROJECT_PARENT_GAV, true, "Use projectParentGAV to migration parent in your pom.xml");
+    options.addOption(PROJECT_GAV, true, "Use projectGAV to override default GAV coordinates when a pom.xml is not provided");
 
     options.addOption("userId", true, "The userId to send for the usage statistics");
     options.addOption("sessionId", true, "The sessionId to send for the usage statistics");
@@ -180,6 +188,15 @@ public class MigrationRunner {
         }
       }
 
+      if (line.hasOption(PROJECT_GAV)) {
+        final String value = line.getOptionValue(PROJECT_GAV);
+        if (StringUtils.isNotEmpty(value) && value.matches(".*:.*:.*")) {
+          this.projectGAV = value;
+        } else {
+          throw new ConsoleOptionsException("You must specify the GAV (groupId:artifactId:version) for the 'projectGAV' option");
+        }
+      }
+
       if (line.hasOption(HELP)) {
         printHelp(options);
       }
@@ -206,13 +223,12 @@ public class MigrationRunner {
       if (line.hasOption("proxyPass")) {
         this.proxyPass = line.getOptionValue("proxyPass");
       }
-    } catch (ParseException e) {
-      e.printStackTrace();
-      System.exit(-1);
-    } catch (ConsoleOptionsException e) {
+    } catch (ParseException | ConsoleOptionsException e) {
+      System.err.println("[ERROR] " + e.getMessage());
       printHelp(options);
-      System.exit(-1);
+      return false;
     }
+    return true;
   }
 
   private void printHelp(Options options) {

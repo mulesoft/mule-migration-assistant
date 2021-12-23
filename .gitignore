@@ -26,3 +26,5 @@ target/
 testout.xml
 logs/
 servers/
+tmp/
+mule-migration-tool-e2e-tests/apps
