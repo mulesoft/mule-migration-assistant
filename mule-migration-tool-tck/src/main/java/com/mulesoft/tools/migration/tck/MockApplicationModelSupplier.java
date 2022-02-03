@@ -5,6 +5,7 @@
  */
 package com.mulesoft.tools.migration.tck;
 
+import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -40,8 +41,14 @@ public class MockApplicationModelSupplier {
     when(appModel.getNodes(any(String.class)))
         .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]));
     when(appModel.getNode(any(String.class)))
-        .thenAnswer(invocation -> getElementsFromDocument(doc, (String) invocation.getArguments()[0]).stream().findFirst()
-            .orElse(null));
+        .thenAnswer(invocation -> {
+          List<Element> nodes = getElementsFromDocument(doc, (String) invocation.getArguments()[0]);
+          if (nodes.size() != 1) {
+            throw new IllegalStateException(format("Found %d nodes for xpath expression '%s'", nodes.size(),
+                                                   invocation.getArguments()[0]));
+          }
+          return nodes.stream().findFirst().orElse(null);
+        });
     when(appModel.getNodeOptional(any(String.class)))
         .thenAnswer(invocation -> {
           List<Element> elementsFromDocument = getElementsFromDocument(doc, (String) invocation.getArguments()[0]);

@@ -1,0 +1,34 @@
+[
+  {
+    "level": "ERROR",
+    "lineNumber": 14,
+    "columnNumber": 98,
+    "message": "Cannot automatically migrate a JMS connection-factory defined as a spring bean.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 17,
+    "columnNumber": 145,
+    "message": "Avoid using properties to set the JMS response properties and headers.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 28,
+    "columnNumber": 57,
+    "message": "Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  },
+  {
+    "level": "WARN",
+    "lineNumber": 37,
+    "columnNumber": 51,
+    "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+    "filePath": "src/main/mule/mule-config.xml",
+    "documentationLinks": []
+  }
+]
