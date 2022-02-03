@@ -32,6 +32,9 @@ jobs:
       with:
         java-version: 1.8
 
+    - name: mvn-version
+      run: mvn --version
+
     - name: Build with Maven
       run: mvn --settings /home/runner/.m2/settings.xml  clean install --file pom.xml
 
@@ -56,6 +59,9 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+
+    - name: mvn-version
+      run: mvn --version
 
     - name: Build with Maven
       run: mvn --settings C:\Users\runneradmin\.m2\settings.xml clean install --file pom.xml
