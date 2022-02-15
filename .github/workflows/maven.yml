@@ -12,7 +12,17 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        jdk: [1.8, 1.11, 1.17] # LTS versions
+        include:
+          - os: ubuntu-latest
+            mvn-settings: '/home/runner/.m2/settings.xml'
+          - os: windows-latest
+            mvn-settings: 'C:\Users\runneradmin\.m2\settings.xml'
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: checkout
@@ -25,12 +35,15 @@ jobs:
                         { "id": "mule-releases", "url": "https://repository.mulesoft.org/releases" }]'
 
     - name: log-settings
-      run: cat \/home\/runner\/.m2\/settings.xml
+      run: cat ${{ matrix.mvn-settings }}
 
-    - name: Set up JDK 1.8
+    - name: Set up JDK ${{ matrix.jdk }}
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+        java-version: ${{ matrix.jdk }}
+
+    - name: mvn-version
+      run: mvn --version
 
     - name: Build with Maven
-      run: mvn --settings /home/runner/.m2/settings.xml  clean install --file pom.xml
+      run: mvn --settings ${{ matrix.mvn-settings }}  clean install --file pom.xml

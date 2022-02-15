@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:unknown="http://www.mulesoft.org/schema/mule/unknown"
+      xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/unknown http://www.mulesoft.org/schema/mule/unknown/current/mule-unknown.xsd">
+
+    <flow name="unknown-namespace">
+        <unknown:source>
+            <logger message="nested"/>
+            <unknown:nested/>
+        </unknown:source>
+        <logger message="bye"/>
+        <unknown:operation/>
+    </flow>
+
+</mule>

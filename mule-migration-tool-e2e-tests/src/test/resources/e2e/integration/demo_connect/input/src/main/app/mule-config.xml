@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:schedulers="http://www.mulesoft.org/schema/mule/schedulers"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:file="http://www.mulesoft.org/schema/mule/file"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/schedulers http://www.mulesoft.org/schema/mule/schedulers/current/mule-schedulers.xsd
+      http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+      http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+
+    <http:listener-config name="httpConf" host="localhost" port="${httpPort}"/>
+
+    <http:request-config name="requesterConfig" protocol="HTTPS" host="httpbin.org" port="443"/>
+
+    <http:request-config name="requesterConfigDynPort" host="localhost"/>
+
+    <file:connector name="fileConnector" outputAppend="true"
+        writeToDirectory="${workingDirectory}/random"
+        outputPattern="out.txt"/>
+
+    <flow name="httpProxy" >
+        <http:listener config-ref="httpConf" path="testInput"/>
+
+        <copy-properties propertyName="*" />
+        <remove-property propertyName="http.*" />
+
+        <set-property propertyName="X-Forwarded-For" value="#[message.inboundProperties['http.remote.address']]" />
+        
+        <http:request config-ref="requesterConfig" path="/get" method="GET"/>
+
+        <copy-properties propertyName="*" />
+        <remove-property propertyName="http.*" />
+    </flow>
+
+    <flow name="httpToFile" >
+        <poll>
+            <schedulers:cron-scheduler expression="0 0/1 * 1/1 * ?"/>
+            <set-payload value="1024"/>
+        </poll>        
+
+        <logger level="WARN" message="Appending page content to file..."/>
+
+        <http:request config-ref="requesterConfig" path="#['/bytes/' + payload]" method="GET"/>
+
+        <file:outbound-endpoint connector-ref="fileConnector"/>
+    </flow>
+    
+    <flow name="httpRequesterDynamicPort" >
+    
+        <set-variable variableName="dynPort" value="${httpPort}"/>
+
+        <http:request config-ref="requesterConfigDynPort" path="/path" port="#[flowVars.dynPort]"/>
+
+    </flow>
+    
+</mule>

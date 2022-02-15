@@ -279,6 +279,11 @@ jms:
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes
       - https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-jms#sending-messages
+  beanConnectionFactory:
+    type: ERROR
+    message: "Cannot automatically migrate a JMS connection-factory defined as a spring bean."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-jms#ConnectingToABroker
 
 file:
   streaming:

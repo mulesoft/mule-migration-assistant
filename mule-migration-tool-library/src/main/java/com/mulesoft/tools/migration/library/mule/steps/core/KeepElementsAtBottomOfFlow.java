@@ -47,4 +47,9 @@ public class KeepElementsAtBottomOfFlow extends AbstractApplicationModelMigratio
     element.detach();
     addElementToBottom(flow, element);
   }
+
+  @Override
+  public boolean shouldReportMetrics() {
+    return false;
+  }
 }

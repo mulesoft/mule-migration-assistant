@@ -1,42 +1,95 @@
-[
-  {
-    "level": "ERROR",
-    "lineNumber": 0,
-    "columnNumber": 0,
-    "message": "Unable to parse endpoint address '${TestService}'.",
-    "filePath": "",
-    "documentationLinks": []
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-wsc-connector:1.6.4"
+  ],
+  "numberOfMuleComponents": 6,
+  "numberOfMuleComponentsMigrated": 5,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "on-error-continue": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "wsc:config": {
+      "success": 0,
+      "failure": 1
+    },
+    "wsc:consume": {
+      "success": 1,
+      "failure": 0
+    },
+    "compatibility:set-property": {
+      "success": 1,
+      "failure": 0
+    }
   },
-  {
-    "level": "ERROR",
-    "lineNumber": 4,
-    "columnNumber": 39,
-    "message": "Web Service Consumer only supports HTTP or JMS transports.",
-    "filePath": "src/main/mule/mule-config.xml",
-    "documentationLinks": []
-  },
-  {
-    "level": "WARN",
-    "lineNumber": 14,
-    "columnNumber": 51,
-    "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
-    "filePath": "src/main/mule/mule-config.xml",
-    "documentationLinks": []
-  },
-  {
-    "level": "WARN",
-    "lineNumber": 22,
-    "columnNumber": 57,
-    "message": "Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').",
-    "filePath": "src/main/mule/mule-config.xml",
-    "documentationLinks": []
-  },
-  {
-    "level": "WARN",
-    "lineNumber": 31,
-    "columnNumber": 100,
-    "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
-    "filePath": "src/main/mule/mule-config.xml",
-    "documentationLinks": []
-  }
-]
+  "numberOfMELExpressions": 1,
+  "numberOfMELExpressionsMigrated": 1,
+  "numberOfMELExpressionLines": 1,
+  "numberOfMELExpressionLinesMigrated": 1,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "ERROR",
+      "key": "transports.cantParseAddress",
+      "component": "wsc:connection",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Unable to parse endpoint address \u0027${TestService}\u0027.",
+      "filePath": "",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "wsc.unsupportedProtocol",
+      "component": "wsc:config",
+      "lineNumber": 4,
+      "columnNumber": 39,
+      "message": "Web Service Consumer only supports HTTP or JMS transports.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 14,
+      "columnNumber": 51,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 22,
+      "columnNumber": 57,
+      "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 31,
+      "columnNumber": 100,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

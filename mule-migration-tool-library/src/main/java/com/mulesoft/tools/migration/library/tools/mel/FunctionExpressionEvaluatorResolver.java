@@ -42,6 +42,7 @@ public class FunctionExpressionEvaluatorResolver implements CompatibilityResolve
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
                         ExpressionMigrator expressionMigrator) {
     String functionName = getFunctionName(original);
+    report.melExpressionSuccess(original);
 
     if (NOW_FUNCTION.equalsIgnoreCase(functionName) || DATE_FUNCTION.equalsIgnoreCase(functionName)) {
       return "now()";
