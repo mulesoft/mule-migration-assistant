@@ -34,5 +34,6 @@ public class ExpressionComponent extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     report.report("components.unsupported", object, object, "expression-component");
+    report.addComponentFailure(object);
   }
 }

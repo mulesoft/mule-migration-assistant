@@ -23,6 +23,8 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.collection.JavaConverters;
 
 import java.util.Arrays;
@@ -39,6 +41,8 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class MelToDwExpressionMigrator implements ExpressionMigrator {
+
+  private static Logger logger = LoggerFactory.getLogger(MelToDwExpressionMigrator.class);
 
   private final MigrationReport report;
 
@@ -84,6 +88,8 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
 
   public String translateSingleExpression(String unwrappedExpression, boolean dataWeaveBodyOnly, Element element,
                                           boolean enricher) {
+    logger.debug("  --->> Evaluating MEL expression at element {} -> {}", element != null ? element.getName() : "null",
+                 unwrappedExpression);
     String migratedExpression;
     MigrationResult result;
     try {
@@ -125,6 +131,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
       migratedExpression = migratedExpression.replaceFirst("%dw 2\\.0\n---", "").trim();
     }
 
+    report.melExpressionSuccess(unwrappedExpression);
     return escapeUnderscores(migratedExpression);
   }
 

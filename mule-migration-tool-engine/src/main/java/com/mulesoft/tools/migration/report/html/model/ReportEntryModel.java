@@ -45,6 +45,7 @@ import java.util.Objects;
 public class ReportEntryModel {
 
   private final Level level;
+  private final String key;
   private final String elementContent;
   private transient Element element;
   private Integer lineNumber = 0;
@@ -54,8 +55,9 @@ public class ReportEntryModel {
   private final List<String> documentationLinks = new ArrayList<>();
 
 
-  public ReportEntryModel(Level level, Element element, String message, String... documentationLinks) {
+  public ReportEntryModel(String key, Level level, Element element, String message, String... documentationLinks) {
     this.level = level;
+    this.key = key;
     this.elementContent = element != null ? escapeXml11(domElementToString(element)) : "";
     this.element = element;
     this.message = message;
@@ -69,8 +71,17 @@ public class ReportEntryModel {
     this.documentationLinks.addAll(asList(documentationLinks));
   }
 
-  public ReportEntryModel(Level level, Element element, String message, Document document, String... documentationLinks) {
-    this(level, element, message, documentationLinks);
+  private ReportEntryModel(Level level, Element element, String message, String... documentationLinks) {
+    this(null, level, element, message, documentationLinks);
+  }
+
+  private ReportEntryModel(Level level, Element element, String message, Document document, String... documentationLinks) {
+    this(null, level, element, message, document, documentationLinks);
+  }
+
+  public ReportEntryModel(String key, Level level, Element element, String message, Document document,
+                          String... documentationLinks) {
+    this(key, level, element, message, documentationLinks);
     try {
       this.filePath = new File(new URI(document.getBaseURI())).getAbsolutePath();
     } catch (URISyntaxException e) {
@@ -162,6 +173,10 @@ public class ReportEntryModel {
       // do nothing with printing Namespaces....
     }
   };
+
+  public String getKey() {
+    return key;
+  }
 
   public Level getLevel() {
     return level;

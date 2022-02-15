@@ -84,7 +84,6 @@ public abstract class AbstractEndToEndTestCase {
     final String projectBasePath = new File(getResourceUri("e2e/" + projectName + "/input")).getAbsolutePath();
 
     final String outPutPath = migrationResult.getRoot().toPath().resolve(projectName).toAbsolutePath().toString();
-    System.setProperty(MigrationRunner.JSON_REPORT_PROP_NAME, "true");
 
     // Run migration tool
     final List<String> command = buildMigratorArgs(projectBasePath, outPutPath, projectName);
@@ -107,7 +106,8 @@ public abstract class AbstractEndToEndTestCase {
     command.add("-muleVersion");
     command.add(RUNTIME_VERSION);
     command.add("-projectGAV");
-    command.add(":" + projectName + ":");
+    command.add(":" + projectName.replaceAll(".*/", "") + ":");
+    command.add("-jsonReport");
 
     return command;
   }
@@ -168,8 +168,9 @@ public abstract class AbstractEndToEndTestCase {
   }
 
   private void normalizeFilePath(JsonElement report) {
-    if (report.isJsonArray()) {
-      report.getAsJsonArray().forEach(e -> {
+    String messagesKey = "detailedMessages";
+    if (report.isJsonObject() && report.getAsJsonObject().has(messagesKey)) {
+      report.getAsJsonObject().get(messagesKey).getAsJsonArray().forEach(e -> {
         String filePathKey = "filePath";
         if (e.isJsonObject() && e.getAsJsonObject().has(filePathKey)) {
           String filePath = e.getAsJsonObject().get(filePathKey).getAsString();

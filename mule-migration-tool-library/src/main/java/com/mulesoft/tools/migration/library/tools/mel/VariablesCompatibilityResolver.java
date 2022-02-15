@@ -31,6 +31,7 @@ public class VariablesCompatibilityResolver implements CompatibilityResolver<Str
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
                         ExpressionMigrator expressionMigrator) {
     String varName = original.trim().replaceFirst("(?i)^variable:", EMPTY);
+    report.melExpressionSuccess(original);
     return "vars." + varName;
   }
 }

@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-	<amqp:config name="amqpConnector">
-		<amqp:connection host="localhost" username="guest" password="guest" />
-	</amqp:config>
+    <amqp:config name="amqpConnector">
+        <amqp:connection host="localhost" username="guest" password="guest" />
+    </amqp:config>
 
-	<flow name="bridgeFlow1">
-		<amqp:listener queueName="in" consumerTag="tag" config-ref="amqpConnector" numberOfConsumers="8">
-			<!--Migration WARN: No Exchange Definition is allowed in a listener in Mule 4. You can define a fallback queue, but bindings and exchanges must be previously declared.-->
-			<!--    For more information refer to:-->
-			<!--        * https://docs.mulesoft.com/amqp-connector/1.6/amqp-listener#declaring-a-queue-in-the-amqp-listener-->
-			<amqp:fallback-queue-definition removalStrategy="SHUTDOWN" exchangeToBind="direct.exchange" />
-		</amqp:listener>
+    <flow name="bridgeFlow1">
+        <amqp:listener queueName="in" consumerTag="tag" config-ref="amqpConnector" numberOfConsumers="8">
+            <!--Migration WARN: No Exchange Definition is allowed in a listener in Mule 4. You can define a fallback queue, but bindings and exchanges must be previously declared.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/amqp-connector/1.6/amqp-listener#declaring-a-queue-in-the-amqp-listener-->
+            <amqp:fallback-queue-definition removalStrategy="SHUTDOWN" exchangeToBind="direct.exchange" />
+        </amqp:listener>
 
-		<amqp:ack ackId="#[attributes.ackId]" />
+        <amqp:ack ackId="#[attributes.ackId]" />
 
-		<amqp:publish exchangeName="out" config-ref="amqpConnector">
-			<amqp:fallback-exchange-definition removalStrategy="SHUTDOWN" />
-		</amqp:publish>
+        <amqp:publish exchangeName="out" config-ref="amqpConnector">
+            <amqp:fallback-exchange-definition removalStrategy="SHUTDOWN" />
+        </amqp:publish>
 
-	</flow>
+    </flow>
 
-	<flow name="bridgeFlow2">
-		<amqp:listener queueName="in" consumerTag="tag" config-ref="amqpConnector" numberOfConsumers="8">
-			<!--Migration WARN: No Exchange Definition is allowed in a listener in Mule 4. You can define a fallback queue, but bindings and exchanges must be previously declared.-->
-			<!--    For more information refer to:-->
-			<!--        * https://docs.mulesoft.com/amqp-connector/1.6/amqp-listener#declaring-a-queue-in-the-amqp-listener-->
-			<amqp:fallback-queue-definition removalStrategy="SHUTDOWN" exchangeToBind="direct.exchange" />
-		</amqp:listener>
+    <flow name="bridgeFlow2">
+        <amqp:listener queueName="in" consumerTag="tag" config-ref="amqpConnector" numberOfConsumers="8">
+            <!--Migration WARN: No Exchange Definition is allowed in a listener in Mule 4. You can define a fallback queue, but bindings and exchanges must be previously declared.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/amqp-connector/1.6/amqp-listener#declaring-a-queue-in-the-amqp-listener-->
+            <amqp:fallback-queue-definition removalStrategy="SHUTDOWN" exchangeToBind="direct.exchange" />
+        </amqp:listener>
 
-		<amqp:reject requeue="true" ackId="#[attributes.ackId]" />
+        <amqp:reject requeue="true" ackId="#[attributes.ackId]" />
 
-		<amqp:publish exchangeName="out" config-ref="amqpConnector">
-			<amqp:fallback-exchange-definition removalStrategy="SHUTDOWN" />
-		</amqp:publish>
+        <amqp:publish exchangeName="out" config-ref="amqpConnector">
+            <amqp:fallback-exchange-definition removalStrategy="SHUTDOWN" />
+        </amqp:publish>
 
-	</flow>
+    </flow>
 
 </mule>

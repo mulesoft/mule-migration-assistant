@@ -30,6 +30,7 @@ public class SessionVariablesCompatibilityResolver implements CompatibilityResol
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
                         ExpressionMigrator expressionMigrator) {
     String sessionVarName = original.trim().replaceFirst("(?i)^header:session:", EMPTY);
+    report.melExpressionSuccess(original);
     return "vars.compatibility_sessionVars." + sessionVarName;
   }
 }

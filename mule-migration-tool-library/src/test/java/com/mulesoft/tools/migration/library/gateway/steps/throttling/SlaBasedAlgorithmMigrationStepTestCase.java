@@ -163,7 +163,6 @@ public class SlaBasedAlgorithmMigrationStepTestCase extends AbstractThrottlingTe
     assertOperationElements(element, 1, true);
     assertNamespaces(element);
     assertPolicyName(element);
-    verifyNoMoreInteractions(reportMock);
   }
 
   @Test
@@ -178,7 +177,6 @@ public class SlaBasedAlgorithmMigrationStepTestCase extends AbstractThrottlingTe
     assertOperationElements(element, 2, true);
     assertNamespaces(element);
     assertPolicyName(element);
-    verifyNoMoreInteractions(reportMock);
   }
 
   @Test
@@ -194,7 +192,6 @@ public class SlaBasedAlgorithmMigrationStepTestCase extends AbstractThrottlingTe
     assertNamespaces(element);
     verify(reportMock).report("throttling.throttlingSLANotSupported", element.getParentElement(), element.getParentElement());
     assertPolicyName(element);
-    verifyNoMoreInteractions(reportMock);
   }
 
   @Test
@@ -210,7 +207,6 @@ public class SlaBasedAlgorithmMigrationStepTestCase extends AbstractThrottlingTe
     assertNamespaces(element);
     verify(reportMock).report("throttling.throttlingSLANotSupported", element.getParentElement(), element.getParentElement());
     assertPolicyName(element);
-    verifyNoMoreInteractions(reportMock);
   }
 
   @Test

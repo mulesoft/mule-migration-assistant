@@ -11,7 +11,6 @@
             <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-engine-->
             <!--<threading-profile xmlns="http://www.mulesoft.org/schema/mule/core" maxThreadsActive="45" maxThreadsIdle="5" threadTTL="52" threadWaitTimeout="52" />-->
             <logger message="#[1]" />
-
         </until-successful>
 
     </flow>

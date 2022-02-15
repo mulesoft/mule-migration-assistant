@@ -44,7 +44,7 @@ public class MigrationRunner {
   private final static String CANCEL_ON_ERROR = "cancelOnError";
   private final static String PROJECT_PARENT_GAV = "projectParentGAV";
   private final static String PROJECT_GAV = "projectGAV";
-  public static final String JSON_REPORT_PROP_NAME = "jsonReport";
+  public static final String JSON_REPORT = "jsonReport";
 
   private String projectBasePath;
   private String parentDomainProjectBasePath;
@@ -53,6 +53,7 @@ public class MigrationRunner {
   private boolean cancelOnError = false;
   private Parent projectParentGAV;
   private String projectGAV;
+  private boolean jsonReport;
 
 
   private String userId;
@@ -108,7 +109,7 @@ public class MigrationRunner {
         .withCancelOnError(cancelOnError)
         .withProjectParentGAV(projectParentGAV)
         .withProjectGAV(projectGAV)
-        .withJsonReport(Boolean.getBoolean(JSON_REPORT_PROP_NAME))
+        .withJsonReport(jsonReport)
         .build();
   }
 
@@ -130,6 +131,7 @@ public class MigrationRunner {
     options.addOption(CANCEL_ON_ERROR, true, "Use cancelOnError to stop the migration. Default is false");
     options.addOption(PROJECT_PARENT_GAV, true, "Use projectParentGAV to migration parent in your pom.xml");
     options.addOption(PROJECT_GAV, true, "Use projectGAV to override default GAV coordinates when a pom.xml is not provided");
+    options.addOption(JSON_REPORT, false, "Generate migration report in JSON format");
 
     options.addOption("userId", true, "The userId to send for the usage statistics");
     options.addOption("sessionId", true, "The sessionId to send for the usage statistics");
@@ -195,6 +197,10 @@ public class MigrationRunner {
         } else {
           throw new ConsoleOptionsException("You must specify the GAV (groupId:artifactId:version) for the 'projectGAV' option");
         }
+      }
+
+      if (line.hasOption(JSON_REPORT)) {
+        jsonReport = true;
       }
 
       if (line.hasOption(HELP)) {

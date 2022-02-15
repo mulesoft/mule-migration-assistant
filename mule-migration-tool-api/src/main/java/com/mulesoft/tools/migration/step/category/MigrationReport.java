@@ -6,11 +6,13 @@
 package com.mulesoft.tools.migration.step.category;
 
 import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.project.model.pom.PomModel;
 
 import org.jdom2.Element;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An interface to feed the migration report.
@@ -90,6 +92,125 @@ public interface MigrationReport<T> {
   void addProcessedElements(int processedElements);
 
   /**
+   * Returns the type of the migrated project.
+   */
+  String getProjectType();
+
+  /**
+   * Returns the name of the migrated project.
+   */
+  String getProjectName();
+
+  /**
+   * Returns a list of connectors migrated.
+   */
+  List<String> getConnectorNames();
+
+  /**
+   * Retrieves the migrated connectors from the POM.
+   *
+   * @param pomModel POM from where the migrated connectors are retrieved.
+   */
+  void addConnectors(PomModel pomModel);
+
+  /**
+   * Number of components successfully migrated.
+   */
+  Integer getComponentSuccessCount();
+
+  /**
+   * Number of components that where not migrated successfully.
+   */
+  Integer getComponentFailureCount();
+
+  /**
+   * Migration status summary by component.
+   */
+  Map<String, ComponentMigrationStatus> getComponents();
+
+  /**
+   * Increments the component success migration count.
+   *
+   * @param element component migrated with no errors.
+   */
+  void addComponentSuccess(Element element);
+
+  /**
+   * Increments the component failure migration count.
+   *
+   * @param element component migrated with errors.
+   */
+  void addComponentFailure(Element element);
+
+  /**
+   * Number of DataWeave scripts migrated successfully.
+   */
+  Integer getDwTransformsSuccessCount();
+
+  /**
+   * Number of DataWeave scripts migrated unsuccessfully.
+   */
+  Integer getDwTransformsFailureCount();
+
+  /**
+   * Number of DataWeave script lines migrated successfully.
+   */
+  Integer getDwTransformsSuccessLineCount();
+
+  /**
+   * Number of DataWeave script lines migrated unsuccessfully.
+   */
+  Integer getDwTransformsFailureLineCount();
+
+  /**
+   * Reports a successful DataWeave script migration.
+   *
+   * @param script DataWeave script migrated.
+   */
+  void dwTransformsSuccess(String script);
+
+  /**
+   * Reports an unsuccessful DataWeave script migration.
+   *
+   * @param script DataWeave script unsuccessfully migrated.
+   */
+  void dwTransformsFailure(String script);
+
+  /**
+   * Number of MEL expressions migrated successfully.
+   */
+  Integer getMelExpressionsSuccessCount();
+
+  /**
+   * Number of MEL expressions migrated unsuccessfully.
+   */
+  Integer getMelExpressionsFailureCount();
+
+  /**
+   * Number of MEL expression lines migrated successfully.
+   */
+  Integer getMelExpressionsSuccessLineCount();
+
+  /**
+   * Number of MEL expression lines migrated unsuccessfully.
+   */
+  Integer getMelExpressionsFailureLineCount();
+
+  /**
+   * Reports a successful MEL expression migration.
+   *
+   * @param melExpression MEL expression migrated.
+   */
+  void melExpressionSuccess(String melExpression);
+
+  /**
+   * Reports an unsuccessful MEL expression migration.
+   *
+   * @param melExpression MEL expression unsuccessfully migrated.
+   */
+  void melExpressionFailure(String melExpression);
+
+  /**
    * Update file reference on report
    *
    * @param oldFileName the previous name of the file
@@ -101,4 +222,12 @@ public interface MigrationReport<T> {
    * Returns the report entries.
    */
   List<T> getReportEntries();
+
+  /**
+   * Returns the report entries for the given levels.
+   *
+   * @param levels to filter report entries returned.
+   */
+  List<T> getReportEntries(Level... levels);
+
 }
