@@ -28,11 +28,6 @@ public class ErrorResponseBuilderMigrationStep extends AbstractResponseBuilderMi
   }
 
   @Override
-  public void execute(Element element, MigrationReport migrationReport) throws RuntimeException {
-    super.execute(element, migrationReport);
-  }
-
-  @Override
   protected String getListenerResponseStatusCode() {
     return HTTP_LISTENER_RESPONSE_ERROR_STATUS_CODE;
   }

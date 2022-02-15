@@ -6,17 +6,22 @@
 package com.mulesoft.tools.migration.step;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 
 import com.mulesoft.tools.migration.exception.MigrationStepException;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
-
-import org.jdom2.Namespace;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Basic unit of execution.
@@ -68,5 +73,10 @@ public abstract class AbstractApplicationModelMigrationStep implements Applicati
   @Override
   public void setNamespacesContributions(List<Namespace> namespaces) {
     this.namespacesContribution = namespaces;
+  }
+
+  @Override
+  public boolean shouldReportMetrics() {
+    return true;
   }
 }

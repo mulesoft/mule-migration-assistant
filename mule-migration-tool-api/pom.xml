@@ -60,6 +60,29 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>surefire-java15plus</id>
+            <activation>
+                <jdk>[1.15,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>
+                                --add-opens java.base/java.io=ALL-UNNAMED
+                                --add-opens java.base/java.lang=ALL-UNNAMED
+                            </argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.jdom</groupId>

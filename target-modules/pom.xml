@@ -22,7 +22,7 @@
         <mule.http.connector.version>1.5.25</mule.http.connector.version>
         <mule.sockets.connector.version>1.2.2</mule.sockets.connector.version>
         <mule.file.connector.version>1.3.4</mule.file.connector.version>
-        <mule.jms.connector.version>1.8.1</mule.jms.connector.version>
+        <mule.jms.connector.version>1.8.2</mule.jms.connector.version>
         <mule.vm.connector.version>2.0.0</mule.vm.connector.version>
         <mule.amqp.connector.version>1.7.2</mule.amqp.connector.version>
         <mule.aggregators.module.version>1.0.5</mule.aggregators.module.version>

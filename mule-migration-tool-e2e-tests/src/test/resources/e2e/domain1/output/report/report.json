@@ -1,10 +1,39 @@
-[
-  {
-    "level": "WARN",
-    "lineNumber": 5,
-    "columnNumber": 112,
-    "message": "Threading profiles do not exist in Mule 4. You can replace them with a \u0027maxConcurrency\u0027 value in the flow.",
-    "filePath": "src/main/mule/mule-domain-config.xml",
-    "documentationLinks": []
-  }
-]
+{
+  "projectType": "MULE_THREE_DOMAIN",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.5.25"
+  ],
+  "numberOfMuleComponents": 2,
+  "numberOfMuleComponentsMigrated": 2,
+  "componentDetails": {
+    "domain:mule-domain": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener-config": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "flow.threading",
+      "component": "http:listener-config",
+      "lineNumber": 5,
+      "columnNumber": 112,
+      "message": "Threading profiles do not exist in Mule 4. You can replace them with a \u0027maxConcurrency\u0027 value in the flow.",
+      "filePath": "src/main/mule/mule-domain-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

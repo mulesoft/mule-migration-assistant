@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <spring:bean name="activemqConnectionFactory" class="org.apache.activemq.ActiveMQSslConnectionFactory">
+        <spring:property name="trustStore" value="${activemq.trustStore.location}" />
+        <spring:property name="trustStorePassword" value="${activemq.trustStore.password}" />
+        <spring:property name="brokerURL" value="${activemq.broker.url.ssl}" />
+        <spring:property name="userName" value="${activemq.username}" />
+        <spring:property name="password" value="${activemq.password}" />
+    </spring:bean>
+
+    <spring:bean name="cacheConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <spring:property name="targetConnectionFactory" ref="activemqConnectionFactory" />
+        <spring:property name="sessionCacheSize" value="5" />
+    </spring:bean>
+
+</beans>

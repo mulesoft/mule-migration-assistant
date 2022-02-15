@@ -63,4 +63,9 @@ public interface ApplicationModelContribution extends MigrationStep<Element> {
    * @return a {@link ApplicationModel}
    */
   void setNamespacesContributions(List<Namespace> namespaces);
+
+  /**
+   * Whether this step should report migration result metrics or not.
+   */
+  boolean shouldReportMetrics();
 }

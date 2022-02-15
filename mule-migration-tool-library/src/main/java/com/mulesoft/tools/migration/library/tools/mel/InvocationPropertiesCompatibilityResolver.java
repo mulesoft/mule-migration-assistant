@@ -30,6 +30,7 @@ public class InvocationPropertiesCompatibilityResolver implements CompatibilityR
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
                         ExpressionMigrator expressionMigrator) {
     String sessionVarName = original.trim().replaceFirst("(?i)^header:invocation:", EMPTY);
+    report.melExpressionSuccess(original);
     return "vars." + sessionVarName;
   }
 }

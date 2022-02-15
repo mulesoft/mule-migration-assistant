@@ -241,16 +241,21 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
     copyAttributeIfPresent(m3Connector, connection, "clientId");
 
     if (m3Connector.getAttribute("connectionFactory-ref") != null) {
-      Element connFactory =
-          appModel.getNode("/*/*[@name='" + m3Connector.getAttributeValue("connectionFactory-ref") + "']");
       Element defaultCaching = new Element("default-caching", JMS_NAMESPACE);
-      copyAttributeIfPresent(connFactory, defaultCaching, "sessionCacheSize");
-      copyAttributeIfPresent(connFactory, defaultCaching, "cacheConsumers");
-      copyAttributeIfPresent(connFactory, defaultCaching, "cacheProducers");
+      Optional<Element> conFactoryOptional =
+          appModel.getNodeOptional("/*/*[@name='" + m3Connector.getAttributeValue("connectionFactory-ref") + "']");
+      if (conFactoryOptional.isPresent()) {
+        Element connFactory = conFactoryOptional.get();
+        copyAttributeIfPresent(connFactory, defaultCaching, "sessionCacheSize");
+        copyAttributeIfPresent(connFactory, defaultCaching, "cacheConsumers");
+        copyAttributeIfPresent(connFactory, defaultCaching, "cacheProducers");
 
-      connection.addContent(0, new Element("caching-strategy", JMS_NAMESPACE).addContent(defaultCaching));
+        connection.addContent(0, new Element("caching-strategy", JMS_NAMESPACE).addContent(defaultCaching));
 
-      connFactory.detach();
+        connFactory.detach();
+      } else {
+        report.report("jms.beanConnectionFactory", m3Connector, m4JmsConfig);
+      }
     } else {
       connection.addContent(0, new Element("caching-strategy", JMS_NAMESPACE)
           .addContent(new Element("no-caching", JMS_NAMESPACE)));

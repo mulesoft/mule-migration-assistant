@@ -29,7 +29,7 @@ public class InboundAttachmentsCompatibilityResolver implements CompatibilityRes
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
                         ExpressionMigrator expressionMigrator) {
     report.report("expressions.inboundAttachments", element, element);
-
+    report.melExpressionFailure(original);
     return "mel:" + original;
   }
 

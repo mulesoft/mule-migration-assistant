@@ -149,7 +149,6 @@ public class FixedTimeAlgorithmMigrationStepTestCase extends AbstractThrottlingT
     assertOperationElements(element, 1, true);
     assertNamespaces(element);
     assertPolicyName(element);
-    verifyNoMoreInteractions(reportMock);
   }
 
   @Test
@@ -164,7 +163,6 @@ public class FixedTimeAlgorithmMigrationStepTestCase extends AbstractThrottlingT
     assertOperationElements(element, 2, true);
     assertNamespaces(element);
     assertPolicyName(element);
-    verifyNoMoreInteractions(reportMock);
   }
 
   @Test
@@ -179,7 +177,6 @@ public class FixedTimeAlgorithmMigrationStepTestCase extends AbstractThrottlingT
     assertOperationElements(element, 1, false);
     assertNamespaces(element);
     assertPolicyName(element);
-    verifyNoMoreInteractions(reportMock);
   }
 
   @Test
@@ -195,7 +192,6 @@ public class FixedTimeAlgorithmMigrationStepTestCase extends AbstractThrottlingT
     assertNamespaces(element);
     verify(reportMock).report("throttling.throttlingMultipleTiersNotSupported", element, element);
     assertPolicyName(element);
-    verifyNoMoreInteractions(reportMock);
   }
 
   @Test

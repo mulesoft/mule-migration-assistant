@@ -55,13 +55,13 @@ public class Flow extends AbstractApplicationModelMigrationStep {
       if ("synchronous".equals(processingStrategy.getValue())) {
         element.setAttribute("maxConcurrency", "1");
       } else {
-        Element processingStrategyConfig = getApplicationModel().getNode("//*[@name = '" + processingStrategy.getValue() + "']");
-        if (processingStrategyConfig != null) {
-          processingStrategyConfig.detach();
-          if (processingStrategyConfig.getAttribute("maxThreads") != null) {
-            element.setAttribute("maxConcurrency", processingStrategyConfig.getAttribute("maxThreads").getValue());
-          }
-        }
+        getApplicationModel().getNodeOptional("//*[@name = '" + processingStrategy.getValue() + "']")
+            .ifPresent(processingStrategyConfig -> {
+              processingStrategyConfig.detach();
+              if (processingStrategyConfig.getAttribute("maxThreads") != null) {
+                element.setAttribute("maxConcurrency", processingStrategyConfig.getAttribute("maxThreads").getValue());
+              }
+            });
       }
 
       element.removeAttribute(processingStrategy);

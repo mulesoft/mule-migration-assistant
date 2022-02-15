@@ -3,6 +3,10 @@
 
     <!-- configure here resource to be shared within the domain -->
     <http:listener-config name="HTTP_Listener_Configuration_in_domain1" doc:name="HTTP Listener Configuration">
+        <!--Migration WARN: Threading profiles do not exist in Mule 4. You can replace them with a 'maxConcurrency' value in the flow.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-engine-->
+        <!--<http:worker-threading-profile xmlns:http="http://www.mulesoft.org/schema/mule/http" maxThreadsActive="256" />-->
         <http:listener-connection host="0.0.0.0" port="${httpPort}" />
     </http:listener-config>
 
