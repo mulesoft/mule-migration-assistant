@@ -5,6 +5,7 @@
  */
 package com.mulesoft.tools.migration.report.html;
 
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class HTMLReportTest {
 
   @Before
   public void setUp() {
-    printer = new HTMLReport(mock(List.class), temporaryFolder.getRoot(), "1.0.0");
+    printer = new HTMLReport(mock(MigrationReport.class), temporaryFolder.getRoot(), "1.0.0");
     writer = mock(ReportFileWriter.class);
     printer.setReportFileWriter(writer);
   }

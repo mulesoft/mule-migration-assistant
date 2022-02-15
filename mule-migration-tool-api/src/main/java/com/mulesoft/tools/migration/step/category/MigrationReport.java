@@ -124,6 +124,11 @@ public interface MigrationReport<T> {
   Integer getComponentFailureCount();
 
   /**
+   * Number of total components before migration.
+   */
+  Integer getComponentCount();
+
+  /**
    * Migration status summary by component.
    */
   Map<String, ComponentMigrationStatus> getComponents();
@@ -153,6 +158,11 @@ public interface MigrationReport<T> {
   Integer getDwTransformsFailureCount();
 
   /**
+   * Number of DataWeave scripts before migration.
+   */
+  Integer getDwTransformsCount();
+
+  /**
    * Number of DataWeave script lines migrated successfully.
    */
   Integer getDwTransformsSuccessLineCount();
@@ -161,6 +171,11 @@ public interface MigrationReport<T> {
    * Number of DataWeave script lines migrated unsuccessfully.
    */
   Integer getDwTransformsFailureLineCount();
+
+  /**
+   * Number of DataWeave script lines before migration.
+   */
+  Integer getDwTransformsLineCount();
 
   /**
    * Reports a successful DataWeave script migration.
@@ -187,6 +202,11 @@ public interface MigrationReport<T> {
   Integer getMelExpressionsFailureCount();
 
   /**
+   * Number of MEL expressions before migration
+   */
+  Integer getMelExpressionsCount();
+
+  /**
    * Number of MEL expression lines migrated successfully.
    */
   Integer getMelExpressionsSuccessLineCount();
@@ -195,6 +215,12 @@ public interface MigrationReport<T> {
    * Number of MEL expression lines migrated unsuccessfully.
    */
   Integer getMelExpressionsFailureLineCount();
+
+
+  /**
+   * Number of MEL expression lines before migration.
+   */
+  Integer getMelExpressionsLineCount();
 
   /**
    * Reports a successful MEL expression migration.

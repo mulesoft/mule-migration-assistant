@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Mule Migration Assistant Report</title>
+    <link rel="stylesheet" type="text/css" href="assets/styles/mulesoft-styles.css">
+    <link rel="stylesheet" type="text/css" href="assets/styles/tsorter.css">
+</head>
+<body>
+<div class="mulesoft-topbar">
+    <div class="mulesoft-appbar">
+        <div class="muleicon muleicon-logo"></div>
+        <div class="anypoint-brand">Mule Migration Assistant 1.2.1-SNAPSHOT</div>
+    </div>
+</div>
+<div class="col-md-8">
+    <h2 class="text-bold">Migration Summary</h2>
+    <div class="col-md-8 col-md-offset-1">
+        <h3><span class="text-bold">Migrated Components:</span> <span>4/5</span></h3>
+        <h3><span class="text-bold">Migrated MEL Expressions:</span> <span>0/0</span></h3>
+        <h3><span class="text-bold">Migrated MEL Expression Lines:</span> <span>0/0</span></h3>
+        <h3><span class="text-bold">Migrated DW Transformations:</span> <span>1/1</span></h3>
+        <h3><span class="text-bold">Migrated DW Transformation Lines:</span> <span>10/10</span></h3>
+    </div>
+</div>
+<div class="col-md-12"><hr /></div>
+<div class="col-md-8">
+    <h2 class="text-bold">Issues found during migration</h2>
+</div>
+<div class="col-md-8 col-md-offset-1">
+    <h2 class="text-bold">Errors:</h2>
+    <table id="error_resources_table" class="table table-featured table-hover sortable">
+        <thead>
+        <tr>
+            <th colspan="2" data-tsorter="link">Resource</th>
+            <th data-tsorter="numeric"># Issues</th>
+        </tr>
+        </thead>
+        <tbody id="error_table_body">
+        <tbody class="labels">
+        <tr>
+            <td colspan="2">
+                <a><label for="error-mule-config.xml">mule-config.xml</label></a>
+                <input type="checkbox" name="error-mule-config.xml" id="error-mule-config.xml" data-toggle="toggle">
+            </td>
+            <td>1</td>
+        </tr>
+        </tbody>
+        <tbody class="hide" style="display: none">
+        <tr>
+            <td colspan="2">
+                <a href=resources/error-mule-config-0.html>- Unable to parse endpoint address '${http.address}'.</a>
+            </td>
+            <td>1</td>
+        </tr>
+        </tbody>
+        </tbody>
+    </table>
+</div>
+<div class="col-md-8 col-md-offset-1">
+    <h2 class="text-bold">Warnings:</h2>
+    <table id="warn_resources_table" class="table table-featured table-hover sortable">
+        <thead>
+        <tr>
+            <th colspan="2" data-tsorter="link">Resource</th>
+            <th data-tsorter="numeric"># Issues</th>
+        </tr>
+        </thead>
+        <tbody id="warn_table_body">
+        <tbody class="labels">
+        <tr>
+            <td colspan="2">
+                <a><label for="warn-mule-config.xml">mule-config.xml</label></a>
+                <input type="checkbox" name="warn-mule-config.xml" id="warn-mule-config.xml" data-toggle="toggle">
+            </td>
+            <td>5</td>
+        </tr>
+        </tbody>
+        <tbody class="hide" style="display: none">
+        <tr>
+            <td colspan="2">
+                <a href=resources/warn-mule-config-0.html>- This replicates logic from the HTTP transport. Remove it if it is not needed.</a>
+            </td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <a href=resources/warn-mule-config-1.html>- Avoid using an outbound property to determine the status code.</a>
+            </td>
+            <td>2</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <a href=resources/warn-mule-config-2.html>- Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').</a>
+            </td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <a href=resources/warn-mule-config-3.html>- Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.</a>
+            </td>
+            <td>1</td>
+        </tr>
+        </tbody>
+        </tbody>
+    </table>
+</div>
+<div class="col-md-8 col-md-offset-1">
+    <h2 class="text-bold">Info:</h2>
+    <table id="info_resources_table" class="table table-featured table-hover sortable">
+        <thead>
+        <tr>
+            <th colspan="2" data-tsorter="link">Resource</th>
+            <th data-tsorter="numeric"># Issues</th>
+        </tr>
+        </thead>
+        <tbody id="info_table_body">
+        <tbody class="labels">
+        <tr>
+            <td colspan="2">
+                <a><label for="info-mule-config.xml">mule-config.xml</label></a>
+                <input type="checkbox" name="warn-mule-config.xml" id="info-mule-config.xml" data-toggle="toggle">
+            </td>
+            <td>1</td>
+        </tr>
+        </tbody>
+        <tbody class="hide" style="display: none">
+        <tr>
+            <td colspan="2">
+                <a href=resources/info-mule-config-0.html>- The 'flow' element no longer has a 'processingStrategy' attribute.</a>
+            </td>
+            <td>1</td>
+        </tr>
+        </tbody>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript" src="assets/js/jquery-3.3.1.js"></script>
+<script type="text/javascript">
+    $('[data-toggle="toggle"]').change(function(){
+        $(this).parents().next('.hide').toggle();
+    });
+</script>
+</body>
+</html>
