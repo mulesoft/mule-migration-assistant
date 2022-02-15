@@ -59,6 +59,7 @@ public class PreprocessNamespaces implements NamespaceContribution {
             } else {
               report.report("components.unknown", node, node, ns.getPrefix(), ns.getURI(), ADDITIONAL_SPRING_NAMESPACES_PROP);
             }
+            report.addComponentFailure(node);
           });
     });
 

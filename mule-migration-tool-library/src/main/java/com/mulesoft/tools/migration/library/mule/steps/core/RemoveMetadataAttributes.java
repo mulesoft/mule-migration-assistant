@@ -44,4 +44,9 @@ public class RemoveMetadataAttributes extends AbstractApplicationModelMigrationS
         .forEach(att -> att.detach());
     element.removeNamespaceDeclaration(METADATA_NAMESPACE);
   }
+
+  @Override
+  public boolean shouldReportMetrics() {
+    return false;
+  }
 }

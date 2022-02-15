@@ -42,4 +42,10 @@ public class RemoveSyntheticMigrationAttributes extends AbstractApplicationModel
         .forEach(att -> att.detach());
     element.removeNamespaceDeclaration(MIGRATION_NAMESPACE);
   }
+
+  @Override
+  public boolean shouldReportMetrics() {
+    return false;
+  }
+
 }

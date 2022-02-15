@@ -140,7 +140,7 @@
         <scalatest.maven.plugin.version>2.0.2</scalatest.maven.plugin.version>
 
         <java.version>1.8</java.version>
-        <scala.version>2.12.7</scala.version>
+        <scala.version>2.12.9</scala.version>
         <parboiled.version>2.1.4</parboiled.version>
         <scalatest.version>3.0.1</scalatest.version>
 
@@ -437,36 +437,35 @@
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${maven.deploy.plugin.version}</version>
                 </plugin>
-                
-                <!--TODO this we need to make it run-->
-                <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-jar-plugin</artifactId>-->
-                <!--<version>${maven.jar.plugin.version}</version>-->
-                <!--<configuration>-->
-                <!--<archive>-->
-                <!--<manifest>-->
-                <!--<addClasspath>true</addClasspath>-->
-                <!--<classpathPrefix>${lib-dir}</classpathPrefix>-->
-                <!--<mainClass>com.mulesoft.tools.migration.MigrationRunner</mainClass>-->
-                <!--</manifest>-->
-                <!--</archive>-->
-                <!--</configuration>-->
-                <!--</plugin>-->
 
-                <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-shade-plugin</artifactId>-->
-                <!--<version>${maven.shade.plugin.version}</version>-->
-                <!--<executions>-->
-                <!--<execution>-->
-                <!--<phase>package</phase>-->
-                <!--<goals>-->
-                <!--<goal>shade</goal>-->
-                <!--</goals>-->
-                <!--</execution>-->
-                <!--</executions>-->
-                <!--</plugin>-->
+                <plugin>
+                    <groupId>org.codehaus.gmavenplus</groupId>
+                    <artifactId>gmavenplus-plugin</artifactId>
+                    <version>1.13.1</version>
+                    <executions>
+                        <execution>
+                            <id>execute</id>
+                            <goals>
+                                <goal>execute</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <scripts>
+                            <script>${project.basedir}/scripts/update-e2e-tests-output.groovy</script>
+                        </scripts>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-all</artifactId>
+                            <version>3.0.9</version>
+                            <type>pom</type>
+                            <scope>runtime</scope>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
             </plugins>
         </pluginManagement>
     </build>

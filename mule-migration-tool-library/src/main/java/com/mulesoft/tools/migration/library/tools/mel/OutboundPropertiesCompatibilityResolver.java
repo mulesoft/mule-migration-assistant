@@ -32,13 +32,13 @@ public class OutboundPropertiesCompatibilityResolver implements CompatibilityRes
   @Override
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
                         ExpressionMigrator expressionMigrator) {
-    return doResolve(original);
+    return doResolve(original, report);
   }
 
   @Override
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
                         ExpressionMigrator expressionMigrator, boolean enricher) {
-    String propertyName = doResolve(original);
+    String propertyName = doResolve(original, report);
     if (enricher) {
       return propertyName;
     } else {
@@ -46,7 +46,8 @@ public class OutboundPropertiesCompatibilityResolver implements CompatibilityRes
     }
   }
 
-  private String doResolve(String original) {
+  private String doResolve(String original, MigrationReport report) {
+    report.melExpressionSuccess(original);
     return original.trim().replaceFirst("(?i)^(header:outbound:|header:)", EMPTY);
   }
 
