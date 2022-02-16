@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="ee-transform-03Flow">
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json  
+---
+{
+  order: {
+    "type": "Book",
+    title: payload.title,
+    details: "By $(payload.author) ($(payload.year))"
+  }
+}]]></ee:set-payload>
+            </ee:message>
+            <ee:variables>
+                <ee:set-variable variableName="testVar"><![CDATA[%dw 2.0
+output application/java  
+---
+{
+  orderStatus: 
+    if (vars.purchaseOrderStatus == "C")
+      "complete"
+    else
+      "incomplete"
+}]]></ee:set-variable>
+                <ee:set-variable variableName="testSessionVar"><![CDATA[%dw 2.0
+output application/java  
+---
+{
+  value: "aValue"
+}]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+
+        <compatibility:set-session-variable variableName="testSessionVar" value="#[vars.testSessionVar]">
+            <!--Migration WARN: Instead of setting session variables in the flow, you must set Mule 4 variables.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#session_variables-->
+        </compatibility:set-session-variable>
+
+        <logger />
+
+    </flow>
+
+</mule>

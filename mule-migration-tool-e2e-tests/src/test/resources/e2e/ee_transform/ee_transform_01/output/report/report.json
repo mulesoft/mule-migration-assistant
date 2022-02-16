@@ -1,0 +1,45 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 4,
+  "numberOfMuleComponentsMigrated": 4,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "logger": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "ee:transform": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 3,
+  "numberOfDWTransformationsMigrated": 3,
+  "numberOfDWTransformationLines": 22,
+  "numberOfDWTransformationLinesMigrated": 22,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "transform.sessionVars",
+      "component": "compatibility:set-session-variable",
+      "lineNumber": 38,
+      "columnNumber": 106,
+      "message": "Instead of setting session variables in the flow, you must set Mule 4 variables.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}
