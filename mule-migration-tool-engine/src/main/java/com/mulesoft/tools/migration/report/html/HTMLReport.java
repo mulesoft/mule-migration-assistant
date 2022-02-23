@@ -55,10 +55,8 @@ public class HTMLReport extends AbstractReport {
   public HTMLReport(MigrationReport<ReportEntryModel> report, File reportDirectory, String runnerVersion) {
     super(report, reportDirectory);
 
-    // sorting entries by key to allow better validation over the HTML
-    List<ReportEntryModel> sortedEntries = report.getReportEntries().stream()
-        .sorted(Comparator.comparing(ReportEntryModel::getKey)).collect(Collectors.toList());
-    this.applicationReport = new ApplicationReport.ApplicationReportBuilder().withReportEntries(sortedEntries).build();
+    this.applicationReport = new ApplicationReport.ApplicationReportBuilder()
+        .withReportEntries(report.getReportEntries()).build();
     this.freemarkerConfig = new Configuration(Configuration.VERSION_2_3_28);
     this.freemarkerConfig.setClassForTemplateLoading(this.getClass(), BASE_TEMPLATE_FOLDER);
     this.runnerVersion = runnerVersion;

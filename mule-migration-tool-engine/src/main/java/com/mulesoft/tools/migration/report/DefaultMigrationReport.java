@@ -52,7 +52,7 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
   private transient Map<String, Map<String, Map<String, Object>>> possibleEntries;
 
   private transient XMLOutputter outp = new XMLOutputter();
-  private final Set<ReportEntryModel> reportEntries = new HashSet<>();
+  private final Set<ReportEntryModel> reportEntries = new LinkedHashSet<>();
 
   private String projectType;
   private String projectName;
