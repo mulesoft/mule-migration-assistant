@@ -192,7 +192,7 @@ public class MigrationJob implements Executable {
         throw new MigrationJobException("Failed to generate report.", ex);
       }
     }
-    HTMLReport htmlReport = new HTMLReport(report.getReportEntries(), reportPath.toFile(), this.getRunnerVersion());
+    HTMLReport htmlReport = new HTMLReport(report, reportPath.toFile(), this.getRunnerVersion());
     htmlReport.printReport();
     if (jsonReportEnabled) {
       applicationModel.getPomModel().ifPresent(p -> report.addConnectors(p));

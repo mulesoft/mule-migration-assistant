@@ -14,18 +14,29 @@
     </div>
 </div>
 <div class="col-md-8">
-    <h4>Issues found during migration:</h2>
+    <h2 class="text-bold">Migration Summary</h2>
+    <div class="col-md-8 col-md-offset-1">
+        <h3><span class="text-bold">Migrated Components:</span> <span>${componentsMigrated}</span></h3>
+        <h3><span class="text-bold">Migrated MEL Expressions:</span> <span>${melExpressionsMigrated}</span></h3>
+        <h3><span class="text-bold">Migrated MEL Expression Lines:</span> <span>${melExpressionLinesMigrated}</span></h3>
+        <h3><span class="text-bold">Migrated DW Transformations:</span> <span>${dwTransformationsMigrated}</span></h3>
+        <h3><span class="text-bold">Migrated DW Transformation Lines:</span> <span>${dwTransformationLinesMigrated}</span></h3>
+    </div>
+</div>
+<div class="col-md-12"><hr /></div>
+<div class="col-md-8">
+    <h2 class="text-bold">Issues found during migration</h2>
 </div>
     <div class="col-md-8 col-md-offset-1">
         <h2 class="text-bold">Errors:</h2>
-        <table id="resources_table" class="table table-featured table-hover sortable">
+        <table id="error_resources_table" class="table table-featured table-hover sortable">
                 <thead>
                 <tr>
                     <th colspan="2" data-tsorter="link">Resource</th>
                     <th data-tsorter="numeric"># Issues</th>
                 </tr>
                 </thead>
-                <tbody id="table-body">
+                <tbody id="error_table_body">
                     <#list applicationSummaryErrors as path, issuesCount>
                         <tbody class="labels">
                             <tr>
@@ -58,14 +69,14 @@
     </div>
     <div class="col-md-8 col-md-offset-1">
         <h2 class="text-bold">Warnings:</h2>
-        <table id="resources_table" class="table table-featured table-hover sortable">
+        <table id="warn_resources_table" class="table table-featured table-hover sortable">
                 <thead>
                 <tr>
                     <th colspan="2" data-tsorter="link">Resource</th>
                     <th data-tsorter="numeric"># Issues</th>
                 </tr>
                 </thead>
-                <tbody id="table-body">
+                <tbody id="warn_table_body">
                     <#list applicationSummaryWarnings as path, issuesCount>
                         <tbody class="labels">
                             <tr>
@@ -98,14 +109,14 @@
     </div>
     <div class="col-md-8 col-md-offset-1">
             <h2 class="text-bold">Info:</h2>
-            <table id="resources_table" class="table table-featured table-hover sortable">
+            <table id="info_resources_table" class="table table-featured table-hover sortable">
                     <thead>
                     <tr>
                         <th colspan="2" data-tsorter="link">Resource</th>
                         <th data-tsorter="numeric"># Issues</th>
                     </tr>
                     </thead>
-                    <tbody id="table-body">
+                    <tbody id="info_table_body">
                         <#list applicationSummaryInfo as path, issuesCount>
                             <tbody class="labels">
                                 <tr>

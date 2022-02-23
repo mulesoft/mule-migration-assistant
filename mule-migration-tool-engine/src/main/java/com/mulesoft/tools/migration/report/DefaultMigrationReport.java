@@ -52,7 +52,7 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
   private transient Map<String, Map<String, Map<String, Object>>> possibleEntries;
 
   private transient XMLOutputter outp = new XMLOutputter();
-  private final Set<ReportEntryModel> reportEntries = new HashSet<>();
+  private final Set<ReportEntryModel> reportEntries = new LinkedHashSet<>();
 
   private String projectType;
   private String projectName;
@@ -230,6 +230,11 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
   }
 
   @Override
+  public Integer getComponentCount() {
+    return getComponentSuccessCount() + getComponentFailureCount();
+  }
+
+  @Override
   public Map<String, ComponentMigrationStatus> getComponents() {
     return components;
   }
@@ -264,6 +269,12 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
   }
 
   @Override
+  public Integer getDwTransformsCount() {
+    return dwTransformsSuccess + dwTransformsFailure;
+  }
+
+
+  @Override
   public Integer getDwTransformsSuccessLineCount() {
     return dwTransformLinesSuccess;
   }
@@ -271,6 +282,11 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
   @Override
   public Integer getDwTransformsFailureLineCount() {
     return dwTransformLinesFailure;
+  }
+
+  @Override
+  public Integer getDwTransformsLineCount() {
+    return dwTransformLinesSuccess + dwTransformLinesFailure;
   }
 
   @Override
@@ -298,6 +314,11 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
   }
 
   @Override
+  public Integer getMelExpressionsCount() {
+    return melExpressionsFailure + melExpressionsSuccess;
+  }
+
+  @Override
   public Integer getMelExpressionsSuccessLineCount() {
     return melLinesSuccess;
   }
@@ -305,6 +326,11 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
   @Override
   public Integer getMelExpressionsFailureLineCount() {
     return melLinesFailure;
+  }
+
+  @Override
+  public Integer getMelExpressionsLineCount() {
+    return melLinesFailure + melLinesSuccess;
   }
 
   @Override

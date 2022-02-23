@@ -9,6 +9,7 @@ import static java.lang.System.getProperty;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.io.FileUtils.copyDirectory;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -30,12 +31,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import junitx.framework.FileAssert;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -127,6 +132,8 @@ public abstract class AbstractEndToEndTestCase {
             compareXml(expectedPath, migratedPath);
           } else if (migratedPath.toFile().getName().endsWith(".json")) {
             compareJson(expectedPath, migratedPath);
+          } else if (migratedPath.toFile().getName().endsWith(".html")) {
+            compareStringFiles(expectedPath, migratedPath);
           } else {
             compareChars(expectedPath, migratedPath);
           }
@@ -197,6 +204,17 @@ public abstract class AbstractEndToEndTestCase {
         .ignoreElementContentWhitespace()
         .build();
     assertFalse(d.toString(), d.hasDifferences());
+  }
+
+  private void compareStringFiles(Path output, Path expected) {
+    try {
+      assertThat(String.format("Comparison mismatch at resource %s: ",
+                               new File("test-classes").getAbsoluteFile().toPath().relativize(output)),
+                 FileUtils.readFileToString(output.toFile(), "utf-8"),
+                 Matchers.equalToIgnoringWhiteSpace(FileUtils.readFileToString(expected.toFile(), "utf-8")));
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void compareChars(Path output, Path expected) {

@@ -5,9 +5,10 @@
  */
 package com.mulesoft.tools.migration.report.html;
 
+import com.mulesoft.tools.migration.report.AbstractReport;
 import com.mulesoft.tools.migration.report.html.model.ApplicationReport;
-import com.mulesoft.tools.migration.report.html.model.ApplicationReport.ApplicationReportBuilder;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
+import com.mulesoft.tools.migration.step.category.MigrationReport;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -18,12 +19,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.*;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.*;
 
@@ -33,7 +31,7 @@ import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.*
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class HTMLReport {
+public class HTMLReport extends AbstractReport {
 
   private static final String ASSETS_FOLDER = "assets";
   private static final String RESOURCES_FOLDER = "resources";
@@ -49,17 +47,16 @@ public class HTMLReport {
   private static final String MULESOFT_ICON = "icons/004_logo.svg";
   private static final String MULESOFT_ICON_TTF = "fonts/muleicons.ttf";
 
-  private final File reportDirectory;
   private ApplicationReport applicationReport;
   private ReportFileWriter reportFileWriter = new ReportFileWriter();
   private Configuration freemarkerConfig;
   private String runnerVersion;
 
-  public HTMLReport(List<ReportEntryModel> reportEntries, File reportDirectory, String runnerVersion) {
-    checkNotNull(reportEntries, "Report Entries cannot be null");
-    checkNotNull(reportDirectory, "Report directory cannot be null");
-    this.applicationReport = new ApplicationReportBuilder().withReportEntries(reportEntries).build();
-    this.reportDirectory = reportDirectory;
+  public HTMLReport(MigrationReport<ReportEntryModel> report, File reportDirectory, String runnerVersion) {
+    super(report, reportDirectory);
+
+    this.applicationReport = new ApplicationReport.ApplicationReportBuilder()
+        .withReportEntries(report.getReportEntries()).build();
     this.freemarkerConfig = new Configuration(Configuration.VERSION_2_3_28);
     this.freemarkerConfig.setClassForTemplateLoading(this.getClass(), BASE_TEMPLATE_FOLDER);
     this.runnerVersion = runnerVersion;
@@ -91,6 +88,17 @@ public class HTMLReport {
       data.put("applicationSummaryErrors", applicationReport.getSummaryErrorEntries());
       data.put("applicationSummaryWarnings", applicationReport.getSummaryWarningEntries());
       data.put("applicationSummaryInfo", applicationReport.getSummaryInfoEntries());
+      data.put("componentsMigrated", String.format("%s/%s", report.getComponentSuccessCount(),
+                                                   report.getComponentCount()));
+      data.put("melExpressionsMigrated", String.format("%s/%s", report.getMelExpressionsSuccessCount(),
+                                                       report.getMelExpressionsCount()));
+      data.put("melExpressionLinesMigrated", String.format("%s/%s", report.getMelExpressionsSuccessLineCount(),
+                                                           report.getMelExpressionsLineCount()));
+      data.put("dwTransformationsMigrated", String.format("%s/%s", report.getDwTransformsSuccessCount(),
+                                                          report.getDwTransformsCount()));
+      data.put("dwTransformationLinesMigrated",
+               String.format("%s/%s", report.getDwTransformsSuccessLineCount(),
+                             report.getDwTransformsLineCount()));
 
       writer = new StringWriter();
       summaryTemplate.process(data, writer);

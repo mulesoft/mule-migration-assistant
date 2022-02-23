@@ -7,6 +7,7 @@ package com.mulesoft.tools.migration.report.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mulesoft.tools.migration.report.AbstractReport;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.ComponentMigrationStatus;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -18,13 +19,9 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.mulesoft.tools.migration.report.DefaultMigrationReport.getComponentKey;
 
 import org.jdom2.Element;
@@ -35,20 +32,13 @@ import org.jdom2.Element;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class JSONReport {
+public class JSONReport extends AbstractReport {
 
-
-  private final File reportDirectory;
-  private final MigrationReport<ReportEntryModel> report;
   private final Path outputProject;
 
-
   public JSONReport(MigrationReport<ReportEntryModel> report, File reportDirectory, Path outputProject) {
-    this.report = report;
+    super(report, reportDirectory);
     this.outputProject = outputProject;
-    checkNotNull(report.getReportEntries(), "Report Entries cannot be null");
-    checkNotNull(reportDirectory, "Report directory cannot be null");
-    this.reportDirectory = reportDirectory;
   }
 
   public void printReport() {
@@ -71,6 +61,7 @@ public class JSONReport {
 
     private final String projectType;
     private final String projectName;
+
     private final List<String> connectorsMigrated;
     private final Integer numberOfMuleComponents;
     private final Integer numberOfMuleComponentsMigrated;
@@ -88,18 +79,21 @@ public class JSONReport {
     public JSONReportModel(MigrationReport<ReportEntryModel> report, Path outputProject) {
       projectType = report.getProjectType();
       projectName = report.getProjectName();
+
       connectorsMigrated = report.getConnectorNames();
       numberOfMuleComponentsMigrated = report.getComponentSuccessCount();
       numberOfMuleComponents = report.getComponentFailureCount() + numberOfMuleComponentsMigrated;
       componentDetails = report.getComponents();
+
       numberOfMELExpressionsMigrated = report.getMelExpressionsSuccessCount();
-      numberOfMELExpressions = report.getMelExpressionsFailureCount() + numberOfMELExpressionsMigrated;
+      numberOfMELExpressions = report.getMelExpressionsCount();
       numberOfMELExpressionLinesMigrated = report.getMelExpressionsSuccessLineCount();
-      numberOfMELExpressionLines = report.getMelExpressionsFailureLineCount() + numberOfMELExpressionLinesMigrated;
+      numberOfMELExpressionLines = report.getMelExpressionsLineCount();
       numberOfDWTransformationsMigrated = report.getDwTransformsSuccessCount();
-      numberOfDWTransformations = report.getDwTransformsFailureCount() + numberOfDWTransformationsMigrated;
+      numberOfDWTransformations = report.getDwTransformsCount();
       numberOfDWTransformationLinesMigrated = report.getDwTransformsSuccessLineCount();
-      numberOfDWTransformationLines = report.getDwTransformsFailureLineCount() + numberOfDWTransformationLinesMigrated;
+      numberOfDWTransformationLines = report.getDwTransformsLineCount();
+
       detailedMessages = report.getReportEntries().stream()
           .map((re) -> JSONReportEntryModel.fromReportModel(re, outputProject))
           .sorted(Comparator.comparing(JSONReportEntryModel::getMessage))
@@ -167,6 +161,7 @@ public class JSONReport {
     public List<JSONReportEntryModel> getDetailedMessages() {
       return detailedMessages;
     }
+
   }
 
   static class JSONReportEntryModel {
