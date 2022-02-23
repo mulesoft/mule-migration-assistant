@@ -79,25 +79,25 @@
         <tbody class="hide" style="display: none">
         <tr>
             <td colspan="2">
-                <a href=resources/warn-mule-config-0.html>- This replicates logic from the HTTP transport. Remove it if it is not needed.</a>
-            </td>
-            <td>1</td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <a href=resources/warn-mule-config-1.html>- Avoid using an outbound property to determine the status code.</a>
+                <a href=resources/warn-mule-config-0.html>- Avoid using an outbound property to determine the status code.</a>
             </td>
             <td>2</td>
         </tr>
         <tr>
             <td colspan="2">
-                <a href=resources/warn-mule-config-2.html>- Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').</a>
+                <a href=resources/warn-mule-config-1.html>- Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').</a>
             </td>
             <td>1</td>
         </tr>
         <tr>
             <td colspan="2">
-                <a href=resources/warn-mule-config-3.html>- Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.</a>
+                <a href=resources/warn-mule-config-2.html>- Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.</a>
+            </td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+            <a href=resources/warn-mule-config-3.html>- This replicates logic from the HTTP transport. Remove it if it is not needed.</a>
             </td>
             <td>1</td>
         </tr>
