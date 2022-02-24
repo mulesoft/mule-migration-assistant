@@ -38,7 +38,6 @@ public abstract class ProxyHeadersProcessorTestCase {
 
   protected static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   protected static final String MULE_HTTP_PROXY_EXTENSION_ARTIFACT_ID = "mule-http-proxy-extension";
-  protected static final String HTTP_PROXY_EXTENSION_VERSION = "1.1.2";
   protected static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
 
   protected static final Path APPLICATION_MODEL_PATH = Paths.get("src/test/resources/mule/apps/gateway/proxy/original");

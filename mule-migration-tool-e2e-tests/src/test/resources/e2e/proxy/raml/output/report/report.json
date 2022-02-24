@@ -1,0 +1,379 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.5.25"
+  ],
+  "numberOfMuleComponents": 32,
+  "numberOfMuleComponentsMigrated": 29,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "error-handler": {
+      "success": 2,
+      "failure": 0
+    },
+    "flow": {
+      "success": 2,
+      "failure": 0
+    },
+    "set-payload": {
+      "success": 3,
+      "failure": 0
+    },
+    "configuration": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener-config": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:request-config": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener": {
+      "success": 2,
+      "failure": 0
+    },
+    "http:request": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:query-params": {
+      "success": 1,
+      "failure": 0
+    },
+    "custom-processor": {
+      "success": 0,
+      "failure": 2
+    },
+    "apikit:console": {
+      "success": 1,
+      "failure": 0
+    },
+    "apikit:mapping-exception-strategy": {
+      "success": 1,
+      "failure": 0
+    },
+    "apikit:mapping": {
+      "success": 3,
+      "failure": 0
+    },
+    "apikit:exception": {
+      "success": 3,
+      "failure": 0
+    },
+    "api-gateway:autodiscovery": {
+      "success": 1,
+      "failure": 0
+    },
+    "expression-language:property-placeholder": {
+      "success": 0,
+      "failure": 1
+    },
+    "proxy:request-headers": {
+      "success": 1,
+      "failure": 0
+    },
+    "proxy:response-headers": {
+      "success": 1,
+      "failure": 0
+    },
+    "proxy:raml-proxy-config": {
+      "success": 1,
+      "failure": 0
+    },
+    "rest-validator:console": {
+      "success": 1,
+      "failure": 0
+    },
+    "rest-validator:validate-request": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 4,
+  "numberOfMELExpressionsMigrated": 3,
+  "numberOfMELExpressionLines": 4,
+  "numberOfMELExpressionLinesMigrated": 3,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "http.parseResponse",
+      "component": "http:request",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "\u0027parseResponse\u0027 is not needed in Mule 4 because DataWeave 2.0 now handles those MIME types.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "INFO",
+      "key": "http.parseRequest",
+      "component": "http:listener",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "A \u0027parseRequest\u0027 is not needed in Mule 4 because the \u0027InputStream\u0027 of the multipart payload is provided as it is read.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.mapExpression",
+      "component": "http:request",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Build the \u0027query-params\u0027 map with a single DataWeave expression.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.java",
+      "component": "custom-processor",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Element \u0027custom-processor\u0027 which relied on Java no longer exists in Mule 4. Replace its uses with a new Mule 4 feature.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.java",
+      "component": "custom-processor",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Element \u0027custom-processor\u0027 which relied on Java no longer exists in Mule 4. Replace its uses with a new Mule 4 feature.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "expressions.melToDw",
+      "component": "http:request",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "The MEL expression could not be migrated to a DataWeave expression.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "proxy.templates",
+      "component": "proxy:config",
+      "lineNumber": 4,
+      "columnNumber": 39,
+      "message": "Proxy templates have changed in Mule 4. You can review them in Exchange to compare them to this migrated proxy.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "INFO",
+      "key": "configuration.processingStrategy",
+      "component": "configuration",
+      "lineNumber": 4,
+      "columnNumber": 39,
+      "message": "The \u0027configuration\u0027 element no longer has a \u0027defaultProcessingStrategy\u0027 attribute.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "configProperties.springAttributes",
+      "component": "configuration-properties",
+      "lineNumber": 13,
+      "columnNumber": 56,
+      "message": "Spring-specific attributes are no longer available. The default behavior cannot be changed in Mule 4.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "raml.autocompletedConfigAttribute",
+      "component": "rest-validator:config",
+      "lineNumber": 34,
+      "columnNumber": 205,
+      "message": "Attribute \u0027headersStrictValidation\u0027 in RAML config was not found, default value \u0027false\u0027 was set for it.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "raml.autocompletedConfigAttribute",
+      "component": "rest-validator:config",
+      "lineNumber": 34,
+      "columnNumber": 205,
+      "message": "Attribute \u0027parser\u0027 in RAML config was not found, default value \u0027AUTO\u0027 was set for it.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "raml.autocompletedConfigAttribute",
+      "component": "rest-validator:config",
+      "lineNumber": 34,
+      "columnNumber": 205,
+      "message": "Attribute \u0027queryParamsStrictValidation\u0027 in RAML config was not found, default value \u0027false\u0027 was set for it.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "apiDiscovery.apiId",
+      "component": "api-gateway:autodiscovery",
+      "lineNumber": 40,
+      "columnNumber": 66,
+      "message": "APIs in Mule 4 have an identifier, the equivalent should be: \u0027:\u0027.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 49,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 59,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 67,
+      "columnNumber": 57,
+      "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 76,
+      "columnNumber": 79,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "raml.autocompletedOnErrorContinueElement",
+      "component": "on-error-continue",
+      "lineNumber": 123,
+      "columnNumber": 87,
+      "message": "Element \u0027onErrorContinue\u0027 with type \u0027REST-VALIDATOR:BAD_REQUEST\u0027 was added by default while migrating.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "raml.autocompletedOnErrorContinueElement",
+      "component": "on-error-continue",
+      "lineNumber": 132,
+      "columnNumber": 94,
+      "message": "Element \u0027onErrorContinue\u0027 with type \u0027REST-VALIDATOR:RESOURCE_NOT_FOUND\u0027 was added by default while migrating.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "raml.autocompletedOnErrorContinueElement",
+      "component": "on-error-continue",
+      "lineNumber": 141,
+      "columnNumber": 94,
+      "message": "Element \u0027onErrorContinue\u0027 with type \u0027REST-VALIDATOR:METHOD_NOT_ALLOWED\u0027 was added by default while migrating.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "raml.autocompletedOnErrorContinueElement",
+      "component": "on-error-continue",
+      "lineNumber": 150,
+      "columnNumber": 73,
+      "message": "Element \u0027onErrorContinue\u0027 with type \u0027HTTP:TIMEOUT\u0027 was added by default while migrating.",
+      "filePath": "src/main/mule/raml-proxy.xml",
+      "documentationLinks": []
+    }
+  ]
+}

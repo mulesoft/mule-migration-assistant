@@ -10,7 +10,6 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.FALSE;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_PLUGIN_CLASSIFIER;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_THROTTLING_EXTENSION_ARTIFACT_ID;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.THROTTLING_EXTENSION_VERSION;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.TRUE;
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.MULE_4_CORE_NAMESPACE_NO_PREFIX;
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.THROTTLING_MULE_4_NAMESPACE;
@@ -18,7 +17,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.mulesoft.tools.migration.library.gateway.steps.policy.throttling.FixedTimeFrameAlgorithmMigrationStep;
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
@@ -208,7 +206,7 @@ public class FixedTimeAlgorithmMigrationStepTestCase extends AbstractThrottlingT
     Dependency policyTransformExtensionDependency = pm.getDependencies().get(1);
     assertThat(policyTransformExtensionDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(policyTransformExtensionDependency.getArtifactId(), is(MULE_THROTTLING_EXTENSION_ARTIFACT_ID));
-    assertThat(policyTransformExtensionDependency.getVersion(), is(THROTTLING_EXTENSION_VERSION));
+    assertThat(policyTransformExtensionDependency.getVersion(), is(notNullValue()));
     assertThat(policyTransformExtensionDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 }

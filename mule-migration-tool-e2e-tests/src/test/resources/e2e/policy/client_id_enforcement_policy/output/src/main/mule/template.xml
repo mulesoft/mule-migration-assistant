@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:client-id-enforcement="http://www.mulesoft.org/schema/mule/client-id-enforcement" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy" xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform" xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http-policy-transform http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd http://www.mulesoft.org/schema/mule/client-id-enforcement http://www.mulesoft.org/schema/mule/client-id-enforcement/current/mule-client-id-enforcement.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <client-id-enforcement:config name="clientEnforcementConfig" />
+
+    <http-policy:proxy name="Client Id Enforcement">
+        <http-policy:source>
+            <try>
+                {{#credentialsOriginHasHttpBasicAuthenticationHeader}}
+                <client-id-enforcement:validate-basic-auth-encoded-client encodedClient="#[attributes.headers.authorization]" config-ref="clientEnforcementConfig" />
+                {{/credentialsOriginHasHttpBasicAuthenticationHeader}}
+
+        {{! for custom expression or default case (this could happen in migration) }}
+        {{^credentialsOriginHasHttpBasicAuthenticationHeader}}
+                <client-id-enforcement:validate-client clientId="{{clientIdExpression}}" clientSecret="{{clientSecretExpression}}" config-ref="clientEnforcementConfig" />
+                {{/credentialsOriginHasHttpBasicAuthenticationHeader}}
+        {{! for custom expression or default case (this could happen in migration) }}
+                <http-policy:execute-next />
+                <error-handler>
+                    <on-error-continue type="CLIENT-ID-ENFORCEMENT:INVALID_API, CLIENT-ID-ENFORCEMENT:INVALID_CLIENT, CLIENT-ID-ENFORCEMENT:INVALID_CREDENTIALS" logException="false">
+                        <compatibility:set-property propertyName="http.status" value="403" />
+                        {{#isWsdlEndpoint}}
+                        <compatibility:set-property propertyName="Content-Type" value="text/xml" />
+                        <mule:set-payload value="#[mel:soapFault('client', flowVars._invalidClientMessage)]">
+                            <!--Migration WARN: The MEL expression could not be migrated to a DataWeave expression.-->
+                            <!--    For more information refer to:-->
+                            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-mel-->
+                            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#mel_expressions-->
+                            <!--        * https://blogs.mulesoft.com/dev/mule-dev/why-dataweave-main-expression-language-mule-4-->
+                            <!--Migration WARN: The MEL expression contains a method invocation that could not be migrated to a Dataweave expression.-->
+                            <!--    For more information refer to:-->
+                            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/dataweave-cookbook-java-methods-->
+                            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-mel-->
+                        </mule:set-payload>
+                        {{/isWsdlEndpoint}}
+        {{^isWsdlEndpoint}}
+                        <compatibility:set-property propertyName="Content-Type" value="application/json" />
+                        <mule:set-payload value="#[vars.'_invalidClientMessage']" />
+                        {{/isWsdlEndpoint}}
+                        <compatibility:outbound-properties-to-var />
+                        <http-transform:set-response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                            <http-transform:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http-transform:headers>
+                        </http-transform:set-response>
+                    </on-error-continue>
+                </error-handler>
+            </try>
+        </http-policy:source>
+    </http-policy:proxy>
+
+</mule>

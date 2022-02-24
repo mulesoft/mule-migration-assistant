@@ -1,0 +1,42 @@
+id: rate-limiting
+name: Rate limiting
+supportedPoliciesVersions: '>=v1'
+description: Specifies the maximum value for the number of messages processed per time period, and rejects any messages beyond the maximum. Applies rate limiting to all API calls, regardless of the source.
+category: Quality of service
+violationCategory: qos
+type: system
+resourceLevelSupported: true
+standalone: true
+requiredCharacteristics: []
+providedCharacteristics:
+  - Baseline Rate Limiting
+configuration:
+  - propertyName: keySelector
+    name: Identifier
+    description: "For each identifier value, the set of Limits defined in the policy will be enforced independently. I.e.: #[attributes.queryParams['identifier']]."
+    type: expression
+    optional: true
+    allowMultiple: false
+  - propertyName: rateLimits
+    name: Limits
+    description: Pairs of maximum quota allowed and time window.
+    type: rateLimits
+    optional: true
+    allowMultiple: true
+    defaultValue: [{}]
+  - propertyName: clusterizable
+    name: Clusterizable
+    description: When using a clustered runtime with this flag enabled, configuration will be shared among all nodes.
+    type: boolean
+    optional: true
+    defaultValue: true
+    allowMultiple: false
+  - propertyName: exposeHeaders
+    name: Expose Headers
+    description: |
+      Defines if headers should be exposed in the response to the client. These headers are: x-ratelimit-remaining,
+      x-ratelimit-limit and x-ratelimit-reset.
+    type: boolean
+    optional: true
+    defaultValue: false
+    allowMultiple: false

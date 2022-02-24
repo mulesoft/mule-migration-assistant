@@ -5,6 +5,8 @@
  */
 package com.mulesoft.tools.migration.library.gateway.steps.policy.clientidenforcement;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -20,7 +22,7 @@ public class ClientIdEnforcementPomContributionMigrationStep implements PomContr
   private static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   private static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
   private static final String MULE_CLIENT_ID_ENFORCEMENT_EXTENSION_ARTIFACT_ID = "mule-client-id-enforcement-extension";
-  private static final String CLIENT_ID_ENFORCEMENT_EXTENSION_VERSION = "1.1.3";
+  private static final String CLIENT_ID_ENFORCEMENT_EXTENSION_VERSION_PROPERTY = "mule-client-enforcement-extension";
 
   @Override
   public String getDescription() {
@@ -32,7 +34,7 @@ public class ClientIdEnforcementPomContributionMigrationStep implements PomContr
     pomModel.addDependency(new Dependency.DependencyBuilder()
         .withGroupId(COM_MULESOFT_ANYPOINT_GROUP_ID)
         .withArtifactId(MULE_CLIENT_ID_ENFORCEMENT_EXTENSION_ARTIFACT_ID)
-        .withVersion(CLIENT_ID_ENFORCEMENT_EXTENSION_VERSION)
+        .withVersion(targetVersion(CLIENT_ID_ENFORCEMENT_EXTENSION_VERSION_PROPERTY))
         .withClassifier(MULE_PLUGIN_CLASSIFIER)
         .build());
   }

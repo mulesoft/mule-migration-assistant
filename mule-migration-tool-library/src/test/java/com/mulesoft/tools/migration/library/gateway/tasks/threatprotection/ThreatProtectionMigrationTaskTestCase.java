@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.library.gateway.tasks.DocumentHelper.
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -47,7 +48,6 @@ public class ThreatProtectionMigrationTaskTestCase {
   private static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   private static final String MULE_XML_THREAT_PROTECTION_EXTENSION_ARTIFACT_ID = "mule-xml-threat-protection-extension";
   private static final String MULE_JSON_THREAT_PROTECTION_EXTENSION_ARTIFACT_ID = "mule-json-threat-protection-extension";
-  private static final String XML_JSON_THREAT_PROTECTION_EXTENSION_VERSION = "1.1.0";
   private static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
 
   private final Path configPath;
@@ -110,7 +110,7 @@ public class ThreatProtectionMigrationTaskTestCase {
       assertThat(threatProtectionDependency.getArtifactId(), is(MULE_JSON_THREAT_PROTECTION_EXTENSION_ARTIFACT_ID));
     }
     assertThat(threatProtectionDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
-    assertThat(threatProtectionDependency.getVersion(), is(XML_JSON_THREAT_PROTECTION_EXTENSION_VERSION));
+    assertThat(threatProtectionDependency.getVersion(), is(notNullValue()));
     assertThat(threatProtectionDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 

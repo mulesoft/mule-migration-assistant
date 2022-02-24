@@ -193,6 +193,6 @@ public class FixedTimeFrameAlgorithmMigrationStep extends AbstractThrottlingMigr
     addConfigElement(element, isRateLimitMigration);
     addOperationElements(element, isRateLimitMigration, migrationReport);
     addNamespaceDeclarations(element);
-    new ThrottlingPomContributionMigrationStep(false).execute(getApplicationModel().getPomModel().get(), migrationReport);
+    new ThrottlingPomContributionMigrationStep().execute(getApplicationModel().getPomModel().get(), migrationReport);
   }
 }

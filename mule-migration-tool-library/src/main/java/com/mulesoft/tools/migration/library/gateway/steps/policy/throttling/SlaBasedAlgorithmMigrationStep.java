@@ -130,6 +130,6 @@ public class SlaBasedAlgorithmMigrationStep extends AbstractThrottlingMigrationS
     addConfigElement(element);
     addOperationElements(element, migrationReport);
     addNamespaceDeclarations(element);
-    new ThrottlingPomContributionMigrationStep(true).execute(getApplicationModel().getPomModel().get(), migrationReport);
+    new ThrottlingPomContributionMigrationStep().execute(getApplicationModel().getPomModel().get(), migrationReport);
   }
 }

@@ -6,6 +6,7 @@
 package com.mulesoft.tools.migration.library.gateway.steps.ipfilter;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.mulesoft.tools.migration.library.gateway.steps.policy.ipfilter.IpFilterPomContributionMigrationStep;
@@ -20,7 +21,6 @@ public class IpFilterPomContributionMigrationStepTestCase extends AbstractIpFilt
   private static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   private static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
   private static final String MULE_IP_FILTER_EXTENSION_ARTIFACT_ID = "mule-ip-filter-extension";
-  private static final String EXTENSION_VERSION = "1.1.0";
 
   @Override
   protected Element getTestElement() {
@@ -36,7 +36,7 @@ public class IpFilterPomContributionMigrationStepTestCase extends AbstractIpFilt
     Dependency ipFilterExtension = pm.getDependencies().get(0);
     assertThat(ipFilterExtension.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(ipFilterExtension.getArtifactId(), is(MULE_IP_FILTER_EXTENSION_ARTIFACT_ID));
-    assertThat(ipFilterExtension.getVersion(), is(EXTENSION_VERSION));
+    assertThat(ipFilterExtension.getVersion(), is(notNullValue()));
     assertThat(ipFilterExtension.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 }

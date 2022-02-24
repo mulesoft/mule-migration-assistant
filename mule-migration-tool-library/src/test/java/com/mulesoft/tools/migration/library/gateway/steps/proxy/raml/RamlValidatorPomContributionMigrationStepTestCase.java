@@ -10,8 +10,8 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_PL
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_RAML_VALIDATOR_EXTENSION;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_RAML_VALIDATOR_EXTENSION_VERSION;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_REST_VALIDATOR_EXTENSION;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_REST_VALIDATOR_EXTENSION_VERSION;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -32,7 +32,7 @@ public class RamlValidatorPomContributionMigrationStepTestCase {
     Dependency httpPolicyTransformExtension = pm.getDependencies().get(0);
     assertThat(httpPolicyTransformExtension.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(httpPolicyTransformExtension.getArtifactId(), is(MULE_REST_VALIDATOR_EXTENSION));
-    assertThat(httpPolicyTransformExtension.getVersion(), is(MULE_REST_VALIDATOR_EXTENSION_VERSION));
+    assertThat(httpPolicyTransformExtension.getVersion(), is(notNullValue()));
     assertThat(httpPolicyTransformExtension.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 
@@ -46,7 +46,7 @@ public class RamlValidatorPomContributionMigrationStepTestCase {
     Dependency httpPolicyTransformExtension = pm.getDependencies().get(0);
     assertThat(httpPolicyTransformExtension.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(httpPolicyTransformExtension.getArtifactId(), is(MULE_REST_VALIDATOR_EXTENSION));
-    assertThat(httpPolicyTransformExtension.getVersion(), is(MULE_REST_VALIDATOR_EXTENSION_VERSION));
+    assertThat(httpPolicyTransformExtension.getVersion(), is(notNullValue()));
     assertThat(httpPolicyTransformExtension.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 

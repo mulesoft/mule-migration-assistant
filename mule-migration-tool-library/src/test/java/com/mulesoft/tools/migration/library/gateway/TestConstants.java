@@ -15,20 +15,13 @@ public class TestConstants {
   public static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   public static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
   public static final String MULE_HTTP_POLICY_TRANSFORM_EXTENSION_ARTIFACT_ID = "mule-http-policy-transform-extension";
-  public static final String HTTP_POLICY_TRANSFORM_EXTENSION_VERSION = "3.0.0";
   public static final String MULE_THROTTLING_EXTENSION_ARTIFACT_ID = "mule-throttling-extension";
-  public static final String THROTTLING_EXTENSION_VERSION = "1.2.2";
-  public static final String THROTTLING_EXTENSION_SLA_VERSION = "1.1.4";
   public static final String MULE_FEDERATION_EXTENSION_ARTIFACT_ID = "mule-federation-extension";
-  public static final String FEDERATION_EXTENSION_VERSION = "1.1.2";
   public static final String MULE_CLIENT_ID_ENFORCEMENT_EXTENSION_ARTIFACT_ID = "mule-client-id-enforcement-extension";
-  public static final String CLIENT_ID_ENFORCEMENT_EXTENSION_VERSION = "1.1.3";
   public static final String MULE_RAML_VALIDATOR_EXTENSION = "mule-raml-validator-extension";
   public static final String MULE_REST_VALIDATOR_EXTENSION = "mule-rest-validator-extension";
-  public static final String MULE_REST_VALIDATOR_EXTENSION_VERSION = "2.1.2";
-  public static final String MULE_RAML_VALIDATOR_EXTENSION_VERSION = "1.2.0";
+  public static final String MULE_RAML_VALIDATOR_EXTENSION_VERSION = "someVersion";
   public static final String MULE_WSDL_FUNCTIONS_EXTENSION_ARTIFACT_ID = "mule-wsdl-functions-extension";
-  public static final String WSDL_FUNCTIONS_EXTENSION_VERSION = "1.1.1";
 
   public static final Path SRC_MAIN_MULE_PATH = Paths.get("src/main/mule");
   public static final Path POLICY_EXAMPLES_PATH = Paths.get("mule/apps/gateway/policy");
@@ -138,7 +131,6 @@ public class TestConstants {
   public static final String EXCHANGE_URL_KEY = "exchange.url";
   public static final String EXCHANGE_URL_VALUE = "https://maven.anypoint.mulesoft.com/api/v1/organizations/{orgId}/maven";
   public static final String MULE_MAVEN_PLUGIN_VERSION_KEY = "mule.maven.plugin.version";
-  public static final String MULE_MAVEN_PLUGIN_VERSION_VALUE = "3.2.0";
 
   public static final String EXCHANGE_SERVER_ID = "exchange-server";
   public static final String EXCHANGE_SERVER_NAME = "MuleSoft Exchange Environment";

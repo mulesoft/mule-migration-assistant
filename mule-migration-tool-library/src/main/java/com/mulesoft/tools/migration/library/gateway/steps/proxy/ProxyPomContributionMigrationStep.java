@@ -10,6 +10,8 @@ import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 /**
  * Contribute mule-http-proxy and mule-wsdl-functions plugins to pom.xml
  *
@@ -20,8 +22,8 @@ public class ProxyPomContributionMigrationStep implements PomContribution {
   private static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   private static final String MULE_HTTP_PROXY_EXTENSION_ARTIFACT_ID = "mule-http-proxy-extension";
   private static final String MULE_WSDL_FUNCTIONS_EXTENSION_ARTIFACT_ID = "mule-wsdl-functions-extension";
-  private static final String HTTP_PROXY_EXTENSION_VERSION = "1.1.2";
-  private static final String WSDL_FUNCTIONS_EXTENSION_VERSION = "1.1.1";
+  private static final String HTTP_PROXY_EXTENSION_VERSION_PROPERTY = "mule-http-proxy-extension";
+  private static final String WSDL_FUNCTIONS_EXTENSION_VERSION_PROPERTY = "mule-wsdl-functions-extension";
   private static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
 
   private boolean isCustomProcessorMigrationStep;
@@ -43,7 +45,8 @@ public class ProxyPomContributionMigrationStep implements PomContribution {
         .withArtifactId(
                         this.isCustomProcessorMigrationStep ? MULE_HTTP_PROXY_EXTENSION_ARTIFACT_ID
                             : MULE_WSDL_FUNCTIONS_EXTENSION_ARTIFACT_ID)
-        .withVersion(this.isCustomProcessorMigrationStep ? HTTP_PROXY_EXTENSION_VERSION : WSDL_FUNCTIONS_EXTENSION_VERSION);
+        .withVersion(this.isCustomProcessorMigrationStep ? targetVersion(HTTP_PROXY_EXTENSION_VERSION_PROPERTY)
+            : targetVersion(WSDL_FUNCTIONS_EXTENSION_VERSION_PROPERTY));
 
     pomModel.addDependency(dependencyBuilder.build());
   }

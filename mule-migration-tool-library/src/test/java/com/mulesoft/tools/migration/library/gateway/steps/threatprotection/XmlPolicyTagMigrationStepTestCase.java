@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.POLICY_
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.THREAT_PROTECTION_GW_NAMESPACE;
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.XML_THREAT_PROTECTION_NAMESPACE;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -55,7 +56,6 @@ public class XmlPolicyTagMigrationStepTestCase {
 
   private static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   private static final String MULE_XML_THREAT_PROTECTION_EXTENSION_ARTIFACT_ID = "mule-xml-threat-protection-extension";
-  private static final String XML_JSON_THREAT_PROTECTION_EXTENSION_VERSION = "1.1.0";
   private static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
 
   private static final String XPATH_NODE_EXPRESSION =
@@ -194,7 +194,7 @@ public class XmlPolicyTagMigrationStepTestCase {
     Dependency xmlThreatProtectionDependency = pm.getDependencies().get(0);
     assertThat(xmlThreatProtectionDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(xmlThreatProtectionDependency.getArtifactId(), is(MULE_XML_THREAT_PROTECTION_EXTENSION_ARTIFACT_ID));
-    assertThat(xmlThreatProtectionDependency.getVersion(), is(XML_JSON_THREAT_PROTECTION_EXTENSION_VERSION));
+    assertThat(xmlThreatProtectionDependency.getVersion(), is(notNullValue()));
     assertThat(xmlThreatProtectionDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
 
     assertCompleteXmlPolicyTag(element);

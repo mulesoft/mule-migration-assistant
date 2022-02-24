@@ -19,7 +19,6 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.FILE_KE
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.GENERATE_POM_KEY;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.GROUP_ID_KEY;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.GROUP_ID_VALUE;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.HTTP_POLICY_TRANSFORM_EXTENSION_VERSION;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MAVEN_DEPLOY_PLUGIN_ARTIFACT_ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MAVEN_DEPLOY_PLUGIN_EXECUTION_ARTIFACT_ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MAVEN_DEPLOY_PLUGIN_EXECUTION_CLASSIFIER;
@@ -40,7 +39,6 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_MA
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_MAVEN_PLUGIN_GROUP_ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_MAVEN_PLUGIN_VERSION;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_MAVEN_PLUGIN_VERSION_KEY;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_MAVEN_PLUGIN_VERSION_VALUE;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_PLUGIN_CLASSIFIER;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_THROTTLING_EXTENSION_ARTIFACT_ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.PACKAGING_KEY;
@@ -49,7 +47,6 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.PLUGIN_
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.REPOSITORY_ID_KEY;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.SRC_MAIN_MULE_PATH;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.TEMPLATE_XML;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.THROTTLING_EXTENSION_VERSION;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.URL_KEY;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.VERSION_KEY;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.XML_EXTENSION;
@@ -63,6 +60,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
@@ -186,12 +184,12 @@ public class ThrottlingWithFileRenameMigrationTestCase {
     Dependency httpTransformDependency = pomModel.getDependencies().get(0);
     assertThat(httpTransformDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(httpTransformDependency.getArtifactId(), is(MULE_HTTP_POLICY_TRANSFORM_EXTENSION_ARTIFACT_ID));
-    assertThat(httpTransformDependency.getVersion(), is(HTTP_POLICY_TRANSFORM_EXTENSION_VERSION));
+    assertThat(httpTransformDependency.getVersion(), is(notNullValue()));
     assertThat(httpTransformDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
     Dependency policyTransformExtensionDependency = pomModel.getDependencies().get(1);
     assertThat(policyTransformExtensionDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(policyTransformExtensionDependency.getArtifactId(), is(MULE_THROTTLING_EXTENSION_ARTIFACT_ID));
-    assertThat(policyTransformExtensionDependency.getVersion(), is(THROTTLING_EXTENSION_VERSION));
+    assertThat(policyTransformExtensionDependency.getVersion(), is(notNullValue()));
     assertThat(policyTransformExtensionDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
     assertPomDeployProperties(pomModel);
   }
@@ -203,7 +201,7 @@ public class ThrottlingWithFileRenameMigrationTestCase {
     assertNotNull(pomProperties);
     assertThat(pomProperties.size(), is(5));
     assertThat(pomProperties.getProperty(EXCHANGE_URL_KEY), is(EXCHANGE_URL_VALUE));
-    assertThat(pomProperties.getProperty(MULE_MAVEN_PLUGIN_VERSION_KEY), is(MULE_MAVEN_PLUGIN_VERSION_VALUE));
+    assertThat(pomProperties.getProperty(MULE_MAVEN_PLUGIN_VERSION_KEY), is(notNullValue()));
 
     List<Repository> repositoryList = pomModel.getRepositories();
     assertThat(repositoryList.size(), is(1));
