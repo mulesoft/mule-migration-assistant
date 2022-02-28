@@ -166,7 +166,9 @@ public class ApplicationPersister {
 
       File targetFile = targetFilePath.toFile();
       targetFile.getParentFile().mkdirs();
-      new XMLOutputter().output(finalDocument, new FileOutputStream(targetFile));
+      try (FileOutputStream fileOutputStream = new FileOutputStream(targetFile)) {
+        new XMLOutputter().output(finalDocument, fileOutputStream);
+      }
     }
   }
 
@@ -243,9 +245,10 @@ public class ApplicationPersister {
   private void persistPom() throws Exception {
     MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
     Path pomLocation = ((MavenProject) projectOutput).pom();
-    BufferedWriter writer = new BufferedWriter(new FileWriter(pomLocation.toFile()));
-    if (appModel.getPomModel().isPresent()) {
-      mavenWriter.write(writer, appModel.getPomModel().get().getMavenModelCopy());
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(pomLocation.toFile()))) {
+      if (appModel.getPomModel().isPresent()) {
+        mavenWriter.write(writer, appModel.getPomModel().get().getMavenModelCopy());
+      }
     }
   }
 

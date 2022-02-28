@@ -992,6 +992,9 @@ basicStructure:
     message: No YAML found for policy.
     docLinks:
       - https://docs.mulesoft.com/mule-runtime/4.3/migration-api-gateways-policies#yaml_migration_issues
+  yamlRenameFailed:
+      type: WARN
+      message: No YAML found for policy.
   noPomModel:
     type: WARN
     message: "No Pom Model found for policy {policyName}."

@@ -2,7 +2,7 @@
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
   "connectorsMigrated": [
-    "org.mule.connectors:mule-http-connector:1.5.25",
+    "org.mule.connectors:mule-http-connector:1.6.0",
     "org.mule.connectors:mule-file-connector:1.3.4"
   ],
   "numberOfMuleComponents": 22,

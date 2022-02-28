@@ -68,14 +68,18 @@ public class SetSecureProperties implements ProjectStructureContribution {
     File muleAppProperties = new File(projectBasePath.toFile(), SRC_MAIN_RESOURCES_MULE_APP_PROPERTIES);
     List<String> secureProperties = new ArrayList<>();
     if (muleAppProperties != null && muleAppProperties.exists()) {
-      Properties properties = new Properties();
-      properties.load(new FileInputStream(muleAppProperties));
-      String securePropertiesList = properties.getProperty(SECURE_PROPERTIES);
-      if (securePropertiesList != null) {
-        secureProperties =
-            Arrays.stream(securePropertiesList.split(SECURE_PROPERTIES_SEPARATOR)).map(String::trim).collect(toList());
-        properties.remove(SECURE_PROPERTIES);
-        properties.store(new FileOutputStream(muleAppProperties), null);
+      try (FileInputStream inputStream = new FileInputStream(muleAppProperties)) {
+        Properties properties = new Properties();
+        properties.load(inputStream);
+        String securePropertiesList = properties.getProperty(SECURE_PROPERTIES);
+        if (securePropertiesList != null) {
+          secureProperties =
+              Arrays.stream(securePropertiesList.split(SECURE_PROPERTIES_SEPARATOR)).map(String::trim).collect(toList());
+          properties.remove(SECURE_PROPERTIES);
+          try (FileOutputStream outputStream = new FileOutputStream(muleAppProperties)) {
+            properties.store(outputStream, null);
+          }
+        }
       }
     }
     return secureProperties;

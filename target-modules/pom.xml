@@ -19,12 +19,12 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <!-- Target versions for migrated components -->
-        <mule.http.connector.version>1.5.25</mule.http.connector.version>
+        <mule.http.connector.version>1.6.0</mule.http.connector.version>
         <mule.sockets.connector.version>1.2.2</mule.sockets.connector.version>
         <mule.file.connector.version>1.3.4</mule.file.connector.version>
         <mule.jms.connector.version>1.8.2</mule.jms.connector.version>
         <mule.vm.connector.version>2.0.0</mule.vm.connector.version>
-        <mule.amqp.connector.version>1.7.2</mule.amqp.connector.version>
+        <mule.amqp.connector.version>1.7.3</mule.amqp.connector.version>
         <mule.db.connector.version>1.12.1</mule.db.connector.version>
         <mule.wsc.connector.version>1.6.9</mule.wsc.connector.version>
         <mule.email.connector.version>1.5.2</mule.email.connector.version>
@@ -36,7 +36,7 @@
 
         <mule.validation.module.version>1.4.5</mule.validation.module.version>
         <mule.secureProps.module.version>1.2.3</mule.secureProps.module.version>
-        <mule.scripting.module.version>1.1.7</mule.scripting.module.version>
+        <mule.scripting.module.version>2.0.0</mule.scripting.module.version>
         <mule.spring.module.version>1.3.6</mule.spring.module.version>
         <mule.compression.module.version>2.1.2</mule.compression.module.version>
         <mule.apikit.module.version>1.5.10</mule.apikit.module.version>
@@ -47,7 +47,7 @@
         <mule.oauth2-provider.module.version>1.0.8</mule.oauth2-provider.module.version>
         <mule.compatibility.module.version>1.4.0</mule.compatibility.module.version>
 
-        <munit.version>2.2.5</munit.version>
+        <munit.version>2.3.8</munit.version>
 
         <!-- api gw policies -->
         <mule.client-id-enforcement.extension.version>1.1.4</mule.client-id-enforcement.extension.version>
