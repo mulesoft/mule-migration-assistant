@@ -23,7 +23,6 @@ public class ThrottlingPomContributionMigrationStep implements PomContribution {
   private static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   private static final String MULE_THROTTLING_EXTENSION_ARTIFACT_ID = "mule-throttling-extension";
   private static final String THROTTLING_EXTENSION_VERSION_PROPERTY = "mule-throttling-extension";
-  private static final String THROTTLING_EXTENSION_SLA_VERSION_PROPERTY = "mule-throttling-sla-extension";
   private static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
 
   @Override
