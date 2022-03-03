@@ -19,21 +19,46 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <!-- Target versions for migrated components -->
-        <mule.http.connector.version>1.5.25</mule.http.connector.version>
+        <mule.http.connector.version>1.6.0</mule.http.connector.version>
         <mule.sockets.connector.version>1.2.2</mule.sockets.connector.version>
         <mule.file.connector.version>1.3.4</mule.file.connector.version>
         <mule.jms.connector.version>1.8.2</mule.jms.connector.version>
         <mule.vm.connector.version>2.0.0</mule.vm.connector.version>
-        <mule.amqp.connector.version>1.7.2</mule.amqp.connector.version>
+        <mule.amqp.connector.version>1.7.3</mule.amqp.connector.version>
+        <mule.db.connector.version>1.12.1</mule.db.connector.version>
+        <mule.wsc.connector.version>1.6.9</mule.wsc.connector.version>
+        <mule.email.connector.version>1.5.2</mule.email.connector.version>
+        <mule.ftp.connector.version>1.5.5</mule.ftp.connector.version>
+        <mule.sftp.connector.version>1.4.1</mule.sftp.connector.version>
+        <mule.objectstore.connector.version>1.2.1</mule.objectstore.connector.version>
+        <mule.salesforce.connector.version>10.14.0</mule.salesforce.connector.version>
         <mule.aggregators.module.version>1.0.5</mule.aggregators.module.version>
 
         <mule.validation.module.version>1.4.5</mule.validation.module.version>
         <mule.secureProps.module.version>1.2.3</mule.secureProps.module.version>
-        <mule.scripting.module.version>1.1.7</mule.scripting.module.version>
+        <mule.scripting.module.version>2.0.0</mule.scripting.module.version>
         <mule.spring.module.version>1.3.6</mule.spring.module.version>
         <mule.compression.module.version>2.1.2</mule.compression.module.version>
+        <mule.apikit.module.version>1.5.10</mule.apikit.module.version>
+        <mule.soapkit.module.version>1.2.11</mule.soapkit.module.version>
+        <mule.json.module.version>2.1.5</mule.json.module.version>
+        <mule.java.module.version>1.2.9</mule.java.module.version>
+        <mule.cryptography.module.version>1.3.9</mule.cryptography.module.version>
+        <mule.oauth2-provider.module.version>1.0.8</mule.oauth2-provider.module.version>
+        <mule.compatibility.module.version>1.4.0</mule.compatibility.module.version>
 
-        <munit.version>2.2.5</munit.version>
+        <munit.version>2.3.8</munit.version>
+
+        <!-- api gw policies -->
+        <mule.client-id-enforcement.extension.version>1.1.4</mule.client-id-enforcement.extension.version>
+        <mule.federation.extension.version>1.3.0</mule.federation.extension.version>
+        <mule.ip-filter.extension.version>2.0.0</mule.ip-filter.extension.version>
+        <mule.http-policy-transform.extension.version>3.0.0</mule.http-policy-transform.extension.version>
+        <mule.threat-protection.extension.version>1.1.2</mule.threat-protection.extension.version>
+        <mule.throttling.extension.version>2.0.3</mule.throttling.extension.version>
+        <mule.rest-validator.extension.version>2.2.1</mule.rest-validator.extension.version>
+        <mule.http-proxy.extension.version>1.1.3</mule.http-proxy.extension.version>
+        <mule.wsdl-functions.extension.version>1.1.1</mule.wsdl-functions.extension.version>
         
         <!-- maven plugin versions -->
         <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
@@ -44,6 +69,7 @@
         <maven.site.plugin.version>3.3</maven.site.plugin.version>
         <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
         <maven.enforcer.plugin.version>3.0.0</maven.enforcer.plugin.version>
+        <mule.maven.plugin.version>3.2.1</mule.maven.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -85,6 +111,48 @@
                 <classifier>mule-plugin</classifier>
             </dependency>
             <dependency>
+                <groupId>org.mule.connectors</groupId>
+                <artifactId>mule-db-connector</artifactId>
+                <version>${mule.db.connector.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.connectors</groupId>
+                <artifactId>mule-wsc-connector</artifactId>
+                <version>${mule.wsc.connector.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.connectors</groupId>
+                <artifactId>mule-email-connector</artifactId>
+                <version>${mule.email.connector.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.connectors</groupId>
+                <artifactId>mule-ftp-connector</artifactId>
+                <version>${mule.ftp.connector.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.connectors</groupId>
+                <artifactId>mule-sftp-connector</artifactId>
+                <version>${mule.sftp.connector.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.connectors</groupId>
+                <artifactId>mule-objectstore-connector</artifactId>
+                <version>${mule.objectstore.connector.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.connectors</groupId>
+                <artifactId>mule-salesforce-connector</artifactId>
+                <version>${mule.salesforce.connector.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
                 <groupId>org.mule.modules</groupId>
                 <artifactId>mule-aggregators-module</artifactId>
                 <version>${mule.aggregators.module.version}</version>
@@ -120,6 +188,42 @@
                 <version>${mule.secureProps.module.version}</version>
                 <classifier>mule-plugin</classifier>
             </dependency>
+            <dependency>
+                <groupId>org.mule.modules</groupId>
+                <artifactId>mule-apikit-module</artifactId>
+                <version>${mule.apikit.module.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.modules</groupId>
+                <artifactId>mule-soapkit-module</artifactId>
+                <version>${mule.soapkit.module.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.modules</groupId>
+                <artifactId>mule-json-module</artifactId>
+                <version>${mule.json.module.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.modules</groupId>
+                <artifactId>mule-cryptography-module</artifactId>
+                <version>${mule.cryptography.module.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.mule.modules</groupId>
+                <artifactId>mule-oauth2-provider-module</artifactId>
+                <version>${mule.oauth2-provider.module.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.mule.modules</groupId>
+                <artifactId>mule-compatibility-module</artifactId>
+                <version>${mule.compatibility.module.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
 
             <dependency>
                 <groupId>org.mule.modules</groupId>
@@ -147,6 +251,67 @@
                 <version>${munit.version}</version>
                 <scope>test</scope>
                 <classifier>mule-plugin</classifier>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mulesoft.anypoint</groupId>
+                <artifactId>mule-client-id-enforcement-extension</artifactId>
+                <version>${mule.client-id-enforcement.extension.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.anypoint</groupId>
+                <artifactId>mule-federation-extension</artifactId>
+                <version>${mule.federation.extension.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.anypoint</groupId>
+                <artifactId>mule-ip-filter-extension</artifactId>
+                <version>${mule.ip-filter.extension.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.anypoint</groupId>
+                <artifactId>mule-http-policy-transform-extension</artifactId>
+                <version>${mule.http-policy-transform.extension.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.anypoint</groupId>
+                <artifactId>mule-json-threat-protection-extension</artifactId>
+                <version>${mule.threat-protection.extension.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.anypoint</groupId>
+                <artifactId>mule-throttling-extension</artifactId>
+                <version>${mule.throttling.extension.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.anypoint</groupId>
+                <artifactId>mule-rest-validator-extension</artifactId>
+                <version>${mule.rest-validator.extension.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.anypoint</groupId>
+                <artifactId>mule-http-proxy-extension</artifactId>
+                <version>${mule.http-proxy.extension.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.mulesoft.anypoint</groupId>
+                <artifactId>mule-wsdl-functions-extension</artifactId>
+                <version>${mule.wsdl-functions.extension.version}</version>
+                <classifier>mule-plugin</classifier>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mule.tools.maven</groupId>
+                <artifactId>mule-maven-plugin</artifactId>
+                <version>${mule.maven.plugin.version}</version>
             </dependency>
         </dependencies>    
     </dependencyManagement>

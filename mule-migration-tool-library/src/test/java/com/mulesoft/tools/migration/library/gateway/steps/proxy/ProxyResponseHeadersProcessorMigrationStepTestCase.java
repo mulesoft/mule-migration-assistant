@@ -7,6 +7,7 @@ package com.mulesoft.tools.migration.library.gateway.steps.proxy;
 
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_4_NAMESPACE;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
@@ -64,7 +65,7 @@ public class ProxyResponseHeadersProcessorMigrationStepTestCase extends ProxyHea
     Dependency customProcessorDependency = pm.getDependencies().get(0);
     assertThat(customProcessorDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(customProcessorDependency.getArtifactId(), is(MULE_HTTP_PROXY_EXTENSION_ARTIFACT_ID));
-    assertThat(customProcessorDependency.getVersion(), is(HTTP_PROXY_EXTENSION_VERSION));
+    assertThat(customProcessorDependency.getVersion(), is(notNullValue()));
     assertThat(customProcessorDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 
@@ -91,7 +92,7 @@ public class ProxyResponseHeadersProcessorMigrationStepTestCase extends ProxyHea
     Dependency customProcessorDependency = pm.getDependencies().get(0);
     assertThat(customProcessorDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(customProcessorDependency.getArtifactId(), is(MULE_HTTP_PROXY_EXTENSION_ARTIFACT_ID));
-    assertThat(customProcessorDependency.getVersion(), is(HTTP_PROXY_EXTENSION_VERSION));
+    assertThat(customProcessorDependency.getVersion(), is(notNullValue()));
     assertThat(customProcessorDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 

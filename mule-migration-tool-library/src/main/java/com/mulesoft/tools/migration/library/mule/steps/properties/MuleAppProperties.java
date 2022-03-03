@@ -76,9 +76,11 @@ public class MuleAppProperties implements NamespaceContribution {
     File muleAppProperties = new File(filePath.toFile(), propsFileName);
     List<String> appProperties = new ArrayList<>();
     if (muleAppProperties != null && muleAppProperties.exists()) {
-      Properties properties = new Properties();
-      properties.load(new FileInputStream(muleAppProperties));
-      properties.forEach((k, v) -> appProperties.add((String) k));
+      try (FileInputStream inputStream = new FileInputStream(muleAppProperties)) {
+        Properties properties = new Properties();
+        properties.load(inputStream);
+        properties.forEach((k, v) -> appProperties.add((String) k));
+      }
     }
     return appProperties;
   }

@@ -8,12 +8,12 @@ package com.mulesoft.tools.migration.library.gateway.tasks.proxy;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.COM_MULESOFT_ANYPOINT_GROUP_ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_PLUGIN_CLASSIFIER;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_WSDL_FUNCTIONS_EXTENSION_ARTIFACT_ID;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.WSDL_FUNCTIONS_EXTENSION_VERSION;
 import static com.mulesoft.tools.migration.library.gateway.tasks.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.library.gateway.tasks.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -51,7 +51,6 @@ public class ProxyMigrationTaskTestCase {
   private static final Path POM_PATH = APPLICATION_MODEL_PATH.resolve("pom.xml");
 
   protected static final String MULE_HTTP_PROXY_EXTENSION_ARTIFACT_ID = "mule-http-proxy-extension";
-  protected static final String HTTP_PROXY_EXTENSION_VERSION = "1.1.2";
 
   private final Path configPath;
   private final Path targetPath;
@@ -101,7 +100,7 @@ public class ProxyMigrationTaskTestCase {
     Dependency customProcessorDependency = pomModel.getDependencies().get(2);
     assertThat(customProcessorDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(customProcessorDependency.getArtifactId(), is(MULE_HTTP_PROXY_EXTENSION_ARTIFACT_ID));
-    assertThat(customProcessorDependency.getVersion(), is(HTTP_PROXY_EXTENSION_VERSION));
+    assertThat(customProcessorDependency.getVersion(), is(notNullValue()));
     assertThat(customProcessorDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 
@@ -109,7 +108,7 @@ public class ProxyMigrationTaskTestCase {
     Dependency wsdlExtensionDependency = pomModel.getDependencies().get(position);
     assertThat(wsdlExtensionDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(wsdlExtensionDependency.getArtifactId(), is(MULE_WSDL_FUNCTIONS_EXTENSION_ARTIFACT_ID));
-    assertThat(wsdlExtensionDependency.getVersion(), is(WSDL_FUNCTIONS_EXTENSION_VERSION));
+    assertThat(wsdlExtensionDependency.getVersion(), is(notNullValue()));
     assertThat(wsdlExtensionDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 

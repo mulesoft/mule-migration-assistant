@@ -6,17 +6,15 @@
 package com.mulesoft.tools.migration.library.gateway.tasks.throttling;
 
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.COM_MULESOFT_ANYPOINT_GROUP_ID;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.HTTP_POLICY_TRANSFORM_EXTENSION_VERSION;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_HTTP_POLICY_TRANSFORM_EXTENSION_ARTIFACT_ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_PLUGIN_CLASSIFIER;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_THROTTLING_EXTENSION_ARTIFACT_ID;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.THROTTLING_EXTENSION_SLA_VERSION;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.THROTTLING_EXTENSION_VERSION;
 import static com.mulesoft.tools.migration.library.gateway.tasks.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.library.gateway.tasks.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -106,16 +104,12 @@ public class ThrottlingMigrationTaskTestCase {
     Dependency httpTransformDependency = pomModel.getDependencies().get(0);
     assertThat(httpTransformDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(httpTransformDependency.getArtifactId(), is(MULE_HTTP_POLICY_TRANSFORM_EXTENSION_ARTIFACT_ID));
-    assertThat(httpTransformDependency.getVersion(), is(HTTP_POLICY_TRANSFORM_EXTENSION_VERSION));
+    assertThat(httpTransformDependency.getVersion(), is(notNullValue()));
     assertThat(httpTransformDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
     Dependency policyTransformExtensionDependency = pomModel.getDependencies().get(1);
     assertThat(policyTransformExtensionDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(policyTransformExtensionDependency.getArtifactId(), is(MULE_THROTTLING_EXTENSION_ARTIFACT_ID));
-    if (pomModel.getArtifactId().equals("rate-limiting-sla-based")) {
-      assertThat(policyTransformExtensionDependency.getVersion(), is(THROTTLING_EXTENSION_SLA_VERSION));
-    } else {
-      assertThat(policyTransformExtensionDependency.getVersion(), is(THROTTLING_EXTENSION_VERSION));
-    }
+    assertThat(policyTransformExtensionDependency.getVersion(), is(notNullValue()));
     assertThat(policyTransformExtensionDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 

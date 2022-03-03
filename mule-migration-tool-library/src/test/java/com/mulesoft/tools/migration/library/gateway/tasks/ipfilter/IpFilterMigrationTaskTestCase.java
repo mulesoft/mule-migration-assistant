@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.library.gateway.tasks.DocumentHelper.
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -50,7 +51,6 @@ public class IpFilterMigrationTaskTestCase {
   private static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   private static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
   private static final String MULE_IP_FILTER_EXTENSION_ARTIFACT_ID = "mule-ip-filter-extension";
-  private static final String EXTENSION_VERSION = "1.1.0";
 
   private final Path configPath;
   private final Path targetPath;
@@ -102,7 +102,7 @@ public class IpFilterMigrationTaskTestCase {
     Dependency ipFilterExtension = pomModel.getDependencies().get(3);
     assertThat(ipFilterExtension.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(ipFilterExtension.getArtifactId(), is(MULE_IP_FILTER_EXTENSION_ARTIFACT_ID));
-    assertThat(ipFilterExtension.getVersion(), is(EXTENSION_VERSION));
+    assertThat(ipFilterExtension.getVersion(), is(notNullValue()));
     assertThat(ipFilterExtension.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 

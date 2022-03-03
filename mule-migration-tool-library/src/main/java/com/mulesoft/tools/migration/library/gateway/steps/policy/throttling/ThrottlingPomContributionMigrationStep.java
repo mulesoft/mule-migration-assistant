@@ -11,6 +11,8 @@ import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 /**
  * Contribute throttling plugin to pom.xml
  *
@@ -20,16 +22,8 @@ public class ThrottlingPomContributionMigrationStep implements PomContribution {
 
   private static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   private static final String MULE_THROTTLING_EXTENSION_ARTIFACT_ID = "mule-throttling-extension";
-  private static final String THROTTLING_EXTENSION_VERSION = "1.2.2";
-  private static final String THROTTLING_EXTENSION_SLA_VERSION = "1.1.4";
+  private static final String THROTTLING_EXTENSION_VERSION_PROPERTY = "mule-throttling-extension";
   private static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
-
-  private final boolean isSla;
-
-  public ThrottlingPomContributionMigrationStep(boolean isSla) {
-    this.isSla = isSla;
-  }
-
 
   @Override
   public String getDescription() {
@@ -42,7 +36,7 @@ public class ThrottlingPomContributionMigrationStep implements PomContribution {
     pomModel.addDependency(new Dependency.DependencyBuilder()
         .withGroupId(COM_MULESOFT_ANYPOINT_GROUP_ID)
         .withArtifactId(MULE_THROTTLING_EXTENSION_ARTIFACT_ID)
-        .withVersion(isSla ? THROTTLING_EXTENSION_SLA_VERSION : THROTTLING_EXTENSION_VERSION)
+        .withVersion(targetVersion(THROTTLING_EXTENSION_VERSION_PROPERTY))
         .withClassifier(MULE_PLUGIN_CLASSIFIER)
         .build());
   }

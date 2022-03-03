@@ -1,0 +1,77 @@
+{
+  "projectType": "MULE_THREE_POLICY",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 11,
+  "numberOfMuleComponentsMigrated": 11,
+  "componentDetails": {
+    "mule:set-payload": {
+      "success": 2,
+      "failure": 0
+    },
+    "client-id-enforcement:validate-basic-auth-encoded-client": {
+      "success": 1,
+      "failure": 0
+    },
+    "client-id-enforcement:validate-client": {
+      "success": 1,
+      "failure": 0
+    },
+    "compatibility:set-property": {
+      "success": 3,
+      "failure": 0
+    },
+    "mule": {
+      "success": 2,
+      "failure": 0
+    },
+    "before": {
+      "success": 1,
+      "failure": 0
+    },
+    "pointcut": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 2,
+  "numberOfMELExpressionsMigrated": 1,
+  "numberOfMELExpressionLines": 2,
+  "numberOfMELExpressionLinesMigrated": 1,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "INFO",
+      "key": "basicStructure.pointcutMigrationStepResolvedByRuntime",
+      "component": "pointcut",
+      "lineNumber": -1,
+      "columnNumber": -1,
+      "message": "Api pointcut is resolved by the Mule runtime engine automatically.",
+      "filePath": "src/main/mule/template.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "expressions.methodInvocation",
+      "component": "mule:set-payload",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "The MEL expression contains a method invocation that could not be migrated to a Dataweave expression.",
+      "filePath": "src/main/mule/template.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "expressions.melToDw",
+      "component": "mule:set-payload",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "The MEL expression could not be migrated to a DataWeave expression.",
+      "filePath": "src/main/mule/template.xml",
+      "documentationLinks": []
+    }
+  ]
+}

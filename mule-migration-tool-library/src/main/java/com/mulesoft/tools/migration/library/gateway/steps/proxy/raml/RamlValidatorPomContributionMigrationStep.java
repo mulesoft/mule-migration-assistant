@@ -10,6 +10,8 @@ import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 /**
  * Contribute mule-raml-validator and mule-rest-validator plugins to pom.xml
  *
@@ -21,7 +23,7 @@ public class RamlValidatorPomContributionMigrationStep implements PomContributio
   private static final String MULE_RAML_VALIDATOR_EXTENSION = "mule-raml-validator-extension";
   private static final String MULE_REST_VALIDATOR_EXTENSION = "mule-rest-validator-extension";
   private static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
-  private static final String MULE_REST_VALIDATOR_EXTENSION_VERSION = "2.1.2";
+  private static final String MULE_REST_VALIDATOR_EXTENSION_VERSION_PROPERTY = "mule-rest-validator-extension";
   private static final String ARBITRARY_MULE_RAML_VALIDATOR_EXTENSION_VERSION = "${raml.validator.extension.version}";
 
   @Override
@@ -34,7 +36,7 @@ public class RamlValidatorPomContributionMigrationStep implements PomContributio
     pomModel.addDependency(new Dependency.DependencyBuilder()
         .withGroupId(COM_MULESOFT_ANYPOINT_GROUP_ID)
         .withArtifactId(MULE_REST_VALIDATOR_EXTENSION)
-        .withVersion(MULE_REST_VALIDATOR_EXTENSION_VERSION)
+        .withVersion(targetVersion(MULE_REST_VALIDATOR_EXTENSION_VERSION_PROPERTY))
         .withClassifier(MULE_PLUGIN_CLASSIFIER)
         .build());
     pomModel.removeDependency(new Dependency.DependencyBuilder()
@@ -44,5 +46,4 @@ public class RamlValidatorPomContributionMigrationStep implements PomContributio
         .withClassifier(MULE_PLUGIN_CLASSIFIER)
         .build());
   }
-
 }

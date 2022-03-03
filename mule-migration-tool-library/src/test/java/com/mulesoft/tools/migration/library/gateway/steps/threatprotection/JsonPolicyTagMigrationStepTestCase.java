@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.POLICY_
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.JSON_THREAT_PROTECTION_NAMESPACE;
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.THREAT_PROTECTION_GW_NAMESPACE;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -49,7 +50,6 @@ public class JsonPolicyTagMigrationStepTestCase {
 
   private static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   private static final String MULE_JSON_THREAT_PROTECTION_EXTENSION_ARTIFACT_ID = "mule-json-threat-protection-extension";
-  private static final String JSON_THREAT_PROTECTION_EXTENSION_VERSION = "1.1.0";
   private static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
 
   private static final String XPATH_NODE_EXPRESSION =
@@ -118,7 +118,7 @@ public class JsonPolicyTagMigrationStepTestCase {
     Dependency jsonThreatProtectionDependency = pm.getDependencies().get(0);
     assertThat(jsonThreatProtectionDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(jsonThreatProtectionDependency.getArtifactId(), is(MULE_JSON_THREAT_PROTECTION_EXTENSION_ARTIFACT_ID));
-    assertThat(jsonThreatProtectionDependency.getVersion(), is(JSON_THREAT_PROTECTION_EXTENSION_VERSION));
+    assertThat(jsonThreatProtectionDependency.getVersion(), is(notNullValue()));
     assertThat(jsonThreatProtectionDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
 
     assertJsonPolicyTag(element);

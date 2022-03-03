@@ -8,8 +8,8 @@ package com.mulesoft.tools.migration.library.gateway.steps.proxy;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.COM_MULESOFT_ANYPOINT_GROUP_ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_PLUGIN_CLASSIFIER;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_WSDL_FUNCTIONS_EXTENSION_ARTIFACT_ID;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.WSDL_FUNCTIONS_EXTENSION_VERSION;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -274,7 +274,7 @@ public class DWWsdlPropertyAttributeValueMigrationStepTestCase {
     Dependency wsdlExtensionDependency = pm.getDependencies().get(0);
     assertThat(wsdlExtensionDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(wsdlExtensionDependency.getArtifactId(), is(MULE_WSDL_FUNCTIONS_EXTENSION_ARTIFACT_ID));
-    assertThat(wsdlExtensionDependency.getVersion(), is(WSDL_FUNCTIONS_EXTENSION_VERSION));
+    assertThat(wsdlExtensionDependency.getVersion(), is(notNullValue()));
     assertThat(wsdlExtensionDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
 
     assertThat(element.getAttributeValue(PORT_ATTRIBUTE), is(EXPECTED_FUNCTION_PORT));

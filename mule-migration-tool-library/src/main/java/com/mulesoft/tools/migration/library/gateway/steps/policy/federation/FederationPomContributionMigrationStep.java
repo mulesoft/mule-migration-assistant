@@ -11,6 +11,8 @@ import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 /**
  * Contribute mule federation plugin to pom.xml
  *
@@ -20,7 +22,7 @@ public class FederationPomContributionMigrationStep implements PomContribution {
 
   private static final String COM_MULESOFT_ANYPOINT_GROUP_ID = "com.mulesoft.anypoint";
   private static final String MULE_FEDERATION_EXTENSION_ARTIFACT_ID = "mule-federation-extension";
-  private static final String FEDERATION_EXTENSION_VERSION = "1.1.2";
+  private static final String FEDERATION_EXTENSION_VERSION_PROPERTY = "mule-federation-extension";
   private static final String MULE_PLUGIN_CLASSIFIER = "mule-plugin";
 
 
@@ -35,7 +37,7 @@ public class FederationPomContributionMigrationStep implements PomContribution {
     pomModel.addDependency(new DependencyBuilder()
         .withGroupId(COM_MULESOFT_ANYPOINT_GROUP_ID)
         .withArtifactId(MULE_FEDERATION_EXTENSION_ARTIFACT_ID)
-        .withVersion(FEDERATION_EXTENSION_VERSION)
+        .withVersion(targetVersion(FEDERATION_EXTENSION_VERSION_PROPERTY))
         .withClassifier(MULE_PLUGIN_CLASSIFIER)
         .build());
   }

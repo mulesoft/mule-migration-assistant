@@ -8,11 +8,7 @@ package com.mulesoft.tools.migration.library.gateway.steps.policy.utils;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.ProjectStructureContribution;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -66,20 +62,26 @@ public class PolicyYamlMigrationStep implements ProjectStructureContribution {
   }
 
   private void treatYaml(File yamlFile, MigrationReport migrationReport) throws IOException {
-    Yaml yaml = new Yaml();
-    Map<String, Object> yamlData = new LinkedHashMap<>();
-    yamlData.putAll(yaml.loadAs(new FileInputStream(yamlFile), Map.class));
-    checkYamlProperty(yamlData, "id", yamlFile.getName(), migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
-    checkYamlProperty(yamlData, "name", yamlFile.getName(), migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
-    checkYamlProperty(yamlData, "description", yamlFile.getName(), migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
-    checkYamlProperty(yamlData, "category", "Compliance", migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
-    checkYamlProperty(yamlData, "type", "system", migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
-    checkYamlProperty(yamlData, "resourceLevelSupported", false, migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
-    checkYamlProperty(yamlData, "standalone", true, migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
-    checkYamlProperty(yamlData, "requiredCharacteristics", new ArrayList<>(), migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
-    checkYamlProperty(yamlData, "providedCharacteristics", new ArrayList<>(), migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
-    checkConfiguration(yamlData, migrationReport);
-    yaml.dump(yamlData, new FileWriter(yamlFile));
+    try (FileInputStream yamlFileStream = new FileInputStream(yamlFile)) {
+      Yaml yaml = new Yaml();
+      Map<String, Object> yamlData = new LinkedHashMap<>();
+      yamlData.putAll(yaml.loadAs(yamlFileStream, Map.class));
+      checkYamlProperty(yamlData, "id", yamlFile.getName(), migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
+      checkYamlProperty(yamlData, "name", yamlFile.getName(), migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
+      checkYamlProperty(yamlData, "description", yamlFile.getName(), migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
+      checkYamlProperty(yamlData, "category", "Compliance", migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
+      checkYamlProperty(yamlData, "type", "system", migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
+      checkYamlProperty(yamlData, "resourceLevelSupported", false, migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
+      checkYamlProperty(yamlData, "standalone", true, migrationReport, DEFAULT_POLICY_YAML_VALUE_MESSAGE);
+      checkYamlProperty(yamlData, "requiredCharacteristics", new ArrayList<>(), migrationReport,
+                        DEFAULT_POLICY_YAML_VALUE_MESSAGE);
+      checkYamlProperty(yamlData, "providedCharacteristics", new ArrayList<>(), migrationReport,
+                        DEFAULT_POLICY_YAML_VALUE_MESSAGE);
+      checkConfiguration(yamlData, migrationReport);
+      try (FileWriter fileWriter = new FileWriter(yamlFile)) {
+        yaml.dump(yamlData, fileWriter);
+      }
+    }
   }
 
   @Override

@@ -1,0 +1,57 @@
+{
+  "projectType": "MULE_THREE_POLICY",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 8,
+  "numberOfMuleComponentsMigrated": 8,
+  "componentDetails": {
+    "throttling-gw:fixed-time-frame-algorithm": {
+      "success": 1,
+      "failure": 0
+    },
+    "throttling-gw:discard-response": {
+      "success": 1,
+      "failure": 0
+    },
+    "throttling-gw:policy": {
+      "success": 1,
+      "failure": 0
+    },
+    "throttling-gw:throttle": {
+      "success": 1,
+      "failure": 0
+    },
+    "mule": {
+      "success": 2,
+      "failure": 0
+    },
+    "before": {
+      "success": 1,
+      "failure": 0
+    },
+    "pointcut": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "INFO",
+      "key": "basicStructure.pointcutMigrationStepResolvedByRuntime",
+      "component": "pointcut",
+      "lineNumber": -1,
+      "columnNumber": -1,
+      "message": "Api pointcut is resolved by the Mule runtime engine automatically.",
+      "filePath": "src/main/mule/template.xml",
+      "documentationLinks": []
+    }
+  ]
+}

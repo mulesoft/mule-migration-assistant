@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:proxy="http://www.mulesoft.org/schema/mule/proxy" xmlns:rest-validator="http://www.mulesoft.org/schema/mule/rest-validator" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/proxy http://www.mulesoft.org/schema/mule/proxy/current/mule-proxy.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/rest-validator http://www.mulesoft.org/schema/mule/rest-validator/current/mule-rest-validator.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <proxy:config name="proxy-config">
+        <!--Migration WARN: Proxy templates have changed in Mule 4. You can review them in Exchange to compare them to this migrated proxy.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/api-manager/2.x/api-proxy-landing-page-->
+        <!--<custom-processor xmlns="http://www.mulesoft.org/schema/mule/core" class="com.mulesoft.gateway.extension.ProxyRequestHeadersProcessor">
+            
+        </custom-processor>-->
+    </proxy:config>
+
+    <configuration-properties file="config.properties">
+        <!--Migration ERROR: Spring-specific attributes are no longer available. The default behavior cannot be changed in Mule 4.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/configuring-properties-->
+        <!--<expression-language:property-placeholder xmlns:expression-language="http://www.mulesoft.org/schema/mule/expression-language-gw" location="config.properties" system-properties-mode="OVERRIDE" />-->
+    </configuration-properties>
+
+    <configuration>
+        <!--Migration INFO: The 'configuration' element no longer has a 'defaultProcessingStrategy' attribute.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-engine-->
+    </configuration>
+
+    <http:listener-config name="http-lc-0.0.0.0-8081">
+        <http:listener-connection protocol="HTTP" host="0.0.0.0" port="${httpPort}" />
+    </http:listener-config>
+
+    <http:request-config name="http-request-config" basePath="${implementation.path}" responseTimeout="${proxy.responseTimeout}">
+        <http:request-connection protocol="${implementation.protocol}" host="${implementation.host}" port="${implementation.port}" />
+    </http:request-config>
+
+    <rest-validator:config name="rest-validator-config" disableValidations="${validation.disable}" api="${raml.location}" parser="AUTO" queryParamsStrictValidation="false" headersStrictValidation="false">
+        <!--Migration WARN: Attribute 'headersStrictValidation' in RAML config was not found, default value 'false' was set for it.-->
+        <!--Migration WARN: Attribute 'queryParamsStrictValidation' in RAML config was not found, default value 'false' was set for it.-->
+        <!--Migration WARN: Attribute 'parser' in RAML config was not found, default value 'AUTO' was set for it.-->
+    </rest-validator:config>
+
+    <api-gateway:autodiscovery flowRef="proxy" apiId="${api.id}">
+        <!--Migration WARN: APIs in Mule 4 have an identifier, the equivalent should be: ':'.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/api-manager/2.x/configure-autodiscovery-4-task-->
+        <!--<api-platform-gw:api xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw" apiName="${api.name}" version="${api.version}" apikitRef="proxy-config" flowRef="proxy" />-->
+    </api-gateway:autodiscovery>
+
+    <flow name="proxy" doc:name="HTTP Proxy">
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="${proxy.path}">
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:response>
+            <!--Migration INFO: A 'parseRequest' is not needed in Mule 4 because the 'InputStream' of the multipart payload is provided as it is read.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-http#http-mime-types-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/dataweave-formats#format_form_data-->
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+        <proxy:request-headers config-ref="proxy-config" target="proxyRequestHeaders" />
+
+        <rest-validator:validate-request config-ref="rest-validator-config" />
+
+        <compatibility:outbound-properties-to-var>
+            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:outbound-properties-to-var>
+
+        <http:request config-ref="http-request-config" method="#[vars.compatibility_inboundProperties['http.method']]" path="#[mel:message.inboundProperties['http.request.path'].substring(message.inboundProperties['http.listener.path'].length()-2)]">
+            <!--Migration WARN: Build the 'query-params' map with a single DataWeave expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+            <!--<http:query-params xmlns:http="http://www.mulesoft.org/schema/mule/http" />-->
+            <!--Migration WARN: The MEL expression could not be migrated to a DataWeave expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-mel-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#mel_expressions-->
+            <!--        * https://blogs.mulesoft.com/dev/mule-dev/why-dataweave-main-expression-language-mule-4-->
+            <!--Migration WARN: 'parseResponse' is not needed in Mule 4 because DataWeave 2.0 now handles those MIME types.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-http#http-mime-types-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/dataweave-formats#format_form_data-->
+            <http:headers>#[migration::HttpRequester::httpRequesterHeaders(vars)]</http:headers>
+            <http:query-params><![CDATA[#[vars.compatibility_inboundProperties['http.query.params']]]]></http:query-params>
+            <http:response-validator>
+                <http:success-status-code-validator values="0..599" />
+            </http:response-validator>
+        </http:request>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+        <proxy:response-headers config-ref="proxy-config" target="proxyResponseHeaders">
+            <!--Migration ERROR: Element 'custom-processor' which relied on Java no longer exists in Mule 4. Replace its uses with a new Mule 4 feature.-->
+        </proxy:response-headers>
+
+        <compatibility:outbound-properties-to-var>
+            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:outbound-properties-to-var>
+
+        <error-handler>
+            <on-error-continue type="REST-VALIDATOR:BAD_REQUEST" logException="false">
+                <!--Migration WARN: Element 'onErrorContinue' with type 'REST-VALIDATOR:BAD_REQUEST' was added by default while migrating.-->
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload>output application/json --- {"error": "$(error.description)"}</ee:set-payload>
+                        <ee:set-attributes>{ statusCode: 400 }</ee:set-attributes>
+                    </ee:message>
+                </ee:transform>
+            </on-error-continue>
+            <on-error-continue type="REST-VALIDATOR:RESOURCE_NOT_FOUND" logException="false">
+                <!--Migration WARN: Element 'onErrorContinue' with type 'REST-VALIDATOR:RESOURCE_NOT_FOUND' was added by default while migrating.-->
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload>output application/json --- {"error": "$(error.description)"}</ee:set-payload>
+                        <ee:set-attributes>{ statusCode: 404 }</ee:set-attributes>
+                    </ee:message>
+                </ee:transform>
+            </on-error-continue>
+            <on-error-continue type="REST-VALIDATOR:METHOD_NOT_ALLOWED" logException="false">
+                <!--Migration WARN: Element 'onErrorContinue' with type 'REST-VALIDATOR:METHOD_NOT_ALLOWED' was added by default while migrating.-->
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload>output application/json --- {"error": "$(error.description)"}</ee:set-payload>
+                        <ee:set-attributes>{ statusCode: 405 }</ee:set-attributes>
+                    </ee:message>
+                </ee:transform>
+            </on-error-continue>
+            <on-error-continue type="HTTP:TIMEOUT" logException="false">
+                <!--Migration WARN: Element 'onErrorContinue' with type 'HTTP:TIMEOUT' was added by default while migrating.-->
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-attributes>{ statusCode: 504 }</ee:set-attributes>
+                    </ee:message>
+                </ee:transform>
+            </on-error-continue>
+        </error-handler>
+
+    </flow>
+
+    <flow name="console" doc:name="console">
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api-console/*">
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+        <rest-validator:console config-ref="rest-validator-config" />
+
+        <compatibility:outbound-properties-to-var>
+            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:outbound-properties-to-var>
+
+    </flow>
+
+</mule>

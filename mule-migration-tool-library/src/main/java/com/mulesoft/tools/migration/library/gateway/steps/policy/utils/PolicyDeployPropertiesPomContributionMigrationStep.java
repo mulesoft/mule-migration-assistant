@@ -19,6 +19,8 @@ import org.apache.maven.model.DeploymentRepository;
 import org.apache.maven.model.DistributionManagement;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
+import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
+
 /**
  * Migrate policy deploy properties on pom.xml
  *
@@ -31,7 +33,7 @@ public class PolicyDeployPropertiesPomContributionMigrationStep implements PomCo
   private static final String EXCHANGE_URL_KEY = "exchange.url";
   private static final String EXCHANGE_URL_VALUE = "https://maven.anypoint.mulesoft.com/api/v1/organizations/{orgId}/maven";
   private static final String MULE_MAVEN_PLUGIN_VERSION_KEY = "mule.maven.plugin.version";
-  private static final String MULE_MAVEN_PLUGIN_VERSION_VALUE = "3.2.0";
+  private static final String MULE_MAVEN_PLUGIN_VERSION_VALUE_PROPERTY = "mule-maven-plugin";
 
   private static final String EXCHANGE_SERVER_ID = "exchange-server";
   private static final String EXCHANGE_SERVER_NAME = "MuleSoft Exchange Environment";
@@ -121,7 +123,8 @@ public class PolicyDeployPropertiesPomContributionMigrationStep implements PomCo
     Optional<Plugin> muleMavenPluginOptional =
         pomModel.getPlugins().stream().filter(plugin -> plugin.getArtifactId().equals(MULE_MAVEN_PLUGIN_ARTIFACT_ID)).findFirst();
     if (!muleMavenPluginOptional.isPresent()) {
-      pomModel.getProperties().setProperty(MULE_MAVEN_PLUGIN_VERSION_KEY, MULE_MAVEN_PLUGIN_VERSION_VALUE);
+      pomModel.getProperties().setProperty(MULE_MAVEN_PLUGIN_VERSION_KEY,
+                                           targetVersion(MULE_MAVEN_PLUGIN_VERSION_VALUE_PROPERTY));
       pomModel.addPlugin(new Plugin.PluginBuilder()
           .withGroupId(MULE_MAVEN_PLUGIN_GROUP_ID)
           .withArtifactId(MULE_MAVEN_PLUGIN_ARTIFACT_ID)

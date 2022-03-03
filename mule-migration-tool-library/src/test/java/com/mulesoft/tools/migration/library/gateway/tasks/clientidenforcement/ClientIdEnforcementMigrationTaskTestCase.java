@@ -5,7 +5,6 @@
  */
 package com.mulesoft.tools.migration.library.gateway.tasks.clientidenforcement;
 
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.CLIENT_ID_ENFORCEMENT_EXTENSION_VERSION;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.COM_MULESOFT_ANYPOINT_GROUP_ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_CLIENT_ID_ENFORCEMENT_EXTENSION_ARTIFACT_ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_PLUGIN_CLASSIFIER;
@@ -14,6 +13,7 @@ import static com.mulesoft.tools.migration.library.gateway.tasks.DocumentHelper.
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -108,7 +108,7 @@ public class ClientIdEnforcementMigrationTaskTestCase {
     Dependency clientIdEnforcementDependency = pomModel.getDependencies().get(3);
     assertThat(clientIdEnforcementDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(clientIdEnforcementDependency.getArtifactId(), is(MULE_CLIENT_ID_ENFORCEMENT_EXTENSION_ARTIFACT_ID));
-    assertThat(clientIdEnforcementDependency.getVersion(), is(CLIENT_ID_ENFORCEMENT_EXTENSION_VERSION));
+    assertThat(clientIdEnforcementDependency.getVersion(), is(notNullValue()));
     assertThat(clientIdEnforcementDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 

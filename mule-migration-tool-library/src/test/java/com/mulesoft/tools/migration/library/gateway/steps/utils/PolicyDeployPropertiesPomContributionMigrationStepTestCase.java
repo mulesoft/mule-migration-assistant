@@ -37,7 +37,6 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_MA
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_MAVEN_PLUGIN_GROUP_ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_MAVEN_PLUGIN_VERSION;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_MAVEN_PLUGIN_VERSION_KEY;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_MAVEN_PLUGIN_VERSION_VALUE;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_PLUGIN_CLASSIFIER;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.PACKAGING_KEY;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.PLUGIN_REPOSITORY_NAME;
@@ -46,8 +45,10 @@ import static com.mulesoft.tools.migration.library.gateway.TestConstants.REPOSIT
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.URL_KEY;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.VERSION_KEY;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.Mockito.mock;
 
 import com.mulesoft.tools.migration.library.gateway.steps.policy.utils.PolicyDeployPropertiesPomContributionMigrationStep;
@@ -78,7 +79,7 @@ public class PolicyDeployPropertiesPomContributionMigrationStepTestCase {
     assertNotNull(pomProperties);
     assertThat(pomProperties.size(), is(2));
     assertThat(pomProperties.getProperty(EXCHANGE_URL_KEY), is(EXCHANGE_URL_VALUE));
-    assertThat(pomProperties.getProperty(MULE_MAVEN_PLUGIN_VERSION_KEY), is(MULE_MAVEN_PLUGIN_VERSION_VALUE));
+    assertThat(pomProperties.getProperty(MULE_MAVEN_PLUGIN_VERSION_KEY), is(notNullValue()));
 
     List<Repository> repositoryList = pomModel.getRepositories();
     assertThat(repositoryList.size(), is(1));

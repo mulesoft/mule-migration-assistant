@@ -8,11 +8,11 @@ package com.mulesoft.tools.migration.library.gateway.tasks.raml;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.COM_MULESOFT_ANYPOINT_GROUP_ID;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_PLUGIN_CLASSIFIER;
 import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_REST_VALIDATOR_EXTENSION;
-import static com.mulesoft.tools.migration.library.gateway.TestConstants.MULE_REST_VALIDATOR_EXTENSION_VERSION;
 import static com.mulesoft.tools.migration.library.gateway.tasks.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.library.gateway.tasks.DocumentHelper.getElementsFromDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
@@ -99,7 +99,7 @@ public class RamlProxyMigrationTaskTestCase {
     Dependency customProcessorDependency = pomModel.getDependencies().get(0);
     assertThat(customProcessorDependency.getGroupId(), is(COM_MULESOFT_ANYPOINT_GROUP_ID));
     assertThat(customProcessorDependency.getArtifactId(), is(MULE_REST_VALIDATOR_EXTENSION));
-    assertThat(customProcessorDependency.getVersion(), is(MULE_REST_VALIDATOR_EXTENSION_VERSION));
+    assertThat(customProcessorDependency.getVersion(), is(notNullValue()));
     assertThat(customProcessorDependency.getClassifier(), is(MULE_PLUGIN_CLASSIFIER));
   }
 
