@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+    xmlns:spring="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <flow name="testdwFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/testdw" doc:name="HTTP"/>
+        <set-variable variableName="applicationProperties" value="#[{&quot;cloudapp.application.md5&quot;: &quot;1234&quot;}]" doc:name="Variable"/>
+        <set-variable variableName="platformApplicationMD5" value="1234" doc:name="Copy_of_Variable"/>
+        <set-payload value="#[dw(&quot;\&quot;Expression value \&quot; ++ (flowVars.applicationProperties.'cloudapp.application.md5' == flowVars.platformApplicationMD5)&quot;)]" doc:name="Set Payload"/>
+    </flow>
+</mule>

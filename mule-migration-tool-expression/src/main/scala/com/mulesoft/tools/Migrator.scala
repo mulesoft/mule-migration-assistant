@@ -2,9 +2,10 @@ package com.mulesoft.tools
 
 import java.util
 import java.util.Date
-
 import com.mulesoft.tools.ast._
 import com.mulesoft.tools.{ast => mel}
+import org.mule.weave.v1.parser.Parser
+import org.mule.weave.v2.{V1OperatorManager, V2LangMigrant}
 import org.mule.weave.v2.grammar._
 import org.mule.weave.v2.parser.ast.logical.{AndNode, OrNode}
 import org.mule.weave.v2.parser.annotation.{EnclosedMarkAnnotation, InfixNotationFunctionCallAnnotation, QuotedStringAnnotation}
@@ -39,6 +40,7 @@ object Migrator {
       case mel.EnclosedExpression(expression) => toDataweaveEnclosedExpressionNode(expression)
       case mel.ConstructorNode(canonicalName, arguments) => toDataweaveConstructorNode(canonicalName, arguments)
       case mel.IfNode(ifExpr, condition, elseExpr) => toDataweaveIfNode(ifExpr, condition, elseExpr)
+      case mel.DWFunctionNode(script) => toDWScript(script.literal)
       case mel.MethodInvocationNode(canonicalName, arguments) => toDataweaveMethodInvocation(canonicalName, arguments)
       case mel.PropertyNode(name) => toDataweaveProperty(name.map(_.literal).mkString("."))
       case mel.ContainsNode(left, right) => toContainsInvocation(left, right)
@@ -65,6 +67,11 @@ object Migrator {
     } else {
       new MigrationResult(toDataweaveNameIdentifierNode("$").dwAstNode, DefaultMigrationMetadata(Seq(NonMigratable("expressions.methodInvocation"))))
     }
+  }
+
+  private def toDWScript(dwScript: String) = {
+    val apply: Parser = Parser.apply(dwScript, Some(V1OperatorManager))
+    new MigrationResult(V2LangMigrant.migrateSeq(Seq(apply.parse)).head)
   }
 
   private def toDataweaveMethodInvocation(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) = {

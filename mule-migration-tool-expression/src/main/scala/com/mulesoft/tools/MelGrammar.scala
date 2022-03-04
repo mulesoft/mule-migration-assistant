@@ -17,6 +17,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   private val createListNode = (elements: Seq[MelExpressionNode]) => ListNode(elements)
   private val createConstructorNode = (canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) => ConstructorNode(canonicalName, arguments)
   private val createMethodInvocationNode = (canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) => MethodInvocationNode(canonicalName, arguments)
+  private val createDWMethodInvocationNode = (script: StringNode) => DWFunctionNode(script)
   private val createCanonicalNameNode = (name: String) => CanonicalNameNode(name)
   private val createIfNode = (condition : MelExpressionNode, ifExpr : MelExpressionNode, elseExpr : MelExpressionNode) => IfNode(ifExpr, condition, elseExpr)
   private val createPropertyNode = (identifiers: Seq[IdentifierNode]) => PropertyNode(identifiers)
@@ -212,6 +213,10 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
     ws ~ ch('\'') ~ clearSB() ~ zeroOrMore(doubleQuoteEscapedChar | noneOf("\'") ~ appendSB()) ~ ch('\'') ~ push(sb.toString) ~> createStringNode
   }
 
+  def stringPreserveEscaping = rule {
+    capture(zeroOrMore(doubleQuoteEscapedChar() | noneOf("\""))) ~> (_.replace("\\\"", "\""))
+  }
+
   def doubleQuoteEscapedChar() = rule {
     str("\\\"")
   }
@@ -245,7 +250,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   }
 
   def values = rule {
-    (property | constructor | methodInvocation | stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(selector)
+    (property | constructor | dwMethodInvocation | methodInvocation  | stringNode | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(selector)
   }
 
   def constructor: Rule1[ConstructorNode] = rule {
@@ -254,6 +259,14 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
 
   def containsToken = rule {
     ws ~ "contains"
+  }
+
+  def dwScript = rule {
+    ws ~ str("\"") ~ stringPreserveEscaping ~ str("\"") ~> createStringNode
+  }
+
+  def dwMethodInvocation: Rule1[DWFunctionNode] = rule {
+    ws ~ str("dw") ~ ws ~ ch('(') ~ ws ~ dwScript ~ ws ~ ch(')') ~> createDWMethodInvocationNode
   }
 
   def methodInvocation = rule {

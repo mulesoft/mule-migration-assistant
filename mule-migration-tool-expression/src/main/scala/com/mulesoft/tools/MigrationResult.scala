@@ -13,6 +13,15 @@ class MigrationResult(val dwAstNode: dw.AstNode, val metadata: MigrationMetadata
   }
 
   def getGeneratedCode(): String = {
+    // avoid duplicating DW header
+    if (defaultHeaderAlreadyDefined(dwAstNode)) {
+      return CodeGenerator.generate(dwAstNode)
+    }
+
     getGeneratedCode(DEFAULT_HEADER)
+  }
+
+  private def defaultHeaderAlreadyDefined(root: dw.AstNode): Boolean = {
+    Option(dwAstNode.children()).isDefined && !dwAstNode.children().isEmpty && dwAstNode.children().head == DEFAULT_HEADER
   }
 }
