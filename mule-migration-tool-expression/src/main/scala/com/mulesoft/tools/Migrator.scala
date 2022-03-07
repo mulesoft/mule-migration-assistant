@@ -11,15 +11,18 @@ import org.mule.weave.v2.parser.ast.logical.{AndNode, OrNode}
 import org.mule.weave.v2.parser.annotation.{EnclosedMarkAnnotation, InfixNotationFunctionCallAnnotation, QuotedStringAnnotation}
 import org.mule.weave.v2.parser.ast.functions.FunctionCallParametersNode
 import org.mule.weave.v2.parser.ast.header.HeaderNode
+import org.mule.weave.v2.parser.ast.header.directives.{VersionDirective, VersionMajor, VersionMinor}
 import org.mule.weave.v2.parser.ast.structure.schema.{SchemaNode, SchemaPropertyNode}
 import org.mule.weave.v2.parser.ast.types.TypeReferenceNode
 import org.mule.weave.v2.parser.ast.variables.{NameIdentifier, VariableReferenceNode}
 import org.mule.weave.v2.parser.{ast => dw}
+import org.mule.weave.v2.parser.ast.{AstNode => AstNodeV2}
 
 import scala.util.{Failure, Success, Try}
 
 object Migrator {
 
+  val DEFAULT_HEADER = HeaderNode(Seq(VersionDirective(VersionMajor("2"), VersionMinor("0"))))
   val CLASS_PROPERTY_NAME = "class"
 
   def bindingContextVariable: List[String] = List("message", "exception", "payload", "flowVars", "sessionVars", "recordVars", "null");
@@ -71,7 +74,12 @@ object Migrator {
 
   private def toDWScript(dwScript: String) = {
     val apply: Parser = Parser.apply(dwScript, Some(V1OperatorManager))
-    new MigrationResult(V2LangMigrant.migrateSeq(Seq(apply.parse)).head)
+    var headNode: AstNodeV2 =  V2LangMigrant.migrateSeq(Seq(apply.parse)).head
+    // avoid duplicating DW header
+    if (headNode.children().head == DEFAULT_HEADER) {
+      headNode = (headNode.children().drop(1)).head
+    }
+    new MigrationResult(headNode)
   }
 
   private def toDataweaveMethodInvocation(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) = {
