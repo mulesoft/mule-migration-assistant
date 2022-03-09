@@ -43,7 +43,6 @@ object Migrator {
       case mel.EnclosedExpression(expression) => toDataweaveEnclosedExpressionNode(expression)
       case mel.ConstructorNode(canonicalName, arguments) => toDataweaveConstructorNode(canonicalName, arguments)
       case mel.IfNode(ifExpr, condition, elseExpr) => toDataweaveIfNode(ifExpr, condition, elseExpr)
-      case mel.DWFunctionNode(script) => toDWScript(script.literal)
       case mel.MethodInvocationNode(canonicalName, arguments) => toDataweaveMethodInvocation(canonicalName, arguments)
       case mel.PropertyNode(name) => toDataweaveProperty(name.map(_.literal).mkString("."))
       case mel.ContainsNode(left, right) => toContainsInvocation(left, right)
@@ -72,14 +71,19 @@ object Migrator {
     }
   }
 
-  private def toDWScript(dwScript: String) = {
-    val apply: Parser = Parser.apply(dwScript, Some(V1OperatorManager))
-    var headNode: AstNodeV2 =  V2LangMigrant.migrateSeq(Seq(apply.parse)).head
-    // avoid duplicating DW header
-    if (headNode.children().head == DEFAULT_HEADER) {
-      headNode = (headNode.children().drop(1)).head
+  private def toDWScript(arguments: Seq[MelExpressionNode]) = {
+    if (isStringType(arguments.head)) {
+      val dwScript = arguments.head.asInstanceOf[StringNode].literal
+      val apply: Parser = Parser.apply(dwScript, Some(V1OperatorManager))
+      var headNode: AstNodeV2 = V2LangMigrant.migrateSeq(Seq(apply.parse)).head
+      // avoid duplicating DW header
+      if (headNode.children().head == DEFAULT_HEADER) {
+        headNode = (headNode.children().drop(1)).head
+      }
+      new MigrationResult(headNode)
+    } else {
+      handleNonMigratableMethodInvocation()
     }
-    new MigrationResult(headNode)
   }
 
   private def toDataweaveMethodInvocation(canonicalName: CanonicalNameNode, arguments: Seq[MelExpressionNode]) = {
@@ -102,10 +106,9 @@ object Migrator {
           case "contains" => toContainsInvocation(mel.VariableReferenceNode(candidateToCanonicalName), arguments.head)
           case "causedBy" => toExceptionFunction(name, arguments.head, false)
           case "causedExactlyBy" => toExceptionFunction(name, arguments.head, true)
+          case "dw" => toDWScript(arguments)
           case _ => {
-            counter += 1
-            val reference = "$" + counter
-            new MigrationResult(toDataweaveStringNode(reference).dwAstNode, DefaultMigrationMetadata(Seq(NonMigratable("expressions.methodInvocation"))))
+            handleNonMigratableMethodInvocation()
           }
         }
       }
@@ -116,6 +119,12 @@ object Migrator {
         }
       }
     }
+  }
+
+  private def handleNonMigratableMethodInvocation(): MigrationResult = {
+    counter += 1
+    val reference = "$" + counter
+    new MigrationResult(toDataweaveStringNode(reference).dwAstNode, DefaultMigrationMetadata(Seq(NonMigratable("expressions.methodInvocation"))))
   }
 
   private def toUUID: MigrationResult = {
