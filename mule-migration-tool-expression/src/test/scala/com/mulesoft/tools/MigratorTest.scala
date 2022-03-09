@@ -167,4 +167,24 @@ class MigratorTest extends FlatSpec with Matchers {
   it should "migrate a simple ternary operator expression2" in {
     Migrator.migrate("true ? true ? 1 : 0 : 0").getGeneratedCode() shouldBe "%dw 2.0\n---\nif (true)\n  if (true)\n    1\n  else\n    0\nelse\n  0"
   }
+
+  it should "migrate a dw function" in {
+    Migrator.migrate("dw(\"\\\"Expression is \\\" ++ (flowVars.firstVar == flowVars.secondVar)\")").getGeneratedCode() shouldBe "%dw 2.0\n---\n\"Expression is \" ++ (vars.firstVar == vars.secondVar)"
+  }
+
+  it should "migrate a dw function with single quotes" in {
+    Migrator.migrate("dw(\'\"Expression is \" ++ (flowVars.firstVar == flowVars.secondVar)\')").getGeneratedCode() shouldBe "%dw 2.0\n---\n\"Expression is \" ++ (vars.firstVar == vars.secondVar)"
+  }
+
+  it should "migrate a dw function with conditional statement" in {
+    Migrator.migrate("dw(\"{md5: 1234} when flowVars.firstVar == flowVars.secondVar otherwise {md5: 456}\")").getGeneratedCode() shouldBe "%dw 2.0\n---\nif (vars.firstVar == vars.secondVar)\n  {\n    md5: 1234\n  }\nelse\n  {\n    md5: 456\n  }"
+  }
+
+  it should "migrate mel expression involving dw function" in {
+    Migrator.migrate("\"Value of variable is: \" + dw(\"{md5: 1234} when flowVars.firstVar == flowVars.secondVar otherwise {md5: 456}\")").getGeneratedCode() shouldBe "%dw 2.0\n---\n'Value of variable is: ' ++ if (vars.firstVar == vars.secondVar)\n  {\n    md5: 1234\n  }\nelse\n  {\n    md5: 456\n  }"
+  }
+
+  it should "fail with dw function with no inline script" in {
+    Migrator.migrate("dw(flowVars.test)").metadata.children.head shouldBe NonMigratable("expressions.methodInvocation")
+  }
 }
