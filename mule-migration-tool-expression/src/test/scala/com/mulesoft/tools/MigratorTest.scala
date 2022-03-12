@@ -187,4 +187,12 @@ class MigratorTest extends FlatSpec with Matchers {
   it should "fail with dw function with no inline script" in {
     Migrator.migrate("dw(flowVars.test)").metadata.children.head shouldBe NonMigratable("expressions.methodInvocation")
   }
+  
+  it should "migrate mel expression with isInstanceOf function" in {
+    Migrator.migrate("a instanceof org.mule.SomeClass").getGeneratedCode() shouldBe "%dw 2.0\n---\nJava::isInstanceOf(vars.a, 'org.mule.SomeClass')"
+  }
+
+  it should "migrate mel expression with isCausedBy function" in {
+    Migrator.migrate("exception.causedBy(org.mule.RuntimeException)").getGeneratedCode() shouldBe "%dw 2.0\n---\nJava::isCausedBy(error.cause, 'org.mule.RuntimeException', false)"
+  }
 }
