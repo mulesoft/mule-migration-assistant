@@ -17,7 +17,8 @@ public class TransformMigrationTestCase extends AbstractEndToEndTestCase {
   @Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "ee_transform/ee_transform_01"
+        "ee_transform/ee_transform_01",
+        "ee_transform/ee_transform_keep_parentheses"
     };
   }
 

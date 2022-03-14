@@ -64,8 +64,8 @@ output application/java
         <ee:transform>
             <ee:variables>
                 <ee:set-variable variableName="soap.header">%dw 2.0
-output application/xml  
 ns ns0 http://mulesoft.org/tshirt-service
+output application/xml  
 ---
 {
   ns0#APIUsageInformation: {

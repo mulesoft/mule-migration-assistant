@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="ee-transform-Flow">
+        <set-variable variableName="var1" value="#[{&quot;customerData&quot;: [{&quot;data&quot;: &quot;data1&quot;, &quot;value&quot;: &quot;value1&quot;}, {&quot;data&quot;: &quot;data2&quot;, &quot;value&quot;: &quot;value2&quot;}], &quot;groupData&quot;: [{&quot;name&quot;: &quot;data1&quot;, &quot;value&quot;: &quot;value1&quot;}, {&quot;name&quot;: &quot;data3&quot;, &quot;value&quot;: &quot;value3&quot;}]}" doc:name="Variable" />
+
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json  
+---
+{
+  Customer: {
+    customAttribute: vars.var1.customerData map ((data01, indexOfData01) -> {
+      (vars.var1.groupData filter ($.name == data01.data and $.value == data01.value) map ((data02, indexOfPayload02) -> {
+        data: data02.name
+      }))
+    }) filter (not $ == {})
+  }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+
+        <logger />
+
+    </flow>
+
+</mule>
