@@ -2,7 +2,7 @@
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
   "connectorsMigrated": [
-    "org.mule.connectors:mule-jms-connector:1.8.2"
+    "org.mule.connectors:mule-jms-connector:VERSION"
   ],
   "numberOfMuleComponents": 6,
   "numberOfMuleComponentsMigrated": 5,

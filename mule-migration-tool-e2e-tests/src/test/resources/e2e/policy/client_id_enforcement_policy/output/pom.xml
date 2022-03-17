@@ -21,19 +21,19 @@
     <dependency>
       <groupId>com.mulesoft.mule.modules</groupId>
       <artifactId>mule-compatibility-module</artifactId>
-      <version>1.4.0</version>
+      <version>VERSION</version>
       <classifier>mule-plugin</classifier>
     </dependency>
     <dependency>
       <groupId>com.mulesoft.anypoint</groupId>
       <artifactId>mule-client-id-enforcement-extension</artifactId>
-      <version>1.1.4</version>
+      <version>VERSION</version>
       <classifier>mule-plugin</classifier>
     </dependency>
     <dependency>
       <groupId>com.mulesoft.anypoint</groupId>
       <artifactId>mule-http-policy-transform-extension</artifactId>
-      <version>3.0.0</version>
+      <version>VERSION</version>
       <classifier>mule-plugin</classifier>
     </dependency>
   </dependencies>
@@ -77,7 +77,7 @@
       <plugin>
         <groupId>org.mule.tools.maven</groupId>
         <artifactId>mule-maven-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>VERSION</version>
         <extensions>true</extensions>
         <configuration />
       </plugin>
