@@ -2,7 +2,7 @@
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
   "connectorsMigrated": [
-    "org.mule.connectors:mule-wsc-connector:VERSION"
+    "org.mule.connectors:mule-wsc-connector:1.6.9"
   ],
   "numberOfMuleComponents": 6,
   "numberOfMuleComponentsMigrated": 5,

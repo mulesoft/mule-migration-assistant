@@ -9,22 +9,22 @@
   <name>amqp1Mvn</name>
   <description>Application migrated with MMA</description>
   <properties>
-    <mule.tools.version>VERSION</mule.tools.version>
+    <mule.tools.version>1.7</mule.tools.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <mule.version>VERSION</mule.version>
+    <mule.version>3.8.4</mule.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
     <dependency>
       <groupId>com.mulesoft.mule.modules</groupId>
       <artifactId>mule-compatibility-module</artifactId>
-      <version>VERSION</version>
+      <version>1.4.0</version>
       <classifier>mule-plugin</classifier>
     </dependency>
     <dependency>
       <groupId>com.mulesoft.connectors</groupId>
       <artifactId>mule-amqp-connector</artifactId>
-      <version>VERSION</version>
+      <version>1.7.3</version>
       <classifier>mule-plugin</classifier>
     </dependency>
   </dependencies>
@@ -60,7 +60,7 @@
       <plugin>
         <groupId>org.mule.tools.maven</groupId>
         <artifactId>mule-maven-plugin</artifactId>
-        <version>VERSION</version>
+        <version>3.2.1</version>
         <extensions>true</extensions>
         <configuration />
       </plugin>

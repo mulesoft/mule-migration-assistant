@@ -156,9 +156,12 @@ public abstract class AbstractEndToEndTestCase {
       MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
       StringWriter expectedOutput = new StringWriter();
       StringWriter migratedOutput = new StringWriter();
-      mavenWriter.write(expectedOutput, new PomModelBuilder().withPom(expectedPath).build().getMavenModelCopy());
+      PomModel expectedPomModel = new PomModelBuilder().withPom(expectedPath).build();
+      normalizePomVersions(expectedPomModel);
+      mavenWriter.write(expectedOutput, expectedPomModel.getMavenModelCopy());
+
       PomModel migratedPomModel = new PomModelBuilder().withPom(migratedPath).build();
-      normalizeVersions(migratedPomModel);
+      normalizePomVersions(migratedPomModel);
       mavenWriter.write(migratedOutput, migratedPomModel.getMavenModelCopy());
 
       Diff d = DiffBuilder.compare(Input.fromString(expectedOutput.toString()))
@@ -170,9 +173,7 @@ public abstract class AbstractEndToEndTestCase {
     }
   }
 
-  private void normalizeVersions(PomModel pomModel) {
-    normalizeVersionProperty(pomModel, MULE_TOOLS_VERSION_POM_PROPERTY);
-    normalizeVersionProperty(pomModel, MULE_VERSION_POM_PROPERTY);
+  private void normalizePomVersions(PomModel pomModel) {
     pomModel.getDependencies().forEach(dep -> {
       if (dep.getVersion() != null && VERSION_REGEX_MATCHER.matcher(dep.getVersion()).matches()) {
         dep.setVersion(VERSION_PLACEHOLDER);
@@ -185,12 +186,6 @@ public abstract class AbstractEndToEndTestCase {
     });
   }
 
-  private void normalizeVersionProperty(PomModel pomModel, String propertyName) {
-    if (pomModel.getProperties().getProperty(propertyName) != null) {
-      pomModel.getProperties().setProperty(propertyName, VERSION_PLACEHOLDER);
-    }
-  }
-
   private void compareJson(Path expected, Path migratedPath) {
     try {
       JsonElement expectedJson = JsonParser.parseString(IOUtils.toString(expected.toUri(), UTF_8));
@@ -198,10 +193,10 @@ public abstract class AbstractEndToEndTestCase {
       if (migratedPath.getFileName().endsWith("report.json")) {
         normalizeFilePath(expectedJson);
         normalizeFilePath(actualJson);
-        // connector names have versions included [0-9]{1,2}\.[0-10]{1,2}\.[0-10]{1,2}
       }
 
-      removeVersions(actualJson.getAsJsonObject().get("connectorsMigrated").getAsJsonArray());
+      normalizeJsonReportVersions(actualJson.getAsJsonObject().get("connectorsMigrated").getAsJsonArray());
+      normalizeJsonReportVersions(expectedJson.getAsJsonObject().get("connectorsMigrated").getAsJsonArray());
 
       assertEquals(expectedJson, actualJson);
     } catch (IOException e) {
@@ -209,7 +204,7 @@ public abstract class AbstractEndToEndTestCase {
     }
   }
 
-  private void removeVersions(JsonArray elementArray) {
+  private void normalizeJsonReportVersions(JsonArray elementArray) {
     List<String> elementsToAdd = new ArrayList<>();
     elementArray.forEach(jsonElement -> {
       elementsToAdd.add(jsonElement.getAsString()

@@ -2,8 +2,8 @@
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
   "connectorsMigrated": [
-    "org.mule.connectors:mule-http-connector:VERSION",
-    "org.mule.connectors:mule-file-connector:VERSION"
+    "org.mule.connectors:mule-http-connector:1.6.0",
+    "org.mule.connectors:mule-file-connector:1.3.4"
   ],
   "numberOfMuleComponents": 22,
   "numberOfMuleComponentsMigrated": 21,
