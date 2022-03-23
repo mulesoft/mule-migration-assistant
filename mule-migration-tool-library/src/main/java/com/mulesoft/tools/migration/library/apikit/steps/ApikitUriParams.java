@@ -25,7 +25,8 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPA
  */
 public class ApikitUriParams extends AbstractApikitMigrationStep {
 
-  private static final String XPATH_SELECTOR = "//*[local-name()='flow' and namespace-uri()='" + XmlDslUtils.CORE_NS_URI + "']";
+  private static final String XPATH_SELECTOR = "//*[local-name()='flow' and namespace-uri()='" + XmlDslUtils.CORE_NS_URI
+      + "' and contains(@name, '(') and contains(@name, ')')]";
 
   private static final String DOCS_NAMESPACE_URL = "http://www.mulesoft.org/schema/mule/documentation";
   private static final String DOCS_NAMESPACE_PREFIX = "doc";
@@ -51,7 +52,8 @@ public class ApikitUriParams extends AbstractApikitMigrationStep {
 
     String flowName = flow.getAttributeValue("name");
 
-    if (!StringUtils.isBlank(flowName)) {
+    // check if the flow ends with ":<STRING>" which should be the case for an apikit flow
+    if (!StringUtils.isBlank(flowName) && flowName.matches(".*:.*$")) {
       Matcher m = Pattern.compile("\\(.*?\\)")
           .matcher(flowName);
       while (m.find()) {

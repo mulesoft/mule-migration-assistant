@@ -10,8 +10,6 @@
         - URI params in flow names will be enclosed in parentheses
         - flowVars will be replaced with vars
      -->
-    <flow name="main" />
-    <flow name="main-console" />
     <flow name="get:/resources/(id):mma-test-api-config">
         <logger message="Retrieving resource. Resource Id: #[vars.id]" level="INFO" doc:name="Logger"/>
     </flow>

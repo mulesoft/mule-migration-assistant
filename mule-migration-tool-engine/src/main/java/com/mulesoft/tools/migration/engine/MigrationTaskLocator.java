@@ -6,7 +6,6 @@
 package com.mulesoft.tools.migration.engine;
 
 import com.mulesoft.tools.migration.library.apikit.tasks.ApikitMigrationTask;
-import com.mulesoft.tools.migration.library.apikit.tasks.ApikitPostprocessTask;
 import com.mulesoft.tools.migration.library.gateway.tasks.BasicStructureMigrationTask;
 import com.mulesoft.tools.migration.library.gateway.tasks.ClientIdEnforcementMigrationTask;
 import com.mulesoft.tools.migration.library.gateway.tasks.FederationMigrationTask;
@@ -181,7 +180,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new MigrationCleanTask());
     coreMigrationTasks.add(new PostprocessGeneral());
     coreMigrationTasks.add(new PostprocessMuleApplication());
-    coreMigrationTasks.add(new ApikitPostprocessTask());
+    // coreMigrationTasks.add(new ApikitPostprocessTask());
     return coreMigrationTasks;
   }
 
