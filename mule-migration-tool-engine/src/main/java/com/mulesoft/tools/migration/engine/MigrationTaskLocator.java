@@ -180,7 +180,6 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new MigrationCleanTask());
     coreMigrationTasks.add(new PostprocessGeneral());
     coreMigrationTasks.add(new PostprocessMuleApplication());
-    // coreMigrationTasks.add(new ApikitPostprocessTask());
     return coreMigrationTasks;
   }
 
