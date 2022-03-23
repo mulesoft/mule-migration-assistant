@@ -22,6 +22,7 @@ import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,6 +43,7 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 public class ApikitMigrationTest {
 
   private static Path BASE_PATH = Paths.get("mule/apps/apikit");
+  private static String PATH_SEPARATOR = FileSystems.getDefault().getSeparator();
 
   private final Path configPath;
   private final Path targetPath;
@@ -49,12 +51,13 @@ public class ApikitMigrationTest {
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() throws Exception {
     final URI resource = ApikitMigrationTest.class.getClassLoader().getResource(BASE_PATH.toString()).toURI();
-    return Files.walk(Paths.get(new File(resource).getAbsolutePath()))
-        .filter(s -> s.toString().endsWith("-original.xml") && !s.toString().contains("/steps/"))
+    Object[] params = Files.walk(Paths.get(new File(resource).getAbsolutePath()))
+        .filter(s -> s.toString().endsWith("-original.xml") && !s.toString().contains(PATH_SEPARATOR + "steps" + PATH_SEPARATOR))
         .map(p -> new File(p.toUri()).getName().replaceAll("-original.xml", ""))
         .sorted()
         .collect(toList())
         .toArray(new Object[] {});
+    return params;
   }
 
   public ApikitMigrationTest(String filePrefix) {

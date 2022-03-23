@@ -47,6 +47,11 @@ public class ApikitUriParams extends AbstractApikitMigrationStep {
     addVariableDeclarationFor(element, getUriParamsFrom(element));
   }
 
+  @Override
+  public boolean shouldReportMetrics() {
+    return false;
+  }
+
   private List<String> getUriParamsFrom(Element flow) {
     List<String> result = new ArrayList<>();
 
