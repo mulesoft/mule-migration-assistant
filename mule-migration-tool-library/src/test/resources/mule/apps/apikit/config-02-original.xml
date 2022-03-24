@@ -13,4 +13,6 @@
         <apikit:flow-mapping resource="/leagues/{leagueId}" action="put" flow-ref="put-leagueId"/>
     </apikit:config>
 
+    <flow name="get-leagueId"></flow>
+    <flow name="put-leagueId"></flow>
 </mule>

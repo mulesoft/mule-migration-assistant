@@ -15,4 +15,18 @@
     </apikit:flow-mappings>
   </apikit:config>
 
+  <flow name="get-leagueId">
+    <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" doc:name="URI Params to Variables">
+      <ee:variables>
+        <ee:set-variable variableName="leagueId">attributes.uriParams.leagueId</ee:set-variable>
+      </ee:variables>
+    </ee:transform>
+  </flow>
+  <flow name="put-leagueId">
+    <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" doc:name="URI Params to Variables">
+      <ee:variables>
+        <ee:set-variable variableName="leagueId">attributes.uriParams.leagueId</ee:set-variable>
+      </ee:variables>
+    </ee:transform>
+  </flow>
 </mule>

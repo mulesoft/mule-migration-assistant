@@ -5,11 +5,15 @@
  */
 package com.mulesoft.tools.migration.library.apikit.steps;
 
+import com.mulesoft.tools.migration.library.apikit.ApikitUriParamUtils;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
 import static java.util.stream.Collectors.toList;
@@ -22,8 +26,11 @@ import static java.util.stream.Collectors.toList;
 public class ApikitRouterConfig extends AbstractApikitMigrationStep {
 
   private static final String XPATH_SELECTOR = "//*[local-name()='config' and namespace-uri()='" + APIKIT_NAMESPACE_URI + "']";
+  private static final String FLOW_XPATH_SELECTOR = "//*[@name='%s']";
   private static final String FLOW_MAPPING_PARENT_TAG_NAME = "flow-mappings";
   private static final String FLOW_MAPPING_TAG_NAME = "flow-mapping";
+  private static final String FLOW_REF_ATTRIBUTE = "flow-ref";
+  private static final String RESOURCE_ATTRIBUTE = "resource";
 
   @Override
   public String getDescription() {
@@ -71,7 +78,26 @@ public class ApikitRouterConfig extends AbstractApikitMigrationStep {
         flowMapping.detach();
         flowMapping.setNamespace(APIKIT_NAMESPACE);
         flowMappingParent.addContent(flowMapping);
+        migrateUriParams(flowMapping);
       });
+    }
+  }
+
+  private void migrateUriParams(Element flowMapping) {
+    Attribute flowRef = flowMapping.getAttribute(FLOW_REF_ATTRIBUTE);
+    Attribute resourceUri = flowMapping.getAttribute(RESOURCE_ATTRIBUTE);
+    Element flow = getApplicationModel().getNode(String.format(FLOW_XPATH_SELECTOR, flowRef.getValue()));
+
+    if (flow != null && flowRef != null && resourceUri != null) {
+      List<String> uriParams = new ArrayList<>();
+
+      Matcher m = Pattern.compile("\\{.*?\\}").matcher(resourceUri.getValue());
+      while (m.find()) {
+        String uriParam = m.group().replaceAll("\\{|\\}", "");
+        uriParams.add(uriParam);
+      }
+
+      ApikitUriParamUtils.addVariableDeclarationFor(flow, uriParams);
     }
   }
 

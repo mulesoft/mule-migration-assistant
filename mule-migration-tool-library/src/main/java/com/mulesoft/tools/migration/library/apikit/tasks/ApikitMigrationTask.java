@@ -54,7 +54,7 @@ public class ApikitMigrationTask extends AbstractMigrationTask {
     steps.add(new ApikitHttpListenerMapping());
     steps.add(new ApikitErrorHandler());
     steps.add(new ApikitApiLocation());
-    steps.add(new ApikitUriParams());
+    steps.add(new ApikitFlowUriParams());
     return steps;
   }
 }

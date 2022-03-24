@@ -5,6 +5,7 @@
  */
 package com.mulesoft.tools.migration.library.apikit.steps;
 
+import com.mulesoft.tools.migration.library.apikit.ApikitUriParamUtils;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,17 +24,14 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPA
  * @author Mulesoft Inc.
  * @since 1.2.1
  */
-public class ApikitUriParams extends AbstractApikitMigrationStep {
+public class ApikitFlowUriParams extends AbstractApikitMigrationStep {
 
   private static final String XPATH_SELECTOR = "//*[local-name()='flow' and namespace-uri()='" + XmlDslUtils.CORE_NS_URI
       + "' and contains(@name, '(') and contains(@name, ')')]";
 
-  private static final String DOCS_NAMESPACE_URL = "http://www.mulesoft.org/schema/mule/documentation";
-  private static final String DOCS_NAMESPACE_PREFIX = "doc";
-  private static final Namespace DOCS_NAMESPACE = Namespace.getNamespace(DOCS_NAMESPACE_PREFIX, DOCS_NAMESPACE_URL);
 
 
-  public ApikitUriParams() {
+  public ApikitFlowUriParams() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
@@ -44,7 +42,7 @@ public class ApikitUriParams extends AbstractApikitMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    addVariableDeclarationFor(element, getUriParamsFrom(element));
+    ApikitUriParamUtils.addVariableDeclarationFor(element, getUriParamsFrom(element));
   }
 
   @Override
@@ -69,38 +67,4 @@ public class ApikitUriParams extends AbstractApikitMigrationStep {
 
     return result;
   }
-
-
-  private void addVariableDeclarationFor(Element flow, List<String> uriParams) {
-    if (!uriParams.isEmpty()) {
-      Element transformNode = addTransformNodeAsFirstNodeTo(flow);
-      Element variables = (Element) transformNode.getContent(0);
-      for (String uriParam : uriParams) {
-        addVariable(variables, uriParam);
-      }
-    }
-  }
-
-  private Element addTransformNodeAsFirstNodeTo(Element flow) {
-    Element result = createTransformNode();
-    flow.addContent(0, result);
-    return result;
-  }
-
-  private Element createTransformNode() {
-    Element result = new Element("transform")
-        .setName("transform")
-        .setNamespace(CORE_EE_NAMESPACE)
-        .setAttribute("name", "URI Params to Variables", DOCS_NAMESPACE);
-    result.addContent(new Element("variables", CORE_EE_NAMESPACE));
-    return result;
-  }
-
-  private void addVariable(Element variables, String uriParam) {
-    Element variable = new Element("set-variable", CORE_EE_NAMESPACE)
-        .setAttribute("variableName", uriParam);
-    variable.addContent("attributes.uriParams." + uriParam);
-    variables.addContent(variable);
-  }
-
 }

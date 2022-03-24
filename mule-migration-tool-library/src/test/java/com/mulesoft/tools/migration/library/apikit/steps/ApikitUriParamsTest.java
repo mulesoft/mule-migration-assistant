@@ -54,7 +54,7 @@ public class ApikitUriParamsTest {
     targetPath = APIKIT_URIPARAMS_EXAMPLES_PATH.resolve(filePrefix + ".xml");
   }
 
-  private ApikitUriParams uriParams;
+  private ApikitFlowUriParams uriParams;
 
   private Document doc;
   private ApplicationModel appModel;
@@ -64,7 +64,7 @@ public class ApikitUriParamsTest {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     appModel = mockApplicationModel(doc, temp);
 
-    uriParams = new ApikitUriParams();
+    uriParams = new ApikitFlowUriParams();
     uriParams.setApplicationModel(appModel);
   }
 

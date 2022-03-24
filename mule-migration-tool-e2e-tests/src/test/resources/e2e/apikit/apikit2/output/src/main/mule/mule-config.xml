@@ -65,6 +65,12 @@
     </flow>
 
     <flow name="get-specific-resource">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:name="URI Params to Variables">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        
         <compatibility:set-property propertyName="Content-Type" value="application/json">
             <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
             <!--    For more information refer to:-->
