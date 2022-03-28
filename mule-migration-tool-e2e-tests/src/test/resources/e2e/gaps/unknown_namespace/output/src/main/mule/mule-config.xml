@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:unknown="http://www.mulesoft.org/schema/mule/unknown" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/unknown http://www.mulesoft.org/schema/mule/unknown/current/mule-unknown.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="unknown-namespace">
-        <unknown:source>
-            <!--Migration ERROR: The migration of 'unknown' is not supported.-->
-            <!--    For more information refer to:-->
-            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool.adoc#unsupported_connectors-->
-            <logger message="nested" />
+        <!--Migration ERROR: The migration of 'namespace unknown (element source)' is not supported.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-->
+        <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool.adoc#unsupported_connectors-->
+        <!--<unknown:source xmlns:unknown="http://www.mulesoft.org/schema/mule/unknown">
+            <logger xmlns="http://www.mulesoft.org/schema/mule/core" message="nested" />
             <unknown:nested />
-        </unknown:source>
-
+        </unknown:source>-->
         <logger message="bye" />
 
-        <unknown:operation>
-            <!--Migration ERROR: The migration of 'unknown' is not supported.-->
-            <!--    For more information refer to:-->
-            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool.adoc#unsupported_connectors-->
-        </unknown:operation>
-
+        <!--Migration ERROR: The migration of 'namespace unknown (element operation)' is not supported.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-->
+        <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool.adoc#unsupported_connectors-->
+        <!--<unknown:operation xmlns:unknown="http://www.mulesoft.org/schema/mule/unknown" />-->
     </flow>
 
 </mule>

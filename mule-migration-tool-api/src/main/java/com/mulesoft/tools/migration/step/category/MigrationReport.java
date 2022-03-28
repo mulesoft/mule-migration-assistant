@@ -133,6 +133,8 @@ public interface MigrationReport<T> {
    */
   Map<String, ComponentMigrationStatus> getComponents();
 
+  String getComponentKey(Element element);
+
   /**
    * Increments the component success migration count.
    *

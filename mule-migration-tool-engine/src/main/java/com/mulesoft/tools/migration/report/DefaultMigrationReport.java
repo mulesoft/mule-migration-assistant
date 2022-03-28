@@ -133,6 +133,10 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
     ReportEntryModel reportEntry;
 
     if (elementToComment != null) {
+      if (elementToComment != element) {
+        i = findContentIndex(element, elementToComment);
+      }
+
       if (elementToComment.getDocument() != null || element.getDocument() == null) {
         reportEntry = new ReportEntryModel(entryKey, level, elementToComment, message, documentationLinks);
       } else {
@@ -157,6 +161,15 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
       }
     }
 
+  }
+
+  private int findContentIndex(Element element, Element elementToComment) {
+    int i = 0;
+
+    while (i < elementToComment.getContent().size() && !element.toString().equals(elementToComment.getContent(i).toString())) {
+      i++;
+    }
+    return i < elementToComment.getContent().size() ? i : 0;
   }
 
   private String sanitize(String message) {
@@ -239,7 +252,12 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
     return components;
   }
 
-  public static String getComponentKey(Element element) {
+  @Override
+  public String getComponentKey(Element element) {
+    return DefaultMigrationReport.getComponentKeyStatic(element);
+  }
+
+  public static String getComponentKeyStatic(Element element) {
     String prefix = StringUtils.isBlank(element.getNamespace().getPrefix()) ? "" : element.getNamespace().getPrefix() + ":";
     return prefix + element.getName();
   }

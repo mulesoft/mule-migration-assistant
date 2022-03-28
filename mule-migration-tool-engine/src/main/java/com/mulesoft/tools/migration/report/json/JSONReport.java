@@ -22,7 +22,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.mulesoft.tools.migration.report.DefaultMigrationReport.getComponentKey;
+import static com.mulesoft.tools.migration.report.DefaultMigrationReport.getComponentKeyStatic;
 
 import org.jdom2.Element;
 
@@ -180,7 +180,7 @@ public class JSONReport extends AbstractReport {
                                  String filePath) {
       this.key = key;
       this.level = level;
-      this.component = component != null ? getComponentKey(component) : "UNKNOWN";
+      this.component = component != null ? getComponentKeyStatic(component) : "UNKNOWN";
       this.lineNumber = lineNumber;
       this.columnNumber = columnNumber;
       this.message = message;

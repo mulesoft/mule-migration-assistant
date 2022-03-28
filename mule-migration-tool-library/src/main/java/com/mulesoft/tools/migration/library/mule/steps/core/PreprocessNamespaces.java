@@ -18,6 +18,7 @@ import org.jdom2.Document;
 import org.jdom2.Namespace;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -27,6 +28,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 1.0.0
  */
 public class PreprocessNamespaces implements NamespaceContribution {
+
+  private static final String UNSUPPORTED_ELEMENT_TEMPLATE = "namespace %s (element %s)";
 
   @Override
   public String getDescription() {
@@ -55,9 +58,14 @@ public class PreprocessNamespaces implements NamespaceContribution {
             processedElements.incrementAndGet();
 
             if (ns.getURI().startsWith("http://www.mulesoft.org")) {
-              report.report("components.unsupported", node, node, ns.getPrefix());
+              report.report("components.unsupported", node, node.getParentElement(),
+                            String.format(UNSUPPORTED_ELEMENT_TEMPLATE, ns.getPrefix(), node.getName()));
+              node.getParentElement().removeChild(node.getName(), ns);
             } else {
-              report.report("components.unknown", node, node, ns.getPrefix(), ns.getURI(), ADDITIONAL_SPRING_NAMESPACES_PROP);
+              report.report("components.unknown", node, node.getParentElement(),
+                            String.format(UNSUPPORTED_ELEMENT_TEMPLATE, ns.getPrefix(), node.getName()),
+                            ns.getURI(), ADDITIONAL_SPRING_NAMESPACES_PROP);
+              node.getParentElement().removeChild(node.getName(), ns);
             }
             report.addComponentFailure(node);
           });

@@ -739,6 +739,17 @@ public final class XmlDslUtils {
   }
 
   /**
+   * Get Xpath expression to select all elements from a given namespace on the configuration file
+   *
+   * @param namespaceUri the namespace URI
+   * @param topLevel is a top level element
+   * @return a String with the expression
+   */
+  public static String getAllElementsFromNamespaceXpathSelector(String namespaceUri, boolean topLevel) {
+    return format("%s[namespace-uri() = '%s']", topLevel ? "/*/*" : "//*", namespaceUri);
+  }
+
+  /**
    * Get Xpath expression to select Mule core elements on the configuration file
    *
    * @param elementName the element name

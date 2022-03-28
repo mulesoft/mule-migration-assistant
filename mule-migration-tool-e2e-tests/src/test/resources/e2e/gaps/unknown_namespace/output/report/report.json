@@ -2,8 +2,8 @@
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
   "connectorsMigrated": [],
-  "numberOfMuleComponents": 6,
-  "numberOfMuleComponentsMigrated": 4,
+  "numberOfMuleComponents": 5,
+  "numberOfMuleComponentsMigrated": 3,
   "componentDetails": {
     "unknown:source": {
       "success": 0,
@@ -18,7 +18,7 @@
       "failure": 0
     },
     "logger": {
-      "success": 2,
+      "success": 1,
       "failure": 0
     },
     "flow": {
@@ -38,22 +38,24 @@
     {
       "level": "ERROR",
       "key": "components.unsupported",
-      "component": "unknown:source",
-      "lineNumber": 5,
-      "columnNumber": 25,
-      "message": "The migration of \u0027unknown\u0027 is not supported.",
+      "component": "flow",
+      "lineNumber": 4,
+      "columnNumber": 36,
+      "message": "The migration of 'namespace unknown (element operation)' is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks": []
+      "documentationLinks":
+      []
     },
     {
       "level": "ERROR",
       "key": "components.unsupported",
-      "component": "unknown:operation",
-      "lineNumber": 16,
-      "columnNumber": 28,
-      "message": "The migration of \u0027unknown\u0027 is not supported.",
+      "component": "flow",
+      "lineNumber": 4,
+      "columnNumber": 36,
+      "message": "The migration of 'namespace unknown (element source)' is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks": []
+      "documentationLinks":
+      []
     }
   ]
 }

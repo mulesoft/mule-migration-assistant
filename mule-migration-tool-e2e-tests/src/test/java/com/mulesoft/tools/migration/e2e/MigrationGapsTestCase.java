@@ -18,7 +18,8 @@ public class MigrationGapsTestCase extends AbstractEndToEndTestCase {
   public static Object[] params() {
     return new Object[] {
         "gaps/unknown_element",
-        "gaps/unknown_namespace"
+        "gaps/unknown_namespace",
+        "gaps/salesforce_config_oauth_user_pass"
     };
   }
 
