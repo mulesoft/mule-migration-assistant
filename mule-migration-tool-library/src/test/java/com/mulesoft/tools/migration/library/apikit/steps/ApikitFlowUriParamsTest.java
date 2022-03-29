@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 @RunWith(Parameterized.class)
-public class ApikitUriParamsTest {
+public class ApikitFlowUriParamsTest {
 
   private static final Path APIKIT_URIPARAMS_EXAMPLES_PATH = Paths.get("mule/apps/apikit/steps/uriparams");
 
@@ -49,7 +49,7 @@ public class ApikitUriParamsTest {
   private final Path configPath;
   private final Path targetPath;
 
-  public ApikitUriParamsTest(String filePrefix) {
+  public ApikitFlowUriParamsTest(String filePrefix) {
     configPath = APIKIT_URIPARAMS_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = APIKIT_URIPARAMS_EXAMPLES_PATH.resolve(filePrefix + ".xml");
   }

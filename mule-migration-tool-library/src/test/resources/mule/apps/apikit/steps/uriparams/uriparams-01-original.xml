@@ -5,15 +5,15 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <!--
-        APIKit post tasks will be executed after all migration steps.
+        APIKit Uri params steps will be executed after previous flow name migration
         At this point:
         - URI params in flow names will be enclosed in parentheses
         - flowVars will be replaced with vars
      -->
-    <flow name="get:/resources/(id):mma-test-api-config">
+    <flow name="get:\resources\(id):mma-test-api-config">
         <logger message="Retrieving resource. Resource Id: #[vars.id]" level="INFO" doc:name="Logger"/>
     </flow>
-    <flow name="get:/resources/(id)/nested-resources/(nestedResourceId):mma-test-api-config">
+    <flow name="get:\resources\(id)\nested-resources\(nestedResourceId):mma-test-api-config">
         <logger message="Retrieving nested resource. Resource Id: #[vars.id], Nested Resource Id: #[vars.nestedResourceId]" level="INFO" doc:name="Logger"/>
     </flow>
 </mule>
