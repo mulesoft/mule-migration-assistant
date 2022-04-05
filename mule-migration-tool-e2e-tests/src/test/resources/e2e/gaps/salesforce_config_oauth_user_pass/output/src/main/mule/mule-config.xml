@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <!--Migration ERROR: The migration of 'sfdc:config-oauth-user-pass' (name Salesforce__Basic_Authentication) is not supported.-->
+    <!--    For more information refer to:-->
+    <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-->
+    <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool.adoc#unsupported_connectors-->
+    <sfdc:config-oauth-user-pass xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" name="Salesforce__Basic_Authentication" consumerKey="${cbms.sfdc.consumerkey}" consumerSecret="${cbms.sfdc.consumersecret}" username="${cbms.sfdc.username}" password="${cbms.sfdc.password}" securityToken="${cbms.sfdc.securitytoken}" tokenEndpoint="${cbms.sfdc.authurl}" doc:name="ct_salesforce" readTimeout="${cbms.sfdc.read.timeout}" disableSessionInvalidation="true">
+        <reconnect xmlns="http://www.mulesoft.org/schema/mule/core" count="${cbms.sfdc.reconnect.attemptcount}" frequency="${cbms.sfdc.reconnect.frequency}" />
+    </sfdc:config-oauth-user-pass>
+
+    <!--Migration ERROR: The migration of 'sfdc:config-oauth-user-pass' (name Salesforce__Basic_Authentication2) is not supported.-->
+    <!--    For more information refer to:-->
+    <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-->
+    <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool.adoc#unsupported_connectors-->
+    <sfdc:config-oauth-user-pass xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" name="Salesforce__Basic_Authentication2" consumerKey="${cbms.sfdc.consumerkey}" consumerSecret="${cbms.sfdc.consumersecret}" username="${cbms.sfdc.username}" password="${cbms.sfdc.password}" securityToken="${cbms.sfdc.securitytoken}" tokenEndpoint="${cbms.sfdc.authurl}" doc:name="ct_salesforce" readTimeout="${cbms.sfdc.read.timeout}" disableSessionInvalidation="true">
+        <reconnect xmlns="http://www.mulesoft.org/schema/mule/core" count="${cbms.sfdc.reconnect.attemptcount}" frequency="${cbms.sfdc.reconnect.frequency}" />
+    </sfdc:config-oauth-user-pass>
+</mule>

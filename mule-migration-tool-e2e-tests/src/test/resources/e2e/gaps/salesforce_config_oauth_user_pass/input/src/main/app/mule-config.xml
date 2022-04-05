@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" 
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+      xmlns:sfdc="http://www.mulesoft.org/schema/mule/sfdc" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <sfdc:config-oauth-user-pass name="Salesforce__Basic_Authentication"
+                    consumerKey="${cbms.sfdc.consumerkey}" consumerSecret="${cbms.sfdc.consumersecret}"
+                    username="${cbms.sfdc.username}" password="${cbms.sfdc.password}"
+                    securityToken="${cbms.sfdc.securitytoken}" tokenEndpoint="${cbms.sfdc.authurl}"
+                    doc:name="ct_salesforce" readTimeout="${cbms.sfdc.read.timeout}"
+                    disableSessionInvalidation="true">
+                    <reconnect count="${cbms.sfdc.reconnect.attemptcount}"
+                            frequency="${cbms.sfdc.reconnect.frequency}" />
+    </sfdc:config-oauth-user-pass>
+
+    <sfdc:config-oauth-user-pass name="Salesforce__Basic_Authentication2"
+                                 consumerKey="${cbms.sfdc.consumerkey}" consumerSecret="${cbms.sfdc.consumersecret}"
+                                 username="${cbms.sfdc.username}" password="${cbms.sfdc.password}"
+                                 securityToken="${cbms.sfdc.securitytoken}" tokenEndpoint="${cbms.sfdc.authurl}"
+                                 doc:name="ct_salesforce" readTimeout="${cbms.sfdc.read.timeout}"
+                                 disableSessionInvalidation="true">
+        <reconnect count="${cbms.sfdc.reconnect.attemptcount}"
+                   frequency="${cbms.sfdc.reconnect.frequency}" />
+    </sfdc:config-oauth-user-pass>
+</mule>

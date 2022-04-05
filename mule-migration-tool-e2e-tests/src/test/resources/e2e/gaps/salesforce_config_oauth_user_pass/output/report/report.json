@@ -2,35 +2,22 @@
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
   "connectorsMigrated":
-  [],
-  "numberOfMuleComponents": 6,
-  "numberOfMuleComponentsMigrated": 4,
+  [
+    "com.mulesoft.connectors:mule-salesforce-connector:VERSION"
+  ],
+  "numberOfMuleComponents": 3,
+  "numberOfMuleComponentsMigrated": 1,
   "componentDetails":
   {
-    "unknown:source":
-    {
-      "success": 0,
-      "failure": 1
-    },
-    "unknown:operation":
-    {
-      "success": 0,
-      "failure": 1
-    },
     "mule":
     {
       "success": 1,
       "failure": 0
     },
-    "logger":
+    "sfdc:config-oauth-user-pass":
     {
-      "success": 2,
-      "failure": 0
-    },
-    "flow":
-    {
-      "success": 1,
-      "failure": 0
+      "success": 0,
+      "failure": 2
     }
   },
   "numberOfMELExpressions": 0,
@@ -46,10 +33,10 @@
     {
       "level": "ERROR",
       "key": "components.unsupported",
-      "component": "unknown:source",
-      "lineNumber": 5,
-      "columnNumber": 25,
-      "message": "The migration of 'unknown' is not supported.",
+      "component": "sfdc:config-oauth-user-pass",
+      "lineNumber": 4,
+      "columnNumber": 403,
+      "message": "The migration of 'sfdc:config-oauth-user-pass (name = Salesforce__Basic_Authentication)' is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks":
       []
@@ -57,10 +44,10 @@
     {
       "level": "ERROR",
       "key": "components.unsupported",
-      "component": "unknown:operation",
-      "lineNumber": 16,
-      "columnNumber": 28,
-      "message": "The migration of 'unknown' is not supported.",
+      "component": "sfdc:config-oauth-user-pass",
+      "lineNumber": 12,
+      "columnNumber": 404,
+      "message": "The migration of 'sfdc:config-oauth-user-pass (name = Salesforce__Basic_Authentication2)' is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks":
       []

@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Attribute;
@@ -736,6 +737,20 @@ public final class XmlDslUtils {
    */
   public static String getXPathSelector(String namespaceUri, String elementName, boolean topLevel) {
     return format("%s[namespace-uri() = '%s' and local-name() = '%s']", topLevel ? "/*/*" : "//*", namespaceUri, elementName);
+  }
+
+  /**
+   * Get Xpath expression to select all elements from a given namespace on the configuration file
+   *
+   * @param namespaceUri the namespace URI
+   * @param topLevel is a top level element
+   * @return a String with the expression
+   */
+  public static String getAllElementsFromNamespaceXpathSelector(String namespaceUri, List<String> elements, boolean topLevel) {
+    String localNameExpression = elements.stream()
+        .map(e -> String.format("local-name() = '%s'", e))
+        .collect(Collectors.joining(" or "));
+    return format("%s[namespace-uri() = '%s' and (%s)]", topLevel ? "/*/*" : "//*", namespaceUri, localNameExpression);
   }
 
   /**
