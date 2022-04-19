@@ -6,6 +6,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
@@ -34,9 +35,15 @@ public class CopyAttachments extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    report.report("message.inboundAttachments", element, element);
-    element.setName("multipart-to-vars");
-    element.setNamespace(COMPATIBILITY_NAMESPACE);
-    element.getAttribute("attachmentName").setName("partName");
+    if (getApplicationModel().noCompatibilityMode()) {
+      report.report("message.outboundAttachments", element, element.getParentElement());
+      element.detach();
+    } else {
+      report.report("message.inboundAttachments", element, element);
+      addCompatibilityNamespace(element.getDocument());
+      element.setName("multipart-to-vars");
+      element.setNamespace(COMPATIBILITY_NAMESPACE);
+      element.getAttribute("attachmentName").setName("partName");
+    }
   }
 }

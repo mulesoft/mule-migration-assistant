@@ -1,0 +1,141 @@
+{
+  "projectType": "MULE_THREE_MAVEN_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0"
+  ],
+  "numberOfMuleComponents": 13,
+  "numberOfMuleComponentsMigrated": 9,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener-config": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:request-config": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:request": {
+      "success": 1,
+      "failure": 0
+    },
+    "set-variable": {
+      "success": 1,
+      "failure": 0
+    },
+    "copy-attachments": {
+      "success": 0,
+      "failure": 2
+    },
+    "copy-properties": {
+      "success": 0,
+      "failure": 2
+    },
+    "remove-variable": {
+      "success": 2,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 1,
+  "numberOfMELExpressionsMigrated": 1,
+  "numberOfMELExpressionLines": 1,
+  "numberOfMELExpressionLinesMigrated": 1,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "http:request",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "noCompatibility.copyProperties",
+      "component": "flow",
+      "lineNumber": 12,
+      "columnNumber": 38,
+      "message": "Instead of copying inbound properties in the flow, use the \u0027attributes\u0027 of the message directly.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "noCompatibility.copyProperties",
+      "component": "flow",
+      "lineNumber": 12,
+      "columnNumber": 38,
+      "message": "Instead of copying inbound properties in the flow, use the \u0027attributes\u0027 of the message directly.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "message.outboundAttachments",
+      "component": "flow",
+      "lineNumber": 12,
+      "columnNumber": 38,
+      "message": "Refer to the documentation for the specific connector or operation to learn how to send attachments.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "message.outboundAttachments",
+      "component": "flow",
+      "lineNumber": 12,
+      "columnNumber": 38,
+      "message": "Refer to the documentation for the specific connector or operation to learn how to send attachments.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "http:listener",
+      "lineNumber": 13,
+      "columnNumber": 63,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 14,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 21,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

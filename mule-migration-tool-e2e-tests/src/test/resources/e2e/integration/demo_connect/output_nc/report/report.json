@@ -1,0 +1,178 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0",
+    "org.mule.connectors:mule-file-connector:1.3.4"
+  ],
+  "numberOfMuleComponents": 22,
+  "numberOfMuleComponentsMigrated": 19,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "logger": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 3,
+      "failure": 0
+    },
+    "scheduler": {
+      "success": 1,
+      "failure": 0
+    },
+    "set-payload": {
+      "success": 1,
+      "failure": 0
+    },
+    "set-variable": {
+      "success": 2,
+      "failure": 0
+    },
+    "http:listener-config": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:request-config": {
+      "success": 2,
+      "failure": 0
+    },
+    "http:listener": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:request": {
+      "success": 2,
+      "failure": 1
+    },
+    "file:config": {
+      "success": 1,
+      "failure": 0
+    },
+    "file:write": {
+      "success": 1,
+      "failure": 0
+    },
+    "copy-properties": {
+      "success": 0,
+      "failure": 2
+    },
+    "remove-variable": {
+      "success": 2,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 2,
+  "numberOfMELExpressionsMigrated": 2,
+  "numberOfMELExpressionLines": 2,
+  "numberOfMELExpressionLinesMigrated": 2,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "ERROR",
+      "key": "noCompatibility.copyProperties",
+      "component": "flow",
+      "lineNumber": 22,
+      "columnNumber": 28,
+      "message": "Instead of copying inbound properties in the flow, use the \u0027attributes\u0027 of the message directly.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "noCompatibility.copyProperties",
+      "component": "flow",
+      "lineNumber": 22,
+      "columnNumber": 28,
+      "message": "Instead of copying inbound properties in the flow, use the \u0027attributes\u0027 of the message directly.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "http:listener",
+      "lineNumber": 23,
+      "columnNumber": 63,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 24,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 31,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "http:request",
+      "lineNumber": 56,
+      "columnNumber": 59,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "http:request",
+      "lineNumber": 71,
+      "columnNumber": 96,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "file:write",
+      "lineNumber": 76,
+      "columnNumber": 249,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "http.port",
+      "component": "http:request",
+      "lineNumber": 85,
+      "columnNumber": 72,
+      "message": "\u0027port\u0027 cannot be overridden by the HTTP Request operation. You can use an expression in the config to make it dynamic. Original value was port\u003d\"#[flowVars.dynPort]\".",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "http:request",
+      "lineNumber": 85,
+      "columnNumber": 72,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

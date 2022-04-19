@@ -28,13 +28,13 @@ import java.util.Map;
  */
 public class WsConsumer extends AbstractApplicationModelMigrationStep {
 
-  private static final String WS_NAMESPACE_PREFIX = "ws";
+  public static final String WS_NAMESPACE_PREFIX = "ws";
   public static final String WS_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ws";
   public static final Namespace WS_NAMESPACE = Namespace.getNamespace(WS_NAMESPACE_PREFIX, WS_NAMESPACE_URI);
 
-  private static final String WSC_NAMESPACE_PREFIX = "wsc";
-  private static final String WSC_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/wsc";
-  private static final Namespace WSC_NAMESPACE = Namespace.getNamespace(WSC_NAMESPACE_PREFIX, WSC_NAMESPACE_URI);
+  public static final String WSC_NAMESPACE_PREFIX = "wsc";
+  public static final String WSC_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/wsc";
+  public static final Namespace WSC_NAMESPACE = Namespace.getNamespace(WSC_NAMESPACE_PREFIX, WSC_NAMESPACE_URI);
   public static final String XPATH_SELECTOR = "//ws:consumer";
 
   @Override
@@ -77,15 +77,20 @@ public class WsConsumer extends AbstractApplicationModelMigrationStep {
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
     migrateOperationStructure(getApplicationModel(), object, report);
 
-    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    expressionsPerProperty.put("http.headers", "message.attributes.protocolHeaders");
-
     try {
-      addAttributesMapping(getApplicationModel(), "org.mule.runtime.extension.api.soap.SoapAttributes", expressionsPerProperty,
+      addAttributesMapping(getApplicationModel(), "org.mule.runtime.extension.api.soap.SoapAttributes",
+                           inboundToAttributesExpressions(),
                            "message.attributes.protocolHeaders");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
+
+  public static Map<String, String> inboundToAttributesExpressions() {
+    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
+    expressionsPerProperty.put("http.headers", "message.attributes.protocolHeaders");
+    return expressionsPerProperty;
+  }
+
 
 }

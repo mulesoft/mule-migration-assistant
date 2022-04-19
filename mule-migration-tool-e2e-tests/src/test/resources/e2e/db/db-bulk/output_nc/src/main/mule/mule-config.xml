@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <db:config name="dbConfig">
+        <db:generic-connection url="jdbc:derby:target/muleEmbeddedDB;create=true" driverClassName="org.apache.derby.jdbc.EmbeddedDriver">
+            <!--Migration INFO: The config in Mule 3 is specific for an engine, but it contained a 'url' attribute. It will be made generic to keep the URL.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-database#example_generic_db-->
+            <reconnection failsDeployment="true" />
+        </db:generic-connection>
+    </db:config>
+
+    <flow name="insertBulk">
+        <db:bulk-insert config-ref="dbConfig">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <db:sql><![CDATA[#["INSERT INTO PLANET(POSITION, NAME) VALUES (777, $(payload))"]]]></db:sql>
+        </db:bulk-insert>
+
+    </flow>
+
+    <flow name="updateBulk">
+        <db:bulk-update config-ref="dbConfig">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <db:sql><![CDATA[#["update PLANET set NAME='Mercury' where NAME=$(payload)"]]]></db:sql>
+        </db:bulk-update>
+
+    </flow>
+
+    <flow name="deleteBulk">
+        <db:bulk-delete config-ref="dbConfig">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <db:sql><![CDATA[#["DELETE FROM PLANET WHERE name = $(payload)"]]]></db:sql>
+        </db:bulk-delete>
+
+    </flow>
+
+    <flow name="runScript">
+        <db:execute-script config-ref="dbConfig" file="bulk-execute.sql">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+        </db:execute-script>
+
+    </flow>
+
+</mule>

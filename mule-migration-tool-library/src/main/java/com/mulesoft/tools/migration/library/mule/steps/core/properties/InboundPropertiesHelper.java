@@ -41,6 +41,10 @@ public class InboundPropertiesHelper {
                                           String... additionalInboundProps)
       throws IOException {
 
+    if (appModel.noCompatibilityMode()) {
+      return;
+    }
+
     File migrationScriptFolder = getMigrationScriptFolder(appModel.getProjectBasePath());
     migrationScriptFolder.mkdirs();
 

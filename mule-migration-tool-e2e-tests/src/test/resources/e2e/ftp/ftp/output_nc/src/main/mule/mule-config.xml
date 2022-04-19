@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <ftp:config name="ftpSource">
+        <ftp:connection host="localhost" port="${ftpSourcePort}" username="admin" password="admin" passive="true" transferMode="BINARY">
+            <reconnection failsDeployment="true" />
+        </ftp:connection>
+    </ftp:config>
+
+    <ftp:config name="ftpDestination">
+        <ftp:connection host="localhost" port="${ftpDestinationPort}" username="anonymous" password="password" workingDir="target" connectionTimeout="5000" connectionTimeoutUnit="MILLISECONDS">
+            <reconnection failsDeployment="true" />
+        </ftp:connection>
+    </ftp:config>
+
+    <flow name="flow">
+        <ftp:listener config-ref="ftpSource" directory="/">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <redelivery-policy maxRedeliveryCount="2" />
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000" />
+            </scheduling-strategy>
+        </ftp:listener>
+
+        <set-payload value="#[payload]" encoding="EUC-JP" />
+
+        <logger />
+
+        <ftp:write config-ref="ftpDestination" path="#[migration::FtpWriteOutputFile::ftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+        </ftp:write>
+
+        <error-handler>
+            <on-error-propagate type="REDELIVERY_EXHAUSTED">
+                <logger message="I'm dead! :(" />
+            </on-error-propagate>
+        </error-handler>
+
+    </flow>
+
+</mule>

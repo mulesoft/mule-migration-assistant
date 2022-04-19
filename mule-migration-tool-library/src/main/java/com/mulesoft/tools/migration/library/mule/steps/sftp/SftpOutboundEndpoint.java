@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.sftp;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.sftp.SftpConfig.SFTP_NAMESPACE;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.VARS_OUTBOUND_PREFIX;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -129,9 +130,12 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
           errorHandler = new Element("error-handler", CORE_NAMESPACE);
           flow.addContent(errorHandler);
         }
-        errorHandler.addContent(new Element("on-error-continue", CORE_NAMESPACE)
-            .setAttribute("errorType", "SFTP:ILLEGAL_PATH,SFTP:ILLEGAL_CONTENT,SFTP:FILE_ALREADY_EXISTS,SFTP:ACCESS_DENIED")
-            .addContent(new Element("outbound-properties-to-var", COMPATIBILITY_NAMESPACE)));
+        Element onErrorContinue = new Element("on-error-continue", CORE_NAMESPACE)
+            .setAttribute("errorType", "SFTP:ILLEGAL_PATH,SFTP:ILLEGAL_CONTENT,SFTP:FILE_ALREADY_EXISTS,SFTP:ACCESS_DENIED");
+        if (!getApplicationModel().noCompatibilityMode()) {
+          onErrorContinue.addContent(new Element("outbound-properties-to-var", COMPATIBILITY_NAMESPACE));
+        }
+        errorHandler.addContent(onErrorContinue);
       }
     }
     object.removeAttribute("keepFileOnError");
@@ -147,7 +151,7 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
 
     object.setAttribute("path", getExpressionMigrator()
         .wrap((object.getAttribute("path") != null ? ("'" + object.getAttributeValue("path") + "/' ++ ") : "")
-            + compatibilityOutputFile("{"
+            + outputFileLib("{"
                 + " outputPattern: " + propToDwExpr(object, "outputPattern") + ","
                 + " outputPatternConfig: " + getExpressionMigrator().unwrap(propToDwExpr(object, "outputPatternConfig"))
                 + "}")));
@@ -160,9 +164,13 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
     }
   }
 
-  private String compatibilityOutputFile(String pathDslParams) {
+  private String outputFileLib(String pathDslParams) {
     try {
       // Replicates logic from org.mule.transport.sftp.SftpMessageDispatcher.buildFilename(MuleEvent)
+      String varPrefix =
+          getApplicationModel().noCompatibilityMode() ? VARS_OUTBOUND_PREFIX : "vars.compatibility_outboundProperties.";
+      String varFilename = getApplicationModel().noCompatibilityMode() ? "message.attributes.name"
+          : "vars.compatibility_inboundProperties.filename";
       library(getMigrationScriptFolder(getApplicationModel().getProjectBasePath()), "SftpWriteOutputFile.dwl",
               "" +
                   "/**" + lineSeparator() +
@@ -171,11 +179,11 @@ public class SftpOutboundEndpoint extends AbstractSftpEndpoint {
                   " */" + lineSeparator() +
                   "fun sftpWriteOutputfile(vars: {}, pathDslParams: {}) = do {" + lineSeparator() +
                   "    (((((pathDslParams.outputPattern" + lineSeparator() +
-                  "         default vars.compatibility_outboundProperties.outputPattern)" + lineSeparator() +
+                  "         default " + varPrefix + "outputPattern)" + lineSeparator() +
                   "         default pathDslParams.outputPatternConfig)" + lineSeparator() +
-                  "         default vars.compatibility_outboundProperties.filename)" + lineSeparator() +
+                  "         default " + varPrefix + "filename)" + lineSeparator() +
                   "         default vars.filename)" + lineSeparator() +
-                  "         default vars.compatibility_inboundProperties.filename)" + lineSeparator() +
+                  "         default " + varFilename + ")" + lineSeparator() +
                   "}" + lineSeparator() +
                   lineSeparator());
     } catch (IOException e) {

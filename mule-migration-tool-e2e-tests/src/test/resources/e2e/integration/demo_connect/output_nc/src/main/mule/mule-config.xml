@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="httpConf">
+        <http:listener-connection host="localhost" port="${httpPort}" />
+    </http:listener-config>
+
+    <http:request-config name="requesterConfig">
+        <http:request-connection protocol="HTTPS" host="httpbin.org" port="443" />
+    </http:request-config>
+
+    <http:request-config name="requesterConfigDynPort">
+        <http:request-connection host="localhost" />
+    </http:request-config>
+
+    <file:config name="fileConnector">
+        <file:connection workingDir=".">
+            <reconnection failsDeployment="true" />
+        </file:connection>
+    </file:config>
+
+    <flow name="httpProxy">
+        <http:listener config-ref="httpConf" path="testInput">
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:response>
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <!--Migration ERROR: Instead of copying inbound properties in the flow, use the 'attributes' of the message directly.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+        <!--<copy-properties xmlns="http://www.mulesoft.org/schema/mule/core" propertyName="*" />-->
+        <remove-variable variableName="outbound_http.*" />
+
+        <set-variable variableName="outbound_X-Forwarded-For" value="#[message.attributes.remoteAddress]" />
+
+        <http:request config-ref="requesterConfig" path="/get" method="GET">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:headers>#[migration::HttpRequester::httpRequesterHeaders(vars)]</http:headers>
+        </http:request>
+
+        <!--Migration ERROR: Instead of copying inbound properties in the flow, use the 'attributes' of the message directly.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+        <!--<copy-properties xmlns="http://www.mulesoft.org/schema/mule/core" propertyName="*" />-->
+        <remove-variable variableName="outbound_http.*" />
+
+    </flow>
+
+    <flow name="httpToFile">
+        <scheduler>
+            <scheduling-strategy>
+                <cron expression="0 0/1 * 1/1 * ?" />
+            </scheduling-strategy>
+        </scheduler>
+
+        <set-payload value="1024" />
+
+        <logger level="WARN" message="Appending page content to file..." />
+
+        <http:request config-ref="requesterConfig" path="#['/bytes/' ++ payload]" method="GET">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:headers>#[migration::HttpRequester::httpRequesterHeaders(vars)]</http:headers>
+        </http:request>
+
+        <file:write config-ref="fileConnector" mode="APPEND" path="#[migration::FileWriteOutputFile::fileWriteOutputfile(vars, { writeToDirectory: '${workingDirectory}/random', address: null, outputPattern: null, outputPatternConfig: 'out.txt'})]">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+        </file:write>
+
+    </flow>
+
+    <flow name="httpRequesterDynamicPort">
+        <set-variable variableName="dynPort" value="${httpPort}" />
+
+        <http:request config-ref="requesterConfigDynPort" path="/path">
+            <!--Migration ERROR: 'port' cannot be overridden by the HTTP Request operation. You can use an expression in the config to make it dynamic. Original value was port="#[flowVars.dynPort]".-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-http#http-request-->
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:headers>#[migration::HttpRequester::httpRequesterHeaders(vars)]</http:headers>
+        </http:request>
+
+    </flow>
+
+</mule>

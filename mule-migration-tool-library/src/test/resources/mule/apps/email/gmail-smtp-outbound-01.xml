@@ -20,20 +20,20 @@
 
     <flow name="flow">
         <compatibility:outbound-properties-to-var/>
-        <email:send config-ref="smtpConnector" fromAddress="#[vars.compatibility_outboundProperties.fromAddress]" subject="#[vars.compatibility_outboundProperties.subject]">
+        <email:send config-ref="smtpConnector" fromAddress="#[migration::SmtpTransport::smtpFromAddress(vars)]" subject="#[migration::SmtpTransport::smtpSubject(vars)]">
             <email:to-addresses>
-                <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars) default 'bob@example.com']"/>
+                <email:to-address value="#[migration::SmtpTransport::smtpToAddress(vars) default 'bob@example.com']"/>
             </email:to-addresses>
             <email:cc-addresses>
-                <email:cc-address value="#[migration::SmtpTransport::smptCcAddress(vars)]"/>
+                <email:cc-address value="#[migration::SmtpTransport::smtpCcAddress(vars)]"/>
             </email:cc-addresses>
             <email:bcc-addresses>
-                <email:bcc-address value="#[migration::SmtpTransport::smptBccAddress(vars)]"/>
+                <email:bcc-address value="#[migration::SmtpTransport::smtpBccAddress(vars)]"/>
             </email:bcc-addresses>
             <email:reply-to-addresses>
-                <email:reply-to-address value="#[migration::SmtpTransport::smptReplyToAddress(vars)]"/>
+                <email:reply-to-address value="#[migration::SmtpTransport::smtpReplyToAddress(vars)]"/>
             </email:reply-to-addresses>
-            <email:headers>#[vars.compatibility_outboundProperties.customHeaders]</email:headers>
+            <email:headers>#[migration::SmtpTransport::smtpCustomHeaders(vars)]</email:headers>
             <email:body contentType="#[payload.^mimeType]">
                 <email:content>#[payload]</email:content>
             </email:body>

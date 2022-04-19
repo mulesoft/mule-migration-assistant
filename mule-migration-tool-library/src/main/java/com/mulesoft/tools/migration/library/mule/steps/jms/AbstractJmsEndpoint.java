@@ -10,6 +10,8 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.jms.JmsConnector.XPATH_SELECTOR;
 import static com.mulesoft.tools.migration.library.mule.steps.spring.SpringBeans.SPRING_BEANS_NS_URI;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.NO_COMPATIBILITY_OUTBOUND_MAP_EXPRESSION;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.VARS_OUTBOUND_PREFIX;
 import static com.mulesoft.tools.migration.project.model.pom.PomModelUtils.addSharedLibs;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
@@ -28,14 +30,14 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the endpoints of the JMS Transport
@@ -52,6 +54,15 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
   private ExpressionMigrator expressionMigrator;
 
   public static void addAttributesToInboundProperties(Element object, ApplicationModel appModel, MigrationReport report) {
+    try {
+      addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", inboundToAttributesExpressions(),
+                           "message.attributes.properties.userProperties");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static Map<String, String> inboundToAttributesExpressions() {
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("JMSCorrelationID", "message.attributes.headers.correlationId");
     expressionsPerProperty.put("MULE_CORRELATION_ID", "message.attributes.headers.correlationId");
@@ -64,22 +75,23 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
     expressionsPerProperty.put("JMSReplyTo", "message.attributes.headers.replyTo.destination");
     expressionsPerProperty.put("JMSTimestamp", "message.attributes.headers.timestamp");
     expressionsPerProperty.put("JMSType", "message.attributes.headers['type']");
-
-    try {
-      addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", expressionsPerProperty,
-                           "message.attributes.properties.userProperties");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return expressionsPerProperty;
   }
 
-  public static Element compatibilityProperties(ApplicationModel appModel) {
+  public static Element mule3Properties(ApplicationModel appModel) {
     return setText(new Element("properties", JMS_NAMESPACE), "#[migration::JmsTransport::jmsPublishProperties(vars)]");
   }
 
   public static void jmsTransportLib(ApplicationModel appModel) {
     try {
       // Replicates logic from org.mule.transport.jms.transformers.AbstractJmsTransformer.setJmsProperties(MuleMessage, Message)
+      String outboundMap =
+          appModel.noCompatibilityMode() ? NO_COMPATIBILITY_OUTBOUND_MAP_EXPRESSION : "vars.compatibility_outboundProperties";
+      String outboundPrefix =
+          appModel.noCompatibilityMode() ? VARS_OUTBOUND_PREFIX : "vars.compatibility_outboundProperties.";
+      String inboundJmsReplyTo = appModel.noCompatibilityMode() ? inboundToAttributesExpressions().get("JMSReplyTo")
+          : "vars.compatibility_inboundProperties.JMSReplyTo";
+
       library(getMigrationScriptFolder(appModel.getProjectBasePath()), "JmsTransport.dwl",
               "" +
                   "/**" + lineSeparator() +
@@ -92,7 +104,7 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
                   + " 'JMSMessageID', 'JMSPriority', 'JMSRedelivered', 'JMSReplyTo', 'JMSTimestamp', 'JMSType',"
                   + " 'selector', 'MULE_REPLYTO']" + lineSeparator() +
                   "    ---" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties default {} filterObject" + lineSeparator() +
+                  "    " + outboundMap + " default {} filterObject" + lineSeparator() +
                   "    ((value,key) -> not contains(jmsProperties, (key as String)))" + lineSeparator() +
                   "    mapObject ((value, key, index) -> {" + lineSeparator() +
                   "        ((key as String) replace \" \" with \"_\") : value" + lineSeparator() +
@@ -103,14 +115,14 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
                   " * Adapts the Mule 4 correlationId to the way it was used in 3.x" + lineSeparator() +
                   " */" + lineSeparator() +
                   "fun jmsCorrelationId(correlationId, vars: {}) = do {" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties.MULE_CORRELATION_ID default correlationId" + lineSeparator() +
+                  "    " + outboundPrefix + "MULE_CORRELATION_ID default correlationId" + lineSeparator() +
                   "}" + lineSeparator() +
                   "" + lineSeparator() +
                   "/**" + lineSeparator() +
                   " * Adapts the Mule 4 correlationId to the way it was used in 3.x" + lineSeparator() +
                   " */" + lineSeparator() +
                   "fun jmsSendCorrelationId(vars: {}) = do {" + lineSeparator() +
-                  "    if (vars.compatibility_outboundProperties.MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS'"
+                  "    if (" + outboundPrefix + "MULE_CORRELATION_ID == null) 'NEVER' else 'ALWAYS'"
                   + lineSeparator() +
                   "}" + lineSeparator() +
                   "" + lineSeparator() +
@@ -118,9 +130,9 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
                   " * Adapts the Mule 4 reply-to to the way it was used in 3.x" + lineSeparator() +
                   " */" + lineSeparator() +
                   "fun jmsPublishReplyTo(vars: {}) = do {" + lineSeparator() +
-                  "    vars.compatibility_inboundProperties.JMSReplyTo default" + lineSeparator() +
-                  "    (if (vars.compatibility_outboundProperties.MULE_REPLYTO != null)" + lineSeparator() +
-                  "        (vars.compatibility_outboundProperties.MULE_REPLYTO splitBy 'jms://')[1]" + lineSeparator() +
+                  "    " + inboundJmsReplyTo + " default" + lineSeparator() +
+                  "    (if (" + outboundPrefix + "MULE_REPLYTO != null)" + lineSeparator() +
+                  "        (" + outboundPrefix + "MULE_REPLYTO splitBy 'jms://')[1]" + lineSeparator() +
                   "        else null)"
                   + lineSeparator() +
                   "}" + lineSeparator() +

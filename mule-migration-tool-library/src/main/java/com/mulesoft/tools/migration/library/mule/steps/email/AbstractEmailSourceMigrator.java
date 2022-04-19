@@ -27,6 +27,16 @@ public abstract class AbstractEmailSourceMigrator extends AbstractEmailMigrator 
   protected void addAttributesToInboundProperties(Element object, MigrationReport report) {
     migrateInboundEndpointStructure(getApplicationModel(), object, report, false);
 
+    try {
+      addAttributesMapping(getApplicationModel(), getInboundAttributesClass(),
+                           inboundToAttributesExpressions(),
+                           "message.attributes.headers mapObject ((value, key, index) -> { key : value })");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static Map<String, String> inboundToAttributesExpressions() {
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("toAddresses", "message.attributes.toAddresses joinBy ', '");
     expressionsPerProperty.put("ccAddresses", "message.attributes.ccAddresses joinBy ', '");
@@ -38,14 +48,7 @@ public abstract class AbstractEmailSourceMigrator extends AbstractEmailMigrator 
     expressionsPerProperty.put("contentType", "payload.^mimeType");
 
     expressionsPerProperty.put("sentDate", "message.attributes.sentDate");
-
-    try {
-      addAttributesMapping(getApplicationModel(), getInboundAttributesClass(),
-                           expressionsPerProperty,
-                           "message.attributes.headers mapObject ((value, key, index) -> { key : value })");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return expressionsPerProperty;
   }
 
   protected abstract String getInboundAttributesClass();

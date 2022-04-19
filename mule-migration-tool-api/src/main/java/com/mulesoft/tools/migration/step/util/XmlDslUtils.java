@@ -10,8 +10,11 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILI
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.jdom2.Namespace.getNamespace;
 
+import com.google.common.collect.Maps;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
@@ -20,10 +23,7 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -36,8 +36,10 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.Parent;
+import org.jdom2.filter.Filter;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
+import org.jdom2.xpath.XPathFactory;
 
 /**
  * Provides reusable methods for common migration scenarios.
@@ -54,6 +56,11 @@ public final class XmlDslUtils {
   public static final String CORE_EE_NS_URI = "http://www.mulesoft.org/schema/mule/ee/core";
   public static final Namespace CORE_EE_NAMESPACE = Namespace.getNamespace(EE_NAMESPACE_NAME, CORE_EE_NS_URI);
   public static final String EE_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd";
+  public static final Namespace MIGRATION_NAMESPACE = Namespace.getNamespace("migration", "migration");
+  public static final String HTTP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/http";
+  public static final Namespace HTTP_NAMESPACE = getNamespace("http", HTTP_NAMESPACE_URI);
+
+  public static final String MIGRATION_ID_ATTRIBUTE = "migrationId";
 
   private XmlDslUtils() {
     // Nothing to do
@@ -114,8 +121,8 @@ public final class XmlDslUtils {
    * @param element the source element to migrate using compatibility module
    * @param report the migration report
    */
-  public static void migrateSourceStructure(ApplicationModel appModel, Element element, MigrationReport report) {
-    migrateSourceStructure(appModel, element, report, true, false);
+  public static void migrateSourceStructureForCompatibility(ApplicationModel appModel, Element element, MigrationReport report) {
+    migrateSourceStructureForCompatibility(appModel, element, report, true, false);
   }
 
   /**
@@ -127,13 +134,11 @@ public final class XmlDslUtils {
    * @param expectsOutboundProperties should it declare outbound properties
    * @param consumeStreams should properties be declared as streams
    */
-  public static void migrateSourceStructure(ApplicationModel appModel, Element element, MigrationReport report,
-                                            boolean expectsOutboundProperties, boolean consumeStreams) {
+  public static void migrateSourceStructureForCompatibility(ApplicationModel appModel, Element element, MigrationReport report,
+                                                            boolean expectsOutboundProperties, boolean consumeStreams) {
     addCompatibilityNamespace(element.getDocument());
-
     int index = element.getParent().indexOf(element);
     buildAttributesToInboundProperties(report, element.getParent(), index + 1);
-
     if (expectsOutboundProperties) {
       Element errorHandlerElement = getFlowExceptionHandlingElement(element.getParentElement());
       if (errorHandlerElement != null) {
@@ -192,15 +197,18 @@ public final class XmlDslUtils {
     if (expressionMigrator != null && resolver != null) {
       migrateEnrichers(element, expressionMigrator, resolver, appModel, report);
     }
-    addCompatibilityNamespace(element.getDocument());
 
-    int index = element.getParent().indexOf(element);
-
-    if (!"true".equals(element.getAttributeValue("isPolledConsumer", Namespace.getNamespace("migration", "migration")))) {
-      buildOutboundPropertiesToVar(report, element.getParent(), index, consumeStreams);
-    }
-    if (outputsAttributes) {
-      buildAttributesToInboundProperties(report, element.getParent(), index + 2);
+    if (!appModel.noCompatibilityMode()) {
+      addCompatibilityNamespace(element.getDocument());
+      int index = element.getParent().indexOf(element);
+      if (!"true".equals(element.getAttributeValue("isPolledConsumer", MIGRATION_NAMESPACE))) {
+        buildOutboundPropertiesToVar(report, element.getParent(), index, consumeStreams);
+      }
+      if (outputsAttributes) {
+        buildAttributesToInboundProperties(report, element.getParent(), index + 2);
+      }
+    } else {
+      report.report("noCompatibility.notFullyImplemented", element, element);
     }
   }
 
@@ -547,13 +555,30 @@ public final class XmlDslUtils {
   }
 
   /**
+   * Remove all attributes from element on a given namespace
+   *
+   * @param element the element where all the attributes will be removed
+   */
+  public static void removeAllAttributes(Element element, Namespace namespace) {
+    List<Attribute> attributes = element.getAttributes().stream()
+        .filter(att -> att.getNamespace().equals(namespace))
+        .collect(toList());
+    attributes.forEach(Attribute::detach);
+  }
+
+  public static void removeAllAttributesRecursive(Element element, Namespace namespace) {
+    removeAllAttributes(element, namespace);
+    element.getChildren().stream().forEach(e -> removeAllAttributesRecursive(e, namespace));
+  }
+
+  /**
    * Add a new attribute to identify for particular post-migration actions
    *
    * @param element the element where this attribute will be added
    * @param attribute the attribute to be added
    */
   public static void addMigrationAttributeToElement(Element element, Attribute attribute) {
-    attribute.setNamespace(Namespace.getNamespace("migration", "migration"));
+    attribute.setNamespace(MIGRATION_NAMESPACE);
     element.setAttribute(attribute);
   }
 
@@ -674,9 +699,13 @@ public final class XmlDslUtils {
    * @param filePath the path of the file
    * @return the jdom document.
    */
-  public static Document generateDocument(Path filePath) throws JDOMException, IOException {
+  public static Document generateDocument(Path filePath, boolean generateElementIds) throws JDOMException, IOException {
     SAXBuilder saxBuilder = new SAXBuilder();
-    saxBuilder.setJDOMFactory(new LocatedJDOMFactory());
+    if (generateElementIds) {
+      saxBuilder.setJDOMFactory(new LocatedIdJDOMFactory());
+    } else {
+      saxBuilder.setJDOMFactory(new LocatedJDOMFactory());
+    }
     return saxBuilder.build(filePath.toFile());
   }
 
@@ -694,7 +723,7 @@ public final class XmlDslUtils {
           .filter(f -> f.getName().equals(fileName.replace("classpath:", ""))).findFirst().orElse(null);
       if (xmlFile != null) {
         try {
-          Document doc = generateDocument(xmlFile.toPath());
+          Document doc = generateDocument(xmlFile.toPath(), false);
           if (doc.getRootElement().getNamespace().getURI().startsWith("http://www.mulesoft.org/schema/mule/")) {
             muleConfig = true;
           }
@@ -744,13 +773,35 @@ public final class XmlDslUtils {
    *
    * @param namespaceUri the namespace URI
    * @param topLevel is a top level element
+   * @param firstGenerationOnly only return the first generation of children
    * @return a String with the expression
    */
-  public static String getAllElementsFromNamespaceXpathSelector(String namespaceUri, List<String> elements, boolean topLevel) {
-    String localNameExpression = elements.stream()
-        .map(e -> String.format("local-name() = '%s'", e))
+  public static String getAllElementsFromNamespaceXpathSelector(String namespaceUri, List<String> elements, boolean topLevel,
+                                                                boolean firstGenerationOnly) {
+    Map<String, List<String>> namespacedElements = Maps.newHashMap();
+    namespacedElements.put(namespaceUri, elements);
+    return getAllElementsFromNamespaceXpathSelector(namespacedElements, topLevel, firstGenerationOnly);
+  }
+
+  /**
+   * Get Xpath expression to select all elements from a given namespace on the configuration file
+   *
+   * @param namespacedElements map of namespaces and elements to search
+   * @param topLevel is a top level element
+   * @param firstGenerationOnly only return the first generation of children
+   * @return a String with the expression
+   */
+  public static String getAllElementsFromNamespaceXpathSelector(Map<String, List<String>> namespacedElements, boolean topLevel,
+                                                                boolean firstGenerationOnly) {
+
+    String localNameExpression = namespacedElements.entrySet().stream()
+        .map(e -> String.format("(namespace-uri()='%s' and (%s))", e.getKey(),
+                                e.getValue().stream().map(element -> String.format("local-name()='%s'", element)).collect(
+                                                                                                                          Collectors
+                                                                                                                              .joining(" or "))))
         .collect(Collectors.joining(" or "));
-    return format("%s[namespace-uri() = '%s' and (%s)]", topLevel ? "/*/*" : "//*", namespaceUri, localNameExpression);
+    return format("%s[%s]", topLevel ? "/*/*" : firstGenerationOnly ? "*" : "//*",
+                  localNameExpression);
   }
 
   /**
@@ -802,6 +853,10 @@ public final class XmlDslUtils {
         removeNestedComments(contentElement);
       }
     }
+  }
+
+  public static <T> List<T> getChildrenMatchingExpression(Element elementToEvaluate, String expression, Filter<T> filter) {
+    return XPathFactory.instance().compile(expression, filter).evaluate(elementToEvaluate);
   }
 
   public static boolean isAncestorOf(Element ancestor, Element descendant) {

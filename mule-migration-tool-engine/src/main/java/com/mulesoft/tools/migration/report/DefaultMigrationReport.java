@@ -5,12 +5,27 @@
  */
 package com.mulesoft.tools.migration.report;
 
+import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.THROTTLING_MULE_4_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.batch.BatchJob.BATCH_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.db.DbConfig.DB_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.scripting.ScriptingModuleMigration.SCRIPT_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderConfig.OAUTH2_PROVIDER_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.spring.AbstractSpringMigratorStep.SPRING_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer.WSC_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.munit.steps.MUnitNamespaces.MUNIT_TOOLS_URI;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NS_URI;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.HTTP_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_ID_ATTRIBUTE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.removeAllAttributesRecursive;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.list;
 
 import com.mulesoft.tools.migration.exception.MigrationAbortException;
 import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.step.category.ComponentMigrationStatus;
@@ -54,6 +69,10 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
   private transient XMLOutputter outp = new XMLOutputter();
   private final Set<ReportEntryModel> reportEntries = new LinkedHashSet<>();
 
+  private final Set<String> processedElementIds = new LinkedHashSet<>();
+  private boolean unprocessedElementsComputed;
+  private static final Set<String> PROCESSED_BY_PARENT;
+
   private String projectType;
   private String projectName;
 
@@ -72,6 +91,46 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
   private int melLinesSuccess;
   private int melLinesFailure;
 
+  static {
+    PROCESSED_BY_PARENT = new HashSet<>();
+    PROCESSED_BY_PARENT.add(BATCH_NAMESPACE_URI + ":history");
+    PROCESSED_BY_PARENT.add(BATCH_NAMESPACE_URI + ":on-complete");
+    PROCESSED_BY_PARENT.add(BATCH_NAMESPACE_URI + ":process-records");
+    PROCESSED_BY_PARENT.add(CORE_NS_URI + ":when");
+    PROCESSED_BY_PARENT.add(CORE_NS_URI + ":otherwise");
+    PROCESSED_BY_PARENT.add(CORE_NS_URI + ":reconnect");
+    PROCESSED_BY_PARENT.add(CORE_NS_URI + ":redelivery-policy");
+    PROCESSED_BY_PARENT.add(CORE_NS_URI + ":route");
+    PROCESSED_BY_PARENT.add(CORE_NS_URI + ":simple-text-file-store");
+    PROCESSED_BY_PARENT.add(CORE_EE_NS_URI + ":set-payload");
+    PROCESSED_BY_PARENT.add(CORE_EE_NS_URI + ":set-variable");
+    PROCESSED_BY_PARENT.add(DB_NAMESPACE_URI + ":sql");
+    PROCESSED_BY_PARENT.add(HTTP_NAMESPACE_URI + ":error-response");
+    PROCESSED_BY_PARENT.add(HTTP_NAMESPACE_URI + ":response");
+    PROCESSED_BY_PARENT.add(HTTP_NAMESPACE_URI + ":success-status-code-validator");
+    PROCESSED_BY_PARENT.add(MUNIT_TOOLS_URI + ":with-attributes");
+    PROCESSED_BY_PARENT.add(MUNIT_TOOLS_URI + ":with-attribute");
+    PROCESSED_BY_PARENT.add(MUNIT_TOOLS_URI + ":then-return");
+    PROCESSED_BY_PARENT.add(OAUTH2_PROVIDER_NAMESPACE_URI + ":clients");
+    PROCESSED_BY_PARENT.add(OAUTH2_PROVIDER_NAMESPACE_URI + ":client");
+    PROCESSED_BY_PARENT.add(OAUTH2_PROVIDER_NAMESPACE_URI + ":client-redirect-uris");
+    PROCESSED_BY_PARENT.add(OAUTH2_PROVIDER_NAMESPACE_URI + ":client-redirect-uri");
+    PROCESSED_BY_PARENT.add(OAUTH2_PROVIDER_NAMESPACE_URI + ":client-authorized-grant-types");
+    PROCESSED_BY_PARENT.add(OAUTH2_PROVIDER_NAMESPACE_URI + ":client-authorized-grant-type");
+    PROCESSED_BY_PARENT.add(OAUTH2_PROVIDER_NAMESPACE_URI + ":client-scopes");
+    PROCESSED_BY_PARENT.add(OAUTH2_PROVIDER_NAMESPACE_URI + ":client-scope");
+    PROCESSED_BY_PARENT.add(SCRIPT_NAMESPACE_URI + ":code");
+    PROCESSED_BY_PARENT.add(SPRING_NAMESPACE_URI + ":delegate-security-provider");
+    PROCESSED_BY_PARENT.add(SPRING_NAMESPACE_URI + ":security-property");
+    PROCESSED_BY_PARENT.add(THROTTLING_MULE_4_NAMESPACE_URI + ":tier");
+    PROCESSED_BY_PARENT.add(WSC_NAMESPACE_URI + ":web-service-security");
+    PROCESSED_BY_PARENT.add(WSC_NAMESPACE_URI + ":sign-security-strategy");
+    PROCESSED_BY_PARENT.add(WSC_NAMESPACE_URI + ":verify-signature-security-strategy");
+    PROCESSED_BY_PARENT.add(WSC_NAMESPACE_URI + ":username-token-security-strategy");
+    PROCESSED_BY_PARENT.add(WSC_NAMESPACE_URI + ":timestamp-security-strategy");
+    PROCESSED_BY_PARENT.add(WSC_NAMESPACE_URI + ":decrypt-security-strategy");
+    PROCESSED_BY_PARENT.add(WSC_NAMESPACE_URI + ":encrypt-security-strategy");
+  }
 
   public DefaultMigrationReport() {
     possibleEntries = new HashMap<>();
@@ -138,9 +197,10 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
       }
 
       if (elementToComment.getDocument() != null || element.getDocument() == null) {
-        reportEntry = new ReportEntryModel(entryKey, level, elementToComment, message, documentationLinks);
+        reportEntry = new ReportEntryModel(entryKey, level, elementToComment, element, message, documentationLinks);
       } else {
-        reportEntry = new ReportEntryModel(entryKey, level, elementToComment, message, element.getDocument(), documentationLinks);
+        reportEntry =
+            new ReportEntryModel(entryKey, level, elementToComment, element, message, element.getDocument(), documentationLinks);
       }
 
       if (reportEntries.add(reportEntry)) {
@@ -156,6 +216,7 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
 
         if (!XmlDslUtils.isAncestorOf(element, elementToComment)) {
           XmlDslUtils.removeNestedComments(element);
+          removeAllAttributesRecursive(element, MIGRATION_NAMESPACE);
           elementToComment.addContent(i, new Comment(sanitize(outp.outputString(element))));
         }
       }
@@ -185,6 +246,26 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
     this.errorMigrationRatio = (1.0 * reportEntries.stream()
         .filter(re -> re.getElement() != null && ERROR.equals(re.getLevel()))
         .map(re -> re.getElement()).distinct().count()) / this.processedElements;
+  }
+
+  @Override
+  public void addProcessedElementId(String processedElementId) {
+    processedElementIds.add(processedElementId);
+  }
+
+  public void computeUnprocessedElements(ApplicationModel applicationModel) {
+    if (!unprocessedElementsComputed) {
+      unprocessedElementsComputed = true;
+      List<Element> nodes = applicationModel.getNodes("//*[@migration:migrationId]");
+      nodes.stream()
+          .filter(element -> !processedElementIds
+              .contains(element.getAttributeValue(MIGRATION_ID_ATTRIBUTE, MIGRATION_NAMESPACE)))
+          .filter(element -> !PROCESSED_BY_PARENT.contains(element.getNamespaceURI() + ":" + element.getName()))
+          .forEach(element -> {
+            report("components.unsupported", element, element, getComponentKey(element));
+            addComponentFailure(element);
+          });
+    }
   }
 
   @Override

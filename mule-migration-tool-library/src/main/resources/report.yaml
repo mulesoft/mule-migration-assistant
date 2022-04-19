@@ -1103,3 +1103,31 @@ salesforce:
     type: INFO
     message: "The output for this operation changed from mule 3 to mule 4. Please check the transform message that maps the output to see if it matches the flow logic."
 
+noCompatibility:
+  dynamicFlowRef:
+    type: ERROR
+    message: "Dynamic flow reference, might result in Mule 3 properties (inbound/outbound) or variables (session) references not migrated"
+  missingFlow:
+    type: ERROR
+    message: "Flow ref references a flow that is not found in the current application"
+  unsupportedProperty:
+    type: ERROR
+    message: "Cannot migrate {element}. At least 1 referenced property was emitted by an unsupported connector or source"
+  melExpression:
+    type: WARN
+    message: "Cannot replace compatibility references in unmigrated MEL expression on {element}"
+  notFullyImplemented:
+    type: WARN
+    message: "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations."
+  copyProperties:
+    type: ERROR
+    message: "Instead of copying inbound properties in the flow, use the 'attributes' of the message directly."
+    docLinks:
+      - https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes
+  collidingProperties:
+    type: WARN
+    message: "There are multiple possible translations of {property} due to app ambiguity. Defaulting to the first one, please revise if this needs to be changed"
+  mapPattern:
+    type: ERROR
+    message: "Referencing full map of properties like message.outboundProperties or message.inboundProperties cannot be automatically migrated. In case of outbound properties it can be migrated to a map containing all the variables with the prefix 'outbound_', 
+    for inbound, a new structure needs to be created in case we want to work over the full map of attributes coming from a message source or connector"

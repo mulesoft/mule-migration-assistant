@@ -22,6 +22,7 @@ import static java.util.Optional.of;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.pom.Parent;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
@@ -69,8 +70,7 @@ public class ApplicationModel {
   private MuleArtifactJsonModel muleArtifactJsonModel;
   private List<Namespace> supportedNamespaces;
   private Parent projectPomParent;
-
-
+  private ApplicationGraph applicationGraph;
 
   protected ApplicationModel(Map<Path, Document> applicationDocuments) {
     this(applicationDocuments, emptyMap());
@@ -451,6 +451,34 @@ public class ApplicationModel {
   }
 
   /**
+   * Set the ApplicationGraph
+   *
+   * @param graph ApplicationGraph
+   */
+  public void setApplicationGraph(ApplicationGraph graph) {
+    this.applicationGraph = graph;
+  }
+
+  /**
+   * @return The {@link ApplicationGraph} when running in no-compatibility mode, otherwise null
+   * // TODO return an Optional
+   */
+  public ApplicationGraph getApplicationGraph() {
+    return this.applicationGraph;
+  }
+
+  /**
+   * @return true if running in NO Compatibility mode.
+   */
+  public boolean noCompatibilityMode() {
+    return this.applicationGraph != null;
+  }
+
+  public void addApplicationDocument(Path path, Document document) {
+    this.applicationDocuments.put(path, document);
+  }
+
+  /**
    * It represent the builder to obtain a {@link ApplicationModel}
    *
    * @author Mulesoft Inc.
@@ -470,6 +498,8 @@ public class ApplicationModel {
     private List<Namespace> supportedNamespaces;
     private Parent projectPomParent;
     private String projectGAV;
+    private ApplicationGraph applicationGraph;
+    private boolean generateElementIds;
 
     /**
      * Collection of paths to project configuration files
@@ -604,6 +634,28 @@ public class ApplicationModel {
     }
 
     /**
+     * The application modeled as a graph
+     *
+     * @param graph applicationGraph
+     * @return the builder
+     */
+    public ApplicationModelBuilder withApplicationGraph(ApplicationGraph graph) {
+      this.applicationGraph = graph;
+      return this;
+    }
+
+    /**
+     * Generate element synthetic ids
+     *
+     * @param generateElementIds generate ids or not
+     * @return the builder
+     */
+    public ApplicationModelBuilder withGenerateElementIds(boolean generateElementIds) {
+      this.generateElementIds = generateElementIds;
+      return this;
+    }
+
+    /**
      * Build the {@link ApplicationModel}
      *
      * @return an {@link ApplicationModel} instance
@@ -624,7 +676,7 @@ public class ApplicationModel {
       Map<Path, Document> applicationDocuments = new HashMap<>();
       for (Path afp : applicationFilePaths) {
         try {
-          applicationDocuments.put(projectBasePath.relativize(afp), generateDocument(afp));
+          applicationDocuments.put(projectBasePath.relativize(afp), generateDocument(afp, generateElementIds));
         } catch (JDOMException | IOException e) {
           throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + afp, e);
         }
@@ -643,7 +695,7 @@ public class ApplicationModel {
           Map<Path, Document> domainDocuments = new HashMap<>();
           for (Path dfp : domainFilePaths) {
             try {
-              domainDocuments.put(parentDomainBasePath.relativize(dfp), generateDocument(dfp));
+              domainDocuments.put(parentDomainBasePath.relativize(dfp), generateDocument(dfp, generateElementIds));
             } catch (JDOMException | IOException e) {
               throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + dfp, e);
             }
@@ -692,9 +744,10 @@ public class ApplicationModel {
       applicationModel.setSupportedNamespaces(supportedNamespaces != null ? new ArrayList<>(new HashSet<>(supportedNamespaces))
           : emptyList());
 
+      applicationModel.setApplicationGraph(applicationGraph);
+
       return applicationModel;
     }
 
   }
-
 }

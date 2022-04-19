@@ -3,7 +3,7 @@
 
     <flow name="unknown-namespace-2">
         <unknown:source>
-            <!--Migration ERROR: The migration of 'unknown' is not supported.-->
+            <!--Migration ERROR: The migration of 'unknown:source' is not supported.-->
             <!--    For more information refer to:-->
             <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-->
             <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool.adoc#unsupported_connectors-->

@@ -5,6 +5,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
+import static com.mulesoft.tools.migration.library.mule.steps.db.DbConfig.DB_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.lang.String.format;
 import static java.util.regex.Pattern.compile;
@@ -15,9 +16,6 @@ import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,6 +23,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
+
+import org.jdom2.Element;
 
 /**
  * Migrates operations of the DB Connector
@@ -34,9 +34,6 @@ import java.util.stream.Collector;
  */
 public abstract class AbstractDbOperationMigrator extends AbstractApplicationModelMigrationStep
     implements ExpressionMigratorAware {
-
-  protected static final String DB_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/db";
-  protected final static Namespace DB_NAMESPACE = Namespace.getNamespace("db", DB_NAMESPACE_URI);
 
   private static final Pattern DB_3X_MEL_CONTRIB_PATTERN =
       compile("(?:dbCreateArray|dbCreateStruct)\\(['\\\"]([^'\\\"]*)['\\\"]\\s*,\\s*['\\\"]([^'\\\"]*)['\\\"]\\s*,\\s*(.*)\\)");

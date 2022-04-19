@@ -11,7 +11,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getFlowExceptio
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.isErrorHanldingElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateReconnection;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructureForCompatibility;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.regex.Pattern.compile;
@@ -213,7 +213,11 @@ public final class TransportsUtils {
     inboundEndpoint.removeAttribute("exchange-pattern");
     inboundEndpoint.removeAttribute("disableTransportTransformer");
     extractInboundChildren(inboundEndpoint, appModel);
-    migrateSourceStructure(appModel, inboundEndpoint, report, expectsOutboundProperties, consumeStreams);
+    if (appModel.getApplicationGraph() == null) {
+      migrateSourceStructureForCompatibility(appModel, inboundEndpoint, report, expectsOutboundProperties, consumeStreams);
+    } else {
+      report.report("noCompatibility.notFullyImplemented", inboundEndpoint, inboundEndpoint);
+    }
   }
 
   /**
