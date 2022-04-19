@@ -18,46 +18,7 @@ import com.mulesoft.tools.migration.library.gateway.tasks.RamlProxyMigrationTask
 import com.mulesoft.tools.migration.library.gateway.tasks.ThreatProtectionMigrationTask;
 import com.mulesoft.tools.migration.library.gateway.tasks.ThrottlingMigrationTask;
 import com.mulesoft.tools.migration.library.mule.steps.compression.CompressionMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.AmqpMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.BatchMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.DomainAppMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.EmailMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.ExpressionTransformerMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.FiltersMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.FtpMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.HTTPCleanupTask;
-import com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.JmsDomainMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.JmsMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.JsonMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.MigrationCleanTask;
-import com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.MuleDeprecatedCoreComponentsMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.ObjectStoreMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.PostprocessGeneral;
-import com.mulesoft.tools.migration.library.mule.tasks.PostprocessMuleApplication;
-import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
-import com.mulesoft.tools.migration.library.mule.tasks.PropertiesMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.QuartzMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.RequestReplyMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SalesforceMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.ScriptingMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SecurePropertiesMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SecurityCrc32MigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SecurityFiltersMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SecurityOAuth2ProviderMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SftpMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SplitterAggregatorTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SpringMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.TransformersMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.VMMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.ValidationMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.VmDomainMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.WscMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.*;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.library.soapkit.tasks.SoapkitMigrationTask;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -172,6 +133,7 @@ public class MigrationTaskLocator {
   public List<AbstractMigrationTask> getCoreAfterMigrationTasks() {
     List<AbstractMigrationTask> coreMigrationTasks = new ArrayList<>();
 
+    coreMigrationTasks.add(new HandleNoCompatibility());
     coreMigrationTasks.add(new FiltersMigrationTask());
 
     // Spring has to run after MUnit, since MUnit in Mule 3 has some custom spring components that are removed by the migrator

@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
 import org.jdom2.Comment;
@@ -744,13 +745,31 @@ public final class XmlDslUtils {
    *
    * @param namespaceUri the namespace URI
    * @param topLevel is a top level element
+   * @param firstGenerationOnly only return the first generation of children
    * @return a String with the expression
    */
-  public static String getAllElementsFromNamespaceXpathSelector(String namespaceUri, List<String> elements, boolean topLevel) {
+  public static String getAllElementsFromNamespaceXpathSelector(String namespaceUri, List<String> elements, boolean topLevel, 
+                                                                boolean firstGenerationOnly) {
     String localNameExpression = elements.stream()
         .map(e -> String.format("local-name() = '%s'", e))
         .collect(Collectors.joining(" or "));
-    return format("%s[namespace-uri() = '%s' and (%s)]", topLevel ? "/*/*" : "//*", namespaceUri, localNameExpression);
+    return format("%s[namespace-uri() = '%s' and (%s)]", topLevel ? "/*/*" : firstGenerationOnly ? "*" : "//*", namespaceUri, localNameExpression);
+  }
+
+  /**
+   * Get Xpath expression to select all elements with certain attributeName and value from 
+   * a given namespace on the configuration file
+   *
+   * @param nsPrefix the namespace prefix
+   * @param attributeName name of the attribute to search
+   * @param attributeValue value of the attribute to search
+   * @param firstGenerationOnly only return the first generation of children
+   * @return a String with the expression
+   */
+  public static String getChildElementsWithAttribute(String nsPrefix, String attributeName, String attributeValue, boolean firstGenerationOnly) {
+    String prefixExpression = StringUtils.isNotBlank(nsPrefix) ? nsPrefix + ":" : "";
+    String attributeExpression = String.format("@%s%s", prefixExpression, attributeName) + (attributeValue != null ? String.format("=%s", attributeValue) : "");
+    return format("%s[%s]", firstGenerationOnly ? "*" : "//*", attributeExpression);
   }
 
   /**
