@@ -97,7 +97,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     }
   }
 
-  public static void addAttributesToInboundProperties(Element object, ApplicationModel appModel, MigrationReport report) {
+  public static Map<String, String> inboundToAttributesExpressions() {
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("http.listener.path", "message.attributes.listenerPath");
     expressionsPerProperty.put("http.context.path",
@@ -118,9 +118,12 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     expressionsPerProperty.put("http.request", "message.attributes.requestPath");
     expressionsPerProperty.put("http.request.path", "message.attributes.requestPath");
     expressionsPerProperty.put("http.headers", "message.attributes.headers");
+    return expressionsPerProperty;
+  }
 
+  public static void addAttributesToInboundProperties(Element object, ApplicationModel appModel, MigrationReport report) {
     try {
-      addAttributesMapping(appModel, "org.mule.extension.http.api.HttpRequestAttributes", expressionsPerProperty,
+      addAttributesMapping(appModel, "org.mule.extension.http.api.HttpRequestAttributes", inboundToAttributesExpressions(),
                            "message.attributes.headers mapObject ((value, key, index) -> { (if(upper(key as String) startsWith 'X-MULE_') upper((key as String) [2 to -1]) else key) : value })",
                            "message.attributes.queryParams");
     } catch (IOException e) {
