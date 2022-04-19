@@ -105,23 +105,23 @@
                     <!--    For more information refer to:-->
                     <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
                 </compatibility:outbound-properties-to-var>
-                <email:send config-ref="SmtpConfig" fromAddress="#[vars.compatibility_outboundProperties.fromAddress]" subject="#[vars.compatibility_outboundProperties.subject]">
+                <email:send config-ref="SmtpConfig" fromAddress="#[migration::SmtpTransport::smtpFromAddress(vars)]" subject="#[migration::SmtpTransport::smtpSubject(vars)]">
                     <!--Migration ERROR: Use the inline configuration of the operation instead of relying on properties set before this endpoint.-->
                     <!--    For more information refer to:-->
                     <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-email#migrating-an-smtp-outbound-endpoint-->
                     <email:to-addresses>
-                        <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars)]" />
+                        <email:to-address value="#[migration::SmtpTransport::smtpToAddress(vars)]" />
                     </email:to-addresses>
                     <email:cc-addresses>
-                        <email:cc-address value="#[migration::SmtpTransport::smptCcAddress(vars)]" />
+                        <email:cc-address value="#[migration::SmtpTransport::smtpCcAddress(vars)]" />
                     </email:cc-addresses>
                     <email:bcc-addresses>
-                        <email:bcc-address value="#[migration::SmtpTransport::smptBccAddress(vars)]" />
+                        <email:bcc-address value="#[migration::SmtpTransport::smtpBccAddress(vars)]" />
                     </email:bcc-addresses>
                     <email:reply-to-addresses>
-                        <email:reply-to-address value="#[migration::SmtpTransport::smptReplyToAddress(vars)]" />
+                        <email:reply-to-address value="#[migration::SmtpTransport::smtpReplyToAddress(vars)]" />
                     </email:reply-to-addresses>
-                    <email:headers>#[vars.compatibility_outboundProperties.customHeaders]</email:headers>
+                    <email:headers>#[migration::SmtpTransport::smtpCustomHeaders(vars)]</email:headers>
                     <email:body contentType="#[payload.^mimeType]">
                         <email:content>#[payload]</email:content>
                     </email:body>

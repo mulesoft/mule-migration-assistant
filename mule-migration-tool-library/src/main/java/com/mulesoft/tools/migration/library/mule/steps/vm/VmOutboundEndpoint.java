@@ -11,6 +11,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddr
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
@@ -88,14 +89,15 @@ public class VmOutboundEndpoint extends AbstractVmEndpoint {
     Optional<Element> connector = resolveVmConector(object, getApplicationModel());
     String configName = getVmConfigName(object, connector);
     Element vmConfig = migrateVmConfig(object, connector, configName, getApplicationModel());
-    migrateOutboundVmEndpoint(object, report, connector, configName, vmConfig);
+    migrateOutboundVmEndpoint(object, report, connector, configName, vmConfig, getApplicationModel());
 
     migrateOutboundEndpointStructure(getApplicationModel(), object, report, true, true);
   }
 
   public static void migrateOutboundVmEndpoint(Element object, MigrationReport report, Optional<Element> connector,
                                                String configName,
-                                               Element vmConfig) {
+                                               Element vmConfig,
+                                               ApplicationModel appModel) {
     String path = processAddress(object, report).map(address -> address.getPath()).orElseGet(() -> obtainPath(object));
 
     addQueue(VM_NAMESPACE, connector, vmConfig, path);
@@ -113,9 +115,11 @@ public class VmOutboundEndpoint extends AbstractVmEndpoint {
     object.removeAttribute("mimeType");
     object.removeAttribute("disableTransportTransformer");
 
-    Element content = buildContent(VM_NAMESPACE);
-    object.addContent(content);
-    report.report("vm.sessionVars", content, content);
+    if (!appModel.noCompatibilityMode()) {
+      Element content = buildContent(VM_NAMESPACE);
+      object.addContent(content);
+      report.report("vm.sessionVars", content, content);
+    }
   }
 
   public static void migrateVmEndpointConsumer(Element object, MigrationReport report, Optional<Element> connector,

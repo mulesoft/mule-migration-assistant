@@ -38,10 +38,20 @@
     {
       "level": "INFO",
       "key": "basicStructure.pointcutMigrationStepResolvedByRuntime",
-      "component": "pointcut",
+      "component": "api-platform-gw:api-pointcut",
       "lineNumber": -1,
       "columnNumber": -1,
       "message": "Api pointcut is resolved by the Mule runtime engine automatically.",
+      "filePath": "src/main/mule/template.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "INFO",
+      "key": "basicStructure.pointcutMigrationStepResolvedByRuntime",
+      "component": "resource",
+      "lineNumber": -1,
+      "columnNumber": -1,
+      "message": "Resource pointcut is resolved by the Mule runtime engine automatically.",
       "filePath": "src/main/mule/template.xml",
       "documentationLinks": []
     },

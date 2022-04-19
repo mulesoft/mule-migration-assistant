@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:request-config name="requesterConfig">
+        <http:request-connection protocol="HTTP" host="httpbin.org" port="443" />
+    </http:request-config>
+
+    <file:config name="File">
+        <file:connection workingDir=".">
+            <reconnection failsDeployment="true" />
+        </file:connection>
+    </file:config>
+
+    <flow name="fileFlow">
+        <file:listener directory="someDir" config-ref="File" autoDelete="true" recursive="false" applyPostActionWhenFailed="false">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000" />
+            </scheduling-strategy>
+        </file:listener>
+
+        <!-- should log error -->
+        <logger message="#[message.inboundProperties.implicit]">
+            <!--Migration ERROR: Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source-->
+        </logger>
+
+        <flow-ref name="subFlow" />
+
+        <!-- should use http implicit header -->
+        <logger message="#[message.attributes.headers.implicit]" />
+
+    </flow>
+
+    <sub-flow name="subFlow">
+        <!-- should log error -->
+        <logger message="#[message.inboundProperties.implicit]">
+            <!--Migration ERROR: Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source-->
+        </logger>
+
+        <http:request config-ref="requesterConfig" path="/get" method="GET">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:headers>#[migration::HttpRequester::httpRequesterHeaders(vars)]</http:headers>
+        </http:request>
+
+        <!-- should use http implicit header -->
+        <logger message="#[message.attributes.headers.implicit]" />
+    </sub-flow>
+
+</mule>

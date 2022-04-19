@@ -1,0 +1,73 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-vm-connector:2.0.0"
+  ],
+  "numberOfMuleComponents": 10,
+  "numberOfMuleComponentsMigrated": 10,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "logger": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "outbound-endpoint": {
+      "success": 1,
+      "failure": 0
+    },
+    "vm:endpoint": {
+      "success": 2,
+      "failure": 0
+    },
+    "vm:listener": {
+      "success": 1,
+      "failure": 0
+    },
+    "vm:publish": {
+      "success": 1,
+      "failure": 0
+    },
+    "vm:connector": {
+      "success": 2,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "vm:listener",
+      "lineNumber": 17,
+      "columnNumber": 63,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "vm:publish",
+      "lineNumber": 24,
+      "columnNumber": 63,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

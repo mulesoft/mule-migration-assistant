@@ -10,22 +10,23 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.jdom2.Element;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jdom2.Element;
+
 /**
- * Compatibility resolver for general MEL expressions
+ * Compatibility resolver for general MEL expressions. 
+ * Only one resolver will apply per expression
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
 public class MelCompatibilityResolver implements CompatibilityResolver<String> {
 
-  private static List<CompatibilityResolver<String>> resolvers;
+  private List<CompatibilityResolver<String>> resolvers;
 
-  static {
+  public MelCompatibilityResolver() {
     resolvers = new ArrayList<>();
     resolvers.add(new InboundAttachmentsCompatibilityResolver());
     resolvers.add(new HeaderSyntaxCompatibilityResolver());

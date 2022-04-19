@@ -5,7 +5,14 @@
  */
 package com.mulesoft.tools.migration;
 
-import com.google.common.base.Stopwatch;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.log;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationError;
+import static com.mulesoft.tools.migration.printer.ConsolePrinter.printMigrationSummary;
+import static java.lang.Integer.parseInt;
+import static java.lang.System.exit;
+import static java.util.UUID.randomUUID;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import com.mulesoft.tools.migration.engine.MigrationJob;
 import com.mulesoft.tools.migration.engine.MigrationJob.MigrationJobBuilder;
 import com.mulesoft.tools.migration.exception.ConsoleOptionsException;
@@ -13,17 +20,19 @@ import com.mulesoft.tools.migration.project.model.pom.Parent;
 import com.mulesoft.tools.migration.project.model.pom.Parent.ParentBuilder;
 import com.mulesoft.tools.migration.report.DefaultMigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
-import org.apache.commons.cli.*;
-import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.base.Stopwatch;
 
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static com.mulesoft.tools.migration.printer.ConsolePrinter.*;
-import static java.lang.Integer.parseInt;
-import static java.lang.System.exit;
-import static java.util.UUID.randomUUID;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Base entry point to run {@link AbstractMigrationTask}s
@@ -45,6 +54,7 @@ public class MigrationRunner {
   private final static String PROJECT_PARENT_GAV = "projectParentGAV";
   private final static String PROJECT_GAV = "projectGAV";
   public static final String JSON_REPORT = "jsonReport";
+  public static final String NO_COMPATIBILITY = "noCompatibility";
 
   private String projectBasePath;
   private String parentDomainProjectBasePath;
@@ -54,7 +64,7 @@ public class MigrationRunner {
   private Parent projectParentGAV;
   private String projectGAV;
   private boolean jsonReport;
-
+  private boolean noCompatibility;
 
   private String userId;
   private String sessionId;
@@ -110,6 +120,7 @@ public class MigrationRunner {
         .withProjectParentGAV(projectParentGAV)
         .withProjectGAV(projectGAV)
         .withJsonReport(jsonReport)
+        .withNoCompatibility(noCompatibility)
         .build();
   }
 
@@ -132,6 +143,7 @@ public class MigrationRunner {
     options.addOption(PROJECT_PARENT_GAV, true, "Use projectParentGAV to migration parent in your pom.xml");
     options.addOption(PROJECT_GAV, true, "Use projectGAV to override default GAV coordinates when a pom.xml is not provided");
     options.addOption(JSON_REPORT, false, "Generate migration report in JSON format");
+    options.addOption(NO_COMPATIBILITY, false, "Do not use compatibility module");
 
     options.addOption("userId", true, "The userId to send for the usage statistics");
     options.addOption("sessionId", true, "The sessionId to send for the usage statistics");
@@ -201,6 +213,10 @@ public class MigrationRunner {
 
       if (line.hasOption(JSON_REPORT)) {
         jsonReport = true;
+      }
+
+      if (line.hasOption(NO_COMPATIBILITY)) {
+        noCompatibility = true;
       }
 
       if (line.hasOption(HELP)) {

@@ -6,9 +6,13 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeAttribute;
+import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.OUTBOUND_PREFIX;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
+import static java.util.Optional.of;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
@@ -26,6 +30,7 @@ import org.jdom2.Element;
 public class SetProperty extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
   public static final String XPATH_SELECTOR = "//mule:set-property";
+  private static final String SET_VARIABLE = "set-variable";
   private ExpressionMigrator expressionMigrator;
 
   @Override
@@ -40,10 +45,18 @@ public class SetProperty extends AbstractApplicationModelMigrationStep implement
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    addCompatibilityNamespace(element.getDocument());
-    migrateExpression(element.getAttribute("value"), getExpressionMigrator());
-    report.report("message.outboundProperties", element, element);
-    element.setNamespace(COMPATIBILITY_NAMESPACE);
+    if (getApplicationModel().noCompatibilityMode()) {
+      String propertyName = element.getAttributeValue("propertyName");
+      changeNodeName("", SET_VARIABLE)
+          .andThen(changeAttribute("propertyName", of("variableName"), of(OUTBOUND_PREFIX + propertyName)))
+          .apply(element);
+      migrateExpression(element.getAttribute("value"), getExpressionMigrator());
+    } else {
+      migrateExpression(element.getAttribute("value"), getExpressionMigrator());
+      addCompatibilityNamespace(element.getDocument());
+      report.report("message.outboundProperties", element, element);
+      element.setNamespace(COMPATIBILITY_NAMESPACE);
+    }
   }
 
   @Override

@@ -5,7 +5,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
-import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes.MIGRATION_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 
 import org.jdom2.Attribute;

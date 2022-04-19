@@ -37,19 +37,19 @@ public class PointcutTagMigrationStep extends AbstractBasicStructureMigrationSte
       children.stream().forEach(e -> {
         switch (e.getName()) {
           case APP_TAG_NAME:
-            migrationReport.report("basicStructure.pointcutMigrationStepNoEquivalent", element, element, "App");
+            migrationReport.report("basicStructure.pointcutMigrationStepNoEquivalent", e, e, "App");
             break;
           case ENDPOINT_TAG_NAME:
-            migrationReport.report("basicStructure.pointcutMigrationStepNoEquivalent", element, element, "Endpoint");
+            migrationReport.report("basicStructure.pointcutMigrationStepNoEquivalent", e, e, "Endpoint");
             break;
           case RESOURCE_TAG_NAME:
-            migrationReport.report("basicStructure.pointcutMigrationStepResolvedByRuntime", element, element, "Resource");
+            migrationReport.report("basicStructure.pointcutMigrationStepResolvedByRuntime", e, e, "Resource");
             break;
           case API_POINTCUT_TAG_NAME:
-            migrationReport.report("basicStructure.pointcutMigrationStepResolvedByRuntime", element, element, "Api");
+            migrationReport.report("basicStructure.pointcutMigrationStepResolvedByRuntime", e, e, "Api");
             break;
           default:
-            migrationReport.report("basicStructure.pointcutMigrationStepUnknown", element, element, "Unknown");
+            migrationReport.report("basicStructure.pointcutMigrationStepUnknown", e, e, "Unknown");
             break;
         }
       });

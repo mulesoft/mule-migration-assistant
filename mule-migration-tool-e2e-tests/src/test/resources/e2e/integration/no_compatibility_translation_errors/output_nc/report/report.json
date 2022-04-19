@@ -1,0 +1,67 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-sftp-connector:1.4.1"
+  ],
+  "numberOfMuleComponents": 6,
+  "numberOfMuleComponentsMigrated": 6,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "logger": {
+      "success": 3,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "sftp:listener": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 3,
+  "numberOfMELExpressionsMigrated": 1,
+  "numberOfMELExpressionLines": 3,
+  "numberOfMELExpressionLinesMigrated": 1,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "ERROR",
+      "key": "noCompatibility.unsupportedProperty",
+      "component": "logger",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "noCompatibility.unsupportedProperty",
+      "component": "logger",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "sftp:listener",
+      "lineNumber": 11,
+      "columnNumber": 76,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:request-config name="requesterConfig">
+        <http:request-connection protocol="HTTP" host="httpbin.org" port="443" />
+    </http:request-config>
+
+    <file:config name="File">
+        <file:connection workingDir=".">
+            <reconnection failsDeployment="true" />
+        </file:connection>
+    </file:config>
+
+    <flow name="mainFlow">
+        <file:listener directory="someDir" config-ref="File" autoDelete="true" recursive="false" applyPostActionWhenFailed="false">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000" />
+            </scheduling-strategy>
+        </file:listener>
+
+        <flow-ref name="subFlow1" />
+
+    </flow>
+
+    <sub-flow name="subFlow1">
+        <flow-ref name="subFlow2" />
+        <logger message="#[message.attributes.fileName]" />
+    </sub-flow>
+
+    <sub-flow name="subFlow2">
+        <flow-ref name="subFlow1" />
+        <logger message="#[message.attributes.fileName]" />
+    </sub-flow>
+
+</mule>

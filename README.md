@@ -63,17 +63,17 @@ $ java -jar mule-migration-assistant-runner-*CURRENT VERSION*.jar [parameters]
 ```
 #### Mule Migration Assistant accepted parameters
 
-| Parameter                  |      Description                                 |  Required |
-|----------------------------|:------------------------------------------------:|----------:|
-| projectBasePath            | Path of the application to be migrated           | Yes       |
-| destinationProjectBasePath | Path where to generate the migrated application  | Yes       |
-| muleVersion                | Mule 4 version to define on the application      | Yes       |
-| parentDomainBasePath       | Path of the domain to be migrated                | No        |  
-| help                       | Show all the parameters to define on MMA         | No        |
-| cancelOnError              | Use cancelOnError = true the MMA stop migration if a exception occurs (default false)        | No        |
-| projectParentGAV           | Use projectParentGAV 'groupId:artifactId:version' to migrate your parent inside the pom.xml  | No        |
-| jsonReport (experimental)  | Generate migration report in JSON format         | No        |
-
+| Parameter                      |      Description                                 |  Required |
+|--------------------------------|:------------------------------------------------:|----------:|
+| projectBasePath                | Path of the application to be migrated           | Yes       |
+| destinationProjectBasePath     | Path where to generate the migrated application  | Yes       |
+| muleVersion                    | Mule 4 version to define on the application      | Yes       |
+| parentDomainBasePath           | Path of the domain to be migrated                | No        |
+| help                           | Show all the parameters to define on MMA         | No        |
+| cancelOnError                  | Use cancelOnError = true the MMA stop migration if a exception occurs (default false)        | No        |
+| projectParentGAV               | Use projectParentGAV 'groupId:artifactId:version' to migrate your parent inside the pom.xml  | No        |
+| jsonReport (experimental)      | Generate migration report in JSON format         | No        |
+| noCompatibility (experimental) | Do not use Mule compatibility module             | No        |
 
 ### User Documentation
 

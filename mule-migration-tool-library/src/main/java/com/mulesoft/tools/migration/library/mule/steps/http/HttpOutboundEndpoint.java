@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.addAttributesToInboundProperties;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.addHeadersElement;
 import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.httpRequesterLib;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.SOCKETS_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.addSocketsModule;
@@ -19,7 +20,6 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElem
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.util.Collections.emptyList;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -28,14 +28,14 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the outbound endpoint of the HTTP Transport
@@ -63,6 +63,12 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     httpRequesterLib(getApplicationModel());
+    if (!getApplicationModel().noCompatibilityMode()) {
+      migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
+      addAttributesToInboundProperties(object, getApplicationModel(), report);
+    } else {
+      report.report("noCompatibility.notFullyImplemented", object, object);
+    }
 
     object.setNamespace(HTTP_NAMESPACE);
     object.setName("request");
@@ -149,8 +155,6 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
       }
     }
 
-    migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
-    addAttributesToInboundProperties(object, getApplicationModel(), report);
 
     if (object.getAttribute("contentType") != null) {
       String contentType = object.getAttributeValue("contentType").toLowerCase();
@@ -175,7 +179,8 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
       }
       object.removeAttribute("contentType");
     }
-    object.addContent(compatibilityHeaders(HTTP_NAMESPACE));
+    object
+        .addContent(addHeadersElement(HTTP_NAMESPACE, "#[migration::HttpRequester::httpRequesterTransportHeaders(vars)]"));
 
     if (object.getAttribute("exceptionOnMessageError") != null
         && "false".equals(object.getAttributeValue("exceptionOnMessageError"))) {
@@ -315,12 +320,8 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
     if ("request-builder".equals(object.getName())) {
       handleReferencedRequestBuilder(object, httpNamespace);
-      object.addContent(compatibilityHeaders(httpNamespace));
+      object.addContent(addHeadersElement(httpNamespace, "#[migration::HttpRequester::httpRequesterTransportHeaders(vars)]"));
     }
-  }
-
-  private Element compatibilityHeaders(Namespace httpNamespace) {
-    return setText(new Element("headers", httpNamespace), "#[migration::HttpRequester::httpRequesterTransportHeaders(vars)]");
   }
 
   private void handleReferencedRequestBuilder(Element object, final Namespace httpNamespace) {

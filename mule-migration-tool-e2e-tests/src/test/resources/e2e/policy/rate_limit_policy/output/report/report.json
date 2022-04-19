@@ -46,7 +46,7 @@
     {
       "level": "INFO",
       "key": "basicStructure.pointcutMigrationStepResolvedByRuntime",
-      "component": "pointcut",
+      "component": "api-platform-gw:api-pointcut",
       "lineNumber": -1,
       "columnNumber": -1,
       "message": "Api pointcut is resolved by the Mule runtime engine automatically.",

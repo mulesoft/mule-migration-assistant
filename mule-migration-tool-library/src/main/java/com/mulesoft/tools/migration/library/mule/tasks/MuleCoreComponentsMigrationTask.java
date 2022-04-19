@@ -49,6 +49,7 @@ import com.mulesoft.tools.migration.library.mule.steps.properties.MuleAppPropert
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,6 +59,16 @@ import java.util.List;
  * @since 1.0.0
  */
 public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
+
+  private boolean noCompatibility;
+
+  public MuleCoreComponentsMigrationTask() {
+    this(false);
+  }
+
+  public MuleCoreComponentsMigrationTask(boolean noCompatibility) {
+    this.noCompatibility = noCompatibility;
+  }
 
   @Override
   public String getDescription() {
@@ -76,42 +87,46 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new CompatibilityPomContribution(),
-                        new MuleApp(),
-                        new MuleDomain(),
-                        new Logger(),
-                        new ChoiceExceptionStrategy(),
-                        new CatchExceptionStrategy(),
-                        new RollbackExceptionStrategy(),
-                        new TransactionalScope(),
-                        new ExceptionStrategyRef(),
-                        new ForEachScope(),
-                        new ScatterGather(),
-                        new Enricher(),
-                        new Flow(),
-                        new SubFlow(),
-                        new FlowRef(),
-                        new CompositeSource(),
-                        new Async(),
-                        new FirstSuccessful(),
-                        new UntilSuccessful(),
-                        new Poll(),
-                        new ChoiceExpressions(),
-                        new ForEachExpressions(),
-                        new SetPayload(),
-                        new SetVariable(),
-                        new EETransform(),
-                        new CacheScope(),
-                        new CacheInvalidateKey(),
-                        new CacheObjectStoreCachingStrategy(),
-                        new CacheHttpCachingStrategy(),
-                        new Tracking(),
-                        new GenericGlobalEndpoint(),
-                        new SpringImport(),
-                        new PropertyPlaceholder(),
-                        new MuleAppProperties(),
-                        new ProcessorChain(),
-                        new Configuration(),
-                        new ProcessorChainReference());
+    ArrayList<MigrationStep> migrationSteps = newArrayList(new MuleApp(),
+                                                           new MuleDomain(),
+                                                           new Logger(),
+                                                           new ChoiceExceptionStrategy(),
+                                                           new CatchExceptionStrategy(),
+                                                           new RollbackExceptionStrategy(),
+                                                           new TransactionalScope(),
+                                                           new ExceptionStrategyRef(),
+                                                           new ForEachScope(),
+                                                           new ScatterGather(),
+                                                           new Enricher(),
+                                                           new Flow(),
+                                                           new SubFlow(),
+                                                           new FlowRef(),
+                                                           new CompositeSource(),
+                                                           new Async(),
+                                                           new FirstSuccessful(),
+                                                           new UntilSuccessful(),
+                                                           new Poll(),
+                                                           new ChoiceExpressions(),
+                                                           new ForEachExpressions(),
+                                                           new SetPayload(),
+                                                           new SetVariable(),
+                                                           new EETransform(),
+                                                           new CacheScope(),
+                                                           new CacheInvalidateKey(),
+                                                           new CacheObjectStoreCachingStrategy(),
+                                                           new CacheHttpCachingStrategy(),
+                                                           new Tracking(),
+                                                           new GenericGlobalEndpoint(),
+                                                           new SpringImport(),
+                                                           new PropertyPlaceholder(),
+                                                           new MuleAppProperties(),
+                                                           new ProcessorChain(),
+                                                           new Configuration(),
+                                                           new ProcessorChainReference());
+
+    if (!noCompatibility) {
+      migrationSteps.add(0, new CompatibilityPomContribution());
+    }
+    return migrationSteps;
   }
 }

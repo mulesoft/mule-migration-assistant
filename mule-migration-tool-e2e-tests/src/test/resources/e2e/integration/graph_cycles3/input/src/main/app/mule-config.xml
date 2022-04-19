@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:file="http://www.mulesoft.org/schema/mule/file"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener Configuration" host="0.0.0.0" port="8081" />
+    <file:connector name="File" outputPattern="test123.txt" autoDelete="true" streaming="true" validateConnections="true" />
+    <sub-flow name="flow3">
+        <logger/>
+    </sub-flow>
+    <sub-flow name="flow2">
+        <set-property propertyName="http.status" value="202"/>
+        <flow-ref name="flow3"/>
+        <copy-properties propertyName="*" />
+    </sub-flow>
+    <flow name="httpFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api" />
+        <flow-ref name="flow2"/>
+    </flow>
+    <flow name="http2Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api2"/>
+        <flow-ref name="flow3"/>
+        <copy-properties propertyName="*" />
+    </flow>
+    <flow name="fileFlow">
+        <file:inbound-endpoint path="someDir" connector-ref="File"/>
+        <flow-ref name="flow2"/>
+    </flow>
+</mule>

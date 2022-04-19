@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <vm:config name="VmConfig">
+        <vm:queues>
+            <vm:queue queueName="vm-request" queueType="TRANSIENT" />
+        </vm:queues>
+    </vm:config>
+
+    <flow name="request-reply">
+        <async>
+            <vm:publish-consume config-ref="VmConfig" queueName="vm-request">
+                <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+                <!--Migration INFO: The queue configured in the VM inbound endpoint of the 'request-reply' is not used anymore.-->
+                <!--    For more information refer to:-->
+                <!--        * https://docs.mulesoft.com/connectors/vm/vm-publish-response-->
+                <!--<vm:inbound-endpoint xmlns:vm="http://www.mulesoft.org/schema/mule/vm" exchange-pattern="one-way" path="vm-response" />-->
+            </vm:publish-consume>
+        </async>
+
+    </flow>
+
+    <flow name="entry">
+        <vm:listener config-ref="VmConfig" queueName="vm-request">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+        </vm:listener>
+
+        <set-variable variableName="id" value="#[message.inboundProperties['id']]">
+            <!--Migration ERROR: Cannot migrate set-variable. At least 1 referenced property was emitted by an unsupported connector or source-->
+        </set-variable>
+
+    </flow>
+
+</mule>

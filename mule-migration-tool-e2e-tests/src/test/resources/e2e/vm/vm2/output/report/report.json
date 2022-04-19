@@ -59,7 +59,7 @@
       "component": "bti:transaction-manager",
       "lineNumber": 4,
       "columnNumber": 30,
-      "message": "The migration of \u0027bti\u0027 is not supported.",
+      "message": "The migration of \u0027bti:transaction-manager\u0027 is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks": []
     },

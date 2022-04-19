@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:file="http://www.mulesoft.org/schema/mule/file"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <http:request-config name="HTTP_Request_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <vm:connector name="VM" queueTimeout="300" validateConnections="true" doc:name="VM"/>
+    <file:connector name="File" outputPattern="test123.txt" autoDelete="true" streaming="true" validateConnections="true" doc:name="File"/>
+
+    <flow name="flowWithSource">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/file" doc:name="HTTP">
+            <http:response-builder>
+                <http:header headerName="fileName" value=" 123"/>
+            </http:response-builder>
+        </http:listener>
+        <logger message="#[&quot;Subflow with source. File moved: &quot; + message.inboundProperties.fileName]" level="INFO" doc:name="Logger"/>
+        <set-property propertyName="someOutbound" value="Hello" doc:name="Property"/>
+    </flow>
+
+    <flow name="Test">
+        <file:inbound-endpoint path="someDir/subdir" connector-ref="File" responseTimeout="10000" doc:name="File" moveToDirectory="someDir/subdir/output">
+        </file:inbound-endpoint>
+        <logger message="#[&quot;Moved file &quot; + message.inboundProperties.originalFilename]" level="INFO" doc:name="File move logger"/>
+        <set-property propertyName="fileName" value="#[message.inboundProperties.originalFilename]" doc:name="Property"/>
+        <http:request config-ref="HTTP_Request_Configuration" path="/file" method="GET" doc:name="HTTP"/>
+        <logger message="#[&quot;The new inbound properties are from HTTP like http.status: &quot; + message.inboundProperties['http.status']]" level="INFO" doc:name="Logger"/>
+    </flow>
+
+</mule>
