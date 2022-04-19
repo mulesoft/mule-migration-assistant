@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -62,8 +63,6 @@ public abstract class AbstractEndToEndTestCase {
   protected static final String ONLY_MIGRATE = getProperty("mule.test.migratorOnly");
 
   private static final String RUNTIME_VERSION = ofNullable(getProperty("mule.version")).orElse("4.3.0");
-  public static final String MULE_TOOLS_VERSION_POM_PROPERTY = "mule.tools.version";
-  public static final String MULE_VERSION_POM_PROPERTY = "mule.version";
   public static final String VERSION_PLACEHOLDER = "VERSION";
   private static final Pattern VERSION_REGEX_MATCHER = Pattern.compile("[0-9]{1,2}\\.[0-9]{0,2}\\.[0-9]{0,2}.*");
 
@@ -75,8 +74,10 @@ public abstract class AbstractEndToEndTestCase {
   @Rule
   public TemporaryFolder migrationResult = new TemporaryFolder();
 
+  private String noCompatibilitySuffix = "";
 
   public void simpleCase(String appName, String... additionalParams) throws Exception {
+    noCompatibilitySuffix = Arrays.asList(additionalParams).contains("-noCompatibility") ? "_nc" : "";
     String outputPath = migrate(appName, additionalParams);
 
     if (ONLY_MIGRATE != null) {
@@ -95,7 +96,7 @@ public abstract class AbstractEndToEndTestCase {
   protected String migrate(String projectName, String... additionalParams) throws Exception {
     final String projectBasePath = new File(getResourceUri("e2e/" + projectName + "/input")).getAbsolutePath();
 
-    final String outPutPath = migrationResult.getRoot().toPath().resolve(projectName).toAbsolutePath().toString();
+    final String outPutPath = migrationResult.getRoot().toPath().resolve(projectName).toAbsolutePath() + noCompatibilitySuffix;
 
     // Run migration tool
     final List<String> command = buildMigratorArgs(projectBasePath, outPutPath, projectName);
@@ -125,7 +126,7 @@ public abstract class AbstractEndToEndTestCase {
   }
 
   private void verifyOutput(String outputDir, String appName) throws URISyntaxException, IOException {
-    Path expectedOutputBasePath = Paths.get(getResourceUri("e2e/" + appName + "/output"));
+    Path expectedOutputBasePath = Paths.get(getResourceUri("e2e/" + appName + "/output" + noCompatibilitySuffix));
     Path outputBasePath = Paths.get(outputDir);
 
     Files.walk(expectedOutputBasePath).forEach(expectedPath -> {

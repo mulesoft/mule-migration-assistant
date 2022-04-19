@@ -258,4 +258,6 @@ public interface MigrationReport<T> {
    */
   List<T> getReportEntries(Level... levels);
 
+  void removeCompatibilityEntries();
+
 }

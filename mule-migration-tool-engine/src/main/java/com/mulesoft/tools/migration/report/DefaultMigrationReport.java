@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -210,6 +209,11 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
   public List<ReportEntryModel> getReportEntries(Level... levels) {
     List<Level> levelList = Arrays.asList(levels);
     return reportEntries.stream().filter(e -> levelList.contains(e.getLevel())).collect(Collectors.toList());
+  }
+
+  @Override
+  public void removeCompatibilityEntries() {
+    reportEntries.removeIf(e -> e.getElement().getNamespacePrefix().equals("compatibility"));
   }
 
   public double getSuccessfulMigrationRatio() {

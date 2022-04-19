@@ -12,6 +12,7 @@ import static com.mulesoft.tools.migration.util.MuleVersion.MULE_4_VERSION;
 import static java.util.Collections.singleton;
 
 import com.mulesoft.tools.migration.library.mule.steps.core.AttributesToInboundPropertiesScriptGenerator;
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveCompatibility;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -26,6 +27,16 @@ import java.util.Set;
  * @since 1.0.0
  */
 public class PostprocessMuleApplication extends AbstractMigrationTask {
+
+  private boolean noCompatibility;
+
+  public PostprocessMuleApplication() {
+    this(false);
+  }
+
+  public PostprocessMuleApplication(boolean noCompatibility) {
+    this.noCompatibility = noCompatibility;
+  }
 
   @Override
   public String getDescription() {
@@ -49,6 +60,9 @@ public class PostprocessMuleApplication extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
+    if (noCompatibility) {
+      return newArrayList(new RemoveCompatibility());
+    }
     return newArrayList(new AttributesToInboundPropertiesScriptGenerator());
   }
 

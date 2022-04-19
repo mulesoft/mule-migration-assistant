@@ -102,6 +102,7 @@ public class ReportEntryModel {
     }
   }
 
+  // TODO in noCompatibility mode, element locations are not found in some cases due to removed compatibility elements
   private void setElementLocation(Document document) {
     String xpathExpression = "";
     Element currentElement = element;

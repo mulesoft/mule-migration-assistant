@@ -35,6 +35,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.component.NullCompon
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,6 +45,16 @@ import java.util.List;
  * @since 1.0.0
  */
 public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigrationTask {
+
+  private final boolean noCompatibility;
+
+  public MuleDeprecatedCoreComponentsMigrationTask() {
+    this(false);
+  }
+
+  public MuleDeprecatedCoreComponentsMigrationTask(boolean noCompatibility) {
+    this.noCompatibility = noCompatibility;
+  }
 
   @Override
   public String getDescription() {
@@ -62,28 +73,32 @@ public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigration
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new CompatibilityPomContribution(),
-                        new EchoComponent(),
-                        new LogComponent(),
-                        new NullComponent(),
-                        new RemovedElements(),
-                        new JavaReferenceElements(),
-                        new RemoveObjectToStringTransformer(),
-                        new SetAttachment(),
-                        new SetProperty(),
-                        new SetSessionVariable(),
-                        new CopyAttachments(),
-                        new MessageAttachmentsListExpressionEvaluator(),
-                        new CopyProperties(),
-                        new RemoveAttachment(),
-                        new RemoveProperty(),
-                        new RemoveSessionVariable(),
-                        new RemoveJsonTransformerNamespace(),
-                        new CopyCatalogFolder(),
-                        new RemoveMetadataAttributes(),
-                        new MessagePropertiesTransformer(),
-                        new RemoveSchedulersNamespace(),
-                        new DataMapper(),
-                        new ExpressionComponent());
+    ArrayList<MigrationStep> migrationSteps = newArrayList(new CompatibilityPomContribution(),
+                                                           new EchoComponent(),
+                                                           new LogComponent(),
+                                                           new NullComponent(),
+                                                           new RemovedElements(),
+                                                           new JavaReferenceElements(),
+                                                           new RemoveObjectToStringTransformer(),
+                                                           new SetAttachment(),
+                                                           new MessageAttachmentsListExpressionEvaluator(),
+                                                           new RemoveAttachment(),
+                                                           new RemoveJsonTransformerNamespace(),
+                                                           new CopyCatalogFolder(),
+                                                           new RemoveMetadataAttributes(),
+                                                           new RemoveSchedulersNamespace(),
+                                                           new DataMapper(),
+                                                           new ExpressionComponent());
+    if (!noCompatibility) {
+      migrationSteps.addAll(newArrayList(
+                                         new SetProperty(),
+                                         new SetSessionVariable(),
+                                         new CopyAttachments(),
+                                         new CopyProperties(),
+                                         new RemoveProperty(),
+                                         new RemoveSessionVariable(),
+                                         new MessagePropertiesTransformer()));
+    }
+    return migrationSteps;
   }
 }

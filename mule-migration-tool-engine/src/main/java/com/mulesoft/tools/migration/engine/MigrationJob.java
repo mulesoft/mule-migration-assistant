@@ -49,7 +49,6 @@ import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTa
 public class MigrationJob implements Executable {
 
   private static final String HTML_REPORT_FOLDER = "report";
-  private final boolean jsonReportEnabled;
   private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private final Path project;
@@ -62,10 +61,12 @@ public class MigrationJob implements Executable {
   private String runnerVersion;
   private final Parent projectParentGAV;
   private final String projectGAV;
+  private final boolean jsonReportEnabled;
+  private final boolean noCompatibility;
 
   private MigrationJob(Path project, Path parentDomainProject, Path outputProject, List<AbstractMigrationTask> migrationTasks,
                        String muleVersion, boolean cancelOnError, Parent projectParentGAV, String projectGAV,
-                       boolean jsonReportEnabled) {
+                       boolean jsonReportEnabled, boolean noCompatibility) {
     this.migrationTasks = migrationTasks;
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
@@ -76,6 +77,7 @@ public class MigrationJob implements Executable {
     this.projectParentGAV = projectParentGAV;
     this.projectGAV = projectGAV;
     this.jsonReportEnabled = jsonReportEnabled;
+    this.noCompatibility = noCompatibility;
     this.runnerVersion = this.getClass().getPackage().getImplementationVersion();
     if (this.runnerVersion == null) {
       this.runnerVersion = "n/a";
@@ -184,6 +186,9 @@ public class MigrationJob implements Executable {
   }
 
   private void generateReport(MigrationReport<ReportEntryModel> report, ApplicationModel applicationModel) throws Exception {
+    if (this.noCompatibility) {
+      report.removeCompatibilityEntries();
+    }
     List<ReportEntryModel> reportEntries = report.getReportEntries();
     for (ReportEntryModel entry : reportEntries) {
       try {
@@ -224,6 +229,7 @@ public class MigrationJob implements Executable {
     private String outputVersion;
     private boolean cancelOnError = false;
     private boolean jsonReportEnabled = false;
+    private boolean noCompatibility = false;
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
     private Parent projectParentGAV = null;
     private String projectGAV;
@@ -273,6 +279,11 @@ public class MigrationJob implements Executable {
       return this;
     }
 
+    public MigrationJobBuilder withNoCompatibility(Boolean noCompatibility) {
+      this.noCompatibility = noCompatibility;
+      return this;
+    }
+
     public MigrationJob build() throws Exception {
       checkState(project != null, "The project must not be null");
       if (!project.toFile().exists()) {
@@ -304,11 +315,12 @@ public class MigrationJob implements Executable {
         throw new MigrationJobException("Destination folder already exist.");
       }
 
-      MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion);
+      MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion, noCompatibility);
       migrationTasks = migrationTaskLocator.locate();
 
-      return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion.toString(),
-                              this.cancelOnError, this.projectParentGAV, this.projectGAV, this.jsonReportEnabled);
+      return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion,
+                              this.cancelOnError, this.projectParentGAV, this.projectGAV, this.jsonReportEnabled,
+                              this.noCompatibility);
     }
   }
 
