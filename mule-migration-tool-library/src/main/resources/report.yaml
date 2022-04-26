@@ -1097,3 +1097,16 @@ salesforce:
     type: INFO
     message: "The output for this operation changed from mule 3 to mule 4. Please check the transform message that maps the output to see if it matches the flow logic."
 
+nocompatibility:
+  dynamicflowref:
+    type: ERROR
+    message: "Dynamic flow reference, might result in Mule 3 properties (inbound/outbound) or variables (session) references not migrated"
+  missingflow:
+    type: ERROR
+    message: "Flow ref references a flow that is not found in the current application"
+  unsupportedproperty:
+    type: ERROR
+    message: "Cannot migrate {element}. At least 1 referenced property was emitted by an unsupported connector or source"
+  melexpression:
+    type: WARN
+    message: "Cannot replace compatibility references in unmigrated MEL expression on {element}"

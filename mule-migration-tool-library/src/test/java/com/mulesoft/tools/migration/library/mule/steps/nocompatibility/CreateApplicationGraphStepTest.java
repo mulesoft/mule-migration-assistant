@@ -1,7 +1,6 @@
 package com.mulesoft.tools.migration.library.mule.steps.nocompatibility;
 
 import com.google.common.collect.ImmutableMap;
-import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationAttributes;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.tck.ReportVerification;
@@ -44,12 +43,13 @@ public class CreateApplicationGraphStepTest {
   private Document doc;
   private ApplicationModel applicationModel;
   private CreateApplicationGraphStep step;
-
+ 
 
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
     return new Object[] {
-        "nocompatibility-01"
+        "nocompatibility-01",
+        "nocompatibility-02"
     };
   }
 
