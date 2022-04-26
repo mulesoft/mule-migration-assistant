@@ -3,22 +3,17 @@ package com.mulesoft.tools.migration.library.mule.steps.nocompatibility;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.mulesoft.tools.migration.library.applicationflow.Flow;
-import com.mulesoft.tools.migration.library.applicationflow.MessageProcessor;
-import com.mulesoft.tools.migration.library.applicationflow.MessageSource;
+import com.google.common.collect.Maps;
+import com.mulesoft.tools.migration.exception.MigrationException;
+import com.mulesoft.tools.migration.library.applicationflow.*;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import org.jdom2.Attribute;
-import org.jdom2.Document;
-import org.jdom2.Element;
+import org.jdom2.*;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathFactory;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -35,11 +30,11 @@ public class CreateApplicationGraphStep implements MigrationStep<ApplicationMode
       getChildElementsWithAttribute("", "isMessageSource", "\"true\"", true);
   private static final String FLOW_REF_EXPRESSION = getAllElementsFromNamespaceXpathSelector(CORE_NS_URI, ImmutableList.of("flow-ref"), false, true);
   private static final Pattern COMPATIBILITY_INBOUND_PATTERN_IN_DW =
-      Pattern.compile("#\\[.*(vars.compatibility_inboundProperties(?:.*|\\[.*\\])).*\\]");
-  private static final Pattern COMPATIBILITY_INBOUND_PATTERN =
-      Pattern.compile("(?:vars.compatibility_inboundProperties.(.*)|vars.compatibility_inboundProperties.\\[(.*)\\])");
+      Pattern.compile("(vars\\.compatibility_inboundProperties(?:\\.'?[\\.a-zA-Z0-9]*'?|\\['?.*'+?\\]))");
+  private static final Pattern COMPATIBILITY_INBOUND_PATTERN_WITH_BRACKETS = Pattern.compile("vars\\.compatibility_inboundProperties\\['(.*?)'\\]");
+  private static final Pattern COMPATIBILITY_INBOUND_PATTERN_WITH_DOT = Pattern.compile("vars\\.compatibility_inboundProperties\\.'?(.*?)'?");
   private static final Pattern MEL_COMPATIBILITY_INBOUND_PATTERN =
-      Pattern.compile("message.inboundProperties.\\[\'(.*)\'\\]");
+      Pattern.compile("message\\.inboundProperties\\[\'(.*)\'\\]");
    private ExpressionMigrator expressionMigrator;
 
   @Override
@@ -55,115 +50,171 @@ public class CreateApplicationGraphStep implements MigrationStep<ApplicationMode
         .flatMap(Collection::stream)
         .collect(Collectors.toList());
 
-    Graph<Flow, DefaultEdge> applicationGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
-    applicationFlows.forEach(flow -> applicationGraph.addVertex(flow));
-
-    // build ApplicationGraph
-    for (Flow flow : applicationFlows) {
-
-      // get explicit connections
-      List<Flow> connectedFlows = getFlowRefElements(flow, applicationGraph, report);
-      connectedFlows.forEach(connectedFlow -> {
-        if (!applicationGraph.containsVertex(connectedFlow)) {
-          applicationGraph.addVertex(connectedFlow);
-        }
-
-        applicationGraph.addEdge(flow, connectedFlow);
-      });
-
-      // TODO: add implicit connections (i.e: operations)
-    }
-
-    // resolve inbound references
+    ApplicationGraph applicationGraph = new ApplicationGraph();
+    
     applicationFlows.forEach(flow -> {
-      List<MessageProcessor> messageProcessors = getMessageProcessors(flow);
-      messageProcessors.forEach(messageProcessor -> {
-        List<MessageSource> sources = findMessageSources(flow, applicationGraph);
-        Element element = messageProcessor.getXmlElement();
-        updatePropertyReferencesInAttributes(element.getAttributes(), sources.stream()
-            .map(MessageSource::getType).collect(Collectors.toList()));
+      List<FlowComponent> flowComponents = getFlowComponents(flow, applicationFlows, report);
+      applicationGraph.addConnectedFlowComponents(flowComponents);
+    });
+    
+    // build ApplicationGraph based on flow components and flowRefs. 
+    // This graph can have non connected components, if we have multiple flows with sources
+      // get explicit connections (flow-refs)
+    Map<FlowRef, FlowComponent> connectedFlows = getFlowRefMap(applicationGraph);
+    connectedFlows.entrySet().forEach(connectedFlow -> {
+      applicationGraph.addEdge(connectedFlow.getKey(), connectedFlow.getValue());
+    });
 
-        // TODO: add for children
+    // TODO: add implicit connections (i.e: operations)
+    // Is this actually needed? If we have an operation that calls a flow inside the same app, then handling
+    // any property references should be the same as migrating that flow individually
 
+    // resolve inbound references per flow
+    applicationGraph.getAllFlowComponents().forEach(flowComponent -> {
+        //TODO: change to only find the source when we have to do a property translation in a flow component
+        Optional<PropertiesSource> propertiesEmitter = applicationGraph.findClosestPropertiesSource(flowComponent);
+        if (propertiesEmitter.isPresent()) {
+          Queue<Element> elementsToUpdate = new LinkedList<>();
+          elementsToUpdate.offer(flowComponent.getXmlElement());
+          
+          while (!elementsToUpdate.isEmpty()) {
+            Element element = elementsToUpdate.poll();
+            // update references in attributes
+            updatePropertyReferencesInAttributes(element, propertiesEmitter.get().getType(), report);
+            Optional<CDATA> cdataContent = getCDATAContent(element.getContent());
+            if (element.getChildren().isEmpty() && cdataContent.isPresent()) {
+              updatePropertyReferencesInCDATAContent(element, cdataContent.get(), propertiesEmitter.get().getType(), report);
+            } else {
+              element.getChildren().forEach(e -> elementsToUpdate.offer(e));
+            }
+          }
+        } else {
+          // TODO: unresolvable property
+        }
       });
       
-      removeCompatibilityElements(flow);
-    });
+    applicationFlows.forEach(flow -> removeCompatibilityElements(flow));
+  }
+
+  private List<FlowComponent> getFlowComponents(Flow flow, List<Flow> applicationFlows, MigrationReport report) {
+    Element flowAsXmL = flow.getXmlElement();
+    List<FlowComponent> flowComponents = Lists.newArrayList();
+    MessageSource messageSource = getMessageSource(flow);
+    if (messageSource != null) {
+      flowComponents.add(messageSource);
+    }
+    
+    List<MessageProcessor> processors = flowAsXmL.getContent().stream()
+        .filter(Element.class::isInstance)
+        .map(Element.class::cast)
+        .filter(e -> messageSource == null || e != messageSource.getXmlElement())
+        .map(xmlElement -> convertToComponent(xmlElement, flow, applicationFlows, report))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+    flowComponents.addAll(processors);
+    return flowComponents;
+  }
+
+  private MessageProcessor convertToComponent(Element xmlElement, Flow parentFlow, 
+                                              List<Flow> applicationFlows, MigrationReport report) {
+    if (xmlElement.getName().equals("flow-ref")) {
+      if (!expressionMigrator.isWrapped(xmlElement.getAttribute("name").getValue())) {
+        String destinationFlowName = xmlElement.getAttribute("name").getValue();
+        Optional<Flow> destinationFlow = applicationFlows.stream()
+            .filter(flow -> flow.getName().equals(destinationFlowName))
+            .findFirst();
+        
+        if (destinationFlow.isPresent()) {
+          return new FlowRef(xmlElement, parentFlow, destinationFlow.get());
+        } else {
+          report.report("nocompatibility.missingflow", xmlElement, xmlElement);
+        }
+      } else {
+        report.report("nocompatibility.dynamicflowref", xmlElement, xmlElement);
+      }
+    } else {
+        return new MessageProcessor(xmlElement, parentFlow);
+    }
+    
+    return null;
+  }
+
+  private Optional<CDATA> getCDATAContent(List<Content> content) {
+    return content.stream().filter(CDATA.class::isInstance).map(CDATA.class::cast).findFirst();
   }
 
   private void removeCompatibilityElements(Flow flow) {
     flow.getXmlElement().removeChildren("attributes-to-inbound-properties", COMPATIBILITY_NAMESPACE);
   }
-
-  private List<MessageSource> findMessageSources(Flow flow, Graph<Flow, DefaultEdge> applicationGraph) {
-    List<MessageSource> sources = Lists.newArrayList();
-    Queue<Flow> incomingFlows = new LinkedList<>();
-    incomingFlows.offer(flow);
-    Flow currentFlow = flow;
-    while (!incomingFlows.isEmpty()) {
-      currentFlow = incomingFlows.poll();
-      if (currentFlow.hasSource()) {
-        sources.add(currentFlow.getMessageSource());
-      } else {
-        applicationGraph.incomingEdgesOf(currentFlow).stream()
-            .map(e -> applicationGraph.getEdgeSource(e))
-            .forEach(incomingFlows::offer);
-      }
-    }
-
-    return sources;
+  
+  private void updatePropertyReferencesInAttributes(Element parentElement, String originatingSource, MigrationReport report) {
+    parentElement.getAttributes().forEach(attribute -> attribute.setValue(translatePropertyReferences(attribute.getParent(), attribute.getName(), attribute.getValue(), originatingSource, report)));
   }
 
-  private void updatePropertyReferencesInAttributes(List<Attribute> attributes, List<String> originatingSources) {
-    attributes.forEach(attribute -> attribute.setValue(translatePropertyReferences(attribute.getValue(), originatingSources)));
+  private void updatePropertyReferencesInCDATAContent(Element parentElement, CDATA cdata, String originatingSource, MigrationReport report) {
+    cdata.setText(translatePropertyReferences(parentElement, "CDATA", cdata.getText(), originatingSource, report));
   }
 
-  private String translatePropertyReferences(String content, List<String> originatingSources) {
+  private String translatePropertyReferences(Element parentElement, String elementName, String content, String originatingSource, MigrationReport report) {
     Matcher matcher = COMPATIBILITY_INBOUND_PATTERN_IN_DW.matcher(content);
-    if (matcher.matches()) {
-      for (int i = 1; i <= matcher.groupCount(); i++) {
-        String referenceToInbound = matcher.group(i);
-        Matcher specificVarMatcher = COMPATIBILITY_INBOUND_PATTERN.matcher(referenceToInbound);
-        if (specificVarMatcher.matches()) {
-          String propertyToTranslate = specificVarMatcher.group(1);
-          String propertyTranslation = InboundToAttributesTranslator.translate(originatingSources, propertyToTranslate);
-          if (propertyTranslation != null) {
-            return content.replaceAll(specificVarMatcher.group(0), propertyTranslation);
-          } else {
-            // TODO: this is a user defined property somewhere upstream, we need to see how to handle
-          }
+    try {
+      if (matcher.find()) {
+        return replaceAllOccurencesOfProperty(content, matcher, originatingSource);
+      } else {
+        matcher = MEL_COMPATIBILITY_INBOUND_PATTERN.matcher(content);
+        if (matcher.find()) {
+          report.report("nocompatibility.melexpression", parentElement, parentElement, elementName);
         }
       }
-    } else {
-      matcher = MEL_COMPATIBILITY_INBOUND_PATTERN.matcher(content);
-      if (matcher.matches()) {
-        String propertyToTranslate = matcher.group(1);
-        String propertyTranslation = InboundToAttributesTranslator.translate(originatingSources, propertyToTranslate);
-        // TODO: case using mel, we need to use the translation and transform to DW 
-        return content.replaceAll(matcher.group(0), propertyTranslation);
-      }
+    } catch (Exception e) {
+      report.report("nocompatibility.unsupportedproperty", parentElement, parentElement, elementName);
     }
 
     // nothing to translate
     return content;
   }
-
-  private List<Flow> getFlowRefElements(Flow flow, Graph<Flow, DefaultEdge> applicationGrap, MigrationReport report) {
-    List<Element> flowRefsAsXml = getChildrenMatchingExpression(flow.getXmlElement(), FLOW_REF_EXPRESSION);
-    List<Flow> flowRefs = Lists.newArrayList();
-    flowRefsAsXml.forEach(flowRef -> {
-      if (!expressionMigrator.isWrapped(flowRef.getAttribute("name").getValue())) {
-        flowRefs.add(
-                     applicationGrap.vertexSet().stream().filter(v -> v.getName().equals(flowRef.getAttribute("name").getValue()))
-                         .findFirst()
-                         .orElseThrow(() -> new RuntimeException("Cannot find referenced flow in current application")));
+  
+  private String replaceAllOccurencesOfProperty(String content, Matcher outerMatcher, String originatingSource)
+      throws MigrationException {
+    outerMatcher.reset();
+    String contentTranslation = content;
+    while (outerMatcher.find()) {
+      String referenceToInbound = outerMatcher.group();
+      Matcher specificVarMatcher = COMPATIBILITY_INBOUND_PATTERN_WITH_BRACKETS.matcher(referenceToInbound);
+      if (specificVarMatcher.matches()) {
+        if (containsExpression(referenceToInbound)) {
+          throw new MigrationException("Cannot migrate content, found at least 1 property that can't be translated");
+        }
       } else {
-        // TODO: report as error because of dynamic flow ref
-        report.report("nocompatibility.dynamicflowref", flowRef, flowRef);
+        specificVarMatcher = COMPATIBILITY_INBOUND_PATTERN_WITH_DOT.matcher(referenceToInbound);
       }
+      
+      if (specificVarMatcher.matches()) {
+        String propertyToTranslate = specificVarMatcher.group(1);
+        String propertyTranslation = InboundToAttributesTranslator.translate(originatingSource, propertyToTranslate);
+        if (propertyTranslation != null) {
+          contentTranslation = content.replace(specificVarMatcher.group(0), propertyTranslation);
+        } else {
+          throw new MigrationException("Cannot migrate content, found at least 1 property that can't be translated");
+        }
+      }
+    }
+    
+    return contentTranslation;
+  }
+
+  private boolean containsExpression(String referenceToInbound) {
+    return referenceToInbound.matches("vars\\.compatibility_inboundProperties\\[[^'].*\\]");
+  }
+
+  private Map<FlowRef, FlowComponent> getFlowRefMap(ApplicationGraph applicationGraph) {
+    Map<FlowRef, FlowComponent> connectedFlows = Maps.newHashMap();
+    applicationGraph.getAllFlowComponents(FlowRef.class).forEach(flowRef -> {
+        FlowComponent destinationFlowComponent = applicationGraph.getStartingFlowComponent(flowRef.getDestinationFlow());
+        connectedFlows.put(flowRef, destinationFlowComponent);
     });
 
-    return flowRefs;
+    return connectedFlows;
   }
 
   private List<Flow> getFlows(Document document) {
@@ -175,27 +226,17 @@ public class CreateApplicationGraphStep implements MigrationStep<ApplicationMode
   }
 
   private Flow convertToFlow(Element flowAsXml) {
-    return new Flow(flowAsXml, getMessageSource(flowAsXml));
+    return new Flow(flowAsXml);
   }
 
-  private MessageSource getMessageSource(Element flowAsXml) {
-    List<Element> messageSource = getChildrenMatchingExpression(flowAsXml, MESSAGE_SOURCE_FILTER_EXPRESSION);
+  private MessageSource getMessageSource(Flow flow) {
+    List<Element> messageSource = getChildrenMatchingExpression(flow.getXmlElement(), MESSAGE_SOURCE_FILTER_EXPRESSION);
     if (messageSource.isEmpty()) {
       return null;
     }
     
     Element messageSourceXml = Iterables.getOnlyElement(messageSource);
-    return new MessageSource(messageSourceXml);
-  }
-
-  private List<MessageProcessor> getMessageProcessors(Flow parentFlow) {
-    Element flowAsXmL = parentFlow.getXmlElement();
-    return flowAsXmL.getContent().stream()
-        .filter(Element.class::isInstance)
-        .filter(e -> !e.equals(Optional.ofNullable(parentFlow.getMessageSource()).map(MessageSource::getXmlElement).orElse(null)))
-        .map(Element.class::cast)
-        .map(xmlElement -> new MessageProcessor(xmlElement, parentFlow))
-        .collect(Collectors.toList());
+    return new MessageSource(messageSourceXml, flow);
   }
 
   private List<Element> getChildrenMatchingExpression(Element elementToEvaluate, String expression) {

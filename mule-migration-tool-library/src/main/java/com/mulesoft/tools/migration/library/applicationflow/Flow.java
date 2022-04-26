@@ -11,7 +11,7 @@ public class Flow {
   private MessageSource messageSource;
   private List<MessageProcessor> processors;
 
-  public Flow(Element xmlElement, MessageSource messageSource) {
+  public Flow(Element xmlElement) {
     this.xmlElement = xmlElement;
     this.name = xmlElement.getAttribute("name").getValue();
     this.messageSource = messageSource;

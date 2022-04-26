@@ -1,29 +1,29 @@
 package com.mulesoft.tools.migration.library.applicationflow;
 
-import com.google.common.collect.Maps;
 import org.jdom2.Element;
 
-import java.util.Map;
-
-public class MessageSource {
-
+public class MessageSource implements PropertiesSource, FlowComponent {
   private final Element elementXml;
-  private String type;
+  private final String type;
+  private final Flow parentFlow;
 
-  public Map<String, String> getPropertiesContext() {
-    return Maps.newHashMap();
-  }
-
-  public MessageSource(Element elementXml) {
+  public MessageSource(Element elementXml, Flow parentFlow) {
     this.elementXml = elementXml;
-    this.type = elementXml.getNamespacePrefix() + ":" + elementXml.getName();
-  }
-
-  public String getType() {
-    return this.type;
+    this.type = elementXml.getName();
+    this.parentFlow = parentFlow;
   }
 
   public Element getXmlElement() {
     return this.elementXml;
+  }
+
+  @Override 
+  public String getType() {
+    return type;
+  }
+
+  @Override 
+  public Flow getParentFlow() {
+    return parentFlow;
   }
 }
