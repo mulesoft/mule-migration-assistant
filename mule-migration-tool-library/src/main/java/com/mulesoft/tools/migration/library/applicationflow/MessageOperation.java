@@ -7,7 +7,7 @@ public class MessageOperation extends MessageProcessor implements PropertiesSour
 
     public MessageOperation(Element xmlElement, Flow parentFLow) {
         super(xmlElement, parentFLow);
-        this.type = xmlElement.getName();
+        this.type = String.format("%s:%s", xmlElement.getNamespacePrefix(), xmlElement.getName());
     }
     
     @Override public String getType() {

@@ -74,7 +74,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
 
         if (getExpressionMigrator().isWrapped(exprAttr.getValue())) {
           exprAttr.setValue(getExpressionMigrator()
-              .wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, object)));
+                                .wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, object)));
         }
       }
 
@@ -248,9 +248,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     return newMatcher;
   }
 
-  private void addAttributesToInboundProperties(Element object, MigrationReport report) {
-    migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
-
+  public static Map<String, String> inboundToAttributesExpressions() {
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("originalFilename", "message.attributes.fileName");
     expressionsPerProperty.put("originalDirectory",
@@ -264,9 +262,13 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
     expressionsPerProperty.put("fileSize", "message.attributes.size");
     expressionsPerProperty.put("timestamp", "message.attributes.lastModifiedTime");
     expressionsPerProperty.put("MULE.FORCE_SYNC", "false");
+    return expressionsPerProperty;
+  }
 
+  private void addAttributesToInboundProperties(Element object, MigrationReport report) {
+    migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
     try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.file.api.LocalFileAttributes", expressionsPerProperty);
+      addAttributesMapping(getApplicationModel(), "org.mule.extension.file.api.LocalFileAttributes", inboundToAttributesExpressions());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
