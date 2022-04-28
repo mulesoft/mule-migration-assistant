@@ -15,6 +15,7 @@ import org.jdom2.*;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathFactory;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,7 +36,8 @@ public class CreateApplicationGraphStep implements MigrationStep<ApplicationMode
   private static final Pattern COMPATIBILITY_INBOUND_PATTERN_WITH_DOT = Pattern.compile("vars\\.compatibility_inboundProperties\\.'?(.*?)'?");
   private static final Pattern MEL_COMPATIBILITY_INBOUND_PATTERN =
       Pattern.compile("message\\.inboundProperties\\[\'(.*)\'\\]");
-   private ExpressionMigrator expressionMigrator;
+  private static final List<String> SUPPORTED_OPERATIONS = Lists.newArrayList("http:request");
+  private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
@@ -132,11 +134,17 @@ public class CreateApplicationGraphStep implements MigrationStep<ApplicationMode
       } else {
         report.report("nocompatibility.dynamicflowref", xmlElement, xmlElement);
       }
+    } else if (isOperation(xmlElement)) {
+      return new MessageOperation(xmlElement, parentFlow);
     } else {
         return new MessageProcessor(xmlElement, parentFlow);
     }
     
     return null;
+  }
+
+  private boolean isOperation(Element xmlElement) {
+    return SUPPORTED_OPERATIONS.contains(String.format("%s:%s", xmlElement.getNamespacePrefix(), xmlElement.getName()));
   }
 
   private Optional<CDATA> getCDATAContent(List<Content> content) {
