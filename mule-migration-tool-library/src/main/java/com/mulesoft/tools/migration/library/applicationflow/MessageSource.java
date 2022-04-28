@@ -9,7 +9,7 @@ public class MessageSource implements PropertiesSource, FlowComponent {
 
   public MessageSource(Element elementXml, Flow parentFlow) {
     this.elementXml = elementXml;
-    this.type = elementXml.getName();
+    this.type = String.format("%s:%s", elementXml.getNamespacePrefix(), elementXml.getName());
     this.parentFlow = parentFlow;
   }
 
