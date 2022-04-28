@@ -49,7 +49,8 @@ public class CreateApplicationGraphStepTest {
   public static Object[] params() {
     return new Object[] {
         "nocompatibility-01",
-        "nocompatibility-02"
+        "nocompatibility-02",
+        "nocompatibility-03"
     };
   }
 
