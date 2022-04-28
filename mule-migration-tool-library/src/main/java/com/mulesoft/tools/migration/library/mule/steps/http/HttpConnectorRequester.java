@@ -144,17 +144,20 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
   }
 
   public static void addAttributesToInboundProperties(Element object, ApplicationModel appModel, MigrationReport report) {
-    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    expressionsPerProperty.put("http.status", "message.attributes.statusCode");
-    expressionsPerProperty.put("http.reason", "message.attributes.reasonPhrase");
-    expressionsPerProperty.put("http.headers", "message.attributes.headers");
-
     try {
-      addAttributesMapping(appModel, "org.mule.extension.http.api.HttpResponseAttributes", expressionsPerProperty,
+      addAttributesMapping(appModel, "org.mule.extension.http.api.HttpResponseAttributes", inboundToAttributesExpressions(),
                            "message.attributes.headers mapObject ((value, key, index) -> { (if(upper(key as String) startsWith 'X-MULE_') upper((key as String) [2 to -1]) else key) : value })");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static Map<String, String> inboundToAttributesExpressions() {
+    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
+    expressionsPerProperty.put("http.status", "message.attributes.statusCode");
+    expressionsPerProperty.put("http.reason", "message.attributes.reasonPhrase");
+    expressionsPerProperty.put("http.headers", "message.attributes.headers");
+    return expressionsPerProperty;
   }
 
   public void executeChild(Element object, MigrationReport report, Namespace httpNamespace) throws RuntimeException {
