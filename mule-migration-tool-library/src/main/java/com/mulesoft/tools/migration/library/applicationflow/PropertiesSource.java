@@ -1,7 +1,8 @@
 package com.mulesoft.tools.migration.library.applicationflow;
 
-import org.jdom2.Element;
+import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.InboundToAttributesTranslator;
 
 public interface PropertiesSource {
-    public String getType();
+
+  InboundToAttributesTranslator.SourceType getType();
 }

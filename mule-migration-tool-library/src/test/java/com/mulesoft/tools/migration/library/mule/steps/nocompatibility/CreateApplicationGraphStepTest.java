@@ -43,7 +43,7 @@ public class CreateApplicationGraphStepTest {
   private Document doc;
   private ApplicationModel applicationModel;
   private CreateApplicationGraphStep step;
- 
+
 
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {

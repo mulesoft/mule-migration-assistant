@@ -28,7 +28,7 @@ public class Flow {
   public MessageSource getMessageSource() {
     return this.messageSource;
   }
-  
+
   public String getName() {
     return name;
   }

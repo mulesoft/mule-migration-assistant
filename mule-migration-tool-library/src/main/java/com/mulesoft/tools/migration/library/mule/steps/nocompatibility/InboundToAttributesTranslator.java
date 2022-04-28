@@ -1,43 +1,132 @@
 package com.mulesoft.tools.migration.library.mule.steps.nocompatibility;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailSourceMigrator;
 import com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener;
 import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester;
+import com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpInboundEndpoint;
+import com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.IMAP_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.POP3_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpNamespaceHandler.FTP_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEndpoint.JMS_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.quartz.QuartzInboundEndpoint.QUARTZ_NS_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.sftp.AbstractSftpEndpoint.SFTP_NS_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer.WS_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
 
 public class InboundToAttributesTranslator {
-  
-  private static List<String> SUPPORTED_SOURCES = ImmutableList.of("http:listener", "file:listener", "http:request");
 
-  public static String translate(String originatingSource, String propertyToTranslate) {
+  public static final SourceType HTTP_LISTENER =
+      new SourceType(HTTP_NAMESPACE_URI, "listener");
+  public static final SourceType HTTP_TRANSPORT =
+      new SourceType(HTTP_NAMESPACE_URI, "inbound-endpoint");
+  public static final SourceType HTTP_CONNECTOR_REQUESTER = new SourceType(HTTP_NAMESPACE_URI, "request");
+  public static final SourceType HTTP_TRANSPORT_OUTBOUND = new SourceType(HTTP_NAMESPACE_URI, "outbound-endpoint");
+  public static final SourceType HTTP_POLLING_CONNECTOR = new SourceType(HTTP_NAMESPACE_URI, "polling-connector");
+  public static final SourceType FILE_INBOUND = new SourceType(FILE_NAMESPACE_URI, "listener");
+  public static final SourceType IMAP_INBOUND = new SourceType(IMAP_NAMESPACE_URI, "inbound-endpoint");
+  public static final SourceType POP3_INBOUND = new SourceType(POP3_NAMESPACE_URI, "inbound-endpoint");
+  public static final SourceType FTP_INBOUND = new SourceType(FTP_NAMESPACE_URI, "inbound-endpoint");
+  public static final SourceType JMS_INBOUND = new SourceType(JMS_NAMESPACE_URI, "inbound-endpoint");
+  public static final SourceType JMS_OUTBOUND = new SourceType(JMS_NAMESPACE_URI, "outbound-endpoint");
+  public static final SourceType REQUEST_REPLY =
+      new SourceType(CORE_NS_URI, "request-reply");
+  public static final SourceType QUARTZ_INBOUND =
+      new SourceType(QUARTZ_NS_URI, "inbound-endpoint");
+  public static final SourceType SFTP_INBOUND = new SourceType(SFTP_NS_URI, "inbound-endpoint");
+  public static final SourceType WS_CONSUMER = new SourceType(WS_NAMESPACE_URI, "consumer");
+  private static String ATTRIBUTES_PATTERN_REGEX = "[a-zA-Z0-9_\\-.]*";
+
+  private static Map<SourceType, Class> translatorClasses;
+
+  public InboundToAttributesTranslator() {
+    translatorClasses = new ImmutableMap.Builder<SourceType, Class>()
+        .put(HTTP_LISTENER, HttpConnectorListener.class)
+        .put(HTTP_TRANSPORT, HttpConnectorListener.class)
+        .put(HTTP_CONNECTOR_REQUESTER, HttpConnectorRequester.class)
+        .put(HTTP_TRANSPORT_OUTBOUND, HttpConnectorRequester.class)
+        .put(HTTP_POLLING_CONNECTOR, HttpConnectorRequester.class)
+        .put(FILE_INBOUND, FileInboundEndpoint.class)
+        .put(IMAP_INBOUND, AbstractEmailSourceMigrator.class)
+        .put(POP3_INBOUND, AbstractEmailSourceMigrator.class)
+        .put(FTP_INBOUND, FtpInboundEndpoint.class)
+        .put(JMS_INBOUND, AbstractJmsEndpoint.class)
+        .put(JMS_OUTBOUND, AbstractJmsEndpoint.class)
+        .put(REQUEST_REPLY, AbstractJmsEndpoint.class)
+        .put(QUARTZ_INBOUND, AbstractJmsEndpoint.class)
+        .put(SFTP_INBOUND, SftpInboundEndpoint.class)
+        .put(WS_CONSUMER, WsConsumer.class)
+        .build();
+  }
+
+  public String translate(SourceType originatingSourceType, String propertyToTranslate) throws Exception {
     String translation = null;
     if (propertyToTranslate != null) {
-      switch (originatingSource) {
-        case ("http:listener"):
-          translation =  HttpConnectorListener.inboundToAttributesExpressions().get(propertyToTranslate);
-          break;
-        case ("file:listener"):
-          translation = FileInboundEndpoint.inboundToAttributesExpressions().get(propertyToTranslate);
-          break;
-        case ("http:request"):
-          translation = HttpConnectorRequester.inboundToAttributesExpressions().get(propertyToTranslate);
-          break;
-        default:
-          translation = null;
-      }
-      
-      // assume is a user defined property
-      if (translation == null && isSupported(originatingSource)) {
-        translation = "message.attributes." + propertyToTranslate;     
+      Class<?> translatorClazz = translatorClasses.get(originatingSourceType);
+      if (translatorClazz != null) {
+        Map<String, String> translationMap = (Map<String, String>) translatorClazz
+            .getMethod("inboundToAttributesExpressions")
+            .invoke(null);
+
+        translation = translationMap != null ? translationMap.get(propertyToTranslate) : null;
+        // assume is a user defined property
+        if (translation == null && isSupported(originatingSourceType)) {
+          translation = "message.attributes." + propertyToTranslate;
+        }
       }
     }
-    
+
+    translation = wrapWhenExpression(translation);
+
     return translation;
   }
-  
-  private static boolean isSupported(String originatingSource) {
-    return SUPPORTED_SOURCES.contains(originatingSource);  
+
+  private static String wrapWhenExpression(String translation) {
+
+    if (translation != null && !translation.matches(ATTRIBUTES_PATTERN_REGEX)) {
+      return String.format("(%s)", translation);
+    }
+
+    return translation;
+  }
+
+  private static boolean isSupported(SourceType originatingSourceType) {
+    return translatorClasses.keySet().contains(originatingSourceType);
+  }
+
+  public static class SourceType {
+
+    private String namespaceUri;
+    private String type;
+
+    public SourceType(String namespaceUri, String type) {
+      this.namespaceUri = namespaceUri;
+      this.type = type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o)
+        return true;
+      if (o == null || getClass() != o.getClass())
+        return false;
+      SourceType that = (SourceType) o;
+      return Objects.equals(namespaceUri, that.namespaceUri) && Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(namespaceUri, type);
+    }
   }
 }

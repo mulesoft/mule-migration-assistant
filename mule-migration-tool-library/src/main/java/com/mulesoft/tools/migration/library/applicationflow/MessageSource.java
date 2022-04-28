@@ -1,15 +1,17 @@
 package com.mulesoft.tools.migration.library.applicationflow;
 
+import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.InboundToAttributesTranslator;
 import org.jdom2.Element;
 
 public class MessageSource implements PropertiesSource, FlowComponent {
+
   private final Element elementXml;
-  private final String type;
+  private final InboundToAttributesTranslator.SourceType type;
   private final Flow parentFlow;
 
-  public MessageSource(Element elementXml, Flow parentFlow) {
-    this.elementXml = elementXml;
-    this.type = String.format("%s:%s", elementXml.getNamespacePrefix(), elementXml.getName());
+  public MessageSource(Element xmlElement, Flow parentFlow) {
+    this.elementXml = xmlElement;
+    this.type = new InboundToAttributesTranslator.SourceType(xmlElement.getNamespaceURI(), xmlElement.getName());
     this.parentFlow = parentFlow;
   }
 
@@ -17,12 +19,12 @@ public class MessageSource implements PropertiesSource, FlowComponent {
     return this.elementXml;
   }
 
-  @Override 
-  public String getType() {
+  @Override
+  public InboundToAttributesTranslator.SourceType getType() {
     return type;
   }
 
-  @Override 
+  @Override
   public Flow getParentFlow() {
     return parentFlow;
   }

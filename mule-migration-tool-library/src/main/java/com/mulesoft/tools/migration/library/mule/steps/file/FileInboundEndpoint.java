@@ -74,7 +74,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
 
         if (getExpressionMigrator().isWrapped(exprAttr.getValue())) {
           exprAttr.setValue(getExpressionMigrator()
-                                .wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, object)));
+              .wrap(getExpressionMigrator().migrateExpression(exprAttr.getValue(), true, object)));
         }
       }
 
@@ -268,7 +268,8 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
     migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
     try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.file.api.LocalFileAttributes", inboundToAttributesExpressions());
+      addAttributesMapping(getApplicationModel(), "org.mule.extension.file.api.LocalFileAttributes",
+                           inboundToAttributesExpressions());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

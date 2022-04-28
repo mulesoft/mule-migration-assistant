@@ -30,7 +30,7 @@ public abstract class AbstractSftpEndpoint extends AbstractApplicationModelMigra
     implements ExpressionMigratorAware {
 
   protected static final String SFTP_NS_PREFIX = "sftp";
-  protected static final String SFTP_NS_URI = "http://www.mulesoft.org/schema/mule/sftp";
+  public static final String SFTP_NS_URI = "http://www.mulesoft.org/schema/mule/sftp";
 
   private ExpressionMigrator expressionMigrator;
 
