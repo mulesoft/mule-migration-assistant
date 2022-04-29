@@ -1,4 +1,4 @@
-name: Mule Migration Assistant Release
+name: Publish GH Release
 
 on:
   push:
