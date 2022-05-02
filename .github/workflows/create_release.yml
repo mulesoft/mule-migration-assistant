@@ -1,6 +1,6 @@
 name: Create Next Release
 on:
-  # for testing only, round #0
+  # for testing only, round #1
   push:
     branches: [ chore/auto-release ]
   workflow_dispatch:
