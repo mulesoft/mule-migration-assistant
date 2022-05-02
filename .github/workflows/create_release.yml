@@ -1,5 +1,8 @@
 name: Create Next Release
 on:
+  # for testing only, round #0
+  push:
+    branches: [ chore/auto-release ]
   workflow_dispatch:
 
 jobs:
