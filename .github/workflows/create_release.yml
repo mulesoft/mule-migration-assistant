@@ -1,5 +1,8 @@
 name: Create Next Release
 on:
+  # for testing only, round #5
+  push:
+    branches: [ chore/auto-release ]
   workflow_dispatch:
 
 jobs:
@@ -37,10 +40,10 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
 
-          git checkout -b "release/${{ steps.version.outputs.version }}"
+          git checkout -b "test-release/${{ steps.version.outputs.version }}"
           git add -u \*pom.xml
           git commit -m "Pin release version"
-          git push --set-upstream origin "release/${{ steps.version.outputs.version }}"
+          git push --set-upstream origin "test-release/${{ steps.version.outputs.version }}"
   update_patch:
     name: "Bump patch on master"
     runs-on: ubuntu-latest
@@ -74,15 +77,28 @@ jobs:
 
       - name: Create bump PR
         run: |
-          git checkout -b "bump/${{ steps.nextVersion.outputs.version }}"
+          export DESTINATION_BRANCH="bump/${{ steps.nextVersion.outputs.version }}"
+          git checkout -b "$DESTINATION_BRANCH"
+          git push --set-upstream origin "$DESTINATION_BRANCH"
 
-          mvn -q versions:set -DnewVersion=${{ steps.version.outputs.version }}
+          mvn -q versions:set -DnewVersion=${{ steps.nextVersion.outputs.version }}
           pushd target-modules
-          mvn -q versions:set -DnewVersion=${{ steps.version.outputs.version }}
+          mvn -q versions:set -DnewVersion=${{ steps.nextVersion.outputs.version }}
           popd
 
-          git push --set-upstream origin "bump/${{ steps.nextVersion.outputs.version }}"
+          for FILE_TO_COMMIT in $(git diff --name-only |grep 'pom.xml$')
+          do
+            echo "pushing $FILE_TO_COMMIT ..."
+            export SHA=$( git rev-parse "$DESTINATION_BRANCH":"$FILE_TO_COMMIT" )
+            export CONTENT=$( base64 -i "$FILE_TO_COMMIT" )
+            gh api --method PUT /repos/${{ github.repository }}/contents/$FILE_TO_COMMIT \
+              --field message="Bump Patch version" \
+              --field content="$CONTENT" \
+              --field encoding="base64" \
+              --field branch="$DESTINATION_BRANCH" \
+              --field sha="$SHA"
+          done
 
-          gh pr create -B master -H "bump/${{ steps.nextVersion.outputs.version }}" -b "Bump master to ${{ steps.nextVersion.outputs.version }}" -t "Bump master to ${{ steps.nextVersion.outputs.version }}"
+          gh pr create -B master -H "$DESTINATION_BRANCH" -b "Bump master to ${{ steps.nextVersion.outputs.version }}" -t "Bump master to ${{ steps.nextVersion.outputs.version }}"
         env:
           GITHUB_TOKEN: ${{ steps.get_workflow_token.outputs.token }}

@@ -5,6 +5,7 @@
  */
 package com.mulesoft.tools.migration.e2e;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -28,6 +29,7 @@ public class HtmlReportTestCase extends AbstractEndToEndTestCase {
   }
 
   @Test
+  @Ignore
   public void test() throws Exception {
     simpleCase(appToMigrate);
   }
