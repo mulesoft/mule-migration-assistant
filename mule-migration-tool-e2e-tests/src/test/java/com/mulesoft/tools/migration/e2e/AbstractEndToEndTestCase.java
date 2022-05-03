@@ -234,7 +234,7 @@ public abstract class AbstractEndToEndTestCase {
     }
   }
 
-  protected URI getResourceUri(String path) throws URISyntaxException {
+  protected static URI getResourceUri(String path) throws URISyntaxException {
     URL resource = AbstractEndToEndTestCase.class.getClassLoader().getResource(path);
     assertNotNull("project not found at " + path, resource);
     return resource.toURI();
