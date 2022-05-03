@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020, Mulesoft, LLC. All rights reserved.
+ * Use of this source code is governed by a BSD 3-Clause License
+ * license that can be found in the LICENSE.txt file.
+ */
 package com.mulesoft.tools.migration.library.applicationflow;
 
 import com.google.common.collect.Iterables;
@@ -8,6 +13,12 @@ import org.jgrapht.graph.DefaultEdge;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Mule application graph model
+ *
+ * @author Mulesoft Inc.
+ * @since 1.3.0
+ */
 public class ApplicationGraph {
 
   Graph<FlowComponent, DefaultEdge> applicationGraph;

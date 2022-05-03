@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020, Mulesoft, LLC. All rights reserved.
+ * Use of this source code is governed by a BSD 3-Clause License
+ * license that can be found in the LICENSE.txt file.
+ */
 package com.mulesoft.tools.migration.library.mule.steps.nocompatibility;
 
 import com.google.common.collect.ImmutableMap;
@@ -24,6 +29,12 @@ import static com.mulesoft.tools.migration.library.mule.steps.sftp.AbstractSftpE
 import static com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer.WS_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
 
+/**
+ * Translates between mule 3 inbound properties to mule 4 attributes
+ *
+ * @author Mulesoft Inc.
+ * @since 1.3.0
+ */
 public class InboundToAttributesTranslator {
 
   public static final SourceType HTTP_LISTENER =
@@ -104,6 +115,12 @@ public class InboundToAttributesTranslator {
     return translatorClasses.keySet().contains(originatingSourceType);
   }
 
+  /**
+   * Models an inbound properties source type
+   *
+   * @author Mulesoft Inc.
+   * @since 1.3.0
+   */
   public static class SourceType {
 
     private String namespaceUri;

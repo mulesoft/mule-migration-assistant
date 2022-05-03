@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020, Mulesoft, LLC. All rights reserved.
+ * Use of this source code is governed by a BSD 3-Clause License
+ * license that can be found in the LICENSE.txt file.
+ */
 package com.mulesoft.tools.migration.library.mule.steps.nocompatibility;
 
 import com.google.common.collect.ImmutableList;
@@ -23,6 +28,12 @@ import java.util.stream.Collectors;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
 
+/**
+ * Step that creates an application graph and uses it to translate properties and variables into the mule 4 model
+ *
+ * @author Mulesoft Inc.
+ * @since 1.3.0
+ */
 public class CreateApplicationGraphStep implements MigrationStep<ApplicationModel>, ExpressionMigratorAware {
 
   public static final String FLOW_XPATH =
@@ -64,6 +75,7 @@ public class CreateApplicationGraphStep implements MigrationStep<ApplicationMode
 
     applicationFlows.forEach(flow -> {
       List<FlowComponent> flowComponents = getFlowComponents(flow, applicationFlows, report);
+      flow.setComponents(flowComponents);
       applicationGraph.addConnectedFlowComponents(flowComponents);
     });
 

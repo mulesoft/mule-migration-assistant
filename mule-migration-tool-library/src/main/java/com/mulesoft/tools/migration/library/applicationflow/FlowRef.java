@@ -1,7 +1,18 @@
+/*
+ * Copyright (c) 2020, Mulesoft, LLC. All rights reserved.
+ * Use of this source code is governed by a BSD 3-Clause License
+ * license that can be found in the LICENSE.txt file.
+ */
 package com.mulesoft.tools.migration.library.applicationflow;
 
 import org.jdom2.Element;
 
+/**
+ * Models a flow ref 
+ *
+ * @author Mulesoft Inc.
+ * @since 1.3.0
+ */
 public class FlowRef extends MessageProcessor {
 
   private Flow source;
