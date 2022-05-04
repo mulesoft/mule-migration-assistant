@@ -49,12 +49,6 @@
                 <module>mule-migration-tool-tests</module>
             </modules>
         </profile>
-        <profile>
-            <id>compatibility</id>
-            <modules>
-                <module>compatibility</module>
-            </modules>
-        </profile>
     </profiles>
 
     <properties>
