@@ -187,15 +187,19 @@ public class SftpInboundEndpoint extends AbstractSftpEndpoint {
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
     migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
 
-    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    expressionsPerProperty.put("originalFilename", "message.attributes.name");
-    expressionsPerProperty.put("filename", "message.attributes.name");
-
     try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.sftp.api.SftpFileAttributes", expressionsPerProperty);
+      addAttributesMapping(getApplicationModel(), "org.mule.extension.sftp.api.SftpFileAttributes",
+                           inboundToAttributesExpressions());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static Map<String, String> inboundToAttributesExpressions() {
+    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
+    expressionsPerProperty.put("originalFilename", "message.attributes.name");
+    expressionsPerProperty.put("filename", "message.attributes.name");
+    return expressionsPerProperty;
   }
 
 }

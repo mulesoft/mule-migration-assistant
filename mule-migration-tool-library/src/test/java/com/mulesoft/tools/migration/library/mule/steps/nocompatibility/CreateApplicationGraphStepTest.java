@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020, Mulesoft, LLC. All rights reserved.
+ * Use of this source code is governed by a BSD 3-Clause License
+ * license that can be found in the LICENSE.txt file.
+ */
 package com.mulesoft.tools.migration.library.mule.steps.nocompatibility;
 
 import com.google.common.collect.ImmutableMap;
@@ -43,7 +48,7 @@ public class CreateApplicationGraphStepTest {
   private Document doc;
   private ApplicationModel applicationModel;
   private CreateApplicationGraphStep step;
- 
+
 
   @Parameterized.Parameters(name = "{0}")
   public static Object[] params() {
