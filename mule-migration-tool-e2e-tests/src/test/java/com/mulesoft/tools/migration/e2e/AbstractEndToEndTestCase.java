@@ -120,7 +120,7 @@ public abstract class AbstractEndToEndTestCase {
     command.add("-muleVersion");
     command.add(RUNTIME_VERSION);
     command.add("-projectGAV");
-    command.add(":" + projectName.replaceAll(".*/", "") + ":");
+    command.add(":" + projectName.replaceAll(".*[/\\\\]", "") + ":");
     command.add("-jsonReport");
 
     return command;

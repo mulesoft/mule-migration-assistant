@@ -50,7 +50,7 @@ public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
       if (!dir.isDirectory())
         return;
       if (Arrays.asList(dir.list()).contains("input")) {
-        String test = dir.getPath().replaceFirst(".*/e2e/", "");
+        String test = dir.getPath().replaceFirst(".*[/\\\\]e2e[/\\\\]", "");
         if (test.matches(TEST_INCLUDE) && !test.matches(TEST_EXCLUDE)) {
           acu.put(test, resolveParams(dir));
         }
