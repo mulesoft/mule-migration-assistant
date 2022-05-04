@@ -28,7 +28,8 @@ public abstract class AbstractUnsupportedElementsMigrationStep extends AbstractA
 
   public AbstractUnsupportedElementsMigrationStep(Namespace namespace) {
     checkArgument(getUnsupportedElements() != null, "The unsupported elements list must not be null.");
-    this.setAppliedTo(XmlDslUtils.getAllElementsFromNamespaceXpathSelector(namespace.getURI(), getUnsupportedElements(), false, false));
+    this.setAppliedTo(XmlDslUtils.getAllElementsFromNamespaceXpathSelector(namespace.getURI(), getUnsupportedElements(), false,
+                                                                           false));
     this.setNamespacesContributions(newArrayList(namespace));
   }
 

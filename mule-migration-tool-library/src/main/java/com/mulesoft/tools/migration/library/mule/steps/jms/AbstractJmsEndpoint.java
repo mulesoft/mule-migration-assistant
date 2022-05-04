@@ -52,6 +52,15 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
   private ExpressionMigrator expressionMigrator;
 
   public static void addAttributesToInboundProperties(Element object, ApplicationModel appModel, MigrationReport report) {
+    try {
+      addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", inboundToAttributesExpressions(),
+                           "message.attributes.properties.userProperties");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static Map<String, String> inboundToAttributesExpressions() {
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("JMSCorrelationID", "message.attributes.headers.correlationId");
     expressionsPerProperty.put("MULE_CORRELATION_ID", "message.attributes.headers.correlationId");
@@ -64,13 +73,7 @@ public abstract class AbstractJmsEndpoint extends AbstractApplicationModelMigrat
     expressionsPerProperty.put("JMSReplyTo", "message.attributes.headers.replyTo.destination");
     expressionsPerProperty.put("JMSTimestamp", "message.attributes.headers.timestamp");
     expressionsPerProperty.put("JMSType", "message.attributes.headers['type']");
-
-    try {
-      addAttributesMapping(appModel, "org.mule.extensions.jms.api.message.JmsAttributes", expressionsPerProperty,
-                           "message.attributes.properties.userProperties");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return expressionsPerProperty;
   }
 
   public static Element compatibilityProperties(ApplicationModel appModel) {

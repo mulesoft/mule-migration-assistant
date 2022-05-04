@@ -151,16 +151,21 @@ public class FtpInboundEndpoint extends AbstractFtpEndpoint {
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
     migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
 
+    try {
+      addAttributesMapping(getApplicationModel(), "org.mule.extension.ftp.api.ftp.FtpFileAttributes",
+                           inboundToAttributesExpressions());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static Map<String, String> inboundToAttributesExpressions() {
     Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
     expressionsPerProperty.put("originalFilename", "message.attributes.name");
     expressionsPerProperty.put("fileSize", "message.attributes.size");
     expressionsPerProperty.put("timestamp", "message.attributes.timestamp");
 
-    try {
-      addAttributesMapping(getApplicationModel(), "org.mule.extension.ftp.api.ftp.FtpFileAttributes", expressionsPerProperty);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return expressionsPerProperty;
   }
 
 }
