@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <munit:config name="munit-test" doc:name="MUnit configuration" />
+
+    <munit:test name="munit-test-mock" description="Test">
+        <munit:behavior>
+            <munit-tools:mock-when processor=".*:.*" doc:name="Mock">
+                <munit-tools:with-attributes>
+                    <munit-tools:with-attribute attributeName="doc:name" whereValue="#['Set Payload']" />
+                </munit-tools:with-attributes>
+                <munit-tools:then-return>
+                    <munit-tools:payload value="#['mock']" encoding="UTF-8" />
+                </munit-tools:then-return>
+            </munit-tools:mock-when>
+        </munit:behavior>
+        <munit:execution>
+            <flow-ref name="simplemunitFlow" doc:name="Flow-ref to simplemunitFlow" />
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that message="#['Not the same']" is="#[MunitTools::equalTo('mock')]" doc:name="Assert Payload" expression="#[payload]" />
+        </munit:validation>
+    </munit:test>
+
+</mule>

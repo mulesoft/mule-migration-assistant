@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:request-config name="ProductDataSourceRepositoryRequestConfig">
+        <http:request-connection host="localhost" port="8080" />
+    </http:request-config>
+
+    <flow name="ProductDataSourceRepository">
+        <compatibility:outbound-properties-to-var>
+            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:outbound-properties-to-var>
+
+        <http:request method="POST" path="/" config-ref="ProductDataSourceRepositoryRequestConfig">
+            <http:headers>#[migration::HttpRequester::httpRequesterTransportHeaders(vars)]</http:headers>
+        </http:request>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+    </flow>
+
+</mule>

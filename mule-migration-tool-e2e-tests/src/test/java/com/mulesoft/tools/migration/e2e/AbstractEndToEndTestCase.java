@@ -171,7 +171,7 @@ public abstract class AbstractEndToEndTestCase {
           .build();
       assertFalse(d.toString(), d.hasDifferences());
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      fail(e.toString());
     }
   }
 

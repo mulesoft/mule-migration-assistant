@@ -1,0 +1,339 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0"
+  ],
+  "numberOfMuleComponents": 32,
+  "numberOfMuleComponentsMigrated": 30,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "domain:mule-domain": {
+      "success": 1,
+      "failure": 0
+    },
+    "error-handler": {
+      "success": 1,
+      "failure": 0
+    },
+    "on-error-continue": {
+      "success": 2,
+      "failure": 0
+    },
+    "flow": {
+      "success": 2,
+      "failure": 0
+    },
+    "flow-ref": {
+      "success": 1,
+      "failure": 0
+    },
+    "set-payload": {
+      "success": 2,
+      "failure": 0
+    },
+    "configuration": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener-config": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:request-config": {
+      "success": 2,
+      "failure": 0
+    },
+    "http:listener": {
+      "success": 2,
+      "failure": 0
+    },
+    "http:request": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:query-params": {
+      "success": 1,
+      "failure": 0
+    },
+    "custom-processor": {
+      "success": 0,
+      "failure": 2
+    },
+    "compatibility:set-property": {
+      "success": 4,
+      "failure": 0
+    },
+    "compatibility:remove-property": {
+      "success": 2,
+      "failure": 0
+    },
+    "api-platform-gw:description": {
+      "success": 1,
+      "failure": 0
+    },
+    "api-gateway:autodiscovery": {
+      "success": 1,
+      "failure": 0
+    },
+    "expression-language:property-placeholder": {
+      "success": 1,
+      "failure": 0
+    },
+    "proxy:request-headers": {
+      "success": 1,
+      "failure": 0
+    },
+    "proxy:response-headers": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:request-connection": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 6,
+  "numberOfMELExpressionsMigrated": 4,
+  "numberOfMELExpressionLines": 6,
+  "numberOfMELExpressionLinesMigrated": 4,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "proxy.descriptionTagMigrationStep",
+      "component": "api-platform-gw:description",
+      "lineNumber": -1,
+      "columnNumber": -1,
+      "message": "Description element will not be migrated.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.java",
+      "component": "custom-processor",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Element \u0027custom-processor\u0027 which relied on Java no longer exists in Mule 4. Replace its uses with a new Mule 4 feature.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:remove-property",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:remove-property",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "expressions.methodInvocation",
+      "component": "set-payload",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "The MEL expression contains a method invocation that could not be migrated to a Dataweave expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "expressions.melToDw",
+      "component": "set-payload",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "The MEL expression could not be migrated to a DataWeave expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "proxy.templates",
+      "component": "proxy:config",
+      "lineNumber": 4,
+      "columnNumber": 39,
+      "message": "Proxy templates have changed in Mule 4. You can review them in Exchange to compare them to this migrated proxy.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "INFO",
+      "key": "configuration.processingStrategy",
+      "component": "configuration",
+      "lineNumber": 4,
+      "columnNumber": 39,
+      "message": "The \u0027configuration\u0027 element no longer has a \u0027defaultProcessingStrategy\u0027 attribute.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "apiDiscovery.apiId",
+      "component": "api-gateway:autodiscovery",
+      "lineNumber": 21,
+      "columnNumber": 66,
+      "message": "APIs in Mule 4 have an identifier, the equivalent should be: \u0027:\u0027.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 35,
+      "columnNumber": 79,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.parseResponse",
+      "component": "http:request",
+      "lineNumber": 50,
+      "columnNumber": 57,
+      "message": "\u0027parseResponse\u0027 is not needed in Mule 4 because DataWeave 2.0 now handles those MIME types.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.mapExpression",
+      "component": "http:request",
+      "lineNumber": 50,
+      "columnNumber": 57,
+      "message": "Build the \u0027query-params\u0027 map with a single DataWeave expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "expressions.melToDw",
+      "component": "http:request",
+      "lineNumber": 50,
+      "columnNumber": 57,
+      "message": "The MEL expression could not be migrated to a DataWeave expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 57,
+      "columnNumber": 89,
+      "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.java",
+      "component": "custom-processor",
+      "lineNumber": 59,
+      "columnNumber": 46,
+      "message": "Element \u0027custom-processor\u0027 which relied on Java no longer exists in Mule 4. Replace its uses with a new Mule 4 feature.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

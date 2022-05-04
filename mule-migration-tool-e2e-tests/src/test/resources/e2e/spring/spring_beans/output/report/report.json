@@ -1,0 +1,34 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 4,
+  "numberOfMuleComponentsMigrated": 4,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "set-payload": {
+      "success": 1,
+      "failure": 0
+    },
+    "spring-beans:bean": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": []
+}

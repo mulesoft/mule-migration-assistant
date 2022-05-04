@@ -1,0 +1,54 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 13,
+  "numberOfMuleComponentsMigrated": 13,
+  "componentDetails": {
+    "mule": {
+      "success": 2,
+      "failure": 0
+    },
+    "logger": {
+      "success": 2,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow-ref": {
+      "success": 1,
+      "failure": 0
+    },
+    "choice": {
+      "success": 1,
+      "failure": 0
+    },
+    "set-payload": {
+      "success": 2,
+      "failure": 0
+    },
+    "import": {
+      "success": 2,
+      "failure": 0
+    },
+    "munit:test": {
+      "success": 1,
+      "failure": 0
+    },
+    "munit:config": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 6,
+  "numberOfMELExpressionsMigrated": 6,
+  "numberOfMELExpressionLines": 6,
+  "numberOfMELExpressionLinesMigrated": 6,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": []
+}

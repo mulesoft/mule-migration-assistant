@@ -1,0 +1,57 @@
+{
+  "projectType": "MULE_THREE_MAVEN_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-objectstore-connector:1.2.1"
+  ],
+  "numberOfMuleComponents": 6,
+  "numberOfMuleComponentsMigrated": 5,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 2,
+      "failure": 0
+    },
+    "os:object-store": {
+      "success": 1,
+      "failure": 0
+    },
+    "os:store": {
+      "success": 1,
+      "failure": 1
+    }
+  },
+  "numberOfMELExpressions": 2,
+  "numberOfMELExpressionsMigrated": 2,
+  "numberOfMELExpressionLines": 2,
+  "numberOfMELExpressionLinesMigrated": 2,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "INFO",
+      "key": "os.config",
+      "component": "os:object-store",
+      "lineNumber": 4,
+      "columnNumber": 111,
+      "message": "In Mule 4, you no longer need to create a Spring bean to declare an Object Store.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "os.store",
+      "component": "os:store",
+      "lineNumber": 11,
+      "columnNumber": 80,
+      "message": "The exception thrown by the Object Store has changed.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

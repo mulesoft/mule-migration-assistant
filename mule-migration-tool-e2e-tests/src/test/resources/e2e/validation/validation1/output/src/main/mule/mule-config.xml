@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="isTrue">
+        <validation:is-true expression="#[payload]" />
+
+    </flow>
+
+    <flow name="isFalse">
+        <validation:is-false expression="#[payload]" />
+
+    </flow>
+
+    <flow name="isNull">
+        <validation:is-null value="#[payload]" />
+
+    </flow>
+
+    <flow name="all">
+        <validation:all>
+            <validation:is-url url="#[vars.urlNested]" />
+            <validation:is-email email="#[vars.emailNested]" />
+        </validation:all>
+
+    </flow>
+
+</mule>

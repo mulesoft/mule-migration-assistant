@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <configuration-properties file="sample.properties">
+        <!--Migration ERROR: Spring-specific attributes are no longer available. The default behavior cannot be changed in Mule 4.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/configuring-properties-->
+        <!--<context:property-placeholder xmlns:context="http://www.springframework.org/schema/context" location="sample.properties" system-properties-mode="OVERRIDE" />-->
+    </configuration-properties>
+
+    <flow name="flow1">
+        <logger message="${sample}" />
+
+    </flow>
+
+</mule>

@@ -1,0 +1,28 @@
+{
+  "projectType": "MULE_THREE_DOMAIN",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0"
+  ],
+  "numberOfMuleComponents": 2,
+  "numberOfMuleComponentsMigrated": 2,
+  "componentDetails": {
+    "domain:mule-domain": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener-config": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": []
+}

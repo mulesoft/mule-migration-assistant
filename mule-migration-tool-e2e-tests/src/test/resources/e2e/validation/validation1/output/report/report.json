@@ -1,0 +1,54 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 13,
+  "numberOfMuleComponentsMigrated": 13,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 4,
+      "failure": 0
+    },
+    "validation:is-true": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:is-false": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:is-null": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:all": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:validations": {
+      "success": 2,
+      "failure": 0
+    },
+    "validation:is-url": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:is-email": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 5,
+  "numberOfMELExpressionsMigrated": 5,
+  "numberOfMELExpressionLines": 5,
+  "numberOfMELExpressionLinesMigrated": 5,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": []
+}

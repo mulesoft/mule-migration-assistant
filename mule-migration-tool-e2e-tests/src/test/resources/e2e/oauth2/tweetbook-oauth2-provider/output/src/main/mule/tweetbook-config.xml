@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:oauth2-provider="http://www.mulesoft.org/schema/mule/oauth2-provider" xmlns:spring-module="http://www.mulesoft.org/schema/mule/spring" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd http://www.mulesoft.org/schema/mule/oauth2-provider http://www.mulesoft.org/schema/mule/oauth2-provider/current/mule-oauth2-provider.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <configuration-properties file="bookstore.properties" />
+
+    <spring-module:security-manager>
+        <spring-module:delegate-security-provider name="resourceOwnerSecurityProvider" delegate-ref="resourceOwnerAuthenticationManager" />
+    </spring-module:security-manager>
+
+    <oauth2-provider:config name="oauth2Provider" providerName="TweetBook" resourceOwnerSecurityProvider="resourceOwnerSecurityProvider" scopes="READ_PROFILE,WRITE_PROFILE,READ_BOOKSHELF,WRITE_BOOKSHELF" listenerConfig="oauth2Provider_httpListenerConfig">
+        <oauth2-provider:token-config path="/tweetbook/api/token" />
+        <oauth2-provider:authorization-config path="/tweetbook/api/authorize" />
+        <oauth2-provider:clients>
+            <oauth2-provider:client clientId="${client_id}" secret="${client_secret}" type="CONFIDENTIAL" clientName="Mule Bookstore" description="Mule-powered On-line Bookstore">
+                <oauth2-provider:client-redirect-uris>
+                    <oauth2-provider:client-redirect-uri value="http://localhost*" />
+                </oauth2-provider:client-redirect-uris>
+                <oauth2-provider:client-authorized-grant-types>
+                    <oauth2-provider:client-authorized-grant-type value="AUTHORIZATION_CODE" />
+                </oauth2-provider:client-authorized-grant-types>
+                <oauth2-provider:client-scopes>
+                    <oauth2-provider:client-scope value="READ_PROFILE" />
+                    <oauth2-provider:client-scope value="READ_BOOKSHELF" />
+                    <oauth2-provider:client-scope value="WRITE_BOOKSHELF" />
+                    <oauth2-provider:client-scope value="WRITE_PROFILE" />
+                </oauth2-provider:client-scopes>
+            </oauth2-provider:client>
+        </oauth2-provider:clients>
+    </oauth2-provider:config>
+
+    <http:listener-config name="oauth2Provider_httpListenerConfig">
+        <http:listener-connection host="localhost" port="${httpPort}" />
+    </http:listener-config>
+
+    <http:listener-config name="publicProfileListenerConfig">
+        <http:listener-connection host="localhost" port="${httpPort2}" />
+    </http:listener-config>
+
+    <spring-module:config name="springConfig_tweetbook-config" files="spring/tweetbook-config-beans.xml" />
+
+    <flow name="publicProfile">
+        <http:listener doc:name="Profile API" config-ref="publicProfileListenerConfig" path="/tweetbook/api/profile/*">
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <choice>
+            <!--Migration WARN: This replicates logic from the HTTP transport. Remove it if it is not needed.-->
+            <when expression="#[message.attributes.headers['Transfer-Encoding'] == null and (message.attributes.headers['Content-Length'] as Number default 0) == 0]">
+                <set-payload value="#[message.attributes.requestUri]" />
+            </when>
+        </choice>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+        <oauth2-provider:validate-token scopes="#[['READ_PROFILE']]" config-ref="oauth2Provider">
+            <!--Migration ERROR: Validations always raise an error when the condition is not met.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-filters#applying_filters-->
+        </oauth2-provider:validate-token>
+
+        <!--         <component class="org.mule.security.examples.oauth2.ProfileLookupComponent" doc:name="Profile Lookup"/> -->
+        <logger />
+
+        <compatibility:outbound-properties-to-var>
+            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:outbound-properties-to-var>
+
+    </flow>
+
+    <flow name="publicBookshelf">
+        <http:listener doc:name="Bookshelf API" config-ref="publicProfileListenerConfig" path="/tweetbook/api/bookshelf/*">
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <choice>
+            <!--Migration WARN: This replicates logic from the HTTP transport. Remove it if it is not needed.-->
+            <when expression="#[message.attributes.headers['Transfer-Encoding'] == null and (message.attributes.headers['Content-Length'] as Number default 0) == 0]">
+                <set-payload value="#[message.attributes.requestUri]" />
+            </when>
+        </choice>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+        <oauth2-provider:validate-token scopes="#[['READ_BOOKSHELF']]" config-ref="oauth2Provider">
+            <!--Migration ERROR: Validations always raise an error when the condition is not met.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-filters#applying_filters-->
+        </oauth2-provider:validate-token>
+
+        <set-payload value="The Lord of the Rings,The Hitchhiker's Guide to the Galaxy" doc:name="Retrieve Bookshelf" />
+
+        <compatibility:outbound-properties-to-var>
+            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:outbound-properties-to-var>
+
+    </flow>
+
+</mule>

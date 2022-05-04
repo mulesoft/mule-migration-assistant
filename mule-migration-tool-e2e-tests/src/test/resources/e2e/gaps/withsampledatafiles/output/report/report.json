@@ -1,0 +1,41 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 3,
+  "numberOfMuleComponentsMigrated": 3,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "ee:transform": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 1,
+  "numberOfDWTransformationsMigrated": 1,
+  "numberOfDWTransformationLines": 8,
+  "numberOfDWTransformationLinesMigrated": 8,
+  "detailedMessages": [
+    {
+      "level": "ERROR",
+      "key": "transform.studioCustomTypes",
+      "component": "ee:transform",
+      "lineNumber": 7,
+      "columnNumber": 52,
+      "message": "Custom types defined in Studio 6 are not migrated to Studio 7.",
+      "filePath": "src/main/mule/withsampledatafiles.xml",
+      "documentationLinks": []
+    }
+  ]
+}

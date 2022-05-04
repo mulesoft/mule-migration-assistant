@@ -1,0 +1,36 @@
+{
+  "projectType": "MULE_THREE_MAVEN_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-objectstore-connector:1.2.1"
+  ],
+  "numberOfMuleComponents": 4,
+  "numberOfMuleComponentsMigrated": 4,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "logger": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "scheduler": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 1,
+  "numberOfMELExpressionsMigrated": 1,
+  "numberOfMELExpressionLines": 1,
+  "numberOfMELExpressionLinesMigrated": 1,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": []
+}

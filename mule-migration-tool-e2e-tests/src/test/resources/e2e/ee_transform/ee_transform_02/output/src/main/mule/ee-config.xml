@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="ee-transform-03Flow">
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload resource="payload.dwl" />
+            </ee:message>
+            <ee:variables>
+                <ee:set-variable resource="property.dwl" variableName="prop" />
+            </ee:variables>
+        </ee:transform>
+
+        <compatibility:set-property propertyName="prop" value="#[vars.prop]">
+            <!--Migration WARN: Instead of setting outbound properties in the flow, you must set Mule 4 variables.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:set-property>
+
+        <logger />
+
+    </flow>
+
+</mule>

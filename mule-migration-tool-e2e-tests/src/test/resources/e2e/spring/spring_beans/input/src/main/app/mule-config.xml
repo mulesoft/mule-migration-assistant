@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:spring-beans="http://www.springframework.org/schema/beans"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
+
+    <spring-beans:bean class="org.myapp.MyBean"/>
+    
+    <flow name="contentType" >
+        <set-payload value="{ &quot;key1&quot; : &quot;value, &quot;key2&quot; : 2 }" mimeType="application/json" encoding="UTF-8"/>
+    </flow>
+    
+</mule>

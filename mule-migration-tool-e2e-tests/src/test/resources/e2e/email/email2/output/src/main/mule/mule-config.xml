@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+
+    <email:imap-config name="ImapConfig">
+        <email:imap-connection host="localhost" port="${imapPort}" user="bob" password="secret" />
+    </email:imap-config>
+
+    <email:smtp-config name="SmtpConfig">
+        <email:smtp-connection host="localhost" port="${smtpPort}" user="alice" password="secret" />
+    </email:smtp-config>
+
+    <vm:config name="VmConfig">
+        <vm:queues>
+            <vm:queue queueName="sink" queueType="TRANSIENT" />
+            <vm:queue queueName="rfc822" queueType="TRANSIENT" />
+        </vm:queues>
+    </vm:config>
+
+    <flow name="source">
+        <email:listener-imap config-ref="ImapConfig">
+            <scheduling-strategy>
+                <fixed-frequency />
+            </scheduling-strategy>
+        </email:listener-imap>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+        <async>
+            <compatibility:outbound-properties-to-var consumeStreams="true">
+                <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+            </compatibility:outbound-properties-to-var>
+            <vm:publish config-ref="VmConfig" queueName="sink">
+                <vm:content>
+                    <!--Migration WARN: You can remove this if this flow is not using 'sessionVariables' or after migrating them to variables.-->
+                    <!--    For more information refer to:-->
+                    <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#session_variables-->
+                    <![CDATA[#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType, 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]]]>
+                </vm:content>
+            </vm:publish>
+            <compatibility:attributes-to-inbound-properties>
+                <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+                <!--    For more information refer to:-->
+                <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+            </compatibility:attributes-to-inbound-properties>
+        </async>
+
+    </flow>
+
+    <flow name="sink">
+        <vm:listener config-ref="VmConfig" queueName="sink">
+            <vm:response>
+                <vm:content>
+                    <!--Migration WARN: You can remove this if this flow is not using 'sessionVariables' or after migrating them to variables.-->
+                    <!--    For more information refer to:-->
+                    <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#session_variables-->
+                    <![CDATA[#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType, 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]]]>
+                </vm:content>
+            </vm:response>
+        </vm:listener>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+        <logger />
+
+        <scatter-gather>
+            <route>
+                <async>
+                    <compatibility:outbound-properties-to-var consumeStreams="true">
+                        <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+                        <!--    For more information refer to:-->
+                        <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                    </compatibility:outbound-properties-to-var>
+                    <vm:publish config-ref="VmConfig" queueName="rfc822">
+                        <vm:content>
+                            <!--Migration WARN: You can remove this if this flow is not using 'sessionVariables' or after migrating them to variables.-->
+                            <!--    For more information refer to:-->
+                            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#session_variables-->
+                            <![CDATA[#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType, 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]]]>
+                        </vm:content>
+                    </vm:publish>
+                    <compatibility:attributes-to-inbound-properties>
+                        <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+                        <!--    For more information refer to:-->
+                        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+                        <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+                    </compatibility:attributes-to-inbound-properties>
+                </async>
+            </route>
+            <route>
+                <compatibility:outbound-properties-to-var>
+                    <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+                    <!--    For more information refer to:-->
+                    <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                </compatibility:outbound-properties-to-var>
+                <email:send config-ref="SmtpConfig" fromAddress="#[vars.compatibility_outboundProperties.fromAddress]" subject="#[vars.compatibility_outboundProperties.subject]">
+                    <!--Migration ERROR: Use the inline configuration of the operation instead of relying on properties set before this endpoint.-->
+                    <!--    For more information refer to:-->
+                    <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-email#migrating-an-smtp-outbound-endpoint-->
+                    <email:to-addresses>
+                        <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars)]" />
+                    </email:to-addresses>
+                    <email:cc-addresses>
+                        <email:cc-address value="#[migration::SmtpTransport::smptCcAddress(vars)]" />
+                    </email:cc-addresses>
+                    <email:bcc-addresses>
+                        <email:bcc-address value="#[migration::SmtpTransport::smptBccAddress(vars)]" />
+                    </email:bcc-addresses>
+                    <email:reply-to-addresses>
+                        <email:reply-to-address value="#[migration::SmtpTransport::smptReplyToAddress(vars)]" />
+                    </email:reply-to-addresses>
+                    <email:headers>#[vars.compatibility_outboundProperties.customHeaders]</email:headers>
+                    <email:body contentType="#[payload.^mimeType]">
+                        <email:content>#[payload]</email:content>
+                    </email:body>
+                    <email:attachments>#[vars filterObject ((value,key) -&gt; ((key as String) startsWith 'att_')) pluck ((value, key, index) -&gt; value)]</email:attachments>
+                </email:send>
+            </route>
+        </scatter-gather>
+
+    </flow>
+
+</mule>

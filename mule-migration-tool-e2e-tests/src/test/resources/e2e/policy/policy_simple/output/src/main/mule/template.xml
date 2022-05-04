@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:http-policy="http://www.mulesoft.org/schema/mule/http-policy" xmlns:http-transform="http://www.mulesoft.org/schema/mule/http-policy-transform" xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http-policy-transform http://www.mulesoft.org/schema/mule/http-policy-transform/current/mule-http-policy-transform.xsd http://www.mulesoft.org/schema/mule/http-policy http://www.mulesoft.org/schema/mule/http-policy/current/mule-http-policy.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http-policy:proxy name="simplePolicy">
+        <http-policy:source>
+            <compatibility:set-property propertyName="customRequestHeader" value="customRequestValue">
+                <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+            </compatibility:set-property>
+            <compatibility:set-property propertyName="overrideThisRequestHeader" value="overriddenValue">
+                <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+            </compatibility:set-property>
+            <compatibility:outbound-properties-to-var />
+            <http-transform:set-response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <http-transform:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http-transform:headers>
+            </http-transform:set-response>
+            <http-policy:execute-next />
+            <compatibility:set-property propertyName="customResponseHeader" value="customResponseValue">
+                <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+            </compatibility:set-property>
+            <compatibility:outbound-properties-to-var />
+            <http-transform:set-response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <http-transform:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http-transform:headers>
+            </http-transform:set-response>
+        </http-policy:source>
+    </http-policy:proxy>
+
+</mule>

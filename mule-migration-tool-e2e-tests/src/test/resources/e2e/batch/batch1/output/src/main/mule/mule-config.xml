@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="dispatcher">
+        <flow-ref name="#[vars.compatibility_inboundProperties['batchName']]" />
+
+        <set-payload value="10" />
+
+    </flow>
+
+    <flow name="concurrent">
+        <set-payload value="'hey apple!'" />
+
+        <batch:job jobName="concurrent" schedulingStrategy="ROUND_ROBIN">
+            <batch:history>
+                <batch:expiration maxAge="10" ageUnit="SECONDS" />
+            </batch:history>
+            <batch:process-records>
+                <batch:step name="firstStep" acceptExpression="#[payload == 'hey apple!']">
+                    <batch:aggregator size="10">
+                        <set-payload value="#[payload[0]]" />
+                    </batch:aggregator>
+                </batch:step>
+                <batch:step name="secondStep">
+                    <flow-ref name="upperCasePipe" />
+                    <logger message="something" />
+                </batch:step>
+            </batch:process-records>
+            <batch:on-complete>
+                <logger message="something" />
+            </batch:on-complete>
+        </batch:job>
+
+    </flow>
+
+    <sub-flow name="upperCasePipe">
+        <set-payload value="#[mel:payload + '|' + payload.toUpperCase()]">
+            <!--Migration WARN: The MEL expression could not be migrated to a DataWeave expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-mel-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#mel_expressions-->
+            <!--        * https://blogs.mulesoft.com/dev/mule-dev/why-dataweave-main-expression-language-mule-4-->
+            <!--Migration WARN: The MEL expression contains a method invocation that could not be migrated to a Dataweave expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/dataweave-cookbook-java-methods-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-mel-->
+        </set-payload>
+    </sub-flow>
+
+</mule>

@@ -1,0 +1,69 @@
+{
+  "projectType": "MULE_THREE_MAVEN_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "com.mulesoft.connectors:mule-amqp-connector:1.7.3"
+  ],
+  "numberOfMuleComponents": 10,
+  "numberOfMuleComponentsMigrated": 10,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 2,
+      "failure": 0
+    },
+    "amqp:listener": {
+      "success": 2,
+      "failure": 0
+    },
+    "amqp:publish": {
+      "success": 2,
+      "failure": 0
+    },
+    "amqp:ack": {
+      "success": 1,
+      "failure": 0
+    },
+    "amqp:reject": {
+      "success": 1,
+      "failure": 0
+    },
+    "amqp:connector": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "amqp.exchangeDefinition",
+      "component": "amqp:listener",
+      "lineNumber": 9,
+      "columnNumber": 106,
+      "message": "No Exchange Definition is allowed in a listener in Mule 4. You can define a fallback queue, but bindings and exchanges must be previously declared.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "amqp.exchangeDefinition",
+      "component": "amqp:listener",
+      "lineNumber": 25,
+      "columnNumber": 106,
+      "message": "No Exchange Definition is allowed in a listener in Mule 4. You can define a fallback queue, but bindings and exchanges must be previously declared.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

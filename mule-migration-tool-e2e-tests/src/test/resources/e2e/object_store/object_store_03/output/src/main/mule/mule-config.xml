@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <os:object-store name="OS_Config" entryTtl="2" expirationInterval="200" maxEntries="10" persistent="true">
+        <!--Migration INFO: In Mule 4, you no longer need to create a Spring bean to declare an Object Store.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-objectstore#custom-object-store-->
+    </os:object-store>
+
+    <flow name="objStore1">
+        <os:contains objectStore="OS_Config" key="#[payload]" />
+
+    </flow>
+
+</mule>

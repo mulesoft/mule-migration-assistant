@@ -1,0 +1,66 @@
+{
+  "projectType": "MULE_THREE_MAVEN_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 23,
+  "numberOfMuleComponentsMigrated": 23,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 9,
+      "failure": 0
+    },
+    "validation:is-email": {
+      "success": 2,
+      "failure": 0
+    },
+    "validation:is-ip": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:is-url": {
+      "success": 2,
+      "failure": 0
+    },
+    "validation:matches-regex": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:validate-size": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:is-true": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:is-false": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:is-null": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:all": {
+      "success": 1,
+      "failure": 0
+    },
+    "validation:validations": {
+      "success": 2,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 14,
+  "numberOfMELExpressionsMigrated": 14,
+  "numberOfMELExpressionLines": 14,
+  "numberOfMELExpressionLinesMigrated": 14,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": []
+}

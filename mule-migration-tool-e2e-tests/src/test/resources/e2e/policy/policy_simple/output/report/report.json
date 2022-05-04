@@ -1,0 +1,79 @@
+{
+  "projectType": "MULE_THREE_POLICY",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 11,
+  "numberOfMuleComponentsMigrated": 11,
+  "componentDetails": {
+    "compatibility:set-property": {
+      "success": 6,
+      "failure": 0
+    },
+    "mule": {
+      "success": 2,
+      "failure": 0
+    },
+    "http-policy:proxy": {
+      "success": 1,
+      "failure": 0
+    },
+    "after": {
+      "success": 1,
+      "failure": 0
+    },
+    "pointcut": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "INFO",
+      "key": "basicStructure.pointcutMigrationStepResolvedByRuntime",
+      "component": "pointcut",
+      "lineNumber": -1,
+      "columnNumber": -1,
+      "message": "Api pointcut is resolved by the Mule runtime engine automatically.",
+      "filePath": "src/main/mule/template.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/template.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/template.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 5,
+      "columnNumber": 29,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/template.xml",
+      "documentationLinks": []
+    }
+  ]
+}

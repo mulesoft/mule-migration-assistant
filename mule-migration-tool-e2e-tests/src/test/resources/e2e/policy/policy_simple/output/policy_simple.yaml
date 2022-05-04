@@ -1,0 +1,117 @@
+id: simple-policy-example
+name: Simple Policy Example
+supportedPoliciesVersions: '>=v5'
+description: |
+  Enforces use of an OAuth 2.0 access token issued through an OAuth 2.0 external provider.
+
+  This policy will require updates to the RAML definition in order to function. You can obtain the RAML snippet and learn more [here](https://github.com/raml-org/raml-spec/blob/master/versions/raml-08/raml-08.md#security).
+category: Security
+violationCategory: authentication
+type: system
+resourceLevelSupported: true
+standalone: true
+requiredCharacteristics: []
+providedCharacteristics: [OAuth 2.0 protected]
+configuration:
+- {propertyName: scopes, name: Scopes, description: A space-separated list of supported
+    scopes, type: string, defaultValue: null, optional: true, sensitive: false, allowMultiple: false}
+- {propertyName: tokenUrl, name: Access Token validation endpoint url, description: The
+    url of the Access Token validation endpoint of the External OAuth2 Provider.,
+  type: string, defaultValue: null, optional: false, sensitive: false, allowMultiple: false}
+- {propertyName: exposeHeaders, name: Expose Headers, description: 'In a proxy scenario,
+    defines if headers should be exposed in the request to the backend. The headers
+    that may be sent are the user properties returned by the federation server when
+    validating the access token with a ''X-AGW-'' prefix.', type: boolean, optional: true,
+  defaultValue: true, allowMultiple: false}
+ramlSnippet: |
+  OAuth based token enforcement policies require a security scheme to be defined in RAML. The snippet below is a sample that allows all OAuth grant types and uses the Authorization URI and the Access Token URI from your configuration.
+
+  ```
+  securitySchemes:
+    - oauth_2_0:
+        description: |
+          This API supports OAuth 2.0 for authenticating all API requests.
+        type: OAuth 2.0
+        describedBy:
+          headers:
+            authorization:
+              description: |
+                 Used to send a valid OAuth 2 access token. Do not use with the "access_token" query
+                 string parameter.
+              type: string
+          queryParameters:
+            access_token:
+              description: |
+                 Used to send a valid OAuth 2 access token. Do not use together with the "Authorization"
+                 header
+              type: string
+          responses:
+            401:
+              description: |
+                Bad or expired token. This can happen if the user or the API revoked or expired an
+                access token. To fix, you should re-authenticate the user.
+            403:
+              description: |
+                Bad OAuth request (wrong consumer key, bad nonce, expired timestamp...). Unfortunately,
+                re-authenticating the user won't help here.
+        settings:
+          authorizationUri: INSERT_OAUTH2_AUTHORIZATION_URI
+          accessTokenUri: INSERT_OAUTH2_ACCESS_TOKEN_URI
+          authorizationGrants: INSERT_OAUTH2_AUTHORIZATION_GRANTS
+  ```
+
+  To enforce this security scheme the API definition must use the `securedBy` RAML attribute as well.
+
+  ```
+  /users:
+    get:
+      securedBy: [oauth_2_0]
+  ```
+
+  Please read [Security](https://github.com/raml-org/raml-spec/blob/master/versions/raml-08/raml-08.md#security) section on RAML documention for more information.
+ramlV1Snippet: |-
+  OAuth based token enforcement policies require a security scheme to be defined in RAML. The snippet below is a sample that allows all OAuth grant types and uses the Authorization URI and the Access Token URI from your configuration.
+
+  ```
+  securitySchemes:
+    oauth_2_0:
+      description: |
+        This API supports OAuth 2.0 for authenticating all API requests.
+      type: OAuth 2.0
+      describedBy:
+        headers:
+          authorization:
+            description: |
+               Used to send a valid OAuth 2 access token. Do not use with the "access_token" query
+               string parameter.
+            type: string
+        queryParameters:
+          access_token:
+            description: |
+               Used to send a valid OAuth 2 access token. Do not use together with the "Authorization"
+               header
+            type: string
+        responses:
+          401:
+            description: |
+              Bad or expired token. This can happen if the user or the API revoked or expired an
+              access token. To fix, you should re-authenticate the user.
+          403:
+            description: |
+              Bad OAuth request (wrong consumer key, bad nonce, expired timestamp...). Unfortunately,
+              re-authenticating the user won't help here.
+      settings:
+        authorizationUri: INSERT_OAUTH2_AUTHORIZATION_URI
+        accessTokenUri: INSERT_OAUTH2_ACCESS_TOKEN_URI
+        authorizationGrants: INSERT_OAUTH2_AUTHORIZATION_GRANTS
+  ```
+
+  To enforce this security scheme the API definition must use the `securedBy` RAML attribute as well.
+
+  ```
+  /users:
+    get:
+      securedBy: [oauth_2_0]
+  ```
+
+  Please read [Security Schemes](https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md#security-schemes) section on RAML documention for more information.

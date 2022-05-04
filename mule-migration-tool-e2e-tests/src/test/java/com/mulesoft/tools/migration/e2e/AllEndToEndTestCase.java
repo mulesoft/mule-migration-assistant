@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static java.util.Objects.requireNonNull;
+
 
 @RunWith(Parameterized.class)
 public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
@@ -29,13 +31,13 @@ public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
 
   @Parameterized.Parameters(name = "{0}")
   public static Object[][] params() throws Exception {
-    File[] top = new File(getResourceUri("e2e")).listFiles();
-    Map<String, String> tests = new TreeMap<>();
-    gatherTests(top, tests);
+    File[] e2eResources = requireNonNull(new File(getResourceUri("e2e")).listFiles());
+    Map<String, String> e2eTests = new TreeMap<>();
+    collectTests(e2eResources, e2eTests);
 
-    Object[][] parameters = new String[tests.size()][2];
+    Object[][] parameters = new String[e2eTests.size()][2];
     int count = 0;
-    for (Map.Entry<String, String> entry : tests.entrySet()) {
+    for (Map.Entry<String, String> entry : e2eTests.entrySet()) {
       parameters[count][0] = entry.getKey();
       parameters[count][1] = entry.getValue();
       count++;
@@ -43,7 +45,7 @@ public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
     return parameters;
   }
 
-  private static void gatherTests(File[] dirs, Map<String, String> acu) throws Exception {
+  private static void collectTests(File[] dirs, Map<String, String> acu) throws Exception {
     for (File dir : dirs) {
       if (!dir.isDirectory())
         return;
@@ -53,7 +55,7 @@ public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
           acu.put(test, resolveParams(dir));
         }
       } else {
-        gatherTests(dir.listFiles(), acu);
+        collectTests(dir.listFiles(), acu);
       }
     }
   }

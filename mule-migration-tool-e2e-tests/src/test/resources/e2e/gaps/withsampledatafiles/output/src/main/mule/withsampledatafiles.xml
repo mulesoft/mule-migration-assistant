@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="withsampledatafilesFlow">
+        <set-payload value="#[payload]" mimeType="application/xml" />
+
+        <ee:transform doc:name="Transform Message">
+            <!--Migration ERROR: Custom types defined in Studio 6 are not migrated to Studio 7.-->
+            <ee:message>
+                <ee:set-payload resource="ttt.dwl" />
+            </ee:message>
+        </ee:transform>
+
+    </flow>
+
+</mule>

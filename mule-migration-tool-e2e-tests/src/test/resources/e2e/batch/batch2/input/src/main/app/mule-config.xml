@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+
+    <flow name="dispatcher">
+        <batch:execute name="#[message.inboundProperties['batchName']]"/>
+        <set-payload value="10"/>
+    </flow>
+
+    <batch:job name="concurrent" scheduling-strategy="ROUND_ROBIN">
+        <batch:input>
+            <set-payload value="'hey apple!'"/>
+        </batch:input>
+        <batch:process-records>
+            <batch:step name="firstStep" accept-expression="#[payload == 'hey apple!']">
+                <batch:commit size="10">
+                    <set-payload value="#[payload[0]]"/>
+                </batch:commit>
+            </batch:step>
+            <batch:step name="secondStep">
+                <flow-ref name="upperCasePipe"/>
+                <logger message="something"/>
+            </batch:step>
+        </batch:process-records>
+        <batch:on-complete>
+            <logger message="something"/>
+        </batch:on-complete>
+    </batch:job>
+
+    <batch:job name="concurrent2" scheduling-strategy="ROUND_ROBIN">
+        <batch:history>
+            <batch:expiration max-age="10" age-unit="SECONDS"/>
+        </batch:history>
+        <batch:process-records>
+            <batch:step name="firstStep" accept-expression="#[payload == 'hey apple!']">
+                <batch:commit size="10">
+                    <set-payload value="#[payload[0]]"/>
+                </batch:commit>
+            </batch:step>
+            <batch:step name="secondStep">
+                <logger message="something"/>
+            </batch:step>
+        </batch:process-records>
+    </batch:job>
+
+    <batch:job name="concurrent3">
+        <batch:history>
+            <batch:expiration max-age="10" age-unit="DAYS"/>
+        </batch:history>
+        <batch:process-records>
+            <batch:step name="firstStep">
+                <batch:commit size="10">
+                    <logger message="something else"/>
+                </batch:commit>
+            </batch:step>
+            <batch:step name="secondStep">
+                <logger message="something"/>
+            </batch:step>
+        </batch:process-records>
+    </batch:job>
+
+    <sub-flow name="upperCasePipe">
+        <set-payload value="#[payload + '|' + payload.toUpperCase()]"/>
+    </sub-flow>
+
+</mule>
+

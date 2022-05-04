@@ -1,0 +1,71 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 15,
+  "numberOfMuleComponentsMigrated": 15,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "logger": {
+      "success": 2,
+      "failure": 0
+    },
+    "flow": {
+      "success": 2,
+      "failure": 0
+    },
+    "flow-ref": {
+      "success": 2,
+      "failure": 0
+    },
+    "set-payload": {
+      "success": 4,
+      "failure": 0
+    },
+    "batch:step": {
+      "success": 2,
+      "failure": 0
+    },
+    "batch:aggregator": {
+      "success": 1,
+      "failure": 0
+    },
+    "batch:expiration": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 4,
+  "numberOfMELExpressionsMigrated": 3,
+  "numberOfMELExpressionLines": 4,
+  "numberOfMELExpressionLinesMigrated": 3,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "expressions.methodInvocation",
+      "component": "set-payload",
+      "lineNumber": 37,
+      "columnNumber": 75,
+      "message": "The MEL expression contains a method invocation that could not be migrated to a Dataweave expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "expressions.melToDw",
+      "component": "set-payload",
+      "lineNumber": 37,
+      "columnNumber": 75,
+      "message": "The MEL expression could not be migrated to a DataWeave expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

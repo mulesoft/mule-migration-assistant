@@ -1,0 +1,109 @@
+{
+  "projectType": "MULE_THREE_MAVEN_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-db-connector:1.12.1"
+  ],
+  "numberOfMuleComponents": 10,
+  "numberOfMuleComponentsMigrated": 10,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 4,
+      "failure": 0
+    },
+    "db:config": {
+      "success": 1,
+      "failure": 0
+    },
+    "db:select": {
+      "success": 1,
+      "failure": 0
+    },
+    "db:insert": {
+      "success": 1,
+      "failure": 0
+    },
+    "db:update": {
+      "success": 1,
+      "failure": 0
+    },
+    "db:delete": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 1,
+  "numberOfMELExpressionsMigrated": 1,
+  "numberOfMELExpressionLines": 1,
+  "numberOfMELExpressionLinesMigrated": 1,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "INFO",
+      "key": "db.jdbcUrlForSpecificEngine",
+      "component": "db:generic-connection",
+      "lineNumber": 5,
+      "columnNumber": 138,
+      "message": "The config in Mule 3 is specific for an engine, but it contained a \u0027url\u0027 attribute. It will be made generic to keep the URL.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 14,
+      "columnNumber": 51,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "INFO",
+      "key": "db.streaming",
+      "component": "db:select",
+      "lineNumber": 20,
+      "columnNumber": 42,
+      "message": "Streaming is enabled by default in Mule 4",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 30,
+      "columnNumber": 51,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 43,
+      "columnNumber": 51,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 56,
+      "columnNumber": 51,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

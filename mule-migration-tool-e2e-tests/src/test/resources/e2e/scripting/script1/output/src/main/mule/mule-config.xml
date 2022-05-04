@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="groovyScriptFlow">
+        <scripting:execute doc:name="Groovy" engine="groovy">
+            <!--Migration ERROR: The message format in Mule 4 has changed. Change any uses of the message to match the new bindings in Mule 4.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-module-scripting-->
+            <scripting:code><![CDATA[if(true==true){return 1}]]></scripting:code>
+            <scripting:parameters>#[{"sarasa2":"pep4e","sarasa":"pepe","sarasa4":"pep1e"}]</scripting:parameters>
+        </scripting:execute>
+
+    </flow>
+
+</mule>

@@ -1,0 +1,45 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 4,
+  "numberOfMuleComponentsMigrated": 3,
+  "componentDetails": {
+    "context:property-placeholder": {
+      "success": 0,
+      "failure": 1
+    },
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "logger": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "ERROR",
+      "key": "configProperties.springAttributes",
+      "component": "configuration-properties",
+      "lineNumber": 4,
+      "columnNumber": 56,
+      "message": "Spring-specific attributes are no longer available. The default behavior cannot be changed in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

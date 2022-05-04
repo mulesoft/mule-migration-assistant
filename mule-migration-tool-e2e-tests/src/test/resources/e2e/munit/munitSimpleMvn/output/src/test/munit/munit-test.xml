@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <munit:config name="munit-test" doc:name="MUnit configuration" />
+
+    <munit:test name="simplemunit-test-suite-simplemunitFlowTest" description="Test">
+        <munit:execution>
+            <flow-ref name="simplemunitFlow" doc:name="Flow-ref to simplemunitFlow" />
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that message="#['Not the same']" is="#[MunitTools::equalTo('sample payload')]" doc:name="Assert Payload" expression="#[payload]" />
+        </munit:validation>
+    </munit:test>
+
+</mule>

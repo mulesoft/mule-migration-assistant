@@ -1,0 +1,81 @@
+{
+  "projectType": "MULE_THREE_MAVEN_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-jms-connector:1.8.2"
+  ],
+  "numberOfMuleComponents": 5,
+  "numberOfMuleComponentsMigrated": 5,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "jms:listener": {
+      "success": 1,
+      "failure": 0
+    },
+    "jms:publish": {
+      "success": 1,
+      "failure": 0
+    },
+    "jms:activemq-connector": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "jms.propertiesPublish",
+      "component": "jms:publish",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Avoid using properties to set the JMS properties and headers.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

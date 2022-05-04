@@ -1,0 +1,57 @@
+{
+  "projectType": "MULE_THREE_MAVEN_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 9,
+  "numberOfMuleComponentsMigrated": 9,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 3,
+      "failure": 0
+    },
+    "collection-splitter": {
+      "success": 1,
+      "failure": 0
+    },
+    "splitter": {
+      "success": 1,
+      "failure": 0
+    },
+    "map-splitter": {
+      "success": 1,
+      "failure": 0
+    },
+    "migration:splitterGlobalValues": {
+      "success": 1,
+      "failure": 0
+    },
+    "migration:splitterGlobalIndexes": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 1,
+  "numberOfMELExpressionsMigrated": 1,
+  "numberOfMELExpressionLines": 1,
+  "numberOfMELExpressionLinesMigrated": 1,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "aggregator.missing",
+      "component": "foreach",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Could not find any associated aggregator for the splitter. Might produce unexpected behavior.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

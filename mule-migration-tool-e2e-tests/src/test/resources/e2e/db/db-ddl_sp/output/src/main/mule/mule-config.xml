@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <db:config name="dbConfig">
+        <db:generic-connection url="jdbc:derby:target/muleEmbeddedDB;create=true" driverClassName="org.apache.derby.jdbc.EmbeddedDriver">
+            <!--Migration INFO: The config in Mule 3 is specific for an engine, but it contained a 'url' attribute. It will be made generic to keep the URL.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-database#example_generic_db-->
+            <reconnection failsDeployment="true" />
+        </db:generic-connection>
+    </db:config>
+
+    <flow name="executeDdl">
+        <compatibility:outbound-properties-to-var>
+            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:outbound-properties-to-var>
+
+        <db:execute-ddl config-ref="dbConfig">
+            <db:sql>CREATE TABLE TestDdl(NAME VARCHAR(255))</db:sql>
+        </db:execute-ddl>
+
+    </flow>
+
+    <flow name="storedProcedure">
+        <compatibility:outbound-properties-to-var>
+            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:outbound-properties-to-var>
+
+        <db:stored-procedure config-ref="dbConfig">
+            <!--Migration INFO: Streaming is enabled by default in Mule 4-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-database#database_streaming-->
+            <db:sql>{ call getTestRecords() }</db:sql>
+        </db:stored-procedure>
+
+    </flow>
+
+</mule>
