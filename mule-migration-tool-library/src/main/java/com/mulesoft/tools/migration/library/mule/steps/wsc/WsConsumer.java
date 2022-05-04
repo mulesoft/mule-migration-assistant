@@ -77,15 +77,20 @@ public class WsConsumer extends AbstractApplicationModelMigrationStep {
   private void addAttributesToInboundProperties(Element object, MigrationReport report) {
     migrateOperationStructure(getApplicationModel(), object, report);
 
-    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    expressionsPerProperty.put("http.headers", "message.attributes.protocolHeaders");
-
     try {
-      addAttributesMapping(getApplicationModel(), "org.mule.runtime.extension.api.soap.SoapAttributes", expressionsPerProperty,
+      addAttributesMapping(getApplicationModel(), "org.mule.runtime.extension.api.soap.SoapAttributes",
+                           inboundToAttributesExpressions(),
                            "message.attributes.protocolHeaders");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
+
+  public static Map<String, String> inboundToAttributesExpressions() {
+    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
+    expressionsPerProperty.put("http.headers", "message.attributes.protocolHeaders");
+    return expressionsPerProperty;
+  }
+
 
 }

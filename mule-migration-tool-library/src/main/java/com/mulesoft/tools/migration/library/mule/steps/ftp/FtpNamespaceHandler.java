@@ -23,7 +23,7 @@ import org.jdom2.Namespace;
 public class FtpNamespaceHandler implements PomContribution {
 
   private static final String FTP_NAMESPACE_PREFIX = "ftp";
-  private static final String FTP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ftp";
+  public static final String FTP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/ftp";
   public static final Namespace FTP_NAMESPACE = Namespace.getNamespace(FTP_NAMESPACE_PREFIX, FTP_NAMESPACE_URI);
 
   private ApplicationModel applicationModel;

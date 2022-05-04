@@ -44,7 +44,7 @@ import java.util.Optional;
 public class QuartzInboundEndpoint extends AbstractApplicationModelMigrationStep {
 
   protected static final String QUARTZ_NS_PREFIX = "quartz";
-  protected static final String QUARTZ_NS_URI = "http://www.mulesoft.org/schema/mule/quartz";
+  public static final String QUARTZ_NS_URI = "http://www.mulesoft.org/schema/mule/quartz";
   private static final Namespace QUARTZ_NS = getNamespace(QUARTZ_NS_PREFIX, QUARTZ_NS_URI);
 
   public static final String XPATH_SELECTOR =
