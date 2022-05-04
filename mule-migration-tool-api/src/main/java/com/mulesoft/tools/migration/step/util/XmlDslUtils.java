@@ -748,12 +748,13 @@ public final class XmlDslUtils {
    * @param firstGenerationOnly only return the first generation of children
    * @return a String with the expression
    */
-  public static String getAllElementsFromNamespaceXpathSelector(String namespaceUri, List<String> elements, boolean topLevel, 
+  public static String getAllElementsFromNamespaceXpathSelector(String namespaceUri, List<String> elements, boolean topLevel,
                                                                 boolean firstGenerationOnly) {
     String localNameExpression = elements.stream()
         .map(e -> String.format("local-name() = '%s'", e))
         .collect(Collectors.joining(" or "));
-    return format("%s[namespace-uri() = '%s' and (%s)]", topLevel ? "/*/*" : firstGenerationOnly ? "*" : "//*", namespaceUri, localNameExpression);
+    return format("%s[namespace-uri() = '%s' and (%s)]", topLevel ? "/*/*" : firstGenerationOnly ? "*" : "//*", namespaceUri,
+                  localNameExpression);
   }
 
   /**
@@ -766,9 +767,11 @@ public final class XmlDslUtils {
    * @param firstGenerationOnly only return the first generation of children
    * @return a String with the expression
    */
-  public static String getChildElementsWithAttribute(String nsPrefix, String attributeName, String attributeValue, boolean firstGenerationOnly) {
+  public static String getChildElementsWithAttribute(String nsPrefix, String attributeName, String attributeValue,
+                                                     boolean firstGenerationOnly) {
     String prefixExpression = StringUtils.isNotBlank(nsPrefix) ? nsPrefix + ":" : "";
-    String attributeExpression = String.format("@%s%s", prefixExpression, attributeName) + (attributeValue != null ? String.format("=%s", attributeValue) : "");
+    String attributeExpression = String.format("@%s%s", prefixExpression, attributeName)
+        + (attributeValue != null ? String.format("=%s", attributeValue) : "");
     return format("%s[%s]", firstGenerationOnly ? "*" : "//*", attributeExpression);
   }
 
