@@ -2,20 +2,12 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <ftp:config name="ftpSource">
-        <!--Migration ERROR: The migration of 'ftp' is not supported.-->
-        <!--    For more information refer to:-->
-        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-->
-        <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool.adoc#unsupported_connectors-->
         <ftp:connection host="localhost" port="${ftpSourcePort}" username="admin" password="admin" passive="true" transferMode="BINARY">
             <reconnection failsDeployment="true" />
         </ftp:connection>
     </ftp:config>
 
     <ftp:config name="ftpDestination">
-        <!--Migration ERROR: The migration of 'ftp' is not supported.-->
-        <!--    For more information refer to:-->
-        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-->
-        <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool.adoc#unsupported_connectors-->
         <ftp:connection host="localhost" port="${ftpDestinationPort}" username="anonymous" password="password" workingDir="target" connectionTimeout="5000" connectionTimeoutUnit="MILLISECONDS">
             <reconnection failsDeployment="true" />
         </ftp:connection>
@@ -23,10 +15,6 @@
 
     <flow name="flow">
         <ftp:listener config-ref="ftpSource" directory="/">
-            <!--Migration ERROR: The migration of 'ftp' is not supported.-->
-            <!--    For more information refer to:-->
-            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool.adoc#unsupported_connectors-->
             <redelivery-policy maxRedeliveryCount="2" />
             <scheduling-strategy>
                 <fixed-frequency frequency="1000" />
@@ -50,12 +38,7 @@
             <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
         </compatibility:outbound-properties-to-var>
 
-        <ftp:write config-ref="ftpDestination" path="#[migration::FtpWriteOutputFile::ftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]">
-            <!--Migration ERROR: The migration of 'ftp' is not supported.-->
-            <!--    For more information refer to:-->
-            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool.adoc#unsupported_connectors-->
-        </ftp:write>
+        <ftp:write config-ref="ftpDestination" path="#[migration::FtpWriteOutputFile::ftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]" />
 
         <compatibility:attributes-to-inbound-properties>
             <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->

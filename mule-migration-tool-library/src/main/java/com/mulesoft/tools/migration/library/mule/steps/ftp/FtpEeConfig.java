@@ -35,7 +35,7 @@ public class FtpEeConfig extends FtpConfig {
 
   public FtpEeConfig() {
     this.setAppliedTo(XPATH_SELECTOR);
-    this.setNamespacesContributions(newArrayList(FTP_NAMESPACE));
+    this.setNamespacesContributions(newArrayList(FTP_EE_NAMESPACE));
   }
 
   @Override

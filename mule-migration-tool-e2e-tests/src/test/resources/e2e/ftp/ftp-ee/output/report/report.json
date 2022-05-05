@@ -4,21 +4,9 @@
   "connectorsMigrated": [
     "org.mule.connectors:mule-ftp-connector:1.5.5"
   ],
-  "numberOfMuleComponents": 12,
+  "numberOfMuleComponents": 8,
   "numberOfMuleComponentsMigrated": 8,
   "componentDetails": {
-    "ftp:connector": {
-      "success": 0,
-      "failure": 2
-    },
-    "ftp:inbound-endpoint": {
-      "success": 0,
-      "failure": 1
-    },
-    "ftp:outbound-endpoint": {
-      "success": 0,
-      "failure": 1
-    },
     "mule": {
       "success": 1,
       "failure": 0
@@ -54,52 +42,12 @@
   "numberOfDWTransformationLinesMigrated": 0,
   "detailedMessages": [
     {
-      "level": "ERROR",
-      "key": "components.unsupported",
-      "component": "ftp:connector",
-      "lineNumber": 4,
-      "columnNumber": 34,
-      "message": "The migration of \u0027ftp\u0027 is not supported.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks": []
-    },
-    {
-      "level": "ERROR",
-      "key": "components.unsupported",
-      "component": "ftp:connector",
-      "lineNumber": 14,
-      "columnNumber": 39,
-      "message": "The migration of \u0027ftp\u0027 is not supported.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks": []
-    },
-    {
-      "level": "ERROR",
-      "key": "components.unsupported",
-      "component": "ftp:inbound-endpoint",
-      "lineNumber": 25,
-      "columnNumber": 60,
-      "message": "The migration of \u0027ftp\u0027 is not supported.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks": []
-    },
-    {
       "level": "WARN",
       "key": "message.attributesToInboundProperties",
       "component": "compatibility:attributes-to-inbound-properties",
-      "lineNumber": 36,
+      "lineNumber": 24,
       "columnNumber": 57,
       "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks": []
-    },
-    {
-      "level": "ERROR",
-      "key": "components.unsupported",
-      "component": "ftp:outbound-endpoint",
-      "lineNumber": 43,
-      "columnNumber": 61,
-      "message": "The migration of \u0027ftp\u0027 is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks": []
     },
@@ -107,7 +55,7 @@
       "level": "WARN",
       "key": "message.outboundProperties",
       "component": "compatibility:outbound-properties-to-var",
-      "lineNumber": 47,
+      "lineNumber": 35,
       "columnNumber": 51,
       "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -117,7 +65,7 @@
       "level": "WARN",
       "key": "message.attributesToInboundProperties",
       "component": "compatibility:attributes-to-inbound-properties",
-      "lineNumber": 60,
+      "lineNumber": 43,
       "columnNumber": 57,
       "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
       "filePath": "src/main/mule/mule-config.xml",
@@ -127,7 +75,7 @@
       "level": "WARN",
       "key": "message.outboundProperties",
       "component": "compatibility:outbound-properties-to-var",
-      "lineNumber": 67,
+      "lineNumber": 50,
       "columnNumber": 51,
       "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
       "filePath": "src/main/mule/mule-config.xml",
