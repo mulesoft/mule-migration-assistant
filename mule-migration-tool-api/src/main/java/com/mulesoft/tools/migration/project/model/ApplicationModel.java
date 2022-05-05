@@ -22,6 +22,7 @@ import static java.util.Optional.of;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.artifact.MuleArtifactJsonModel;
 import com.mulesoft.tools.migration.project.model.pom.Parent;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
@@ -69,8 +70,7 @@ public class ApplicationModel {
   private MuleArtifactJsonModel muleArtifactJsonModel;
   private List<Namespace> supportedNamespaces;
   private Parent projectPomParent;
-
-
+  private ApplicationGraph applicationGraph;
 
   protected ApplicationModel(Map<Path, Document> applicationDocuments) {
     this(applicationDocuments, emptyMap());
@@ -439,6 +439,19 @@ public class ApplicationModel {
   }
 
   /**
+   * Set the ApplicationGraph
+   *
+   * @param graph ApplicationGraph
+   */
+  private void setApplicationGraph(ApplicationGraph graph) {
+    this.applicationGraph = graph;
+  }
+
+  public ApplicationGraph getApplicationGraph() {
+    return this.applicationGraph;
+  }
+
+  /**
    * It represent the builder to obtain a {@link ApplicationModel}
    *
    * @author Mulesoft Inc.
@@ -458,6 +471,7 @@ public class ApplicationModel {
     private List<Namespace> supportedNamespaces;
     private Parent projectPomParent;
     private String projectGAV;
+    private ApplicationGraph applicationGraph;
 
     /**
      * Collection of paths to project configuration files
@@ -592,6 +606,17 @@ public class ApplicationModel {
     }
 
     /**
+     * The application modeled as a graph
+     *
+     * @param graph applicationGraph
+     * @return the builder
+     */
+    public ApplicationModelBuilder withApplicationGraph(ApplicationGraph graph) {
+      this.applicationGraph = graph;
+      return this;
+    }
+
+    /**
      * Build the {@link ApplicationModel}
      *
      * @return an {@link ApplicationModel} instance
@@ -680,9 +705,9 @@ public class ApplicationModel {
       applicationModel.setSupportedNamespaces(supportedNamespaces != null ? new ArrayList<>(new HashSet<>(supportedNamespaces))
           : emptyList());
 
+      applicationModel.setApplicationGraph(applicationGraph);
+
       return applicationModel;
     }
-
   }
-
 }

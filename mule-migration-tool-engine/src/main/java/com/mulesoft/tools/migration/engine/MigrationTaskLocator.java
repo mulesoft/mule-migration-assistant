@@ -53,7 +53,7 @@ public class MigrationTaskLocator {
   }
 
   public List<AbstractMigrationTask> locate() {
-    List<AbstractMigrationTask> migrationTasks = newArrayList(new PreprocessMuleApplication());
+    List<AbstractMigrationTask> migrationTasks = newArrayList(getPreMigrationTasks());
     migrationTasks.addAll(getCoreMigrationTasks());
     migrationTasks.addAll(getGatewayMigrationTasks());
     migrationTasks.addAll(getCoreAfterMigrationTasks());
@@ -76,6 +76,13 @@ public class MigrationTaskLocator {
       return TRUE;
     }
     return FALSE;
+  }
+
+  public List<AbstractMigrationTask> getPreMigrationTasks() {
+    List<AbstractMigrationTask> coreMigrationTasks = new ArrayList<>();
+    coreMigrationTasks.add(new PreprocessMuleApplication());
+
+    return coreMigrationTasks;
   }
 
   public List<AbstractMigrationTask> getCoreMigrationTasks() {

@@ -3,9 +3,7 @@
  * Use of this source code is governed by a BSD 3-Clause License
  * license that can be found in the LICENSE.txt file.
  */
-package com.mulesoft.tools.migration.library.applicationflow;
-
-import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.InboundToAttributesTranslator;
+package com.mulesoft.tools.migration.project.model.applicationgraph;
 
 /**
  * Models a type of component that emits inbound properties
@@ -15,5 +13,5 @@ import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.InboundTo
  */
 public interface PropertiesSource {
 
-  InboundToAttributesTranslator.SourceType getType();
+  SourceType getType();
 }

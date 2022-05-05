@@ -5,6 +5,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.nocompatibility;
 
+import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +41,7 @@ public class InboundToAttributesTranslatorTest {
 
   @Test
   public void testTranslate_NonSupportedConnectorTranslation() throws Exception {
-    assertNull(translator.translate(new InboundToAttributesTranslator.SourceType("customUri", "customType"),
+    assertNull(translator.translate(new SourceType("customUri", "customType"),
                                     "myCustomProperty"));
   }
 

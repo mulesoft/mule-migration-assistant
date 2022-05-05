@@ -3,7 +3,7 @@
  * Use of this source code is governed by a BSD 3-Clause License
  * license that can be found in the LICENSE.txt file.
  */
-package com.mulesoft.tools.migration.library.applicationflow;
+package com.mulesoft.tools.migration.project.model.applicationgraph;
 
 import org.jdom2.Element;
 

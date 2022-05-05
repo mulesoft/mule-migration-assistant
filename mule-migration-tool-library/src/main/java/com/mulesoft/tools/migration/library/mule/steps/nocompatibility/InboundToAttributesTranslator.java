@@ -14,9 +14,9 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequest
 import com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer;
+import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
 
 import java.util.Map;
-import java.util.Objects;
 
 import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.IMAP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.POP3_NAMESPACE_URI;
@@ -113,37 +113,5 @@ public class InboundToAttributesTranslator {
 
   private static boolean isSupported(SourceType originatingSourceType) {
     return translatorClasses.keySet().contains(originatingSourceType);
-  }
-
-  /**
-   * Models an inbound properties source type
-   *
-   * @author Mulesoft Inc.
-   * @since 1.3.0
-   */
-  public static class SourceType {
-
-    private String namespaceUri;
-    private String type;
-
-    public SourceType(String namespaceUri, String type) {
-      this.namespaceUri = namespaceUri;
-      this.type = type;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o)
-        return true;
-      if (o == null || getClass() != o.getClass())
-        return false;
-      SourceType that = (SourceType) o;
-      return Objects.equals(namespaceUri, that.namespaceUri) && Objects.equals(type, that.type);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(namespaceUri, type);
-    }
   }
 }
