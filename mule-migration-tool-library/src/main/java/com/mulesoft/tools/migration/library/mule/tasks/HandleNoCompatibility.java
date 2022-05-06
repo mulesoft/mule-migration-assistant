@@ -5,7 +5,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
-import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.CreateApplicationGraphStep;
+import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.TranslateInboundReferencesStep;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
@@ -40,6 +40,6 @@ public class HandleNoCompatibility extends AbstractMigrationTask {
 
   @Override
   public List<MigrationStep> getSteps() {
-    return newArrayList(new CreateApplicationGraphStep());
+    return newArrayList(new TranslateInboundReferencesStep());
   }
 }

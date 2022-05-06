@@ -5,9 +5,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.nocompatibility;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.mulesoft.tools.migration.library.applicationgraph.ApplicationGraphCreator;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -33,7 +35,7 @@ import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 
 @RunWith(Parameterized.class)
-public class CreateApplicationGraphStepTest {
+public class TranslateInboundReferencesStepTest {
 
   private static final Path CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/nocompatibility");
 
@@ -47,7 +49,8 @@ public class CreateApplicationGraphStepTest {
   private final Path targetPath;
   private Document doc;
   private ApplicationModel applicationModel;
-  private CreateApplicationGraphStep step;
+  private ApplicationGraphCreator applicationGraphCreator;
+  private TranslateInboundReferencesStep step;
 
 
   @Parameterized.Parameters(name = "{0}")
@@ -59,7 +62,7 @@ public class CreateApplicationGraphStepTest {
     };
   }
 
-  public CreateApplicationGraphStepTest(String filePrefix) {
+  public TranslateInboundReferencesStepTest(String filePrefix) {
     configPath = CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
   }
@@ -68,9 +71,12 @@ public class CreateApplicationGraphStepTest {
   public void setUp() throws Exception {
     doc = getDocument(this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath());
     applicationModel = mockApplicationModel(doc, temp);
-    when(applicationModel.getApplicationDocuments()).thenReturn(ImmutableMap.of(configPath, doc));
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), applicationModel);
-    step = new CreateApplicationGraphStep();
+    applicationGraphCreator = new ApplicationGraphCreator();
+    applicationGraphCreator.setExpressionMigrator(expressionMigrator);
+    ApplicationGraph graph = applicationGraphCreator.create(Lists.newArrayList(doc), report.getReport());
+    when(applicationModel.getApplicationGraph()).thenReturn(graph);
+    step = new TranslateInboundReferencesStep();
     step.setExpressionMigrator(expressionMigrator);
   }
 
