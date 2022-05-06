@@ -62,7 +62,8 @@ public class TranslateInboundReferencesStepTest {
     return new Object[] {
         "nocompatibility-01",
         "nocompatibility-02",
-        "nocompatibility-03"
+        "nocompatibility-03",
+        "nocompatibility-04"
     };
   }
 

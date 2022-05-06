@@ -6,12 +6,12 @@
 package com.mulesoft.tools.migration.library.applicationgraph;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.InboundToAttributesTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.*;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jdom2.*;
 import org.jdom2.filter.Filter;
 import org.jdom2.filter.Filters;
@@ -32,6 +32,7 @@ public class ApplicationGraphCreator {
 
   public static final String FLOW_XPATH =
       getAllElementsFromNamespaceXpathSelector(CORE_NS_URI, ImmutableList.of("flow", "sub-flow"), true, false);
+
   public static final String MESSAGE_SOURCE_FILTER_EXPRESSION =
       getAllElementsFromNamespaceXpathSelector(InboundToAttributesTranslator.getSupportedConnectors().stream()
           .collect(Collectors.groupingBy(
@@ -57,9 +58,16 @@ public class ApplicationGraphCreator {
     // build ApplicationGraph based on flow components and flowRefs. 
     // This graph can have non connected components, if we have multiple flows with sources
     // get explicit connections (flow-refs)
-    Map<FlowRef, FlowComponent> connectedFlows = getFlowRefMap(applicationGraph);
+    Map<FlowRef, Pair<FlowComponent, FlowComponent>> connectedFlows = getFlowRefMap(applicationGraph);
     connectedFlows.entrySet().forEach(connectedFlow -> {
-      applicationGraph.addEdge(connectedFlow.getKey(), connectedFlow.getValue());
+      FlowRef flowRefComponent = connectedFlow.getKey();
+      FlowComponent firstComponentOfReferencedFlow = connectedFlow.getValue().getLeft();
+      FlowComponent endComponentOfReferencedFlow = applicationGraph.getLastFlowComponent(flowRefComponent.getDestinationFlow());
+      FlowComponent originalFlowContinuation = connectedFlow.getValue().getRight();
+      applicationGraph.addEdge(flowRefComponent, firstComponentOfReferencedFlow);
+      if (originalFlowContinuation != null) {
+        applicationGraph.addEdge(endComponentOfReferencedFlow, originalFlowContinuation);
+      }
     });
 
     // TODO: add implicit connections (i.e: operations)
@@ -106,15 +114,12 @@ public class ApplicationGraphCreator {
     return null;
   }
 
-  private boolean isFirstElement(Element xmlElement, Flow parentFlow) {
-    return parentFlow.getXmlElement().getChildren().get(0).equals(xmlElement);
-  }
-
-  private Map<FlowRef, FlowComponent> getFlowRefMap(ApplicationGraph applicationGraph) {
-    Map<FlowRef, FlowComponent> connectedFlows = Maps.newHashMap();
+  private Map<FlowRef, Pair<FlowComponent, FlowComponent>> getFlowRefMap(ApplicationGraph applicationGraph) {
+    Map<FlowRef, Pair<FlowComponent, FlowComponent>> connectedFlows = Maps.newHashMap();
     applicationGraph.getAllFlowComponents(FlowRef.class).forEach(flowRef -> {
+      FlowComponent goBackFlowComponent = applicationGraph.getNextComponent(flowRef, flowRef.getParentFlow());
       FlowComponent destinationFlowComponent = applicationGraph.getStartingFlowComponent(flowRef.getDestinationFlow());
-      connectedFlows.put(flowRef, destinationFlowComponent);
+      connectedFlows.put(flowRef, Pair.of(destinationFlowComponent, goBackFlowComponent));
     });
 
     return connectedFlows;

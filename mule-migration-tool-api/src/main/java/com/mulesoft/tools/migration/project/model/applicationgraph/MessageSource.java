@@ -15,14 +15,13 @@ import java.util.Map;
  * @author Mulesoft Inc.
  * @since 1.3.0
  */
-public class PropertiesSourceComponent implements PropertiesSource, FlowComponent {
+public class MessageSource implements PropertiesSource, FlowComponent {
 
   private final Element elementXml;
   private final SourceType type;
   private final Flow parentFlow;
-  private PropertiesMigrationContext propertiesMigrationContext;
 
-  public PropertiesSourceComponent(Element xmlElement, Flow parentFlow) {
+  public MessageSource(Element xmlElement, Flow parentFlow) {
     this.elementXml = xmlElement;
     this.type = new SourceType(xmlElement.getNamespaceURI(), xmlElement.getName());
     this.parentFlow = parentFlow;
@@ -30,12 +29,6 @@ public class PropertiesSourceComponent implements PropertiesSource, FlowComponen
 
   public Element getXmlElement() {
     return this.elementXml;
-  }
-
-
-  @Override
-  public String getName() {
-    return null;
   }
 
   @Override
@@ -49,12 +42,8 @@ public class PropertiesSourceComponent implements PropertiesSource, FlowComponen
   }
 
   @Override
-  public PropertiesMigrationContext getPropertiesMigrationContext() {
-    return this.propertiesMigrationContext;
-  }
-
-  public void setPropertiesMigrationContext(PropertiesMigrationContext propertiesMigrationContext) {
-    this.propertiesMigrationContext = propertiesMigrationContext;
+  public String getName() {
+    return type.toString();
   }
 
 }

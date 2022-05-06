@@ -15,6 +15,7 @@ import org.jdom2.Element;
  */
 public class MessageProcessor implements FlowComponent {
 
+  private final String name;
   private Element xmlElement;
   private Flow parentFLow;
   private PropertiesMigrationContext propertiesMigrationContext;
@@ -22,10 +23,16 @@ public class MessageProcessor implements FlowComponent {
   public MessageProcessor(Element xmlElement, Flow parentFLow) {
     this.xmlElement = xmlElement;
     this.parentFLow = parentFLow;
+    this.name = String.format("%s:%s", xmlElement.getNamespace().getURI(), xmlElement.getName());
   }
 
   public Element getXmlElement() {
     return xmlElement;
+  }
+
+  @Override
+  public String getName() {
+    return this.name;
   }
 
   @Override
