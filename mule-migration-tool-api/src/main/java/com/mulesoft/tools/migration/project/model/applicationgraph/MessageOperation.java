@@ -3,9 +3,8 @@
  * Use of this source code is governed by a BSD 3-Clause License
  * license that can be found in the LICENSE.txt file.
  */
-package com.mulesoft.tools.migration.library.applicationflow;
+package com.mulesoft.tools.migration.project.model.applicationgraph;
 
-import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.InboundToAttributesTranslator;
 import org.jdom2.Element;
 
 /**
@@ -16,15 +15,15 @@ import org.jdom2.Element;
  */
 public class MessageOperation extends MessageProcessor implements PropertiesSource {
 
-  private final InboundToAttributesTranslator.SourceType type;
+  private final SourceType type;
 
   public MessageOperation(Element xmlElement, Flow parentFLow) {
     super(xmlElement, parentFLow);
-    this.type = new InboundToAttributesTranslator.SourceType(xmlElement.getNamespaceURI(), xmlElement.getName());
+    this.type = new SourceType(xmlElement.getNamespaceURI(), xmlElement.getName());
   }
 
   @Override
-  public InboundToAttributesTranslator.SourceType getType() {
+  public SourceType getType() {
     return type;
   }
 }
