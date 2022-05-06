@@ -3,9 +3,8 @@
  * Use of this source code is governed by a BSD 3-Clause License
  * license that can be found in the LICENSE.txt file.
  */
-package com.mulesoft.tools.migration.library.applicationflow;
+package com.mulesoft.tools.migration.project.model.applicationgraph;
 
-import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.InboundToAttributesTranslator;
 import org.jdom2.Element;
 
 /**
@@ -17,12 +16,12 @@ import org.jdom2.Element;
 public class MessageSource implements PropertiesSource, FlowComponent {
 
   private final Element elementXml;
-  private final InboundToAttributesTranslator.SourceType type;
+  private final SourceType type;
   private final Flow parentFlow;
 
   public MessageSource(Element xmlElement, Flow parentFlow) {
     this.elementXml = xmlElement;
-    this.type = new InboundToAttributesTranslator.SourceType(xmlElement.getNamespaceURI(), xmlElement.getName());
+    this.type = new SourceType(xmlElement.getNamespaceURI(), xmlElement.getName());
     this.parentFlow = parentFlow;
   }
 
@@ -31,7 +30,7 @@ public class MessageSource implements PropertiesSource, FlowComponent {
   }
 
   @Override
-  public InboundToAttributesTranslator.SourceType getType() {
+  public SourceType getType() {
     return type;
   }
 

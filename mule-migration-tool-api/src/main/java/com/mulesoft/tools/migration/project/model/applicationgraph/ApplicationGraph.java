@@ -3,9 +3,10 @@
  * Use of this source code is governed by a BSD 3-Clause License
  * license that can be found in the LICENSE.txt file.
  */
-package com.mulesoft.tools.migration.library.applicationflow;
+package com.mulesoft.tools.migration.project.model.applicationgraph;
 
 import com.google.common.collect.Iterables;
+import org.jdom2.Element;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -90,5 +91,17 @@ public class ApplicationGraph {
     }
 
     return Optional.empty();
+  }
+
+  public List<FlowComponent> getAllStartingFlowComponents() {
+    return this.applicationGraph.vertexSet().stream()
+        .filter(v -> this.applicationGraph.inDegreeOf(v) == 0)
+        .collect(Collectors.toList());
+  }
+
+  public FlowComponent findFlowComponent(Element element) {
+    return this.applicationGraph.vertexSet().stream()
+        .filter(v -> v.getXmlElement().equals(element))
+        .findFirst().orElse(null);
   }
 }
