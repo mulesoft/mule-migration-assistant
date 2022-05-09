@@ -55,7 +55,7 @@ If you would just like to download/access the MMA tool (compiled version), you c
 See the following commands in order to clone, build and run this project
 
 ```
-$ git clone --recursive git@github.com:mulesoft/mule-migration-assistant.git
+$ git clone git@github.com:mulesoft/mule-migration-assistant.git
 $ cd mule-migration-assistant/
 $ mvn clean package
 $ cd runner/target
@@ -72,7 +72,7 @@ $ java -jar mule-migration-assistant-runner-*CURRENT VERSION*.jar [parameters]
 | help                       | Show all the parameters to define on MMA         | No        |
 | cancelOnError              | Use cancelOnError = true the MMA stop migration if a exception occurs (default false)        | No        |
 | projectParentGAV           | Use projectParentGAV 'groupId:artifactId:version' to migrate your parent inside the pom.xml  | No        |
-| jsonReport                 | Generate migration report in JSON format         | No        |
+| jsonReport (experimental)  | Generate migration report in JSON format         | No        |
 
 
 ### User Documentation
