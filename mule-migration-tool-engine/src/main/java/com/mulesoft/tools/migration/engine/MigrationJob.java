@@ -52,7 +52,6 @@ import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTa
 public class MigrationJob implements Executable {
 
   private static final String HTML_REPORT_FOLDER = "report";
-  private final boolean jsonReportEnabled;
   private transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private final Path project;
@@ -65,11 +64,12 @@ public class MigrationJob implements Executable {
   private String runnerVersion;
   private final Parent projectParentGAV;
   private final String projectGAV;
+  private final boolean jsonReportEnabled;
   private final ApplicationGraphCreator applicationGraphCreator;
 
   private MigrationJob(Path project, Path parentDomainProject, Path outputProject, List<AbstractMigrationTask> migrationTasks,
                        String muleVersion, boolean cancelOnError, Parent projectParentGAV, String projectGAV,
-                       boolean jsonReportEnabled) {
+                       boolean jsonReportEnabled, boolean noCompatibility) {
     this.migrationTasks = migrationTasks;
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
@@ -84,7 +84,7 @@ public class MigrationJob implements Executable {
     if (this.runnerVersion == null) {
       this.runnerVersion = "n/a";
     }
-    this.applicationGraphCreator = new ApplicationGraphCreator();
+    this.applicationGraphCreator = noCompatibility ? new ApplicationGraphCreator() : null;
   }
 
   @Override
@@ -97,11 +97,14 @@ public class MigrationJob implements Executable {
     persistApplicationModel(applicationModel);
     ProjectType targetProjectType = applicationModel.getProjectType().getTargetType();
 
-    applicationGraphCreator.setExpressionMigrator(new MelToDwExpressionMigrator(report, applicationModel));
-    ApplicationGraph applicationGraph = applicationGraphCreator.create(
-                                                                       Lists.newArrayList(applicationModel
-                                                                           .getApplicationDocuments().values()),
-                                                                       report);
+    ApplicationGraph applicationGraph = null;
+    if (applicationGraphCreator != null) {
+      applicationGraphCreator.setExpressionMigrator(new MelToDwExpressionMigrator(report, applicationModel));
+      applicationGraph = applicationGraphCreator.create(
+                                                        Lists.newArrayList(applicationModel
+                                                            .getApplicationDocuments().values()),
+                                                        report);
+    }
 
     applicationModel =
         generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV, projectGAV,
@@ -245,6 +248,7 @@ public class MigrationJob implements Executable {
     private String outputVersion;
     private boolean cancelOnError = false;
     private boolean jsonReportEnabled = false;
+    private boolean noCompatibility = false;
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
     private Parent projectParentGAV = null;
     private String projectGAV;
@@ -294,6 +298,11 @@ public class MigrationJob implements Executable {
       return this;
     }
 
+    public MigrationJobBuilder withNoCompatibility(boolean noCompatibility) {
+      this.noCompatibility = noCompatibility;
+      return this;
+    }
+
     public MigrationJob build() throws Exception {
       checkState(project != null, "The project must not be null");
       if (!project.toFile().exists()) {
@@ -328,8 +337,9 @@ public class MigrationJob implements Executable {
       MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion);
       migrationTasks = migrationTaskLocator.locate();
 
-      return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion.toString(),
-                              this.cancelOnError, this.projectParentGAV, this.projectGAV, this.jsonReportEnabled);
+      return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion,
+                              this.cancelOnError, this.projectParentGAV, this.projectGAV, this.jsonReportEnabled,
+                              this.noCompatibility);
     }
   }
 
