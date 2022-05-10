@@ -23,6 +23,14 @@ public class SourceType {
     this.type = type;
   }
 
+  public String getNamespaceUri() {
+    return namespaceUri;
+  }
+
+  public String getType() {
+    return type;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o)
