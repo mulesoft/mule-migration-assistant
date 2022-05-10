@@ -39,12 +39,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import junitx.framework.FileAssert;
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.junit.After;
 import org.junit.ClassRule;
@@ -155,24 +157,32 @@ public abstract class AbstractEndToEndTestCase {
 
   private void comparePom(Path expectedPath, Path migratedPath) {
     try {
-      MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
-      StringWriter expectedOutput = new StringWriter();
-      StringWriter migratedOutput = new StringWriter();
-      PomModel expectedPomModel = new PomModelBuilder().withPom(expectedPath).build();
-      normalizePomVersions(expectedPomModel);
-      mavenWriter.write(expectedOutput, expectedPomModel.getMavenModelCopy());
-
-      PomModel migratedPomModel = new PomModelBuilder().withPom(migratedPath).build();
-      normalizePomVersions(migratedPomModel);
-      mavenWriter.write(migratedOutput, migratedPomModel.getMavenModelCopy());
-
-      Diff d = DiffBuilder.compare(Input.fromString(expectedOutput.toString()))
-          .withTest(Input.fromString(migratedOutput.toString()))
+      Diff d = DiffBuilder.compare(Input.fromString(normalizePom(expectedPath)))
+          .withTest(Input.fromString(normalizePom(migratedPath)))
           .build();
       assertFalse(d.toString(), d.hasDifferences());
     } catch (Exception e) {
       fail(e.toString());
     }
+  }
+
+  private String normalizePom(Path pomPath) throws Exception {
+    MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
+    StringWriter writer = new StringWriter();
+
+    PomModel pomModel = new PomModelBuilder().withPom(pomPath).build();
+    normalizePomVersions(pomModel);
+    Model mavenModelCopy = pomModel.getMavenModelCopy();
+    mavenModelCopy.setProperties(sortedProperties(mavenModelCopy.getProperties()));
+    mavenWriter.write(writer, mavenModelCopy);
+
+    return writer.toString();
+  }
+
+  private Properties sortedProperties(Properties properties) {
+    Properties sorted = new SortedProperties();
+    sorted.putAll(properties);
+    return sorted;
   }
 
   private void normalizePomVersions(PomModel pomModel) {
