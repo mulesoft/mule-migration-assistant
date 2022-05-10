@@ -459,6 +459,10 @@ public class ApplicationModel {
     this.applicationGraph = graph;
   }
 
+  /**
+   * @return The {@link ApplicationGraph} when running in no-compatibility mode, otherwise null
+   * // TODO return an Optional
+   */
   public ApplicationGraph getApplicationGraph() {
     return this.applicationGraph;
   }
