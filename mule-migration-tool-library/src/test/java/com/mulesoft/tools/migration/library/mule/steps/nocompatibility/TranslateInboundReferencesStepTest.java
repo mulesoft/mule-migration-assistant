@@ -82,7 +82,8 @@ public class TranslateInboundReferencesStepTest {
 
   @Test
   public void testInboundReferencesRemoved() throws URISyntaxException, IOException {
-    step.execute(applicationModel, report.getReport());
+    step.setApplicationModel(applicationModel);
+    step.execute(null, report.getReport());
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
     assertThat(xmlString,

@@ -98,17 +98,17 @@ public class MigrationJob implements Executable {
     ProjectType targetProjectType = applicationModel.getProjectType().getTargetType();
 
     ApplicationGraph applicationGraph = null;
+    applicationModel =
+        generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV, projectGAV);
+
     if (applicationGraphCreator != null) {
       applicationGraphCreator.setExpressionMigrator(new MelToDwExpressionMigrator(report, applicationModel));
-      applicationGraph = applicationGraphCreator.create(
-                                                        Lists.newArrayList(applicationModel
-                                                            .getApplicationDocuments().values()),
+      applicationGraph = applicationGraphCreator.create(Lists.newArrayList(applicationModel
+          .getApplicationDocuments().values()),
                                                         report);
+      applicationModel.setApplicationGraph(applicationGraph);
     }
 
-    applicationModel =
-        generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV, projectGAV,
-                                       applicationGraph);
     try {
       MigrationTaskException firstMigrationTaskException = null;
       for (AbstractMigrationTask task : migrationTasks) {
@@ -118,9 +118,18 @@ public class MigrationJob implements Executable {
           try {
             task.execute(report);
             persistApplicationModel(applicationModel);
+
             applicationModel =
                 generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV,
-                                               projectGAV, applicationGraph);
+                                               projectGAV);
+
+            if (applicationGraphCreator != null) {
+              applicationGraph = applicationGraphCreator.create(Lists.newArrayList(applicationModel
+                  .getApplicationDocuments().values()),
+                                                                report);
+              applicationModel.setApplicationGraph(applicationGraph);
+            }
+
           } catch (MigrationTaskException ex) {
             if (cancelOnError) {
               throw ex;
@@ -169,15 +178,14 @@ public class MigrationJob implements Executable {
   }
 
   private ApplicationModel generateTargetApplicationModel(Path project, ProjectType type, Path sourceProjectBasePath,
-                                                          Parent projectParentGAV, String projectGAV, ApplicationGraph graph)
+                                                          Parent projectParentGAV, String projectGAV)
       throws Exception {
     ApplicationModelBuilder appModelBuilder = new ApplicationModelBuilder()
         .withMuleVersion(muleVersion)
         .withSupportedNamespaces(getTasksDeclaredNamespaces(migrationTasks))
         .withSourceProjectBasePath(sourceProjectBasePath)
         .withProjectPomParent(projectParentGAV)
-        .withProjectPomGAV(projectGAV)
-        .withApplicationGraph(graph);
+        .withProjectPomGAV(projectGAV);
 
     if (type.equals(MULE_FOUR_APPLICATION)) {
       MuleFourApplication application = new MuleFourApplication(project);
