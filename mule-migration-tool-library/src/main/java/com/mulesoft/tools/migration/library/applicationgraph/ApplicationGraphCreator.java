@@ -37,9 +37,6 @@ public class ApplicationGraphCreator {
           .collect(Collectors.groupingBy(
                                          SourceType::getNamespaceUri,
                                          Collectors.mapping(SourceType::getType, Collectors.toList()))), false, true);
-  private static final String FLOW_REF_EXPRESSION =
-      getAllElementsFromNamespaceXpathSelector(CORE_NS_URI, ImmutableList.of("flow-ref"), false, true);
-  private static final List<String> SUPPORTED_OPERATIONS = Lists.newArrayList("http:request");
 
   private ExpressionMigrator expressionMigrator;
 
@@ -100,15 +97,12 @@ public class ApplicationGraphCreator {
         report.report("nocompatibility.dynamicflowref", xmlElement, xmlElement);
       }
     } else if (isPropertySource(xmlElement, parentFlow)) {
-      if (isFirstElement(xmlElement, parentFlow)) {
-        return new MessageSource(xmlElement, parentFlow);
-      } else {
-        return new MessageOperation(xmlElement, parentFlow);
-      }
+      return new PropertiesSourceComponent(xmlElement, parentFlow);
     } else {
       return new MessageProcessor(xmlElement, parentFlow);
     }
 
+    // we should never reach here
     return null;
   }
 
