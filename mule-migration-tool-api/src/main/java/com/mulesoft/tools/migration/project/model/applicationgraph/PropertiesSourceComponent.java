@@ -7,6 +7,8 @@ package com.mulesoft.tools.migration.project.model.applicationgraph;
 
 import org.jdom2.Element;
 
+import java.util.Map;
+
 /**
  * Models a mule message source
  *
@@ -18,6 +20,7 @@ public class PropertiesSourceComponent implements PropertiesSource, FlowComponen
   private final Element elementXml;
   private final SourceType type;
   private final Flow parentFlow;
+  private PropertiesMigrationContext propertiesMigrationContext;
 
   public PropertiesSourceComponent(Element xmlElement, Flow parentFlow) {
     this.elementXml = xmlElement;
@@ -29,6 +32,7 @@ public class PropertiesSourceComponent implements PropertiesSource, FlowComponen
     return this.elementXml;
   }
 
+
   @Override
   public SourceType getType() {
     return type;
@@ -38,4 +42,14 @@ public class PropertiesSourceComponent implements PropertiesSource, FlowComponen
   public Flow getParentFlow() {
     return parentFlow;
   }
+
+  @Override
+  public PropertiesMigrationContext getPropertiesMigrationContext() {
+    return this.propertiesMigrationContext;
+  }
+
+  public void setPropertiesMigrationContext(PropertiesMigrationContext propertiesMigrationContext) {
+    this.propertiesMigrationContext = propertiesMigrationContext;
+  }
+
 }
