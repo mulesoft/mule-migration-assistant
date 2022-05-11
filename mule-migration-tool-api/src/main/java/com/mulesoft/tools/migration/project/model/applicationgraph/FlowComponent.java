@@ -7,6 +7,8 @@ package com.mulesoft.tools.migration.project.model.applicationgraph;
 
 import org.jdom2.Element;
 
+import java.util.Map;
+
 /**
  * Models a mule message source or message processor
  *
@@ -18,4 +20,7 @@ public interface FlowComponent {
   Flow getParentFlow();
 
   Element getXmlElement();
+
+  PropertiesMigrationContext getPropertiesMigrationContext();
+
 }

@@ -17,6 +17,7 @@ public class MessageProcessor implements FlowComponent {
 
   private Element xmlElement;
   private Flow parentFLow;
+  private PropertiesMigrationContext propertiesMigrationContext;
 
   public MessageProcessor(Element xmlElement, Flow parentFLow) {
     this.xmlElement = xmlElement;
@@ -30,5 +31,14 @@ public class MessageProcessor implements FlowComponent {
   @Override
   public Flow getParentFlow() {
     return parentFLow;
+  }
+
+  @Override
+  public PropertiesMigrationContext getPropertiesMigrationContext() {
+    return this.propertiesMigrationContext;
+  }
+
+  public void setPropertiesMigrationContext(PropertiesMigrationContext propertiesMigrationContext) {
+    this.propertiesMigrationContext = propertiesMigrationContext;
   }
 }
