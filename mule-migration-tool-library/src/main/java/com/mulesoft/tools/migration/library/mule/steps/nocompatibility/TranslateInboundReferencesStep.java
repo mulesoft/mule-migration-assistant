@@ -6,10 +6,9 @@
 package com.mulesoft.tools.migration.library.mule.steps.nocompatibility;
 
 import com.mulesoft.tools.migration.exception.MigrationException;
-import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.*;
+import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
-import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.CDATA;
@@ -31,7 +30,7 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILI
  * @author Mulesoft Inc.
  * @since 1.3.0
  */
-public class TranslateInboundReferencesStep implements MigrationStep<ApplicationModel>, ExpressionMigratorAware {
+public class TranslateInboundReferencesStep extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
   private static final Pattern COMPATIBILITY_INBOUND_PATTERN_IN_DW =
       Pattern.compile("(vars\\.compatibility_inboundProperties(?:\\.'?[\\.a-zA-Z0-9]*'?|\\['?.*'+?\\]))");
@@ -47,6 +46,7 @@ public class TranslateInboundReferencesStep implements MigrationStep<Application
 
   public TranslateInboundReferencesStep() {
     this.translator = new InboundToAttributesTranslator();
+    this.setAppliedTo("*");
   }
 
   @Override
@@ -65,36 +65,39 @@ public class TranslateInboundReferencesStep implements MigrationStep<Application
   }
 
   @Override
-  public void execute(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
-    ApplicationGraph applicationGraph = applicationModel.getApplicationGraph();
-    // resolve inbound references per flow
-    // TODO: this needs to be moved into actual steps
-    applicationGraph.getAllFlowComponents().forEach(flowComponent -> {
-      //TODO: change to only find the source when we have to do a property translation in a flow component
-      Optional<PropertiesSource> propertiesEmitter = applicationGraph.findClosestPropertiesSource(flowComponent);
-      if (propertiesEmitter.isPresent()) {
-        Queue<Element> elementsToUpdate = new LinkedList<>();
-        elementsToUpdate.offer(flowComponent.getXmlElement());
+  public void execute(Element unused, MigrationReport report) throws RuntimeException {
+    // only works if "no compatibility mode" is on, which means the application graph exists
+    if (getApplicationModel().getApplicationGraph() != null) {
+      ApplicationGraph applicationGraph = getApplicationModel().getApplicationGraph();
+      // resolve inbound references per flow
+      // TODO: this needs to be moved into actual steps
+      applicationGraph.getAllFlowComponents().forEach(flowComponent -> {
+        //TODO: change to only find the source when we have to do a property translation in a flow component
+        Optional<PropertiesSource> propertiesEmitter = applicationGraph.findClosestPropertiesSource(flowComponent);
+        if (propertiesEmitter.isPresent()) {
+          Queue<Element> elementsToUpdate = new LinkedList<>();
+          elementsToUpdate.offer(flowComponent.getXmlElement());
 
-        while (!elementsToUpdate.isEmpty()) {
-          Element element = elementsToUpdate.poll();
-          // update references in attributes
-          updatePropertyReferencesInAttributes(element, propertiesEmitter.get().getType(), report);
-          Optional<CDATA> cdataContent = getCDATAContent(element.getContent());
-          if (element.getChildren().isEmpty() && cdataContent.isPresent()) {
-            updatePropertyReferencesInCDATAContent(element, cdataContent.get(), propertiesEmitter.get().getType(), report);
-          } else {
-            element.getChildren().forEach(e -> elementsToUpdate.offer(e));
+          while (!elementsToUpdate.isEmpty()) {
+            Element element = elementsToUpdate.poll();
+            // update references in attributes
+            updatePropertyReferencesInAttributes(element, propertiesEmitter.get().getType(), report);
+            Optional<CDATA> cdataContent = getCDATAContent(element.getContent());
+            if (element.getChildren().isEmpty() && cdataContent.isPresent()) {
+              updatePropertyReferencesInCDATAContent(element, cdataContent.get(), propertiesEmitter.get().getType(), report);
+            } else {
+              element.getChildren().forEach(e -> elementsToUpdate.offer(e));
+            }
           }
+        } else {
+          // TODO: unresolvable property
         }
-      } else {
-        // TODO: unresolvable property
-      }
-    });
+      });
 
-    applicationGraph.getAllStartingFlowComponents().stream().map(
-                                                                 FlowComponent::getParentFlow)
-        .distinct().forEach(flow -> removeCompatibilityElements(flow));
+      applicationGraph.getAllStartingFlowComponents().stream().map(
+                                                                   FlowComponent::getParentFlow)
+          .distinct().forEach(flow -> removeCompatibilityElements(flow));
+    }
   }
 
   private Optional<CDATA> getCDATAContent(List<Content> content) {
@@ -174,5 +177,10 @@ public class TranslateInboundReferencesStep implements MigrationStep<Application
 
   private boolean containsExpression(String referenceToInbound) {
     return referenceToInbound.matches("vars\\.compatibility_inboundProperties\\[[^'].*\\]");
+  }
+
+  @Override
+  public boolean shouldReportMetrics() {
+    return false;
   }
 }
