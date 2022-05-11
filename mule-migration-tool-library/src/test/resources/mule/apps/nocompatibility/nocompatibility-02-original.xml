@@ -10,7 +10,7 @@
     </http:request-config>
 
     <flow name="flowWithSource">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/subflow" doc:name="HTTP" isMessageSource="true">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/subflow" doc:name="HTTP">
             <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
                 <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
                 <!--    For more information refer to:-->
@@ -43,7 +43,7 @@
     </flow>
 
     <flow name="Test">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/testinbound" allowedMethods="GET" doc:name="HTTP" isMessageSource="true">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/testinbound" allowedMethods="GET" doc:name="HTTP">
             <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
                 <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
                 <!--    For more information refer to:-->

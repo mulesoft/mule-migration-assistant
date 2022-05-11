@@ -10,8 +10,11 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILI
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NS_SCHEMA_LOC;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import com.google.common.base.Functions;
+import com.google.common.collect.Maps;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
@@ -20,10 +23,7 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -750,29 +750,30 @@ public final class XmlDslUtils {
    */
   public static String getAllElementsFromNamespaceXpathSelector(String namespaceUri, List<String> elements, boolean topLevel,
                                                                 boolean firstGenerationOnly) {
-    String localNameExpression = elements.stream()
-        .map(e -> String.format("local-name() = '%s'", e))
-        .collect(Collectors.joining(" or "));
-    return format("%s[namespace-uri() = '%s' and (%s)]", topLevel ? "/*/*" : firstGenerationOnly ? "*" : "//*", namespaceUri,
-                  localNameExpression);
+    Map<String, List<String>> namespacedElements = Maps.newHashMap();
+    namespacedElements.put(namespaceUri, elements);
+    return getAllElementsFromNamespaceXpathSelector(namespacedElements, topLevel, firstGenerationOnly);
   }
 
   /**
-   * Get Xpath expression to select all elements with certain attributeName and value from 
-   * a given namespace on the configuration file
+   * Get Xpath expression to select all elements from a given namespace on the configuration file
    *
-   * @param nsPrefix the namespace prefix
-   * @param attributeName name of the attribute to search
-   * @param attributeValue value of the attribute to search
+   * @param namespacedElements map of namespaces and elements to search
+   * @param topLevel is a top level element
    * @param firstGenerationOnly only return the first generation of children
    * @return a String with the expression
    */
-  public static String getChildElementsWithAttribute(String nsPrefix, String attributeName, String attributeValue,
-                                                     boolean firstGenerationOnly) {
-    String prefixExpression = StringUtils.isNotBlank(nsPrefix) ? nsPrefix + ":" : "";
-    String attributeExpression = String.format("@%s%s", prefixExpression, attributeName)
-        + (attributeValue != null ? String.format("=%s", attributeValue) : "");
-    return format("%s[%s]", firstGenerationOnly ? "*" : "//*", attributeExpression);
+  public static String getAllElementsFromNamespaceXpathSelector(Map<String, List<String>> namespacedElements, boolean topLevel,
+                                                                boolean firstGenerationOnly) {
+
+    String localNameExpression = namespacedElements.entrySet().stream()
+        .map(e -> String.format("(namespace-uri()='%s' and (%s))", e.getKey(),
+                                e.getValue().stream().map(element -> String.format("local-name()='%s'", element)).collect(
+                                                                                                                          Collectors
+                                                                                                                              .joining(" or "))))
+        .collect(Collectors.joining(" or "));
+    return format("%s[%s]", topLevel ? "/*/*" : firstGenerationOnly ? "*" : "//*",
+                  localNameExpression);
   }
 
   /**

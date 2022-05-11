@@ -6,6 +6,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.nocompatibility;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailSourceMigrator;
 import com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpInboundEndpoint;
@@ -16,6 +17,7 @@ import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer;
 import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.IMAP_NAMESPACE_URI;
@@ -60,7 +62,7 @@ public class InboundToAttributesTranslator {
 
   private static Map<SourceType, Class> translatorClasses;
 
-  public InboundToAttributesTranslator() {
+  static {
     translatorClasses = new ImmutableMap.Builder<SourceType, Class>()
         .put(HTTP_LISTENER, HttpConnectorListener.class)
         .put(HTTP_TRANSPORT, HttpConnectorListener.class)
@@ -78,6 +80,10 @@ public class InboundToAttributesTranslator {
         .put(SFTP_INBOUND, SftpInboundEndpoint.class)
         .put(WS_CONSUMER, WsConsumer.class)
         .build();
+  }
+
+  public static List<SourceType> getSupportedConnectors() {
+    return Lists.newArrayList(translatorClasses.keySet());
   }
 
   public String translate(SourceType originatingSourceType, String propertyToTranslate) throws Exception {

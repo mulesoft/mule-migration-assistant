@@ -21,13 +21,6 @@
             </http:error-response>
         </http:listener>
 
-        <compatibility:attributes-to-inbound-properties>
-            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
-            <!--    For more information refer to:-->
-            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
-        </compatibility:attributes-to-inbound-properties>
-
         <set-variable variableName="someVar" value="123" doc:name="Variable" />
 
         <flow-ref name="flow2" doc:name="Flow Reference" />
@@ -41,13 +34,13 @@
     </flow>
 
     <sub-flow name="flow2">
-        <logger message="#['Source called with queryParams' ++ vars.compatibility_inboundProperties.http.query.params]" level="INFO" doc:name="Logger" />
+        <logger message="#['Source called with queryParams' ++ message.attributes.queryParams]" level="INFO" doc:name="Logger" />
         <set-variable variableName="anotherVar" value="hello" doc:name="variable2" />
         <flow-ref name="flow3" doc:name="Flow Reference" />
     </sub-flow>
 
     <sub-flow name="flow3">
-        <logger message="#['Source called with method' ++ vars.compatibility_inboundProperties.http.method]" level="INFO" doc:name="Logger" />
+        <logger message="#['Source called with method' ++ message.attributes.method]" level="INFO" doc:name="Logger" />
     </sub-flow>
 
     <flow name="anotherApi">
@@ -65,13 +58,6 @@
                 <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:error-response>
         </http:listener>
-
-        <compatibility:attributes-to-inbound-properties>
-            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
-            <!--    For more information refer to:-->
-            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
-        </compatibility:attributes-to-inbound-properties>
 
         <logger level="INFO" doc:name="Logger" />
 

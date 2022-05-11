@@ -455,7 +455,7 @@ public class ApplicationModel {
    *
    * @param graph ApplicationGraph
    */
-  private void setApplicationGraph(ApplicationGraph graph) {
+  public void setApplicationGraph(ApplicationGraph graph) {
     this.applicationGraph = graph;
   }
 

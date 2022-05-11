@@ -8,22 +8,34 @@ package com.mulesoft.tools.migration.project.model.applicationgraph;
 import org.jdom2.Element;
 
 /**
- * Special type of Message processor that is a PropertySource 
+ * Models a mule message source
  *
  * @author Mulesoft Inc.
  * @since 1.3.0
  */
-public class MessageOperation extends MessageProcessor implements PropertiesSource {
+public class PropertiesSourceComponent implements PropertiesSource, FlowComponent {
 
+  private final Element elementXml;
   private final SourceType type;
+  private final Flow parentFlow;
 
-  public MessageOperation(Element xmlElement, Flow parentFLow) {
-    super(xmlElement, parentFLow);
+  public PropertiesSourceComponent(Element xmlElement, Flow parentFlow) {
+    this.elementXml = xmlElement;
     this.type = new SourceType(xmlElement.getNamespaceURI(), xmlElement.getName());
+    this.parentFlow = parentFlow;
+  }
+
+  public Element getXmlElement() {
+    return this.elementXml;
   }
 
   @Override
   public SourceType getType() {
     return type;
+  }
+
+  @Override
+  public Flow getParentFlow() {
+    return parentFlow;
   }
 }

@@ -16,7 +16,7 @@
     </file:config>
 
     <flow name="flowWithSource">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/file" doc:name="HTTP" isMessageSource="true">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/file" doc:name="HTTP">
             <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
                 <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
                 <!--    For more information refer to:-->
@@ -55,7 +55,7 @@
     </flow>
 
     <flow name="Test">
-        <file:listener directory="/Users/jfera/Downloads/input" config-ref="File" doc:name="File" moveToDirectory="/Users/jfera/Downloads/output" recursive="false" applyPostActionWhenFailed="false" isMessageSource="true">
+        <file:listener directory="/Users/jfera/Downloads/input" config-ref="File" doc:name="File" moveToDirectory="/Users/jfera/Downloads/output" recursive="false" applyPostActionWhenFailed="false">
             <!--Migration INFO: 'responseTimeout' was not being used by the file transport.-->
             <scheduling-strategy>
                 <fixed-frequency frequency="1000" />
