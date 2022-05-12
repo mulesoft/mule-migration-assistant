@@ -10,6 +10,7 @@ import com.mulesoft.tools.migration.library.applicationgraph.ApplicationGraphCre
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
+import com.mulesoft.tools.migration.project.model.applicationgraph.GraphRenderer;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
@@ -37,6 +38,8 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 @RunWith(Parameterized.class)
 public class TranslateInboundReferencesStepTest {
 
+  private static final boolean RENDER_GRAPHS = false;
+
   private static final Path CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/nocompatibility");
 
   @Rule
@@ -47,6 +50,7 @@ public class TranslateInboundReferencesStepTest {
 
   private final Path configPath;
   private final Path targetPath;
+  private String filePrefix;
   private Document doc;
   private ApplicationModel applicationModel;
   private ApplicationGraphCreator applicationGraphCreator;
@@ -65,6 +69,7 @@ public class TranslateInboundReferencesStepTest {
   public TranslateInboundReferencesStepTest(String filePrefix) {
     configPath = CONFIG_EXAMPLES_PATH.resolve(filePrefix + "-original.xml");
     targetPath = CONFIG_EXAMPLES_PATH.resolve(filePrefix + ".xml");
+    this.filePrefix = filePrefix;
   }
 
   @Before
@@ -83,6 +88,9 @@ public class TranslateInboundReferencesStepTest {
   @Test
   public void testInboundReferencesRemoved() throws URISyntaxException, IOException {
     step.setApplicationModel(applicationModel);
+    if (RENDER_GRAPHS) {
+      GraphRenderer.render(applicationModel.getApplicationGraph(), filePrefix);
+    }
     step.execute(null, report.getReport());
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);
