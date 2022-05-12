@@ -30,7 +30,7 @@ public class ApplicationGraph {
     applicationGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
   }
 
-  public void addConnectedFlowComponents(List<FlowComponent> flowComponents) {
+  public void addConnections(List<FlowComponent> flowComponents) {
     FlowComponent previousFlowComp = null;
     for (FlowComponent comp : flowComponents) {
       applicationGraph.addVertex(comp);
@@ -95,6 +95,10 @@ public class ApplicationGraph {
     this.applicationGraph.addEdge(source, destination);
   }
 
+  public void addFlowComponent(FlowComponent component) {
+    this.applicationGraph.addVertex(component);
+  }
+
   public Optional<PropertiesSource> findClosestPropertiesSource(FlowComponent flowComponent) {
     Queue<FlowComponent> incomingFlowComponents = new LinkedList<>();
     incomingFlowComponents.offer(flowComponent);
@@ -140,10 +144,23 @@ public class ApplicationGraph {
     List<FlowComponent> resultingFlowComponents = Lists.newArrayList();
     while (iterator.hasNext()) {
       FlowComponent flowComponent = iterator.next();
-      if (componentType.isInstance(flowComponent) && flowComponent.getName().matches(componentName)) {
+      if (componentType.isInstance(flowComponent) && flowComponent.getName().startsWith(componentName)) {
         resultingFlowComponents.add(flowComponent);
       }
     }
     return resultingFlowComponents;
+  }
+
+  public void removeEdgeIfExists(FlowRef flowRefComponent, FlowComponent originalFlowContinuation) {
+    if (applicationGraph.getEdge(flowRefComponent, originalFlowContinuation) != null) {
+      this.applicationGraph.removeEdge(flowRefComponent, originalFlowContinuation);
+    }
+  }
+
+  public List<String> getAllVertexWithPrefix(String prefix) {
+    return this.applicationGraph.vertexSet().stream()
+        .map(FlowComponent::getName)
+        .filter(name -> name.startsWith(prefix))
+        .collect(Collectors.toList());
   }
 }

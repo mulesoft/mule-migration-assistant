@@ -93,7 +93,7 @@ public class TranslateInboundReferencesStep extends AbstractApplicationModelMigr
 
       applicationGraph.getAllStartingFlowComponents().stream()
           .map(startingPoint -> applicationGraph.getAllFlowComponentsOfTypeAlongPath(startingPoint, MessageProcessor.class,
-                                                                                     COMPATIBILITY_NAMESPACE.getURI() + ':'
+                                                                                     COMPATIBILITY_NAMESPACE.getPrefix() + '_'
                                                                                          + "attributes-to-inbound-properties"))
           .flatMap(Collection::stream)
           .forEach(mp -> mp.getXmlElement().detach());

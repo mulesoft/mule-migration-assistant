@@ -38,7 +38,7 @@ import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
 @RunWith(Parameterized.class)
 public class TranslateInboundReferencesStepTest {
 
-  private static final boolean RENDER_GRAPHS = false;
+  private static final boolean RENDER_GRAPHS = true;
 
   private static final Path CONFIG_EXAMPLES_PATH = Paths.get("mule/apps/nocompatibility");
 
@@ -63,7 +63,8 @@ public class TranslateInboundReferencesStepTest {
         "nocompatibility-01",
         "nocompatibility-02",
         "nocompatibility-03",
-        "nocompatibility-04"
+        "nocompatibility-04",
+        "nocompatibility-05"
     };
   }
 
