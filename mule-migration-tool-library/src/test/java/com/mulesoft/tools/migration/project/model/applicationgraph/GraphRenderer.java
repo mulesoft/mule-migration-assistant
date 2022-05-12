@@ -51,7 +51,7 @@ public class GraphRenderer {
         map.put("fillcolor", DefaultAttribute.createAttribute("cadetblue3"));
       } else if (v instanceof FlowRef) {
         map.put("style", DefaultAttribute.createAttribute("filled"));
-        map.put("fillcolor", DefaultAttribute.createAttribute("sandybrown"));   
+        map.put("fillcolor", DefaultAttribute.createAttribute("sandybrown"));
       }
       map.put("label",
               DefaultAttribute.createAttribute(String.format("%s\n(%s)", v.getClass().getSimpleName(), getElementName(v))));
