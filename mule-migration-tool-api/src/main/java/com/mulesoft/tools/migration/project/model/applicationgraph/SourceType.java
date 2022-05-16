@@ -45,4 +45,9 @@ public class SourceType {
   public int hashCode() {
     return Objects.hash(namespaceUri, type);
   }
+
+  @Override
+  public String toString() {
+    return String.format("%s:%s", namespaceUri, type);
+  }
 }
