@@ -6,12 +6,11 @@
 package com.mulesoft.tools.migration.library.applicationgraph;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.InboundToAttributesTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.*;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jdom2.*;
 import org.jdom2.filter.Filter;
 import org.jdom2.filter.Filters;
@@ -32,6 +31,7 @@ public class ApplicationGraphCreator {
 
   public static final String FLOW_XPATH =
       getAllElementsFromNamespaceXpathSelector(CORE_NS_URI, ImmutableList.of("flow", "sub-flow"), true, false);
+
   public static final String MESSAGE_SOURCE_FILTER_EXPRESSION =
       getAllElementsFromNamespaceXpathSelector(InboundToAttributesTranslator.getSupportedConnectors().stream()
           .collect(Collectors.groupingBy(
@@ -49,38 +49,49 @@ public class ApplicationGraphCreator {
     ApplicationGraph applicationGraph = new ApplicationGraph();
 
     applicationFlows.forEach(flow -> {
-      List<FlowComponent> flowComponents = getFlowComponents(flow, applicationFlows, report);
+      List<FlowComponent> flowComponents = getFlowComponents(flow, applicationFlows, report, applicationGraph);
       flow.setComponents(flowComponents);
-      applicationGraph.addConnectedFlowComponents(flowComponents);
+      applicationGraph.addConnections(flowComponents);
     });
 
     // build ApplicationGraph based on flow components and flowRefs. 
     // This graph can have non connected components, if we have multiple flows with sources
     // get explicit connections (flow-refs)
-    Map<FlowRef, FlowComponent> connectedFlows = getFlowRefMap(applicationGraph);
+    Map<Pair<FlowComponent, FlowComponent>, Pair<FlowComponent, FlowComponent>> connectedFlows = getFlowRefMap(applicationGraph);
     connectedFlows.entrySet().forEach(connectedFlow -> {
-      applicationGraph.addEdge(connectedFlow.getKey(), connectedFlow.getValue());
+      Pair<FlowComponent, FlowComponent> sourceComponentPair = connectedFlow.getKey();
+      Pair<FlowComponent, FlowComponent> destinationComponentPair = connectedFlow.getValue();
+
+      FlowRef flowRefComponent = (FlowRef) sourceComponentPair.getLeft();
+      FlowComponent firstComponentOfReferencedFlow = sourceComponentPair.getRight();
+      FlowComponent endComponentOfReferencedFlow = destinationComponentPair.getLeft();
+      FlowComponent originalFlowContinuation = destinationComponentPair.getRight();
+      applicationGraph.addEdge(flowRefComponent, firstComponentOfReferencedFlow);
+      applicationGraph.removeEdgeIfExists(flowRefComponent, originalFlowContinuation);
+      if (originalFlowContinuation != null) {
+        applicationGraph.addEdge(endComponentOfReferencedFlow, originalFlowContinuation);
+      }
     });
 
-    // TODO: add implicit connections (i.e: operations)
-    // Is this actually needed? If we have an operation that calls a flow inside the same app, then handling
-    // any property references should be the same as migrating that flow individually
     return applicationGraph;
   }
 
-  private List<FlowComponent> getFlowComponents(Flow flow, List<Flow> applicationFlows, MigrationReport report) {
+  private List<FlowComponent> getFlowComponents(Flow flow, List<Flow> applicationFlows, MigrationReport report,
+                                                ApplicationGraph applicationGraph) {
     Element flowAsXmL = flow.getXmlElement();
 
     return flowAsXmL.getContent().stream()
         .filter(Element.class::isInstance)
         .map(Element.class::cast)
-        .map(xmlElement -> convertToComponent(xmlElement, flow, applicationFlows, report))
+        .map(xmlElement -> convertAndAddToGraph(xmlElement, flow, applicationFlows, report, applicationGraph))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
 
-  private FlowComponent convertToComponent(Element xmlElement, Flow parentFlow,
-                                           List<Flow> applicationFlows, MigrationReport report) {
+  private FlowComponent convertAndAddToGraph(Element xmlElement, Flow parentFlow,
+                                             List<Flow> applicationFlows, MigrationReport report,
+                                             ApplicationGraph applicationGraph) {
+    FlowComponent component = null;
     if (xmlElement.getName().equals("flow-ref")) {
       if (!expressionMigrator.isWrapped(xmlElement.getAttribute("name").getValue())) {
         String destinationFlowName = xmlElement.getAttribute("name").getValue();
@@ -89,7 +100,7 @@ public class ApplicationGraphCreator {
             .findFirst();
 
         if (destinationFlow.isPresent()) {
-          return new FlowRef(xmlElement, parentFlow, destinationFlow.get());
+          return new FlowRef(xmlElement, parentFlow, destinationFlow.get(), applicationGraph);
         } else {
           report.report("nocompatibility.missingflow", xmlElement, xmlElement);
         }
@@ -97,27 +108,37 @@ public class ApplicationGraphCreator {
         report.report("nocompatibility.dynamicflowref", xmlElement, xmlElement);
       }
     } else if (isPropertySource(xmlElement, parentFlow)) {
-      return new PropertiesSourceComponent(xmlElement, parentFlow);
+      component = new PropertiesSourceComponent(xmlElement, parentFlow, applicationGraph);
     } else {
-      return new MessageProcessor(xmlElement, parentFlow);
+      component = new MessageProcessor(xmlElement, parentFlow, applicationGraph);
     }
 
-    // we should never reach here
-    return null;
+    applicationGraph.addFlowComponent(component);
+    return component;
   }
 
-  private boolean isFirstElement(Element xmlElement, Flow parentFlow) {
-    return parentFlow.getXmlElement().getChildren().get(0).equals(xmlElement);
+  private Map<Pair<FlowComponent, FlowComponent>, Pair<FlowComponent, FlowComponent>> getFlowRefMap(ApplicationGraph applicationGraph) {
+    return applicationGraph.getAllFlowComponents(FlowRef.class).stream()
+        .map(flowRef -> getConnectedComponents(flowRef, applicationGraph))
+        .collect(Collectors.toMap(connectedComponent -> connectedComponent.getLeft(),
+                                  connectedComponent -> connectedComponent.getRight()));
   }
 
-  private Map<FlowRef, FlowComponent> getFlowRefMap(ApplicationGraph applicationGraph) {
-    Map<FlowRef, FlowComponent> connectedFlows = Maps.newHashMap();
-    applicationGraph.getAllFlowComponents(FlowRef.class).forEach(flowRef -> {
-      FlowComponent destinationFlowComponent = applicationGraph.getStartingFlowComponent(flowRef.getDestinationFlow());
-      connectedFlows.put(flowRef, destinationFlowComponent);
-    });
+  private Pair<Pair<FlowComponent, FlowComponent>, Pair<FlowComponent, FlowComponent>> getConnectedComponents(FlowRef flowRef,
+                                                                                                              ApplicationGraph applicationGraph) {
+    FlowComponent referredFlowStartingPoint = applicationGraph.getStartingFlowComponent(flowRef.getDestinationFlow());
+    Pair<FlowComponent, FlowComponent> sourcePair = Pair.of(flowRef, referredFlowStartingPoint);
 
-    return connectedFlows;
+    FlowComponent goBackFlowComponent = applicationGraph.getNextComponent(flowRef, flowRef.getParentFlow());
+    FlowComponent referredFlowEndingPoint = applicationGraph.getLastFlowComponent(flowRef.getDestinationFlow());
+    if (referredFlowEndingPoint instanceof FlowRef) {
+      Pair<Pair<FlowComponent, FlowComponent>, Pair<FlowComponent, FlowComponent>> newFlowRef =
+          getConnectedComponents((FlowRef) referredFlowEndingPoint, applicationGraph);
+      referredFlowEndingPoint = newFlowRef.getRight().getLeft();
+    }
+
+    Pair<FlowComponent, FlowComponent> destinationPair = Pair.of(referredFlowEndingPoint, goBackFlowComponent);
+    return Pair.of(sourcePair, destinationPair);
   }
 
   private List<Flow> getFlows(Document document) {
