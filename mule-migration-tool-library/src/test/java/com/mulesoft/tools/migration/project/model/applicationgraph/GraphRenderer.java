@@ -43,10 +43,16 @@ public class GraphRenderer {
 
   private static String generateDot(Graph<FlowComponent, DefaultEdge> stringGraph)
       throws ExportException {
-
-    DOTExporter<FlowComponent, DefaultEdge> exporter = new DOTExporter<>(GraphRenderer::getElementName);
+    DOTExporter<FlowComponent, DefaultEdge> exporter = new DOTExporter<>(v -> GraphRenderer.getElementName(v));
     exporter.setVertexAttributeProvider((v) -> {
       Map<String, Attribute> map = new LinkedHashMap<>();
+      if (stringGraph.inDegreeOf(v) == 0) {
+        map.put("style", DefaultAttribute.createAttribute("filled"));
+        map.put("fillcolor", DefaultAttribute.createAttribute("cadetblue3"));
+      } else if (v instanceof FlowRef) {
+        map.put("style", DefaultAttribute.createAttribute("filled"));
+        map.put("fillcolor", DefaultAttribute.createAttribute("sandybrown"));
+      }
       map.put("label",
               DefaultAttribute.createAttribute(String.format("%s\n(%s)", v.getClass().getSimpleName(), getElementName(v))));
       return map;
@@ -57,6 +63,6 @@ public class GraphRenderer {
   }
 
   private static String getElementName(FlowComponent v) {
-    return (v.getXmlElement().getName() + "__" + v.getParentFlow().getName()).replaceAll("-", "_");
+    return v.getName().replaceAll("-", "_");
   }
 }

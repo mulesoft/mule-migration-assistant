@@ -23,4 +23,5 @@ public interface FlowComponent {
 
   PropertiesMigrationContext getPropertiesMigrationContext();
 
+  String getName();
 }

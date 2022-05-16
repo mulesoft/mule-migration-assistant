@@ -15,10 +15,7 @@ import org.jdom2.CDATA;
 import org.jdom2.Content;
 import org.jdom2.Element;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Queue;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -94,18 +91,17 @@ public class TranslateInboundReferencesStep extends AbstractApplicationModelMigr
         }
       });
 
-      applicationGraph.getAllStartingFlowComponents().stream().map(
-                                                                   FlowComponent::getParentFlow)
-          .distinct().forEach(flow -> removeCompatibilityElements(flow));
+      applicationGraph.getAllStartingFlowComponents().stream()
+          .map(startingPoint -> applicationGraph.getAllFlowComponentsOfTypeAlongPath(startingPoint, MessageProcessor.class,
+                                                                                     COMPATIBILITY_NAMESPACE.getPrefix() + '_'
+                                                                                         + "attributes-to-inbound-properties"))
+          .flatMap(Collection::stream)
+          .forEach(mp -> mp.getXmlElement().detach());
     }
   }
 
   private Optional<CDATA> getCDATAContent(List<Content> content) {
     return content.stream().filter(CDATA.class::isInstance).map(CDATA.class::cast).findFirst();
-  }
-
-  private void removeCompatibilityElements(Flow flow) {
-    flow.getXmlElement().removeChildren("attributes-to-inbound-properties", COMPATIBILITY_NAMESPACE);
   }
 
   private void updatePropertyReferencesInAttributes(Element parentElement, SourceType originatingSourceType,
