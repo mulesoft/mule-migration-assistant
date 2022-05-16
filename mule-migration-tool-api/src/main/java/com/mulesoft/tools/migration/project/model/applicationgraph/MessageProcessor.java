@@ -32,10 +32,13 @@ public class MessageProcessor implements FlowComponent {
     String elementPrefix = xmlElement.getNamespace().getPrefix();
     String potentialName =
         String.format("%s%s_%s", elementPrefix.isEmpty() ? "" : elementPrefix + "_", xmlElement.getName(), parentFLow.getName());
-    List<String> matchingNames = graph.getAllVertexWithPrefix(potentialName);
+    List<String> matchingNames = graph.getAllVertexNamesWithBaseName(potentialName);
     if (!matchingNames.isEmpty()) {
       String lastMatchingElementName = matchingNames.get(matchingNames.size() - 1);
-      String counter = lastMatchingElementName.replaceFirst("(.*)-?([0-9]*)", "$2");
+      String counter = "";
+      if (!lastMatchingElementName.equals(potentialName)) {
+        counter = lastMatchingElementName.replaceFirst("(.+-)([0-9]*)", "$2");
+      }
       counter = counter.isEmpty() ? "0" : counter;
       potentialName = String.format("%s-%s", potentialName, Integer.valueOf(counter) + 1);
     }

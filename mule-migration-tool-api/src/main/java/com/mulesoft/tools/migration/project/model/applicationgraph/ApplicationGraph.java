@@ -157,10 +157,10 @@ public class ApplicationGraph {
     }
   }
 
-  public List<String> getAllVertexWithPrefix(String prefix) {
+  public List<String> getAllVertexNamesWithBaseName(String prefix) {
     return this.applicationGraph.vertexSet().stream()
         .map(FlowComponent::getName)
-        .filter(name -> name.startsWith(prefix))
+        .filter(name -> name.equals(prefix) || name.startsWith(prefix + "-"))
         .collect(Collectors.toList());
   }
 }
