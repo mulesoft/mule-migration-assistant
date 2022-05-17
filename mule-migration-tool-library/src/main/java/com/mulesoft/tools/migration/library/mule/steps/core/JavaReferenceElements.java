@@ -51,7 +51,8 @@ public class JavaReferenceElements extends AbstractApplicationModelMigrationStep
       + "local-name()='custom-catch-all-strategy' or "
       + "local-name()='custom-forwarding-catch-all-strategy' or "
       + "local-name()='custom-message-info-mapping' or "
-      + "local-name()='custom-lifecycle-adapter-factory'"
+      + "local-name()='custom-lifecycle-adapter-factory' or "
+      + "local-name()='invoke'"
       + "]";
 
   @Override

@@ -9,7 +9,7 @@
     <crc32:config name="configA"/>
     
     <flow name="test">
-        <crc32:filter config-ref="configA" expectedChecksum="#[message.inboundProperties['crc']" />
+        <crc32:filter config-ref="configA" expectedChecksum="#[message.inboundProperties['crc']]" />
     </flow>
 
 </mule>

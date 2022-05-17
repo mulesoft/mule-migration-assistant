@@ -7,7 +7,7 @@
        http://www.mulesoft.org/schema/mule/crypto http://www.mulesoft.org/schema/mule/crypto/current/mule-crypto.xsd">
     
     <flow name="test">
-        <crypto:validate-checksum algorithm="CRC32" expected="#[mel:message.inboundProperties['crc']"/>
+        <crypto:validate-checksum algorithm="CRC32" expected="#[vars.compatibility_inboundProperties['crc']]"/>
         <error-handler>
             <on-error-propagate type="MULE:VALIDATION" logException="false">
                 <set-variable variableName="filtered" value="#[true]"/>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
+    <http:listener-config name="httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${httpPort}" />
+    </http:listener-config>
+
     <!--Migration WARN: consoleEnabled property do not exist in Mule 4.-->
     <!--<apikit:config xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" name="api-config" raml="api.raml" consoleEnabled="false" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus">
         <apikit:flow-mapping resource="/resource" action="post" flow-ref="post-resource" />
         <apikit:flow-mapping resource="/resource/{id}" action="get" content-type="application/json" flow-ref="get-specific-resource" />
     </apikit:config>-->
-    <http:listener-config name="httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="${httpPort}" />
-    </http:listener-config>
-
     <apikit:config name="api-config" raml="api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus">
         <apikit:flow-mappings>
             <apikit:flow-mapping resource="/resource" action="post" flow-ref="post-resource" />
@@ -70,7 +70,7 @@
                 <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        
+
         <compatibility:set-property propertyName="Content-Type" value="application/json">
             <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
             <!--    For more information refer to:-->

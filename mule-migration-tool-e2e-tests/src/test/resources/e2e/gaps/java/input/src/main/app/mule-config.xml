@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+    <http:listener-config name="httpConf" host="localhost" port="${httpPort}"/>
+    
+    <flow name="listenerContentType" >
+        <http:listener config-ref="httpConf" path="testInput"/>
+        <invoke object-ref="someObject" method="someMethod" methodArgumentTypes="java.lang.String" methodArguments="#[payload]" />
+    </flow>
+    
+</mule>

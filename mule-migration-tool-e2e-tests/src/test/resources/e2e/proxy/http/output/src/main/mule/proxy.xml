@@ -67,10 +67,6 @@
         </compatibility:outbound-properties-to-var>
 
         <http:request config-ref="http-request-config" method="#[vars.compatibility_inboundProperties['http.method']]" path="#[mel:message.inboundProperties['http.request.path'].substring(message.inboundProperties['http.listener.path'].length()-2)]">
-            <!--Migration WARN: Build the 'query-params' map with a single DataWeave expression.-->
-            <!--    For more information refer to:-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
-            <!--<http:query-params xmlns:http="http://www.mulesoft.org/schema/mule/http" />-->
             <!--Migration WARN: The MEL expression could not be migrated to a DataWeave expression.-->
             <!--    For more information refer to:-->
             <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-mel-->
@@ -81,6 +77,10 @@
             <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-http#http-mime-types-->
             <!--        * https://docs.mulesoft.com/mule-runtime/4.3/dataweave-formats#format_form_data-->
             <http:headers>#[migration::HttpRequester::httpRequesterHeaders(vars)]</http:headers>
+            <!--Migration WARN: Build the 'query-params' map with a single DataWeave expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+            <!--<http:query-params xmlns:http="http://www.mulesoft.org/schema/mule/http" />-->
             <http:query-params><![CDATA[#[vars.compatibility_inboundProperties['http.query.params']]]]></http:query-params>
             <http:response-validator>
                 <http:success-status-code-validator values="0..599" />
