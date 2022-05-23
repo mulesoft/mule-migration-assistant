@@ -250,10 +250,22 @@ public class ApplicationModel {
   }
 
   /**
-   * Retrieves all elements that satisfies the given xpath expression in the document
+   * Retrieves all elements that satisfy the given xpath expression in the document
    *
-   * @param xpath
-   * @param document
+   * @param xpathExpression the xpath query expression
+   * @param document the document to query
+   * @return all the elements queried by the xpath expression in the given document
+   * @throws IllegalArgumentException if the XPath query cannot be compiled
+   */
+  public List<Element> getElementsFromDocument(String xpathExpression, Document document) {
+    return getElementsFromDocument(XPathFactory.instance().compile(xpathExpression), document);
+  }
+
+  /**
+   * Retrieves all elements that satisfy the given xpath expression in the document
+   *
+   * @param xpath the xpath query expression
+   * @param document the document to query
    * @return all the elements queried by the xpath expression in the given document
    * @throws IllegalArgumentException if the XPath query cannot be compiled
    */

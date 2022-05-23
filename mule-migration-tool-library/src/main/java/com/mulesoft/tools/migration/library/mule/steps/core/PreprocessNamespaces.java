@@ -50,7 +50,9 @@ public class PreprocessNamespaces implements NamespaceContribution {
 
     unsupportedNamespaces.forEach(ns -> {
       // Ignore nested elements of the same pass to not distort statistics or clutter the report
-      applicationModel.getNodes("//*[namespace-uri() = '" + ns.getURI() + "' and namespace-uri(..) != '" + ns.getURI() + "']")
+      applicationModel
+          .getElementsFromDocument("//*[namespace-uri() = '" + ns.getURI() + "' and namespace-uri(..) != '" + ns.getURI() + "']",
+                                   document)
           .forEach(node -> {
             processedElements.incrementAndGet();
 

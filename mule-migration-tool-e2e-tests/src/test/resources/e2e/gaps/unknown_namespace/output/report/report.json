@@ -1,35 +1,28 @@
 {
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
-  "connectorsMigrated":
-  [],
-  "numberOfMuleComponents": 6,
-  "numberOfMuleComponentsMigrated": 4,
-  "componentDetails":
-  {
-    "unknown:source":
-    {
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 9,
+  "numberOfMuleComponentsMigrated": 6,
+  "componentDetails": {
+    "unknown:source": {
+      "success": 0,
+      "failure": 2
+    },
+    "unknown:operation": {
       "success": 0,
       "failure": 1
     },
-    "unknown:operation":
-    {
-      "success": 0,
-      "failure": 1
-    },
-    "mule":
-    {
-      "success": 1,
-      "failure": 0
-    },
-    "logger":
-    {
+    "mule": {
       "success": 2,
       "failure": 0
     },
-    "flow":
-    {
-      "success": 1,
+    "logger": {
+      "success": 2,
+      "failure": 0
+    },
+    "flow": {
+      "success": 2,
       "failure": 0
     }
   },
@@ -41,18 +34,26 @@
   "numberOfDWTransformationsMigrated": 0,
   "numberOfDWTransformationLines": 0,
   "numberOfDWTransformationLinesMigrated": 0,
-  "detailedMessages":
-  [
+  "detailedMessages": [
     {
       "level": "ERROR",
       "key": "components.unsupported",
       "component": "unknown:source",
       "lineNumber": 5,
       "columnNumber": 25,
-      "message": "The migration of 'unknown' is not supported.",
+      "message": "The migration of \u0027unknown\u0027 is not supported.",
+      "filePath": "src/main/mule/mule-config-2.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.unsupported",
+      "component": "unknown:source",
+      "lineNumber": 5,
+      "columnNumber": 25,
+      "message": "The migration of \u0027unknown\u0027 is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "ERROR",
@@ -60,10 +61,9 @@
       "component": "unknown:operation",
       "lineNumber": 16,
       "columnNumber": 28,
-      "message": "The migration of 'unknown' is not supported.",
+      "message": "The migration of \u0027unknown\u0027 is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     }
   ]
 }
