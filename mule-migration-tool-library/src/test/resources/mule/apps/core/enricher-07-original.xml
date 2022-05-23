@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                          http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+
+    <flow name="dispatcher">
+        <batch:execute name="basic" />
+    </flow>
+
+    <batch:job name="basic">
+        <batch:process-records>
+            <batch:step name="step">
+                <enricher target="#[recordVars.target]">
+                    <set-payload value="Hello"/>
+                </enricher>
+            </batch:step>
+        </batch:process-records>
+    </batch:job>
+
+</mule>

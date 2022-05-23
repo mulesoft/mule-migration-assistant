@@ -57,10 +57,7 @@ public class Enricher extends AbstractApplicationModelMigrationStep implements E
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     Element flow = getContainerElement(element);
-    final String flowName = flow.getAttributeValue("name") != null ? flow.getAttributeValue("name")
-        : flow.getParentElement().getName() + StringUtils.capitalize(flow.getName());
-    String subFlowName = flowName + "_Enricher_" + enricherSubFlowIndex
-        .computeIfAbsent(flowName, k -> new AtomicInteger()).getAndIncrement();
+    String subFlowName = getSubFlowName(flow);
 
     Element flowRef = new Element("flow-ref", CORE_NAMESPACE).setAttribute("name", subFlowName);
     addElementAfter(flowRef, element);
@@ -127,6 +124,16 @@ public class Enricher extends AbstractApplicationModelMigrationStep implements E
       flowRef.setAttribute("targetValue", getExpressionMigrator().migrateExpression(source, true, flowRef));
     }
 
+  }
+
+  private String getSubFlowName(Element flow) {
+    String flowName = "MMA_Top_Level";
+    if (flow != null) {
+      flowName = flow.getAttributeValue("name") != null ? flow.getAttributeValue("name")
+          : flow.getParentElement().getName() + StringUtils.capitalize(flow.getName());
+    }
+    return flowName + "_Enricher_" + enricherSubFlowIndex
+        .computeIfAbsent(flowName, k -> new AtomicInteger()).getAndIncrement();
   }
 
   @Override

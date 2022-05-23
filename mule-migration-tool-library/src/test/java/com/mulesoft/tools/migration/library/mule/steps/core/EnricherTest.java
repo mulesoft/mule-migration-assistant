@@ -50,6 +50,7 @@ public class EnricherTest {
         new Object[] {"enricher-04", asList("expressions.melToDw")},
         new Object[] {"enricher-05", emptyList()},
         new Object[] {"enricher-06", emptyList()},
+        new Object[] {"enricher-07", emptyList()},
         new Object[] {"enricher-policy-01", emptyList()}
     };
   }
