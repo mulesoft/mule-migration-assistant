@@ -4,12 +4,22 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <sub-flow name="Processor Chain">
+    <sub-flow name="MMA_processor_chain_2">
+        <set-payload value="#[4]"/>
+    </sub-flow>
+
+    <sub-flow name="named-pc">
+        <set-payload value="#[3]"/>
+    </sub-flow>
+
+    <sub-flow name="MMA_processor_chain_1">
         <set-payload value="#[2]"/>
     </sub-flow>
 
     <flow name="testFlow">
-        <flow-ref name="Processor Chain"/>
+        <flow-ref name="MMA_processor_chain_1"/>
+        <flow-ref name="named-pc"/>
+        <flow-ref name="MMA_processor_chain_2"/>
     </flow>
 
 </mule>

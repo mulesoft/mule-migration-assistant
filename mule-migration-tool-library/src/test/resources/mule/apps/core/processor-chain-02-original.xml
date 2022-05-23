@@ -5,8 +5,14 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="testFlow">
-        <processor-chain name="Processor Chain">
+        <processor-chain>
             <set-payload value="#[2]"/>
+        </processor-chain>
+        <processor-chain name="named-pc">
+            <set-payload value="#[3]"/>
+        </processor-chain>
+        <processor-chain>
+            <set-payload value="#[4]"/>
         </processor-chain>
     </flow>
 
