@@ -15,6 +15,8 @@ import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
+import java.util.ArrayList;
+
 /**
  * Migrates the request configuration of the HTTP Connector
  *
@@ -76,9 +78,9 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
       }
     }
 
-    object.getChildren().forEach(c -> {
+    new ArrayList<>(object.getChildren()).forEach(c -> {
       if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
-        execute(c, report);
+        migrateHttpChild(c, report);
       } else if (TLS_NAMESPACE_URI.equals(c.getNamespaceURI()) && "context".equals(c.getName())) {
         final Element requestConnection = c.getParentElement().getChild("request-connection", HTTP_NAMESPACE);
         c.detach();
@@ -94,6 +96,9 @@ public class HttpConnectorRequestConfig extends AbstractHttpConnectorMigrationSt
 
     });
 
+  }
+
+  private void migrateHttpChild(Element object, MigrationReport report) {
     if ("basic-authentication".equals(object.getName())
         || "digest-authentication".equals(object.getName())
         || "ntlm-authentication".equals(object.getName())) {

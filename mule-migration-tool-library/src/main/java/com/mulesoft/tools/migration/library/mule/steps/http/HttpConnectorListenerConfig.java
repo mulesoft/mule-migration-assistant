@@ -12,6 +12,8 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
 
+import java.util.ArrayList;
+
 /**
  * Migrates the listener configuration of the HTTP Connector
  * @author Mulesoft Inc.
@@ -52,9 +54,10 @@ public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationS
     }
 
 
-    object.getChildren().forEach(c -> {
-      if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
-        execute(c, report);
+    new ArrayList<>(object.getChildren()).forEach(c -> {
+      if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI()) && "worker-threading-profile".equals(c.getName())) {
+        report.report("flow.threading", c, c.getParentElement());
+        c.getParentElement().removeContent(c);
       } else if (TLS_NAMESPACE_URI.equals(c.getNamespaceURI()) && "context".equals(c.getName())) {
         final Element listenerConnection = c.getParentElement().getChild("listener-connection", HTTP_NAMESPACE);
         c.getParentElement().removeContent(c);
@@ -62,10 +65,6 @@ public class HttpConnectorListenerConfig extends AbstractHttpConnectorMigrationS
       }
     });
 
-    if ("worker-threading-profile".equals(object.getName())) {
-      report.report("flow.threading", object, object.getParentElement());
-      object.getParentElement().removeContent(object);
-    }
   }
 
 }

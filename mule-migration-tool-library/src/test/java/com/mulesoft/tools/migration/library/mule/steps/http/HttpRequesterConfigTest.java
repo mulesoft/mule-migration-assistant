@@ -52,7 +52,8 @@ public class HttpRequesterConfigTest {
         "http-requester-config-07",
         "http-requester-config-08",
         "http-requester-config-09",
-        "http-requester-config-10"
+        "http-requester-config-10",
+        "http-requester-config-11"
     };
   }
 
@@ -73,12 +74,6 @@ public class HttpRequesterConfigTest {
     httpRequesterConfig
         .setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
     socketsConfig = new SocketsConfig();
-  }
-
-  @Ignore
-  @Test(expected = MigrationStepException.class)
-  public void executeWithNullElement() throws Exception {
-    httpRequesterConfig.execute(null, report.getReport());
   }
 
   @Test

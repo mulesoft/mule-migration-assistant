@@ -45,7 +45,8 @@ public class HttpListenerConfigTest {
         "http-listener-config-03",
         "http-listener-config-04",
         "http-listener-config-05",
-        "http-listener-config-06"
+        "http-listener-config-06",
+        "http-listener-config-07"
     };
   }
 
@@ -62,12 +63,6 @@ public class HttpListenerConfigTest {
   @Before
   public void setUp() throws Exception {
     httpListenerConfig = new HttpConnectorListenerConfig();
-  }
-
-  @Ignore
-  @Test(expected = MigrationStepException.class)
-  public void executeWithNullElement() throws Exception {
-    httpListenerConfig.execute(null, report.getReport());
   }
 
   @Test
