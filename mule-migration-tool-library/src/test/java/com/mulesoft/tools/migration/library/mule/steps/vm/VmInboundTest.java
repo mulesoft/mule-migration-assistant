@@ -65,7 +65,9 @@ public class VmInboundTest {
         "vm-inbound-13",
         "vm-inbound-14",
         "vm-inbound-15",
-        "vm-inbound-16"
+        "vm-inbound-16",
+        "vm-inbound-17",
+        "vm-inbound-18"
     };
   }
 

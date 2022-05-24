@@ -125,17 +125,17 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
     connector.ifPresent(conn -> {
       handleServiceOverrides(conn, report);
 
-      Integer consumers = null;
+      String consumers = null;
       if (conn.getAttribute("numberOfConcurrentTransactedReceivers") != null) {
-        consumers = parseInt(conn.getAttributeValue("numberOfConcurrentTransactedReceivers"));
+        consumers = conn.getAttributeValue("numberOfConcurrentTransactedReceivers");
       } else if (conn.getChild("receiver-threading-profile", CORE_NAMESPACE) != null
           && conn.getChild("receiver-threading-profile", CORE_NAMESPACE).getAttribute("maxThreadsActive") != null) {
-        consumers = parseInt(conn.getChild("receiver-threading-profile", CORE_NAMESPACE).getAttributeValue("maxThreadsActive"));
+        consumers = conn.getChild("receiver-threading-profile", CORE_NAMESPACE).getAttributeValue("maxThreadsActive");
       }
 
       if (consumers != null) {
-        getContainerElement(object).setAttribute("maxConcurrency", "" + consumers);
-        object.setAttribute("numberOfConsumers", "" + consumers);
+        getContainerElement(object).setAttribute("maxConcurrency", consumers);
+        object.setAttribute("numberOfConsumers", consumers);
       }
 
       handleConnectorChildElements(conn, vmConfig, new Element("connection", CORE_NAMESPACE), report);
