@@ -5,13 +5,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE;
 import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Remove isMessageSource attribute that is used for migration purposes.
@@ -22,7 +22,6 @@ import org.jdom2.Namespace;
 public class RemoveSyntheticMigrationAttributes extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR = "//*[@*[namespace-uri() = 'migration']]";
-  public static final Namespace MIGRATION_NAMESPACE = Namespace.getNamespace("migration");
 
   @Override
   public String getDescription() {

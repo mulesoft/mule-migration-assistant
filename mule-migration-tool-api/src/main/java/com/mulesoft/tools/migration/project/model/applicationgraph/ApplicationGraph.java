@@ -16,6 +16,8 @@ import org.jgrapht.traverse.DepthFirstIterator;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
+
 /**
  * Mule application graph model
  *
@@ -78,11 +80,6 @@ public class ApplicationGraph {
         .collect(Collectors.toList());
   }
 
-  public List<FlowComponent> getAllFlowComponents() {
-    return this.applicationGraph.vertexSet().stream()
-        .collect(Collectors.toList());
-  }
-
   private FlowComponent getOneComponentOfFlow(Flow flow) {
     return this.applicationGraph.vertexSet().stream()
         .filter(flowComponent -> flowComponent.getParentFlow() == flow)
@@ -123,10 +120,44 @@ public class ApplicationGraph {
         .collect(Collectors.toList());
   }
 
-  public FlowComponent findFlowComponent(Element element) {
+  public FlowComponent findFlowComponent(String elementId) {
     return this.applicationGraph.vertexSet().stream()
-        .filter(v -> v.getXmlElement().equals(element))
-        .findFirst().orElse(null);
+        .filter(fc -> matchesElementId(fc, elementId))
+        .findFirst()
+        .map(fc -> getComponent(fc, elementId))
+        .orElse(null);
+  }
+
+  private FlowComponent getComponent(FlowComponent flowComponent, String elementId) {
+    if (matchesIdInResponseComponent(flowComponent, elementId)) {
+      return ((PropertiesSourceComponent) flowComponent).getResponseComponent();
+    } else {
+      return flowComponent;
+    }
+  }
+
+  private boolean matchesElementId(FlowComponent flowComp, String elementId) {
+    return flowComp.getElementId().equals(elementId) || matchesIdInResponseComponent(flowComp, elementId);
+  }
+
+  private boolean matchesIdInResponseComponent(FlowComponent flowComp, String elementId) {
+    if (PropertiesSourceComponent.class.isInstance(flowComp)) {
+      FlowComponent responseComponent = ((PropertiesSourceComponent) flowComp).getResponseComponent();
+      return responseComponent != null && elementId.equals(responseComponent.getElementId());
+    }
+    return false;
+  }
+
+  public FlowComponent findFlowComponent(Element element) {
+    String elementId = element.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
+    FlowComponent flowComponent = findFlowComponent(elementId);
+    while (flowComponent == null && element.getParentElement() != null && !element.getName().equals("flow")) {
+      element = element.getParentElement();
+      elementId = element.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
+      flowComponent = findFlowComponent(elementId);
+    }
+
+    return flowComponent;
   }
 
   public FlowComponent getNextComponent(FlowRef flowRef, Flow flow) {
@@ -162,5 +193,9 @@ public class ApplicationGraph {
         .map(FlowComponent::getName)
         .filter(name -> name.equals(prefix) || name.startsWith(prefix + "-"))
         .collect(Collectors.toList());
+  }
+
+  public DepthFirstIterator getDepthFirstIterator(FlowComponent start) {
+    return new DepthFirstIterator(this.applicationGraph, start);
   }
 }

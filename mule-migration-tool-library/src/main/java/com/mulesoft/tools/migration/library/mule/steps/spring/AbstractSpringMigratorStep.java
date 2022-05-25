@@ -39,7 +39,7 @@ import java.util.TreeSet;
  */
 public abstract class AbstractSpringMigratorStep extends AbstractApplicationModelMigrationStep {
 
-  private static final String SPRING_FOLDER =
+  public static final String SPRING_FOLDER =
       "src" + File.separator + "main" + File.separator + "resources" + File.separator + "spring" + File.separator;
 
   protected static final String SPRING_NAMESPACE_PREFIX = "spring-module";

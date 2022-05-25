@@ -16,7 +16,9 @@ import static org.apache.commons.lang3.StringUtils.join;
 import com.mulesoft.tools.*;
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
 import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
+import com.mulesoft.tools.migration.library.tools.mel.nocompatibility.MelNoCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
@@ -49,12 +51,17 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
   private final Pattern EXPRESSION_WRAPPER = Pattern.compile("^\\s*#\\[(.*)]\\s*$", Pattern.DOTALL);
   private final Pattern EXPRESSION_TEMPLATE_WRAPPER = Pattern.compile(".*#\\[(.*)].*", Pattern.DOTALL);
 
-  private final MelCompatibilityResolver compatibilityResolver = new MelCompatibilityResolver();
+  private final MelCompatibilityResolver compatibilityResolver;
+  private final MelNoCompatibilityResolver noCompatibilityResolver;
   private final ApplicationModel model;
+  private final ApplicationGraph applicationGraph;
 
   public MelToDwExpressionMigrator(MigrationReport report, ApplicationModel model) {
     this.report = report;
     this.model = model;
+    this.compatibilityResolver = new MelCompatibilityResolver(model.getApplicationGraph());
+    this.noCompatibilityResolver = new MelNoCompatibilityResolver(model.getApplicationGraph());
+    this.applicationGraph = model.getApplicationGraph();
   }
 
   @Override
@@ -67,6 +74,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     if (!isWrapped(originalExpression) && !originalExpression.contains("#[")) {
       return originalExpression;
     }
+
     String unwrapped = unwrap(originalExpression);
     unwrapped = unwrapped.replaceAll("mel:", "");
     String migratedExpression;
@@ -98,6 +106,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     } catch (Exception e) {
       return compatibilityResolver.resolve(unwrappedExpression, element, report, model, this, enricher);
     }
+
     if (result.metadata().children().exists(a -> a instanceof NonMigratable)) {
       List<NonMigratable> metadata =
           (List<NonMigratable>) (List<?>) JavaConverters.seqAsJavaList(result.metadata().children())
@@ -125,13 +134,27 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     }
 
     migratedExpression = resolveServerContext(migratedExpression);
-    migratedExpression = resolveIdentifiers(migratedExpression);
 
     if (dataWeaveBodyOnly) {
       migratedExpression = migratedExpression.replaceFirst("%dw 2\\.0\n---", "").trim();
     }
 
-    report.melExpressionSuccess(unwrappedExpression);
+    if (applicationGraph != null) {
+      try {
+        migratedExpression = noCompatibilityResolver.resolve(migratedExpression, element, report, model, this, enricher);
+      } catch (Exception e) {
+        return resolveIdentifiersAndEscape(migratedExpression, dataWeaveBodyOnly);
+      }
+    } else {
+      migratedExpression = resolveCompatibilityIdentifiers(migratedExpression);
+      report.melExpressionSuccess(unwrappedExpression);
+    }
+
+    return resolveIdentifiersAndEscape(migratedExpression, dataWeaveBodyOnly);
+  }
+
+  private String resolveIdentifiersAndEscape(String migratedExpression, boolean dataWeaveBodyOnly) {
+    migratedExpression = resolveIdentifiers(migratedExpression);
     return escapeUnderscores(migratedExpression);
   }
 
@@ -142,11 +165,14 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
         .replaceAll("(vars\\.)?server\\.host", "server.host");
   }
 
+  public String resolveCompatibilityIdentifiers(String expression) {
+    return expression.replaceAll("message\\.inboundProperties", "vars.compatibility_inboundProperties");
+  }
+
   public String resolveIdentifiers(String expression) {
     return expression.replaceAll("flowVars", "vars")
         .replaceAll("recordVars", "vars")
         .replaceAll("message\\.id", "correlationId")
-        .replaceAll("message\\.inboundProperties", "vars.compatibility_inboundProperties")
         .replaceAll("message\\.outboundProperties", "vars.compatibility_outboundProperties")
         .replaceAll("message\\.inboundAttachments", "payload.parts")
         .replaceAll("message\\.dataType\\.mimeType", "message.^mediaType")

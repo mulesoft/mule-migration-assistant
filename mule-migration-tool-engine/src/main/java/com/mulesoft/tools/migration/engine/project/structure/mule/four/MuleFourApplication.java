@@ -35,6 +35,10 @@ public class MuleFourApplication extends MuleProject {
     return baseFolder.resolve(srcTestConfigurationPath);
   }
 
+  public Path srcMainResourcesSpringConfiguration() {
+    return baseFolder.resolve(srcMainConfigurationPath);
+  }
+
   public Path muleArtifactJson() {
     return baseFolder.resolve(MULE_ARTIFACT_JSON);
   }

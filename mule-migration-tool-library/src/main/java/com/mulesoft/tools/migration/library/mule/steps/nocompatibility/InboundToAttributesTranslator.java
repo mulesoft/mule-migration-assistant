@@ -15,10 +15,12 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequest
 import com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesSource;
 import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.IMAP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.POP3_NAMESPACE_URI;
@@ -46,7 +48,7 @@ public class InboundToAttributesTranslator {
   public static final SourceType HTTP_CONNECTOR_REQUESTER = new SourceType(HTTP_NAMESPACE_URI, "request");
   public static final SourceType HTTP_TRANSPORT_OUTBOUND = new SourceType(HTTP_NAMESPACE_URI, "outbound-endpoint");
   public static final SourceType HTTP_POLLING_CONNECTOR = new SourceType(HTTP_NAMESPACE_URI, "polling-connector");
-  public static final SourceType FILE_INBOUND = new SourceType(FILE_NAMESPACE_URI, "listener");
+  public static final SourceType FILE_INBOUND = new SourceType(FILE_NAMESPACE_URI, "inbound-endpoint");
   public static final SourceType IMAP_INBOUND = new SourceType(IMAP_NAMESPACE_URI, "inbound-endpoint");
   public static final SourceType POP3_INBOUND = new SourceType(POP3_NAMESPACE_URI, "inbound-endpoint");
   public static final SourceType FTP_INBOUND = new SourceType(FTP_NAMESPACE_URI, "inbound-endpoint");
@@ -86,26 +88,33 @@ public class InboundToAttributesTranslator {
     return Lists.newArrayList(translatorClasses.keySet());
   }
 
+  public Optional<Map<String, String>> getAllTranslationsFor(PropertiesSource source) throws Exception {
+    return Optional.ofNullable(getTranslationMap(source.getType()));
+  }
+
   public String translate(SourceType originatingSourceType, String propertyToTranslate) throws Exception {
     String translation = null;
     if (propertyToTranslate != null) {
-      Class<?> translatorClazz = translatorClasses.get(originatingSourceType);
-      if (translatorClazz != null) {
-        Map<String, String> translationMap = (Map<String, String>) translatorClazz
-            .getMethod("inboundToAttributesExpressions")
-            .invoke(null);
-
-        translation = translationMap != null ? translationMap.get(propertyToTranslate) : null;
-        // assume is a user defined property
-        if (translation == null && isSupported(originatingSourceType)) {
-          translation = "message.attributes." + propertyToTranslate;
-        }
+      Map<String, String> translationMap = getTranslationMap(originatingSourceType);
+      translation = translationMap != null ? translationMap.get(propertyToTranslate) : null;
+      // assume is a user defined property
+      if (translation == null && isSupported(originatingSourceType)) {
+        translation = "message.attributes." + propertyToTranslate;
       }
     }
-
     translation = wrapWhenExpression(translation);
 
     return translation;
+  }
+
+  public Map<String, String> getTranslationMap(SourceType originatingSourceType) throws Exception {
+    Class<?> translatorClazz = translatorClasses.get(originatingSourceType);
+    if (translatorClazz != null) {
+      return (Map<String, String>) translatorClazz
+          .getMethod("inboundToAttributesExpressions")
+          .invoke(null);
+    }
+    return null;
   }
 
   private static String wrapWhenExpression(String translation) {

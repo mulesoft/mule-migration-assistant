@@ -17,11 +17,16 @@ import java.util.Map;
  */
 public interface FlowComponent {
 
+  String getElementId();
+
   Flow getParentFlow();
 
   Element getXmlElement();
 
   PropertiesMigrationContext getPropertiesMigrationContext();
 
+  void setPropertiesMigrationContext(PropertiesMigrationContext propertiesMigrationContext);
+
   String getName();
+
 }

@@ -1,0 +1,185 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated":
+  [
+    "org.mule.connectors:mule-http-connector:VERSION",
+    "org.mule.connectors:mule-file-connector:VERSION",
+    "org.mule.connectors:mule-vm-connector:VERSION"
+  ],
+  "numberOfMuleComponents": 16,
+  "numberOfMuleComponentsMigrated": 16,
+  "componentDetails":
+  {
+    "mule":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "logger":
+    {
+      "success": 3,
+      "failure": 0
+    },
+    "flow":
+    {
+      "success": 2,
+      "failure": 0
+    },
+    "http:listener-config":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "http:request-config":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "http:request":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "http:header":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "file:config":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "file:listener":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "vm:connector":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "compatibility:set-property":
+    {
+      "success": 2,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 4,
+  "numberOfMELExpressionsMigrated": 3,
+  "numberOfMELExpressionLines": 4,
+  "numberOfMELExpressionLinesMigrated": 3,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages":
+  [
+    {
+      "level": "INFO",
+      "key": "file.responseTimeout",
+      "component": "file:listener",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "'responseTimeout' was not being used by the file transport.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 37,
+      "columnNumber": 99,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "ERROR",
+      "key": "nocompatibility.unsupportedproperty",
+      "component": "flow",
+      "lineNumber": 51,
+      "columnNumber": 23,
+      "message": "Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 54,
+      "columnNumber": 34,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 61,
+      "columnNumber": 120,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 67,
+      "columnNumber": 51,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    }
+  ]
+}

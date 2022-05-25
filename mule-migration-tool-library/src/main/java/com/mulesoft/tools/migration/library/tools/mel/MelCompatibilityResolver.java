@@ -5,7 +5,9 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel;
 
+import com.mulesoft.tools.migration.library.tools.mel.nocompatibility.MelNoCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
@@ -23,12 +25,15 @@ import java.util.List;
  */
 public class MelCompatibilityResolver implements CompatibilityResolver<String> {
 
-  private static List<CompatibilityResolver<String>> resolvers;
+  private List<CompatibilityResolver<String>> resolvers;
+  private ApplicationGraph applicationGraph;
 
-  static {
+  public MelCompatibilityResolver(ApplicationGraph applicationGraph) {
     resolvers = new ArrayList<>();
+    resolvers.add(new MelNoCompatibilityResolver(applicationGraph));
     resolvers.add(new InboundAttachmentsCompatibilityResolver());
     resolvers.add(new HeaderSyntaxCompatibilityResolver());
+    this.applicationGraph = applicationGraph;
   }
 
   @Override

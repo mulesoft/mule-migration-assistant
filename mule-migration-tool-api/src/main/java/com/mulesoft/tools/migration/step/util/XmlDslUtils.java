@@ -12,8 +12,8 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.jdom2.Namespace.getNamespace;
 
-import com.google.common.base.Functions;
 import com.google.common.collect.Maps;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -27,7 +27,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.CDATA;
 import org.jdom2.Comment;
@@ -37,8 +36,10 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.Parent;
+import org.jdom2.filter.Filter;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
+import org.jdom2.xpath.XPathFactory;
 
 /**
  * Provides reusable methods for common migration scenarios.
@@ -55,6 +56,9 @@ public final class XmlDslUtils {
   public static final String CORE_EE_NS_URI = "http://www.mulesoft.org/schema/mule/ee/core";
   public static final Namespace CORE_EE_NAMESPACE = Namespace.getNamespace(EE_NAMESPACE_NAME, CORE_EE_NS_URI);
   public static final String EE_NAMESPACE_SCHEMA = "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd";
+  public static final Namespace MIGRATION_NAMESPACE = Namespace.getNamespace("migration", "migration");
+  public static final String HTTP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/http";
+  public static final Namespace HTTP_NAMESPACE = getNamespace("http", HTTP_NAMESPACE_URI);
 
   private XmlDslUtils() {
     // Nothing to do
@@ -133,7 +137,9 @@ public final class XmlDslUtils {
     addCompatibilityNamespace(element.getDocument());
 
     int index = element.getParent().indexOf(element);
-    buildAttributesToInboundProperties(report, element.getParent(), index + 1);
+    if (appModel.getApplicationGraph() == null) {
+      buildAttributesToInboundProperties(report, element.getParent(), index + 1);
+    }
 
     if (expectsOutboundProperties) {
       Element errorHandlerElement = getFlowExceptionHandlingElement(element.getParentElement());
@@ -197,10 +203,10 @@ public final class XmlDslUtils {
 
     int index = element.getParent().indexOf(element);
 
-    if (!"true".equals(element.getAttributeValue("isPolledConsumer", Namespace.getNamespace("migration", "migration")))) {
+    if (!"true".equals(element.getAttributeValue("isPolledConsumer", MIGRATION_NAMESPACE))) {
       buildOutboundPropertiesToVar(report, element.getParent(), index, consumeStreams);
     }
-    if (outputsAttributes) {
+    if (outputsAttributes && appModel.getApplicationGraph() == null) {
       buildAttributesToInboundProperties(report, element.getParent(), index + 2);
     }
   }
@@ -554,7 +560,7 @@ public final class XmlDslUtils {
    * @param attribute the attribute to be added
    */
   public static void addMigrationAttributeToElement(Element element, Attribute attribute) {
-    attribute.setNamespace(Namespace.getNamespace("migration", "migration"));
+    attribute.setNamespace(MIGRATION_NAMESPACE);
     element.setAttribute(attribute);
   }
 
@@ -675,9 +681,13 @@ public final class XmlDslUtils {
    * @param filePath the path of the file
    * @return the jdom document.
    */
-  public static Document generateDocument(Path filePath) throws JDOMException, IOException {
+  public static Document generateDocument(Path filePath, boolean generateElementIds) throws JDOMException, IOException {
     SAXBuilder saxBuilder = new SAXBuilder();
-    saxBuilder.setJDOMFactory(new LocatedJDOMFactory());
+    if (generateElementIds) {
+      saxBuilder.setJDOMFactory(new LocatedIdJDOMFactory());
+    } else {
+      saxBuilder.setJDOMFactory(new LocatedJDOMFactory());
+    }
     return saxBuilder.build(filePath.toFile());
   }
 
@@ -695,7 +705,7 @@ public final class XmlDslUtils {
           .filter(f -> f.getName().equals(fileName.replace("classpath:", ""))).findFirst().orElse(null);
       if (xmlFile != null) {
         try {
-          Document doc = generateDocument(xmlFile.toPath());
+          Document doc = generateDocument(xmlFile.toPath(), false);
           if (doc.getRootElement().getNamespace().getURI().startsWith("http://www.mulesoft.org/schema/mule/")) {
             muleConfig = true;
           }
@@ -825,6 +835,10 @@ public final class XmlDslUtils {
         removeNestedComments(contentElement);
       }
     }
+  }
+
+  public static <T> List<T> getChildrenMatchingExpression(Element elementToEvaluate, String expression, Filter<T> filter) {
+    return XPathFactory.instance().compile(expression, filter).evaluate(elementToEvaluate);
   }
 
 }
