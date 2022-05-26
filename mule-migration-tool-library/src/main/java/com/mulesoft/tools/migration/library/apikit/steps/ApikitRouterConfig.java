@@ -5,18 +5,20 @@
  */
 package com.mulesoft.tools.migration.library.apikit.steps;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.Flow.migrateFlowName;
+import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
+import static java.util.stream.Collectors.toList;
+
 import com.mulesoft.tools.migration.library.apikit.ApikitUriParamUtils;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-import org.jdom2.Attribute;
-import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.WARN;
-import static java.util.stream.Collectors.toList;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 /**
  * Migrates the router configuration of APIkit
@@ -76,6 +78,8 @@ public class ApikitRouterConfig extends AbstractApikitMigrationStep {
       final Element flowMappingParent = getFlowMappingsParent(config);
       flowMappings.forEach(flowMapping -> {
         flowMapping.detach();
+        Attribute flowRef = flowMapping.getAttribute("flow-ref");
+        flowRef.setValue(migrateFlowName(flowRef.getValue()));
         flowMapping.setNamespace(APIKIT_NAMESPACE);
         flowMappingParent.addContent(flowMapping);
         migrateUriParams(flowMapping);

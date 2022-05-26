@@ -7,12 +7,12 @@
 
     <!--Migration WARN: consoleEnabled property do not exist in Mule 4.-->
     <!--<apikit:config xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" name="api-config" raml="api.raml" consoleEnabled="false" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus">
-        <apikit:flow-mapping resource="/resource" action="post" flow-ref="post-resource" />
+        <apikit:flow-mapping resource="/resource" action="post" flow-ref="post/resource" />
         <apikit:flow-mapping resource="/resource/{id}" action="get" content-type="application/json" flow-ref="get-specific-resource" />
     </apikit:config>-->
     <apikit:config name="api-config" raml="api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus">
         <apikit:flow-mappings>
-            <apikit:flow-mapping resource="/resource" action="post" flow-ref="post-resource" />
+            <apikit:flow-mapping resource="/resource" action="post" flow-ref="post\resource" />
             <apikit:flow-mapping resource="/resource/{id}" action="get" content-type="application/json" flow-ref="get-specific-resource" />
         </apikit:flow-mappings>
     </apikit:config>
@@ -53,7 +53,7 @@
 
     </flow>
 
-    <flow name="post-resource">
+    <flow name="post\resource">
         <compatibility:set-property propertyName="Content-Type" value="application/json">
             <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
             <!--    For more information refer to:-->

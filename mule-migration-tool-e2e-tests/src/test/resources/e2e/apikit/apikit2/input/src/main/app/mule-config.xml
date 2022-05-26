@@ -5,7 +5,7 @@ http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/a
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     <http:listener-config name="httpListenerConfig" host="0.0.0.0" port="${httpPort}"/>
     <apikit:config name="api-config" raml="api.raml" consoleEnabled="false">
-        <apikit:flow-mapping resource="/resource" action="post" flow-ref="post-resource"/>
+        <apikit:flow-mapping resource="/resource" action="post" flow-ref="post/resource"/>
         <apikit:flow-mapping resource="/resource/{id}" action="get" content-type="application/json" flow-ref="get-specific-resource"/>
     </apikit:config>
     <flow name="api-main">
@@ -13,7 +13,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <apikit:router config-ref="api-config"/>
         <exception-strategy ref="apiKitGlobalExceptionMapping"/>
     </flow>
-    <flow name="post-resource">
+    <flow name="post/resource">
         <set-property propertyName="Content-Type" value="application/json"/>
         <set-payload value="{&#xD;&#xA;  &quot;response&quot; :{&#xD;&#xA;    &quot;status&quot;: &quot;success&quot;,&#xD;&#xA;    &quot;http-status&quot; : 201,&#xD;&#xA;    &quot;message_ID&quot;: &quot;a7a756040 10/07/2017-14:40:01.6Z&quot;,&#xD;&#xA;    &quot;summary&quot;: &quot;The new customer record was written successfully&quot;,&#xD;&#xA;    &quot;timestamp&quot; : &quot;2000-01-01T00:00:00.0Z&quot;&#xD;&#xA;  }&#xD;&#xA;}"/>
     </flow>

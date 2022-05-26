@@ -11,6 +11,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.Flow.migrateFlowName;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 
@@ -49,11 +50,7 @@ public class FlowRef extends AbstractApplicationModelMigrationStep implements Ex
 
       report.report("flow.dynamicFlowRefName", element, element);
     } else {
-      element.setAttribute("name", element.getAttributeValue("name")
-          .replaceAll("/", "\\\\")
-          .replaceAll("\\[|\\{", "(")
-          .replaceAll("\\]|\\}", ")")
-          .replaceAll("#", "_"));
+      element.setAttribute("name", migrateFlowName(element.getAttributeValue("name")));
     }
   }
 

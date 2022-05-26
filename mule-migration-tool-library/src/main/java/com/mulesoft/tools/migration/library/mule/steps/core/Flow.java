@@ -44,11 +44,8 @@ public class Flow extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    element.setAttribute("name", element.getAttributeValue("name")
-        .replaceAll("/", "\\\\")
-        .replaceAll("\\[|\\{", "(")
-        .replaceAll("\\]|\\}", ")")
-        .replaceAll("#", "_"));
+    String name = element.getAttributeValue("name");
+    element.setAttribute("name", migrateFlowName(name));
 
     Attribute processingStrategy = element.getAttribute("processingStrategy");
     if (processingStrategy != null) {
@@ -90,6 +87,14 @@ public class Flow extends AbstractApplicationModelMigrationStep {
         addElementToBottom(element, content);
       }
     }
+  }
+
+  public static String migrateFlowName(String name) {
+    return name
+        .replaceAll("/", "\\\\")
+        .replaceAll("\\[|\\{", "(")
+        .replaceAll("\\]|\\}", ")")
+        .replaceAll("#", "_");
   }
 
 }
