@@ -6,14 +6,10 @@
 package com.mulesoft.tools.migration.library.applicationgraph;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.InboundToAttributesTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.*;
 import org.jgrapht.traverse.DepthFirstIterator;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 /**
@@ -24,12 +20,6 @@ import java.util.stream.Collectors;
  */
 public class ApplicationPropertiesContextCalculator {
 
-  private final InboundToAttributesTranslator inboundTranslator;
-
-  public ApplicationPropertiesContextCalculator() {
-    this.inboundTranslator = new InboundToAttributesTranslator();
-  }
-
   public void calculatePropertiesContext(ApplicationGraph graph) {
     List<FlowComponent> startingPoints = graph.getAllStartingFlowComponents();
     startingPoints.forEach(fc -> calculatePropertiesContext(graph, fc));
@@ -37,47 +27,22 @@ public class ApplicationPropertiesContextCalculator {
 
   private void calculatePropertiesContext(ApplicationGraph graph, FlowComponent start) {
     DepthFirstIterator depthFirstIterator = graph.getDepthFirstIterator(start);
-    FlowComponent prevComponent = start;
+    FlowComponent prevComponent = null;
     List<PropertiesSourceComponent> componentsWithResponse = Lists.newArrayList();
     while (depthFirstIterator.hasNext()) {
       FlowComponent currentComponent = (FlowComponent) depthFirstIterator.next();
-      Map<String, PropertyMigrationContext> inboundPropContext = Maps.newHashMap();
-
-      // TODO: populate outbound context
-      Map<String, PropertyMigrationContext> outbundPropContext = Maps.newHashMap();
-      if (!(currentComponent instanceof PropertiesSource)) {
-        if (prevComponent instanceof PropertiesSource) {
-          try {
-            inboundPropContext = createSourceGeneratedContext((PropertiesSource) prevComponent);
-          } catch (Exception e) {
-            // TODO: handleException
-          }
-          inboundPropContext.putAll(prevComponent.getPropertiesMigrationContext().getInboundContext());
-        } else {
-          inboundPropContext = prevComponent.getPropertiesMigrationContext().getInboundContext();
-        }
-      } else if (currentComponent instanceof PropertiesSourceComponent
-          && ((PropertiesSourceComponent) currentComponent).getResponseComponent() != null) {
-        componentsWithResponse.add((PropertiesSourceComponent) currentComponent);
-      }
-
+      PropertiesContextVisitor propertiesContextVisitor = new PropertiesContextVisitor(prevComponent);
+      currentComponent.accept(propertiesContextVisitor);
+      componentsWithResponse.addAll(propertiesContextVisitor.getComponentsWithResponse());
       prevComponent = currentComponent;
-      currentComponent.setPropertiesMigrationContext(new PropertiesMigrationContext(inboundPropContext, outbundPropContext));
     }
 
     FlowComponent leafElement = graph.getLastFlowComponent(start.getParentFlow());
     componentsWithResponse.forEach(component -> {
-      component.getResponseComponent()
-          .setPropertiesMigrationContext(new PropertiesMigrationContext(leafElement.getPropertiesMigrationContext()
-              .getInboundContext(), leafElement.getPropertiesMigrationContext().getOutboundContext()));
+      PropertiesContextVisitor propertiesContextVisitor = new PropertiesContextVisitor(leafElement);
+      propertiesContextVisitor.visitPropertiesSourceComponent(component, true);
     });
   }
 
-  private Map<String, PropertyMigrationContext> createSourceGeneratedContext(PropertiesSource source) throws Exception {
-    return inboundTranslator.getAllTranslationsFor(source).map(translations -> translations.entrySet().stream()
-        .collect(Collectors.toMap(
-                                  e -> e.getKey(),
-                                  e -> new PropertyMigrationContext(e.getValue(), false))))
-        .orElse(Maps.newHashMap());
-  }
+
 }

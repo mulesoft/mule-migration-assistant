@@ -66,16 +66,16 @@
       "success": 1,
       "failure": 0
     },
-    "compatibility:set-property":
+    "set-variable":
     {
       "success": 2,
       "failure": 0
     }
   },
   "numberOfMELExpressions": 4,
-  "numberOfMELExpressionsMigrated": 3,
+  "numberOfMELExpressionsMigrated": 4,
   "numberOfMELExpressionLines": 4,
-  "numberOfMELExpressionLinesMigrated": 3,
+  "numberOfMELExpressionLinesMigrated": 4,
   "numberOfDWTransformations": 0,
   "numberOfDWTransformationsMigrated": 0,
   "numberOfDWTransformationLines": 0,
@@ -128,31 +128,9 @@
     },
     {
       "level": "WARN",
-      "key": "message.outboundProperties",
-      "component": "compatibility:set-property",
-      "lineNumber": 37,
-      "columnNumber": 99,
-      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "ERROR",
-      "key": "nocompatibility.unsupportedproperty",
-      "component": "flow",
-      "lineNumber": 51,
-      "columnNumber": 23,
-      "message": "Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
       "key": "http.statusCode",
       "component": "http:response",
-      "lineNumber": 54,
+      "lineNumber": 49,
       "columnNumber": 34,
       "message": "Avoid using an outbound property to determine the status code.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -162,19 +140,8 @@
     {
       "level": "WARN",
       "key": "message.outboundProperties",
-      "component": "compatibility:set-property",
-      "lineNumber": 61,
-      "columnNumber": 120,
-      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
-      "key": "message.outboundProperties",
       "component": "compatibility:outbound-properties-to-var",
-      "lineNumber": 67,
+      "lineNumber": 58,
       "columnNumber": 51,
       "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
       "filePath": "src/main/mule/mule-config.xml",

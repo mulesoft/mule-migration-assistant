@@ -59,6 +59,11 @@ public class MessageProcessor implements FlowComponent {
   }
 
   @Override
+  public void accept(FlowComponentVisitor visitor) {
+    visitor.visitMessageProcessor(this);
+  }
+
+  @Override
   public String getElementId() {
     return this.elementId;
   }

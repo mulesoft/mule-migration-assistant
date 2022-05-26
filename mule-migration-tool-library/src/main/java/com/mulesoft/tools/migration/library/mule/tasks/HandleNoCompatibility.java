@@ -5,7 +5,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.tasks;
 
-import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.TranslateInboundReferencesStep;
+import com.mulesoft.tools.migration.library.nocompatibility.TranslateInboundReferencesStep;
 import com.mulesoft.tools.migration.step.MigrationStep;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 

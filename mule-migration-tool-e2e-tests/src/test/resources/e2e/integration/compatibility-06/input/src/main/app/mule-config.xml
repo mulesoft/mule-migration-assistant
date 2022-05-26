@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:spring="http://www.springframework.org/schema/beans" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+
+    <flow name="flow2" processingStrategy="synchronous">
+
+        <logger message="#['My outbound is:' + message.outboundProperties.myOutbound]" level="INFO" doc:name="Logger" />
+        <set-property propertyName="myOutbound2" value="#[message.outboundProperties.'myOutbound']" doc:name="SecondProperty"/>
+        <remove-property propertyName="myOutbound" doc:name="RemoveProperty"/>
+        <logger message="#['My outbound is:' + message.outboundProperties.myOutbound2]" level="INFO" doc:name="WrongLogger"/>
+    </flow>
+
+    <flow name="flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/testinbound" allowedMethods="GET" doc:name="HTTP">
+            <http:response-builder>
+                <http:header headerName="isTest" value="#[message.inboundProperties.isTest]"/>
+            </http:response-builder>
+        </http:listener>
+
+        <set-property propertyName="myOutbound" value="#[message.inboundProperties.'http.query.params'.'type']" doc:name="Property" />
+        <flow-ref name="flow2" doc:name="Flow Reference"/>
+        <logger message="#['My outbound is:' + message.outboundProperties.myOutbound2]" level="INFO" doc:name="Copy_of_WrongLogger"/>
+    </flow>
+</mule>

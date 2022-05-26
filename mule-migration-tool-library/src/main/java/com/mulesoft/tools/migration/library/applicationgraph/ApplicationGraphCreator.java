@@ -6,16 +6,14 @@
 package com.mulesoft.tools.migration.library.applicationgraph;
 
 import com.google.common.collect.ImmutableList;
-import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.InboundToAttributesTranslator;
+import com.mulesoft.tools.migration.library.nocompatibility.InboundToAttributesTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.*;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jdom2.*;
-import org.jdom2.filter.Filter;
 import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -115,9 +113,22 @@ public class ApplicationGraphCreator {
         report.report("nocompatibility.dynamicflowref", xmlElement, xmlElement);
       }
     } else if (isPropertySource(xmlElement, parentFlow)) {
-      component = new PropertiesSourceComponent(xmlElement, parentFlow, applicationGraph);
+      component =
+          new PropertiesSourceComponent(xmlElement,
+                                        PropertiesSourceType.getRegistered(xmlElement.getNamespaceURI(), xmlElement.getName()),
+                                        parentFlow, applicationGraph);
     } else {
-      component = new MessageProcessor(xmlElement, parentFlow, applicationGraph);
+      String componentName = String.format("%s:%s", xmlElement.getNamespace().getURI(), xmlElement.getName());
+      switch (componentName) {
+        case CORE_NS_URI + ":" + "set-property":
+          component = new SetPropertyProcessor(xmlElement, parentFlow, applicationGraph);
+          break;
+        case CORE_NS_URI + ":" + "remove-property":
+          component = new RemovePropertyProcessor(xmlElement, parentFlow, applicationGraph);
+          break;
+        default:
+          component = new MessageProcessor(xmlElement, parentFlow, applicationGraph);
+      }
     }
 
     applicationGraph.addFlowComponent(component);

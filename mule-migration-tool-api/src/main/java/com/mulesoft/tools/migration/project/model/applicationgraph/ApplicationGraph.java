@@ -142,7 +142,7 @@ public class ApplicationGraph {
 
   private boolean matchesIdInResponseComponent(FlowComponent flowComp, String elementId) {
     if (PropertiesSourceComponent.class.isInstance(flowComp)) {
-      FlowComponent responseComponent = ((PropertiesSourceComponent) flowComp).getResponseComponent();
+      MessageProcessor responseComponent = ((PropertiesSourceComponent) flowComp).getResponseComponent();
       return responseComponent != null && elementId.equals(responseComponent.getElementId());
     }
     return false;

@@ -29,6 +29,7 @@ public class MelNoCompatibilityResolver implements CompatibilityResolver<String>
   public MelNoCompatibilityResolver(ApplicationGraph graph) {
     resolvers = new ArrayList<>();
     resolvers.add(new InboundPropertiesNoCompatibilityResolver());
+    resolvers.add(new OutboundPropertiesNoCompatibilityResolver());
     this.graph = graph;
   }
 

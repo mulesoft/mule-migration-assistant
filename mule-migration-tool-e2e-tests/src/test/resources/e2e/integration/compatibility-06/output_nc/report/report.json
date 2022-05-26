@@ -5,8 +5,8 @@
   [
     "org.mule.connectors:mule-http-connector:VERSION"
   ],
-  "numberOfMuleComponents": 14,
-  "numberOfMuleComponentsMigrated": 14,
+  "numberOfMuleComponents": 13,
+  "numberOfMuleComponentsMigrated": 13,
   "componentDetails":
   {
     "mule":
@@ -16,7 +16,7 @@
     },
     "logger":
     {
-      "success": 1,
+      "success": 3,
       "failure": 0
     },
     "flow":
@@ -24,32 +24,32 @@
       "success": 2,
       "failure": 0
     },
-    "http:listener-config":
+    "flow-ref":
     {
       "success": 1,
       "failure": 0
     },
-    "http:request-config":
+    "http:listener-config":
     {
       "success": 1,
       "failure": 0
     },
     "http:listener":
     {
-      "success": 2,
-      "failure": 0
-    },
-    "http:request":
-    {
       "success": 1,
       "failure": 0
     },
     "http:header":
     {
-      "success": 4,
+      "success": 1,
       "failure": 0
     },
     "set-variable":
+    {
+      "success": 2,
+      "failure": 0
+    },
+    "remove-variable":
     {
       "success": 1,
       "failure": 0
@@ -66,10 +66,21 @@
   "detailedMessages":
   [
     {
+      "level": "INFO",
+      "key": "flow.processingStrategy",
+      "component": "flow",
+      "lineNumber": 8,
+      "columnNumber": 43,
+      "message": "The 'flow' element no longer has a 'processingStrategy' attribute.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
       "level": "WARN",
       "key": "http.statusCode",
       "component": "http:response",
-      "lineNumber": 14,
+      "lineNumber": 24,
       "columnNumber": 113,
       "message": "Avoid using an outbound property to determine the status code.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -80,40 +91,7 @@
       "level": "WARN",
       "key": "http.statusCode",
       "component": "http:error-response",
-      "lineNumber": 20,
-      "columnNumber": 141,
-      "message": "Avoid using an outbound property to determine the status code.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
-      "key": "message.outboundProperties",
-      "component": "compatibility:outbound-properties-to-var",
       "lineNumber": 30,
-      "columnNumber": 51,
-      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
-      "key": "http.statusCode",
-      "component": "http:response",
-      "lineNumber": 40,
-      "columnNumber": 113,
-      "message": "Avoid using an outbound property to determine the status code.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
-      "key": "http.statusCode",
-      "component": "http:error-response",
-      "lineNumber": 46,
       "columnNumber": 141,
       "message": "Avoid using an outbound property to determine the status code.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -124,18 +102,7 @@
       "level": "WARN",
       "key": "message.outboundProperties",
       "component": "compatibility:outbound-properties-to-var",
-      "lineNumber": 56,
-      "columnNumber": 51,
-      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
-      "key": "message.outboundProperties",
-      "component": "compatibility:outbound-properties-to-var",
-      "lineNumber": 66,
+      "lineNumber": 44,
       "columnNumber": 51,
       "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
       "filePath": "src/main/mule/mule-config.xml",

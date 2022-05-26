@@ -28,11 +28,11 @@ public class PropertiesSourceComponent extends MessageProcessor implements Prope
       getAllElementsFromNamespaceXpathSelector(HTTP_NAMESPACE.getURI(), ImmutableList.of("response-builder"), false, true);
 
   private final SourceType type;
-  private FlowComponent responseComponent;
+  private MessageProcessor responseComponent;
 
-  public PropertiesSourceComponent(Element xmlElement, Flow parentFlow, ApplicationGraph applicationGraph) {
+  public PropertiesSourceComponent(Element xmlElement, SourceType type, Flow parentFlow, ApplicationGraph applicationGraph) {
     super(xmlElement, parentFlow, applicationGraph);
-    this.type = new SourceType(xmlElement.getNamespaceURI(), xmlElement.getName());
+    this.type = type;
     Element responseComponent = getElementResponse(xmlElement);
     if (responseComponent != null) {
       this.responseComponent = new MessageProcessor(responseComponent, parentFlow, applicationGraph);
@@ -53,7 +53,12 @@ public class PropertiesSourceComponent extends MessageProcessor implements Prope
     return type;
   }
 
-  public FlowComponent getResponseComponent() {
+  public MessageProcessor getResponseComponent() {
     return responseComponent;
+  }
+
+  @Override
+  public void accept(FlowComponentVisitor visitor) {
+    visitor.visitPropertiesSourceComponent(this, false);
   }
 }

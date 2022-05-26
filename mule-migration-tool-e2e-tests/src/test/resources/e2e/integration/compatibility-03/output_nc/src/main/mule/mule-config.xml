@@ -31,13 +31,9 @@
             </http:error-response>
         </http:listener>
 
-        <logger message="#['Subflow with source. File moved: ' ++ message.inboundProperties.fileName]" level="INFO" doc:name="Logger" />
+        <logger message="#['Subflow with source. File moved: ' ++ message.attributes.headers.fileName]" level="INFO" doc:name="Logger" />
 
-        <compatibility:set-property propertyName="someOutbound" value="Hello" doc:name="Property">
-            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
-            <!--    For more information refer to:-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
-        </compatibility:set-property>
+        <set-variable variableName="outbound_someOutbound" value="Hello" doc:name="Property" />
 
         <compatibility:outbound-properties-to-var>
             <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
@@ -57,11 +53,7 @@
 
         <logger message="#['Moved file ' ++ message.attributes.fileName]" level="INFO" doc:name="File move logger" />
 
-        <compatibility:set-property propertyName="fileName" value="#[message.attributes.fileName]" doc:name="Property">
-            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
-            <!--    For more information refer to:-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
-        </compatibility:set-property>
+        <set-variable variableName="outbound_fileName" value="#[message.attributes.fileName]" doc:name="Property" />
 
         <compatibility:outbound-properties-to-var>
             <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->

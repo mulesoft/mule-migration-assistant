@@ -25,8 +25,7 @@ public interface FlowComponent {
 
   PropertiesMigrationContext getPropertiesMigrationContext();
 
-  void setPropertiesMigrationContext(PropertiesMigrationContext propertiesMigrationContext);
-
   String getName();
 
+  void accept(FlowComponentVisitor visitor);
 }
