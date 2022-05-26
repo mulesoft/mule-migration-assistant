@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${httpPort}" />
+    </http:listener-config>
+
+    <apikit-soap:config name="TshirtService-TshirtServicePort-api-config" wsdlLocation="tshirt.wsdl" service="TshirtService" port="TshirtServicePort" />
+
+    <flow name="api-main">
+        <http:listener path="/TshirtService/TshirtServicePort" config-ref="api-httpListenerConfig" doc:name="/TshirtService/TshirtServicePort">
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <http:body>#[payload]</http:body>
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[attributes.protocolHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <http:body>#[payload]</http:body>
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[attributes.protocolHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+        <apikit-soap:router config-ref="TshirtService-TshirtServicePort-api-config">
+            <apikit-soap:message>#[payload]</apikit-soap:message>
+            <apikit-soap:attributes>#[%dw 2.0
+output application/java
+---
+{
+   headers: attributes.headers,
+   method: attributes.method,
+   queryString: attributes.queryString
+}]</apikit-soap:attributes>
+        </apikit-soap:router>
+
+        <compatibility:outbound-properties-to-var>
+            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:outbound-properties-to-var>
+
+    </flow>
+
+    <flow name="OrderTshirt:\TshirtService-TshirtServicePort-api-config">
+        <set-variable variableName="att_fileID" value="some content." mimeType="text/plain">
+            <!--Migration ERROR: Refer to the documentation for the specific connector or operation to learn how to send attachments.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_attachments-->
+        </set-variable>
+
+        <set-payload value="&lt;soap:Fault xmlns:soap=&quot;http://www.w3.org/2003/05/soap-envelope&quot;&gt;&lt;faultcode&gt;soap:Server&lt;/faultcode&gt;&lt;faultstring&gt;Operation [OrderTshirt:/TshirtService/TshirtServicePort/api-config] not implemented&lt;/faultstring&gt;&lt;/soap:Fault&gt;" />
+
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="soap.header">%dw 2.0
+ns ns0 http://mulesoft.org/tshirt-service
+output application/xml  
+---
+{
+  ns0#APIUsageInformation: {
+    apiCallsRemaining: 10
+  }
+}</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+
+        <compatibility:set-property propertyName="soap.header" value="#[vars.soap.header]">
+            <!--Migration WARN: Instead of setting outbound properties in the flow, you must set Mule 4 variables.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:set-property>
+
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+import migration::Soapkit
+---
+{
+  body: Soapkit::soapBody(payload),
+  headers: Soapkit::soapHeaders(vars),
+  attachments: Soapkit::soapAttachments(vars)
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+
+    </flow>
+
+    <flow name="ListInventory:\TshirtService-TshirtServicePort-api-config">
+        <set-payload value="&lt;soap:Fault xmlns:soap=&quot;http://www.w3.org/2003/05/soap-envelope&quot;&gt;&lt;faultcode&gt;soap:Server&lt;/faultcode&gt;&lt;faultstring&gt;Operation [ListInventory:/TshirtService/TshirtServicePort/api-config] not implemented&lt;/faultstring&gt;&lt;/soap:Fault&gt;" />
+
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+import migration::Soapkit
+---
+{
+  body: Soapkit::soapBody(payload),
+  headers: Soapkit::soapHeaders(vars),
+  attachments: Soapkit::soapAttachments(vars)
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+
+    </flow>
+
+    <flow name="TrackOrder:\TshirtService-TshirtServicePort-api-config">
+        <set-payload value="&lt;soap:Fault xmlns:soap=&quot;http://www.w3.org/2003/05/soap-envelope&quot;&gt;&lt;faultcode&gt;soap:Server&lt;/faultcode&gt;&lt;faultstring&gt;Operation [TrackOrder:/TshirtService/TshirtServicePort/api-config] not implemented&lt;/faultstring&gt;&lt;/soap:Fault&gt;" />
+
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+import migration::Soapkit
+---
+{
+  body: Soapkit::soapBody(payload),
+  headers: Soapkit::soapHeaders(vars),
+  attachments: Soapkit::soapAttachments(vars)
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+
+    </flow>
+
+</mule>
