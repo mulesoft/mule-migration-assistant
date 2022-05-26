@@ -71,7 +71,7 @@ public abstract class AbstractEndToEndTestCase {
   public static final String NO_COMPATIBILITY_SUFFIX = "_nc";
 
   // to render the application graph when available
-  private static final boolean RENDER_APPLICATION_GRAPH = true;
+  private static final boolean RENDER_APPLICATION_GRAPH = false;
 
   @ClassRule
   public static TemporaryFolder mmaBinary = new TemporaryFolder();
