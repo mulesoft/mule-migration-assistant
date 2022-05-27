@@ -6,6 +6,7 @@
 package com.mulesoft.tools.migration.library.mule.steps.pom;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
@@ -25,6 +26,7 @@ public class UpdateProjectVersionTest {
 
   private static final String POM = "/pommodel/simple-pom/pom.xml";
   private static final String POM_SNAPSHOT = "/pommodel/simple-pom/snapshot-pom.xml";
+  private static final String POM_NO_VERSION = "/pommodel/simple-pom/pom-with-parent-no-version.xml";
 
   @Rule
   public ReportVerification report = new ReportVerification();
@@ -53,6 +55,15 @@ public class UpdateProjectVersionTest {
     assertThat("version must not be updated in pom", model.getVersion(), is("1.0.0-SNAPSHOT"));
     updateProjectVersion.execute(model, report.getReport());
     assertThat("version must be updated in pom", model.getVersion(), is("1.0.0-M4-SNAPSHOT"));
+  }
+
+  @Test
+  public void executeForMissingVersion() throws IOException, XmlPullParserException, URISyntaxException {
+    Path pomPath = Paths.get(getClass().getResource(POM_NO_VERSION).toURI());
+    model = new PomModel.PomModelBuilder().withPom(pomPath).build();
+    assertThat("version must not be updated in pom", model.getVersion(), nullValue());
+    updateProjectVersion.execute(model, report.getReport());
+    assertThat("version must not be updated in pom", model.getVersion(), nullValue());
   }
 
 }

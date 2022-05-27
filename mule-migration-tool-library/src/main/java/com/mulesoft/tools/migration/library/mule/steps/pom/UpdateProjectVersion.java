@@ -25,7 +25,9 @@ public class UpdateProjectVersion implements PomContribution {
 
   @Override
   public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
-    pomModel.setVersion(pomModel.getVersion().replaceAll("(\\d+\\.\\d+\\.)(\\d+)(.*)", "$1$2-M4$3"));
+    if (pomModel.getVersion() != null) {
+      pomModel.setVersion(pomModel.getVersion().replaceAll("(\\d+\\.\\d+\\.)(\\d+)(.*)", "$1$2-M4$3"));
+    }
   }
 
 }
