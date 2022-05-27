@@ -25,4 +25,20 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
         <flow-ref name="simplemunitFlow" doc:name="Flow-ref to simplemunitFlow"/>
         <munit:assert-payload-equals message="#['Not the same']" expectedValue="#['mock']" doc:name="Assert Payload"/>
     </munit:test>
+    <munit:test name="munit-test-mock-no-attributes" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock">
+            <mock:then-return payload="#['mock']" encoding="UTF-8"/>
+        </mock:when>
+        <flow-ref name="simplemunitFlow" doc:name="Flow-ref to simplemunitFlow"/>
+        <munit:assert-payload-equals message="#['Not the same']" expectedValue="#['mock']" doc:name="Assert Payload"/>
+    </munit:test>
+    <munit:test name="munit-test-mock-no-then-return" description="Test">
+        <mock:when messageProcessor=".*:.*" doc:name="Mock">
+            <mock:with-attributes>
+                <mock:with-attribute name="doc:name" whereValue="#['Set Payload']"/>
+            </mock:with-attributes>
+        </mock:when>
+        <flow-ref name="simplemunitFlow" doc:name="Flow-ref to simplemunitFlow"/>
+        <munit:assert-payload-equals message="#['Not the same']" expectedValue="#['']" doc:name="Assert Payload"/>
+    </munit:test>
 </mule>

@@ -22,4 +22,36 @@
         </munit:validation>
     </munit:test>
 
+    <munit:test name="munit-test-mock-no-attributes" description="Test">
+        <munit:behavior>
+            <munit-tools:mock-when processor=".*:.*" doc:name="Mock">
+                <munit-tools:then-return>
+                    <munit-tools:payload value="#['mock']" encoding="UTF-8" />
+                </munit-tools:then-return>
+            </munit-tools:mock-when>
+        </munit:behavior>
+        <munit:execution>
+            <flow-ref name="simplemunitFlow" doc:name="Flow-ref to simplemunitFlow" />
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that message="#['Not the same']" is="#[MunitTools::equalTo('mock')]" doc:name="Assert Payload" expression="#[payload]" />
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="munit-test-mock-no-then-return" description="Test">
+        <munit:behavior>
+            <munit-tools:mock-when processor=".*:.*" doc:name="Mock">
+                <munit-tools:with-attributes>
+                    <munit-tools:with-attribute attributeName="doc:name" whereValue="#['Set Payload']" />
+                </munit-tools:with-attributes>
+            </munit-tools:mock-when>
+        </munit:behavior>
+        <munit:execution>
+            <flow-ref name="simplemunitFlow" doc:name="Flow-ref to simplemunitFlow" />
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that message="#['Not the same']" is="#[MunitTools::equalTo('')]" doc:name="Assert Payload" expression="#[payload]" />
+        </munit:validation>
+    </munit:test>
+
 </mule>

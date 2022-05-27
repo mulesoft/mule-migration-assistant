@@ -2,8 +2,8 @@
   "projectType": "MULE_THREE_MAVEN_APPLICATION",
   "projectName": "input",
   "connectorsMigrated": [],
-  "numberOfMuleComponents": 11,
-  "numberOfMuleComponentsMigrated": 11,
+  "numberOfMuleComponents": 19,
+  "numberOfMuleComponentsMigrated": 19,
   "componentDetails": {
     "mule": {
       "success": 2,
@@ -14,7 +14,7 @@
       "failure": 0
     },
     "flow-ref": {
-      "success": 1,
+      "success": 3,
       "failure": 0
     },
     "set-payload": {
@@ -26,15 +26,15 @@
       "failure": 0
     },
     "munit-tools:assert-that": {
-      "success": 1,
+      "success": 3,
       "failure": 0
     },
     "munit-tools:mock-when": {
-      "success": 1,
+      "success": 3,
       "failure": 0
     },
     "munit:test": {
-      "success": 1,
+      "success": 3,
       "failure": 0
     },
     "munit:config": {

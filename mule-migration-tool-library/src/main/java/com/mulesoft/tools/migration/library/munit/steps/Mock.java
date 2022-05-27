@@ -56,11 +56,15 @@ public class Mock extends AbstractApplicationModelMigrationStep {
       updateChildElementsNamespace(element.getChildren());
 
       Element attributesNode = element.getChild("with-attributes", element.getNamespace());
+      if (attributesNode != null) {
+        attributesNode.getChildren().forEach(n -> changeAttribute("name", of("attributeName"), empty())
+            .apply(n));
+      }
 
-      attributesNode.getChildren().forEach(n -> changeAttribute("name", of("attributeName"), empty())
-          .apply(n));
-
-      movePayloadToChildNode(element.getChild("then-return", element.getNamespace()));
+      Element thenReturnNode = element.getChild("then-return", element.getNamespace());
+      if (thenReturnNode != null) {
+        movePayloadToChildNode(thenReturnNode);
+      }
 
     } catch (Exception e) {
       throw new MigrationStepException("Fail to apply step. " + e.getMessage());
