@@ -94,6 +94,7 @@ public class MigrationJob implements Executable {
     applicationModel =
         generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV, projectGAV);
     try {
+      MigrationTaskException firstMigrationTaskException = null;
       for (AbstractMigrationTask task : migrationTasks) {
         if (task.getApplicableProjectTypes().contains(targetProjectType)) {
           task.setApplicationModel(applicationModel);
@@ -108,6 +109,9 @@ public class MigrationJob implements Executable {
             if (cancelOnError) {
               throw ex;
             } else {
+              if (firstMigrationTaskException == null) {
+                firstMigrationTaskException = ex;
+              }
               logger.error("Failed to apply task, rolling back and continuing with the next one.", ex);
             }
           } catch (RuntimeException e) {
@@ -115,6 +119,9 @@ public class MigrationJob implements Executable {
                 + e.getMessage(), e);
           }
         }
+      }
+      if (firstMigrationTaskException != null) {
+        throw firstMigrationTaskException;
       }
     } finally {
       generateReport(report, applicationModel);

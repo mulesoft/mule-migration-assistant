@@ -14,6 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -133,16 +134,27 @@ public class MigrationJobTest {
         .withOuputVersion(MULE_413_VERSION)
         .build();
 
-    AbstractMigrationTask migrationTask = mock(AbstractMigrationTask.class);
+    AbstractMigrationTask migrationTask1 = mock(AbstractMigrationTask.class);
     doThrow(MigrationTaskException.class)
-        .when(migrationTask)
+        .when(migrationTask1)
         .execute(any(MigrationReport.class));
-    when(migrationTask.getApplicableProjectTypes()).thenReturn(singleton(MULE_FOUR_APPLICATION));
+    when(migrationTask1.getApplicableProjectTypes()).thenReturn(singleton(MULE_FOUR_APPLICATION));
 
-    migrationTasks.add(migrationTask);
+    AbstractMigrationTask migrationTask2 = mock(AbstractMigrationTask.class);
+    when(migrationTask2.getApplicableProjectTypes()).thenReturn(singleton(MULE_FOUR_APPLICATION));
+
+    migrationTasks.add(migrationTask1);
+    migrationTasks.add(migrationTask2);
     Whitebox.setInternalState(migrationJob, "migrationTasks", migrationTasks);
-    migrationJob.execute(new DefaultMigrationReport());
-    verify(migrationTask, times(1)).execute(any(MigrationReport.class));
+    try {
+      migrationJob.execute(new DefaultMigrationReport());
+      fail("expected MigrationTaskException");
+    } catch (MigrationTaskException mte) {
+      verify(migrationTask1, times(1)).execute(any(MigrationReport.class));
+      verify(migrationTask2, times(1)).execute(any(MigrationReport.class));
+    } catch (Exception e) {
+      fail("expected MigrationTaskException");
+    }
   }
 
   @Test(expected = MigrationTaskException.class)
