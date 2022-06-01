@@ -35,7 +35,7 @@ public class MuleThreePolicy extends MuleProject {
       return stream(projectPath.toFile().listFiles((FilenameFilter) new SuffixFileFilter(".xml"))).anyMatch(policyXml -> {
         Element xmlRootElement;
         try {
-          xmlRootElement = generateDocument(policyXml.toPath()).getRootElement();
+          xmlRootElement = generateDocument(policyXml.toPath(), false).getRootElement();
         } catch (JDOMException | IOException e) {
           LOGGER.warn(e.getClass().getName() + ": " + e.getMessage());
           return false;

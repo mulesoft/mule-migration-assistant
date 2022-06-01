@@ -17,6 +17,7 @@ import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourD
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourPolicy;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.library.applicationgraph.ApplicationGraphCreator;
+import com.mulesoft.tools.migration.project.model.applicationgraph.GraphRenderer;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
@@ -28,9 +29,11 @@ import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
 import com.mulesoft.tools.migration.report.json.JSONReport;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +41,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkState;
 import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
 import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
+import static com.mulesoft.tools.migration.library.mule.steps.spring.AbstractSpringMigratorStep.SPRING_FOLDER;
 import static com.mulesoft.tools.migration.project.ProjectType.*;
 import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
 import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionValid;
@@ -65,11 +69,12 @@ public class MigrationJob implements Executable {
   private final Parent projectParentGAV;
   private final String projectGAV;
   private final boolean jsonReportEnabled;
+  private final boolean renderGraph;
   private final ApplicationGraphCreator applicationGraphCreator;
 
   private MigrationJob(Path project, Path parentDomainProject, Path outputProject, List<AbstractMigrationTask> migrationTasks,
                        String muleVersion, boolean cancelOnError, Parent projectParentGAV, String projectGAV,
-                       boolean jsonReportEnabled, boolean noCompatibility) {
+                       boolean jsonReportEnabled, boolean noCompatibility, boolean renderGraph) {
     this.migrationTasks = migrationTasks;
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
@@ -85,6 +90,7 @@ public class MigrationJob implements Executable {
       this.runnerVersion = "n/a";
     }
     this.applicationGraphCreator = noCompatibility ? new ApplicationGraphCreator() : null;
+    this.renderGraph = noCompatibility ? renderGraph : false;
   }
 
   @Override
@@ -99,14 +105,17 @@ public class MigrationJob implements Executable {
 
     ApplicationGraph applicationGraph = null;
     applicationModel =
-        generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV, projectGAV);
+        generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV, projectGAV,
+                                       true);
 
     if (applicationGraphCreator != null) {
       applicationGraphCreator.setExpressionMigrator(new MelToDwExpressionMigrator(report, applicationModel));
       applicationGraph = applicationGraphCreator.create(Lists.newArrayList(applicationModel
-          .getApplicationDocuments().values()),
-                                                        report);
+          .getApplicationDocuments().values()), report);
       applicationModel.setApplicationGraph(applicationGraph);
+      if (renderGraph) {
+        GraphRenderer.render(applicationGraph, project.getFileName().toString());
+      }
     }
 
     try {
@@ -121,15 +130,7 @@ public class MigrationJob implements Executable {
 
             applicationModel =
                 generateTargetApplicationModel(outputProject, targetProjectType, sourceProjectBasePath, projectParentGAV,
-                                               projectGAV);
-
-            if (applicationGraphCreator != null) {
-              applicationGraph = applicationGraphCreator.create(Lists.newArrayList(applicationModel
-                  .getApplicationDocuments().values()),
-                                                                report);
-              applicationModel.setApplicationGraph(applicationGraph);
-            }
-
+                                               projectGAV, applicationGraph, false);
           } catch (MigrationTaskException ex) {
             if (cancelOnError) {
               throw ex;
@@ -178,19 +179,35 @@ public class MigrationJob implements Executable {
   }
 
   private ApplicationModel generateTargetApplicationModel(Path project, ProjectType type, Path sourceProjectBasePath,
-                                                          Parent projectParentGAV, String projectGAV)
+                                                          Parent projectParentGAV, String projectGAV, boolean generateElementIds)
+      throws Exception {
+    return generateTargetApplicationModel(project, type, sourceProjectBasePath, projectParentGAV, projectGAV, null,
+                                          generateElementIds);
+  }
+
+  private ApplicationModel generateTargetApplicationModel(Path project, ProjectType type, Path sourceProjectBasePath,
+                                                          Parent projectParentGAV, String projectGAV, ApplicationGraph graph,
+                                                          boolean generateElementIds)
       throws Exception {
     ApplicationModelBuilder appModelBuilder = new ApplicationModelBuilder()
         .withMuleVersion(muleVersion)
         .withSupportedNamespaces(getTasksDeclaredNamespaces(migrationTasks))
         .withSourceProjectBasePath(sourceProjectBasePath)
         .withProjectPomParent(projectParentGAV)
-        .withProjectPomGAV(projectGAV);
+        .withProjectPomGAV(projectGAV)
+        .withGenerateElementIds(generateElementIds)
+        .withApplicationGraph(graph);
 
     if (type.equals(MULE_FOUR_APPLICATION)) {
       MuleFourApplication application = new MuleFourApplication(project);
+      List<Path> configFiles = getFiles(application.srcMainConfiguration(), "xml");
+      Path springPath = application.getBaseFolder().resolve(SPRING_FOLDER);
+      if (Files.exists(springPath)) {
+        List<Path> springConfigFiles = getFiles(springPath, "xml");
+        configFiles.addAll(springConfigFiles);
+      }
       return appModelBuilder
-          .withConfigurationFiles(getFiles(application.srcMainConfiguration(), "xml"))
+          .withConfigurationFiles(configFiles)
           .withTestConfigurationFiles(getFiles(application.srcTestConfiguration(), "xml"))
           .withMuleArtifactJson(application.muleArtifactJson())
           .withProjectBasePath(application.getBaseFolder())
@@ -260,6 +277,7 @@ public class MigrationJob implements Executable {
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
     private Parent projectParentGAV = null;
     private String projectGAV;
+    private boolean renderGraph;
 
     public MigrationJobBuilder withProject(Path project) {
       this.project = project;
@@ -311,6 +329,11 @@ public class MigrationJob implements Executable {
       return this;
     }
 
+    public MigrationJobBuilder withRenderGraph(boolean renderGraph) {
+      this.renderGraph = renderGraph;
+      return this;
+    }
+
     public MigrationJob build() throws Exception {
       checkState(project != null, "The project must not be null");
       if (!project.toFile().exists()) {
@@ -347,8 +370,10 @@ public class MigrationJob implements Executable {
 
       return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion,
                               this.cancelOnError, this.projectParentGAV, this.projectGAV, this.jsonReportEnabled,
-                              this.noCompatibility);
+                              this.noCompatibility, this.renderGraph);
     }
+
+
   }
 
 }

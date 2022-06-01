@@ -6,15 +6,14 @@
 package com.mulesoft.tools.migration.library.applicationgraph;
 
 import com.google.common.collect.ImmutableList;
-import com.mulesoft.tools.migration.library.mule.steps.nocompatibility.InboundToAttributesTranslator;
+import com.mulesoft.tools.migration.library.nocompatibility.InboundToAttributesTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.*;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jdom2.*;
-import org.jdom2.filter.Filter;
 import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,6 +38,11 @@ public class ApplicationGraphCreator {
                                          Collectors.mapping(SourceType::getType, Collectors.toList()))), false, true);
 
   private ExpressionMigrator expressionMigrator;
+  private ApplicationPropertiesContextCalculator applicationPropertiesContextCalculator;
+
+  public ApplicationGraphCreator() {
+    this.applicationPropertiesContextCalculator = new ApplicationPropertiesContextCalculator();
+  }
 
   public ApplicationGraph create(List<Document> applicationDocuments, MigrationReport report) throws RuntimeException {
     List<Flow> applicationFlows = applicationDocuments.stream()
@@ -49,7 +53,7 @@ public class ApplicationGraphCreator {
     ApplicationGraph applicationGraph = new ApplicationGraph();
 
     applicationFlows.forEach(flow -> {
-      List<FlowComponent> flowComponents = getFlowComponents(flow, applicationFlows, report, applicationGraph);
+      List<FlowComponent> flowComponents = getFirstLevelFlowComponents(flow, applicationFlows, report, applicationGraph);
       flow.setComponents(flowComponents);
       applicationGraph.addConnections(flowComponents);
     });
@@ -73,11 +77,12 @@ public class ApplicationGraphCreator {
       }
     });
 
+    applicationPropertiesContextCalculator.calculatePropertiesContext(applicationGraph);
     return applicationGraph;
   }
 
-  private List<FlowComponent> getFlowComponents(Flow flow, List<Flow> applicationFlows, MigrationReport report,
-                                                ApplicationGraph applicationGraph) {
+  private List<FlowComponent> getFirstLevelFlowComponents(Flow flow, List<Flow> applicationFlows, MigrationReport report,
+                                                          ApplicationGraph applicationGraph) {
     Element flowAsXmL = flow.getXmlElement();
 
     return flowAsXmL.getContent().stream()
@@ -108,9 +113,22 @@ public class ApplicationGraphCreator {
         report.report("nocompatibility.dynamicflowref", xmlElement, xmlElement);
       }
     } else if (isPropertySource(xmlElement, parentFlow)) {
-      component = new PropertiesSourceComponent(xmlElement, parentFlow, applicationGraph);
+      component =
+          new PropertiesSourceComponent(xmlElement,
+                                        PropertiesSourceType.getRegistered(xmlElement.getNamespaceURI(), xmlElement.getName()),
+                                        parentFlow, applicationGraph);
     } else {
-      component = new MessageProcessor(xmlElement, parentFlow, applicationGraph);
+      String componentName = String.format("%s:%s", xmlElement.getNamespace().getURI(), xmlElement.getName());
+      switch (componentName) {
+        case CORE_NS_URI + ":" + "set-property":
+          component = new SetPropertyProcessor(xmlElement, parentFlow, applicationGraph);
+          break;
+        case CORE_NS_URI + ":" + "remove-property":
+          component = new RemovePropertyProcessor(xmlElement, parentFlow, applicationGraph);
+          break;
+        default:
+          component = new MessageProcessor(xmlElement, parentFlow, applicationGraph);
+      }
     }
 
     applicationGraph.addFlowComponent(component);
@@ -142,7 +160,8 @@ public class ApplicationGraphCreator {
   }
 
   private List<Flow> getFlows(Document document) {
-    List<Element> flowsAsXml = getChildrenMatchingExpression(document.getRootElement(), FLOW_XPATH, Filters.element());
+    List<Element> flowsAsXml =
+        XmlDslUtils.getChildrenMatchingExpression(document.getRootElement(), FLOW_XPATH, Filters.element());
 
     return flowsAsXml.stream()
         .map(this::convertToFlow)
@@ -155,13 +174,9 @@ public class ApplicationGraphCreator {
 
   private boolean isPropertySource(Element element, Flow flow) {
     List<Element> propertySources =
-        getChildrenMatchingExpression(flow.getXmlElement(), MESSAGE_SOURCE_FILTER_EXPRESSION, Filters.element());
+        XmlDslUtils.getChildrenMatchingExpression(flow.getXmlElement(), MESSAGE_SOURCE_FILTER_EXPRESSION, Filters.element());
 
     return propertySources.contains(element);
-  }
-
-  private <T> List<T> getChildrenMatchingExpression(Element elementToEvaluate, String expression, Filter<T> filter) {
-    return XPathFactory.instance().compile(expression, filter).evaluate(elementToEvaluate);
   }
 
   public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {

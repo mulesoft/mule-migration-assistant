@@ -14,24 +14,29 @@ package com.mulesoft.tools.migration.project.model.applicationgraph;
 public class PropertyMigrationContext {
 
   private boolean optional = false;
-  private String originalProperty;
+  private boolean removeNext = false;
   private String translation;
 
   public PropertyMigrationContext(String translation) {
     this.translation = translation;
   }
 
-  public PropertyMigrationContext(String translation, boolean optional) {
+  public PropertyMigrationContext(String translation, boolean optional, boolean removeNext) {
     this.translation = translation;
     this.optional = optional;
-  }
-
-  public String getOriginalProperty() {
-    return originalProperty;
+    this.removeNext = removeNext;
   }
 
   public boolean isOptional() {
     return optional;
+  }
+
+  public boolean isRemoveNext() {
+    return removeNext;
+  }
+
+  public PropertyMigrationContext setRemoveNext() {
+    return new PropertyMigrationContext(this.translation, this.optional, true);
   }
 
   public String getTranslation() {
