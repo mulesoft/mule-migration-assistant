@@ -110,8 +110,7 @@ public class MigrationJob implements Executable {
 
     if (applicationGraphCreator != null) {
       applicationGraphCreator.setExpressionMigrator(new MelToDwExpressionMigrator(report, applicationModel));
-      applicationGraph = applicationGraphCreator.create(Lists.newArrayList(applicationModel
-          .getApplicationDocuments().values()), report);
+      applicationGraph = applicationGraphCreator.create(applicationModel, report);
       applicationModel.setApplicationGraph(applicationGraph);
       if (renderGraph) {
         GraphRenderer.render(applicationGraph, project.getFileName().toString());

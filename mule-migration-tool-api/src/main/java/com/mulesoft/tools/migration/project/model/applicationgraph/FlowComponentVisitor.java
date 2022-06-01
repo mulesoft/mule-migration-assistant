@@ -17,6 +17,8 @@ public interface FlowComponentVisitor {
 
   void visitSetPropertyProcessor(SetPropertyProcessor processor);
 
+  void visitCopyPropertiesProcessor(CopyPropertiesProcessor processor);
+
   void visitPropertiesSourceComponent(PropertiesSourceComponent processor, boolean responseComponent);
 
   void visitRemovePropertyProcessor(RemovePropertyProcessor removePropertyProcessor);

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener Configuration">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+
+    <flow name="flow2" maxConcurrency="1">
+        <!--Migration INFO: The 'flow' element no longer has a 'processingStrategy' attribute.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-engine-->
+        <logger message="#['My outbound is:' ++ vars.outbound_myOutbound]" level="INFO" doc:name="Logger" />
+        <set-variable variableName="outbound_myOutbound2" value="#[vars.outbound_myOutbound]" doc:name="SecondProperty"/>
+        <remove-variable variableName="outbound_myOutbound" doc:name="RemoveProperty"/>
+        <logger message="#['My outbound is:' ++ vars.outbound_myOutbound2]" level="INFO" doc:name="WrongLogger" />
+    </flow>
+
+    <flow name="anotherFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/testinbound2" allowedMethods="GET" doc:name="HTTP">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:response statusCode="#[200]">
+                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="500" reasonPhrase="Internal Error">
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'myOutbound2' : vars.outbound_myOutbound2}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <set-variable variableName="outbound_myOutbound" value="#[message.attributes.queryParams.'type']" doc:name="Property" />
+        <flow-ref name="flow2" doc:name="Flow Reference" />
+        <logger message="#['My outbound is:' ++ vars.outbound_myOutbound2 ++ message.attributes.queryParams.'type']" level="INFO" doc:name="Copy_of_WrongLogger" />
+    </flow>
+
+    <flow name="flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/testinbound" allowedMethods="GET" doc:name="HTTP">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:response statusCode="#[200]">
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'isTest' : message.attributes.headers.isTest}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="500" reasonPhrase="Internal Error">
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'myOutbound2' : vars.outbound_myOutbound2}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <set-variable variableName="outbound_myOutbound" value="#[message.attributes.queryParams.'type']" doc:name="Property" />
+        <flow-ref name="flow2" doc:name="Flow Reference" />
+        <logger message="#['My outbound is:' ++ vars.outbound_myOutbound2 ++ message.attributes.queryParams.'type']" level="INFO" doc:name="Copy_of_WrongLogger" />
+    </flow>
+
+</mule>

@@ -92,5 +92,4 @@ public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
     additionalParams += noCompatibility ? " -noCompatibility" : "";
     simpleCase(artifactName, additionalParams.trim().split("\\s"));
   }
-
 }

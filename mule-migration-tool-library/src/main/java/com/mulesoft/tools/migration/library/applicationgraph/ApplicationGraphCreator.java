@@ -7,6 +7,7 @@ package com.mulesoft.tools.migration.library.applicationgraph;
 
 import com.google.common.collect.ImmutableList;
 import com.mulesoft.tools.migration.library.nocompatibility.InboundToAttributesTranslator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.*;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
@@ -14,6 +15,7 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jdom2.*;
 import org.jdom2.filter.Filters;
+import scala.sys.Prop;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,13 +46,15 @@ public class ApplicationGraphCreator {
     this.applicationPropertiesContextCalculator = new ApplicationPropertiesContextCalculator();
   }
 
-  public ApplicationGraph create(List<Document> applicationDocuments, MigrationReport report) throws RuntimeException {
-    List<Flow> applicationFlows = applicationDocuments.stream()
+  public ApplicationGraph create(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
+    List<Flow> applicationFlows = applicationModel.getApplicationDocuments().values().stream()
         .map(this::getFlows)
         .flatMap(Collection::stream)
         .collect(Collectors.toList());
 
-    ApplicationGraph applicationGraph = new ApplicationGraph();
+    PropertyTranslator translator = new InboundToAttributesTranslator();
+    translator.initializeTranslationsForApplicationSourceTypes(applicationModel);
+    ApplicationGraph applicationGraph = new ApplicationGraph(translator);
 
     applicationFlows.forEach(flow -> {
       List<FlowComponent> flowComponents = getFirstLevelFlowComponents(flow, applicationFlows, report, applicationGraph);
@@ -125,6 +129,9 @@ public class ApplicationGraphCreator {
           break;
         case CORE_NS_URI + ":" + "remove-property":
           component = new RemovePropertyProcessor(xmlElement, parentFlow, applicationGraph);
+          break;
+        case CORE_NS_URI + ":" + "copy-properties":
+          component = new CopyPropertiesProcessor(xmlElement, parentFlow, applicationGraph);;
           break;
         default:
           component = new MessageProcessor(xmlElement, parentFlow, applicationGraph);

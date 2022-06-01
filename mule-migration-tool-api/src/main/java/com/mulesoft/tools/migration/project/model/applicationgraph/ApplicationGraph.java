@@ -27,9 +27,11 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMES
 public class ApplicationGraph {
 
   Graph<FlowComponent, DefaultEdge> applicationGraph;
+  PropertyTranslator inboundTranslator;
 
-  public ApplicationGraph() {
+  public ApplicationGraph(PropertyTranslator inboundTranslator) {
     applicationGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
+    this.inboundTranslator = inboundTranslator;
   }
 
   public void addConnections(List<FlowComponent> flowComponents) {
@@ -131,13 +133,16 @@ public class ApplicationGraph {
   private FlowComponent getComponent(FlowComponent flowComponent, String elementId) {
     if (matchesIdInResponseComponent(flowComponent, elementId)) {
       return ((PropertiesSourceComponent) flowComponent).getResponseComponent();
+    } else if (matchesIdInExceptionResponseComponent(flowComponent, elementId)) {
+      return ((PropertiesSourceComponent) flowComponent).getExceptionResponseComponent();
     } else {
       return flowComponent;
     }
   }
 
   private boolean matchesElementId(FlowComponent flowComp, String elementId) {
-    return flowComp.getElementId().equals(elementId) || matchesIdInResponseComponent(flowComp, elementId);
+    return flowComp.getElementId().equals(elementId) || matchesIdInResponseComponent(flowComp, elementId)
+        || matchesIdInExceptionResponseComponent(flowComp, elementId);
   }
 
   private boolean matchesIdInResponseComponent(FlowComponent flowComp, String elementId) {
@@ -148,10 +153,18 @@ public class ApplicationGraph {
     return false;
   }
 
+  private boolean matchesIdInExceptionResponseComponent(FlowComponent flowComp, String elementId) {
+    if (PropertiesSourceComponent.class.isInstance(flowComp)) {
+      MessageProcessor exceptionResponseComponent = ((PropertiesSourceComponent) flowComp).getExceptionResponseComponent();
+      return exceptionResponseComponent != null && elementId.equals(exceptionResponseComponent.getElementId());
+    }
+    return false;
+  }
+
   public FlowComponent findFlowComponent(Element element) {
     String elementId = element.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
     FlowComponent flowComponent = findFlowComponent(elementId);
-    while (flowComponent == null && element.getParentElement() != null && !element.getName().equals("flow")) {
+    while (flowComponent == null && element.getParentElement() != null && !element.getParentElement().getName().equals("flow")) {
       element = element.getParentElement();
       elementId = element.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
       flowComponent = findFlowComponent(elementId);
@@ -197,5 +210,13 @@ public class ApplicationGraph {
 
   public DepthFirstIterator getDepthFirstIterator(FlowComponent start) {
     return new DepthFirstIterator(this.applicationGraph, start);
+  }
+
+  public boolean isLeafComponent(FlowComponent component) {
+    return applicationGraph.outgoingEdgesOf(component).isEmpty();
+  }
+
+  public PropertyTranslator getInboundTranslator() {
+    return this.inboundTranslator;
   }
 }

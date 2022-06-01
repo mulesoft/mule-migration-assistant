@@ -12,7 +12,6 @@ import org.jdom2.Element;
 import org.jdom2.filter.Filters;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
 
@@ -27,8 +26,12 @@ public class PropertiesSourceComponent extends MessageProcessor implements Prope
   public static final String RESPONSE_BUILDER_EXPRESSION =
       getAllElementsFromNamespaceXpathSelector(HTTP_NAMESPACE.getURI(), ImmutableList.of("response-builder"), false, true);
 
+  public static final String ERROR_RESPONSE_BUILDER_EXPRESSION =
+      getAllElementsFromNamespaceXpathSelector(HTTP_NAMESPACE.getURI(), ImmutableList.of("error-response-builder"), false, true);
+
   private final SourceType type;
   private MessageProcessor responseComponent;
+  private MessageProcessor exceptionResponseComponent;
 
   public PropertiesSourceComponent(Element xmlElement, SourceType type, Flow parentFlow, ApplicationGraph applicationGraph) {
     super(xmlElement, parentFlow, applicationGraph);
@@ -36,12 +39,28 @@ public class PropertiesSourceComponent extends MessageProcessor implements Prope
     Element responseComponent = getElementResponse(xmlElement);
     if (responseComponent != null) {
       this.responseComponent = new MessageProcessor(responseComponent, parentFlow, applicationGraph);
+    } else {
+      this.responseComponent = new SyntheticMessageProcessor(xmlElement, "_response", parentFlow, applicationGraph);
+    }
+    Element exceptionResponseComponent = getExceptionElementResponse(xmlElement);
+    if (exceptionResponseComponent != null) {
+      this.exceptionResponseComponent = new MessageProcessor(exceptionResponseComponent, parentFlow, applicationGraph);
+    } else {
+      this.exceptionResponseComponent = new SyntheticMessageProcessor(xmlElement, "_errorResponse", parentFlow, applicationGraph);
     }
   }
 
   private Element getElementResponse(Element xmlElement) {
+    return getChildElement(xmlElement, RESPONSE_BUILDER_EXPRESSION);
+  }
+
+  private Element getExceptionElementResponse(Element xmlElement) {
+    return getChildElement(xmlElement, ERROR_RESPONSE_BUILDER_EXPRESSION);
+  }
+
+  private Element getChildElement(Element xmlElement, String expression) {
     List<Element> detectedResponseElements =
-        XmlDslUtils.getChildrenMatchingExpression(xmlElement, RESPONSE_BUILDER_EXPRESSION, Filters.element());
+        XmlDslUtils.getChildrenMatchingExpression(xmlElement, expression, Filters.element());
     if (!detectedResponseElements.isEmpty()) {
       return Iterables.getOnlyElement(detectedResponseElements);
     }
@@ -57,8 +76,13 @@ public class PropertiesSourceComponent extends MessageProcessor implements Prope
     return responseComponent;
   }
 
+  public MessageProcessor getExceptionResponseComponent() {
+    return exceptionResponseComponent;
+  }
+
   @Override
   public void accept(FlowComponentVisitor visitor) {
     visitor.visitPropertiesSourceComponent(this, false);
   }
+
 }

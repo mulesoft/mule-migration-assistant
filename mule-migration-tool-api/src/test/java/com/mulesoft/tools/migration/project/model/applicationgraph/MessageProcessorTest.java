@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.mockito.Mockito.mock;
 
 public class MessageProcessorTest {
 
@@ -18,7 +19,7 @@ public class MessageProcessorTest {
 
   @Test
   public void testNameCreation_DuplicatedElements_sameFlow() {
-    applicationGraph = new ApplicationGraph();
+    applicationGraph = new ApplicationGraph(mock(PropertyTranslator.class));
     Element flowElement = new Element("flow");
     flowElement.setAttribute(new Attribute("name", "flow1"));
     Flow parentFlow = new Flow(flowElement);
@@ -31,7 +32,7 @@ public class MessageProcessorTest {
 
   @Test
   public void testNameCreation_TriplicatedElements_sameFlow() {
-    applicationGraph = new ApplicationGraph();
+    applicationGraph = new ApplicationGraph(mock(PropertyTranslator.class));
     Element flowElement = new Element("flow");
     flowElement.setAttribute(new Attribute("name", "flow1"));
     Flow parentFlow = new Flow(flowElement);
@@ -45,7 +46,7 @@ public class MessageProcessorTest {
 
   @Test
   public void testNameCreation_sameElements_differentFlowsWithSamePrefix() {
-    applicationGraph = new ApplicationGraph();
+    applicationGraph = new ApplicationGraph(mock(PropertyTranslator.class));
     Element flowElement = new Element("flow");
     flowElement.setAttribute(new Attribute("name", "flow1"));
     Flow parentFlow = new Flow(flowElement);
@@ -64,7 +65,7 @@ public class MessageProcessorTest {
 
   @Test
   public void testNameCreation_elementsWithDashes() {
-    applicationGraph = new ApplicationGraph();
+    applicationGraph = new ApplicationGraph(mock(PropertyTranslator.class));
     Element flowElement = new Element("flow");
     flowElement.setAttribute(new Attribute("name", "flow1"));
     Flow parentFlow = new Flow(flowElement);

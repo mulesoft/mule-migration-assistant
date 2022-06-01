@@ -8,15 +8,18 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructure;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesSourceComponent;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
+import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -27,6 +30,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Migrates the listener source of the HTTP Connector
@@ -38,6 +42,8 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
 
   public static final String XPATH_SELECTOR =
       "/*/mule:flow/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='listener']";
+  public static final String NOCOMPATIBILITY_HEADERS_EXPRESSION =
+      "#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]";
 
   @Override
   public String getDescription() {
@@ -50,7 +56,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    httpListenerLib(getApplicationModel());
+    ApplicationGraph graph = getApplicationModel().getApplicationGraph();
 
     addMigrationAttributeToElement(object, new Attribute("isMessageSource", "true"));
 
@@ -61,39 +67,58 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     }
     object.removeAttribute("parseRequest");
 
-    migrateSourceStructure(getApplicationModel(), object, report);
-    addAttributesToInboundProperties(object, getApplicationModel(), report);
+    if (graph == null) {
+      httpListenerLib(getApplicationModel());
+      migrateSourceStructureForCompatibility(getApplicationModel(), object, report);
+      addAttributesToInboundProperties(object, getApplicationModel(), report);
+    } else {
+      report.report("nocompatibility.notfullyimplemented", object, object);
+    }
 
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
-        executeChild(c, report, HTTP_NAMESPACE);
+        executeChild(c, report, HTTP_NAMESPACE, graph);
       }
     });
 
     if (object.getChild("response", HTTP_NAMESPACE) == null) {
       Element response = new Element("response", HTTP_NAMESPACE);
-      // if (rb.getAttribute("disablePropertiesAsHeaders") == null
-      // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-      object.addContent(0, response.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE)));
-      // }
+      object.addContent(0, response.addContent(addHeadersElement(HTTP_NAMESPACE, graph)));
     }
-    Element response = object.getChild("response", HTTP_NAMESPACE);
-    if (response.getAttribute("statusCode") == null) {
-      response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
-      report.report("http.statusCode", response, response);
-    }
+
     if (object.getChild("error-response", HTTP_NAMESPACE) == null) {
       Element errorResponse = new Element("error-response", HTTP_NAMESPACE);
-      // if (rb.getAttribute("disablePropertiesAsHeaders") == null
-      // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-      object.addContent(errorResponse.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE)));
-      // }
+      object.addContent(errorResponse.addContent(addHeadersElement(HTTP_NAMESPACE, graph)));
     }
-    Element errorResponse = object.getChild("error-response", HTTP_NAMESPACE);
-    if (errorResponse.getAttribute("statusCode") == null) {
-      errorResponse.setAttribute("statusCode",
-                                 "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
-      report.report("http.statusCode", errorResponse, errorResponse);
+
+    addStatusCodeAttribute(object.getChild("response", HTTP_NAMESPACE), graph, report, "200",
+                           "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]", getExpressionMigrator());
+    addStatusCodeAttribute(object.getChild("error-response", HTTP_NAMESPACE), graph, report, "",
+                           "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]",
+                           getExpressionMigrator());
+  }
+
+  public static void addStatusCodeAttribute(Element element, ApplicationGraph graph, MigrationReport report,
+                                            String defaultVal, String statusCodeDwScript, ExpressionMigrator migrator) {
+    if (element != null && element.getAttribute("statusCode") == null) {
+      if (graph != null) {
+        addStatusCodeAttributeNoCompatibility(element, graph, defaultVal, migrator);
+      } else {
+        element.setAttribute("statusCode", statusCodeDwScript);
+        report.report("http.statusCode", element, element);
+      }
+    }
+  }
+
+  public static void addStatusCodeAttributeNoCompatibility(Element element, ApplicationGraph graph, String defaultVal,
+                                                           ExpressionMigrator migrator) {
+    PropertiesSourceComponent propertiesSourceComponent =
+        (PropertiesSourceComponent) graph.findFlowComponent(element.getParentElement());
+    String statusCodeTranslation = Optional.ofNullable(propertiesSourceComponent
+        .getResponseComponent().getPropertiesMigrationContext().getOutboundTranslation("http.statusCode", false))
+        .orElse(defaultVal);
+    if (!StringUtils.isBlank(statusCodeTranslation)) {
+      element.setAttribute("statusCode", migrator.wrap(statusCodeTranslation));
     }
   }
 
@@ -131,29 +156,34 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     }
   }
 
-  public void executeChild(Element object, MigrationReport report, Namespace httpNamespace) throws RuntimeException {
+  public void executeChild(Element object, MigrationReport report, Namespace httpNamespace, ApplicationGraph graph)
+      throws RuntimeException {
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
-        executeChild(c, report, httpNamespace);
+        executeChild(c, report, httpNamespace, graph);
       }
     });
 
-    if ("response-builder".equals(object.getName())) {
-      handleReferencedResponseBuilder(object, getApplicationModel(), httpNamespace);
-      object.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
-
-      object.setName("response");
-    }
-    if ("error-response-builder".equals(object.getName())) {
-      handleReferencedResponseBuilder(object, getApplicationModel(), httpNamespace);
-      object.addContent(compatibilityHeaders(getApplicationModel(), httpNamespace));
-
-      object.setName("error-response");
+    switch (object.getName()) {
+      case "response-builder": {
+        handleReferencedResponseBuilder(object, getApplicationModel(), httpNamespace);
+        object.setName("response");
+        object.addContent(addHeadersElement(httpNamespace, graph));
+        break;
+      }
+      case "error-response-builder": {
+        handleReferencedResponseBuilder(object, getApplicationModel(), httpNamespace);
+        object.setName("error-response");
+        object.addContent(addHeadersElement(httpNamespace, graph));
+        break;
+      }
     }
   }
 
-  public static Element compatibilityHeaders(ApplicationModel appModel, Namespace httpNamespace) {
-    return setText(new Element("headers", httpNamespace), "#[migration::HttpListener::httpListenerResponseHeaders(vars)]");
+  public static Element addHeadersElement(Namespace httpNamespace, ApplicationGraph graph) {
+    String headersText =
+        graph != null ? NOCOMPATIBILITY_HEADERS_EXPRESSION : "#[migration::HttpListener::httpListenerResponseHeaders(vars)]";
+    return setText(new Element("headers", httpNamespace), headersText);
   }
 
   public static void httpListenerLib(ApplicationModel appModel) {

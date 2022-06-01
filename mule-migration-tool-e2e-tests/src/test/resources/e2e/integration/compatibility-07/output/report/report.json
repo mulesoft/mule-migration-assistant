@@ -1,0 +1,190 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated":
+  [
+    "org.mule.connectors:mule-http-connector:VERSION"
+  ],
+  "numberOfMuleComponents": 20,
+  "numberOfMuleComponentsMigrated": 20,
+  "componentDetails":
+  {
+    "mule":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "logger":
+    {
+      "success": 4,
+      "failure": 0
+    },
+    "flow":
+    {
+      "success": 3,
+      "failure": 0
+    },
+    "flow-ref":
+    {
+      "success": 2,
+      "failure": 0
+    },
+    "http:listener-config":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener":
+    {
+      "success": 2,
+      "failure": 0
+    },
+    "http:header":
+    {
+      "success": 3,
+      "failure": 0
+    },
+    "compatibility:set-property":
+    {
+      "success": 3,
+      "failure": 0
+    },
+    "compatibility:remove-property":
+    {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 10,
+  "numberOfMELExpressionsMigrated": 10,
+  "numberOfMELExpressionLines": 10,
+  "numberOfMELExpressionLinesMigrated": 10,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages":
+  [
+    {
+      "level": "INFO",
+      "key": "flow.processingStrategy",
+      "component": "flow",
+      "lineNumber": 8,
+      "columnNumber": 43,
+      "message": "The 'flow' element no longer has a 'processingStrategy' attribute.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 14,
+      "columnNumber": 152,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:remove-property",
+      "lineNumber": 20,
+      "columnNumber": 92,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 32,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 43,
+      "columnNumber": 57,
+      "message": "Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 50,
+      "columnNumber": 158,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 60,
+      "columnNumber": 51,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 70,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 81,
+      "columnNumber": 57,
+      "message": "Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:set-property",
+      "lineNumber": 88,
+      "columnNumber": 158,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 98,
+      "columnNumber": 51,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    }
+  ]
+}
