@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <http:request-config name="HTTP_Request_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <file:connector name="File" outputPattern="test123.txt" autoDelete="true" streaming="true" validateConnections="true" doc:name="File"/>
+
+    <flow name="flowWithSource">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/file" doc:name="HTTP" />
+    </flow>
+
+    <sub-flow name="flow2">
+        <http:request config-ref="HTTP_Request_Configuration" path="/file" method="GET" doc:name="HTTP"/>
+        <logger message="#[&quot;The new inbound properties are from HTTP like http.status in flow2: &quot; + message.inboundProperties['http.status']]" level="INFO" doc:name="Copy_of_Logger"/>
+    </sub-flow>
+
+    <flow name="EntryFlow2">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/entry" doc:name="HTTP" />
+        <flow-ref name="flow2" doc:name="Flow Reference" />
+        <logger message="#[&quot;The new inbound properties are from HTTP like http.status: &quot; + message.inboundProperties['http.status']]" level="INFO" doc:name="Logger" />
+    </flow>
+
+    <flow name="EntryFlow">
+        <file:inbound-endpoint path="someDir/subdir" connector-ref="File" responseTimeout="10000" doc:name="File" moveToDirectory="someDir/subdir/output">
+        </file:inbound-endpoint>
+        <logger message="#[&quot;Moved file &quot; + message.inboundProperties.originalFilename]" level="INFO" doc:name="File move logger"/>
+        <flow-ref name="flow2" doc:name="Flow Reference"/>
+        <logger message="#[&quot;The new inbound properties are from HTTP like http.status: &quot; + message.inboundProperties['http.status']]" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>

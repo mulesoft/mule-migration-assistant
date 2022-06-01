@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.project.model.applicationgraph;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,11 +21,14 @@ public class PropertiesMigrationContext {
 
   private final Map<String, PropertyMigrationContext> inboundContext;
   private final Map<String, PropertyMigrationContext> outboundContext;
+  private final SourceType originatingSource;
 
   public PropertiesMigrationContext(Map<String, PropertyMigrationContext> inboundContext,
-                                    Map<String, PropertyMigrationContext> outboundContext) {
+                                    Map<String, PropertyMigrationContext> outboundContext,
+                                    SourceType originatingSource) {
     this.inboundContext = ImmutableMap.copyOf(inboundContext);
     this.outboundContext = ImmutableMap.copyOf(outboundContext);
+    this.originatingSource = originatingSource;
   }
 
   public Map<String, PropertyMigrationContext> getInboundContext() {
@@ -33,5 +37,9 @@ public class PropertiesMigrationContext {
 
   public Map<String, PropertyMigrationContext> getOutboundContext() {
     return this.outboundContext;
+  }
+
+  public SourceType getOriginatingSource() {
+    return originatingSource;
   }
 }

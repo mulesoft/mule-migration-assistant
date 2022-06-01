@@ -140,7 +140,6 @@ public class MigrationTaskLocator {
   public List<AbstractMigrationTask> getCoreAfterMigrationTasks() {
     List<AbstractMigrationTask> coreMigrationTasks = new ArrayList<>();
 
-    coreMigrationTasks.add(new HandleNoCompatibility());
     coreMigrationTasks.add(new FiltersMigrationTask());
 
     // Spring has to run after MUnit, since MUnit in Mule 3 has some custom spring components that are removed by the migrator

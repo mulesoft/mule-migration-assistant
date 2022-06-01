@@ -9,6 +9,8 @@ import org.jdom2.Element;
 
 import java.util.List;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
+
 /**
  * Models a mule message processor
  *
@@ -20,11 +22,13 @@ public class MessageProcessor implements FlowComponent {
   private final String name;
   private Element xmlElement;
   private Flow parentFLow;
+  private String elementId;
   private PropertiesMigrationContext propertiesMigrationContext;
 
   public MessageProcessor(Element xmlElement, Flow parentFLow, ApplicationGraph graph) {
     this.xmlElement = xmlElement;
     this.parentFLow = parentFLow;
+    this.elementId = xmlElement.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
     name = getComponentName(xmlElement, parentFLow, graph);
   }
 
@@ -52,6 +56,16 @@ public class MessageProcessor implements FlowComponent {
   @Override
   public String getName() {
     return this.name;
+  }
+
+  @Override
+  public void accept(FlowComponentVisitor visitor) {
+    visitor.visitMessageProcessor(this);
+  }
+
+  @Override
+  public String getElementId() {
+    return this.elementId;
   }
 
   @Override

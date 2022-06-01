@@ -6,6 +6,7 @@
 package com.mulesoft.tools.migration.library.tools.mel;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
@@ -23,9 +24,9 @@ import java.util.List;
  */
 public class HeaderSyntaxCompatibilityResolver implements CompatibilityResolver<String> {
 
-  private static List<CompatibilityResolver<String>> resolvers;
+  private List<CompatibilityResolver<String>> resolvers;
 
-  static {
+  public HeaderSyntaxCompatibilityResolver() {
     resolvers = new ArrayList<>();
     resolvers.add(new InboundPropertiesCompatibilityResolver());
     resolvers.add(new OutboundPropertiesCompatibilityResolver());
@@ -35,7 +36,6 @@ public class HeaderSyntaxCompatibilityResolver implements CompatibilityResolver<
     resolvers.add(new Encode64Resolver());
     resolvers.add(new FunctionExpressionEvaluatorResolver());
   }
-
 
   @Override
   public boolean canResolve(String original) {

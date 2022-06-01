@@ -52,6 +52,8 @@ import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
+import javax.print.Doc;
+
 /**
  * Represent the application to be migrated
  *
@@ -467,6 +469,10 @@ public class ApplicationModel {
     return this.applicationGraph;
   }
 
+  public void addApplicationDocument(Path path, Document document) {
+    this.applicationDocuments.put(path, document);
+  }
+
   /**
    * It represent the builder to obtain a {@link ApplicationModel}
    *
@@ -488,6 +494,7 @@ public class ApplicationModel {
     private Parent projectPomParent;
     private String projectGAV;
     private ApplicationGraph applicationGraph;
+    private boolean generateElementIds;
 
     /**
      * Collection of paths to project configuration files
@@ -633,6 +640,17 @@ public class ApplicationModel {
     }
 
     /**
+     * Generate element synthetic ids
+     *
+     * @param generateElementIds generate ids or ot
+     * @return the builder
+     */
+    public ApplicationModelBuilder withGenerateElementIds(boolean generateElementIds) {
+      this.generateElementIds = generateElementIds;
+      return this;
+    }
+
+    /**
      * Build the {@link ApplicationModel}
      *
      * @return an {@link ApplicationModel} instance
@@ -653,7 +671,7 @@ public class ApplicationModel {
       Map<Path, Document> applicationDocuments = new HashMap<>();
       for (Path afp : applicationFilePaths) {
         try {
-          applicationDocuments.put(projectBasePath.relativize(afp), generateDocument(afp));
+          applicationDocuments.put(projectBasePath.relativize(afp), generateDocument(afp, generateElementIds));
         } catch (JDOMException | IOException e) {
           throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + afp, e);
         }
@@ -672,7 +690,7 @@ public class ApplicationModel {
           Map<Path, Document> domainDocuments = new HashMap<>();
           for (Path dfp : domainFilePaths) {
             try {
-              domainDocuments.put(parentDomainBasePath.relativize(dfp), generateDocument(dfp));
+              domainDocuments.put(parentDomainBasePath.relativize(dfp), generateDocument(dfp, generateElementIds));
             } catch (JDOMException | IOException e) {
               throw new RuntimeException("Application Model Generation Error - Fail to parse file: " + dfp, e);
             }
@@ -725,5 +743,6 @@ public class ApplicationModel {
 
       return applicationModel;
     }
+
   }
 }
