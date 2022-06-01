@@ -7,6 +7,7 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.library.tools.PluginsVersions.targetVersion;
 
+import com.mulesoft.tools.migration.library.mule.steps.scripting.ScriptingPomContribution;
 import com.mulesoft.tools.migration.project.model.pom.Dependency.DependencyBuilder;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -19,6 +20,8 @@ import com.mulesoft.tools.migration.step.category.PomContribution;
  * @since 1.0.0
  */
 public class CompatibilityPomContribution implements PomContribution {
+
+  private ScriptingPomContribution scriptingPomContribution = new ScriptingPomContribution();
 
   @Override
   public String getDescription() {
@@ -33,6 +36,9 @@ public class CompatibilityPomContribution implements PomContribution {
         .withVersion(targetVersion("mule-compatibility-module"))
         .withClassifier("mule-plugin")
         .build());
+
+    // compatibility depends on scripting
+    scriptingPomContribution.execute(object, report);
   }
 
 }
