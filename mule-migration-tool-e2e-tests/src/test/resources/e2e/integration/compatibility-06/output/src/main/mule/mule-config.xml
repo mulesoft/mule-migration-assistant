@@ -58,7 +58,7 @@
 
         <flow-ref name="flow2" doc:name="Flow Reference" />
 
-        <logger message="#['My outbound is:' ++ vars.compatibility_outboundProperties.myOutbound2]" level="INFO" doc:name="Copy_of_WrongLogger" />
+        <logger message="#['My outbound is:' ++ vars.compatibility_outboundProperties.myOutbound2 ++ vars.compatibility_inboundProperties.'http.query.params'.'type']" level="INFO" doc:name="Copy_of_WrongLogger" />
 
         <compatibility:outbound-properties-to-var>
             <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->

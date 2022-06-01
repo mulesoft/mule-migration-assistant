@@ -5,6 +5,7 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 
+import com.google.common.collect.ImmutableList;
 import com.mulesoft.tools.migration.library.nocompatibility.PropertyTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
@@ -20,20 +21,23 @@ import java.util.regex.Pattern;
  */
 public class OutboundPropertiesNoCompatibilityResolver extends PropertiesNoCompatibilityResolver {
 
-  private static final Pattern GENERAL_INBOUND_PATTERN =
+  private static final Pattern GENERAL_OUTBOUND_PATTERN =
       Pattern.compile("(message\\.outboundProperties(?:\\.'?[\\.a-zA-Z0-9]*'?|\\['?.*'+?\\]))");
-  private static final Pattern INBOUND_PATTERN_WITH_BRACKETS =
+  private static final Pattern OUTBOUND_PATTERN_WITH_BRACKETS =
       Pattern.compile("message\\.outboundProperties\\['(.*?)'\\]");
-  private static final Pattern INBOUND_PATTERN_WITH_DOT =
+  private static final Pattern OUTBOUND_PATTERN_WITH_DOT =
       Pattern.compile("message\\.outboundProperties\\.'?(.*?)'?");
-  private static final Pattern INBOUND_PATTERN_WITH_EXPRESSION =
+  private static final Pattern OUTBOUND_PATTERN_WITH_HEADER = Pattern.compile("(?i)^(header:outbound:|header:)");
+  private static final Pattern OUTBOUND_PATTERN_WITH_EXPRESSION =
       Pattern.compile("message\\.outboundProperties\\[\'(.*)\'\\]");
-  private static final Pattern INBOUND_PATTERN_ONLY_EXPRESSION =
+  private static final Pattern OUTBOUND_PATTERN_ONLY_EXPRESSION =
       Pattern.compile("message\\.outboundProperties\\[[^'].*\\]");
 
   public OutboundPropertiesNoCompatibilityResolver() {
-    super(GENERAL_INBOUND_PATTERN, INBOUND_PATTERN_WITH_BRACKETS, INBOUND_PATTERN_WITH_DOT, INBOUND_PATTERN_WITH_EXPRESSION,
-          INBOUND_PATTERN_ONLY_EXPRESSION);
+    super(GENERAL_OUTBOUND_PATTERN,
+          ImmutableList.of(OUTBOUND_PATTERN_WITH_BRACKETS, OUTBOUND_PATTERN_WITH_DOT, OUTBOUND_PATTERN_WITH_HEADER),
+          OUTBOUND_PATTERN_WITH_EXPRESSION,
+          OUTBOUND_PATTERN_ONLY_EXPRESSION);
   }
 
   @Override

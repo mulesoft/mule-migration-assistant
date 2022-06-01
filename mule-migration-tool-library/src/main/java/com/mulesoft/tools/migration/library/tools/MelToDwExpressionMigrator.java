@@ -104,7 +104,11 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
       result = Migrator.migrate(unwrappedExpression);
       migratedExpression = result.getGeneratedCode();
     } catch (Exception e) {
-      return compatibilityResolver.resolve(unwrappedExpression, element, report, model, this, enricher);
+      if (applicationGraph != null) {
+        return noCompatibilityResolver.resolve(unwrappedExpression, element, report, model, this, enricher).getTranslation();
+      } else {
+        return compatibilityResolver.resolve(unwrappedExpression, element, report, model, this, enricher);
+      }
     }
 
     if (result.metadata().children().exists(a -> a instanceof NonMigratable)) {
@@ -141,7 +145,8 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
 
     if (applicationGraph != null) {
       try {
-        migratedExpression = noCompatibilityResolver.resolve(migratedExpression, element, report, model, this, enricher);
+        migratedExpression =
+            noCompatibilityResolver.resolve(migratedExpression, element, report, model, this, enricher).getTranslation();
       } catch (Exception e) {
         return resolveIdentifiersAndEscape(migratedExpression, dataWeaveBodyOnly);
       }

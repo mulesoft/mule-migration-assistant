@@ -139,19 +139,20 @@ public final class XmlDslUtils {
     int index = element.getParent().indexOf(element);
     if (appModel.getApplicationGraph() == null) {
       buildAttributesToInboundProperties(report, element.getParent(), index + 1);
-    }
+      if (expectsOutboundProperties) {
+        Element errorHandlerElement = getFlowExceptionHandlingElement(element.getParentElement());
+        if (errorHandlerElement != null) {
+          buildOutboundPropertiesToVar(report, element.getParent(), element.getParentElement().indexOf(errorHandlerElement) - 1,
+                                       consumeStreams);
 
-    if (expectsOutboundProperties) {
-      Element errorHandlerElement = getFlowExceptionHandlingElement(element.getParentElement());
-      if (errorHandlerElement != null) {
-        buildOutboundPropertiesToVar(report, element.getParent(), element.getParentElement().indexOf(errorHandlerElement) - 1,
-                                     consumeStreams);
-
-        errorHandlerElement.getChildren()
-            .forEach(eh -> buildOutboundPropertiesToVar(report, eh, eh.getContentSize(), consumeStreams));
-      } else {
-        buildOutboundPropertiesToVar(report, element.getParent(), element.getParent().getContentSize(), consumeStreams);
+          errorHandlerElement.getChildren()
+              .forEach(eh -> buildOutboundPropertiesToVar(report, eh, eh.getContentSize(), consumeStreams));
+        } else {
+          buildOutboundPropertiesToVar(report, element.getParent(), element.getParent().getContentSize(), consumeStreams);
+        }
       }
+    } else {
+      report.report("nocompatibility.notfullyimplemented", element, element);
     }
   }
 
@@ -203,11 +204,15 @@ public final class XmlDslUtils {
 
     int index = element.getParent().indexOf(element);
 
-    if (!"true".equals(element.getAttributeValue("isPolledConsumer", MIGRATION_NAMESPACE))) {
-      buildOutboundPropertiesToVar(report, element.getParent(), index, consumeStreams);
-    }
-    if (outputsAttributes && appModel.getApplicationGraph() == null) {
-      buildAttributesToInboundProperties(report, element.getParent(), index + 2);
+    if (appModel.getApplicationGraph() == null) {
+      if (!"true".equals(element.getAttributeValue("isPolledConsumer", MIGRATION_NAMESPACE))) {
+        buildOutboundPropertiesToVar(report, element.getParent(), index, consumeStreams);
+      }
+      if (outputsAttributes) {
+        buildAttributesToInboundProperties(report, element.getParent(), index + 2);
+      }
+    } else {
+      report.report("nocompatibility.notfullyimplemented", element, element);
     }
   }
 

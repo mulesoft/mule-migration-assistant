@@ -5,6 +5,7 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 
+import com.google.common.collect.ImmutableList;
 import com.mulesoft.tools.migration.library.nocompatibility.InboundToAttributesTranslator;
 import com.mulesoft.tools.migration.library.nocompatibility.PropertyTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
@@ -27,6 +28,7 @@ public class InboundPropertiesNoCompatibilityResolver extends PropertiesNoCompat
       Pattern.compile("message\\.inboundProperties\\['(.*?)'\\]");
   private static final Pattern INBOUND_PATTERN_WITH_DOT =
       Pattern.compile("message\\.inboundProperties\\.'?(.*?)'?");
+  private static final Pattern INBOUND_PATTERN_WITH_HEADER = Pattern.compile("(?i)^header:inbound:");
   private static final Pattern INBOUND_PATTERN_WITH_EXPRESSION =
       Pattern.compile("message\\.inboundProperties\\[\'(.*)\'\\]");
   private static final Pattern INBOUND_PATTERN_ONLY_EXPRESSION =
@@ -35,7 +37,9 @@ public class InboundPropertiesNoCompatibilityResolver extends PropertiesNoCompat
   private InboundToAttributesTranslator translator;
 
   public InboundPropertiesNoCompatibilityResolver() {
-    super(GENERAL_INBOUND_PATTERN, INBOUND_PATTERN_WITH_BRACKETS, INBOUND_PATTERN_WITH_DOT, INBOUND_PATTERN_WITH_EXPRESSION,
+    super(GENERAL_INBOUND_PATTERN,
+          ImmutableList.of(INBOUND_PATTERN_WITH_BRACKETS, INBOUND_PATTERN_WITH_DOT, INBOUND_PATTERN_WITH_HEADER),
+          INBOUND_PATTERN_WITH_EXPRESSION,
           INBOUND_PATTERN_ONLY_EXPRESSION);
     this.translator = new InboundToAttributesTranslator();
   }

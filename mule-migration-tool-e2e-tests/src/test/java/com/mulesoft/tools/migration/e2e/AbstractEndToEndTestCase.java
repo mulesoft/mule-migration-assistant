@@ -257,7 +257,7 @@ public abstract class AbstractEndToEndTestCase {
     return resource.toURI();
   }
 
-  private void compareXml(Path output, Path expected) {
+  private void compareXml(Path expected, Path output) {
     Diff d = DiffBuilder.compare(Input.fromFile(expected.toFile()))
         .withTest(Input.fromFile(output.toFile()))
         .ignoreComments()

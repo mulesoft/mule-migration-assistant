@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener Configuration">
         <http:listener-connection host="0.0.0.0" port="8081" />
@@ -17,6 +17,7 @@
 
     <flow name="flow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/testinbound" allowedMethods="GET" doc:name="HTTP">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
             <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
                 <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
                 <!--    For more information refer to:-->
@@ -32,12 +33,7 @@
         </http:listener>
         <set-variable variableName="outbound_myOutbound" value="#[message.attributes.queryParams.'type']" doc:name="Property" />
         <flow-ref name="flow2" doc:name="Flow Reference" />
-        <logger message="#['My outbound is:' ++ vars.outbound_myOutbound2]" level="INFO" doc:name="Copy_of_WrongLogger" />
-        <compatibility:outbound-properties-to-var>
-            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
-            <!--    For more information refer to:-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
-        </compatibility:outbound-properties-to-var>
+        <logger message="#['My outbound is:' ++ vars.outbound_myOutbound2 ++ message.attributes.queryParams.'type']" level="INFO" doc:name="Copy_of_WrongLogger" />
     </flow>
 
 </mule>

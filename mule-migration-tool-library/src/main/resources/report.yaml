@@ -1110,3 +1110,6 @@ nocompatibility:
   melexpression:
     type: WARN
     message: "Cannot replace compatibility references in unmigrated MEL expression on {element}"
+  notfullyimplemented:
+    type: WARN
+    message: "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations."

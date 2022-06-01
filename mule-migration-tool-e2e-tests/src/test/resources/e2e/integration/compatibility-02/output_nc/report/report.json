@@ -67,9 +67,20 @@
   [
     {
       "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "http:listener",
+      "lineNumber": 13,
+      "columnNumber": 94,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
       "key": "http.statusCode",
       "component": "http:response",
-      "lineNumber": 14,
+      "lineNumber": 15,
       "columnNumber": 113,
       "message": "Avoid using an outbound property to determine the status code.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -80,7 +91,7 @@
       "level": "WARN",
       "key": "http.statusCode",
       "component": "http:error-response",
-      "lineNumber": 20,
+      "lineNumber": 21,
       "columnNumber": 141,
       "message": "Avoid using an outbound property to determine the status code.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -89,11 +100,11 @@
     },
     {
       "level": "WARN",
-      "key": "message.outboundProperties",
-      "component": "compatibility:outbound-properties-to-var",
-      "lineNumber": 30,
-      "columnNumber": 51,
-      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "http:listener",
+      "lineNumber": 34,
+      "columnNumber": 122,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks":
       []
@@ -102,7 +113,7 @@
       "level": "WARN",
       "key": "http.statusCode",
       "component": "http:response",
-      "lineNumber": 40,
+      "lineNumber": 36,
       "columnNumber": 113,
       "message": "Avoid using an outbound property to determine the status code.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -113,7 +124,7 @@
       "level": "WARN",
       "key": "http.statusCode",
       "component": "http:error-response",
-      "lineNumber": 46,
+      "lineNumber": 42,
       "columnNumber": 141,
       "message": "Avoid using an outbound property to determine the status code.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -122,22 +133,11 @@
     },
     {
       "level": "WARN",
-      "key": "message.outboundProperties",
-      "component": "compatibility:outbound-properties-to-var",
-      "lineNumber": 56,
-      "columnNumber": 51,
-      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
-      "key": "message.outboundProperties",
-      "component": "compatibility:outbound-properties-to-var",
-      "lineNumber": 66,
-      "columnNumber": 51,
-      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "http:request",
+      "lineNumber": 52,
+      "columnNumber": 108,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks":
       []

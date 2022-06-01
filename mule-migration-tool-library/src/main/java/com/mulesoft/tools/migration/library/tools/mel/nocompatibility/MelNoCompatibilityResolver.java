@@ -14,16 +14,19 @@ import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * No compatibility mode resolver for general MEL expressions
+ * No compatibility mode resolver for general MEL expressions,
+ * It works by using a list of resolvers and trying to solve the expression 
+ * with all the matching resolvers
  *
  * @author Mulesoft Inc.
  * @since 1.4.0
  */
-public class MelNoCompatibilityResolver implements CompatibilityResolver<String> {
+public class MelNoCompatibilityResolver implements CompatibilityResolver<NoCompatibilityResolverResult> {
 
-  protected List<CompatibilityResolver<String>> resolvers;
+  protected List<CompatibilityResolver<NoCompatibilityResolverResult>> resolvers;
   private ApplicationGraph graph;
 
   public MelNoCompatibilityResolver(ApplicationGraph graph) {
@@ -39,22 +42,39 @@ public class MelNoCompatibilityResolver implements CompatibilityResolver<String>
   }
 
   @Override
-  public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
-                        ExpressionMigrator expressionMigrator) {
-    return lookupResolver(original).resolve(original, element, report, model, expressionMigrator);
+  public NoCompatibilityResolverResult resolve(String original, Element element, MigrationReport report, ApplicationModel model,
+                                               ExpressionMigrator expressionMigrator) {
+    return this.resolve(original, element, report, model, expressionMigrator, false);
   }
 
   @Override
-  public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
-                        ExpressionMigrator expressionMigrator, boolean enricher) {
-    return lookupResolver(original).resolve(original, element, report, model, expressionMigrator, enricher);
+  public NoCompatibilityResolverResult resolve(String original, Element element, MigrationReport report, ApplicationModel model,
+                                               ExpressionMigrator expressionMigrator, boolean enricher) {
+    List<CompatibilityResolver<NoCompatibilityResolverResult>> matchedResolvers = lookupResolvers(original);
+    NoCompatibilityResolverResult resolverResult = null;
+    String resolvedExpression = original;
+    boolean markedAsSuccess = true;
+    for (CompatibilityResolver<NoCompatibilityResolverResult> resolver : matchedResolvers) {
+      resolverResult = resolver.resolve(resolvedExpression, element, report, model, expressionMigrator);
+      if (!resolverResult.isSuccesful()) {
+        markedAsSuccess = false;
+      }
+      resolvedExpression = resolverResult.getTranslation();
+    }
+
+    if (markedAsSuccess) {
+      report.melExpressionSuccess(original);
+    } else {
+      report.melExpressionFailure(original);
+    }
+
+    return new NoCompatibilityResolverResult(resolvedExpression, markedAsSuccess);
   }
 
-  protected CompatibilityResolver<String> lookupResolver(String original) {
-    CompatibilityResolver<String> resolver = resolvers.stream()
+  protected List<CompatibilityResolver<NoCompatibilityResolverResult>> lookupResolvers(String original) {
+    List<CompatibilityResolver<NoCompatibilityResolverResult>> matchedResolvers = resolvers.stream()
         .filter(r -> r.canResolve(original))
-        .findFirst()
-        .orElse(new EmptyNoCompatibilityResolver());
-    return resolver;
+        .collect(Collectors.toList());
+    return matchedResolvers;
   }
 }
