@@ -5,49 +5,19 @@
  */
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
-import java.util.Objects;
-
 /**
  * Models an inbound properties source type
  *
  * @author Mulesoft Inc.
  * @since 1.3.0
  */
-public class SourceType {
+public interface SourceType {
 
-  private String namespaceUri;
-  private String type;
+  public String getNamespaceUri();
 
-  public SourceType(String namespaceUri, String type) {
-    this.namespaceUri = namespaceUri;
-    this.type = type;
-  }
+  public String getType();
 
-  public String getNamespaceUri() {
-    return namespaceUri;
-  }
+  public boolean supportsImplicit();
 
-  public String getType() {
-    return type;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    if (o == null || getClass() != o.getClass())
-      return false;
-    SourceType that = (SourceType) o;
-    return Objects.equals(namespaceUri, that.namespaceUri) && Objects.equals(type, that.type);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(namespaceUri, type);
-  }
-
-  @Override
-  public String toString() {
-    return String.format("%s:%s", namespaceUri, type);
-  }
+  public String getImplicitPrefix();
 }

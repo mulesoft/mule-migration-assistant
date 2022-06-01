@@ -70,6 +70,9 @@ public abstract class AbstractEndToEndTestCase {
   private static final Pattern VERSION_REGEX_MATCHER = Pattern.compile("[0-9]{1,2}\\.[0-9]{0,2}\\.[0-9]{0,2}.*");
   public static final String NO_COMPATIBILITY_SUFFIX = "_nc";
 
+  // to render the application graph when available
+  private static final boolean RENDER_APPLICATION_GRAPH = false;
+
   @ClassRule
   public static TemporaryFolder mmaBinary = new TemporaryFolder();
 
@@ -125,6 +128,9 @@ public abstract class AbstractEndToEndTestCase {
     command.add("-projectGAV");
     command.add(":" + projectName.replaceAll(".*[/\\\\]", "") + ":");
     command.add("-jsonReport");
+    if (RENDER_APPLICATION_GRAPH) {
+      command.add("-renderGraph");
+    }
 
     return command;
   }
@@ -251,7 +257,7 @@ public abstract class AbstractEndToEndTestCase {
     return resource.toURI();
   }
 
-  private void compareXml(Path output, Path expected) {
+  private void compareXml(Path expected, Path output) {
     Diff d = DiffBuilder.compare(Input.fromFile(expected.toFile()))
         .withTest(Input.fromFile(output.toFile()))
         .ignoreComments()

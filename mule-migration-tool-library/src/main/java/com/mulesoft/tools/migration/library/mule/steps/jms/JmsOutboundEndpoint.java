@@ -9,15 +9,15 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleConnectorChildElements;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_EE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
 
+import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.util.Optional;
 
@@ -136,7 +136,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
 
     Element outboundBuilder = new Element("message", JMS_NAMESPACE);
 
-    Attribute migrationReplyTo = object.getAttribute("reply-to", Namespace.getNamespace("migration", "migration"));
+    Attribute migrationReplyTo = object.getAttribute("reply-to", RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE);
     if (migrationReplyTo != null) {
       if (migrationReplyTo.getValue().startsWith("TOPIC:")) {
         outboundBuilder.addContent(new Element("reply-to", JMS_NAMESPACE)

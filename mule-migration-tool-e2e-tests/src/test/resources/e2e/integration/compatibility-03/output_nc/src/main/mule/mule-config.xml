@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener Configuration">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+
+    <http:request-config name="HTTP_Request_Configuration" doc:name="HTTP Listener Configuration">
+        <http:request-connection host="0.0.0.0" port="8081" />
+    </http:request-config>
+
+    <file:config name="File" doc:name="File">
+        <file:connection workingDir=".">
+            <reconnection failsDeployment="true" />
+        </file:connection>
+    </file:config>
+
+    <flow name="flowWithSource">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/file" doc:name="HTTP">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers><![CDATA[#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'fileName' : ' 123'}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <logger message="#['Subflow with source. File moved: ' ++ message.attributes.headers.fileName]" level="INFO" doc:name="Logger" />
+
+        <set-variable variableName="outbound_someOutbound" value="Hello" doc:name="Property" />
+    </flow>
+
+    <flow name="Test">
+        <file:listener directory="someDir/subdir" config-ref="File" doc:name="File" moveToDirectory="someDir/subdir/output" recursive="false" applyPostActionWhenFailed="false">
+            <!--Migration INFO: 'responseTimeout' was not being used by the file transport.-->
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000" />
+            </scheduling-strategy>
+        </file:listener>
+
+        <logger message="#['Moved file ' ++ message.attributes.fileName]" level="INFO" doc:name="File move logger" />
+
+        <set-variable variableName="outbound_fileName" value="#[message.attributes.fileName]" doc:name="Property" />
+
+        <http:request config-ref="HTTP_Request_Configuration" path="/file" method="GET" doc:name="HTTP">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:headers>#[migration::HttpRequester::httpRequesterHeaders(vars)]</http:headers>
+        </http:request>
+
+        <logger message="#['The new inbound properties are from HTTP like http.status: ' ++ message.attributes.statusCode]" level="INFO" doc:name="Logger" />
+    </flow>
+</mule>
