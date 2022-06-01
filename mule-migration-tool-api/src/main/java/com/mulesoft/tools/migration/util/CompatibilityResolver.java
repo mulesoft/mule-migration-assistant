@@ -19,7 +19,7 @@ import org.jdom2.Element;
  */
 public interface CompatibilityResolver<T> {
 
-  boolean canResolve(T original);
+  boolean canResolve(String original);
 
   T resolve(String original, Element element, MigrationReport report, ApplicationModel model,
             ExpressionMigrator expressionMigrator);

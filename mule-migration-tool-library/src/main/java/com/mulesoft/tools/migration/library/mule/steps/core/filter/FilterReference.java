@@ -5,13 +5,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
-
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
+
+import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 
 /**
  * Migrate global filters
@@ -35,7 +35,7 @@ public class FilterReference extends AbstractFilterMigrator {
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     Element globalFilter = getApplicationModel().getNode("/*/*[@name = '" + element.getAttributeValue("ref") + "']");
-    globalFilter.setAttribute("globalProcessed", "true", Namespace.getNamespace("migration", "migration"));
+    globalFilter.setAttribute("globalProcessed", "true", MIGRATION_NAMESPACE);
     Element clonedFilter = globalFilter.clone();
     clonedFilter.removeAttribute("name");
     addElementAfter(clonedFilter, element);

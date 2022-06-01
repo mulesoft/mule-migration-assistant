@@ -46,6 +46,7 @@ public class MigrationRunner {
   private final static String PROJECT_GAV = "projectGAV";
   public static final String JSON_REPORT = "jsonReport";
   public static final String NO_COMPATIBILITY = "noCompatibility";
+  public static final String RENDER_GRAPH = "renderGraph";
 
   private String projectBasePath;
   private String parentDomainProjectBasePath;
@@ -56,6 +57,7 @@ public class MigrationRunner {
   private String projectGAV;
   private boolean jsonReport;
   private boolean noCompatibility;
+  private boolean renderGraph = false;
 
 
   private String userId;
@@ -113,6 +115,7 @@ public class MigrationRunner {
         .withProjectGAV(projectGAV)
         .withJsonReport(jsonReport)
         .withNoCompatibility(noCompatibility)
+        .withRenderGraph(renderGraph)
         .build();
   }
 
@@ -136,6 +139,7 @@ public class MigrationRunner {
     options.addOption(PROJECT_GAV, true, "Use projectGAV to override default GAV coordinates when a pom.xml is not provided");
     options.addOption(JSON_REPORT, false, "Generate migration report in JSON format");
     options.addOption(NO_COMPATIBILITY, false, "Do not use compatibility module");
+    options.addOption(RENDER_GRAPH, false, "Only available in no compatibility mode. Renders application graph");
 
     options.addOption("userId", true, "The userId to send for the usage statistics");
     options.addOption("sessionId", true, "The sessionId to send for the usage statistics");
@@ -209,6 +213,10 @@ public class MigrationRunner {
 
       if (line.hasOption(NO_COMPATIBILITY)) {
         noCompatibility = true;
+      }
+
+      if (line.hasOption(RENDER_GRAPH)) {
+        renderGraph = true;
       }
 
       if (line.hasOption(HELP)) {

@@ -6,16 +6,12 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.project.model.ApplicationModelUtils.changeNodeName;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateRedeliveryPolicyChildren;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +52,7 @@ public class RollbackExceptionStrategy extends AbstractExceptionsMigrationStep {
       Element flow = getContainerElement(element);
       if (flow != null && !flow.getChildren().isEmpty()) {
         Element source = flow.getChildren().get(0);
-        if (source.getAttribute("isMessageSource", Namespace.getNamespace("migration")) != null) {
+        if (source.getAttribute("isMessageSource", RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE) != null) {
           Element redelivery = source.getChild("idempotent-redelivery-policy", CORE_NAMESPACE);
           if (redelivery != null) {
             redelivery.setName("redelivery-policy");

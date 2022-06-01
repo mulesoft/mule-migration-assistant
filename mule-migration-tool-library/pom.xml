@@ -142,6 +142,18 @@
             <artifactId>snakeyaml</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-io</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>guru.nidi</groupId>
+            <artifactId>graphviz-java</artifactId>
+            <version>0.18.1</version>
+        </dependency>
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -160,20 +172,6 @@
         <dependency>
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jgrapht</groupId>
-            <artifactId>jgrapht-io</artifactId>
-            <version>1.4.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>guru.nidi</groupId>
-            <artifactId>graphviz-java</artifactId>
-            <version>0.18.1</version>
             <scope>test</scope>
         </dependency>
 

@@ -17,6 +17,8 @@ import java.util.Map;
  */
 public interface FlowComponent {
 
+  String getElementId();
+
   Flow getParentFlow();
 
   Element getXmlElement();
@@ -24,4 +26,6 @@ public interface FlowComponent {
   PropertiesMigrationContext getPropertiesMigrationContext();
 
   String getName();
+
+  void accept(FlowComponentVisitor visitor);
 }
