@@ -10,4 +10,11 @@
             <logger message="#[3]"/>
         </async>
     </flow>
+
+    <flow name="async2">
+        <async>
+            <logger message="#[4]"/>
+        </async>
+    </flow>
+
 </mule>

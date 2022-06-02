@@ -7,6 +7,9 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
+import java.util.Optional;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
@@ -35,10 +38,9 @@ public class Async extends AbstractApplicationModelMigrationStep {
     Attribute processingStrategy = element.getAttribute("processingStrategy");
     if (processingStrategy != null) {
       element.removeAttribute(processingStrategy);
-      Element processingStrategyConfig = getApplicationModel().getNode("//*[@name = '" + processingStrategy.getValue() + "']");
-      if (processingStrategyConfig != null) {
-        processingStrategyConfig.detach();
-      }
+      Optional<Element> processingStrategyConfig =
+          getApplicationModel().getNodeOptional("//*[@name = '" + processingStrategy.getValue() + "']");
+      processingStrategyConfig.ifPresent(Element::detach);
       report.report("async.processingStrategy", element, element);
     }
   }
