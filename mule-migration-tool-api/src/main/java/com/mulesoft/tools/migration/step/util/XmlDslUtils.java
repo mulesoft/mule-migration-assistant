@@ -137,7 +137,7 @@ public final class XmlDslUtils {
     addCompatibilityNamespace(element.getDocument());
 
     int index = element.getParent().indexOf(element);
-    if (appModel.getApplicationGraph() == null) {
+    if (!appModel.noCompatibilityMode()) {
       buildAttributesToInboundProperties(report, element.getParent(), index + 1);
       if (expectsOutboundProperties) {
         Element errorHandlerElement = getFlowExceptionHandlingElement(element.getParentElement());
@@ -204,7 +204,7 @@ public final class XmlDslUtils {
 
     int index = element.getParent().indexOf(element);
 
-    if (appModel.getApplicationGraph() == null) {
+    if (!appModel.noCompatibilityMode()) {
       if (!"true".equals(element.getAttributeValue("isPolledConsumer", MIGRATION_NAMESPACE))) {
         buildOutboundPropertiesToVar(report, element.getParent(), index, consumeStreams);
       }

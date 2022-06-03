@@ -10,31 +10,30 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilit
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.join;
 
-import com.mulesoft.tools.*;
+import com.mulesoft.tools.JavaModuleRequired;
+import com.mulesoft.tools.MigrationResult;
+import com.mulesoft.tools.Migrator;
+import com.mulesoft.tools.NonMigratable;
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
 import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
 import com.mulesoft.tools.migration.library.tools.mel.nocompatibility.MelNoCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.pom.Dependency;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.collection.JavaConverters;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Migrate mel expressions to dw expression
@@ -51,17 +50,18 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
   private final Pattern EXPRESSION_WRAPPER = Pattern.compile("^\\s*#\\[(.*)]\\s*$", Pattern.DOTALL);
   private final Pattern EXPRESSION_TEMPLATE_WRAPPER = Pattern.compile(".*#\\[(.*)].*", Pattern.DOTALL);
 
-  private final MelCompatibilityResolver compatibilityResolver;
-  private final MelNoCompatibilityResolver noCompatibilityResolver;
+  private MelCompatibilityResolver compatibilityResolver;
+  private MelNoCompatibilityResolver noCompatibilityResolver;
   private final ApplicationModel model;
-  private final ApplicationGraph applicationGraph;
 
   public MelToDwExpressionMigrator(MigrationReport report, ApplicationModel model) {
     this.report = report;
     this.model = model;
-    this.compatibilityResolver = new MelCompatibilityResolver(model.getApplicationGraph());
-    this.noCompatibilityResolver = new MelNoCompatibilityResolver(model.getApplicationGraph());
-    this.applicationGraph = model.getApplicationGraph();
+    if (model.noCompatibilityMode()) {
+      this.noCompatibilityResolver = new MelNoCompatibilityResolver();
+    } else {
+      this.compatibilityResolver = new MelCompatibilityResolver();
+    }
   }
 
   @Override
@@ -104,7 +104,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
       result = Migrator.migrate(unwrappedExpression);
       migratedExpression = result.getGeneratedCode();
     } catch (Exception e) {
-      if (applicationGraph != null) {
+      if (noCompatibilityResolver != null) {
         return noCompatibilityResolver.resolve(unwrappedExpression, element, report, model, this, enricher).getTranslation();
       } else {
         return compatibilityResolver.resolve(unwrappedExpression, element, report, model, this, enricher);
@@ -143,7 +143,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
       migratedExpression = migratedExpression.replaceFirst("%dw 2\\.0\n---", "").trim();
     }
 
-    if (applicationGraph != null) {
+    if (noCompatibilityResolver != null) {
       try {
         migratedExpression =
             noCompatibilityResolver.resolve(migratedExpression, element, report, model, this, enricher).getTranslation();

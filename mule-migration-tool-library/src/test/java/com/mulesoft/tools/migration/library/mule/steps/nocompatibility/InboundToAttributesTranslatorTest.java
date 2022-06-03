@@ -13,6 +13,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.Map;
+
 public class InboundToAttributesTranslatorTest {
 
   private InboundToAttributesTranslator translator;
@@ -51,5 +53,11 @@ public class InboundToAttributesTranslatorTest {
     assertEquals("(message.attributes.requestPath[1 + sizeOf(if (endsWith(message.attributes.listenerPath, '/*')) "
         + "message.attributes.listenerPath[0 to -3] default '/' else message.attributes.listenerPath) to -1])",
                  translator.getAllTranslationsFor(PropertiesSourceType.HTTP_LISTENER).get().get("http.relative.path"));
+  }
+
+  @Test
+  public void testGetAllTranslationsForAllSourceTypes() throws Exception {
+    Map<String, String> allTranslationsForAllSourceTypes = translator.getAllTranslationsForAllSourceTypes();
+    assertEquals(47, allTranslationsForAllSourceTypes.size());
   }
 }

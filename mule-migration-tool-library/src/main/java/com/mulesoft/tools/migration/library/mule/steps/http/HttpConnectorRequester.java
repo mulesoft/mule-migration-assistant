@@ -74,7 +74,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     migrateExpression(object.getAttribute("followRedirects"), getExpressionMigrator());
 
     migrateOperationStructure(getApplicationModel(), object, report, true, getExpressionMigrator(),
-                              new MelCompatibilityResolver(getApplicationModel().getApplicationGraph()));
+                              new MelCompatibilityResolver());
     addAttributesToInboundProperties(object, getApplicationModel(), report);
 
     object.getChildren().forEach(c -> {

@@ -55,4 +55,9 @@ public class InboundPropertiesNoCompatibilityResolver extends PropertiesNoCompat
     return translator;
   }
 
+  @Override
+  protected String fallbackTranslation(String propertyToTranslate) throws Exception {
+    return translator.getAllTranslationsForAllSourceTypes().get(propertyToTranslate);
+  }
+
 }

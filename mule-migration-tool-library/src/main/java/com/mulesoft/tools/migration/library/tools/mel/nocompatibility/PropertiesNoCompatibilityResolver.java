@@ -12,9 +12,12 @@ import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGr
 import com.mulesoft.tools.migration.project.model.applicationgraph.FlowComponent;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
+import com.mulesoft.tools.migration.step.ReportingStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,8 @@ import java.util.regex.Pattern;
  */
 public abstract class PropertiesNoCompatibilityResolver
     implements com.mulesoft.tools.migration.util.CompatibilityResolver<NoCompatibilityResolverResult> {
+
+  private static final Logger logger = LoggerFactory.getLogger(PropertiesNoCompatibilityResolver.class);
 
   private Pattern generalPattern;
   private List<Pattern> singleExpressionPatterns;
@@ -54,8 +59,7 @@ public abstract class PropertiesNoCompatibilityResolver
                                                ExpressionMigrator expressionMigrator) {
     String translatedExpression = original;
     boolean success = true;
-    if (model.getApplicationGraph() != null) {
-      // no compatibility 
+    if (model.noCompatibilityMode()) {
       try {
         translatedExpression = translatePropertyReferences(original, element, report, model.getApplicationGraph());
       } catch (MigrationException e) {
@@ -82,7 +86,7 @@ public abstract class PropertiesNoCompatibilityResolver
     if (flowComponent != null) {
       try {
         if (matcher.find()) {
-          return replaceAllOccurencesOfProperty(expression, matcher, flowComponent, report);
+          return replaceAllOccurrencesOfProperty(expression, matcher, flowComponent, report);
         } else {
           matcher = patternWithExpression.matcher(expression);
           if (matcher.find()) {
@@ -105,8 +109,8 @@ public abstract class PropertiesNoCompatibilityResolver
     return expression;
   }
 
-  private String replaceAllOccurencesOfProperty(String content, Matcher outerMatcher, FlowComponent flowComponent,
-                                                MigrationReport report)
+  private String replaceAllOccurrencesOfProperty(String content, Matcher outerMatcher, FlowComponent flowComponent,
+                                                 MigrationReport report)
       throws MigrationException {
     outerMatcher.reset();
     String contentTranslation = content;
@@ -137,9 +141,9 @@ public abstract class PropertiesNoCompatibilityResolver
           if (propertyTranslation == null) {
             propertyTranslation = tryImplicitTranslation(propertyToTranslate, flowComponent);
             if (propertyTranslation == null) {
-              report.report("nocompatibility.unsupportedproperty", flowComponent.getXmlElement().getParentElement(),
-                            flowComponent.getXmlElement().getParentElement(), flowComponent.getXmlElement().getName());
-              failedCompleteTranslation = true;
+              propertyTranslation = fallbackTranslation(propertyToTranslate);
+              logger.info("Property '{}' not found in context, using fallback translation '{}' ", propertyToTranslate,
+                          propertyTranslation);
             }
           }
           contentTranslation = content.replace(specificPropMatcher.group(0), propertyTranslation);
@@ -167,6 +171,8 @@ public abstract class PropertiesNoCompatibilityResolver
   }
 
   protected abstract PropertyTranslator getTranslator();
+
+  protected abstract String fallbackTranslation(String propertyToTranslate) throws Exception;
 
   private boolean containsExpression(String referenceToProperty) {
     return referenceToProperty.matches(patternWithOnlyExpression.pattern());

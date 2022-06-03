@@ -27,18 +27,16 @@ import java.util.stream.Collectors;
 public class MelNoCompatibilityResolver implements CompatibilityResolver<NoCompatibilityResolverResult> {
 
   protected List<CompatibilityResolver<NoCompatibilityResolverResult>> resolvers;
-  private ApplicationGraph graph;
 
-  public MelNoCompatibilityResolver(ApplicationGraph graph) {
+  public MelNoCompatibilityResolver() {
     resolvers = new ArrayList<>();
     resolvers.add(new InboundPropertiesNoCompatibilityResolver());
     resolvers.add(new OutboundPropertiesNoCompatibilityResolver());
-    this.graph = graph;
   }
 
   @Override
   public boolean canResolve(String original) {
-    return graph != null;
+    return true;
   }
 
   @Override

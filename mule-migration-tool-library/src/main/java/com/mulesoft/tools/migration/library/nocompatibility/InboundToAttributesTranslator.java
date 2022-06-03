@@ -17,8 +17,10 @@ import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer;
 import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -56,8 +58,22 @@ public class InboundToAttributesTranslator implements PropertyTranslator {
         .build();
   }
 
+  private Map<String, String> allTranslations;
+
   public static List<SourceType> getSupportedConnectors() {
     return Lists.newArrayList(translatorClasses.keySet());
+  }
+
+  @Override
+  public Map<String, String> getAllTranslationsForAllSourceTypes() throws Exception {
+    if (allTranslations == null) {
+      Map<String, String> result = new HashMap<>();
+      for (SourceType sourceType : translatorClasses.keySet()) {
+        result.putAll(getAllTranslationsFor(sourceType).orElseThrow(NoSuchElementException::new));
+      }
+      allTranslations = result;
+    }
+    return allTranslations;
   }
 
   @Override

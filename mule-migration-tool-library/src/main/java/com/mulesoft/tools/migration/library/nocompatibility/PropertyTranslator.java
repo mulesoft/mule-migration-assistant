@@ -18,6 +18,8 @@ import java.util.Optional;
  */
 public interface PropertyTranslator {
 
+  Map<String, String> getAllTranslationsForAllSourceTypes() throws Exception;
+
   Optional<Map<String, String>> getAllTranslationsFor(SourceType sourceType) throws Exception;
 
   String translateImplicit(String propertyToTranslate, SourceType originatingSourceType);

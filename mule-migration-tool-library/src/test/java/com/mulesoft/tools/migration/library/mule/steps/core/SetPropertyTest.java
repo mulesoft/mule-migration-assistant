@@ -79,7 +79,7 @@ public class SetPropertyTest {
     Document doc = getDocument(this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString()).toURI().getPath());
     node = getElementsFromDocument(doc, setProperty.getAppliedTo().getExpression()).get(0);
     ApplicationGraph mockApplicationGraph = mock(ApplicationGraph.class);
-    when(mockApplicationModel.getApplicationGraph()).thenReturn(mockApplicationGraph);
+    when(mockApplicationModel.noCompatibilityMode()).thenReturn(true);
 
     SetPropertyProcessor flowComponent = new SetPropertyProcessor(node, mock(Flow.class), mockApplicationGraph);
     flowComponent.setPropertiesMigrationContext(new PropertiesMigrationContext(Maps.newHashMap(), ImmutableMap
@@ -94,5 +94,6 @@ public class SetPropertyTest {
     assertThat("The node name didn't changed", node.getName(), is("set-variable"));
     assertThat("The attribute was not renamed", node.getAttribute("variableName"), is(notNullValue()));
     assertThat("The attribute was not translated", node.getAttribute("variableName").getValue(), is("outbound_propertyName"));
+    assertThat("The attribute value is wrong", node.getAttributeValue("value"), is("#[2]"));
   }
 }
