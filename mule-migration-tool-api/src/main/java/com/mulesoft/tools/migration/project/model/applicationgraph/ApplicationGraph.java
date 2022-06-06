@@ -6,12 +6,10 @@
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import org.jdom2.Element;
-import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.traverse.DepthFirstIterator;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,11 +24,11 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMES
  */
 public class ApplicationGraph {
 
-  Graph<FlowComponent, DefaultEdge> applicationGraph;
+  DefaultDirectedGraph<FlowComponent, DefaultWeightedEdge> applicationGraph;
   PropertyTranslator inboundTranslator;
 
   public ApplicationGraph(PropertyTranslator inboundTranslator) {
-    applicationGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
+    applicationGraph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
     this.inboundTranslator = inboundTranslator;
   }
 
@@ -43,9 +41,9 @@ public class ApplicationGraph {
    */
   public FlowComponent getStartingFlowComponent(Flow flow) {
     FlowComponent destinationMessageProcessor = getOneComponentOfFlow(flow);
-    Set<DefaultEdge> incomingEdges = applicationGraph.incomingEdgesOf(destinationMessageProcessor);
+    Set<DefaultWeightedEdge> incomingEdges = applicationGraph.incomingEdgesOf(destinationMessageProcessor);
     while (!incomingEdges.isEmpty()) {
-      DefaultEdge singleIncomingEdge = Iterables.getOnlyElement(incomingEdges);
+      DefaultWeightedEdge singleIncomingEdge = Iterables.getOnlyElement(incomingEdges);
       destinationMessageProcessor = applicationGraph.getEdgeSource(singleIncomingEdge);
       incomingEdges = applicationGraph.incomingEdgesOf(destinationMessageProcessor);
     }
@@ -60,9 +58,9 @@ public class ApplicationGraph {
    */
   public FlowComponent getLastFlowComponent(Flow flow) {
     FlowComponent nextMessageProcessor = getOneComponentOfFlow(flow);
-    Set<DefaultEdge> outgoingEdges = getOutgoingEdgesInFlow(nextMessageProcessor, flow);
+    Set<DefaultWeightedEdge> outgoingEdges = getOutgoingEdgesInFlow(nextMessageProcessor, flow);
     while (!outgoingEdges.isEmpty()) {
-      DefaultEdge singleOutgoingEdge = Iterables.getOnlyElement(outgoingEdges);
+      DefaultWeightedEdge singleOutgoingEdge = Iterables.getOnlyElement(outgoingEdges);
       nextMessageProcessor = applicationGraph.getEdgeTarget(singleOutgoingEdge);
       outgoingEdges = getOutgoingEdgesInFlow(nextMessageProcessor, flow);
     }
@@ -71,11 +69,11 @@ public class ApplicationGraph {
   }
 
   /**
-   * Retrieves all the node from one type
-   * @param typeOfComponent
-   * @param <T>
-   * @return
-   */
+  * Retrieves all the node from one type
+  * @param typeOfComponent
+  * @param <T>
+  * @return
+  */
   public <T> List<T> getAllFlowComponents(Class<T> typeOfComponent) {
     return this.applicationGraph.vertexSet().stream()
         .filter(c -> typeOfComponent.isInstance(c))
@@ -111,12 +109,12 @@ public class ApplicationGraph {
   }
 
   /**
-   * Given a flow ref it will get the next component in a flow (after the next flow is executed)
+   * Given a flow component it will get the next component in a flow (after the next flow is executed)
    * @param flowRef
    * @param flow
    * @return
    */
-  public FlowComponent getNextComponent(FlowRef flowRef, Flow flow) {
+  public FlowComponent getNextComponent(FlowComponent flowRef, Flow flow) {
     return applicationGraph.outgoingEdgesOf(flowRef)
         .stream()
         .map(e -> applicationGraph.getEdgeTarget(e))
@@ -137,8 +135,19 @@ public class ApplicationGraph {
         .collect(Collectors.toList());
   }
 
-  public DepthFirstIterator getDepthFirstIterator(FlowComponent start) {
-    return new DepthFirstIterator(this.applicationGraph, start);
+  /**
+   * Get all flow components that have incoming edges to a certain component
+   * @param component
+   * @return
+   */
+  public List<FlowComponent> getAllIncomingNodes(FlowComponent component) {
+    return applicationGraph.incomingEdgesOf(component).stream()
+        .map(edge -> applicationGraph.getEdgeSource(edge))
+        .collect(Collectors.toList());
+  }
+
+  public WeightedPathIterator getWeightedPathIterator(FlowComponent start) {
+    return new WeightedPathIterator(this.applicationGraph, start);
   }
 
   /**
@@ -157,7 +166,15 @@ public class ApplicationGraph {
   // Graph Manipulation
 
   public void addEdge(FlowComponent source, FlowComponent destination) {
-    this.applicationGraph.addEdge(source, destination);
+    Optional<DefaultWeightedEdge> lastAddedEdge = applicationGraph.outgoingEdgesOf(source).stream()
+        .filter(e -> applicationGraph.getEdgeTarget(e).getParentFlow().equals(destination.getParentFlow()))
+        .sorted(Comparator.comparingDouble(e -> applicationGraph.getEdgeWeight(e)))
+        .findFirst();
+    double weight = 1.0d;
+    if (lastAddedEdge.isPresent()) {
+      weight = applicationGraph.getEdgeWeight(lastAddedEdge.get()) + 1.0d;
+    }
+    this.addEdge(source, destination, weight);
   }
 
   public void addFlowComponent(FlowComponent component) {
@@ -181,7 +198,7 @@ public class ApplicationGraph {
     }
   }
 
-  private Set<DefaultEdge> getOutgoingEdgesInFlow(FlowComponent nextMessageProcessor, Flow flow) {
+  private Set<DefaultWeightedEdge> getOutgoingEdgesInFlow(FlowComponent nextMessageProcessor, Flow flow) {
     return applicationGraph.outgoingEdgesOf(nextMessageProcessor).stream()
         .filter(e -> applicationGraph.getEdgeTarget(e).getParentFlow().equals(flow))
         .collect(Collectors.toSet());
@@ -231,5 +248,10 @@ public class ApplicationGraph {
       return exceptionResponseComponent != null && elementId.equals(exceptionResponseComponent.getElementId());
     }
     return false;
+  }
+
+  private void addEdge(FlowComponent source, FlowComponent destination, Double weight) {
+    this.applicationGraph.addEdge(source, destination);
+    this.applicationGraph.setEdgeWeight(source, destination, weight);
   }
 }

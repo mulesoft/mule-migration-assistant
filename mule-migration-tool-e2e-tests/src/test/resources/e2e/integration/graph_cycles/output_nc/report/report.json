@@ -1,0 +1,130 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated":
+  [
+    "org.mule.connectors:mule-http-connector:VERSION",
+    "org.mule.connectors:mule-wsc-connector:VERSION"
+  ],
+  "numberOfMuleComponents": 21,
+  "numberOfMuleComponentsMigrated": 20,
+  "componentDetails":
+  {
+    "mule":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "logger":
+    {
+      "success": 5,
+      "failure": 0
+    },
+    "flow":
+    {
+      "success": 2,
+      "failure": 0
+    },
+    "flow-ref":
+    {
+      "success": 4,
+      "failure": 0
+    },
+    "http:listener-config":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener":
+    {
+      "success": 2,
+      "failure": 0
+    },
+    "http:header":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "wsc:config":
+    {
+      "success": 0,
+      "failure": 1
+    },
+    "wsc:consume":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "set-variable":
+    {
+      "success": 3,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 7,
+  "numberOfMELExpressionsMigrated": 7,
+  "numberOfMELExpressionLines": 7,
+  "numberOfMELExpressionLinesMigrated": 7,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages":
+  [
+    {
+      "level": "ERROR",
+      "key": "wsc.unsupportedProtocol",
+      "component": "wsc:config",
+      "lineNumber": 8,
+      "columnNumber": 65,
+      "message": "Web Service Consumer only supports HTTP or JMS transports.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.collidingProperties",
+      "component": "set-property",
+      "lineNumber": 19,
+      "columnNumber": 129,
+      "message": "There are multiple possible translations of http.headers due to app ambiguity. Defaulting to the first one, please revise if this needs to be changed",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "http:listener",
+      "lineNumber": 24,
+      "columnNumber": 93,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "http:listener",
+      "lineNumber": 47,
+      "columnNumber": 94,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "wsc:consume",
+      "lineNumber": 57,
+      "columnNumber": 92,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    }
+  ]
+}

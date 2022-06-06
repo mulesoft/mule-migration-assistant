@@ -21,10 +21,12 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpressi
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.util.Collections.emptyList;
 
+import com.google.common.collect.Lists;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.applicationgraph.FlowComponent;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
+import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -202,8 +204,13 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
   private String migrateMethod(ApplicationGraph graph, Element element) {
     if (graph != null) {
       FlowComponent flowComponent = graph.findFlowComponent(element);
-      return Optional.ofNullable(flowComponent.getPropertiesMigrationContext().getOutboundTranslation("http.method", false))
-          .orElse("POST");
+      List<String> possibleTranslations =
+          Lists.newArrayList(flowComponent.getPropertiesMigrationContext().getOutboundTranslation("http.method", false).values());
+      String methodTranslation = "POST";
+      if (!possibleTranslations.isEmpty()) {
+        methodTranslation = possibleTranslations.get(0);
+      }
+      return methodTranslation;
     } else {
       return "#[migration::HttpRequester::httpRequesterMethod(vars)]";
     }

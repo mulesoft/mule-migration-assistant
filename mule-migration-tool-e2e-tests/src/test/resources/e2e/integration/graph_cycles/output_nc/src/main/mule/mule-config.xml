@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener Configuration">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+
+    <wsc:config name="wsConfig" doc:name="Web Service Consumer">
+        <!--Migration ERROR: Web Service Consumer only supports HTTP or JMS transports.-->
+        <wsc:connection service="Calculator" port="CalculatorSoap12" wsdlLocation="http://www.dneonline.com/calculator.asmx?WSDL" address="http://www.dneonline.com/calculator.asmx" />
+    </wsc:config>
+
+    <sub-flow name="flow3">
+        <logger message="#['Source called with queryParams' ++ message.attributes.queryParams]" level="INFO" doc:name="Logger" />
+    </sub-flow>
+
+    <sub-flow name="flow2">
+        <logger message="#['Source called with queryParams' ++ message.attributes.queryParams]" level="INFO" doc:name="Logger" />
+        <set-variable variableName="outbound_propertyFlow2" value="#[message.attributes.protocolHeaders]" doc:name="Property" />
+        <flow-ref name="flow3" doc:name="Flow Reference" />
+    </sub-flow>
+
+    <flow name="mainFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api" doc:name="HTTP">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:response statusCode="#[200]">
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'testHeader' : message.attributes.queryParams.'message'}]]]></http:headers>
+            </http:response>
+            <http:error-response>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <set-variable variableName="outbound_mainFlowOutbound" value="#[message.attributes.queryParams.'type']" doc:name="Property" />
+
+        <flow-ref name="flow2" doc:name="Flow Reference" />
+
+        <logger message="#['Outbound is ' ++ message.outboundProperties]" level="INFO" doc:name="Logger" />
+
+        <flow-ref name="flow2" doc:name="Flow Reference" />
+
+        <logger level="INFO" doc:name="Logger" />
+
+    </flow>
+
+    <flow name="secondFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api2" doc:name="HTTP">
+            <http:response statusCode="#[200]">
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            </http:response>
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:error-response>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <wsc:consume config-ref="wsConfig" operation="Add" doc:name="Web Service Consumer">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+        </wsc:consume>
+
+        <set-variable variableName="outbound_secondFlowOutbound" value="test" doc:name="Property" />
+
+        <flow-ref name="flow2" doc:name="Flow Reference" />
+
+        <logger message="#['Outbound is' ++ vars.outbound_secondFlowOutbound]" level="INFO" doc:name="Logger" />
+
+    </flow>
+
+</mule>

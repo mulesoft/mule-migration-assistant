@@ -12,6 +12,7 @@ import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.parse.Parser;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.ExportException;
@@ -51,9 +52,9 @@ public class GraphRenderer {
         .toFile(new File(String.format("target/graphs/%s-%s.png", filePrefix, graphFileSuffix.getAndIncrement())));
   }
 
-  private static String generateDot(Graph<FlowComponent, DefaultEdge> stringGraph)
+  private static String generateDot(Graph<FlowComponent, DefaultWeightedEdge> stringGraph)
       throws ExportException {
-    DOTExporter<FlowComponent, DefaultEdge> exporter = new DOTExporter<>(v -> GraphRenderer.getElementName(v));
+    DOTExporter<FlowComponent, DefaultWeightedEdge> exporter = new DOTExporter<>(v -> GraphRenderer.getElementName(v));
     exporter.setVertexAttributeProvider((v) -> {
       Map<String, Attribute> map = new LinkedHashMap<>();
       if (stringGraph.inDegreeOf(v) == 0) {

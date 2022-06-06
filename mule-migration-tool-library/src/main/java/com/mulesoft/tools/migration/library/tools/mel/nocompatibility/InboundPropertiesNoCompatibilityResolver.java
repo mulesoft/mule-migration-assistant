@@ -6,11 +6,13 @@
 package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
 
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -42,20 +44,14 @@ public class InboundPropertiesNoCompatibilityResolver extends PropertiesNoCompat
   }
 
   @Override
-  public Map<String, PropertyMigrationContext> getPropertiesContextMap(
-                                                                       PropertiesMigrationContext propertiesMigrationContext) {
-    return propertiesMigrationContext.getInboundContext();
-  }
-
-  @Override
   protected PropertyTranslator getTranslator(ApplicationGraph graph) {
     return graph.getInboundTranslator();
   }
 
   @Override
-  protected String getPropertyTranslation(PropertiesMigrationContext context, String propertyToTranslate,
-                                          PropertyTranslator translator) {
-    return context.getInboundTranslation(propertyToTranslate, translator, true);
+  protected List<String> getPropertyTranslations(PropertiesMigrationContext context, String propertyToTranslate,
+                                                 PropertyTranslator translator) {
+    return Lists.newArrayList(context.getInboundTranslation(propertyToTranslate, true).values());
   }
 
 

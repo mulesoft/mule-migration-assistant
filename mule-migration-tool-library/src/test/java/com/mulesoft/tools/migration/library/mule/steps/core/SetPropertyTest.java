@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.nocompatibility.InboundToAttributesTranslator;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.*;
@@ -82,8 +83,8 @@ public class SetPropertyTest {
     when(mockApplicationModel.noCompatibilityMode()).thenReturn(true);
 
     SetPropertyProcessor flowComponent = new SetPropertyProcessor(node, mock(Flow.class), mockApplicationGraph);
-    flowComponent.setPropertiesMigrationContext(new PropertiesMigrationContext(Maps.newHashMap(), ImmutableMap
-        .of("propertyName", new PropertyMigrationContext("vars.outbound_propertyName")), null));
+    PropertiesMigrationContext propertiesMigrationContext = new PropertiesMigrationContext(new InboundToAttributesTranslator());
+    propertiesMigrationContext.addToOutbound("propertyName", new PropertyMigrationContext("vars.outbound_propertyName"));
     when(mockApplicationGraph.findFlowComponent(isA(Element.class))).thenReturn(flowComponent);
 
     setProperty.execute(node, report.getReport());

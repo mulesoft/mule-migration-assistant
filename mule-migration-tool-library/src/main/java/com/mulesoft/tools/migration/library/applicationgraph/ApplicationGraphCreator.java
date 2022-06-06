@@ -151,6 +151,11 @@ public class ApplicationGraphCreator {
   private Pair<Pair<FlowComponent, FlowComponent>, Pair<FlowComponent, FlowComponent>> getConnectedComponents(FlowRef flowRef,
                                                                                                               ApplicationGraph applicationGraph) {
     FlowComponent referredFlowStartingPoint = applicationGraph.getStartingFlowComponent(flowRef.getDestinationFlow());
+    if (referredFlowStartingPoint instanceof PropertiesSource
+        && ((PropertiesSource) referredFlowStartingPoint).getType().isFlowSource()) {
+      referredFlowStartingPoint =
+          applicationGraph.getNextComponent(referredFlowStartingPoint, referredFlowStartingPoint.getParentFlow());
+    }
     Pair<FlowComponent, FlowComponent> sourcePair = Pair.of(flowRef, referredFlowStartingPoint);
 
     FlowComponent goBackFlowComponent = applicationGraph.getNextComponent(flowRef, flowRef.getParentFlow());
