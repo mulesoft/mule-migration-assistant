@@ -5,6 +5,7 @@
  */
 package com.mulesoft.tools.migration.library.nocompatibility;
 
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
 
 import java.util.Map;
@@ -17,6 +18,10 @@ import java.util.Optional;
  * @since 1.4.0
  */
 public interface PropertyTranslator {
+
+  void initializeTranslationsForApplicationSourceTypes(ApplicationModel applicationModel);
+
+  Map<String, String> getTranslationsForApplicationsSourceTypes();
 
   Optional<Map<String, String>> getAllTranslationsFor(SourceType sourceType) throws Exception;
 

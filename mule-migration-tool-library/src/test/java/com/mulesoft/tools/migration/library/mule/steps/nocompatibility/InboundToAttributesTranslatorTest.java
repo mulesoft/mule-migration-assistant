@@ -13,6 +13,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.Map;
+
 public class InboundToAttributesTranslatorTest {
 
   private InboundToAttributesTranslator translator;
@@ -52,4 +54,5 @@ public class InboundToAttributesTranslatorTest {
         + "message.attributes.listenerPath[0 to -3] default '/' else message.attributes.listenerPath) to -1])",
                  translator.getAllTranslationsFor(PropertiesSourceType.HTTP_LISTENER).get().get("http.relative.path"));
   }
+
 }
