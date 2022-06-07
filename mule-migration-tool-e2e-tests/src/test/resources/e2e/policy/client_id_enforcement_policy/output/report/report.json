@@ -2,9 +2,13 @@
   "projectType": "MULE_THREE_POLICY",
   "projectName": "input",
   "connectorsMigrated": [],
-  "numberOfMuleComponents": 11,
-  "numberOfMuleComponentsMigrated": 11,
+  "numberOfMuleComponents": 12,
+  "numberOfMuleComponentsMigrated": 12,
   "componentDetails": {
+    "mule:sub-flow": {
+      "success": 1,
+      "failure": 0
+    },
     "mule:set-payload": {
       "success": 2,
       "failure": 0

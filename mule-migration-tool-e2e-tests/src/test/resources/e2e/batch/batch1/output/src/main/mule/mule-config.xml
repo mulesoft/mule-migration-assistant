@@ -22,7 +22,7 @@
                     </batch:aggregator>
                 </batch:step>
                 <batch:step name="secondStep">
-                    <flow-ref name="upperCasePipe" />
+                    <flow-ref name="\upperCasePipe" />
                     <logger message="something" />
                 </batch:step>
             </batch:process-records>
@@ -33,7 +33,7 @@
 
     </flow>
 
-    <sub-flow name="upperCasePipe">
+    <sub-flow name="\upperCasePipe">
         <set-payload value="#[mel:payload + '|' + payload.toUpperCase()]">
             <!--Migration WARN: The MEL expression could not be migrated to a DataWeave expression.-->
             <!--    For more information refer to:-->

@@ -23,7 +23,7 @@
                 </batch:commit>
             </batch:step>
             <batch:step name="secondStep">
-                <flow-ref name="upperCasePipe"/>
+                <flow-ref name="/upperCasePipe"/>
                 <logger message="something"/>
             </batch:step>
         </batch:process-records>
@@ -32,7 +32,7 @@
         </batch:on-complete>
     </batch:job>
 
-    <sub-flow name="upperCasePipe">
+    <sub-flow name="/upperCasePipe">
         <set-payload value="#[payload + '|' + payload.toUpperCase()]"/>
     </sub-flow>
 

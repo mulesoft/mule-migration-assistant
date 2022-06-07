@@ -5,6 +5,9 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.Flow.migrateFlowName;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getTopLevelCoreXPathSelector;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
@@ -18,7 +21,7 @@ import org.jdom2.Element;
  */
 public class SubFlow extends AbstractApplicationModelMigrationStep {
 
-  public static final String XPATH_SELECTOR = "/*/mule:sub-flow";
+  public static final String XPATH_SELECTOR = getTopLevelCoreXPathSelector("sub-flow");
 
   @Override
   public String getDescription() {
@@ -31,12 +34,13 @@ public class SubFlow extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    element.setAttribute("name", element.getAttributeValue("name")
-        .replaceAll("\\/", "\\\\")
-        .replaceAll("\\[|\\{", "(")
-        .replaceAll("\\]|\\}", ")")
-        .replaceAll("#", "_"));
-  }
+    String name = element.getAttributeValue("name");
 
+    // do not replace special chars for sub-flows in policy templates
+    if (!name.matches(".*\\{\\{\\w+}}.*")) {
+      element.setAttribute("name", migrateFlowName(name));
+    }
+
+  }
 
 }

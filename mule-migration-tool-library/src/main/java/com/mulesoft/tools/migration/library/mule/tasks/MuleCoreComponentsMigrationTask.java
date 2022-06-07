@@ -36,6 +36,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.ScatterGather;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetPayload;
 import com.mulesoft.tools.migration.library.mule.steps.core.SetVariable;
 import com.mulesoft.tools.migration.library.mule.steps.core.SpringImport;
+import com.mulesoft.tools.migration.library.mule.steps.core.SubFlow;
 import com.mulesoft.tools.migration.library.mule.steps.core.TransactionalScope;
 import com.mulesoft.tools.migration.library.mule.steps.core.UntilSuccessful;
 import com.mulesoft.tools.migration.library.mule.steps.ee.CacheHttpCachingStrategy;
@@ -88,6 +89,7 @@ public class MuleCoreComponentsMigrationTask extends AbstractMigrationTask {
                         new ScatterGather(),
                         new Enricher(),
                         new Flow(),
+                        new SubFlow(),
                         new FlowRef(),
                         new CompositeSource(),
                         new Async(),
