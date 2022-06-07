@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <sftp:config name="inboundEndpointConfig">
+        <sftp:connection host="${SFTP_HOST}" port="${SFTP_PORT}" username="${USER1_NAME}" password="${USER1_PASSWORD}">
+            <reconnection failsDeployment="true" />
+        </sftp:connection>
+    </sftp:config>
+
+    <flow name="sftp-flow">
+        <sftp:listener directory="data" config-ref="inboundEndpointConfig">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000" />
+            </scheduling-strategy>
+        </sftp:listener>
+
+        <!-- transport present -->
+        <logger message="#[message.attributes.name]" />
+
+        <!-- transport not present -->
+        <logger message="#[message.inboundProperties['fileSize']]">
+            <!--Migration ERROR: Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source-->
+        </logger>
+
+        <!-- non-existent -->
+        <logger message="#[message.inboundProperties['unknown']]">
+            <!--Migration ERROR: Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source-->
+        </logger>
+
+    </flow>
+
+</mule>

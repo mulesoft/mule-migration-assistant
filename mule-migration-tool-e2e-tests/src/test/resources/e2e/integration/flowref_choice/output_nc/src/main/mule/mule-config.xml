@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <file:config name="File">
+        <file:connection workingDir=".">
+            <reconnection failsDeployment="true" />
+        </file:connection>
+    </file:config>
+
+    <sftp:config name="inboundEndpointConfig">
+        <sftp:connection host="${SFTP_HOST}" port="${SFTP_PORT}" username="${USER1_NAME}" password="${USER1_PASSWORD}">
+            <reconnection failsDeployment="true" />
+        </sftp:connection>
+    </sftp:config>
+
+    <flow name="file-level1">
+        <file:listener directory="someDir/subdir" config-ref="File" moveToDirectory="someDir/subdir/output" recursive="false" applyPostActionWhenFailed="false">
+            <!--Migration INFO: 'responseTimeout' was not being used by the file transport.-->
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000" />
+            </scheduling-strategy>
+        </file:listener>
+
+        <set-variable variableName="outbound_at-file-level1" value="doh" />
+
+        <set-variable variableName="outbound_common-level1" value="doh" />
+
+        <flow-ref name="subflow" />
+
+        <logger message="#[vars.outbound_at-sftp-level1]" />
+
+        <!-- never -->
+        <logger message="#[vars.outbound_at-file-level1]" />
+
+        <!-- always -->
+        <logger message="#[vars.outbound_common-level1]" />
+
+        <!-- always -->
+        <logger message="#[vars.outbound_at-sub-flow-level2]" />
+
+        <!-- always -->
+        <logger message="#[message.attributes.fileName]" />
+
+        <!-- both file and sftp: translate to different attributes -->
+        <logger message="#[message.attributes.size]" />
+
+        <!-- only file -->
+    </flow>
+
+    <flow name="sftp-level1">
+        <sftp:listener directory="data" config-ref="inboundEndpointConfig">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000" />
+            </scheduling-strategy>
+        </sftp:listener>
+
+        <set-variable variableName="outbound_at-sftp-level1" value="doh" />
+
+        <set-variable variableName="outbound_common-level1" value="doh" />
+
+        <choice>
+            <when expression="#[length(payload) &gt; 0]">
+                <flow-ref name="subflow" />
+            </when>
+            <otherwise>
+                <set-variable variableName="outbound_otherwise" value="doh" />
+            </otherwise>
+        </choice>
+
+        <logger message="#[vars.outbound_at-sftp-level1]" />
+
+        <!-- always -->
+        <logger message="#[vars.outbound_at-file-level1]" />
+
+        <!-- never -->
+        <logger message="#[vars.outbound_common-level1]" />
+
+        <!-- always -->
+        <logger message="#[vars.outbound_otherwise]" />
+
+        <!-- sometimes -->
+        <logger message="#[vars.outbound_at-sub-flow-level2]" />
+
+        <!-- sometimes -->
+        <logger message="#[message.attributes.name]" />
+
+        <!-- both file and sftp: translate to different attributes -->
+        <logger message="#[message.attributes.size]" />
+
+        <!-- only file -->
+    </flow>
+
+    <sub-flow name="subflow">
+        <set-variable variableName="outbound_at-sub-flow-level2" value="doh" />
+        <logger message="#[vars.outbound_at-sftp-level1]" />
+        <!-- sometimes -->
+        <logger message="#[vars.outbound_at-file-level1]" />
+        <!-- sometimes -->
+        <logger message="#[vars.outbound_common-level1]" />
+        <!-- always -->
+        <logger message="#[vars.outbound_at-sub-flow-level2]" />
+        <!-- always -->
+        <logger message="#[message.attributes.fileName]" />
+        <!-- both file and sftp: translate to different attributes -->
+        <logger message="#[message.attributes.size]" />
+        <!-- only file -->
+    </sub-flow>
+
+</mule>
