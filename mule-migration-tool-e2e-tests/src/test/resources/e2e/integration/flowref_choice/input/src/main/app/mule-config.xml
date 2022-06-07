@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:file="http://www.mulesoft.org/schema/mule/file"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+      http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+      http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+      http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <file:connector name="File" outputPattern="test123.txt" autoDelete="true" streaming="true" validateConnections="true" />
+
+    <flow name="file-level1">
+        <file:inbound-endpoint path="someDir/subdir" connector-ref="File" responseTimeout="10000" moveToDirectory="someDir/subdir/output" />
+        <set-property propertyName="at-file-level1" value="doh" />
+        <set-property propertyName="common-level1" value="doh" />
+        <flow-ref name="subflow" />
+
+        <logger message="#[message.outboundProperties['at-sftp-level1']]" /><!-- never -->
+        <logger message="#[message.outboundProperties['at-file-level1']]" /><!-- always -->
+        <logger message="#[message.outboundProperties['common-level1']]" /><!-- always -->
+        <logger message="#[message.outboundProperties['at-sub-flow-level2']]" /><!-- always -->
+
+        <logger message="#[message.inboundProperties['filename']]" /><!-- both file and sftp: translate to different attributes -->
+        <logger message="#[message.inboundProperties['fileSize']]" /><!-- only file -->
+    </flow>
+
+    <flow name="sftp-level1">
+        <sftp:inbound-endpoint name="inboundEndpoint" address="sftp://${USER1_NAME}:${USER1_PASSWORD}@${SFTP_HOST}:${SFTP_PORT}/~/data" />
+        <set-property propertyName="at-sftp-level1" value="doh" />
+        <set-property propertyName="common-level1" value="doh" />
+        <choice>
+            <when expression="#[payload.length() > 0]">
+                <flow-ref name="subflow" />
+            </when>
+            <otherwise>
+                <set-property propertyName="otherwise" value="doh" />
+            </otherwise>
+        </choice>
+
+        <logger message="#[message.outboundProperties['at-sftp-level1']]" /><!-- always -->
+        <logger message="#[message.outboundProperties['at-file-level1']]" /><!-- never -->
+        <logger message="#[message.outboundProperties['common-level1']]" /><!-- always -->
+        <logger message="#[message.outboundProperties['otherwise']]" /><!-- sometimes -->
+        <logger message="#[message.outboundProperties['at-sub-flow-level2']]" /><!-- sometimes -->
+
+        <logger message="#[message.inboundProperties['filename']]" /><!-- both file and sftp: translate to different attributes -->
+        <logger message="#[message.inboundProperties['fileSize']]" /><!-- only file -->
+    </flow>
+
+    <sub-flow name="subflow">
+        <set-property propertyName="at-sub-flow-level2" value="doh" />
+
+        <logger message="#[message.outboundProperties['at-sftp-level1']]" /><!-- sometimes -->
+        <logger message="#[message.outboundProperties['at-file-level1']]" /><!-- sometimes -->
+        <logger message="#[message.outboundProperties['common-level1']]" /><!-- always -->
+        <logger message="#[message.outboundProperties['at-sub-flow-level2']]" /><!-- always -->
+
+        <logger message="#[message.inboundProperties['filename']]" /><!-- both file and sftp: translate to different attributes -->
+        <logger message="#[message.inboundProperties['fileSize']]" /><!-- only file -->
+    </sub-flow>
+
+</mule>

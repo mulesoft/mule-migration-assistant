@@ -5,10 +5,13 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 
-import com.google.common.collect.ImmutableList;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.SetPropertyProcessor.OUTBOUND_PREFIX;
+
 import com.mulesoft.tools.migration.library.nocompatibility.PropertyTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -49,6 +52,11 @@ public class OutboundPropertiesNoCompatibilityResolver extends PropertiesNoCompa
   @Override
   protected PropertyTranslator getTranslator() {
     return null;
+  }
+
+  @Override
+  protected String fallbackTranslation(String propertyToTranslate) {
+    return "vars." + OUTBOUND_PREFIX + propertyToTranslate;
   }
 
 }
