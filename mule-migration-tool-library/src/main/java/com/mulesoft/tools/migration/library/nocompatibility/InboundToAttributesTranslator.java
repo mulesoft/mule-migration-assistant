@@ -5,8 +5,25 @@
  */
 package com.mulesoft.tools.migration.library.nocompatibility;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import static com.mulesoft.tools.migration.library.applicationgraph.ApplicationGraphCreator.MESSAGE_SOURCE_FILTER_EXPRESSION;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.FILE_INBOUND;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.FTP_INBOUND;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.HTTP_CONNECTOR_REQUESTER;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.HTTP_LISTENER;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.HTTP_POLLING_CONNECTOR;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.HTTP_TRANSPORT;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.HTTP_TRANSPORT_OUTBOUND;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.IMAP_INBOUND;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.JMS_INBOUND;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.JMS_OUTBOUND;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.POP3_INBOUND;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.QUARTZ_INBOUND;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.REQUEST_REPLY;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.SFTP_INBOUND;
+import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.WS_CONSUMER;
+
+import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType;
 import com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailSourceMigrator;
 import com.mulesoft.tools.migration.library.mule.steps.file.FileInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.ftp.FtpInboundEndpoint;
@@ -15,14 +32,20 @@ import com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequest
 import com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.sftp.SftpInboundEndpoint;
 import com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType.*;
+import org.jdom2.Element;
 
 /**
  * Translates between mule 3 inbound properties to mule 4 attributes
@@ -56,8 +79,33 @@ public class InboundToAttributesTranslator implements PropertyTranslator {
         .build();
   }
 
+  private Map<String, String> applicationTranslations;
+
   public static List<SourceType> getSupportedConnectors() {
     return Lists.newArrayList(translatorClasses.keySet());
+  }
+
+  @Override
+  public void initializeTranslationsForApplicationSourceTypes(ApplicationModel applicationModel) {
+    if (applicationTranslations == null) {
+      Map<String, String> result = new HashMap<>();
+      List<Element> sourceNodes = applicationModel.getNodes("//" + MESSAGE_SOURCE_FILTER_EXPRESSION);
+      try {
+        for (SourceType sourceType : translatorClasses.keySet()) {
+          if (sourceNodes.stream().anyMatch(e -> sourceType.equals(new PropertiesSourceType(e.getNamespaceURI(), e.getName())))) {
+            result.putAll(getAllTranslationsFor(sourceType).orElseThrow(NoSuchElementException::new));
+          }
+        }
+      } catch (Exception e) {
+        throw new MigrationStepException(e.getMessage(), e);
+      }
+      applicationTranslations = result;
+    }
+  }
+
+  @Override
+  public Map<String, String> getTranslationsForApplicationsSourceTypes() {
+    return applicationTranslations;
   }
 
   @Override

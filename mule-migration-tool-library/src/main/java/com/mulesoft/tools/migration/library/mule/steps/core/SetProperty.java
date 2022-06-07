@@ -12,11 +12,8 @@ import static com.mulesoft.tools.migration.project.model.applicationgraph.SetPro
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
-import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
-import com.mulesoft.tools.migration.project.model.applicationgraph.RemovePropertyProcessor;
-import com.mulesoft.tools.migration.project.model.applicationgraph.SetPropertyProcessor;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -48,19 +45,11 @@ public class SetProperty extends AbstractApplicationModelMigrationStep implement
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    if (getApplicationModel().getApplicationGraph() != null) {
+    if (getApplicationModel().noCompatibilityMode()) {
       String propertyName = element.getAttributeValue("propertyName");
-
-      SetPropertyProcessor processor = (SetPropertyProcessor) getApplicationModel()
-          .getApplicationGraph().findFlowComponent(element);
-      String variableNameTranslation = processor.getPropertiesMigrationContext().getOutboundContext()
-          .get(propertyName).getTranslation();
-      if (variableNameTranslation != null) {
-        variableNameTranslation = variableNameTranslation.replace("vars.", "");
-        changeNodeName("", "set-variable")
-            .andThen(changeAttribute("propertyName", of("variableName"), of(variableNameTranslation)))
-            .apply(element);
-      }
+      changeNodeName("", SET_VARIABLE)
+          .andThen(changeAttribute("propertyName", of("variableName"), of(OUTBOUND_PREFIX + propertyName)))
+          .apply(element);
       migrateExpression(element.getAttribute("value"), getExpressionMigrator());
     } else {
       migrateExpression(element.getAttribute("value"), getExpressionMigrator());

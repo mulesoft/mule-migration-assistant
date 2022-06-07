@@ -26,13 +26,11 @@ import java.util.List;
 public class MelCompatibilityResolver implements CompatibilityResolver<String> {
 
   private List<CompatibilityResolver<String>> resolvers;
-  private ApplicationGraph applicationGraph;
 
-  public MelCompatibilityResolver(ApplicationGraph applicationGraph) {
+  public MelCompatibilityResolver() {
     resolvers = new ArrayList<>();
     resolvers.add(new InboundAttachmentsCompatibilityResolver());
     resolvers.add(new HeaderSyntaxCompatibilityResolver());
-    this.applicationGraph = applicationGraph;
   }
 
   @Override

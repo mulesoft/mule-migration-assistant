@@ -12,9 +12,12 @@ import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGr
 import com.mulesoft.tools.migration.project.model.applicationgraph.FlowComponent;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
+import com.mulesoft.tools.migration.step.ReportingStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,8 @@ import java.util.regex.Pattern;
  */
 public abstract class PropertiesNoCompatibilityResolver
     implements com.mulesoft.tools.migration.util.CompatibilityResolver<NoCompatibilityResolverResult> {
+
+  private static final Logger logger = LoggerFactory.getLogger(PropertiesNoCompatibilityResolver.class);
 
   private Pattern generalPattern;
   private List<Pattern> singleExpressionPatterns;
@@ -54,8 +59,7 @@ public abstract class PropertiesNoCompatibilityResolver
                                                ExpressionMigrator expressionMigrator) {
     String translatedExpression = original;
     boolean success = true;
-    if (model.getApplicationGraph() != null) {
-      // no compatibility 
+    if (model.noCompatibilityMode()) {
       try {
         translatedExpression = translatePropertyReferences(original, element, report, model.getApplicationGraph());
       } catch (MigrationException e) {
@@ -82,22 +86,23 @@ public abstract class PropertiesNoCompatibilityResolver
     if (flowComponent != null) {
       try {
         if (matcher.find()) {
-          return replaceAllOccurencesOfProperty(expression, matcher, flowComponent, report);
+          return replaceAllOccurrencesOfProperty(expression, matcher, flowComponent.getPropertiesMigrationContext(), element,
+                                                 report);
         } else {
           matcher = patternWithExpression.matcher(expression);
           if (matcher.find()) {
-            report.report("nocompatibility.melexpression", parentElement, parentElement, elementName);
+            report.report("nocompatibility.melexpression", element, element, elementName);
             report.melExpressionFailure(expression);
           }
         }
       } catch (MigrationException e) {
         throw e;
       } catch (Exception e) {
-        report.report("nocompatibility.unsupportedproperty", parentElement, parentElement, elementName);
+        report.report("nocompatibility.unsupportedproperty", element, element, elementName);
         throw new MigrationException(e.getMessage());
       }
     } else {
-      report.report("nocompatibility.unsupportedproperty", parentElement, parentElement, elementName);
+      report.report("nocompatibility.unsupportedproperty", element, element, elementName);
       throw new MigrationException("There was an issue trying to resolve expression to no compatibility. Application graph is not correctly populated");
     }
 
@@ -105,8 +110,9 @@ public abstract class PropertiesNoCompatibilityResolver
     return expression;
   }
 
-  private String replaceAllOccurencesOfProperty(String content, Matcher outerMatcher, FlowComponent flowComponent,
-                                                MigrationReport report)
+  private String replaceAllOccurrencesOfProperty(String content, Matcher outerMatcher,
+                                                 PropertiesMigrationContext propertiesMigrationContext,
+                                                 Element element, MigrationReport report)
       throws MigrationException {
     outerMatcher.reset();
     String contentTranslation = content;
@@ -122,51 +128,56 @@ public abstract class PropertiesNoCompatibilityResolver
 
       if (specificPropMatcher.matches()) {
         if (containsExpression(referenceToProperty)) {
-          report.report("nocompatibility.unsupportedproperty", flowComponent.getXmlElement().getParentElement(),
-                        flowComponent.getXmlElement().getParentElement(), flowComponent.getXmlElement().getName());
+          report.report("nocompatibility.unsupportedproperty", element, element, element.getName());
           failedCompleteTranslation = true;
         }
 
         String propertyToTranslate = specificPropMatcher.group(1);
         try {
           String propertyTranslation =
-              Optional.ofNullable(getPropertiesContextMap(flowComponent.getPropertiesMigrationContext()).get(propertyToTranslate))
-                  .map(
-                       PropertyMigrationContext::getTranslation)
+              Optional.ofNullable(getPropertiesContextMap(propertiesMigrationContext).get(propertyToTranslate))
+                  .map(PropertyMigrationContext::getTranslation)
                   .orElse(null);
           if (propertyTranslation == null) {
-            propertyTranslation = tryImplicitTranslation(propertyToTranslate, flowComponent);
+            propertyTranslation = tryImplicitTranslation(propertyToTranslate, propertiesMigrationContext);
             if (propertyTranslation == null) {
-              report.report("nocompatibility.unsupportedproperty", flowComponent.getXmlElement().getParentElement(),
-                            flowComponent.getXmlElement().getParentElement(), flowComponent.getXmlElement().getName());
-              failedCompleteTranslation = true;
+              propertyTranslation = fallbackTranslation(propertyToTranslate);
+              if (propertyTranslation == null) {
+                propertyTranslation = content;
+                report.report("nocompatibility.unsupportedproperty", element, element, element.getName());
+                failedCompleteTranslation = true;
+              } else {
+                logger.info("Property '{}' not found in context, using fallback translation '{}' ", propertyToTranslate,
+                            propertyTranslation);
+              }
             }
           }
           contentTranslation = content.replace(specificPropMatcher.group(0), propertyTranslation);
         } catch (Exception e) {
-          report.report("nocompatibility.unsupportedproperty", flowComponent.getXmlElement().getParentElement(),
-                        flowComponent.getXmlElement().getParentElement(), flowComponent.getXmlElement().getName());
+          report.report("nocompatibility.unsupportedproperty", element, element, element.getName());
           failedCompleteTranslation = true;
         }
       }
 
       if (failedCompleteTranslation) {
-        throw new MigrationException("Failed to translate all occurencies of properties");
+        throw new MigrationException("Failed to translate all occurrences of properties");
       }
     }
 
     return contentTranslation;
   }
 
-  private String tryImplicitTranslation(String propertyToTranslate, FlowComponent component) {
+  private String tryImplicitTranslation(String propertyToTranslate, PropertiesMigrationContext propertiesMigrationContext) {
     if (getTranslator() != null) {
       PropertyTranslator translator = getTranslator();
-      return translator.translateImplicit(propertyToTranslate, component.getPropertiesMigrationContext().getOriginatingSource());
+      return translator.translateImplicit(propertyToTranslate, propertiesMigrationContext.getOriginatingSource());
     }
     return null;
   }
 
   protected abstract PropertyTranslator getTranslator();
+
+  protected abstract String fallbackTranslation(String propertyToTranslate) throws Exception;
 
   private boolean containsExpression(String referenceToProperty) {
     return referenceToProperty.matches(patternWithOnlyExpression.pattern());

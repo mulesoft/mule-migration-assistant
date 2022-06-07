@@ -52,8 +52,6 @@ import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
-import javax.print.Doc;
-
 /**
  * Represent the application to be migrated
  *
@@ -457,6 +455,13 @@ public class ApplicationModel {
     return this.applicationGraph;
   }
 
+  /**
+   * @return true if running in NO Compatibility mode.
+   */
+  public boolean noCompatibilityMode() {
+    return this.applicationGraph != null;
+  }
+
   public void addApplicationDocument(Path path, Document document) {
     this.applicationDocuments.put(path, document);
   }
@@ -630,7 +635,7 @@ public class ApplicationModel {
     /**
      * Generate element synthetic ids
      *
-     * @param generateElementIds generate ids or ot
+     * @param generateElementIds generate ids or not
      * @return the builder
      */
     public ApplicationModelBuilder withGenerateElementIds(boolean generateElementIds) {
