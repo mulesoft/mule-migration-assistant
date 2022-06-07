@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 import com.google.common.collect.ImmutableList;
 import com.mulesoft.tools.migration.library.nocompatibility.InboundToAttributesTranslator;
 import com.mulesoft.tools.migration.library.nocompatibility.PropertyTranslator;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
 
@@ -36,12 +37,13 @@ public class InboundPropertiesNoCompatibilityResolver extends PropertiesNoCompat
 
   private InboundToAttributesTranslator translator;
 
-  public InboundPropertiesNoCompatibilityResolver() {
+  public InboundPropertiesNoCompatibilityResolver(ApplicationModel model) {
     super(GENERAL_INBOUND_PATTERN,
           ImmutableList.of(INBOUND_PATTERN_WITH_BRACKETS, INBOUND_PATTERN_WITH_DOT, INBOUND_PATTERN_WITH_HEADER),
           INBOUND_PATTERN_WITH_EXPRESSION,
           INBOUND_PATTERN_ONLY_EXPRESSION);
     this.translator = new InboundToAttributesTranslator();
+    this.translator.initializeTranslationsForApplicationSourceTypes(model);
   }
 
   @Override
@@ -56,8 +58,8 @@ public class InboundPropertiesNoCompatibilityResolver extends PropertiesNoCompat
   }
 
   @Override
-  protected String fallbackTranslation(String propertyToTranslate) throws Exception {
-    return translator.getAllTranslationsForAllSourceTypes().get(propertyToTranslate);
+  protected String fallbackTranslation(String propertyToTranslate) {
+    return translator.getTranslationsForApplicationsSourceTypes().get(propertyToTranslate);
   }
 
 }

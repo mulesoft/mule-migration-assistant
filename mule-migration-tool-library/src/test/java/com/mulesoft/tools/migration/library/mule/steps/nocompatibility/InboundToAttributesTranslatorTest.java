@@ -55,9 +55,4 @@ public class InboundToAttributesTranslatorTest {
                  translator.getAllTranslationsFor(PropertiesSourceType.HTTP_LISTENER).get().get("http.relative.path"));
   }
 
-  @Test
-  public void testGetAllTranslationsForAllSourceTypes() throws Exception {
-    Map<String, String> allTranslationsForAllSourceTypes = translator.getAllTranslationsForAllSourceTypes();
-    assertEquals(47, allTranslationsForAllSourceTypes.size());
-  }
 }

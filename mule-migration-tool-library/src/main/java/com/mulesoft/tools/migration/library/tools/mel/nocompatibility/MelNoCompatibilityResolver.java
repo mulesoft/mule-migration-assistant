@@ -28,9 +28,9 @@ public class MelNoCompatibilityResolver implements CompatibilityResolver<NoCompa
 
   protected List<CompatibilityResolver<NoCompatibilityResolverResult>> resolvers;
 
-  public MelNoCompatibilityResolver() {
+  public MelNoCompatibilityResolver(ApplicationModel model) {
     resolvers = new ArrayList<>();
-    resolvers.add(new InboundPropertiesNoCompatibilityResolver());
+    resolvers.add(new InboundPropertiesNoCompatibilityResolver(model));
     resolvers.add(new OutboundPropertiesNoCompatibilityResolver());
   }
 
