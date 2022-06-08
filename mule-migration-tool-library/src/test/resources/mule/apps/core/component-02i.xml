@@ -5,7 +5,9 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="flow">
-        <logger message="#[payload]"/>
+        <logger message="#[payload]">
+            <custom-interceptor class="org.mule.test.integration.interceptor.SharedInterceptorStackTestCase$CustomInterceptor" />
+        </logger>
     </flow>
 
 </mule>

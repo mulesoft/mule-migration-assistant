@@ -5,7 +5,9 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="flow">
-        <raise-error type="COMPATIBILITY:UNSUPPORTED" description="This service cannot receive messages"/>
+        <raise-error type="COMPATIBILITY:UNSUPPORTED" description="This service cannot receive messages">
+            <custom-interceptor class="org.mule.test.integration.interceptor.SharedInterceptorStackTestCase$CustomInterceptor" />
+        </raise-error>
     </flow>
 
 </mule>

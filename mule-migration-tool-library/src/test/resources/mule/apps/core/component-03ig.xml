@@ -10,7 +10,9 @@
     </interceptor-stack>
 
     <flow name="flow">
-        <raise-error type="COMPATIBILITY:UNSUPPORTED" description="This service cannot receive messages"/>
+        <raise-error type="COMPATIBILITY:UNSUPPORTED" description="This service cannot receive messages">
+            <interceptor-stack ref="stack" />
+        </raise-error>
     </flow>
 
 </mule>

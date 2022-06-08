@@ -66,6 +66,7 @@ public class ComponentTest {
   private NullComponent nullComp;
   private RemovedElements removed;
   private JavaReferenceElements javaRef;
+  private InterceptorElements interceptors;
 
   @Before
   public void setUp() throws Exception {
@@ -74,6 +75,7 @@ public class ComponentTest {
     nullComp = new NullComponent();
     removed = new RemovedElements();
     javaRef = new JavaReferenceElements();
+    interceptors = new InterceptorElements();
   }
 
 
@@ -91,6 +93,8 @@ public class ComponentTest {
         .forEach(node -> removed.execute(node, report.getReport()));
     getElementsFromDocument(doc, javaRef.getAppliedTo().getExpression())
         .forEach(node -> javaRef.execute(node, report.getReport()));
+    getElementsFromDocument(doc, interceptors.getAppliedTo().getExpression())
+        .forEach(node -> interceptors.execute(node, report.getReport()));
 
     XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
     String xmlString = outputter.outputString(doc);

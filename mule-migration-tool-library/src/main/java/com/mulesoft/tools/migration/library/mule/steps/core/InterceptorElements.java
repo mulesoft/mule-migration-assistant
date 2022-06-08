@@ -11,32 +11,33 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import org.jdom2.Element;
 
 /**
- * Remove elements from 3.x that have no replacement in 4.x.
+ * Unsupported interceptor elements.
  *
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class RemovedElements extends AbstractApplicationModelMigrationStep {
+public class InterceptorElements extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR = ""
       + "//*["
-      + "local-name()='static-component' or "
-      + "local-name()='dynamic-all'"
+      + "local-name()='interceptor-stack' or "
+      + "local-name()='custom-interceptor' or "
+      + "local-name()='logging-interceptor' or "
+      + "local-name()='timer-interceptor'"
       + "]";
 
   @Override
   public String getDescription() {
-    return "Remove elements from 3.x that have no replacement in 4.x.";
+    return "Interceptor elements are no longer supported";
   }
 
-  public RemovedElements() {
+  public InterceptorElements() {
     this.setAppliedTo(XPATH_SELECTOR);
   }
 
-
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    report.report("components.removed", object, object, object.getName());
+    report.report("components.interceptors", object, object, object.getName());
   }
 
 }

@@ -35,10 +35,8 @@ public class EchoComponent extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     if (!object.getChildren().isEmpty()) {
-      report.report("components.interceptors", object, object);
       object.setName("set-payload");
       object.setAttribute("value", "#[payload]");
-      object.removeContent();
     } else {
       object.detach();
     }

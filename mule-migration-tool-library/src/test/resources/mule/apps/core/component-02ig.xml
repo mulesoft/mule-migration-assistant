@@ -10,7 +10,9 @@
     </interceptor-stack>
 
     <flow name="flow">
-        <logger message="#[payload]"/>
+        <logger message="#[payload]">
+            <interceptor-stack ref="stack" />
+        </logger>
     </flow>
 
 </mule>

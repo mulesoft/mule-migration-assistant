@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <interceptor-stack name="stack">
+        <custom-interceptor
+            class="org.mule.test.integration.interceptor.SharedInterceptorStackTestCase$CustomInterceptor" />
+    </interceptor-stack>
+
+    <flow name="MyService">
+        <custom-interceptor class="org.my.CustomInterceptor"/>
+        <logging-interceptor/>
+        <interceptor-stack ref="stack"/>
+        <timer-interceptor/>
+    </flow>
+
+    <flow name="flow1">
+        <log-component>
+            <interceptor-stack ref="stack" />
+        </log-component>
+    </flow>
+
+    <flow name="flow2">
+        <echo-component/>
+        <echo-component>
+            <custom-interceptor class="org.mule.test.integration.interceptor.SharedInterceptorStackTestCase$CustomInterceptor" />
+        </echo-component>
+
+        <log-component/>
+        <log-component>
+            <custom-interceptor class="org.mule.test.integration.interceptor.SharedInterceptorStackTestCase$CustomInterceptor" />
+        </log-component>
+
+        <null-component/>
+        <null-component>
+            <custom-interceptor class="org.mule.test.integration.interceptor.SharedInterceptorStackTestCase$CustomInterceptor" />
+        </null-component>
+    </flow>
+
+</mule>

@@ -10,7 +10,9 @@
     </interceptor-stack>
 
     <flow name="flow">
-        <set-payload value="#[payload]"/>
+        <set-payload value="#[payload]">
+            <interceptor-stack ref="stack" />
+        </set-payload>
     </flow>
 
 </mule>

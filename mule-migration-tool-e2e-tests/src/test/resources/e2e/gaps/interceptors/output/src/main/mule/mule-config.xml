@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <interceptor-stack name="stack">
+        <!--Migration ERROR: Interceptors have been replaced by custom policies in Mule 4.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/api-manager/2.x/policies-custom-landing-page-->
+        <custom-interceptor class="org.mule.test.integration.interceptor.SharedInterceptorStackTestCase$CustomInterceptor">
+            <!--Migration ERROR: Interceptors have been replaced by custom policies in Mule 4.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/api-manager/2.x/policies-custom-landing-page-->
+        </custom-interceptor>
+    </interceptor-stack>
+
+    <flow name="MyService">
+        <custom-interceptor class="org.my.CustomInterceptor">
+            <!--Migration ERROR: Interceptors have been replaced by custom policies in Mule 4.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/api-manager/2.x/policies-custom-landing-page-->
+        </custom-interceptor>
+
+        <logging-interceptor>
+            <!--Migration ERROR: Interceptors have been replaced by custom policies in Mule 4.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/api-manager/2.x/policies-custom-landing-page-->
+        </logging-interceptor>
+
+        <interceptor-stack ref="stack">
+            <!--Migration ERROR: Interceptors have been replaced by custom policies in Mule 4.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/api-manager/2.x/policies-custom-landing-page-->
+        </interceptor-stack>
+
+        <timer-interceptor>
+            <!--Migration ERROR: Interceptors have been replaced by custom policies in Mule 4.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/api-manager/2.x/policies-custom-landing-page-->
+        </timer-interceptor>
+
+    </flow>
+
+    <flow name="flow1">
+        <logger message="#[payload]">
+            <interceptor-stack ref="stack">
+                <!--Migration ERROR: Interceptors have been replaced by custom policies in Mule 4.-->
+                <!--    For more information refer to:-->
+                <!--        * https://docs.mulesoft.com/api-manager/2.x/policies-custom-landing-page-->
+            </interceptor-stack>
+        </logger>
+
+    </flow>
+
+    <flow name="flow2">
+        <set-payload value="#[payload]">
+            <custom-interceptor class="org.mule.test.integration.interceptor.SharedInterceptorStackTestCase$CustomInterceptor">
+                <!--Migration ERROR: Interceptors have been replaced by custom policies in Mule 4.-->
+                <!--    For more information refer to:-->
+                <!--        * https://docs.mulesoft.com/api-manager/2.x/policies-custom-landing-page-->
+            </custom-interceptor>
+        </set-payload>
+
+        <logger message="#[payload]" />
+
+        <logger message="#[payload]">
+            <custom-interceptor class="org.mule.test.integration.interceptor.SharedInterceptorStackTestCase$CustomInterceptor">
+                <!--Migration ERROR: Interceptors have been replaced by custom policies in Mule 4.-->
+                <!--    For more information refer to:-->
+                <!--        * https://docs.mulesoft.com/api-manager/2.x/policies-custom-landing-page-->
+            </custom-interceptor>
+        </logger>
+
+        <raise-error type="COMPATIBILITY:UNSUPPORTED" description="This service cannot receive messages" />
+
+        <raise-error type="COMPATIBILITY:UNSUPPORTED" description="This service cannot receive messages">
+            <custom-interceptor class="org.mule.test.integration.interceptor.SharedInterceptorStackTestCase$CustomInterceptor">
+                <!--Migration ERROR: Interceptors have been replaced by custom policies in Mule 4.-->
+                <!--    For more information refer to:-->
+                <!--        * https://docs.mulesoft.com/api-manager/2.x/policies-custom-landing-page-->
+            </custom-interceptor>
+        </raise-error>
+
+    </flow>
+
+</mule>

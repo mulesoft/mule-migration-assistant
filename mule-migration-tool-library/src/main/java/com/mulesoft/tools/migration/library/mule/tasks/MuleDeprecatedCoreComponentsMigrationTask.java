@@ -15,6 +15,7 @@ import com.mulesoft.tools.migration.library.mule.steps.core.CopyCatalogFolder;
 import com.mulesoft.tools.migration.library.mule.steps.core.CopyProperties;
 import com.mulesoft.tools.migration.library.mule.steps.core.DataMapper;
 import com.mulesoft.tools.migration.library.mule.steps.core.ExpressionComponent;
+import com.mulesoft.tools.migration.library.mule.steps.core.InterceptorElements;
 import com.mulesoft.tools.migration.library.mule.steps.core.JavaReferenceElements;
 import com.mulesoft.tools.migration.library.mule.steps.core.MessageAttachmentsListExpressionEvaluator;
 import com.mulesoft.tools.migration.library.mule.steps.core.MessagePropertiesTransformer;
@@ -63,6 +64,7 @@ public class MuleDeprecatedCoreComponentsMigrationTask extends AbstractMigration
   @Override
   public List<MigrationStep> getSteps() {
     return newArrayList(new CompatibilityPomContribution(),
+                        new InterceptorElements(),
                         new EchoComponent(),
                         new LogComponent(),
                         new NullComponent(),

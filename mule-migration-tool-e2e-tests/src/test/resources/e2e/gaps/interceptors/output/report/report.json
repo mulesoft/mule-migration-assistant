@@ -1,0 +1,159 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [],
+  "numberOfMuleComponents": 21,
+  "numberOfMuleComponentsMigrated": 11,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 3,
+      "failure": 0
+    },
+    "interceptor-stack": {
+      "success": 0,
+      "failure": 3
+    },
+    "custom-interceptor": {
+      "success": 0,
+      "failure": 5
+    },
+    "logging-interceptor": {
+      "success": 0,
+      "failure": 1
+    },
+    "timer-interceptor": {
+      "success": 0,
+      "failure": 1
+    },
+    "echo-component": {
+      "success": 1,
+      "failure": 0
+    },
+    "set-payload": {
+      "success": 1,
+      "failure": 0
+    },
+    "logger": {
+      "success": 3,
+      "failure": 0
+    },
+    "raise-error": {
+      "success": 2,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "ERROR",
+      "key": "components.interceptors",
+      "component": "interceptor-stack",
+      "lineNumber": 4,
+      "columnNumber": 37,
+      "message": "Interceptors have been replaced by custom policies in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.interceptors",
+      "component": "custom-interceptor",
+      "lineNumber": 8,
+      "columnNumber": 124,
+      "message": "Interceptors have been replaced by custom policies in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.interceptors",
+      "component": "custom-interceptor",
+      "lineNumber": 16,
+      "columnNumber": 62,
+      "message": "Interceptors have been replaced by custom policies in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.interceptors",
+      "component": "logging-interceptor",
+      "lineNumber": 22,
+      "columnNumber": 30,
+      "message": "Interceptors have been replaced by custom policies in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.interceptors",
+      "component": "interceptor-stack",
+      "lineNumber": 28,
+      "columnNumber": 40,
+      "message": "Interceptors have been replaced by custom policies in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.interceptors",
+      "component": "timer-interceptor",
+      "lineNumber": 34,
+      "columnNumber": 28,
+      "message": "Interceptors have been replaced by custom policies in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.interceptors",
+      "component": "interceptor-stack",
+      "lineNumber": 44,
+      "columnNumber": 44,
+      "message": "Interceptors have been replaced by custom policies in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.interceptors",
+      "component": "custom-interceptor",
+      "lineNumber": 55,
+      "columnNumber": 128,
+      "message": "Interceptors have been replaced by custom policies in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.interceptors",
+      "component": "custom-interceptor",
+      "lineNumber": 65,
+      "columnNumber": 128,
+      "message": "Interceptors have been replaced by custom policies in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.interceptors",
+      "component": "custom-interceptor",
+      "lineNumber": 75,
+      "columnNumber": 128,
+      "message": "Interceptors have been replaced by custom policies in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

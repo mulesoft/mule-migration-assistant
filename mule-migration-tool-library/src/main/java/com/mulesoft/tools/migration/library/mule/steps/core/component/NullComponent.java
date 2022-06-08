@@ -35,10 +35,6 @@ public class NullComponent extends AbstractApplicationModelMigrationStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     object.setName("raise-error");
-    if (!object.getChildren().isEmpty()) {
-      report.report("components.interceptors", object, object);
-      object.removeContent();
-    }
     object.setAttribute("type", "COMPATIBILITY:UNSUPPORTED");
     object.setAttribute("description", "This service cannot receive messages");
   }

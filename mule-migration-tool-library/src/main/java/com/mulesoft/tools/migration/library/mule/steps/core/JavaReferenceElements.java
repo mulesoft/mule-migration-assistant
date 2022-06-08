@@ -36,7 +36,6 @@ public class JavaReferenceElements extends AbstractApplicationModelMigrationStep
       + "local-name()='custom-processing-strategy' or "
       + "local-name()='custom-transaction-manager' or "
       + "local-name()='custom-security-filter' or "
-      + "local-name()='custom-interceptor' or "
       + "local-name()='custom-transformer' or " // actually deprecated
       + "local-name()='custom-exception-strategy' or "
       + "local-name()='custom-connector' or "
