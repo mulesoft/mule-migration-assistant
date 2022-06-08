@@ -30,6 +30,7 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
 import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE;
 import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ApplicationGraphTest {
@@ -57,7 +58,7 @@ public class ApplicationGraphTest {
     String docPath = this.getClass().getClassLoader().getResource(configPath.toString()).toURI().getPath();
     doc = getDocument(docPath, true);
     ApplicationModel applicationModel = mockApplicationModel(doc, temp);
-    when(applicationModel.getApplicationDocuments()).thenReturn(ImmutableMap.of(Paths.get(docPath), doc));
+    when(applicationModel.getApplicationDocuments()).thenReturn(ImmutableMap.of(mock(Path.class), doc));
     MelToDwExpressionMigrator expressionMigrator = new MelToDwExpressionMigrator(report.getReport(), applicationModel);
     applicationGraphCreator = new ApplicationGraphCreator();
     applicationGraphCreator.setExpressionMigrator(expressionMigrator);
@@ -69,7 +70,6 @@ public class ApplicationGraphTest {
     String loggerSubflow3Expression = "//*[local-name()='sub-flow' and @name='flow3']/*[local-name()='logger']";
     Element loggerElement =
         Iterables.getOnlyElement(XPathFactory.instance().compile(loggerSubflow3Expression, Filters.element()).evaluate(doc));
-    String elementId = loggerElement.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
 
     FlowComponent flowComponent = graph.findFlowComponent(loggerElement);
     assertNotNull(flowComponent);
@@ -81,13 +81,11 @@ public class ApplicationGraphTest {
     String loggerSubflow3Expression = "//*[local-name()='sub-flow' and @name='flow3']/*[local-name()='logger']";
     Element loggerElement =
         Iterables.getOnlyElement(XPathFactory.instance().compile(loggerSubflow3Expression, Filters.element()).evaluate(doc));
-    String elementId = loggerElement.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
 
-    FlowComponent initialFlowComponent = graph.findFlowComponent(elementId);
+    FlowComponent initialFlowComponent = graph.findFlowComponent(loggerElement);
     loggerElement.setName("customLogger");
 
-    graph.findFlowComponent(elementId);
-    FlowComponent flowComponentAfterModification = graph.findFlowComponent(elementId);
+    FlowComponent flowComponentAfterModification = graph.findFlowComponent(loggerElement);
     assertEquals(initialFlowComponent, flowComponentAfterModification);
   }
 
@@ -96,13 +94,11 @@ public class ApplicationGraphTest {
     String loggerSubflow3Expression = "//*[local-name()='sub-flow' and @name='flow3']/*[local-name()='logger']";
     Element loggerElement =
         Iterables.getOnlyElement(XPathFactory.instance().compile(loggerSubflow3Expression, Filters.element()).evaluate(doc));
-    String elementId = loggerElement.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
 
-    FlowComponent initialFlowComponent = graph.findFlowComponent(elementId);
+    FlowComponent initialFlowComponent = graph.findFlowComponent(loggerElement);
     loggerElement.detach();
 
-    graph.findFlowComponent(elementId);
-    FlowComponent flowComponentAfterModification = graph.findFlowComponent(elementId);
+    FlowComponent flowComponentAfterModification = graph.findFlowComponent(loggerElement);
     assertEquals(initialFlowComponent, flowComponentAfterModification);
   }
 }
