@@ -22,7 +22,7 @@
                 <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
             </http:response>
             <http:error-response statusCode="500" reasonPhrase="Internal Error">
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'myOutbound2' : vars.outbound_myOutbound2}]]]></http:headers>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'myOutbound2' : essage.attributes.headers.customHeader]]]></http:headers>
             </http:error-response>
         </http:listener>
         <set-variable variableName="outbound_myOutbound" value="#[message.attributes.queryParams.'type']" doc:name="Property" />
@@ -37,7 +37,7 @@
                 <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'isTest' : message.attributes.headers.isTest}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="500" reasonPhrase="Internal Error">
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'myOutbound2' : vars.outbound_myOutbound2}]]]></http:headers>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'myOutbound2' : message.attributes.headers.customHeader}]]]></http:headers>
             </http:error-response>
         </http:listener>
         <set-variable variableName="outbound_myOutbound" value="#[message.attributes.queryParams.'type']" doc:name="Property" />

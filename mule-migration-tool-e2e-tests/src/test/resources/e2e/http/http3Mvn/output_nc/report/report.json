@@ -108,7 +108,7 @@
       "key": "nocompatibility.notfullyimplemented",
       "component": "http:request",
       "lineNumber": 33,
-      "columnNumber": 105,
+      "columnNumber": 100,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks":

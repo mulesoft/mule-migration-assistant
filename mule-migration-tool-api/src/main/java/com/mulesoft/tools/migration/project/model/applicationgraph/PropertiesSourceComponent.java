@@ -31,30 +31,30 @@ public class PropertiesSourceComponent extends MessageProcessor implements Prope
 
   private final SourceType type;
   private MessageProcessor responseComponent;
-  private MessageProcessor exceptionResponseComponent;
+  private MessageProcessor errorResponseComponent;
 
   public PropertiesSourceComponent(Element xmlElement, SourceType type, Flow parentFlow, ApplicationGraph applicationGraph) {
     super(xmlElement, parentFlow, applicationGraph);
     this.type = type;
-    Element responseComponent = getElementResponse(xmlElement);
+    Element responseComponent = getResponseElement(xmlElement);
     if (responseComponent != null) {
       this.responseComponent = new MessageProcessor(responseComponent, parentFlow, applicationGraph);
     } else {
       this.responseComponent = new SyntheticMessageProcessor(xmlElement, "_response", parentFlow, applicationGraph);
     }
-    Element exceptionResponseComponent = getExceptionElementResponse(xmlElement);
-    if (exceptionResponseComponent != null) {
-      this.exceptionResponseComponent = new MessageProcessor(exceptionResponseComponent, parentFlow, applicationGraph);
+    Element errorResponseComponent = getErrorResponseElement(xmlElement);
+    if (errorResponseComponent != null) {
+      this.errorResponseComponent = new MessageProcessor(errorResponseComponent, parentFlow, applicationGraph);
     } else {
-      this.exceptionResponseComponent = new SyntheticMessageProcessor(xmlElement, "_errorResponse", parentFlow, applicationGraph);
+      this.errorResponseComponent = new SyntheticMessageProcessor(xmlElement, "_errorResponse", parentFlow, applicationGraph);
     }
   }
 
-  private Element getElementResponse(Element xmlElement) {
+  private Element getResponseElement(Element xmlElement) {
     return getChildElement(xmlElement, RESPONSE_BUILDER_EXPRESSION);
   }
 
-  private Element getExceptionElementResponse(Element xmlElement) {
+  private Element getErrorResponseElement(Element xmlElement) {
     return getChildElement(xmlElement, ERROR_RESPONSE_BUILDER_EXPRESSION);
   }
 
@@ -76,8 +76,8 @@ public class PropertiesSourceComponent extends MessageProcessor implements Prope
     return responseComponent;
   }
 
-  public MessageProcessor getExceptionResponseComponent() {
-    return exceptionResponseComponent;
+  public MessageProcessor getErrorResponseComponent() {
+    return errorResponseComponent;
   }
 
   @Override

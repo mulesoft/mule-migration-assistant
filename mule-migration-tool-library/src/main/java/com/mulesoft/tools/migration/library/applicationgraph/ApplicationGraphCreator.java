@@ -15,7 +15,6 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jdom2.*;
 import org.jdom2.filter.Filters;
-import scala.sys.Prop;
 
 import java.util.*;
 import java.util.stream.Collectors;

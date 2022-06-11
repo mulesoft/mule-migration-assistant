@@ -16,7 +16,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <flow name="anotherFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/testinbound2" allowedMethods="GET" doc:name="HTTP">
             <http:error-response-builder statusCode="500" reasonPhrase="Internal Error">
-                <http:header headerName="myOutbound2" value="#[message.outboundProperties.myOutbound2]"/>
+                <http:header headerName="myOutbound2" value="#[message.inboundProperties.customHeader]"/>
             </http:error-response-builder>
         </http:listener>
         <set-property propertyName="myOutbound" value="#[message.inboundProperties.'http.query.params'.'type']" doc:name="Property" />

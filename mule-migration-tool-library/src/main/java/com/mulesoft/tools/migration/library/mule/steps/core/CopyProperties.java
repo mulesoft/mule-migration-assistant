@@ -63,7 +63,7 @@ public class CopyProperties extends AbstractApplicationModelMigrationStep implem
       int copyPropertiesIndex = element.getParentElement().indexOf(element);
       for (Map.Entry<String, PropertyMigrationContext> inbound : inboundContext) {
         Element setVariable = new Element("set-variable", CORE_NAMESPACE)
-            .setAttribute("variableName", String.format("vars.%s%s", OUTBOUND_PREFIX, inbound.getKey()))
+            .setAttribute("variableName", String.format("%s%s", OUTBOUND_PREFIX, inbound.getKey()))
             .setAttribute("value", expressionMigrator.wrap(processor.getPropertiesMigrationContext()
                 .getInboundTranslation(inbound.getKey(), graph.getInboundTranslator(), true)));
         element.getParentElement().addContent(copyPropertiesIndex++, setVariable);

@@ -138,7 +138,7 @@ public class PropertiesContextVisitor implements FlowComponentVisitor {
                                                                             previousComponent.getPropertiesMigrationContext()
                                                                                 .getOriginatingSource())));
 
-      Optional.ofNullable(processor.getExceptionResponseComponent())
+      Optional.ofNullable(processor.getErrorResponseComponent())
           .ifPresent(c -> c
               .setPropertiesMigrationContext(new PropertiesMigrationContext(previousComponent.getPropertiesMigrationContext()
                   .getInboundContext(),
@@ -151,7 +151,7 @@ public class PropertiesContextVisitor implements FlowComponentVisitor {
         componentsWithResponse.add(processor);
       }
 
-      if (processor.getExceptionResponseComponent() != null) {
+      if (processor.getErrorResponseComponent() != null) {
         componentsWithResponse.add(processor);
       }
 
