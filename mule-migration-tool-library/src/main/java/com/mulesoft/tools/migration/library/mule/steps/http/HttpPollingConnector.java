@@ -20,6 +20,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.Arrays.asList;
 
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -54,8 +55,9 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    Namespace httpNamespace = Namespace.getNamespace("http", "http://www.mulesoft.org/schema/mule/http");
+    ApplicationGraph graph = getApplicationModel().getApplicationGraph();
 
+    Namespace httpNamespace = Namespace.getNamespace("http", "http://www.mulesoft.org/schema/mule/http");
     handleServiceOverrides(object, report);
 
     Element requestConnection = new Element("request-connection", httpNamespace);
@@ -136,8 +138,13 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
             .setAttribute("value", prop.getAttributeValue("value")));
       }
 
-      migrateInboundEndpointStructure(getApplicationModel(), pollingEndpoint, report, false);
-      addAttributesToInboundProperties(pollingEndpoint, getApplicationModel(), report);
+      if (graph == null) {
+        migrateInboundEndpointStructure(getApplicationModel(), pollingEndpoint, report, false);
+        addAttributesToInboundProperties(pollingEndpoint, getApplicationModel(), report);
+      } else {
+        report.report("nocompatibility.notfullyimplemented", object, object);
+      }
+
       pollingEndpoint.getParentElement().addContent(0, asList(pollingSource, requestOperation));
       pollingEndpoint.detach();
     }

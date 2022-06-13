@@ -30,7 +30,7 @@ public class MelNoCompatibilityResolver implements CompatibilityResolver<NoCompa
 
   public MelNoCompatibilityResolver(ApplicationModel model) {
     resolvers = new ArrayList<>();
-    resolvers.add(new InboundPropertiesNoCompatibilityResolver(model));
+    resolvers.add(new InboundPropertiesNoCompatibilityResolver());
     resolvers.add(new OutboundPropertiesNoCompatibilityResolver());
   }
 

@@ -29,19 +29,23 @@ public class ApplicationPropertiesContextCalculator {
     DepthFirstIterator depthFirstIterator = graph.getDepthFirstIterator(start);
     FlowComponent prevComponent = null;
     List<PropertiesSourceComponent> componentsWithResponse = Lists.newArrayList();
+    List<FlowComponent> leafElelements = Lists.newArrayList();
     while (depthFirstIterator.hasNext()) {
       FlowComponent currentComponent = (FlowComponent) depthFirstIterator.next();
-      PropertiesContextVisitor propertiesContextVisitor = new PropertiesContextVisitor(prevComponent);
+      if (graph.isLeafComponent(currentComponent)) {
+        leafElelements.add(currentComponent);
+      }
+      PropertiesContextVisitor propertiesContextVisitor =
+          new PropertiesContextVisitor(prevComponent, graph.getInboundTranslator());
       currentComponent.accept(propertiesContextVisitor);
       componentsWithResponse.addAll(propertiesContextVisitor.getComponentsWithResponse());
       prevComponent = currentComponent;
     }
 
-    FlowComponent leafElement = graph.getLastFlowComponent(start.getParentFlow());
-    componentsWithResponse.forEach(component -> {
-      PropertiesContextVisitor propertiesContextVisitor = new PropertiesContextVisitor(leafElement);
+    componentsWithResponse.forEach(component -> leafElelements.forEach(leaf -> {
+      PropertiesContextVisitor propertiesContextVisitor = new PropertiesContextVisitor(leaf, graph.getInboundTranslator());
       propertiesContextVisitor.visitPropertiesSourceComponent(component, true);
-    });
+    }));
   }
 
 

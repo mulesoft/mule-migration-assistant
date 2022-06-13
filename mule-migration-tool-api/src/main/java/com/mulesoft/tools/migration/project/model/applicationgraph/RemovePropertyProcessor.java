@@ -13,23 +13,23 @@ import org.jdom2.Element;
  * @author Mulesoft Inc.
  * @since 1.4.0
  */
-public class RemovePropertyProcessor extends MessageProcessor {
+public class RemovePropertyProcessor extends AbstractPropertyProcessor {
 
-  private final String propertyName;
+  String originalPropertyName;
 
   public RemovePropertyProcessor(Element xmlElement, Flow parentFLow,
                                  ApplicationGraph graph) {
     super(xmlElement, parentFLow, graph);
-    this.propertyName = xmlElement.getAttribute("propertyName").getValue();
-  }
-
-  public String getPropertyName() {
-    return this.propertyName;
+    this.originalPropertyName = xmlElement.getAttributeValue("propertyName");
   }
 
   @Override
   public void accept(FlowComponentVisitor visitor) {
     visitor.visitRemovePropertyProcessor(this);
+  }
+
+  public String getOriginalPropertyName() {
+    return originalPropertyName;
   }
 }
 

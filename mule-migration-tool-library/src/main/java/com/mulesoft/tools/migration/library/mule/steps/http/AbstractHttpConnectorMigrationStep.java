@@ -14,6 +14,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -54,7 +55,7 @@ public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplica
                                            MigrationReport report) {
     final List<Element> children = parentTag.getChildren(tagName, httpNamespace);
 
-    return children.stream().filter(c -> StringUtils.isNotEmpty(c.getTextTrim())).findAny()
+    return children.stream().filter(c -> doesNotRequireMapExpression(c)).findAny()
         .orElseGet(() -> {
           final Element mapBuilderElement = new Element(tagName, httpNamespace);
 
@@ -63,6 +64,10 @@ public abstract class AbstractHttpConnectorMigrationStep extends AbstractApplica
 
           return mapBuilderElement;
         });
+  }
+
+  private boolean doesNotRequireMapExpression(Element c) {
+    return StringUtils.isNotEmpty(c.getTextTrim()) || c.getAttributeValue("expression") == null;
   }
 
   @Override
