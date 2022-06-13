@@ -1,0 +1,102 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated":
+  [
+    "org.mule.connectors:mule-http-connector:VERSION"
+  ],
+  "numberOfMuleComponents": 20,
+  "numberOfMuleComponentsMigrated": 20,
+  "componentDetails":
+  {
+    "mule":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "logger":
+    {
+      "success": 4,
+      "failure": 0
+    },
+    "flow":
+    {
+      "success": 3,
+      "failure": 0
+    },
+    "flow-ref":
+    {
+      "success": 2,
+      "failure": 0
+    },
+    "http:listener-config":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener":
+    {
+      "success": 2,
+      "failure": 0
+    },
+    "http:header":
+    {
+      "success": 3,
+      "failure": 0
+    },
+    "set-variable":
+    {
+      "success": 3,
+      "failure": 0
+    },
+    "remove-variable":
+    {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 10,
+  "numberOfMELExpressionsMigrated": 10,
+  "numberOfMELExpressionLines": 10,
+  "numberOfMELExpressionLinesMigrated": 10,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages":
+  [
+    {
+      "level": "INFO",
+      "key": "flow.processingStrategy",
+      "component": "flow",
+      "lineNumber": 8,
+      "columnNumber": 43,
+      "message": "The 'flow' element no longer has a 'processingStrategy' attribute.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "http:listener",
+      "lineNumber": 23,
+      "columnNumber": 123,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "http:listener",
+      "lineNumber": 42,
+      "columnNumber": 122,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    }
+  ]
+}

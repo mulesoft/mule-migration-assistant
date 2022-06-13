@@ -43,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
+
 import java.util.stream.Collectors;
 
 import org.jdom2.Element;

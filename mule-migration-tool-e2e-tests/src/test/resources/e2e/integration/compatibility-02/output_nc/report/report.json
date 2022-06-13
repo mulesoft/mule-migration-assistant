@@ -78,31 +78,9 @@
     },
     {
       "level": "WARN",
-      "key": "http.statusCode",
-      "component": "http:response",
-      "lineNumber": 15,
-      "columnNumber": 113,
-      "message": "Avoid using an outbound property to determine the status code.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
-      "key": "http.statusCode",
-      "component": "http:error-response",
-      "lineNumber": 21,
-      "columnNumber": 141,
-      "message": "Avoid using an outbound property to determine the status code.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
       "key": "nocompatibility.notfullyimplemented",
       "component": "http:listener",
-      "lineNumber": 34,
+      "lineNumber": 28,
       "columnNumber": 122,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -111,31 +89,9 @@
     },
     {
       "level": "WARN",
-      "key": "http.statusCode",
-      "component": "http:response",
-      "lineNumber": 36,
-      "columnNumber": 113,
-      "message": "Avoid using an outbound property to determine the status code.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
-      "key": "http.statusCode",
-      "component": "http:error-response",
-      "lineNumber": 42,
-      "columnNumber": 141,
-      "message": "Avoid using an outbound property to determine the status code.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
       "key": "nocompatibility.notfullyimplemented",
       "component": "http:request",
-      "lineNumber": 52,
+      "lineNumber": 40,
       "columnNumber": 108,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",

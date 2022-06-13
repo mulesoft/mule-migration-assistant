@@ -5,14 +5,9 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.http;
 
-import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
-import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
-import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.addAttributesToInboundProperties;
-import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.compatibilityHeaders;
-import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.handleReferencedResponseBuilder;
-import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.httpListenerLib;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.*;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -22,10 +17,9 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAtt
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
-import static java.lang.System.lineSeparator;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -36,7 +30,6 @@ import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -66,8 +59,7 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    httpListenerLib(getApplicationModel());
-
+    ApplicationGraph graph = getApplicationModel().getApplicationGraph();
     object.setNamespace(HTTP_NAMESPACE);
     object.setName("listener");
 
@@ -137,15 +129,10 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
           copyAttributeIfPresent(rb, response, "statusCode");
           copyAttributeIfPresent(rb, response, "reasonPhrase");
 
-          if (response.getAttribute("statusCode") == null) {
-            response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
-            report.report("http.statusCode", response, response);
-          }
-
-          // if (rb.getAttribute("disablePropertiesAsHeaders") == null
-          // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-          response.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE));
-          // }
+          addStatusCodeAttribute(response, graph, report, "200",
+                                 "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]",
+                                 getExpressionMigrator());
+          response.addContent(addHeadersElement(HTTP_NAMESPACE, graph));
         });
 
     getApplicationModel()
@@ -158,17 +145,11 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
           copyAttributeIfPresent(rb, errorResponse, "statusCode");
           copyAttributeIfPresent(rb, errorResponse, "reasonPhrase");
 
-          if (errorResponse.getAttribute("statusCode") == null) {
-            errorResponse
-                .setAttribute("statusCode",
-                              "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
-            report.report("http.statusCode", errorResponse, errorResponse);
-          }
+          addStatusCodeAttribute(errorResponse, graph, report, "",
+                                 "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]",
+                                 getExpressionMigrator());
 
-          // if (rb.getAttribute("disablePropertiesAsHeaders") == null
-          // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-          errorResponse.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE));
-          // }
+          errorResponse.addContent(addHeadersElement(HTTP_NAMESPACE, graph));
         });
 
     if (object.getAttribute("contentType") != null) {
@@ -176,39 +157,34 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
       response.addContent(new Element("header", HTTP_NAMESPACE)
           .setAttribute("headerName", "Content-Type")
           .setAttribute("value", object.getAttributeValue("contentType")));
-      response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
-      report.report("http.statusCode", response, response);
-      // if (rb.getAttribute("disablePropertiesAsHeaders") == null
-      // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-      response.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE));
+      addStatusCodeAttribute(response, graph, report, "200",
+                             "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]", getExpressionMigrator());
+      response.addContent(addHeadersElement(HTTP_NAMESPACE, graph));
       object.removeAttribute("contentType");
     }
 
     Element response = object.getChild("response", HTTP_NAMESPACE);
     if (response == null) {
       response = getResponse(object, HTTP_NAMESPACE);
-      response.setAttribute("statusCode", "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
-      report.report("http.statusCode", response, response);
-      // if (rb.getAttribute("disablePropertiesAsHeaders") == null
-      // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-      response.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE));
-      // }
+      addStatusCodeAttribute(response, graph, report, "200",
+                             "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]", getExpressionMigrator());
+      response.addContent(addHeadersElement(HTTP_NAMESPACE, graph));
     }
     Element errorResponse = object.getChild("error-response", HTTP_NAMESPACE);
     if (errorResponse == null) {
       errorResponse = getErrorResponse(object, HTTP_NAMESPACE);
-      errorResponse.setAttribute("statusCode",
-                                 "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
-      report.report("http.statusCode", errorResponse, errorResponse,
-                    "Avoid using an outbound property to determine the status code.");
-      // if (rb.getAttribute("disablePropertiesAsHeaders") == null
-      // || "false".equals(rb.getAttributeValue("disablePropertiesAsHeaders"))) {
-      errorResponse.addContent(compatibilityHeaders(getApplicationModel(), HTTP_NAMESPACE));
-      // }
+      addStatusCodeAttribute(errorResponse, graph, report, "",
+                             "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]",
+                             getExpressionMigrator());
+      errorResponse.addContent(addHeadersElement(HTTP_NAMESPACE, graph));
     }
 
     migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
-    addAttributesToInboundProperties(object, getApplicationModel(), report);
+
+    if (graph == null) {
+      addAttributesToInboundProperties(object, getApplicationModel(), report);
+      httpListenerLib(getApplicationModel());
+    }
 
     // Replicates logic from org.mule.transport.http.HttpMuleMessageFactory#extractPayloadFromHttpRequest
     Element checkPayload = new Element("choice", CORE_NAMESPACE)
@@ -226,26 +202,6 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
     if (object.getAttribute("ref") != null) {
       object.removeAttribute("ref");
     }
-  }
-
-  public static Element connectionHeaders(ApplicationModel appModel, Namespace httpNamespace) {
-    try {
-      library(getMigrationScriptFolder(appModel.getProjectBasePath()), "HttpInboundConnectionAndKeepAliveHeaders.dwl",
-              "" +
-                  "/**" + lineSeparator() +
-                  " * Emulates the Connection and Keep-Alive inbound headers logic of the Mule 3.x HTTP Connector."
-                  + lineSeparator() +
-                  " */" + lineSeparator() +
-                  "fun httpInboundConnectionAndKeepAliveHeaders(version, headers: {}) = do {" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties default {} filterObject" + lineSeparator() +
-                  "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
-                  "}" + lineSeparator() +
-                  lineSeparator());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    return setText(new Element("headers", httpNamespace), "#[migration::HttpListener::httpListenerResponseHeaders(vars)]");
   }
 
   public static void extractListenerConfig(ApplicationModel appModel, Element object, Supplier<Element> connectorLookup,

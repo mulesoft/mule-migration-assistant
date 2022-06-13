@@ -19,23 +19,26 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMES
  */
 public class MessageProcessor implements FlowComponent {
 
-  private final String name;
+  protected String name;
   private Element xmlElement;
-  private Flow parentFLow;
+  protected Flow parentFLow;
   private String elementId;
-  private PropertiesMigrationContext propertiesMigrationContext;
+  protected PropertiesMigrationContext propertiesMigrationContext;
+
+  public MessageProcessor(Flow parentFLow) {
+    this.parentFLow = parentFLow;
+  }
 
   public MessageProcessor(Element xmlElement, Flow parentFLow, ApplicationGraph graph) {
     this.xmlElement = xmlElement;
     this.parentFLow = parentFLow;
     this.elementId = xmlElement.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
-    name = getComponentName(xmlElement, parentFLow, graph);
+    name = getComponentName(xmlElement.getName(), xmlElement.getNamespace().getPrefix(), parentFLow, graph);
   }
 
-  private String getComponentName(Element xmlElement, Flow parentFLow, ApplicationGraph graph) {
-    String elementPrefix = xmlElement.getNamespace().getPrefix();
+  protected String getComponentName(String elementName, String namespacePrefix, Flow parentFLow, ApplicationGraph graph) {
     String potentialName =
-        String.format("%s%s_%s", elementPrefix.isEmpty() ? "" : elementPrefix + "_", xmlElement.getName(), parentFLow.getName());
+        String.format("%s%s_%s", namespacePrefix.isEmpty() ? "" : namespacePrefix + "_", elementName, parentFLow.getName());
     List<String> matchingNames = graph.getAllVertexNamesWithBaseName(potentialName);
     if (!matchingNames.isEmpty()) {
       String lastMatchingElementName = matchingNames.get(matchingNames.size() - 1);

@@ -5,6 +5,8 @@
  */
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
+import java.util.Optional;
+
 /**
  * Models the context for doing property migration
  *
@@ -39,7 +41,11 @@ public class PropertyMigrationContext {
     return new PropertyMigrationContext(this.translation, this.optional, true);
   }
 
-  public String getTranslation() {
-    return translation;
+  String getTranslation() {
+    if (!optional) {
+      return translation;
+    } else {
+      return String.format("if ((%s) != null) %s", translation, translation);
+    }
   }
 }

@@ -5,7 +5,9 @@
  */
 package com.mulesoft.tools.migration.report;
 
+import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.removeAllAttributes;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.list;
 
@@ -138,9 +140,10 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
       }
 
       if (elementToComment.getDocument() != null || element.getDocument() == null) {
-        reportEntry = new ReportEntryModel(entryKey, level, elementToComment, message, documentationLinks);
+        reportEntry = new ReportEntryModel(entryKey, level, elementToComment, element, message, documentationLinks);
       } else {
-        reportEntry = new ReportEntryModel(entryKey, level, elementToComment, message, element.getDocument(), documentationLinks);
+        reportEntry =
+            new ReportEntryModel(entryKey, level, elementToComment, element, message, element.getDocument(), documentationLinks);
       }
 
       if (reportEntries.add(reportEntry)) {
@@ -156,6 +159,7 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
 
         if (element != elementToComment) {
           XmlDslUtils.removeNestedComments(element);
+          removeAllAttributes(element, MIGRATION_NAMESPACE);
           elementToComment.addContent(i, new Comment(outp.outputString(element)));
         }
       }

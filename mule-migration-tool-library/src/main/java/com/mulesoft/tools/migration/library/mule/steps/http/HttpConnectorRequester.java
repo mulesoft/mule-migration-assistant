@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.NOCOMPATIBILITY_HEADERS_EXPRESSION;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
@@ -19,6 +20,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Content;
@@ -51,7 +53,16 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    httpRequesterLib(getApplicationModel());
+    ApplicationGraph graph = getApplicationModel().getApplicationGraph();
+
+    if (!getApplicationModel().noCompatibilityMode()) {
+      httpRequesterLib(getApplicationModel());
+      migrateOperationStructure(getApplicationModel(), object, report, true, getExpressionMigrator(),
+                                new MelCompatibilityResolver());
+      addAttributesToInboundProperties(object, getApplicationModel(), report);
+    } else {
+      report.report("nocompatibility.notfullyimplemented", object, object);
+    }
 
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE_URI);
     object.setNamespace(httpNamespace);
@@ -73,10 +84,6 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     migrateExpression(object.getAttribute("method"), getExpressionMigrator());
     migrateExpression(object.getAttribute("followRedirects"), getExpressionMigrator());
 
-    migrateOperationStructure(getApplicationModel(), object, report, true, getExpressionMigrator(),
-                              new MelCompatibilityResolver());
-    addAttributesToInboundProperties(object, getApplicationModel(), report);
-
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
         executeChild(c, report, httpNamespace);
@@ -84,7 +91,8 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     });
 
     if (object.getChild("request-builder", httpNamespace) == null) {
-      object.addContent(new Element("request-builder", httpNamespace).addContent(compatibilityHeaders(httpNamespace)));
+      object.addContent(new Element("request-builder", httpNamespace)
+          .addContent(addHeadersElement(httpNamespace, graph, "#[migration::HttpRequester::httpRequesterHeaders(vars)]")));
     }
 
     if (object.getAttribute("source") != null) {
@@ -169,12 +177,14 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
 
     if ("request-builder".equals(object.getName())) {
       handleReferencedRequestBuilder(object, httpNamespace);
-      object.addContent(compatibilityHeaders(httpNamespace));
+      object.addContent(addHeadersElement(httpNamespace, getApplicationModel().getApplicationGraph(),
+                                          "#[migration::HttpRequester::httpRequesterHeaders(vars)]"));
     }
   }
 
-  private Element compatibilityHeaders(Namespace httpNamespace) {
-    return setText(new Element("headers", httpNamespace), "#[migration::HttpRequester::httpRequesterHeaders(vars)]");
+  public static Element addHeadersElement(Namespace httpNamespace, ApplicationGraph graph, String compatibilityExpression) {
+    String headersText = graph != null ? NOCOMPATIBILITY_HEADERS_EXPRESSION : compatibilityExpression;
+    return setText(new Element("headers", httpNamespace), headersText);
   }
 
   public static void httpRequesterLib(ApplicationModel appModel) {

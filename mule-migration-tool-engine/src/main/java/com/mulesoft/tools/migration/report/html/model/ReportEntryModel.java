@@ -53,13 +53,16 @@ public class ReportEntryModel {
   private final String message;
   private String filePath;
   private final List<String> documentationLinks = new ArrayList<>();
+  private Element originalElement;
 
 
-  public ReportEntryModel(String key, Level level, Element element, String message, String... documentationLinks) {
+  public ReportEntryModel(String key, Level level, Element element, Element originalElement, String message,
+                          String... documentationLinks) {
     this.level = level;
     this.key = key;
     this.elementContent = element != null ? escapeXml11(domElementToString(element)) : "";
     this.element = element;
+    this.originalElement = originalElement;
     this.message = message;
     if (element != null && element.getDocument() != null) {
       try {
@@ -71,17 +74,18 @@ public class ReportEntryModel {
     this.documentationLinks.addAll(asList(documentationLinks));
   }
 
-  private ReportEntryModel(Level level, Element element, String message, String... documentationLinks) {
-    this(null, level, element, message, documentationLinks);
+  private ReportEntryModel(Level level, Element element, Element originalElement, String message, String... documentationLinks) {
+    this(null, level, element, originalElement, message, documentationLinks);
   }
 
-  private ReportEntryModel(Level level, Element element, String message, Document document, String... documentationLinks) {
-    this(null, level, element, message, document, documentationLinks);
+  private ReportEntryModel(Level level, Element element, Element originalElement, String message, Document document,
+                           String... documentationLinks) {
+    this(null, level, element, originalElement, message, document, documentationLinks);
   }
 
-  public ReportEntryModel(String key, Level level, Element element, String message, Document document,
+  public ReportEntryModel(String key, Level level, Element element, Element originalElement, String message, Document document,
                           String... documentationLinks) {
-    this(key, level, element, message, documentationLinks);
+    this(key, level, element, originalElement, message, documentationLinks);
     try {
       this.filePath = new File(new URI(document.getBaseURI())).getAbsolutePath();
     } catch (URISyntaxException e) {
@@ -228,8 +232,13 @@ public class ReportEntryModel {
     ReportEntryModel that = (ReportEntryModel) obj;
     return Objects.equals(getLevel(), that.getLevel()) &&
         Objects.equals(getElement(), that.getElement()) &&
+        Objects.equals(getOriginalElement(), that.getOriginalElement()) &&
         Objects.equals(getMessage(), that.getMessage()) &&
         Objects.equals(getDocumentationLinks(), that.getDocumentationLinks());
+  }
+
+  public Element getOriginalElement() {
+    return this.originalElement;
   }
 
 }
