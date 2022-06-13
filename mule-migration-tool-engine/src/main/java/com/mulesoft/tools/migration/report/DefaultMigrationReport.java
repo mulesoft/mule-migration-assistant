@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.report;
 import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.removeAllAttributes;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.removeAllAttributesRecursive;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.list;
 
@@ -159,7 +160,7 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
 
         if (element != elementToComment) {
           XmlDslUtils.removeNestedComments(element);
-          removeAllAttributes(element, MIGRATION_NAMESPACE);
+          removeAllAttributesRecursive(element, MIGRATION_NAMESPACE);
           elementToComment.addContent(i, new Comment(outp.outputString(element)));
         }
       }

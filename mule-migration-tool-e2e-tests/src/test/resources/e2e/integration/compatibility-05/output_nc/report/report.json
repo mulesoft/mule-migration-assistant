@@ -1,62 +1,54 @@
 {
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
-  "connectorsMigrated":
-  [
-    "org.mule.connectors:mule-http-connector:VERSION",
-    "org.mule.connectors:mule-file-connector:VERSION"
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0",
+    "org.mule.connectors:mule-file-connector:1.3.4"
   ],
-  "numberOfMuleComponents": 17,
-  "numberOfMuleComponentsMigrated": 17,
-  "componentDetails":
-  {
-    "mule":
-    {
+  "numberOfMuleComponents": 18,
+  "numberOfMuleComponentsMigrated": 18,
+  "componentDetails": {
+    "mule": {
       "success": 1,
       "failure": 0
     },
-    "logger":
-    {
+    "logger": {
       "success": 4,
       "failure": 0
     },
-    "flow":
-    {
+    "flow": {
       "success": 3,
       "failure": 0
     },
-    "flow-ref":
-    {
+    "sub-flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow-ref": {
       "success": 2,
       "failure": 0
     },
-    "http:listener-config":
-    {
+    "http:listener-config": {
       "success": 1,
       "failure": 0
     },
-    "http:request-config":
-    {
+    "http:request-config": {
       "success": 1,
       "failure": 0
     },
-    "http:listener":
-    {
+    "http:listener": {
       "success": 2,
       "failure": 0
     },
-    "http:request":
-    {
+    "http:request": {
       "success": 1,
       "failure": 0
     },
-    "file:config":
-    {
+    "file:config": {
       "success": 1,
       "failure": 0
     },
-    "file:listener":
-    {
+    "file:listener": {
       "success": 1,
       "failure": 0
     }
@@ -69,8 +61,7 @@
   "numberOfDWTransformationsMigrated": 0,
   "numberOfDWTransformationLines": 0,
   "numberOfDWTransformationLinesMigrated": 0,
-  "detailedMessages":
-  [
+  "detailedMessages": [
     {
       "level": "WARN",
       "key": "nocompatibility.notfullyimplemented",
@@ -79,8 +70,7 @@
       "columnNumber": 94,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "WARN",
@@ -90,8 +80,7 @@
       "columnNumber": 105,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "WARN",
@@ -101,8 +90,7 @@
       "columnNumber": 95,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "INFO",
@@ -110,10 +98,9 @@
       "component": "file:listener",
       "lineNumber": 57,
       "columnNumber": 177,
-      "message": "'responseTimeout' was not being used by the file transport.",
+      "message": "\u0027responseTimeout\u0027 was not being used by the file transport.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "WARN",
@@ -123,8 +110,7 @@
       "columnNumber": 177,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     }
   ]
 }

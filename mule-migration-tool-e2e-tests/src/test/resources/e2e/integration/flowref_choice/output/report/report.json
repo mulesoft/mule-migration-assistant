@@ -5,8 +5,8 @@
     "org.mule.connectors:mule-file-connector:1.3.4",
     "org.mule.connectors:mule-sftp-connector:1.4.1"
   ],
-  "numberOfMuleComponents": 34,
-  "numberOfMuleComponentsMigrated": 34,
+  "numberOfMuleComponents": 35,
+  "numberOfMuleComponentsMigrated": 35,
   "componentDetails": {
     "mule": {
       "success": 1,
@@ -18,6 +18,10 @@
     },
     "flow": {
       "success": 2,
+      "failure": 0
+    },
+    "sub-flow": {
+      "success": 1,
       "failure": 0
     },
     "flow-ref": {

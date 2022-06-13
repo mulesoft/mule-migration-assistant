@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.mule.migrated</groupId>
   <artifactId>flowref_choice</artifactId>
@@ -12,6 +12,12 @@
       <groupId>com.mulesoft.mule.modules</groupId>
       <artifactId>mule-compatibility-module</artifactId>
       <version>1.4.0</version>
+      <classifier>mule-plugin</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.mule.modules</groupId>
+      <artifactId>mule-scripting-module</artifactId>
+      <version>2.0.0</version>
       <classifier>mule-plugin</classifier>
     </dependency>
     <dependency>

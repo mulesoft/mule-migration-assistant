@@ -33,12 +33,9 @@
                 <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
                 <!--    For more information refer to:-->
                 <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
-                <http:headers><![CDATA[#[migration::HttpListener::httpListenerResponseHeaders(vars)]]]></http:headers>
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:response>
             <http:error-response statusCode="500" reasonPhrase="Internal Error">
-                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
-                <!--    For more information refer to:-->
-                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
                 <http:headers><![CDATA[#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'myOutbound2' : vars.compatibility_inboundProperties.customHeader}]]]></http:headers>
             </http:error-response>
         </http:listener>
@@ -77,9 +74,6 @@
                 <http:headers><![CDATA[#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'isTest' : vars.compatibility_inboundProperties.isTest}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="500" reasonPhrase="Internal Error">
-                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
-                <!--    For more information refer to:-->
-                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
                 <http:headers><![CDATA[#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'myOutbound2' : vars.compatibility_inboundProperties.customHeader}]]]></http:headers>
             </http:error-response>
         </http:listener>
