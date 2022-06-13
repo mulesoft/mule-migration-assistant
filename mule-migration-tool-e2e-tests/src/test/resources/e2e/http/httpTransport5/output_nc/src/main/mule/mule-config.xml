@@ -8,8 +8,9 @@
     <flow name="ProductDataSourceRepository">
         <http:request method="POST" path="/" config-ref="ProductDataSourceRepositoryRequestConfig">
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>        
+            <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
         </http:request>
+
     </flow>
 
 </mule>

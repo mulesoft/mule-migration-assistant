@@ -1,46 +1,41 @@
 {
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
-  "connectorsMigrated":
-  [
-    "org.mule.connectors:mule-http-connector:VERSION"
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0"
   ],
-  "numberOfMuleComponents": 13,
-  "numberOfMuleComponentsMigrated": 13,
-  "componentDetails":
-  {
-    "mule":
-    {
+  "numberOfMuleComponents": 15,
+  "numberOfMuleComponentsMigrated": 15,
+  "componentDetails": {
+    "mule": {
       "success": 1,
       "failure": 0
     },
-    "logger":
-    {
+    "logger": {
       "success": 3,
       "failure": 0
     },
-    "flow":
-    {
+    "flow": {
       "success": 2,
       "failure": 0
     },
-    "flow-ref":
-    {
+    "sub-flow": {
       "success": 2,
       "failure": 0
     },
-    "set-variable":
-    {
+    "flow-ref": {
       "success": 2,
       "failure": 0
     },
-    "http:listener-config":
-    {
+    "set-variable": {
+      "success": 2,
+      "failure": 0
+    },
+    "http:listener-config": {
       "success": 1,
       "failure": 0
     },
-    "http:listener":
-    {
+    "http:listener": {
       "success": 2,
       "failure": 0
     }
@@ -53,8 +48,7 @@
   "numberOfDWTransformationsMigrated": 0,
   "numberOfDWTransformationLines": 0,
   "numberOfDWTransformationLinesMigrated": 0,
-  "detailedMessages":
-  [
+  "detailedMessages": [
     {
       "level": "WARN",
       "key": "nocompatibility.notfullyimplemented",
@@ -63,8 +57,7 @@
       "columnNumber": 94,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "WARN",
@@ -74,8 +67,7 @@
       "columnNumber": 93,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     }
   ]
 }

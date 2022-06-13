@@ -4,8 +4,8 @@
   "connectorsMigrated": [
     "org.mule.connectors:mule-http-connector:1.6.0"
   ],
-  "numberOfMuleComponents": 13,
-  "numberOfMuleComponentsMigrated": 13,
+  "numberOfMuleComponents": 15,
+  "numberOfMuleComponentsMigrated": 15,
   "componentDetails": {
     "mule": {
       "success": 1,
@@ -16,6 +16,10 @@
       "failure": 0
     },
     "flow": {
+      "success": 2,
+      "failure": 0
+    },
+    "sub-flow": {
       "success": 2,
       "failure": 0
     },

@@ -22,13 +22,14 @@
                 <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'fileName' : ' 123'}]]]></http:headers>
             </http:response>
             <http:error-response>
-                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:error-response>
         </http:listener>
 
         <logger message="#['Subflow with source. File moved: ' ++ message.attributes.headers.fileName]" level="INFO" doc:name="Logger" />
 
         <set-variable variableName="outbound_someOutbound" value="Hello" doc:name="Property" />
+
     </flow>
 
     <flow name="Test">
@@ -46,9 +47,11 @@
 
         <http:request config-ref="HTTP_Request_Configuration" path="/file" method="GET" doc:name="HTTP">
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+            <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
         </http:request>
 
         <logger message="#['The new inbound properties are from HTTP like http.status: ' ++ message.attributes.statusCode]" level="INFO" doc:name="Logger" />
+
     </flow>
+
 </mule>

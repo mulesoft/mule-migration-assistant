@@ -17,21 +17,22 @@
 
     <flow name="flowWithSource">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/file" doc:name="HTTP">
-            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
             <http:response statusCode="#[200]">
-                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:response>
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
             <http:error-response>
-                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:error-response>
         </http:listener>
+
     </flow>
 
     <sub-flow name="flow2">
         <logger message="#['Subflow without source. File moved: ' ++ message.attributes.fileName]" level="INFO" doc:name="Logger" />
         <http:request config-ref="HTTP_Request_Configuration" path="/file" method="GET" doc:name="HTTP">
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+            <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
         </http:request>
         <logger message="#['The new inbound properties are from HTTP like http.status in flow2: ' ++ message.attributes.statusCode]" level="INFO" doc:name="Copy_of_Logger" />
     </sub-flow>
@@ -50,5 +51,7 @@
         <flow-ref name="flow2" doc:name="Flow Reference" />
 
         <logger message="#['The new inbound properties are from HTTP like http.status: ' ++ message.attributes.statusCode]" level="INFO" doc:name="Logger" />
+
     </flow>
+
 </mule>

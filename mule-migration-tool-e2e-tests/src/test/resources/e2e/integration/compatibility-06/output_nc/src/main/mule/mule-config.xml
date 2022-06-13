@@ -10,9 +10,13 @@
         <!--    For more information refer to:-->
         <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-engine-->
         <logger message="#['My outbound is:' ++ vars.outbound_myOutbound]" level="INFO" doc:name="Logger" />
-        <set-variable variableName="outbound_myOutbound2" value="#[vars.outbound_myOutbound]" doc:name="SecondProperty"/>
-        <remove-variable variableName="outbound_myOutbound" doc:name="RemoveProperty"/>
+
+        <set-variable variableName="outbound_myOutbound2" value="#[vars.outbound_myOutbound]" doc:name="SecondProperty" />
+
+        <remove-variable variableName="outbound_myOutbound" doc:name="RemoveProperty" />
+
         <logger message="#['My outbound is:' ++ vars.outbound_myOutbound2]" level="INFO" doc:name="WrongLogger" />
+
     </flow>
 
     <flow name="flow">
@@ -22,12 +26,16 @@
                 <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'isTest' : message.attributes.headers.isTest}]]]></http:headers>
             </http:response>
             <http:error-response>
-                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:error-response>
         </http:listener>
+
         <set-variable variableName="outbound_myOutbound" value="#[message.attributes.queryParams.'type']" doc:name="Property" />
+
         <flow-ref name="flow2" doc:name="Flow Reference" />
+
         <logger message="#['My outbound is:' ++ vars.outbound_myOutbound2 ++ message.attributes.queryParams.'type']" level="INFO" doc:name="Copy_of_WrongLogger" />
+
     </flow>
 
 </mule>
