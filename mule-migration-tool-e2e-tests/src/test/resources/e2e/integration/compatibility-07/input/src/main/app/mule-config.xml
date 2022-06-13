@@ -30,7 +30,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
                 <http:header headerName="isTest" value="#[message.inboundProperties.isTest]"/>
             </http:response-builder>
             <http:error-response-builder statusCode="500" reasonPhrase="Internal Error">
-                <http:header headerName="myOutbound2" value="#[message.outboundProperties.myOutbound2]"/>
+                <http:header headerName="myOutbound2" value="#[message.inboundProperties.customHeader]"/>
             </http:error-response-builder>
         </http:listener>
 
