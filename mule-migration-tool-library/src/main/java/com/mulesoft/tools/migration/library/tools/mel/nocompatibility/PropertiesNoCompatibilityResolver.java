@@ -6,18 +6,15 @@
 package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 
 import com.mulesoft.tools.migration.exception.MigrationException;
-import com.mulesoft.tools.migration.library.nocompatibility.PropertyTranslator;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.applicationgraph.FlowComponent;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
-import com.mulesoft.tools.migration.step.ReportingStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -33,8 +30,6 @@ import java.util.regex.Pattern;
  */
 public abstract class PropertiesNoCompatibilityResolver
     implements com.mulesoft.tools.migration.util.CompatibilityResolver<NoCompatibilityResolverResult> {
-
-  private static final Logger logger = LoggerFactory.getLogger(PropertiesNoCompatibilityResolver.class);
 
   private Pattern generalPattern;
   private List<Pattern> singleExpressionPatterns;
@@ -86,8 +81,7 @@ public abstract class PropertiesNoCompatibilityResolver
     if (flowComponent != null) {
       try {
         if (matcher.find()) {
-          return replaceAllOccurrencesOfProperty(expression, matcher, flowComponent.getPropertiesMigrationContext(), element,
-                                                 report);
+          return replaceAllOccurencesOfProperty(expression, matcher, flowComponent, report, getTranslator(applicationGraph));
         } else {
           matcher = patternWithExpression.matcher(expression);
           if (matcher.find()) {
@@ -110,12 +104,12 @@ public abstract class PropertiesNoCompatibilityResolver
     return expression;
   }
 
-  private String replaceAllOccurrencesOfProperty(String content, Matcher outerMatcher,
-                                                 PropertiesMigrationContext propertiesMigrationContext,
-                                                 Element element, MigrationReport report)
+  private String replaceAllOccurencesOfProperty(String content, Matcher outerMatcher, FlowComponent flowComponent,
+                                                MigrationReport report, PropertyTranslator translator)
       throws MigrationException {
     outerMatcher.reset();
     String contentTranslation = content;
+    Element element = flowComponent.getXmlElement();
     boolean failedCompleteTranslation = false;
     while (outerMatcher.find()) {
       String referenceToProperty = outerMatcher.group();
@@ -133,26 +127,21 @@ public abstract class PropertiesNoCompatibilityResolver
         }
 
         String propertyToTranslate = specificPropMatcher.group(1);
+        String propertyTranslation;
         try {
-          String propertyTranslation =
-              Optional.ofNullable(getPropertiesContextMap(propertiesMigrationContext).get(propertyToTranslate))
-                  .map(PropertyMigrationContext::getTranslation)
+          propertyTranslation =
+              Optional
+                  .ofNullable(getPropertyTranslation(flowComponent.getPropertiesMigrationContext(), propertyToTranslate,
+                                                     translator))
                   .orElse(null);
           if (propertyTranslation == null) {
-            propertyTranslation = tryImplicitTranslation(propertyToTranslate, propertiesMigrationContext);
-            if (propertyTranslation == null) {
-              propertyTranslation = fallbackTranslation(propertyToTranslate);
-              if (propertyTranslation == null) {
-                propertyTranslation = content;
-                report.report("nocompatibility.unsupportedproperty", element, element, element.getName());
-                failedCompleteTranslation = true;
-              } else {
-                logger.info("Property '{}' not found in context, using fallback translation '{}' ", propertyToTranslate,
-                            propertyTranslation);
-              }
-            }
+            report.report("nocompatibility.unsupportedproperty", element, element, element.getName());
+            failedCompleteTranslation = true;
           }
-          contentTranslation = content.replace(specificPropMatcher.group(0), propertyTranslation);
+
+          if (propertyTranslation != null) {
+            contentTranslation = content.replace(specificPropMatcher.group(0), propertyTranslation);
+          }
         } catch (Exception e) {
           report.report("nocompatibility.unsupportedproperty", element, element, element.getName());
           failedCompleteTranslation = true;
@@ -167,20 +156,12 @@ public abstract class PropertiesNoCompatibilityResolver
     return contentTranslation;
   }
 
-  private String tryImplicitTranslation(String propertyToTranslate, PropertiesMigrationContext propertiesMigrationContext) {
-    if (getTranslator() != null) {
-      PropertyTranslator translator = getTranslator();
-      return translator.translateImplicit(propertyToTranslate, propertiesMigrationContext.getOriginatingSource());
-    }
-    return null;
-  }
-
-  protected abstract PropertyTranslator getTranslator();
-
-  protected abstract String fallbackTranslation(String propertyToTranslate) throws Exception;
-
   private boolean containsExpression(String referenceToProperty) {
     return referenceToProperty.matches(patternWithOnlyExpression.pattern());
   }
 
+  protected abstract PropertyTranslator getTranslator(ApplicationGraph graph);
+
+  protected abstract String getPropertyTranslation(PropertiesMigrationContext context, String propertyToTranslate,
+                                                   PropertyTranslator translator);
 }

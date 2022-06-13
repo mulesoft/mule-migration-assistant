@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="serverEndpointListenerConfig">
+        <http:listener-connection host="localhost" port="8080" />
+    </http:listener-config>
+
+    <http:listener-config name="serverEndpoint2ListenerConfig">
+        <http:listener-connection host="localhost" port="8081" />
+    </http:listener-config>
+
+    <flow name="ProductDataSourceRepository">
+        <http:listener config-ref="serverEndpointListenerConfig" path="/*">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:response statusCode="#[200]">
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'Content-Type' : 'application/x-download'}]]]></http:headers>
+            </http:response>
+            <http:error-response>
+                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <choice>
+            <!--Migration WARN: This replicates logic from the HTTP transport. Remove it if it is not needed.-->
+            <when expression="#[message.attributes.headers['Transfer-Encoding'] == null and (message.attributes.headers['Content-Length'] as Number default 0) == 0]">
+                <set-payload value="#[message.attributes.requestUri]" />
+            </when>
+        </choice>
+
+        <set-variable variableName="Content-Disposition" value="attachment; filename=foo.zip" />
+        <set-variable variableName="Content-Type" value="application/x-download" />
+        <logger />
+    </flow>
+
+    <flow name="TestService2">
+        <http:listener config-ref="serverEndpoint2ListenerConfig" path="/*">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:response statusCode="#[200]">
+                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+            </http:response>
+            <http:error-response>
+                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <choice>
+            <!--Migration WARN: This replicates logic from the HTTP transport. Remove it if it is not needed.-->
+            <when expression="#[message.attributes.headers['Transfer-Encoding'] == null and (message.attributes.headers['Content-Length'] as Number default 0) == 0]">
+                <set-payload value="#[message.attributes.requestUri]" />
+            </when>
+        </choice>
+        <logger />
+    </flow>
+
+</mule>

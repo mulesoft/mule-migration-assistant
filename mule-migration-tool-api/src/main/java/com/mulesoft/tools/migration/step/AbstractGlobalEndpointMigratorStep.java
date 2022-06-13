@@ -76,8 +76,10 @@ public abstract class AbstractGlobalEndpointMigratorStep extends AbstractApplica
 
   public static void copyAttributes(Element object, Element referent) {
     for (Attribute attribute : object.getAttributes()) {
-      if (!"name".equals(attribute.getName()) && referent.getAttribute(attribute.getName()) == null) {
-        referent.setAttribute(attribute.getName(), attribute.getValue(), attribute.getNamespace());
+      if (referent.getAttribute(attribute.getName(), attribute.getNamespace()) == null) {
+        if (!"name".equals(attribute.getName()) && referent.getAttribute(attribute.getName()) == null) {
+          referent.setAttribute(attribute.getName(), attribute.getValue(), attribute.getNamespace());
+        }
       }
     }
   }
