@@ -95,17 +95,6 @@
     },
     {
       "level": "WARN",
-      "key": "http.statusCode",
-      "component": "http:error-response",
-      "lineNumber": 0,
-      "columnNumber": 0,
-      "message": "Avoid using an outbound property to determine the status code.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
       "key": "nocompatibility.notfullyimplemented",
       "component": "http:request",
       "lineNumber": 0,
@@ -130,20 +119,9 @@
       "level": "WARN",
       "key": "nocompatibility.notfullyimplemented",
       "component": "http:listener",
-      "lineNumber": 42,
+      "lineNumber": 36,
       "columnNumber": 177,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
-      "key": "http.statusCode",
-      "component": "http:response",
-      "lineNumber": 45,
-      "columnNumber": 34,
-      "message": "Avoid using an outbound property to determine the status code.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks":
       []

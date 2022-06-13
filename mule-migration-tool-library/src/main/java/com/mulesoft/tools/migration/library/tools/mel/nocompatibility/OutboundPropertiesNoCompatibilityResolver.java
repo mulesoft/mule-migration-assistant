@@ -5,13 +5,11 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 
-import static com.mulesoft.tools.migration.project.model.applicationgraph.SetPropertyProcessor.OUTBOUND_PREFIX;
-
-import com.mulesoft.tools.migration.library.nocompatibility.PropertyTranslator;
+import com.google.common.collect.ImmutableList;
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
-
-import com.google.common.collect.ImmutableList;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -50,13 +48,14 @@ public class OutboundPropertiesNoCompatibilityResolver extends PropertiesNoCompa
   }
 
   @Override
-  protected PropertyTranslator getTranslator() {
+  protected PropertyTranslator getTranslator(ApplicationGraph graph) {
     return null;
   }
 
   @Override
-  protected String fallbackTranslation(String propertyToTranslate) {
-    return "vars." + OUTBOUND_PREFIX + propertyToTranslate;
+  protected String getPropertyTranslation(PropertiesMigrationContext context, String propertyToTranslate,
+                                          PropertyTranslator translator) {
+    return context.getOutboundTranslation(propertyToTranslate, true);
   }
 
 }

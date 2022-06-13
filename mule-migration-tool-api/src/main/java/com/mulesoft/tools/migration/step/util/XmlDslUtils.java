@@ -119,8 +119,8 @@ public final class XmlDslUtils {
    * @param element the source element to migrate using compatibility module
    * @param report the migration report
    */
-  public static void migrateSourceStructure(ApplicationModel appModel, Element element, MigrationReport report) {
-    migrateSourceStructure(appModel, element, report, true, false);
+  public static void migrateSourceStructureForCompatibility(ApplicationModel appModel, Element element, MigrationReport report) {
+    migrateSourceStructureForCompatibility(appModel, element, report, true, false);
   }
 
   /**
@@ -132,27 +132,22 @@ public final class XmlDslUtils {
    * @param expectsOutboundProperties should it declare outbound properties
    * @param consumeStreams should properties be declared as streams
    */
-  public static void migrateSourceStructure(ApplicationModel appModel, Element element, MigrationReport report,
-                                            boolean expectsOutboundProperties, boolean consumeStreams) {
+  public static void migrateSourceStructureForCompatibility(ApplicationModel appModel, Element element, MigrationReport report,
+                                                            boolean expectsOutboundProperties, boolean consumeStreams) {
     addCompatibilityNamespace(element.getDocument());
-
     int index = element.getParent().indexOf(element);
-    if (!appModel.noCompatibilityMode()) {
-      buildAttributesToInboundProperties(report, element.getParent(), index + 1);
-      if (expectsOutboundProperties) {
-        Element errorHandlerElement = getFlowExceptionHandlingElement(element.getParentElement());
-        if (errorHandlerElement != null) {
-          buildOutboundPropertiesToVar(report, element.getParent(), element.getParentElement().indexOf(errorHandlerElement) - 1,
-                                       consumeStreams);
+    buildAttributesToInboundProperties(report, element.getParent(), index + 1);
+    if (expectsOutboundProperties) {
+      Element errorHandlerElement = getFlowExceptionHandlingElement(element.getParentElement());
+      if (errorHandlerElement != null) {
+        buildOutboundPropertiesToVar(report, element.getParent(), element.getParentElement().indexOf(errorHandlerElement) - 1,
+                                     consumeStreams);
 
-          errorHandlerElement.getChildren()
-              .forEach(eh -> buildOutboundPropertiesToVar(report, eh, eh.getContentSize(), consumeStreams));
-        } else {
-          buildOutboundPropertiesToVar(report, element.getParent(), element.getParent().getContentSize(), consumeStreams);
-        }
+        errorHandlerElement.getChildren()
+            .forEach(eh -> buildOutboundPropertiesToVar(report, eh, eh.getContentSize(), consumeStreams));
+      } else {
+        buildOutboundPropertiesToVar(report, element.getParent(), element.getParent().getContentSize(), consumeStreams);
       }
-    } else {
-      report.report("nocompatibility.notfullyimplemented", element, element);
     }
   }
 
@@ -200,11 +195,10 @@ public final class XmlDslUtils {
     if (expressionMigrator != null && resolver != null) {
       migrateEnrichers(element, expressionMigrator, resolver, appModel, report);
     }
-    addCompatibilityNamespace(element.getDocument());
-
-    int index = element.getParent().indexOf(element);
 
     if (!appModel.noCompatibilityMode()) {
+      addCompatibilityNamespace(element.getDocument());
+      int index = element.getParent().indexOf(element);
       if (!"true".equals(element.getAttributeValue("isPolledConsumer", MIGRATION_NAMESPACE))) {
         buildOutboundPropertiesToVar(report, element.getParent(), index, consumeStreams);
       }
@@ -555,6 +549,18 @@ public final class XmlDslUtils {
    */
   public static void removeAllAttributes(Element element) {
     List<Attribute> attributes = element.getAttributes().stream().collect(toList());
+    attributes.forEach(Attribute::detach);
+  }
+
+  /**
+   * Remove all attributes from element on a given namespace
+   *
+   * @param element the element where all the attributes will be removed
+   */
+  public static void removeAllAttributes(Element element, Namespace namespace) {
+    List<Attribute> attributes = element.getAttributes().stream()
+        .filter(att -> att.getNamespace().equals(namespace))
+        .collect(toList());
     attributes.forEach(Attribute::detach);
   }
 

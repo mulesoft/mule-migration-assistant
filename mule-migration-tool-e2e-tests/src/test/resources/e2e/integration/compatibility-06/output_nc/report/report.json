@@ -86,28 +86,6 @@
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks":
       []
-    },
-    {
-      "level": "WARN",
-      "key": "http.statusCode",
-      "component": "http:response",
-      "lineNumber": 25,
-      "columnNumber": 113,
-      "message": "Avoid using an outbound property to determine the status code.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
-      "key": "http.statusCode",
-      "component": "http:error-response",
-      "lineNumber": 31,
-      "columnNumber": 141,
-      "message": "Avoid using an outbound property to determine the status code.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
     }
   ]
 }
