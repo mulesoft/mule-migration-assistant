@@ -19,14 +19,10 @@
         <logger message="#[message.attributes.name]" />
 
         <!-- transport not present -->
-        <logger message="#[message.inboundProperties['fileSize']]">
-            <!--Migration ERROR: Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source-->
-        </logger>
+        <logger message="#[message.inboundProperties['fileSize']]" />
 
         <!-- non-existent -->
-        <logger message="#[message.inboundProperties['unknown']]">
-            <!--Migration ERROR: Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source-->
-        </logger>
+        <logger message="#[message.inboundProperties['unknown']]" />
 
     </flow>
 

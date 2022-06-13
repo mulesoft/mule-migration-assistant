@@ -17,43 +17,46 @@
 
     <flow name="flowWithSource">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/file" doc:name="HTTP">
-            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
             <http:response statusCode="#[200]">
-                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:response>
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
             <http:error-response>
-                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
-            </http:error-response>        
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            </http:error-response>
         </http:listener>
+
     </flow>
 
     <sub-flow name="flow2">
         <http:request config-ref="HTTP_Request_Configuration" path="/file" method="GET" doc:name="HTTP">
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+            <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
         </http:request>
         <logger message="#['The new inbound properties are from HTTP like http.status in flow2: ' ++ message.attributes.statusCode]" level="INFO" doc:name="Copy_of_Logger" />
     </sub-flow>
 
     <flow name="EntryFlow2">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/entry" doc:name="HTTP">
-            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
             <http:response statusCode="#[200]">
-                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:response>
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
             <http:error-response>
-                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
-            </http:error-response>        
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            </http:error-response>
         </http:listener>
 
         <flow-ref name="flow2" doc:name="Flow Reference" />
 
         <logger message="#['The new inbound properties are from HTTP like http.status: ' ++ message.attributes.statusCode]" level="INFO" doc:name="Logger" />
+
     </flow>
 
     <flow name="EntryFlow">
         <file:listener directory="someDir/subdir" config-ref="File" doc:name="File" moveToDirectory="someDir/subdir/output" recursive="false" applyPostActionWhenFailed="false">
             <!--Migration INFO: 'responseTimeout' was not being used by the file transport.-->
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
             <scheduling-strategy>
                 <fixed-frequency frequency="1000" />
             </scheduling-strategy>
@@ -64,5 +67,7 @@
         <flow-ref name="flow2" doc:name="Flow Reference" />
 
         <logger message="#['The new inbound properties are from HTTP like http.status: ' ++ message.attributes.statusCode]" level="INFO" doc:name="Logger" />
+
     </flow>
+
 </mule>

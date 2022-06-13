@@ -16,10 +16,12 @@
                 <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'isTest' : message.attributes.headers.myOutbound == 'test'} ++ {'secondHeader' : message.inboundProperties[message.attributes.headers.myOutbound]}]]]></http:headers>
             </http:response>
             <http:error-response>
-                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:error-response>
         </http:listener>
-        <logger message="#['HTTP called with the following headers:' ++ message.attributes.headers]" level="INFO" doc:name="Logger"/>
+
+        <logger message="#['HTTP called with the following headers:' ++ message.attributes.headers]" level="INFO" doc:name="Logger" />
+
     </flow>
 
     <flow name="Test">
@@ -29,16 +31,17 @@
                 <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'isTest' : message.attributes.headers.isTest}]]]></http:headers>
             </http:response>
             <http:error-response>
-                <http:headers>#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]</http:headers>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:error-response>
         </http:listener>
-        
+
         <set-variable variableName="outbound_myOutbound" value="#[message.attributes.queryParams.'type']" doc:name="Property" />
 
         <http:request config-ref="HTTP_Request_Configuration" path="/subflow" method="GET" doc:name="HTTP">
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
             <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'isTest' : vars.outbound_myOutbound == 'test'}]]]></http:headers>
         </http:request>
+
     </flow>
 
 </mule>

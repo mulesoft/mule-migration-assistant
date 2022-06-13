@@ -564,6 +564,11 @@ public final class XmlDslUtils {
     attributes.forEach(Attribute::detach);
   }
 
+  public static void removeAllAttributesRecursive(Element element, Namespace namespace) {
+    removeAllAttributes(element, namespace);
+    element.getChildren().stream().forEach(e -> removeAllAttributesRecursive(e, namespace));
+  }
+
   /**
    * Add a new attribute to identify for particular post-migration actions
    *
