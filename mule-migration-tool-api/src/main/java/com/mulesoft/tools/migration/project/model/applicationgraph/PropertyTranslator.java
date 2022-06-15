@@ -26,5 +26,7 @@ public interface PropertyTranslator {
 
   Optional<Map<String, String>> getAllTranslationsFor(SourceType sourceType) throws Exception;
 
+  String translateImplicit(String propertyToTranslate, SourceType sourceType);
+
   Map<SourceType, String> translateImplicit(String propertyToTranslate, Set<SourceType> originatingSourceTypes);
 }

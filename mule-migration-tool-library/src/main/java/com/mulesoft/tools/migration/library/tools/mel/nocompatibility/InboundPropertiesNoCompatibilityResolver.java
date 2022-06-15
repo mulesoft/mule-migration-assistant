@@ -53,7 +53,7 @@ public class InboundPropertiesNoCompatibilityResolver extends PropertiesNoCompat
   @Override
   protected List<String> getPropertyTranslations(PropertiesMigrationContext context, String propertyToTranslate,
                                                  PropertyTranslator translator) {
-    return Lists.newArrayList(context.getInboundTranslation(propertyToTranslate, true).values());
+    return context.getInboundTranslation(propertyToTranslate, true);
   }
 
 

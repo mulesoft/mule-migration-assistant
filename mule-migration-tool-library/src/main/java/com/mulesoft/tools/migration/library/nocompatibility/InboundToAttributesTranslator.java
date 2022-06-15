@@ -122,7 +122,8 @@ public class InboundToAttributesTranslator implements PropertyTranslator {
         .collect(Collectors.toMap(Function.identity(), s -> translateImplicit(propertyToTranslate, s)));
   }
 
-  private String translateImplicit(String propertyToTranslate, SourceType originatingSourceType) {
+  @Override
+  public String translateImplicit(String propertyToTranslate, SourceType originatingSourceType) {
     String translation = null;
     if (propertyToTranslate != null) {
       if (isSupported(originatingSourceType) && originatingSourceType.supportsImplicit()) {

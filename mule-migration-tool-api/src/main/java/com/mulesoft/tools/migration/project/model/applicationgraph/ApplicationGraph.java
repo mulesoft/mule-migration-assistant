@@ -41,7 +41,8 @@ public class ApplicationGraph {
    */
   public FlowComponent getStartingFlowComponent(Flow flow) {
     FlowComponent destinationMessageProcessor = getOneComponentOfFlow(flow);
-    Set<DefaultWeightedEdge> incomingEdges = applicationGraph.incomingEdgesOf(destinationMessageProcessor);
+    Set<DefaultWeightedEdge> incomingEdges = applicationGraph.incomingEdgesOf(destinationMessageProcessor).stream()
+        .filter(edge -> applicationGraph.getEdgeSource(edge).getParentFlow().equals(flow)).collect(Collectors.toSet());
     while (!incomingEdges.isEmpty()) {
       DefaultWeightedEdge singleIncomingEdge = Iterables.getOnlyElement(incomingEdges);
       destinationMessageProcessor = applicationGraph.getEdgeSource(singleIncomingEdge);
@@ -166,15 +167,19 @@ public class ApplicationGraph {
   // Graph Manipulation
 
   public void addEdge(FlowComponent source, FlowComponent destination) {
-    Optional<DefaultWeightedEdge> lastAddedEdge = applicationGraph.outgoingEdgesOf(source).stream()
-        .filter(e -> applicationGraph.getEdgeTarget(e).getParentFlow().equals(destination.getParentFlow()))
-        .sorted(Comparator.comparingDouble(e -> applicationGraph.getEdgeWeight(e)))
-        .findFirst();
-    double weight = 1.0d;
-    if (lastAddedEdge.isPresent()) {
-      weight = applicationGraph.getEdgeWeight(lastAddedEdge.get()) + 1.0d;
+    if (applicationGraph.getEdge(source, destination) == null) {
+      Optional<DefaultWeightedEdge> lastAddedEdge = applicationGraph.outgoingEdgesOf(source).stream()
+          .filter(e -> applicationGraph.getEdgeTarget(e).getParentFlow().equals(destination.getParentFlow()))
+          .sorted(Comparator.comparingDouble(e -> applicationGraph.getEdgeWeight(e)))
+          .findFirst();
+      double weight = 1.0d;
+
+      if (lastAddedEdge.isPresent()) {
+        weight = applicationGraph.getEdgeWeight(lastAddedEdge.get()) + 1.0d;
+      }
+
+      this.addEdge(source, destination, weight);
     }
-    this.addEdge(source, destination, weight);
   }
 
   public void addFlowComponent(FlowComponent component) {
@@ -182,7 +187,8 @@ public class ApplicationGraph {
   }
 
   public void removeEdgeIfExists(FlowRef flowRefComponent, FlowComponent originalFlowContinuation) {
-    if (applicationGraph.getEdge(flowRefComponent, originalFlowContinuation) != null) {
+    if (flowRefComponent != null && originalFlowContinuation != null
+        && applicationGraph.getEdge(flowRefComponent, originalFlowContinuation) != null) {
       this.applicationGraph.removeEdge(flowRefComponent, originalFlowContinuation);
     }
   }

@@ -144,7 +144,7 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
     if (object.getAttribute("method") == null) {
       // Logic from org.mule.transport.http.transformers.ObjectToHttpClientMethodRequest.detectHttpMethod(MuleMessage)
-      String translatedMethod = migrateMethod(graph, object);
+      String translatedMethod = migrateMethod(graph, object, report);
       object.setAttribute("method", translatedMethod);
       object.setAttribute("sendBodyMode", getExpressionMigrator()
           .wrap(String.format("if (%s == 'DELETE') 'NEVER' else 'AUTO'", getExpressionMigrator().unwrap(translatedMethod))));
@@ -201,13 +201,17 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     }
   }
 
-  private String migrateMethod(ApplicationGraph graph, Element element) {
+  private String migrateMethod(ApplicationGraph graph, Element element, MigrationReport report) {
     if (graph != null) {
       FlowComponent flowComponent = graph.findFlowComponent(element);
       List<String> possibleTranslations =
-          Lists.newArrayList(flowComponent.getPropertiesMigrationContext().getOutboundTranslation("http.method", false).values());
+          flowComponent.getPropertiesMigrationContext().getOutboundTranslation("http.method", false);
       String methodTranslation = "POST";
       if (!possibleTranslations.isEmpty()) {
+        if (possibleTranslations.size() > 1) {
+          report.report("nocompatibility.collidingProperties", element, element, element.getName());
+        }
+
         methodTranslation = possibleTranslations.get(0);
       }
       return methodTranslation;

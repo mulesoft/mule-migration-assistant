@@ -16,7 +16,7 @@
     </sub-flow>
 
     <sub-flow name="flow2">
-        <set-variable variableName="outbound_http.statusCode" value="202" />
+        <set-variable variableName="outbound_http.status" value="202" />
         <flow-ref name="flow3" />
         <!--Migration WARN: When migrating copy properties headers sent by the user or implicit properties are not converted to variables, if there is any specific reference to them as outbound properties they will be need to be migrated manually-->
         <!--<copy-properties xmlns="http://www.mulesoft.org/schema/mule/core" propertyName="*" />-->
@@ -50,17 +50,16 @@
 
     <flow name="httpFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/api">
-            <http:response statusCode="#[200]">
+            <http:response statusCode="#[vars.outbound_http.status]">
                 <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:response>
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:error-response>
+            <http:error-response statusCode="#[vars.outbound_http.status]">
                 <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:error-response>
         </http:listener>
 
         <flow-ref name="flow2" />
-
     </flow>
 
     <flow name="http2Flow">

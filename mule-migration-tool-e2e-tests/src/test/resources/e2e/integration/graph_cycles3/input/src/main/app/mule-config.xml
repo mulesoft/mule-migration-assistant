@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/fil
         <logger/>
     </sub-flow>
     <sub-flow name="flow2">
-        <set-property propertyName="http.statusCode" value="202"/>
+        <set-property propertyName="http.status" value="202"/>
         <flow-ref name="flow3"/>
         <copy-properties propertyName="*" />
     </sub-flow>

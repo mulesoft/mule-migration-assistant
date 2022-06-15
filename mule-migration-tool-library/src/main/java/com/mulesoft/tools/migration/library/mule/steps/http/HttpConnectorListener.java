@@ -13,10 +13,7 @@ import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesSourceComponent;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
-import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
+import com.mulesoft.tools.migration.project.model.applicationgraph.*;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
@@ -115,14 +112,14 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
                                                            ExpressionMigrator migrator, MigrationReport report) {
     PropertiesSourceComponent propertiesSourceComponent =
         (PropertiesSourceComponent) graph.findFlowComponent(element.getParentElement());
-    Map<SourceType, String> potentialTranslations = propertiesSourceComponent
+    List<String> potentialTranslations = propertiesSourceComponent
         .getResponseComponent().getPropertiesMigrationContext().getOutboundTranslation("http.status", false);
     String statusCodeTranslation = defaultVal;
     if (!potentialTranslations.isEmpty()) {
       if (potentialTranslations.size() > 1) {
         report.report("nocompatibility.collidingProperties", element, element, element.getName());
       }
-      statusCodeTranslation = potentialTranslations.values().stream().findFirst().get();
+      statusCodeTranslation = potentialTranslations.get(0);
     }
     if (!StringUtils.isBlank(statusCodeTranslation)) {
       element.setAttribute("statusCode", migrator.wrap(statusCodeTranslation));

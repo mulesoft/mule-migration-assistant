@@ -87,7 +87,7 @@
       "key": "nocompatibility.collidingProperties",
       "component": "set-property",
       "lineNumber": 19,
-      "columnNumber": 129,
+      "columnNumber": 121,
       "message": "There are multiple possible translations of http.headers due to app ambiguity. Defaulting to the first one, please revise if this needs to be changed",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks":

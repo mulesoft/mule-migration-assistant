@@ -64,27 +64,7 @@ public class ApplicationGraphCreator {
     // build ApplicationGraph based on flow components and flowRefs. 
     // This graph can have non connected components, if we have multiple flows with sources
     // get explicit connections (flow-refs)
-    Map<Pair<FlowComponent, FlowComponent>, Pair<FlowComponent, FlowComponent>> connectedFlows = getFlowRefMap(applicationGraph);
-    connectedFlows.entrySet().forEach(connectedFlow -> {
-      Pair<FlowComponent, FlowComponent> sourceComponentPair = connectedFlow.getKey();
-      Pair<FlowComponent, FlowComponent> destinationComponentPair = connectedFlow.getValue();
-
-      FlowRef flowRefComponent = (FlowRef) sourceComponentPair.getLeft();
-      FlowComponent firstComponentOfReferencedFlow = sourceComponentPair.getRight();
-      FlowComponent endComponentOfReferencedFlow = destinationComponentPair.getLeft();
-      FlowComponent originalFlowContinuation = destinationComponentPair.getRight();
-      applicationGraph.addEdge(flowRefComponent, firstComponentOfReferencedFlow);
-      applicationGraph.removeEdgeIfExists(flowRefComponent, originalFlowContinuation);
-      if (originalFlowContinuation != null) {
-        applicationGraph.addEdge(endComponentOfReferencedFlow, originalFlowContinuation);
-      } else {
-        SyntheticMessageProcessor syntethicOriginalFlowContinuation =
-            new SyntheticMessageProcessor("endFlow" + flowRefComponent.getParentFlow().getName(), "",
-                                          flowRefComponent.getParentFlow(), applicationGraph);
-        applicationGraph.addFlowComponent(syntethicOriginalFlowContinuation);
-        applicationGraph.addEdge(endComponentOfReferencedFlow, syntethicOriginalFlowContinuation);
-      }
-    });
+    connectAllFlowRefs(applicationGraph);
 
     applicationPropertiesContextCalculator.calculatePropertiesContext(applicationGraph);
     return applicationGraph;
@@ -147,33 +127,44 @@ public class ApplicationGraphCreator {
     return component;
   }
 
-  private Map<Pair<FlowComponent, FlowComponent>, Pair<FlowComponent, FlowComponent>> getFlowRefMap(ApplicationGraph applicationGraph) {
-    return applicationGraph.getAllFlowComponents(FlowRef.class).stream()
-        .map(flowRef -> getConnectedComponents(flowRef, applicationGraph))
-        .collect(Collectors.toMap(connectedComponent -> connectedComponent.getLeft(),
-                                  connectedComponent -> connectedComponent.getRight()));
+  private void connectAllFlowRefs(ApplicationGraph graph) {
+    graph.getAllFlowComponents(FlowRef.class).forEach(flowRef -> connectFlowRefComponents(flowRef, graph));
+
+    // remove immediate connections between flow refs and components in the same flow
+    graph.getAllFlowComponents(FlowRef.class).forEach(flowRef -> {
+      FlowComponent flowComponent = graph.getNextComponent(flowRef, flowRef.getParentFlow());
+      graph.removeEdgeIfExists(flowRef, flowComponent);
+    });
   }
 
-  private Pair<Pair<FlowComponent, FlowComponent>, Pair<FlowComponent, FlowComponent>> getConnectedComponents(FlowRef flowRef,
-                                                                                                              ApplicationGraph applicationGraph) {
+  private FlowComponent connectFlowRefComponents(FlowRef flowRef, ApplicationGraph applicationGraph) {
     FlowComponent referredFlowStartingPoint = applicationGraph.getStartingFlowComponent(flowRef.getDestinationFlow());
     if (referredFlowStartingPoint instanceof PropertiesSource
         && ((PropertiesSource) referredFlowStartingPoint).getType().isFlowSource()) {
       referredFlowStartingPoint =
           applicationGraph.getNextComponent(referredFlowStartingPoint, referredFlowStartingPoint.getParentFlow());
     }
-    Pair<FlowComponent, FlowComponent> sourcePair = Pair.of(flowRef, referredFlowStartingPoint);
 
-    FlowComponent goBackFlowComponent = applicationGraph.getNextComponent(flowRef, flowRef.getParentFlow());
+    applicationGraph.addEdge(flowRef, referredFlowStartingPoint);
+
     FlowComponent referredFlowEndingPoint = applicationGraph.getLastFlowComponent(flowRef.getDestinationFlow());
+    FlowComponent goBackFlowComponent = applicationGraph.getNextComponent(flowRef, flowRef.getParentFlow());
     if (referredFlowEndingPoint instanceof FlowRef) {
-      Pair<Pair<FlowComponent, FlowComponent>, Pair<FlowComponent, FlowComponent>> newFlowRef =
-          getConnectedComponents((FlowRef) referredFlowEndingPoint, applicationGraph);
-      referredFlowEndingPoint = newFlowRef.getRight().getLeft();
+
+      referredFlowEndingPoint = connectFlowRefComponents((FlowRef) referredFlowEndingPoint, applicationGraph);
     }
 
-    Pair<FlowComponent, FlowComponent> destinationPair = Pair.of(referredFlowEndingPoint, goBackFlowComponent);
-    return Pair.of(sourcePair, destinationPair);
+    if (goBackFlowComponent == null) {
+      goBackFlowComponent =
+          new SyntheticMessageProcessor("endFlow" + flowRef.getParentFlow().getName(), "",
+                                        flowRef.getParentFlow(), applicationGraph);
+      applicationGraph.addFlowComponent(goBackFlowComponent);
+      applicationGraph.addEdge(flowRef, goBackFlowComponent);
+    }
+
+    applicationGraph.addEdge(referredFlowEndingPoint, goBackFlowComponent);
+
+    return referredFlowEndingPoint;
   }
 
   private List<Flow> getFlows(Document document) {

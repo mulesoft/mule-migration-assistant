@@ -11,11 +11,11 @@
 
     <flow name="mainFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/api" doc:name="HTTP">
-            <http:response statusCode="#[message.attributes.statusCode]">
+            <http:response statusCode="#[vars.outbound_http.status]">
                 <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:response>
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:error-response statusCode="#[message.attributes.statusCode]">
+            <http:error-response statusCode="#[vars.outbound_http.status]">
                 <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:error-response>
         </http:listener>

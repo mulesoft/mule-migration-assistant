@@ -27,10 +27,10 @@ public class PropertiesMigrationContext {
 
   private static final Logger logger = LoggerFactory.getLogger(PropertiesMigrationContext.class);
 
-  private final Set<SourceType> originatingSources;
+  private final Set<PropertiesSource> originatingSources;
   // even when flow components can have multiple originating sources if they are in shared subflows/flows, outside 
   // of it they should have a single source from where they are coming
-  private final Map<SourceType, Map<String, PropertyMigrationContext>> outboundContext;
+  private final Map<PropertiesSource, Map<String, PropertyMigrationContext>> outboundContext;
   private final PropertyTranslator inboundTranslator;
 
   public PropertiesMigrationContext(PropertyTranslator inboundTranslator) {
@@ -42,32 +42,31 @@ public class PropertiesMigrationContext {
   // Translations
 
   public List<String> getAllInboundKeys() {
-    return originatingSources.stream().map(sourceType -> getInboundTranslationForOriginatingSource(sourceType))
+    return originatingSources.stream().map(source -> getInboundTranslationForOriginatingSource(source.getType()))
         .map(Map::keySet)
         .flatMap(Collection::stream)
         .distinct()
         .collect(Collectors.toList());
   }
 
-  public Map<SourceType, List<String>> getAllOutboundKeys() {
+  public Map<PropertiesSource, List<String>> getAllOutboundKeys() {
     return originatingSources.stream().collect(Collectors.toMap(Function.identity(),
-                                                                sourceType -> getAllOutboundKeys(sourceType)));
+                                                                source -> getAllOutboundKeys(source)));
   }
 
-  public List<String> getAllOutboundKeys(SourceType sourceType) {
-    return Lists.newArrayList(Optional.ofNullable(outboundContext.get(sourceType)).orElse(Maps.newHashMap()).keySet());
+  private List<String> getAllOutboundKeys(PropertiesSource source) {
+    return Lists.newArrayList(Optional.ofNullable(outboundContext.get(source)).orElse(Maps.newHashMap()).keySet());
   }
 
-  public Map<SourceType, Map<String, String>> getAllInboundTranslations() {
+  public Map<PropertiesSource, Map<String, String>> getAllInboundTranslations() {
     return originatingSources.stream()
         .collect(Collectors.toMap(
                                   Function.identity(),
-                                  source -> getInboundTranslationForOriginatingSource(source)));
+                                  source -> getInboundTranslationForOriginatingSource(source.getType())));
   }
 
-  public Map<SourceType, String> getInboundTranslation(String key, boolean useFallback) {
-
-    Map<SourceType, String> potentialTranslations = getAllInboundTranslations().entrySet().stream()
+  public List<String> getInboundTranslation(String key, boolean useFallback) {
+    Map<PropertiesSource, String> potentialTranslations = getAllInboundTranslations().entrySet().stream()
         .filter(e -> e.getValue().containsKey(key))
         .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().get(key)));
 
@@ -75,31 +74,31 @@ public class PropertiesMigrationContext {
       potentialTranslations = tryImplicitTranslation(key, inboundTranslator);
       if (potentialTranslations.isEmpty()) {
         if (useFallback) {
-          return tryFallBackTranslation(key, (k, sourceType) -> tryFindTranslationInAllSources(inboundTranslator
+          potentialTranslations = tryFallBackTranslation(key, (k, sourceType) -> tryFindTranslationInAllSources(inboundTranslator
               .getTranslationsForApplicationsSourceTypes(), key, sourceType));
         } else {
-          return Maps.newHashMap();
+          potentialTranslations = Maps.newHashMap();
         }
       }
     }
 
-    return potentialTranslations;
+    return potentialTranslations.values().stream().sorted().distinct().collect(Collectors.toList());
   }
 
-  public Map<SourceType, String> getOutboundTranslation(String key, boolean useFallback) {
-    Map<SourceType, String> potentialTranslations = originatingSources.stream()
-        .filter(sourceType -> outboundContext.containsKey(sourceType) && outboundContext.get(sourceType).containsKey(key))
+  public List<String> getOutboundTranslation(String key, boolean useFallback) {
+    Map<PropertiesSource, String> potentialTranslations = originatingSources.stream()
+        .filter(source -> outboundContext.containsKey(source) && outboundContext.get(source).containsKey(key))
         .collect(Collectors.toMap(
                                   Function.identity(),
-                                  sourceType -> outboundContext.get(sourceType).get(key).getTranslation()));
+                                  source -> outboundContext.get(source).get(key).getTranslation()));
     if (potentialTranslations == null || potentialTranslations.isEmpty()) {
       if (useFallback) {
-        return tryFallBackTranslation(key, (k, sourceType) -> "vars." + OUTBOUND_PREFIX + k);
+        potentialTranslations = tryFallBackTranslation(key, (k, sourceType) -> "vars." + OUTBOUND_PREFIX + k);
       } else {
-        return Maps.newHashMap();
+        potentialTranslations = Maps.newHashMap();
       }
     }
-    return potentialTranslations;
+    return potentialTranslations.values().stream().sorted().distinct().collect(Collectors.toList());
   }
 
   // Context manipulation
@@ -111,8 +110,8 @@ public class PropertiesMigrationContext {
     return context;
   }
 
-  public void addToOutbound(SourceType sourceType, String key, PropertyMigrationContext context) {
-    this.outboundContext.computeIfAbsent(sourceType, s -> {
+  public void addToOutbound(PropertiesSource source, String key, PropertyMigrationContext context) {
+    this.outboundContext.computeIfAbsent(source, s -> {
       Map<String, PropertyMigrationContext> contextMap = Maps.newHashMap();
       contextMap.put(key, context);
       return contextMap;
@@ -123,55 +122,56 @@ public class PropertiesMigrationContext {
     this.originatingSources.forEach(s -> addToOutbound(s, key, context));
   }
 
-  public void removeFromOutbound(SourceType sourceType, String key) {
-    Optional.ofNullable(this.outboundContext.get(sourceType))
+  public void removeFromOutbound(PropertiesSource source, String key) {
+    Optional.ofNullable(this.outboundContext.get(source))
         .ifPresent(contextMap -> contextMap.remove(key));
   }
 
-  public void markAsRemoveNext(SourceType sourceType, String key) {
-    Optional.ofNullable(this.outboundContext.get(sourceType)).ifPresent(contextMap -> {
+  public void markAsRemoveNext(PropertiesSource source, String key) {
+    Optional.ofNullable(this.outboundContext.get(source)).ifPresent(contextMap -> {
       contextMap.get(key).setRemoveNext();
     });
   }
 
   public void cleanOutbound() {
-    this.originatingSources.stream().forEach(sourceType -> {
+    this.originatingSources.stream().forEach(source -> {
       List<String> keysToRemove = Lists.newArrayList();
-      Optional.ofNullable(this.outboundContext.get(sourceType))
+      Optional.ofNullable(this.outboundContext.get(source))
           .ifPresent(contextMap -> contextMap.entrySet()
               .forEach(contextEntry -> {
                 if (contextMap.get(contextEntry.getKey()).isRemoveNext()) {
                   keysToRemove.add(contextEntry.getKey());
                 }
               }));
-      keysToRemove.forEach(k -> removeFromOutbound(sourceType, k));
+      keysToRemove.forEach(k -> removeFromOutbound(source, k));
     });
   }
 
-  public Set<SourceType> getOriginatingSources() {
+  public Set<PropertiesSource> getOriginatingSources() {
     return originatingSources;
   }
 
-  public void addOriginatingSources(Set<SourceType> originatingSources) {
+  public void addOriginatingSources(Set<PropertiesSource> originatingSources) {
     this.originatingSources.addAll(originatingSources);
   }
 
-  public void addFromExisting(PropertiesMigrationContext propertiesMigrationContext, Set<SourceType> type, boolean optional) {
+  public void addFromExisting(PropertiesMigrationContext propertiesMigrationContext, Set<PropertiesSource> sources,
+                              boolean optional) {
     if (propertiesMigrationContext != null) {
-      this.addOriginatingSources(Sets.newHashSet(type));
-      this.getOriginatingSources().forEach(sourceType -> {
+      this.addOriginatingSources(Sets.newHashSet(sources));
+      this.getOriginatingSources().forEach(source -> {
         Map<String, PropertyMigrationContext> propertyMigrationContextToAdd =
-            propertiesMigrationContext.getOutboundContext(sourceType).entrySet().stream()
+            propertiesMigrationContext.getOutboundContext(source).entrySet().stream()
                 .collect(Collectors.toMap(
                                           entry -> entry.getKey(),
                                           entry -> new PropertyMigrationContext(entry.getValue().getRawTranslation(), optional,
                                                                                 entry.getValue().isRemoveNext())));
-        Map<String, PropertyMigrationContext> outboundContextForSource = this.outboundContext.get(sourceType);
+        Map<String, PropertyMigrationContext> outboundContextForSource = this.outboundContext.get(source);
         if (outboundContextForSource != null) {
           propertyMigrationContextToAdd.forEach(
                                                 (key, value) -> outboundContextForSource.merge(key, value, (v1, v2) -> v1));
         } else {
-          this.addToOutbound(sourceType, propertyMigrationContextToAdd);
+          this.addToOutbound(source, propertyMigrationContextToAdd);
         }
       });
     }
@@ -181,20 +181,20 @@ public class PropertiesMigrationContext {
     this.addFromExisting(propertiesMigrationContext, propertiesMigrationContext.getOriginatingSources(), optional);
   }
 
-  private Map<String, PropertyMigrationContext> getOutboundContext(SourceType sourceType) {
-    if (outboundContext.containsKey(sourceType)) {
-      return ImmutableMap.copyOf(outboundContext.get(sourceType));
+  private Map<String, PropertyMigrationContext> getOutboundContext(PropertiesSource source) {
+    if (outboundContext.containsKey(source)) {
+      return ImmutableMap.copyOf(outboundContext.get(source));
     } else {
       return ImmutableMap.of();
     }
   }
 
-  private Map<SourceType, Map<String, PropertyMigrationContext>> getOutboundContext() {
+  private Map<PropertiesSource, Map<String, PropertyMigrationContext>> getOutboundContext() {
     return ImmutableMap.copyOf(originatingSources.stream().filter(s -> outboundContext.containsKey(s))
         .collect(Collectors.toMap(Function.identity(), this::getOutboundContext)));
   }
 
-  private void addToOutbound(SourceType sourceType, Map<String, PropertyMigrationContext> contextMap) {
+  private void addToOutbound(PropertiesSource sourceType, Map<String, PropertyMigrationContext> contextMap) {
     this.outboundContext.put(sourceType, contextMap);
   }
 
@@ -206,9 +206,10 @@ public class PropertiesMigrationContext {
     return Maps.newHashMap();
   }
 
-  private Map<SourceType, String> tryImplicitTranslation(String key, PropertyTranslator translator) {
+  private Map<PropertiesSource, String> tryImplicitTranslation(String key, PropertyTranslator translator) {
     if (translator != null) {
-      return translator.translateImplicit(key, originatingSources);
+      return originatingSources.stream().filter(source -> source.getType().supportsImplicit())
+          .collect(Collectors.toMap(Function.identity(), s -> translator.translateImplicit(key, s.getType())));
     }
     return Maps.newHashMap();
   }
@@ -224,13 +225,13 @@ public class PropertiesMigrationContext {
     }
   }
 
-  private Map<SourceType, String> tryFallBackTranslation(String key,
-                                                         BiFunction<String, SourceType, String> fallbackTranslationFunction) {
+  private Map<PropertiesSource, String> tryFallBackTranslation(String key,
+                                                               BiFunction<String, SourceType, String> fallbackTranslationFunction) {
     return originatingSources.stream()
         .collect(Collectors.toMap(
                                   Function.identity(),
                                   source -> {
-                                    String propertyTranslation = fallbackTranslationFunction.apply(key, source);
+                                    String propertyTranslation = fallbackTranslationFunction.apply(key, source.getType());
                                     logger.info("Property '{}' not found in context, using fallback translation '{}' ", key,
                                                 propertyTranslation);
                                     return propertyTranslation;

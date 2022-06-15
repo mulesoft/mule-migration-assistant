@@ -22,7 +22,7 @@ import static java.util.Objects.requireNonNull;
 public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
 
   // e.g. use ".*" to include all tests; "http/.*" for http tests only
-  private static final String TEST_INCLUDE = "integration/graph_cycles";
+  private static final String TEST_INCLUDE = ".*";
 
   // e.g. use "" to avoid exclusions; "apikit/.*|domain1app1" OR excludes
   private static final String TEST_EXCLUDE = "";

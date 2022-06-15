@@ -49,13 +49,13 @@ public class PropertiesContextVisitor implements FlowComponentVisitor {
         FlowComponent singlePreviousComponent = Iterables.getOnlyElement(previousComponents);
         if (singlePreviousComponent instanceof PropertiesSource) {
           processor.getPropertiesMigrationContext()
-              .addOriginatingSources(Sets.newHashSet(((PropertiesSource) singlePreviousComponent).getType()));
+              .addOriginatingSources(Sets.newHashSet(((PropertiesSource) singlePreviousComponent)));
         } else {
-          Set<SourceType> sourceTypesToPropagate =
+          Set<PropertiesSource> sourceTypesToPropagate =
               singlePreviousComponent.getPropertiesMigrationContext().getOriginatingSources();
           if (singlePreviousComponent.getPropertiesMigrationContext().getOriginatingSources().size() > 1
               && processor.getParentFlow().equals(startingPropertiesSource.getParentFlow())) {
-            sourceTypesToPropagate = Sets.newHashSet(((PropertiesSource) startingPropertiesSource).getType());
+            sourceTypesToPropagate = Sets.newHashSet((startingPropertiesSource));
           }
           processor.getPropertiesMigrationContext().addFromExisting(singlePreviousComponent.getPropertiesMigrationContext(),
                                                                     sourceTypesToPropagate, false);
@@ -97,19 +97,13 @@ public class PropertiesContextVisitor implements FlowComponentVisitor {
     this.visitMessageProcessor(processor);
     PropertiesMigrationContext existingMigrationContext = processor.getPropertiesMigrationContext();
 
-    Map<SourceType, List<String>> keysToRemove = existingMigrationContext.getAllOutboundKeys().entrySet().stream().collect(
-                                                                                                                           Collectors
-                                                                                                                               .toMap(e -> e
-                                                                                                                                   .getKey(),
-                                                                                                                                      e -> e
-                                                                                                                                          .getValue()
-                                                                                                                                          .stream()
-                                                                                                                                          .filter(key -> key
-                                                                                                                                              .matches(processor
-                                                                                                                                                  .getExpression()
-                                                                                                                                                  .pattern()))
-                                                                                                                                          .collect(Collectors
-                                                                                                                                              .toList())));
+    Map<PropertiesSource, List<String>> keysToRemove = existingMigrationContext.getAllOutboundKeys().entrySet().stream()
+        .collect(Collectors.toMap(
+                                  e -> e.getKey(),
+                                  e -> e.getValue().stream()
+                                      .filter(key -> key.matches(processor.getExpression().pattern()))
+                                      .collect(Collectors.toList())));
+
     keysToRemove.entrySet().forEach(keyEntry -> keyEntry.getValue()
         .forEach(key -> processor.getPropertiesMigrationContext().markAsRemoveNext(keyEntry.getKey(), key)));
   }
@@ -118,14 +112,15 @@ public class PropertiesContextVisitor implements FlowComponentVisitor {
   public void visitCopyPropertiesProcessor(CopyPropertiesProcessor processor) {
     this.visitMessageProcessor(processor);
     PropertiesMigrationContext existingMigrationContext = processor.getPropertiesMigrationContext();
-    Map<SourceType, Map<String, String>> inboundContext = existingMigrationContext.getAllInboundTranslations();
+    Map<PropertiesSource, Map<String, String>> inboundContext = existingMigrationContext.getAllInboundTranslations();
 
     Pattern expression = processor.getExpression();
     inboundContext.entrySet().forEach(inbound -> {
       inbound.getValue().entrySet().stream()
           .filter(e -> expression.matcher(e.getKey()).matches())
           .forEach(e -> existingMigrationContext.addToOutbound(inbound.getKey(), e.getKey(),
-                                                               new PropertyMigrationContext(e.getValue())));
+                                                               new PropertyMigrationContext(processor
+                                                                   .getPropertyTranslation(e.getKey()))));
     });
   }
 

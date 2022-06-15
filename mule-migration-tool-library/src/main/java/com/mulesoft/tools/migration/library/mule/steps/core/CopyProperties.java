@@ -57,8 +57,7 @@ public class CopyProperties extends AbstractApplicationModelMigrationStep implem
       List<String> allInboundKeys = processor.getPropertiesMigrationContext().getAllInboundKeys().stream()
           .sorted().collect(Collectors.toList());
       for (String key : allInboundKeys) {
-        List<String> possibleTranslations = Lists.newArrayList(processor.getPropertiesMigrationContext()
-            .getInboundTranslation(key, true).values());
+        List<String> possibleTranslations = processor.getPropertiesMigrationContext().getInboundTranslation(key, true);
         if (!possibleTranslations.isEmpty()) {
           Element setVariable = new Element("set-variable", CORE_NAMESPACE)
               .setAttribute("variableName", String.format("%s%s", OUTBOUND_PREFIX, key))

@@ -16,17 +16,17 @@
     </sub-flow>
 
     <sub-flow name="flow2">
-        <set-variable variableName="outbound_http.statusCode" value="202" />
+        <set-variable variableName="outbound_http.status" value="202" />
         <flow-ref name="flow3" />
     </sub-flow>
 
     <flow name="httpFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/api">
-            <http:response statusCode="#[200]">
+            <http:response statusCode="#[vars.outbound_http.status]">
                 <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:response>
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:error-response>
+            <http:error-response statusCode="#[vars.outbound_http.status]">
                 <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
             </http:error-response>
         </http:listener>
@@ -47,7 +47,6 @@
         </http:listener>
 
         <flow-ref name="flow3" />
-
     </flow>
 
     <flow name="fileFlow">
