@@ -1,0 +1,119 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated":
+  [
+    "org.mule.connectors:mule-http-connector:VERSION",
+    "org.mule.connectors:mule-file-connector:VERSION"
+  ],
+  "numberOfMuleComponents": 16,
+  "numberOfMuleComponentsMigrated": 16,
+  "componentDetails":
+  {
+    "mule":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "logger":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "flow":
+    {
+      "success": 3,
+      "failure": 0
+    },
+    "flow-ref":
+    {
+      "success": 4,
+      "failure": 0
+    },
+    "http:listener-config":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener":
+    {
+      "success": 2,
+      "failure": 0
+    },
+    "file:config":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "file:listener":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "set-variable":
+    {
+      "success": 1,
+      "failure": 0
+    },
+    "copy-properties":
+    {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages":
+  [
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "http:listener",
+      "lineNumber": 24,
+      "columnNumber": 77,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "http:listener",
+      "lineNumber": 39,
+      "columnNumber": 78,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.copyproperties",
+      "component": "flow",
+      "lineNumber": 53,
+      "columnNumber": 27,
+      "message": "When migrating copy properties headers sent by the user or implicit properties are not converted to variables, if there is any specific reference to them as outbound properties they will be need to be migrated manually",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "file:listener",
+      "lineNumber": 54,
+      "columnNumber": 132,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks":
+      []
+    }
+  ]
+}

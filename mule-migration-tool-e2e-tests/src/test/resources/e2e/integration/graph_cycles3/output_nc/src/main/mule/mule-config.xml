@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener Configuration">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+
+    <file:config name="File">
+        <file:connection workingDir=".">
+            <reconnection failsDeployment="true" />
+        </file:connection>
+    </file:config>
+
+    <sub-flow name="flow3">
+        <logger />
+    </sub-flow>
+
+    <sub-flow name="flow2">
+        <set-variable variableName="outbound_http.statusCode" value="202" />
+        <flow-ref name="flow3" />
+        <!--Migration WARN: When migrating copy properties headers sent by the user or implicit properties are not converted to variables, if there is any specific reference to them as outbound properties they will be need to be migrated manually-->
+        <!--<copy-properties xmlns="http://www.mulesoft.org/schema/mule/core" propertyName="*" />-->
+        <set-variable variableName="outbound_LOCAL_CERTIFICATES" value="#[([message.attributes.clientCertificate])]" />
+        <set-variable variableName="outbound_MULE.FORCE_SYNC" value="#[false]" />
+        <set-variable variableName="outbound_PEER_CERTIFICATES" value="#[([message.attributes.clientCertificate])]" />
+        <set-variable variableName="outbound_directory" value="#[((message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))])]" />
+        <set-variable variableName="outbound_fileSize" value="#[message.attributes.size]" />
+        <set-variable variableName="outbound_filename" value="#[message.attributes.fileName]" />
+        <set-variable variableName="outbound_http.client.cert" value="#[message.attributes.clientCertificate]" />
+        <set-variable variableName="outbound_http.context.path" value="#[(if (endsWith(message.attributes.listenerPath, '/*')) message.attributes.listenerPath[0 to -3] default '/' else message.attributes.listenerPath)]" />
+        <set-variable variableName="outbound_http.headers" value="#[message.attributes.headers]" />
+        <set-variable variableName="outbound_http.listener.path" value="#[message.attributes.listenerPath]" />
+        <set-variable variableName="outbound_http.method" value="#[message.attributes.method]" />
+        <set-variable variableName="outbound_http.query.params" value="#[message.attributes.queryParams]" />
+        <set-variable variableName="outbound_http.query.string" value="#[message.attributes.queryString]" />
+        <set-variable variableName="outbound_http.relative.path" value="#[(message.attributes.requestPath[1 + sizeOf(if (endsWith(message.attributes.listenerPath, '/*')) message.attributes.listenerPath[0 to -3] default '/' else message.attributes.listenerPath) to -1])]" />
+        <set-variable variableName="outbound_http.remote.address" value="#[message.attributes.remoteAddress]" />
+        <set-variable variableName="outbound_http.request" value="#[message.attributes.requestPath]" />
+        <set-variable variableName="outbound_http.request.path" value="#[message.attributes.requestPath]" />
+        <set-variable variableName="outbound_http.request.uri" value="#[message.attributes.requestUri]" />
+        <set-variable variableName="outbound_http.scheme" value="#[message.attributes.scheme]" />
+        <set-variable variableName="outbound_http.uri.params" value="#[message.attributes.uriParams]" />
+        <set-variable variableName="outbound_http.version" value="#[message.attributes.version]" />
+        <set-variable variableName="outbound_originalDirectory" value="#[((message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))])]" />
+        <set-variable variableName="outbound_originalFilename" value="#[message.attributes.fileName]" />
+        <set-variable variableName="outbound_sourceDirectory" value="#[((message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))])]" />
+        <set-variable variableName="outbound_sourceFileName" value="#[message.attributes.fileName]" />
+        <set-variable variableName="outbound_timestamp" value="#[message.attributes.lastModifiedTime]" />
+    </sub-flow>
+
+    <flow name="httpFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api">
+            <http:response statusCode="#[200]">
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            </http:response>
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:error-response>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <flow-ref name="flow2" />
+
+    </flow>
+
+    <flow name="http2Flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api2">
+            <http:response statusCode="#[200]">
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            </http:response>
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:error-response>
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <flow-ref name="flow3" />
+
+        <!--Migration WARN: When migrating copy properties headers sent by the user or implicit properties are not converted to variables, if there is any specific reference to them as outbound properties they will be need to be migrated manually-->
+        <!--<copy-properties xmlns="http://www.mulesoft.org/schema/mule/core" propertyName="*" />-->
+        <set-variable variableName="outbound_LOCAL_CERTIFICATES" value="#[([message.attributes.clientCertificate])]" />
+        <set-variable variableName="outbound_PEER_CERTIFICATES" value="#[([message.attributes.clientCertificate])]" />
+        <set-variable variableName="outbound_http.client.cert" value="#[message.attributes.clientCertificate]" />
+        <set-variable variableName="outbound_http.context.path" value="#[(if (endsWith(message.attributes.listenerPath, '/*')) message.attributes.listenerPath[0 to -3] default '/' else message.attributes.listenerPath)]" />
+        <set-variable variableName="outbound_http.headers" value="#[message.attributes.headers]" />
+        <set-variable variableName="outbound_http.listener.path" value="#[message.attributes.listenerPath]" />
+        <set-variable variableName="outbound_http.method" value="#[message.attributes.method]" />
+        <set-variable variableName="outbound_http.query.params" value="#[message.attributes.queryParams]" />
+        <set-variable variableName="outbound_http.query.string" value="#[message.attributes.queryString]" />
+        <set-variable variableName="outbound_http.relative.path" value="#[(message.attributes.requestPath[1 + sizeOf(if (endsWith(message.attributes.listenerPath, '/*')) message.attributes.listenerPath[0 to -3] default '/' else message.attributes.listenerPath) to -1])]" />
+        <set-variable variableName="outbound_http.remote.address" value="#[message.attributes.remoteAddress]" />
+        <set-variable variableName="outbound_http.request" value="#[message.attributes.requestPath]" />
+        <set-variable variableName="outbound_http.request.path" value="#[message.attributes.requestPath]" />
+        <set-variable variableName="outbound_http.request.uri" value="#[message.attributes.requestUri]" />
+        <set-variable variableName="outbound_http.scheme" value="#[message.attributes.scheme]" />
+        <set-variable variableName="outbound_http.uri.params" value="#[message.attributes.uriParams]" />
+        <set-variable variableName="outbound_http.version" value="#[message.attributes.version]" />
+    </flow>
+
+    <flow name="fileFlow">
+        <file:listener directory="someDir" config-ref="File" autoDelete="true" recursive="false" applyPostActionWhenFailed="false">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000" />
+            </scheduling-strategy>
+        </file:listener>
+        <flow-ref name="flow2" />
+    </flow>
+</mule>

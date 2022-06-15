@@ -111,7 +111,7 @@ public class PropertiesContextVisitor implements FlowComponentVisitor {
                                                                                                                                           .collect(Collectors
                                                                                                                                               .toList())));
     keysToRemove.entrySet().forEach(keyEntry -> keyEntry.getValue()
-        .forEach(key -> processor.getPropertiesMigrationContext().removeFromOutbound(keyEntry.getKey(), key, true)));
+        .forEach(key -> processor.getPropertiesMigrationContext().markAsRemoveNext(keyEntry.getKey(), key)));
   }
 
   @Override

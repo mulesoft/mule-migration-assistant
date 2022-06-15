@@ -6,6 +6,7 @@
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.traverse.AbstractGraphIterator;
@@ -24,6 +25,7 @@ public class WeightedPathIterator extends AbstractGraphIterator<FlowComponent, D
   private Queue<FlowComponent> toVisit;
   private List<DefaultWeightedEdge> visitedEdges;
   FlowComponent start;
+  Set<String> visitedFlows;
 
   public WeightedPathIterator(Graph g, FlowComponent start) {
     super(g);
@@ -31,6 +33,7 @@ public class WeightedPathIterator extends AbstractGraphIterator<FlowComponent, D
     this.visitedEdges = Lists.newArrayList();
     this.toVisit = new LinkedList();
     this.toVisit.offer(start);
+    this.visitedFlows = Sets.newHashSet();
   }
 
   @Override
@@ -47,9 +50,16 @@ public class WeightedPathIterator extends AbstractGraphIterator<FlowComponent, D
     Map<String, List<DefaultWeightedEdge>> edgesByFlow =
         outgoingComponentsEdges.stream().collect(Collectors.groupingBy(e -> (graph.getEdgeTarget(e)).getParentFlow().getName()));
     List<DefaultWeightedEdge> consideredEdges = null;
-    if (edgesByFlow.size() > 1) {
-      consideredEdges = edgesByFlow.get(start.getParentFlow().getName());
+
+    // in case there are multiple outgoing edges we need to consider only those that are related to the path that we are iterating through
+    if (edgesByFlow.keySet().size() > 1) {
+      consideredEdges = edgesByFlow.entrySet().stream().filter(e -> visitedFlows.contains(e.getKey())).map(
+                                                                                                           Map.Entry::getValue)
+          .flatMap(Collection::stream).collect(Collectors.toList());
     } else {
+      if (edgesByFlow.keySet().size() > 0) {
+        visitedFlows.add(edgesByFlow.keySet().iterator().next());
+      }
       consideredEdges = edgesByFlow.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
     if (consideredEdges != null) {

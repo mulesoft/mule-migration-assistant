@@ -35,7 +35,9 @@
 
         <flow-ref name="flow2" doc:name="Flow Reference" />
 
-        <logger message="#['Outbound is ' ++ message.outboundProperties]" level="INFO" doc:name="Logger" />
+        <logger message="#['Outbound is ' ++ message.outboundProperties]" level="INFO" doc:name="Logger">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+        </logger>
 
         <flow-ref name="flow2" doc:name="Flow Reference" />
 

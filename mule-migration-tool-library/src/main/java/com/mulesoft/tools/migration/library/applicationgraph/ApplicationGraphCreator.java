@@ -77,6 +77,12 @@ public class ApplicationGraphCreator {
       applicationGraph.removeEdgeIfExists(flowRefComponent, originalFlowContinuation);
       if (originalFlowContinuation != null) {
         applicationGraph.addEdge(endComponentOfReferencedFlow, originalFlowContinuation);
+      } else {
+        SyntheticMessageProcessor syntethicOriginalFlowContinuation =
+            new SyntheticMessageProcessor("endFlow" + flowRefComponent.getParentFlow().getName(), "",
+                                          flowRefComponent.getParentFlow(), applicationGraph);
+        applicationGraph.addFlowComponent(syntethicOriginalFlowContinuation);
+        applicationGraph.addEdge(endComponentOfReferencedFlow, syntethicOriginalFlowContinuation);
       }
     });
 

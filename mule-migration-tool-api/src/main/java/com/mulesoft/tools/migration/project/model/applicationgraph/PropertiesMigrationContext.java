@@ -123,21 +123,28 @@ public class PropertiesMigrationContext {
     this.originatingSources.forEach(s -> addToOutbound(s, key, context));
   }
 
-  public void removeFromOutbound(SourceType sourceType, String key, boolean removeNext) {
+  public void removeFromOutbound(SourceType sourceType, String key) {
+    Optional.ofNullable(this.outboundContext.get(sourceType))
+        .ifPresent(contextMap -> contextMap.remove(key));
+  }
+
+  public void markAsRemoveNext(SourceType sourceType, String key) {
     Optional.ofNullable(this.outboundContext.get(sourceType)).ifPresent(contextMap -> {
-      if (removeNext) {
-        contextMap.get(key).setRemoveNext();
-      } else if (contextMap.get(key).isRemoveNext()) {
-        contextMap.remove(key);
-      }
+      contextMap.get(key).setRemoveNext();
     });
   }
 
   public void cleanOutbound() {
     this.originatingSources.stream().forEach(sourceType -> {
+      List<String> keysToRemove = Lists.newArrayList();
       Optional.ofNullable(this.outboundContext.get(sourceType))
           .ifPresent(contextMap -> contextMap.entrySet()
-              .forEach(contextEntry -> removeFromOutbound(sourceType, contextEntry.getKey(), false)));
+              .forEach(contextEntry -> {
+                if (contextMap.get(contextEntry.getKey()).isRemoveNext()) {
+                  keysToRemove.add(contextEntry.getKey());
+                }
+              }));
+      keysToRemove.forEach(k -> removeFromOutbound(sourceType, k));
     });
   }
 
@@ -158,7 +165,7 @@ public class PropertiesMigrationContext {
                 .collect(Collectors.toMap(
                                           entry -> entry.getKey(),
                                           entry -> new PropertyMigrationContext(entry.getValue().getRawTranslation(), optional,
-                                                                                false)));
+                                                                                entry.getValue().isRemoveNext())));
         Map<String, PropertyMigrationContext> outboundContextForSource = this.outboundContext.get(sourceType);
         if (outboundContextForSource != null) {
           propertyMigrationContextToAdd.forEach(

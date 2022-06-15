@@ -116,7 +116,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
     PropertiesSourceComponent propertiesSourceComponent =
         (PropertiesSourceComponent) graph.findFlowComponent(element.getParentElement());
     Map<SourceType, String> potentialTranslations = propertiesSourceComponent
-        .getResponseComponent().getPropertiesMigrationContext().getOutboundTranslation("http.statusCode", false);
+        .getResponseComponent().getPropertiesMigrationContext().getOutboundTranslation("http.status", false);
     String statusCodeTranslation = defaultVal;
     if (!potentialTranslations.isEmpty()) {
       if (potentialTranslations.size() > 1) {

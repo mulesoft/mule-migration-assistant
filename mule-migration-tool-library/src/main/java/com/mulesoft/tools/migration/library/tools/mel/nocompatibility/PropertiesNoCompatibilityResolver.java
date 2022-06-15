@@ -16,7 +16,6 @@ import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
 
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,13 +28,15 @@ import java.util.regex.Pattern;
 public abstract class PropertiesNoCompatibilityResolver
     implements com.mulesoft.tools.migration.util.CompatibilityResolver<NoCompatibilityResolverResult> {
 
+  private Pattern mapPattern;
   private Pattern generalPattern;
   private List<Pattern> singleExpressionPatterns;
   private Pattern patternWithExpression;
   private Pattern patternWithOnlyExpression;
 
-  public PropertiesNoCompatibilityResolver(Pattern generalPattern, List<Pattern> singleExpressionPatterns,
+  public PropertiesNoCompatibilityResolver(Pattern mapPattern, Pattern generalPattern, List<Pattern> singleExpressionPatterns,
                                            Pattern patternWithExpression, Pattern patternWithOnlyExpression) {
+    this.mapPattern = mapPattern;
     this.generalPattern = generalPattern;
     this.singleExpressionPatterns = singleExpressionPatterns;
     this.patternWithExpression = patternWithExpression;
@@ -44,7 +45,8 @@ public abstract class PropertiesNoCompatibilityResolver
 
   @Override
   public boolean canResolve(String original) {
-    return original != null && generalPattern.matcher(original).find();
+    return original != null && (generalPattern.matcher(original).find()
+        || mapPattern.matcher(original).matches());
   }
 
   @Override
@@ -54,6 +56,11 @@ public abstract class PropertiesNoCompatibilityResolver
     boolean success = true;
     if (model.noCompatibilityMode()) {
       try {
+        // in case we match part of the expression as referencing the full map of properties we log a message that the expression needs to be changed
+        if (mapPattern.matcher(original).matches()) {
+          report.report("nocompatibility.mapPattern", element, element, element.getName());
+          success = false;
+        }
         translatedExpression = translatePropertyReferences(original, element, report, model.getApplicationGraph());
       } catch (MigrationException e) {
         success = false;
@@ -72,6 +79,7 @@ public abstract class PropertiesNoCompatibilityResolver
       throws Exception {
     String elementName = element.getName();
     FlowComponent flowComponent = applicationGraph.findFlowComponent(element);
+
     Matcher matcher = generalPattern.matcher(expression);
     if (flowComponent != null) {
       try {

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener Configuration">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+
+    <http:request-config name="requesterConfig">
+        <http:request-connection protocol="HTTPS" host="httpbin.org" port="443" />
+    </http:request-config>
+
+    <flow name="mainFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api" doc:name="HTTP">
+            <http:response statusCode="#[message.attributes.statusCode]">
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            </http:response>
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:error-response statusCode="#[message.attributes.statusCode]">
+                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <http:request config-ref="requesterConfig" path="/get" method="GET">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+        </http:request>
+
+        <!--Migration WARN: When migrating copy properties headers sent by the user or implicit properties are not converted to variables, if there is any specific reference to them as outbound properties they will be need to be migrated manually-->
+        <!--<copy-properties xmlns="http://www.mulesoft.org/schema/mule/core" propertyName="*" />-->
+        <set-variable variableName="outbound_http.headers" value="#[message.attributes.headers]" />
+        <set-variable variableName="outbound_http.reason" value="#[message.attributes.reasonPhrase]" />
+        <set-variable variableName="outbound_http.status" value="#[message.attributes.statusCode]" />
+    </flow>
+</mule>

@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
  */
 public class OutboundPropertiesNoCompatibilityResolver extends PropertiesNoCompatibilityResolver {
 
+  private static final Pattern OUTBOUND_MAP_PATTERN =
+      Pattern.compile(".*message\\.outboundProperties(?!(?:\\[|\\.))+.*$");
   private static final Pattern GENERAL_OUTBOUND_PATTERN =
       Pattern.compile("(message\\.outboundProperties(?:\\.'?[\\.a-zA-Z0-9]*'?|\\['?.*'+?\\]))");
   private static final Pattern OUTBOUND_PATTERN_WITH_BRACKETS =
@@ -35,7 +37,7 @@ public class OutboundPropertiesNoCompatibilityResolver extends PropertiesNoCompa
       Pattern.compile("message\\.outboundProperties\\[[^'].*\\]");
 
   public OutboundPropertiesNoCompatibilityResolver() {
-    super(GENERAL_OUTBOUND_PATTERN,
+    super(OUTBOUND_MAP_PATTERN, GENERAL_OUTBOUND_PATTERN,
           ImmutableList.of(OUTBOUND_PATTERN_WITH_BRACKETS, OUTBOUND_PATTERN_WITH_DOT, OUTBOUND_PATTERN_WITH_HEADER),
           OUTBOUND_PATTERN_WITH_EXPRESSION,
           OUTBOUND_PATTERN_ONLY_EXPRESSION);

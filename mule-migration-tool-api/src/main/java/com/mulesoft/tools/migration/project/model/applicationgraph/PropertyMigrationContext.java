@@ -37,8 +37,8 @@ public class PropertyMigrationContext {
     return removeNext;
   }
 
-  public PropertyMigrationContext setRemoveNext() {
-    return new PropertyMigrationContext(this.translation, this.optional, true);
+  public void setRemoveNext() {
+    this.removeNext = true;
   }
 
   String getRawTranslation() {
