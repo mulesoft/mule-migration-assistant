@@ -11,14 +11,11 @@ import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.applicationgraph.FlowComponent;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,13 +28,15 @@ import java.util.regex.Pattern;
 public abstract class PropertiesNoCompatibilityResolver
     implements com.mulesoft.tools.migration.util.CompatibilityResolver<NoCompatibilityResolverResult> {
 
+  private Pattern mapPattern;
   private Pattern generalPattern;
   private List<Pattern> singleExpressionPatterns;
   private Pattern patternWithExpression;
   private Pattern patternWithOnlyExpression;
 
-  public PropertiesNoCompatibilityResolver(Pattern generalPattern, List<Pattern> singleExpressionPatterns,
+  public PropertiesNoCompatibilityResolver(Pattern mapPattern, Pattern generalPattern, List<Pattern> singleExpressionPatterns,
                                            Pattern patternWithExpression, Pattern patternWithOnlyExpression) {
+    this.mapPattern = mapPattern;
     this.generalPattern = generalPattern;
     this.singleExpressionPatterns = singleExpressionPatterns;
     this.patternWithExpression = patternWithExpression;
@@ -46,7 +45,8 @@ public abstract class PropertiesNoCompatibilityResolver
 
   @Override
   public boolean canResolve(String original) {
-    return original != null && generalPattern.matcher(original).find();
+    return original != null && (generalPattern.matcher(original).find()
+        || mapPattern.matcher(original).matches());
   }
 
   @Override
@@ -56,6 +56,11 @@ public abstract class PropertiesNoCompatibilityResolver
     boolean success = true;
     if (model.noCompatibilityMode()) {
       try {
+        // in case we match part of the expression as referencing the full map of properties we log a message that the expression needs to be changed
+        if (mapPattern.matcher(original).matches()) {
+          report.report("nocompatibility.mapPattern", element, element, element.getName());
+          success = false;
+        }
         translatedExpression = translatePropertyReferences(original, element, report, model.getApplicationGraph());
       } catch (MigrationException e) {
         success = false;
@@ -69,14 +74,12 @@ public abstract class PropertiesNoCompatibilityResolver
     return new NoCompatibilityResolverResult(translatedExpression, success);
   }
 
-  public abstract Map<String, PropertyMigrationContext> getPropertiesContextMap(PropertiesMigrationContext propertiesMigrationContext);
-
   private String translatePropertyReferences(String expression, Element element,
                                              MigrationReport report, ApplicationGraph applicationGraph)
       throws Exception {
-    Element parentElement = element.getParentElement();
     String elementName = element.getName();
     FlowComponent flowComponent = applicationGraph.findFlowComponent(element);
+
     Matcher matcher = generalPattern.matcher(expression);
     if (flowComponent != null) {
       try {
@@ -127,13 +130,19 @@ public abstract class PropertiesNoCompatibilityResolver
         }
 
         String propertyToTranslate = specificPropMatcher.group(1);
-        String propertyTranslation;
+        String propertyTranslation = null;
         try {
-          propertyTranslation =
-              Optional
-                  .ofNullable(getPropertyTranslation(flowComponent.getPropertiesMigrationContext(), propertyToTranslate,
-                                                     translator))
-                  .orElse(null);
+          List<String> possibleTranslations =
+              getPropertyTranslations(flowComponent.getPropertiesMigrationContext(), propertyToTranslate,
+                                      translator);
+          if (possibleTranslations != null && possibleTranslations.size() > 0) {
+            propertyTranslation = possibleTranslations.get(0);
+          }
+
+          if (possibleTranslations.size() > 1) {
+            report.report("nocompatibility.collidingProperties", element, element, propertyToTranslate);
+          }
+
           if (propertyTranslation == null) {
             report.report("nocompatibility.unsupportedproperty", element, element, element.getName());
             failedCompleteTranslation = true;
@@ -162,6 +171,6 @@ public abstract class PropertiesNoCompatibilityResolver
 
   protected abstract PropertyTranslator getTranslator(ApplicationGraph graph);
 
-  protected abstract String getPropertyTranslation(PropertiesMigrationContext context, String propertyToTranslate,
-                                                   PropertyTranslator translator);
+  protected abstract List<String> getPropertyTranslations(PropertiesMigrationContext context, String propertyToTranslate,
+                                                          PropertyTranslator translator);
 }

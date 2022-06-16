@@ -58,7 +58,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     this.report = report;
     this.model = model;
     if (model.noCompatibilityMode()) {
-      this.noCompatibilityResolver = new MelNoCompatibilityResolver(model);
+      this.noCompatibilityResolver = new MelNoCompatibilityResolver();
     } else {
       this.compatibilityResolver = new MelCompatibilityResolver();
     }
