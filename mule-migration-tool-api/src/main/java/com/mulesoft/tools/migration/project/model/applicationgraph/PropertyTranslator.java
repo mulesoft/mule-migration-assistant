@@ -6,10 +6,11 @@
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Interface for translating properties given a source type
@@ -21,9 +22,11 @@ public interface PropertyTranslator {
 
   void initializeTranslationsForApplicationSourceTypes(ApplicationModel applicationModel);
 
-  Map<String, String> getTranslationsForApplicationsSourceTypes();
+  Map<SourceType, Map<String, String>> getTranslationsForApplicationsSourceTypes();
 
   Optional<Map<String, String>> getAllTranslationsFor(SourceType sourceType) throws Exception;
 
-  String translateImplicit(String propertyToTranslate, SourceType originatingSourceType);
+  String translateImplicit(String propertyToTranslate, SourceType sourceType);
+
+  Map<SourceType, String> translateImplicit(String propertyToTranslate, Set<SourceType> originatingSourceTypes);
 }

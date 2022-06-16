@@ -30,26 +30,27 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
 public class PropertiesSourceType implements SourceType {
 
   public static final PropertiesSourceType HTTP_LISTENER =
-      new PropertiesSourceType(HTTP_NAMESPACE_URI, "listener", true, "headers");
+      new PropertiesSourceType(HTTP_NAMESPACE_URI, "listener", true, "headers", true);
   public static final PropertiesSourceType HTTP_TRANSPORT =
-      new PropertiesSourceType(HTTP_NAMESPACE_URI, "inbound-endpoint", true, "headers");
-  public static final PropertiesSourceType HTTP_CONNECTOR_REQUESTER = new PropertiesSourceType(HTTP_NAMESPACE_URI, "request");
+      new PropertiesSourceType(HTTP_NAMESPACE_URI, "inbound-endpoint", true, "headers", true);
+  public static final PropertiesSourceType HTTP_CONNECTOR_REQUESTER =
+      new PropertiesSourceType(HTTP_NAMESPACE_URI, "request", true, "headers", false);
   public static final PropertiesSourceType HTTP_TRANSPORT_OUTBOUND =
-      new PropertiesSourceType(HTTP_NAMESPACE_URI, "outbound-endpoint");
+      new PropertiesSourceType(HTTP_NAMESPACE_URI, "outbound-endpoint", false);
   public static final PropertiesSourceType HTTP_POLLING_CONNECTOR =
-      new PropertiesSourceType(HTTP_NAMESPACE_URI, "polling-connector");
-  public static final PropertiesSourceType FILE_INBOUND = new PropertiesSourceType(FILE_NAMESPACE_URI, "inbound-endpoint");
-  public static final PropertiesSourceType IMAP_INBOUND = new PropertiesSourceType(IMAP_NAMESPACE_URI, "inbound-endpoint");
-  public static final PropertiesSourceType POP3_INBOUND = new PropertiesSourceType(POP3_NAMESPACE_URI, "inbound-endpoint");
-  public static final PropertiesSourceType FTP_INBOUND = new PropertiesSourceType(FTP_NAMESPACE_URI, "inbound-endpoint");
-  public static final PropertiesSourceType JMS_INBOUND = new PropertiesSourceType(JMS_NAMESPACE_URI, "inbound-endpoint");
-  public static final PropertiesSourceType JMS_OUTBOUND = new PropertiesSourceType(JMS_NAMESPACE_URI, "outbound-endpoint");
+      new PropertiesSourceType(HTTP_NAMESPACE_URI, "polling-connector", true);
+  public static final PropertiesSourceType FILE_INBOUND = new PropertiesSourceType(FILE_NAMESPACE_URI, "inbound-endpoint", true);
+  public static final PropertiesSourceType IMAP_INBOUND = new PropertiesSourceType(IMAP_NAMESPACE_URI, "inbound-endpoint", true);
+  public static final PropertiesSourceType POP3_INBOUND = new PropertiesSourceType(POP3_NAMESPACE_URI, "inbound-endpoint", true);
+  public static final PropertiesSourceType FTP_INBOUND = new PropertiesSourceType(FTP_NAMESPACE_URI, "inbound-endpoint", true);
+  public static final PropertiesSourceType JMS_INBOUND = new PropertiesSourceType(JMS_NAMESPACE_URI, "inbound-endpoint", true);
+  public static final PropertiesSourceType JMS_OUTBOUND = new PropertiesSourceType(JMS_NAMESPACE_URI, "outbound-endpoint", false);
   public static final PropertiesSourceType REQUEST_REPLY =
-      new PropertiesSourceType(CORE_NS_URI, "request-reply");
+      new PropertiesSourceType(CORE_NS_URI, "request-reply", false);
   public static final PropertiesSourceType QUARTZ_INBOUND =
-      new PropertiesSourceType(QUARTZ_NS_URI, "inbound-endpoint");
-  public static final PropertiesSourceType SFTP_INBOUND = new PropertiesSourceType(SFTP_NS_URI, "inbound-endpoint");
-  public static final PropertiesSourceType WS_CONSUMER = new PropertiesSourceType(WS_NAMESPACE_URI, "consumer");
+      new PropertiesSourceType(QUARTZ_NS_URI, "inbound-endpoint", true);
+  public static final PropertiesSourceType SFTP_INBOUND = new PropertiesSourceType(SFTP_NS_URI, "inbound-endpoint", true);
+  public static final PropertiesSourceType WS_CONSUMER = new PropertiesSourceType(WS_NAMESPACE_URI, "consumer", false);
 
   public static Set<PropertiesSourceType> registeredSourceTypes = new ImmutableSet.Builder<PropertiesSourceType>()
       .add(HTTP_LISTENER)
@@ -78,6 +79,7 @@ public class PropertiesSourceType implements SourceType {
   private String type;
   private boolean supportsImplicit;
   private String implicitPrefix = null;
+  private boolean isFlowSource;
 
   public PropertiesSourceType(String namespaceUri, String type) {
     this.namespaceUri = namespaceUri;
@@ -85,11 +87,20 @@ public class PropertiesSourceType implements SourceType {
     this.supportsImplicit = false;
   }
 
-  private PropertiesSourceType(String namespaceUri, String type, boolean supportsImplicit, String implicitPrefix) {
+  public PropertiesSourceType(String namespaceUri, String type, boolean isFlowSource) {
+    this.namespaceUri = namespaceUri;
+    this.type = type;
+    this.supportsImplicit = false;
+    this.isFlowSource = isFlowSource;
+  }
+
+  private PropertiesSourceType(String namespaceUri, String type, boolean supportsImplicit, String implicitPrefix,
+                               boolean isFlowSource) {
     this.namespaceUri = namespaceUri;
     this.type = type;
     this.supportsImplicit = supportsImplicit;
     this.implicitPrefix = implicitPrefix;
+    this.isFlowSource = isFlowSource;
   }
 
   public String getNamespaceUri() {
@@ -106,6 +117,11 @@ public class PropertiesSourceType implements SourceType {
 
   public String getImplicitPrefix() {
     return implicitPrefix;
+  }
+
+  @Override
+  public boolean isFlowSource() {
+    return isFlowSource;
   }
 
   @Override

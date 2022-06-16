@@ -6,12 +6,12 @@
 package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
 
-import java.util.Map;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
  */
 public class OutboundPropertiesNoCompatibilityResolver extends PropertiesNoCompatibilityResolver {
 
+  private static final Pattern OUTBOUND_MAP_PATTERN =
+      Pattern.compile(".*message\\.outboundProperties(?!(?:\\[|\\.))+.*$");
   private static final Pattern GENERAL_OUTBOUND_PATTERN =
       Pattern.compile("(message\\.outboundProperties(?:\\.'?[\\.a-zA-Z0-9]*'?|\\['?.*'+?\\]))");
   private static final Pattern OUTBOUND_PATTERN_WITH_BRACKETS =
@@ -35,16 +37,10 @@ public class OutboundPropertiesNoCompatibilityResolver extends PropertiesNoCompa
       Pattern.compile("message\\.outboundProperties\\[[^'].*\\]");
 
   public OutboundPropertiesNoCompatibilityResolver() {
-    super(GENERAL_OUTBOUND_PATTERN,
+    super(OUTBOUND_MAP_PATTERN, GENERAL_OUTBOUND_PATTERN,
           ImmutableList.of(OUTBOUND_PATTERN_WITH_BRACKETS, OUTBOUND_PATTERN_WITH_DOT, OUTBOUND_PATTERN_WITH_HEADER),
           OUTBOUND_PATTERN_WITH_EXPRESSION,
           OUTBOUND_PATTERN_ONLY_EXPRESSION);
-  }
-
-  @Override
-  public Map<String, PropertyMigrationContext> getPropertiesContextMap(
-                                                                       PropertiesMigrationContext propertiesMigrationContext) {
-    return propertiesMigrationContext.getOutboundContext();
   }
 
   @Override
@@ -53,8 +49,8 @@ public class OutboundPropertiesNoCompatibilityResolver extends PropertiesNoCompa
   }
 
   @Override
-  protected String getPropertyTranslation(PropertiesMigrationContext context, String propertyToTranslate,
-                                          PropertyTranslator translator) {
+  protected List<String> getPropertyTranslations(PropertiesMigrationContext context, String propertyToTranslate,
+                                                 PropertyTranslator translator) {
     return context.getOutboundTranslation(propertyToTranslate, true);
   }
 

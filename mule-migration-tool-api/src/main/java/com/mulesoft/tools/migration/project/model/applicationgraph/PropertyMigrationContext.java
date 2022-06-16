@@ -37,15 +37,19 @@ public class PropertyMigrationContext {
     return removeNext;
   }
 
-  public PropertyMigrationContext setRemoveNext() {
-    return new PropertyMigrationContext(this.translation, this.optional, true);
+  public void setRemoveNext() {
+    this.removeNext = true;
+  }
+
+  String getRawTranslation() {
+    return translation;
   }
 
   String getTranslation() {
     if (!optional) {
       return translation;
     } else {
-      return String.format("if ((%s) != null) %s", translation, translation);
+      return String.format("if ((%s) != null) %s)", translation, translation);
     }
   }
 }

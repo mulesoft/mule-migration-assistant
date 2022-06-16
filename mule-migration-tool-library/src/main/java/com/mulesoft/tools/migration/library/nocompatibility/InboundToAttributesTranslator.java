@@ -38,13 +38,11 @@ import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
 
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jdom2.Element;
@@ -81,7 +79,7 @@ public class InboundToAttributesTranslator implements PropertyTranslator {
         .build();
   }
 
-  private Map<String, String> applicationTranslations;
+  private Map<SourceType, Map<String, String>> applicationTranslations;
 
   public static List<SourceType> getSupportedConnectors() {
     return Lists.newArrayList(translatorClasses.keySet());
@@ -90,12 +88,12 @@ public class InboundToAttributesTranslator implements PropertyTranslator {
   @Override
   public void initializeTranslationsForApplicationSourceTypes(ApplicationModel applicationModel) {
     if (applicationTranslations == null) {
-      Map<String, String> result = new HashMap<>();
+      Map<SourceType, Map<String, String>> result = new HashMap<>();
       List<Element> sourceNodes = applicationModel.getNodes("//" + MESSAGE_SOURCE_FILTER_EXPRESSION);
       try {
         for (SourceType sourceType : translatorClasses.keySet()) {
           if (sourceNodes.stream().anyMatch(e -> sourceType.equals(new PropertiesSourceType(e.getNamespaceURI(), e.getName())))) {
-            result.putAll(getAllTranslationsFor(sourceType).orElseThrow(NoSuchElementException::new));
+            result.put(sourceType, getAllTranslationsFor(sourceType).orElseThrow(NoSuchElementException::new));
           }
         }
       } catch (Exception e) {
@@ -106,7 +104,7 @@ public class InboundToAttributesTranslator implements PropertyTranslator {
   }
 
   @Override
-  public Map<String, String> getTranslationsForApplicationsSourceTypes() {
+  public Map<SourceType, Map<String, String>> getTranslationsForApplicationsSourceTypes() {
     return applicationTranslations;
   }
 
@@ -115,6 +113,13 @@ public class InboundToAttributesTranslator implements PropertyTranslator {
     return Optional.ofNullable(getTranslationMap(sourceType))
         .map(map -> map.entrySet().stream()
             .collect(Collectors.toMap(entry -> entry.getKey(), entry -> wrapWhenExpression(entry.getValue()))));
+  }
+
+  @Override
+  public Map<SourceType, String> translateImplicit(String propertyToTranslate, Set<SourceType> originatingSourceTypes) {
+    return originatingSourceTypes.stream()
+        .filter(s -> translateImplicit(propertyToTranslate, s) != null)
+        .collect(Collectors.toMap(Function.identity(), s -> translateImplicit(propertyToTranslate, s)));
   }
 
   @Override
@@ -130,6 +135,7 @@ public class InboundToAttributesTranslator implements PropertyTranslator {
 
     return translation;
   }
+
 
   public Map<String, String> getTranslationMap(SourceType originatingSourceType) throws Exception {
     Class<?> translatorClazz = translatorClasses.get(originatingSourceType);

@@ -20,4 +20,6 @@ public interface SourceType {
   public boolean supportsImplicit();
 
   public String getImplicitPrefix();
+
+  public boolean isFlowSource();
 }
