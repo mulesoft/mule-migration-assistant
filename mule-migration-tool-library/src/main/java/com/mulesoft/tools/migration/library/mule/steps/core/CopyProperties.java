@@ -10,6 +10,7 @@ import static com.mulesoft.tools.migration.project.model.applicationgraph.SetPro
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
 
+import com.google.common.collect.Lists;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.applicationgraph.CopyPropertiesProcessor;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
@@ -20,10 +21,7 @@ import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 import org.jdom2.Element;
 
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -54,19 +52,21 @@ public class CopyProperties extends AbstractApplicationModelMigrationStep implem
       CopyPropertiesProcessor processor =
           (CopyPropertiesProcessor) getApplicationModel().getApplicationGraph().findFlowComponent(element);
 
-      Set<Map.Entry<String, PropertyMigrationContext>> inboundContext =
-          processor.getPropertiesMigrationContext().getInboundContext()
-              .entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey)).collect(
-                                                                                           Collectors
-                                                                                               .toCollection(LinkedHashSet::new));
       report.report("nocompatibility.copyproperties", element, element.getParentElement());
       int copyPropertiesIndex = element.getParentElement().indexOf(element);
-      for (Map.Entry<String, PropertyMigrationContext> inbound : inboundContext) {
-        Element setVariable = new Element("set-variable", CORE_NAMESPACE)
-            .setAttribute("variableName", String.format("%s%s", OUTBOUND_PREFIX, inbound.getKey()))
-            .setAttribute("value", expressionMigrator.wrap(processor.getPropertiesMigrationContext()
-                .getInboundTranslation(inbound.getKey(), graph.getInboundTranslator(), true)));
-        element.getParentElement().addContent(copyPropertiesIndex++, setVariable);
+      List<String> allInboundKeys = processor.getPropertiesMigrationContext().getAllInboundKeys().stream()
+          .sorted().collect(Collectors.toList());
+      for (String key : allInboundKeys) {
+        List<String> possibleTranslations = processor.getPropertiesMigrationContext().getInboundTranslation(key, true);
+        if (!possibleTranslations.isEmpty()) {
+          Element setVariable = new Element("set-variable", CORE_NAMESPACE)
+              .setAttribute("variableName", String.format("%s%s", OUTBOUND_PREFIX, key))
+              .setAttribute("value", expressionMigrator.wrap(possibleTranslations.get(0)));
+          element.getParentElement().addContent(copyPropertiesIndex++, setVariable);
+          if (possibleTranslations.size() > 1) {
+            report.report("nocompatibility.collidingProperties", setVariable, setVariable, setVariable.getName());
+          }
+        }
       }
       element.detach();
     } else {

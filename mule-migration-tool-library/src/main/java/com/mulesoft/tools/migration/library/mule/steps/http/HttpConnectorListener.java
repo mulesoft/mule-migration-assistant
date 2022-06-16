@@ -13,9 +13,7 @@ import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesSourceComponent;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
+import com.mulesoft.tools.migration.project.model.applicationgraph.*;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
@@ -102,7 +100,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
                                             String defaultVal, String statusCodeDwScript, ExpressionMigrator migrator) {
     if (element != null && element.getAttribute("statusCode") == null) {
       if (graph != null) {
-        addStatusCodeAttributeNoCompatibility(element, graph, defaultVal, migrator);
+        addStatusCodeAttributeNoCompatibility(element, graph, defaultVal, migrator, report);
       } else {
         element.setAttribute("statusCode", statusCodeDwScript);
         report.report("http.statusCode", element, element);
@@ -111,12 +109,18 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
   }
 
   public static void addStatusCodeAttributeNoCompatibility(Element element, ApplicationGraph graph, String defaultVal,
-                                                           ExpressionMigrator migrator) {
+                                                           ExpressionMigrator migrator, MigrationReport report) {
     PropertiesSourceComponent propertiesSourceComponent =
         (PropertiesSourceComponent) graph.findFlowComponent(element.getParentElement());
-    String statusCodeTranslation = Optional.ofNullable(propertiesSourceComponent
-        .getResponseComponent().getPropertiesMigrationContext().getOutboundTranslation("http.statusCode", false))
-        .orElse(defaultVal);
+    List<String> potentialTranslations = propertiesSourceComponent
+        .getResponseComponent().getPropertiesMigrationContext().getOutboundTranslation("http.status", false);
+    String statusCodeTranslation = defaultVal;
+    if (!potentialTranslations.isEmpty()) {
+      if (potentialTranslations.size() > 1) {
+        report.report("nocompatibility.collidingProperties", element, element, element.getName());
+      }
+      statusCodeTranslation = potentialTranslations.get(0);
+    }
     if (!StringUtils.isBlank(statusCodeTranslation)) {
       element.setAttribute("statusCode", migrator.wrap(statusCodeTranslation));
     }

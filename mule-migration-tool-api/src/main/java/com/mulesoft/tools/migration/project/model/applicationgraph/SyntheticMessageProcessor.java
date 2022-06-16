@@ -18,10 +18,16 @@ public class SyntheticMessageProcessor extends MessageProcessor {
 
   private static final String NON_MATCHING_ID = "NON_MATCHING";
 
-  public SyntheticMessageProcessor(Element parentElementName, String elementSuffix, Flow parentFLow, ApplicationGraph graph) {
+  public SyntheticMessageProcessor(Element parentElement, String elementSuffix, Flow parentFLow, ApplicationGraph graph) {
     super(parentFLow);
     this.name =
-        super.getComponentName(parentElementName + elementSuffix, parentElementName.getNamespacePrefix(), parentFLow, graph);
+        super.getComponentName(parentElement.getName() + elementSuffix, parentElement.getNamespacePrefix(), parentFLow, graph);
+  }
+
+  public SyntheticMessageProcessor(String parentElementName, String elementSuffix, Flow parentFLow, ApplicationGraph graph) {
+    super(parentFLow);
+    this.name =
+        super.getComponentName(parentElementName + elementSuffix, "", parentFLow, graph);
   }
 
   @Override

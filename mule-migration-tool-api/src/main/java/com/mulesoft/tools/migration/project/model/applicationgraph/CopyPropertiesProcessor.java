@@ -15,6 +15,8 @@ import org.jdom2.Element;
  */
 public class CopyPropertiesProcessor extends AbstractPropertyProcessor {
 
+  public static String OUTBOUND_PREFIX = "outbound_";
+
   public CopyPropertiesProcessor(Element xmlElement, Flow parentFLow,
                                  ApplicationGraph graph) {
     super(xmlElement, parentFLow, graph);
@@ -23,6 +25,10 @@ public class CopyPropertiesProcessor extends AbstractPropertyProcessor {
   @Override
   public void accept(FlowComponentVisitor visitor) {
     visitor.visitCopyPropertiesProcessor(this);
+  }
+
+  public String getPropertyTranslation(String propertyKey) {
+    return String.format("vars.%s%s", OUTBOUND_PREFIX, propertyKey);
   }
 }
 
