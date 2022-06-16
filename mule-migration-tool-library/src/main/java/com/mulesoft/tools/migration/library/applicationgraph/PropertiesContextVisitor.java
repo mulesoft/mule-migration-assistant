@@ -5,9 +5,9 @@
  */
 package com.mulesoft.tools.migration.library.applicationgraph;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.mulesoft.tools.migration.library.nocompatibility.InboundToAttributesTranslator;
+import com.google.common.collect.Sets;
 import com.mulesoft.tools.migration.project.model.applicationgraph.*;
 
 import java.util.List;
@@ -25,127 +25,114 @@ import java.util.stream.Collectors;
  */
 public class PropertiesContextVisitor implements FlowComponentVisitor {
 
-  private final FlowComponent previousComponent;
+  private final List<FlowComponent> previousComponents;
   private final PropertyTranslator inboundTranslator;
   List<PropertiesSourceComponent> componentsWithResponse = Lists.newArrayList();
+  PropertiesSourceComponent startingPropertiesSource;
 
-  public PropertiesContextVisitor(FlowComponent previousComponent, PropertyTranslator inboundTranslator) {
-    this.previousComponent = previousComponent;
+  public PropertiesContextVisitor(List<FlowComponent> previousComponents, PropertyTranslator inboundTranslator,
+                                  PropertiesSourceComponent startingPropertiesSource) {
+    this.previousComponents = previousComponents;
     this.inboundTranslator = inboundTranslator;
+    this.startingPropertiesSource = startingPropertiesSource;
   }
 
   @Override
   public void visitMessageProcessor(MessageProcessor processor) {
-    Map<String, PropertyMigrationContext> inboundPropContext = Optional.ofNullable(processor.getPropertiesMigrationContext())
-        .map(context -> Maps.newHashMap(context.getInboundContext())).orElse(Maps.newHashMap());
-    Map<String, PropertyMigrationContext> outbundPropContext = Optional.ofNullable(processor.getPropertiesMigrationContext())
-        .map(context -> Maps.newHashMap(context.getOutboundContext())).orElse(Maps.newHashMap());
-    SourceType originatingSource = null;
-
-    clearRemoveNextProperties(processor.getPropertiesMigrationContext());
-    if (previousComponent != null) {
-      inboundPropContext.putAll(previousComponent.getPropertiesMigrationContext().getInboundContext());
-      outbundPropContext = previousComponent.getPropertiesMigrationContext().getOutboundContext();
-      if (previousComponent instanceof PropertiesSource) {
-        try {
-          inboundPropContext.clear();
-          inboundPropContext.putAll(createSourceGeneratedContext((PropertiesSource) previousComponent));
-        } catch (Exception e) {
-          // TODO: handleException
-        }
-        originatingSource = ((PropertiesSource) previousComponent).getType();
+    if (processor.getPropertiesMigrationContext() == null) {
+      processor.setPropertiesMigrationContext(new PropertiesMigrationContext(inboundTranslator));
+    }
+    if (previousComponents != null && !previousComponents.isEmpty()) {
+      if (previousComponents.size() > 1) {
+        mergeContexts(processor);
       } else {
-        originatingSource = previousComponent.getPropertiesMigrationContext().getOriginatingSource();
+        FlowComponent singlePreviousComponent = Iterables.getOnlyElement(previousComponents);
+        if (singlePreviousComponent instanceof PropertiesSource) {
+          processor.getPropertiesMigrationContext()
+              .addOriginatingSources(Sets.newHashSet(((PropertiesSource) singlePreviousComponent)));
+        } else {
+          Set<PropertiesSource> sourceTypesToPropagate =
+              singlePreviousComponent.getPropertiesMigrationContext().getOriginatingSources();
+          if (singlePreviousComponent.getPropertiesMigrationContext().getOriginatingSources().size() > 1
+              && processor.getParentFlow().equals(startingPropertiesSource.getParentFlow())) {
+            sourceTypesToPropagate = Sets.newHashSet((startingPropertiesSource));
+          }
+          processor.getPropertiesMigrationContext().addFromExisting(singlePreviousComponent.getPropertiesMigrationContext(),
+                                                                    sourceTypesToPropagate, false);
+        }
       }
     }
 
-    processor
-        .setPropertiesMigrationContext(new PropertiesMigrationContext(inboundPropContext, outbundPropContext, originatingSource));
+    clearRemoveNextProperties(processor.getPropertiesMigrationContext());
   }
 
-  private PropertiesMigrationContext clearRemoveNextProperties(PropertiesMigrationContext propertiesMigrationContext) {
+  private void mergeContexts(MessageProcessor processor) {
+    previousComponents.stream().forEach(comp -> {
+      if (comp.getPropertiesMigrationContext() != null) {
+        if (processor.getPropertiesMigrationContext() == null) {
+          processor.setPropertiesMigrationContext(PropertiesMigrationContext.fromContext(comp.getPropertiesMigrationContext()));
+        } else {
+          processor.getPropertiesMigrationContext().addFromExisting(comp.getPropertiesMigrationContext(), true);
+        }
+      }
+    });
+  }
+
+  private void clearRemoveNextProperties(PropertiesMigrationContext propertiesMigrationContext) {
     if (propertiesMigrationContext != null) {
-      Map<String, PropertyMigrationContext> outboundContext = propertiesMigrationContext.getOutboundContext().entrySet().stream()
-          .filter(e -> !e.getValue().isRemoveNext())
-          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-      Map<String, PropertyMigrationContext> inboundContext = propertiesMigrationContext.getInboundContext().entrySet().stream()
-          .filter(e -> !e.getValue().isRemoveNext())
-          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-      return new PropertiesMigrationContext(inboundContext, outboundContext, propertiesMigrationContext.getOriginatingSource());
+      propertiesMigrationContext.cleanOutbound();
     }
-
-    return propertiesMigrationContext;
   }
 
   @Override
   public void visitSetPropertyProcessor(SetPropertyProcessor processor) {
     this.visitMessageProcessor(processor);
     PropertiesMigrationContext existingMigrationContext = processor.getPropertiesMigrationContext();
-    Map outboundContext = Maps.newHashMap(existingMigrationContext.getOutboundContext());
-    outboundContext.put(processor.getPropertyName(), new PropertyMigrationContext(processor.getPropertyTranslation()));
-
-    processor.setPropertiesMigrationContext(new PropertiesMigrationContext(existingMigrationContext.getInboundContext(),
-                                                                           outboundContext,
-                                                                           existingMigrationContext.getOriginatingSource()));
+    existingMigrationContext.addToOutbound(processor.getPropertyName(),
+                                           new PropertyMigrationContext(processor.getPropertyTranslation()));
   }
 
   @Override
   public void visitRemovePropertyProcessor(RemovePropertyProcessor processor) {
     this.visitMessageProcessor(processor);
     PropertiesMigrationContext existingMigrationContext = processor.getPropertiesMigrationContext();
-    Map<String, PropertyMigrationContext> outboundContext = Maps.newHashMap(existingMigrationContext.getOutboundContext());
 
-    Set<String> keysToRemove =
-        outboundContext.keySet().stream().filter(k -> k.matches(processor.getExpression().pattern())).collect(Collectors.toSet());
-    keysToRemove.forEach(k -> {
-      outboundContext.put(k, outboundContext.get(k).setRemoveNext());
-    });
+    Map<PropertiesSource, List<String>> keysToRemove = existingMigrationContext.getAllOutboundKeys().entrySet().stream()
+        .collect(Collectors.toMap(
+                                  e -> e.getKey(),
+                                  e -> e.getValue().stream()
+                                      .filter(key -> key.matches(processor.getExpression().pattern()))
+                                      .collect(Collectors.toList())));
 
-    processor.setPropertiesMigrationContext(new PropertiesMigrationContext(existingMigrationContext.getInboundContext(),
-                                                                           outboundContext,
-                                                                           existingMigrationContext.getOriginatingSource()));
+    keysToRemove.entrySet().forEach(keyEntry -> keyEntry.getValue()
+        .forEach(key -> processor.getPropertiesMigrationContext().markAsRemoveNext(keyEntry.getKey(), key)));
   }
 
   @Override
   public void visitCopyPropertiesProcessor(CopyPropertiesProcessor processor) {
     this.visitMessageProcessor(processor);
     PropertiesMigrationContext existingMigrationContext = processor.getPropertiesMigrationContext();
-    Map<String, PropertyMigrationContext> inboundContext = Maps.newHashMap(existingMigrationContext.getInboundContext());
-    Map<String, PropertyMigrationContext> outboundContext = Maps.newHashMap(existingMigrationContext.getOutboundContext());
+    Map<PropertiesSource, Map<String, String>> inboundContext = existingMigrationContext.getAllInboundTranslations();
 
     Pattern expression = processor.getExpression();
     inboundContext.entrySet().forEach(inbound -> {
-      if (expression.matcher(inbound.getKey()).matches()) {
-        outboundContext.put(inbound.getKey(), inbound.getValue());
-      }
+      inbound.getValue().entrySet().stream()
+          .filter(e -> expression.matcher(e.getKey()).matches())
+          .forEach(e -> existingMigrationContext.addToOutbound(inbound.getKey(), e.getKey(),
+                                                               new PropertyMigrationContext(processor
+                                                                   .getPropertyTranslation(e.getKey()))));
     });
-
-    processor.setPropertiesMigrationContext(new PropertiesMigrationContext(existingMigrationContext.getInboundContext(),
-                                                                           outboundContext,
-                                                                           existingMigrationContext.getOriginatingSource()));
   }
 
   @Override
   public void visitPropertiesSourceComponent(PropertiesSourceComponent processor, boolean responseComponent) {
     if (responseComponent) {
       Optional.ofNullable(processor.getResponseComponent())
-          .ifPresent(c -> c
-              .setPropertiesMigrationContext(new PropertiesMigrationContext(previousComponent.getPropertiesMigrationContext()
-                  .getInboundContext(),
-                                                                            previousComponent.getPropertiesMigrationContext()
-                                                                                .getOutboundContext(),
-                                                                            previousComponent.getPropertiesMigrationContext()
-                                                                                .getOriginatingSource())));
+          .ifPresent(c -> this.visitMessageProcessor(c));
 
       Optional.ofNullable(processor.getErrorResponseComponent())
-          .ifPresent(c -> c
-              .setPropertiesMigrationContext(new PropertiesMigrationContext(previousComponent.getPropertiesMigrationContext()
-                  .getInboundContext(),
-                                                                            previousComponent.getPropertiesMigrationContext()
-                                                                                .getOutboundContext(),
-                                                                            previousComponent.getPropertiesMigrationContext()
-                                                                                .getOriginatingSource())));
+          .ifPresent(c -> this.visitMessageProcessor(c));
+
     } else {
       if (processor.getResponseComponent() != null) {
         componentsWithResponse.add(processor);
@@ -155,16 +142,17 @@ public class PropertiesContextVisitor implements FlowComponentVisitor {
         componentsWithResponse.add(processor);
       }
 
-      if (previousComponent != null) {
-        processor.setPropertiesMigrationContext(new PropertiesMigrationContext(
-                                                                               previousComponent.getPropertiesMigrationContext()
-                                                                                   .getInboundContext(),
-                                                                               previousComponent.getPropertiesMigrationContext()
-                                                                                   .getOutboundContext(),
-                                                                               previousComponent.getPropertiesMigrationContext()
-                                                                                   .getOriginatingSource()));
+      // having multiple components converge in a source is not an expected case
+      if (!previousComponents.isEmpty()) {
+        if (previousComponents.size() > 1) {
+          mergeContexts(processor);
+        } else {
+          FlowComponent previousComponent = Iterables.getOnlyElement(previousComponents);
+          processor.setPropertiesMigrationContext(PropertiesMigrationContext
+              .fromContext(previousComponent.getPropertiesMigrationContext()));
+        }
       } else {
-        processor.setPropertiesMigrationContext(new PropertiesMigrationContext(Maps.newHashMap(), Maps.newHashMap(), null));
+        processor.setPropertiesMigrationContext(new PropertiesMigrationContext(this.inboundTranslator));
       }
     }
   }
@@ -173,11 +161,4 @@ public class PropertiesContextVisitor implements FlowComponentVisitor {
     return this.componentsWithResponse;
   }
 
-  private Map<String, PropertyMigrationContext> createSourceGeneratedContext(PropertiesSource source) throws Exception {
-    return inboundTranslator.getAllTranslationsFor(source.getType()).map(translations -> translations.entrySet().stream()
-        .collect(Collectors.toMap(
-                                  e -> e.getKey(),
-                                  e -> new PropertyMigrationContext(e.getValue(), false, false))))
-        .orElse(Maps.newHashMap());
-  }
 }

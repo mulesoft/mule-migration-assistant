@@ -5,15 +5,14 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.nocompatibility;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import com.mulesoft.tools.migration.library.applicationgraph.PropertiesSourceType;
 import com.mulesoft.tools.migration.library.nocompatibility.InboundToAttributesTranslator;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.util.Map;
+import static org.junit.Assert.*;
 
 public class InboundToAttributesTranslatorTest {
 
@@ -39,13 +38,15 @@ public class InboundToAttributesTranslatorTest {
 
   @Test
   public void testTranslate_SupportedConnectorCustomProperty() throws Exception {
-    assertEquals("message.attributes.headers.myCustomProperty",
-                 translator.translateImplicit("myCustomProperty", PropertiesSourceType.HTTP_LISTENER));
+    assertEquals(ImmutableMap.of(PropertiesSourceType.HTTP_LISTENER, "message.attributes.headers.myCustomProperty"),
+                 translator.translateImplicit("myCustomProperty", Sets.newHashSet(PropertiesSourceType.HTTP_LISTENER)));
   }
 
   @Test
   public void testTranslate_NonSupportedConnectorTranslation() throws Exception {
-    assertNull(translator.translateImplicit("myCustomProperty", new PropertiesSourceType("customUri", "customType")));
+    assertTrue(translator.translateImplicit("myCustomProperty",
+                                            Sets.newHashSet(new PropertiesSourceType("customUri", "customType")))
+        .isEmpty());
   }
 
   @Test

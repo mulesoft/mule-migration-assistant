@@ -36,4 +36,5 @@ public abstract class AbstractPropertyProcessor extends MessageProcessor {
   public Pattern getExpression() {
     return this.expression;
   }
+
 }
