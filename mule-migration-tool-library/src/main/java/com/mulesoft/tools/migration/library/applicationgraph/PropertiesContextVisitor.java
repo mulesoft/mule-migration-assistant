@@ -108,6 +108,9 @@ public class PropertiesContextVisitor implements FlowComponentVisitor {
         .forEach(key -> processor.getPropertiesMigrationContext().markAsRemoveNext(keyEntry.getKey(), key)));
   }
 
+  @Override public void visitScopeComponent(ScopeComponent scopeComponent) {
+  }
+
   @Override
   public void visitCopyPropertiesProcessor(CopyPropertiesProcessor processor) {
     this.visitMessageProcessor(processor);

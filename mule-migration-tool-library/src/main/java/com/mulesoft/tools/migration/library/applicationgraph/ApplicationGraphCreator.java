@@ -6,6 +6,8 @@
 package com.mulesoft.tools.migration.library.applicationgraph;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.kitfox.svg.A;
 import com.mulesoft.tools.migration.library.nocompatibility.InboundToAttributesTranslator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.*;
@@ -17,6 +19,7 @@ import org.jdom2.*;
 import org.jdom2.filter.Filters;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
@@ -46,18 +49,18 @@ public class ApplicationGraphCreator {
   }
 
   public ApplicationGraph create(ApplicationModel applicationModel, MigrationReport report) throws RuntimeException {
-    List<Flow> applicationFlows = applicationModel.getApplicationDocuments().values().stream()
-        .map(this::getFlows)
-        .flatMap(Collection::stream)
-        .collect(Collectors.toList());
-
     PropertyTranslator translator = new InboundToAttributesTranslator();
     translator.initializeTranslationsForApplicationSourceTypes(applicationModel);
     ApplicationGraph applicationGraph = new ApplicationGraph(translator);
+    List<Document> applicationDocuments = Lists.newArrayList(applicationModel.getApplicationDocuments().values());
+    
+    List<Flow> applicationFlows = applicationDocuments.stream()
+        .map(d -> getElementsFromXml(d, FLOW_XPATH, this::convertToFlow))
+        .flatMap(Collection::stream)
+        .collect(Collectors.toList());
 
     applicationFlows.forEach(flow -> {
-      List<FlowComponent> flowComponents = getFirstLevelFlowComponents(flow, applicationFlows, report, applicationGraph);
-      flow.setComponents(flowComponents);
+      List<FlowComponent> flowComponents = getFirstLevelComponents(flow, applicationFlows, report, applicationGraph);
       applicationGraph.addConnections(flowComponents);
     });
 
@@ -65,19 +68,29 @@ public class ApplicationGraphCreator {
     // This graph can have non connected components, if we have multiple flows with sources
     // get explicit connections (flow-refs)
     connectAllFlowRefs(applicationGraph);
+    applicationFlows.forEach(flow -> {
+      Element exceptionStrategyElement = getFlowExceptionHandlingElement(flow.getXmlElement());
+      if (exceptionStrategyElement != null) {
+        ExceptionStrategy flowExceptionStrategy = convertToExceptionStrategy(exceptionStrategyElement, flow, applicationFlows, report, applicationGraph);
+        flow.setExceptionStrategy(flowExceptionStrategy);
+      }
+    });
 
     applicationPropertiesContextCalculator.calculatePropertiesContext(applicationGraph);
     return applicationGraph;
   }
 
-  private List<FlowComponent> getFirstLevelFlowComponents(Flow flow, List<Flow> applicationFlows, MigrationReport report,
-                                                          ApplicationGraph applicationGraph) {
-    Element flowAsXmL = flow.getXmlElement();
+  private List<FlowComponent> getFirstLevelComponents(Flow flow, List<Flow> applicationFlows, MigrationReport report,
+                                                      ApplicationGraph applicationGraph) {
+    return this.getFirstLevelComponents(flow.getXmlElement(), flow, applicationFlows, report, applicationGraph);
+  }
 
-    return flowAsXmL.getContent().stream()
+  private List<FlowComponent> getFirstLevelComponents(Element xmlELement, Flow flow, List<Flow> applicationFlows, MigrationReport report,
+                                                          ApplicationGraph applicationGraph) {
+    return xmlELement.getContent().stream()
         .filter(Element.class::isInstance)
         .map(Element.class::cast)
-        .map(xmlElement -> convertAndAddToGraph(xmlElement, flow, applicationFlows, report, applicationGraph))
+        .map(subElement -> convertAndAddToGraph(subElement, flow, applicationFlows, report, applicationGraph))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
@@ -119,7 +132,9 @@ public class ApplicationGraphCreator {
           component = new CopyPropertiesProcessor(xmlElement, parentFlow, applicationGraph);;
           break;
         default:
-          component = new MessageProcessor(xmlElement, parentFlow, applicationGraph);
+          if (!isErrorHanldingElement(xmlElement)) {
+            component = new MessageProcessor(xmlElement, parentFlow, applicationGraph);
+          }
       }
     }
 
@@ -167,17 +182,25 @@ public class ApplicationGraphCreator {
     return referredFlowEndingPoint;
   }
 
-  private List<Flow> getFlows(Document document) {
+  private <T> List<T> getElementsFromXml(Document document, String elementExpression, Function<Element, T> convertFunction) {
     List<Element> flowsAsXml =
         XmlDslUtils.getChildrenMatchingExpression(document.getRootElement(), FLOW_XPATH, Filters.element());
 
     return flowsAsXml.stream()
-        .map(this::convertToFlow)
+        .map(convertFunction::apply)
         .collect(Collectors.toList());
   }
 
   private Flow convertToFlow(Element flowAsXml) {
     return new Flow(flowAsXml);
+  }
+  
+  private ExceptionStrategy convertToExceptionStrategy(Element xmlElement, Flow flow, List<Flow> applicationFlows, MigrationReport report, ApplicationGraph applicationGraph) {
+    List<FlowComponent> scopedComponents = getFirstLevelComponents(xmlElement, flow, applicationFlows, report, applicationGraph);
+    applicationGraph.addConnections(scopedComponents);
+    ApplicationGraph subGraph = new ApplicationGraph(applicationGraph, scopedComponents.get(0));
+    
+    return new ExceptionStrategy(xmlElement, applicationGraph, subGraph);
   }
 
   private boolean isPropertySource(Element element, Flow flow) {

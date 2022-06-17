@@ -24,8 +24,8 @@ public class WeightedPathIterator extends AbstractGraphIterator<FlowComponent, D
 
   private Queue<FlowComponent> toVisit;
   private List<DefaultWeightedEdge> visitedEdges;
-  FlowComponent start;
-  Set<String> visitedFlows;
+  private FlowComponent start;
+  private Set<String> visitedFlows;
 
   public WeightedPathIterator(Graph g, FlowComponent start) {
     super(g);
@@ -83,6 +83,10 @@ public class WeightedPathIterator extends AbstractGraphIterator<FlowComponent, D
     }
 
     return nextToVisitNode;
+  }
+
+  public Set<String> getVisitedFlows() {
+    return visitedFlows;
   }
 }
 

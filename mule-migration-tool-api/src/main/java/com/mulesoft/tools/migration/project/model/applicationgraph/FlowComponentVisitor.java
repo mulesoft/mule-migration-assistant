@@ -22,4 +22,6 @@ public interface FlowComponentVisitor {
   void visitPropertiesSourceComponent(PropertiesSourceComponent processor, boolean responseComponent);
 
   void visitRemovePropertyProcessor(RemovePropertyProcessor removePropertyProcessor);
+
+  void visitScopeComponent(ScopeComponent scopeComponent);
 }

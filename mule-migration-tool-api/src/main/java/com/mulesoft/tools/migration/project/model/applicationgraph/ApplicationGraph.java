@@ -31,6 +31,19 @@ public class ApplicationGraph {
     applicationGraph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
     this.inboundTranslator = inboundTranslator;
   }
+  
+  public ApplicationGraph(ApplicationGraph parentGraph, FlowComponent startingPoint) {
+    this(parentGraph.getInboundTranslator());
+    WeightedPathIterator iterator = new WeightedPathIterator(parentGraph.applicationGraph, startingPoint);
+    while (iterator.hasNext()) {
+      FlowComponent currentNode = iterator.next();
+      this.applicationGraph.addVertex(currentNode);
+      parentGraph.getAllIncomingNodes(currentNode)
+          .stream()
+          .filter(this.applicationGraph::containsVertex)
+          .forEach(v -> this.addEdge(v, currentNode));
+    }
+  }
 
   // Graph Access
 

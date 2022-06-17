@@ -19,7 +19,7 @@ public class Flow {
 
   private String name;
   private Element xmlElement;
-  private List<FlowComponent> flowComponents;
+  private ExceptionStrategy exceptionStrategy;
 
   public Flow(Element xmlElement) {
     this.xmlElement = xmlElement;
@@ -34,7 +34,7 @@ public class Flow {
     return name;
   }
 
-  public void setComponents(List<FlowComponent> flowComponents) {
-    this.flowComponents = flowComponents;
+  public void setExceptionStrategy(ExceptionStrategy flowExceptionStrategy) {
+    this.exceptionStrategy = flowExceptionStrategy;
   }
 }
