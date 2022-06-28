@@ -16,9 +16,7 @@
 
     <sub-flow name="flow2">
         <logger message="#['Source called with queryParams' ++ message.attributes.queryParams]" level="INFO" doc:name="Logger" />
-        <set-variable variableName="outbound_propertyFlow2" value="#[message.attributes.headers]" doc:name="Property" >
-            <!--Migration WARN: There are multiple possible translations of http.headers due to app ambiguity. Defaulting to the first one, please revise if this needs to be changed"-->
-        </set-variable>
+        <set-variable variableName="outbound_propertyFlow2" value="#[message.attributes.headers]" doc:name="Property" />
         <flow-ref name="flow3" doc:name="Flow Reference" />
     </sub-flow>
 
@@ -38,7 +36,7 @@
         <flow-ref name="flow2" doc:name="Flow Reference" />
 
         <logger message="#['Outbound is ' ++ message.outboundProperties]" level="INFO" doc:name="Logger">
-            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <!--Migration ERROR: Referencing full map of properties like message.outboundProperties or message.inboundProperties cannot be automatically migrated. In case of outbound properties it can be migrated to a map containing all the variables with the prefix 'outbound_', for inbound, a new structure needs to be created in case we want to work over the full map of attributes coming from a message source or connector-->
         </logger>
 
         <flow-ref name="flow2" doc:name="Flow Reference" />

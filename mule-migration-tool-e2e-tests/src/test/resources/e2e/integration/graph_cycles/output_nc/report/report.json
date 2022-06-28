@@ -6,8 +6,8 @@
     "org.mule.connectors:mule-http-connector:VERSION",
     "org.mule.connectors:mule-wsc-connector:VERSION"
   ],
-  "numberOfMuleComponents": 21,
-  "numberOfMuleComponentsMigrated": 20,
+  "numberOfMuleComponents": 23,
+  "numberOfMuleComponentsMigrated": 22,
   "componentDetails":
   {
     "mule":
@@ -20,8 +20,11 @@
       "success": 5,
       "failure": 0
     },
-    "flow":
-    {
+    "flow": {
+      "success": 2,
+      "failure": 0
+    },
+    "sub-flow": {
       "success": 2,
       "failure": 0
     },
