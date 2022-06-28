@@ -5,17 +5,17 @@
  */
 package com.mulesoft.tools.migration.e2e;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import static java.util.Objects.requireNonNull;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 
 @RunWith(Parameterized.class)
@@ -26,6 +26,10 @@ public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
 
   // e.g. use "" to avoid exclusions; "apikit/.*|domain1app1" OR excludes
   private static final String TEST_EXCLUDE = "";
+
+  // types of test to run
+  private static final boolean TEST_COMPATIBILITY = true;
+  private static final boolean TEST_NO_COMPATIBILITY = true;
 
   @Parameterized.Parameters(name = "{0}-no-compat={1}")
   public static Object[][] params() throws Exception {
@@ -51,9 +55,9 @@ public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
       if (subDirs.contains("input")) {
         String test = dir.getPath().replaceFirst(".*[/\\\\]e2e[/\\\\]", "");
         if (test.matches(TEST_INCLUDE) && !test.matches(TEST_EXCLUDE)) {
-          if (subDirs.contains("output"))
+          if (subDirs.contains("output") && TEST_COMPATIBILITY)
             acu.add(new Object[] {test, false});
-          if (subDirs.contains("output" + NO_COMPATIBILITY_SUFFIX))
+          if (subDirs.contains("output" + NO_COMPATIBILITY_SUFFIX) && TEST_NO_COMPATIBILITY)
             acu.add(new Object[] {test, true});
         }
       } else {
