@@ -43,13 +43,19 @@ public class MigrationTaskLocator {
 
   private final String from;
   private final String to;
+  private final boolean noCompatibility;
 
   public MigrationTaskLocator(String from, String to) {
+    this(from, to, false);
+  }
+
+  public MigrationTaskLocator(String from, String to, boolean noCompatibility) {
     checkArgument(from != null, "From must not be null");
     checkArgument(to != null, "To must not be null");
 
     this.from = from;
     this.to = to;
+    this.noCompatibility = noCompatibility;
   }
 
   public List<AbstractMigrationTask> locate() {
@@ -92,7 +98,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new SecurityCrc32MigrationTask());
     coreMigrationTasks.add(new SecurityFiltersMigrationTask());
     coreMigrationTasks.add(new PropertiesMigrationTask());
-    coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
+    coreMigrationTasks.add(new MuleCoreComponentsMigrationTask(noCompatibility));
     coreMigrationTasks.add(new SplitterAggregatorTask());
     coreMigrationTasks.add(new BatchMigrationTask());
     coreMigrationTasks.add(new ValidationMigrationTask());
@@ -125,7 +131,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new SalesforceMigrationTask());
 
     coreMigrationTasks.add(new DomainAppMigrationTask());
-    coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask());
+    coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask(noCompatibility));
     coreMigrationTasks.add(new MunitMigrationTask());
     coreMigrationTasks.add(new TransformersMigrationTask());
     coreMigrationTasks.add(new ExpressionTransformerMigrationTask());
