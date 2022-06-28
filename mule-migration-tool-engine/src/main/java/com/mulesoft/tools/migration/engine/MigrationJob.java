@@ -364,7 +364,7 @@ public class MigrationJob implements Executable {
         throw new MigrationJobException("Destination folder already exist.");
       }
 
-      MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion);
+      MigrationTaskLocator migrationTaskLocator = new MigrationTaskLocator(inputVersion, outputVersion, this.noCompatibility);
       migrationTasks = migrationTaskLocator.locate();
 
       return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion,
