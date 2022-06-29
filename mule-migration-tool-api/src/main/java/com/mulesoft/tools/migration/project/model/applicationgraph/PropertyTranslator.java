@@ -7,7 +7,6 @@ package com.mulesoft.tools.migration.project.model.applicationgraph;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -19,6 +18,9 @@ import java.util.Set;
  * @since 1.4.0
  */
 public interface PropertyTranslator {
+
+  String OUTBOUND_PREFIX = "outbound_";
+  String VARS_OUTBOUND_PREFIX = "vars." + OUTBOUND_PREFIX;
 
   void initializeTranslationsForApplicationSourceTypes(ApplicationModel applicationModel);
 

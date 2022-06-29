@@ -1,0 +1,144 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-email-connector:1.5.2",
+    "org.mule.connectors:mule-vm-connector:2.0.0"
+  ],
+  "numberOfMuleComponents": 10,
+  "numberOfMuleComponentsMigrated": 9,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "logger": {
+      "success": 1,
+      "failure": 0
+    },
+    "scatter-gather": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 2,
+      "failure": 0
+    },
+    "email:listener-imap": {
+      "success": 1,
+      "failure": 0
+    },
+    "email:send": {
+      "success": 0,
+      "failure": 1
+    },
+    "vm:listener": {
+      "success": 1,
+      "failure": 0
+    },
+    "vm:publish": {
+      "success": 2,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "email:send",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "email.outbound",
+      "component": "email:send",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Use the inline configuration of the operation instead of relying on properties set before this endpoint.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "email:listener-imap",
+      "lineNumber": 13,
+      "columnNumber": 20,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "vm:publish",
+      "lineNumber": 28,
+      "columnNumber": 64,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "vm.sessionVars",
+      "component": "vm:content",
+      "lineNumber": 30,
+      "columnNumber": 29,
+      "message": "You can remove this if this flow is not using \u0027sessionVariables\u0027 or after migrating them to variables.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "vm:listener",
+      "lineNumber": 42,
+      "columnNumber": 61,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "vm.sessionVars",
+      "component": "vm:content",
+      "lineNumber": 45,
+      "columnNumber": 29,
+      "message": "You can remove this if this flow is not using \u0027sessionVariables\u0027 or after migrating them to variables.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "nocompatibility.notfullyimplemented",
+      "component": "vm:publish",
+      "lineNumber": 59,
+      "columnNumber": 74,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "vm.sessionVars",
+      "component": "vm:content",
+      "lineNumber": 61,
+      "columnNumber": 37,
+      "message": "You can remove this if this flow is not using \u0027sessionVariables\u0027 or after migrating them to variables.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

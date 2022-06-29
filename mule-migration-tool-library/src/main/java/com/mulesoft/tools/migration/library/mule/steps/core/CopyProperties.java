@@ -6,23 +6,22 @@
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.mulesoft.tools.migration.project.model.applicationgraph.SetPropertyProcessor.OUTBOUND_PREFIX;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.OUTBOUND_PREFIX;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilityNamespace;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 
-import com.google.common.collect.Lists;
-import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.applicationgraph.CopyPropertiesProcessor;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import org.jdom2.Element;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
+
+import org.jdom2.Element;
 
 /**
  * Migrate Copy Properties to the compatibility plugin
@@ -47,8 +46,7 @@ public class CopyProperties extends AbstractApplicationModelMigrationStep implem
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    ApplicationGraph graph = getApplicationModel().getApplicationGraph();
-    if (graph != null) {
+    if (getApplicationModel().noCompatibilityMode()) {
       CopyPropertiesProcessor processor =
           (CopyPropertiesProcessor) getApplicationModel().getApplicationGraph().findFlowComponent(element);
 
@@ -60,7 +58,7 @@ public class CopyProperties extends AbstractApplicationModelMigrationStep implem
         List<String> possibleTranslations = processor.getPropertiesMigrationContext().getInboundTranslation(key, true);
         if (!possibleTranslations.isEmpty()) {
           Element setVariable = new Element("set-variable", CORE_NAMESPACE)
-              .setAttribute("variableName", String.format("%s%s", OUTBOUND_PREFIX, key))
+              .setAttribute("variableName", OUTBOUND_PREFIX + key)
               .setAttribute("value", expressionMigrator.wrap(possibleTranslations.get(0)));
           element.getParentElement().addContent(copyPropertiesIndex++, setVariable);
           if (possibleTranslations.size() > 1) {
