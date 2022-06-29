@@ -5,17 +5,25 @@
  */
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
-import com.google.common.collect.*;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.VARS_OUTBOUND_PREFIX;
 
-import java.util.*;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.mulesoft.tools.migration.project.model.applicationgraph.SetPropertyProcessor.OUTBOUND_PREFIX;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Models the context for properties migration
@@ -93,7 +101,7 @@ public class PropertiesMigrationContext {
                                   source -> outboundContext.get(source).get(key).getTranslation()));
     if (potentialTranslations == null || potentialTranslations.isEmpty()) {
       if (useFallback) {
-        potentialTranslations = tryFallBackTranslation(key, (k, sourceType) -> "vars." + OUTBOUND_PREFIX + k);
+        potentialTranslations = tryFallBackTranslation(key, (k, sourceType) -> VARS_OUTBOUND_PREFIX + k);
       } else {
         potentialTranslations = Maps.newHashMap();
       }

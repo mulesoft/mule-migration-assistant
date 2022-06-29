@@ -5,6 +5,8 @@
  */
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.VARS_OUTBOUND_PREFIX;
+
 import org.jdom2.Element;
 
 /**
@@ -14,8 +16,6 @@ import org.jdom2.Element;
  * @since 1.4.0
  */
 public class CopyPropertiesProcessor extends AbstractPropertyProcessor {
-
-  public static String OUTBOUND_PREFIX = "outbound_";
 
   public CopyPropertiesProcessor(Element xmlElement, Flow parentFLow,
                                  ApplicationGraph graph) {
@@ -28,7 +28,7 @@ public class CopyPropertiesProcessor extends AbstractPropertyProcessor {
   }
 
   public String getPropertyTranslation(String propertyKey) {
-    return String.format("vars.%s%s", OUTBOUND_PREFIX, propertyKey);
+    return VARS_OUTBOUND_PREFIX + propertyKey;
   }
 }
 
