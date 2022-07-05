@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:httpn="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="httpConf">
+        <http:listener-connection host="localhost" port="${httpPort}" />
+    </http:listener-config>
+
+    <flow name="listenerContentType">
+        <http:listener config-ref="httpConf" path="testInput">
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+        <flow-ref name="listenerContentType_Enricher_0" target="sessionVars.exceptionMessage">
+            <!--Migration ERROR: Only the first enrichment pair is migrated. You should use a temporary structure to make multiple enrichments.-->
+            <!--<enricher xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" target="#[sessionVars.exceptionMessage]" doc:name="Exception message">
+            <dw:transform-message xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" doc:name="CALENDARS-S-T-0004">
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+ - - -
+{
+	message:"Not able to retrieve calendars." as :string,
+	status:"500" as :string,
+	code:"CALENDARS-S-T-0004" as :string,
+	origin: "database" as :string,
+	causeMessage: "" as :string
+}]]></dw:set-payload>
+            </dw:transform-message>
+        </enricher>-->
+        </flow-ref>
+
+        <compatibility:set-property propertyName="sessionVars.exceptionMessage" value="#[vars.sessionVars.exceptionMessage]" />
+
+        <compatibility:outbound-properties-to-var />
+
+        <compatibility:outbound-properties-to-var>
+            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:outbound-properties-to-var>
+
+    </flow>
+
+    <sub-flow name="listenerContentType_Enricher_0">
+        <ee:transform doc:name="CALENDARS-S-T-0004">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/java  
+---
+{
+  message: "Not able to retrieve calendars." as String,
+  status: "500" as String,
+  code: "CALENDARS-S-T-0004" as String,
+  origin: "database" as String,
+  causeMessage: "" as String
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </sub-flow>
+
+</mule>

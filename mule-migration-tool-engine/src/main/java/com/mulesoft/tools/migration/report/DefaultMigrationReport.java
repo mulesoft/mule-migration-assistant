@@ -150,13 +150,13 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
           elementToComment.addContent(i++, new Comment("    For more information refer to:"));
 
           for (String link : documentationLinks) {
-            elementToComment.addContent(i++, new Comment("        * " + link));
+            elementToComment.addContent(i++, new Comment("        * " + sanitize(link)));
           }
         }
 
         if (element != elementToComment) {
           XmlDslUtils.removeNestedComments(element);
-          elementToComment.addContent(i, new Comment(outp.outputString(element)));
+          elementToComment.addContent(i, new Comment(sanitize(outp.outputString(element))));
         }
       }
     }

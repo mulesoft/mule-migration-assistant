@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:httpn="http://www.mulesoft.org/schema/mule/http"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+    <httpn:listener-config name="httpConf" host="localhost" port="${httpPort}"/>
+    
+    <flow name="listenerContentType" >
+        <httpn:listener config-ref="httpConf" path="testInput"/>
+
+        <enricher target="#[sessionVars.exceptionMessage]" doc:name="Exception message">
+            <dw:transform-message doc:name="CALENDARS-S-T-0004">
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	message:"Not able to retrieve calendars." as :string,
+	status:"500" as :string,
+	code:"CALENDARS-S-T-0004" as :string,
+	origin: "database" as :string,
+	causeMessage: "" as :string
+}]]></dw:set-payload>
+            </dw:transform-message>
+        </enricher>
+
+    </flow>
+    
+</mule>
