@@ -35,12 +35,6 @@
         <async>
             <vm:publish config-ref="VmConfig" queueName="sink">
                 <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-                <vm:content>
-                    <!--Migration WARN: You can remove this if this flow is not using 'sessionVariables' or after migrating them to variables.-->
-                    <!--    For more information refer to:-->
-                    <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#session_variables-->
-                    <![CDATA[#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType, 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]]]>
-                </vm:content>
             </vm:publish>
         </async>
 
@@ -49,14 +43,6 @@
     <flow name="sink">
         <vm:listener config-ref="VmConfig" queueName="sink">
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <vm:response>
-                <vm:content>
-                    <!--Migration WARN: You can remove this if this flow is not using 'sessionVariables' or after migrating them to variables.-->
-                    <!--    For more information refer to:-->
-                    <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#session_variables-->
-                    <![CDATA[#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType, 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]]]>
-                </vm:content>
-            </vm:response>
         </vm:listener>
 
         <logger />
@@ -66,12 +52,6 @@
                 <async>
                     <vm:publish config-ref="VmConfig" queueName="rfc822">
                         <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-                        <vm:content>
-                            <!--Migration WARN: You can remove this if this flow is not using 'sessionVariables' or after migrating them to variables.-->
-                            <!--    For more information refer to:-->
-                            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#session_variables-->
-                            <![CDATA[#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType, 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]]]>
-                        </vm:content>
                     </vm:publish>
                 </async>
             </route>
