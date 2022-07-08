@@ -116,19 +116,9 @@
     },
     {
       "level": "WARN",
-      "key": "vm.sessionVars",
-      "component": "vm:content",
-      "lineNumber": 38,
-      "columnNumber": 29,
-      "message": "You can remove this if this flow is not using \u0027sessionVariables\u0027 or after migrating them to variables.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks": []
-    },
-    {
-      "level": "WARN",
       "key": "nocompatibility.notfullyimplemented",
       "component": "vm:listener",
-      "lineNumber": 50,
+      "lineNumber": 44,
       "columnNumber": 61,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -136,31 +126,11 @@
     },
     {
       "level": "WARN",
-      "key": "vm.sessionVars",
-      "component": "vm:content",
-      "lineNumber": 53,
-      "columnNumber": 29,
-      "message": "You can remove this if this flow is not using \u0027sessionVariables\u0027 or after migrating them to variables.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks": []
-    },
-    {
-      "level": "WARN",
       "key": "nocompatibility.notfullyimplemented",
       "component": "vm:publish",
-      "lineNumber": 67,
+      "lineNumber": 53,
       "columnNumber": 74,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks": []
-    },
-    {
-      "level": "WARN",
-      "key": "vm.sessionVars",
-      "component": "vm:content",
-      "lineNumber": 69,
-      "columnNumber": 37,
-      "message": "You can remove this if this flow is not using \u0027sessionVariables\u0027 or after migrating them to variables.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks": []
     }

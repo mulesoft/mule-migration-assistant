@@ -153,7 +153,9 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new HTTPCleanupTask());
     coreMigrationTasks.add(new MigrationCleanTask());
     coreMigrationTasks.add(new PostprocessGeneral());
-    coreMigrationTasks.add(new PostprocessMuleApplication());
+    if (!noCompatibility) {
+      coreMigrationTasks.add(new PostprocessMuleApplication());
+    }
     return coreMigrationTasks;
   }
 
