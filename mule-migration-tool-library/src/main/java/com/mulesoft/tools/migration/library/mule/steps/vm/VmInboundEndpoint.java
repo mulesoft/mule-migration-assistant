@@ -162,9 +162,11 @@ public class VmInboundEndpoint extends AbstractVmEndpoint {
     object.removeAttribute("name");
     object.removeAttribute("disableTransportTransformer");
 
-    Element content = buildContent(VM_NAMESPACE);
-    object.addContent(new Element("response", VM_NAMESPACE).addContent(content));
-    report.report("vm.sessionVars", content, content);
+    if (!getApplicationModel().noCompatibilityMode()) {
+      Element content = buildContent(VM_NAMESPACE);
+      object.addContent(new Element("response", VM_NAMESPACE).addContent(content));
+      report.report("vm.sessionVars", content, content);
+    }
 
     if (object.getAttribute("exchange-pattern") == null
         || object.getAttributeValue("exchange-pattern").equals("one-way")) {

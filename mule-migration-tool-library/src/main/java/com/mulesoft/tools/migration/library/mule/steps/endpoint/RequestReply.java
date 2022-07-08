@@ -193,7 +193,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
 
     final String configName = getVmConfigName(object, requestConnector);
     Element vmConfig = migrateVmConfig(object, requestConnector, configName, getApplicationModel());
-    migrateOutboundVmEndpoint(request, report, requestConnector, configName, vmConfig);
+    migrateOutboundVmEndpoint(request, report, requestConnector, configName, vmConfig, getApplicationModel());
 
     request.detach();
     addElementAfter(request, object);
