@@ -8,7 +8,6 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE_URI;
-import static com.mulesoft.tools.migration.step.util.TransportsUtils.COMPATIBILITY_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateSchedulingStrategy;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -23,15 +22,15 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
+
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the inbound endpoints of the file transport
@@ -172,7 +171,7 @@ public class FileInboundEndpoint extends AbstractApplicationModelMigrationStep
       object.removeContent(globFilterIn);
     }
 
-    Element customFilterIn = object.getChild("custom-filter", COMPATIBILITY_NAMESPACE);
+    Element customFilterIn = object.getChild("custom-filter", CORE_NAMESPACE);
     if (customFilterIn != null) {
       object.removeContent(customFilterIn);
       // The ERROR will be reported when all custom-filters are queried to be migrated

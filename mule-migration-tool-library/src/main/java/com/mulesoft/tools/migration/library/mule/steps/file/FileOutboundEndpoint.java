@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.file;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.VARS_OUTBOUND_PREFIX;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.lang.System.lineSeparator;
@@ -52,7 +53,7 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
     migrateOperationStructure(getApplicationModel(), object, report);
 
-    object.setAttribute("path", compatibilityOutputFile("{"
+    object.setAttribute("path", outputFileLib("{"
         + " writeToDirectory: "
         + (object.getAttribute("path") == null ? propToDwExpr(object, "writeToDirectory")
             : "'" + object.getAttributeValue("path") + "'")
@@ -88,9 +89,14 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
     }
   }
 
-  private String compatibilityOutputFile(String pathDslParams) {
+  private String outputFileLib(String pathDslParams) {
     try {
       // Replicates logic from org.mule.transport.file.FileConnector.getOutputStream(OutboundEndpoint, MuleEvent)
+      String varPrefix =
+          getApplicationModel().noCompatibilityMode() ? VARS_OUTBOUND_PREFIX : "vars.compatibility_outboundProperties.";
+      String varFilename = getApplicationModel().noCompatibilityMode() ? "message.attributes.fileName"
+          : "vars.compatibility_inboundProperties.filename";
+
       library(getMigrationScriptFolder(getApplicationModel().getProjectBasePath()), "FileWriteOutputFile.dwl",
               "" +
                   "/**" + lineSeparator() +
@@ -98,14 +104,14 @@ public class FileOutboundEndpoint extends AbstractApplicationModelMigrationStep
                   + lineSeparator() +
                   " */" + lineSeparator() +
                   "fun fileWriteOutputfile(vars: {}, pathDslParams: {}) = do {" + lineSeparator() +
-                  "    ((vars.compatibility_outboundProperties['writeToDirectoryName']" + lineSeparator() +
+                  "    ((" + varPrefix + "writeToDirectoryName" + lineSeparator() +
                   "        default pathDslParams.writeToDirectory)" + lineSeparator() +
                   "        default pathDslParams.address)" + lineSeparator() +
                   "    ++ '/' ++" + lineSeparator() +
                   "    ((((pathDslParams.outputPattern" + lineSeparator() +
-                  "        default vars.compatibility_outboundProperties.outputPattern)" + lineSeparator() +
+                  "        default " + varPrefix + "outputPattern)" + lineSeparator() +
                   "        default pathDslParams.outputPatternConfig)" + lineSeparator() +
-                  "        default vars.compatibility_inboundProperties.filename)" + lineSeparator() +
+                  "        default " + varFilename + ")" + lineSeparator() +
                   "        default (uuid() ++ '.dat'))" + lineSeparator() +
                   "}" + lineSeparator() +
                   lineSeparator());
