@@ -8,6 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.ftp;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.ftp.FtpConfig.FTP_NAMESPACE;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.VARS_OUTBOUND_PREFIX;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
@@ -99,7 +100,7 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
 
     migrateOperationStructure(getApplicationModel(), object, report);
 
-    object.setAttribute("path", compatibilityOutputFile("{"
+    object.setAttribute("path", outputFileLib("{"
         + " outputPattern: " + propToDwExpr(object, "outputPattern") + ","
         + " outputPatternConfig: " + getExpressionMigrator().unwrap(propToDwExpr(object, "outputPatternConfig"))
         + "}"));
@@ -109,9 +110,11 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
     }
   }
 
-  private String compatibilityOutputFile(String pathDslParams) {
+  private String outputFileLib(String pathDslParams) {
     try {
       // Replicates logic from org.mule.transport.ftp.FtpConnector.getFilename(ImmutableEndpoint, MuleMessage)
+      String varPrefix =
+          getApplicationModel().noCompatibilityMode() ? VARS_OUTBOUND_PREFIX : "vars.compatibility_outboundProperties.";
       library(getMigrationScriptFolder(getApplicationModel().getProjectBasePath()), "FtpWriteOutputFile.dwl",
               "" +
                   "/**" + lineSeparator() +
@@ -119,9 +122,9 @@ public class FtpOutboundEndpoint extends AbstractFtpEndpoint {
                   + lineSeparator() +
                   " */" + lineSeparator() +
                   "fun ftpWriteOutputfile(vars: {}, pathDslParams: {}) = do {" + lineSeparator() +
-                  "    ((((vars.compatibility_outboundProperties.filename" + lineSeparator() +
+                  "    ((((" + varPrefix + "filename" + lineSeparator() +
                   "        default pathDslParams.outputPattern)" + lineSeparator() +
-                  "        default vars.compatibility_outboundProperties.outputPattern)" + lineSeparator() +
+                  "        default " + varPrefix + "outputPattern)" + lineSeparator() +
                   "        default pathDslParams.outputPatternConfig)" + lineSeparator() +
                   "        default (uuid() ++ '.dat'))" + lineSeparator() +
                   "}" + lineSeparator() +
