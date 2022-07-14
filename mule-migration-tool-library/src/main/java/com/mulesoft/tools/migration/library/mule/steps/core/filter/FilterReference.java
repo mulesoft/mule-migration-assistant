@@ -5,13 +5,13 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-
-import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 
 /**
  * Migrate global filters

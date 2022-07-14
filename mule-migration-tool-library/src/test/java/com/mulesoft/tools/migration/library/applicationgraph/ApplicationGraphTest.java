@@ -5,15 +5,27 @@
  */
 package com.mulesoft.tools.migration.library.applicationgraph;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
+import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.applicationgraph.FlowComponent;
 import com.mulesoft.tools.migration.project.model.applicationgraph.MessageProcessor;
 import com.mulesoft.tools.migration.tck.ReportVerification;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
@@ -22,16 +34,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static com.mulesoft.tools.migration.helper.DocumentHelper.getDocument;
-import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE;
-import static com.mulesoft.tools.migration.tck.MockApplicationModelSupplier.mockApplicationModel;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ApplicationGraphTest {
 

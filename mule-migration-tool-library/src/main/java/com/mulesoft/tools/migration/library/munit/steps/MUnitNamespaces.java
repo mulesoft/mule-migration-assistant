@@ -22,10 +22,10 @@ public class MUnitNamespaces implements NamespaceContribution {
 
   private static final String MUNIT_PATH = "src/test/munit";
   private static final String MUNIT_MOCK_NAME = "mock";
-  private static final String MUNIT_MOCK_URI = "http://www.mulesoft.org/schema/mule/mock";
+  public static final String MUNIT_MOCK_URI = "http://www.mulesoft.org/schema/mule/mock";
   private static final String MUNIT_MOCK_SCHEMA = "http://www.mulesoft.org/schema/mule/mock/current/mule-mock.xsd";
   private static final String MUNIT_TOOLS_NAME = "munit-tools";
-  private static final String MUNIT_TOOLS_URI = "http://www.mulesoft.org/schema/mule/munit-tools";
+  public static final String MUNIT_TOOLS_URI = "http://www.mulesoft.org/schema/mule/munit-tools";
   private static final String MUNIT_TOOLS_SCHEMA = "http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd";
 
   @Override

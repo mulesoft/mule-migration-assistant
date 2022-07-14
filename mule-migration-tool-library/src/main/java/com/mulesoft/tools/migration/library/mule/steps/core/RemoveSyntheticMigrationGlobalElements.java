@@ -5,11 +5,12 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
+
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Remove global elements that have the migration namespace, used internally for migration.
@@ -20,7 +21,6 @@ import org.jdom2.Namespace;
 public class RemoveSyntheticMigrationGlobalElements extends AbstractApplicationModelMigrationStep {
 
   public static final String XPATH_SELECTOR = "//*[namespace-uri() = 'migration']";
-  public static final Namespace MIGRATION_NAMESPACE = Namespace.getNamespace("migration", "migration");
 
   @Override
   public String getDescription() {

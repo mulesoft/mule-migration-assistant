@@ -5,13 +5,14 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementToBottom;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+
 import org.jdom2.Element;
 
 /**
