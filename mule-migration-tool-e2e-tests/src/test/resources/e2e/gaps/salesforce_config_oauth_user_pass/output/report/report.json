@@ -1,10 +1,7 @@
 {
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
-  "connectorsMigrated":
-  [
-    "com.mulesoft.connectors:mule-salesforce-connector:VERSION"
-  ],
+  "connectorsMigrated": [],
   "numberOfMuleComponents": 3,
   "numberOfMuleComponentsMigrated": 1,
   "componentDetails":
@@ -36,7 +33,7 @@
       "component": "sfdc:config-oauth-user-pass",
       "lineNumber": 4,
       "columnNumber": 403,
-      "message": "The migration of 'sfdc:config-oauth-user-pass (name = Salesforce__Basic_Authentication)' is not supported.",
+      "message": "The migration of \u0027sfdc:config-oauth-user-pass\u0027 is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks":
       []
@@ -47,7 +44,7 @@
       "component": "sfdc:config-oauth-user-pass",
       "lineNumber": 12,
       "columnNumber": 404,
-      "message": "The migration of 'sfdc:config-oauth-user-pass (name = Salesforce__Basic_Authentication2)' is not supported.",
+      "message": "The migration of \u0027sfdc:config-oauth-user-pass\u0027 is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks":
       []

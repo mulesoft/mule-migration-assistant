@@ -6,6 +6,7 @@
 package com.mulesoft.tools.migration.step.category;
 
 import com.mulesoft.tools.migration.project.ProjectType;
+import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.pom.PomModel;
 
 import org.jdom2.Element;
@@ -90,6 +91,21 @@ public interface MigrationReport<T> {
    * @param processedElements the amount of elements processed
    */
   void addProcessedElements(int processedElements);
+
+  /**
+   * Marks the element as processed.
+   * Used to report the unprocessed elements at the end of the migration.
+   *
+   * @param processedElementId migration ID of the element
+   */
+  void addProcessedElementId(String processedElementId);
+
+  /**
+   * Reports all the elements that were not processed by the migrator.
+   *
+   * @param applicationModel
+   */
+  void computeUnprocessedElements(ApplicationModel applicationModel);
 
   /**
    * Returns the type of the migrated project.

@@ -5,16 +5,21 @@
  */
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_ID_ATTRIBUTE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
+
 import com.google.common.collect.Iterables;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.jdom2.Element;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
 
 /**
  * Mule application graph model
@@ -98,11 +103,11 @@ public class ApplicationGraph {
    * @return
    */
   public FlowComponent findFlowComponent(Element element) {
-    String elementId = element.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
+    String elementId = element.getAttributeValue(MIGRATION_ID_ATTRIBUTE, MIGRATION_NAMESPACE);
     FlowComponent flowComponent = findFlowComponent(elementId);
     while (flowComponent == null && element.getParentElement() != null && !element.getParentElement().getName().equals("flow")) {
       element = element.getParentElement();
-      elementId = element.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
+      elementId = element.getAttributeValue(MIGRATION_ID_ATTRIBUTE, MIGRATION_NAMESPACE);
       flowComponent = findFlowComponent(elementId);
     }
 

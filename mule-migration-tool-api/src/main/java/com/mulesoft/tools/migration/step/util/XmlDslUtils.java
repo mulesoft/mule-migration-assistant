@@ -60,6 +60,8 @@ public final class XmlDslUtils {
   public static final String HTTP_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/http";
   public static final Namespace HTTP_NAMESPACE = getNamespace("http", HTTP_NAMESPACE_URI);
 
+  public static final String MIGRATION_ID_ATTRIBUTE = "migrationId";
+
   private XmlDslUtils() {
     // Nothing to do
   }

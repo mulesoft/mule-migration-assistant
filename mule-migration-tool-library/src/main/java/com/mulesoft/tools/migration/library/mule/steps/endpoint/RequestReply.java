@@ -19,17 +19,18 @@ import static com.mulesoft.tools.migration.step.AbstractGlobalEndpointMigratorSt
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInboundChildren;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 
-import com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.Optional;
+
 import org.jdom2.Content;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
-
-import java.util.Optional;
 
 /**
  * Migrates the request-reply construct
@@ -84,7 +85,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
             return "TOPIC:" + reply.getAttributeValue("topic");
           }
         });
-        request.setAttribute("reply-to", destination, RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE);
+        request.setAttribute("reply-to", destination, MIGRATION_NAMESPACE);
 
         migrateToReplyFlow(object, report, request, reply);
         return;

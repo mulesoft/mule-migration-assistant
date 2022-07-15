@@ -5,12 +5,14 @@
  */
 package com.mulesoft.tools.migration.step.util;
 
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_ID_ATTRIBUTE;
+
+import java.util.UUID;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.located.LocatedJDOMFactory;
-
-import java.util.UUID;
 
 /**
  * Element factory that includes a synthetic id to match elements
@@ -23,33 +25,30 @@ public class LocatedIdJDOMFactory extends LocatedJDOMFactory {
   @Override
   public Element element(int line, int col, String name, Namespace namespace) {
     Element element = super.element(line, col, name, namespace);
-    XmlDslUtils.addMigrationAttributeToElement(element,
-                                               new Attribute("migrationId", UUID.randomUUID().toString()));
-    return element;
+    return addMigrationIdAttribute(element);
   }
 
   @Override
   public Element element(int line, int col, String name) {
     Element element = super.element(line, col, name);
-    XmlDslUtils.addMigrationAttributeToElement(element,
-                                               new Attribute("migrationId", UUID.randomUUID().toString()));
-    return element;
+    return addMigrationIdAttribute(element);
   }
 
   @Override
   public Element element(int line, int col, String name, String uri) {
     Element element = super.element(line, col, name, uri);
-    XmlDslUtils.addMigrationAttributeToElement(element,
-                                               new Attribute("migrationId", UUID.randomUUID().toString()));
-    return element;
+    return addMigrationIdAttribute(element);
   }
 
   @Override
-  public Element element(int line, int col, String name, String prefix,
-                         String uri) {
+  public Element element(int line, int col, String name, String prefix, String uri) {
     Element element = super.element(line, col, name, prefix, uri);
+    return addMigrationIdAttribute(element);
+  }
+
+  private Element addMigrationIdAttribute(Element element) {
     XmlDslUtils.addMigrationAttributeToElement(element,
-                                               new Attribute("migrationId", UUID.randomUUID().toString()));
+                                               new Attribute(MIGRATION_ID_ATTRIBUTE, UUID.randomUUID().toString()));
     return element;
   }
 

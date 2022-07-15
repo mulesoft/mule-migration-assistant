@@ -7,6 +7,8 @@ package com.mulesoft.tools.migration.library.mule.steps.core;
 
 import static com.mulesoft.tools.migration.library.mule.steps.spring.SpringContributions.ADDITIONAL_SPRING_NAMESPACES_PROP;
 import static com.mulesoft.tools.migration.project.model.ApplicationModel.getElementsWithNamespace;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_ID_ATTRIBUTE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
 import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.containsNamespace;
 import static java.util.stream.Collectors.toList;
 
@@ -57,10 +59,11 @@ public class PreprocessNamespaces implements NamespaceContribution {
             processedElements.incrementAndGet();
 
             if (ns.getURI().startsWith("http://www.mulesoft.org")) {
-              report.report("components.unsupported", node, node, ns.getPrefix());
+              report.report("components.unsupported", node, node, report.getComponentKey(node));
             } else {
               report.report("components.unknown", node, node, ns.getPrefix(), ns.getURI(), ADDITIONAL_SPRING_NAMESPACES_PROP);
             }
+            report.addProcessedElementId(node.getAttributeValue(MIGRATION_ID_ATTRIBUTE, MIGRATION_NAMESPACE));
             report.addComponentFailure(node);
           });
     });
