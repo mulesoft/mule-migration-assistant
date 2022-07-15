@@ -16,7 +16,7 @@
         <file:inbound-endpoint path="someDir/subdir" connector-ref="File" responseTimeout="10000" moveToDirectory="someDir/subdir/output" />
         <set-property propertyName="at-file-level1" value="doh" />
         <set-property propertyName="common-level1" value="doh" />
-        <flow-ref name="subflow" />
+        <flow-ref name="sub/flow" />
 
         <logger message="#[message.outboundProperties['at-sftp-level1']]" /><!-- never -->
         <logger message="#[message.outboundProperties['at-file-level1']]" /><!-- always -->
@@ -33,7 +33,7 @@
         <set-property propertyName="common-level1" value="doh" />
         <choice>
             <when expression="#[payload.length() > 0]">
-                <flow-ref name="subflow" />
+                <flow-ref name="sub/flow" />
             </when>
             <otherwise>
                 <set-property propertyName="otherwise" value="doh" />
@@ -50,7 +50,7 @@
         <logger message="#[message.inboundProperties['fileSize']]" /><!-- only file -->
     </flow>
 
-    <sub-flow name="subflow">
+    <sub-flow name="sub/flow">
         <set-property propertyName="at-sub-flow-level2" value="doh" />
 
         <logger message="#[message.outboundProperties['at-sftp-level1']]" /><!-- sometimes -->

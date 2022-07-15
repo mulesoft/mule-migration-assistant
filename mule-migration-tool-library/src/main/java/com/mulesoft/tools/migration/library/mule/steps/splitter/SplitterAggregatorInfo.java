@@ -5,10 +5,11 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.splitter;
 
-import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElement;
 import static java.lang.Math.abs;
 import static java.nio.file.Paths.get;
+
 import org.mule.runtime.api.util.LazyValue;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;

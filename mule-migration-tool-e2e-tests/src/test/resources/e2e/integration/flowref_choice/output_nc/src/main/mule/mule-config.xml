@@ -26,7 +26,7 @@
 
         <set-variable variableName="outbound_common-level1" value="doh" />
 
-        <flow-ref name="subflow" />
+        <flow-ref name="sub\flow" />
 
         <logger message="#[vars.outbound_at-sftp-level1]" />
 
@@ -62,7 +62,7 @@
 
         <choice>
             <when expression="#[length(payload) &gt; 0]">
-                <flow-ref name="subflow" />
+                <flow-ref name="sub\flow" />
             </when>
             <otherwise>
                 <set-variable variableName="outbound_otherwise" value="doh" />
@@ -92,7 +92,7 @@
         <!-- only file -->
     </flow>
 
-    <sub-flow name="subflow">
+    <sub-flow name="sub\flow">
         <set-variable variableName="outbound_at-sub-flow-level2" value="doh" />
         <logger message="#[vars.outbound_at-sftp-level1]" />
         <!-- sometimes -->

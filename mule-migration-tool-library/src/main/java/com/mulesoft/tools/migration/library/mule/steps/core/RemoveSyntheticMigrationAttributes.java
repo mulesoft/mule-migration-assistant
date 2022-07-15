@@ -5,9 +5,8 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.core;
 
-import static com.mulesoft.tools.migration.library.mule.steps.core.RemoveSyntheticMigrationGlobalElements.MIGRATION_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.removeAllAttributes;
-import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
@@ -35,6 +34,7 @@ public class RemoveSyntheticMigrationAttributes extends AbstractApplicationModel
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
+    report.computeUnprocessedElements(this.getApplicationModel());
     removeAllAttributes(element, MIGRATION_NAMESPACE);
     element.removeNamespaceDeclaration(MIGRATION_NAMESPACE);
   }
@@ -43,4 +43,5 @@ public class RemoveSyntheticMigrationAttributes extends AbstractApplicationModel
   public boolean shouldReportMetrics() {
     return false;
   }
+
 }

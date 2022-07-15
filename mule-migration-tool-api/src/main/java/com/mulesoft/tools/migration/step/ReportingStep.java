@@ -6,6 +6,8 @@
 package com.mulesoft.tools.migration.step;
 
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_ID_ATTRIBUTE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.ApplicationModelContribution;
@@ -68,6 +70,8 @@ public class ReportingStep implements ApplicationModelContribution, ExpressionMi
         report.addComponentFailure(element);
       }
       throw e;
+    } finally {
+      report.addProcessedElementId(element.getAttributeValue(MIGRATION_ID_ATTRIBUTE, MIGRATION_NAMESPACE));
     }
   }
 

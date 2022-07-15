@@ -40,7 +40,7 @@
             <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
         </compatibility:set-property>
 
-        <flow-ref name="subflow" />
+        <flow-ref name="sub\flow" />
 
         <logger message="#[vars.compatibility_outboundProperties['at-sftp-level1']]" />
 
@@ -96,7 +96,7 @@
 
         <choice>
             <when expression="#[length(payload) &gt; 0]">
-                <flow-ref name="subflow" />
+                <flow-ref name="sub\flow" />
             </when>
             <otherwise>
                 <compatibility:set-property propertyName="otherwise" value="doh">
@@ -136,7 +136,7 @@
 
     </flow>
 
-    <sub-flow name="subflow">
+    <sub-flow name="sub\flow">
         <compatibility:set-property propertyName="at-sub-flow-level2" value="doh">
             <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
             <!--    For more information refer to:-->

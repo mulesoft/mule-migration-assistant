@@ -5,11 +5,12 @@
  */
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
-import org.jdom2.Element;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_ID_ATTRIBUTE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
 
 import java.util.List;
 
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
+import org.jdom2.Element;
 
 /**
  * Models a mule message processor
@@ -32,7 +33,7 @@ public class MessageProcessor implements FlowComponent {
   public MessageProcessor(Element xmlElement, Flow parentFLow, ApplicationGraph graph) {
     this.xmlElement = xmlElement;
     this.parentFLow = parentFLow;
-    this.elementId = xmlElement.getAttributeValue("migrationId", MIGRATION_NAMESPACE);
+    this.elementId = xmlElement.getAttributeValue(MIGRATION_ID_ATTRIBUTE, MIGRATION_NAMESPACE);
     name = getComponentName(xmlElement.getName(), xmlElement.getNamespace().getPrefix(), parentFLow, graph);
   }
 

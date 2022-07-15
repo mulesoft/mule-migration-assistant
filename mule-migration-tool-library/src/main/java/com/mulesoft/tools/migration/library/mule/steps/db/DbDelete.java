@@ -5,15 +5,17 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
+import static com.mulesoft.tools.migration.library.mule.steps.db.DbConfig.DB_NAMESPACE;
+import static com.mulesoft.tools.migration.library.mule.steps.db.DbConfig.DB_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static java.util.stream.Collectors.toList;
 
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Element;
-
 import java.util.List;
+
+import org.jdom2.Element;
 
 /**
  * Migrates the delete operation of the DB Connector

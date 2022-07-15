@@ -75,7 +75,6 @@ public class SalesforceMigrationTask extends AbstractMigrationTask {
                         new ReplayStreamingChannelSource(),
                         new SubscribeTopicSource(),
                         new SubscribeStreamingChannelSource(),
-                        new NonPaginatedQueryOperation(),
-                        new SalesforceUnsupportedElementsStep());
+                        new NonPaginatedQueryOperation());
   }
 }
