@@ -22,6 +22,14 @@ public interface PropertyTranslator {
   String OUTBOUND_PREFIX = "outbound_";
   String VARS_OUTBOUND_PREFIX = "vars." + OUTBOUND_PREFIX;
 
+  static String outboundVariable(String property) {
+    if (property.contains(".")) {
+      return String.format("vars['%s%s']", OUTBOUND_PREFIX, property);
+    } else {
+      return VARS_OUTBOUND_PREFIX + property;
+    }
+  }
+
   void initializeTranslationsForApplicationSourceTypes(ApplicationModel applicationModel);
 
   Map<SourceType, Map<String, String>> getTranslationsForApplicationsSourceTypes();

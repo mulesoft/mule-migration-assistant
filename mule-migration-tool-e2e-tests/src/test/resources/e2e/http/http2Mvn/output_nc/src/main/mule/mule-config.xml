@@ -10,7 +10,7 @@
 
         <http:request config-ref="requesterConfig" path="/post" method="POST">
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            <http:headers>#[migration::HttpRequester::httpRequesterHeaders(vars)]</http:headers>
         </http:request>
 
     </flow>

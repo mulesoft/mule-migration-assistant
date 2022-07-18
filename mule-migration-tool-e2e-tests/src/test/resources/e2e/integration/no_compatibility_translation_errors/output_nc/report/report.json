@@ -35,7 +35,7 @@
   "detailedMessages": [
     {
       "level": "ERROR",
-      "key": "nocompatibility.unsupportedproperty",
+      "key": "noCompatibility.unsupportedProperty",
       "component": "logger",
       "lineNumber": 0,
       "columnNumber": 0,
@@ -45,7 +45,7 @@
     },
     {
       "level": "ERROR",
-      "key": "nocompatibility.unsupportedproperty",
+      "key": "noCompatibility.unsupportedProperty",
       "component": "logger",
       "lineNumber": 0,
       "columnNumber": 0,
@@ -55,7 +55,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "sftp:listener",
       "lineNumber": 11,
       "columnNumber": 76,

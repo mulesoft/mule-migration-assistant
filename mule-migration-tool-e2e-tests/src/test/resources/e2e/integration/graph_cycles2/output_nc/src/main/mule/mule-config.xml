@@ -22,12 +22,18 @@
 
     <flow name="httpFlow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/api">
-            <http:response statusCode="#[vars.outbound_http.status]">
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:response>
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:error-response statusCode="#[vars.outbound_http.status]">
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:error-response>
         </http:listener>
 
@@ -37,16 +43,23 @@
 
     <flow name="http2Flow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/api2">
-            <http:response statusCode="#[200]">
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:response>
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:error-response>
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:error-response>
         </http:listener>
 
         <flow-ref name="flow3" />
+
     </flow>
 
     <flow name="fileFlow">
@@ -59,16 +72,10 @@
 
         <flow-ref name="flow2" />
 
-        <!--Migration WARN: When migrating copy properties headers sent by the user or implicit properties are not converted to variables, if there is any specific reference to them as outbound properties they will be need to be migrated manually-->
+        <!--Migration ERROR: Instead of copying inbound properties in the flow, use the 'attributes' of the message directly.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
         <!--<copy-properties xmlns="http://www.mulesoft.org/schema/mule/core" propertyName="*" />-->
-        <set-variable variableName="outbound_MULE.FORCE_SYNC" value="#[false]" />
-        <set-variable variableName="outbound_directory" value="#[((message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))])]" />
-        <set-variable variableName="outbound_fileSize" value="#[message.attributes.size]" />
-        <set-variable variableName="outbound_filename" value="#[message.attributes.fileName]" />
-        <set-variable variableName="outbound_originalDirectory" value="#[((message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))])]" />
-        <set-variable variableName="outbound_originalFilename" value="#[message.attributes.fileName]" />
-        <set-variable variableName="outbound_sourceDirectory" value="#[((message.attributes.path as String) [0 to -(2 + sizeOf(message.attributes.fileName))])]" />
-        <set-variable variableName="outbound_sourceFileName" value="#[message.attributes.fileName]" />
-        <set-variable variableName="outbound_timestamp" value="#[message.attributes.lastModifiedTime]" />
     </flow>
+
 </mule>

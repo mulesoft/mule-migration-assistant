@@ -35,10 +35,15 @@ public class CopyAttachments extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    report.report("message.inboundAttachments", element, element);
-    addCompatibilityNamespace(element.getDocument());
-    element.setName("multipart-to-vars");
-    element.setNamespace(COMPATIBILITY_NAMESPACE);
-    element.getAttribute("attachmentName").setName("partName");
+    if (getApplicationModel().noCompatibilityMode()) {
+      report.report("message.outboundAttachments", element, element.getParentElement());
+      element.detach();
+    } else {
+      report.report("message.inboundAttachments", element, element);
+      addCompatibilityNamespace(element.getDocument());
+      element.setName("multipart-to-vars");
+      element.setNamespace(COMPATIBILITY_NAMESPACE);
+      element.getAttribute("attachmentName").setName("partName");
+    }
   }
 }

@@ -1,36 +1,29 @@
 {
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
-  "connectorsMigrated":
-  [
-    "org.mule.connectors:mule-http-connector:VERSION"
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0"
   ],
   "numberOfMuleComponents": 5,
   "numberOfMuleComponentsMigrated": 5,
-  "componentDetails":
-  {
-    "mule":
-    {
+  "componentDetails": {
+    "mule": {
       "success": 1,
       "failure": 0
     },
-    "flow":
-    {
+    "flow": {
       "success": 1,
       "failure": 0
     },
-    "set-payload":
-    {
+    "set-payload": {
       "success": 1,
       "failure": 0
     },
-    "http:listener-config":
-    {
+    "http:listener-config": {
       "success": 1,
       "failure": 0
     },
-    "http:listener":
-    {
+    "http:listener": {
       "success": 1,
       "failure": 0
     }
@@ -43,18 +36,36 @@
   "numberOfDWTransformationsMigrated": 0,
   "numberOfDWTransformationLines": 0,
   "numberOfDWTransformationLinesMigrated": 0,
-  "detailedMessages":
-  [
+  "detailedMessages": [
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "http:listener",
       "lineNumber": 9,
       "columnNumber": 63,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 10,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 17,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
     }
   ]
 }

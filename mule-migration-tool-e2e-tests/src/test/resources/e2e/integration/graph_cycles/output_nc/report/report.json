@@ -1,22 +1,18 @@
 {
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
-  "connectorsMigrated":
-  [
-    "org.mule.connectors:mule-http-connector:VERSION",
-    "org.mule.connectors:mule-wsc-connector:VERSION"
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0",
+    "org.mule.connectors:mule-wsc-connector:1.6.9"
   ],
   "numberOfMuleComponents": 23,
   "numberOfMuleComponentsMigrated": 22,
-  "componentDetails":
-  {
-    "mule":
-    {
+  "componentDetails": {
+    "mule": {
       "success": 1,
       "failure": 0
     },
-    "logger":
-    {
+    "logger": {
       "success": 5,
       "failure": 0
     },
@@ -28,38 +24,31 @@
       "success": 2,
       "failure": 0
     },
-    "flow-ref":
-    {
+    "flow-ref": {
       "success": 4,
       "failure": 0
     },
-    "http:listener-config":
-    {
+    "http:listener-config": {
       "success": 1,
       "failure": 0
     },
-    "http:listener":
-    {
+    "http:listener": {
       "success": 2,
       "failure": 0
     },
-    "http:header":
-    {
+    "http:header": {
       "success": 1,
       "failure": 0
     },
-    "wsc:config":
-    {
+    "wsc:config": {
       "success": 0,
       "failure": 1
     },
-    "wsc:consume":
-    {
+    "wsc:consume": {
       "success": 1,
       "failure": 0
     },
-    "set-variable":
-    {
+    "set-variable": {
       "success": 3,
       "failure": 0
     }
@@ -72,8 +61,7 @@
   "numberOfDWTransformationsMigrated": 0,
   "numberOfDWTransformationLines": 0,
   "numberOfDWTransformationLinesMigrated": 0,
-  "detailedMessages":
-  [
+  "detailedMessages": [
     {
       "level": "ERROR",
       "key": "wsc.unsupportedProtocol",
@@ -82,63 +70,97 @@
       "columnNumber": 65,
       "message": "Web Service Consumer only supports HTTP or JMS transports.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.collidingProperties",
+      "key": "noCompatibility.collidingProperties",
       "component": "set-property",
       "lineNumber": 19,
       "columnNumber": 121,
       "message": "There are multiple possible translations of http.headers due to app ambiguity. Defaulting to the first one, please revise if this needs to be changed",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "http:listener",
       "lineNumber": 24,
       "columnNumber": 93,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 26,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 32,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
     },
     {
       "level": "ERROR",
-      "key": "nocompatibility.mapPattern",
+      "key": "noCompatibility.mapPattern",
       "component": "logger",
-      "lineNumber": 38,
+      "lineNumber": 44,
       "columnNumber": 106,
-      "message": "Referencing full map of properties like message.outboundProperties or message.inboundProperties cannot be automatically migrated. In case of outbound properties it can be migrated to a map containing all the variables with the prefix 'outbound_', for inbound, a new structure needs to be created in case we want to work over the full map of attributes coming from a message source or connector",
+      "message": "Referencing full map of properties like message.outboundProperties or message.inboundProperties cannot be automatically migrated. In case of outbound properties it can be migrated to a map containing all the variables with the prefix \u0027outbound_\u0027, for inbound, a new structure needs to be created in case we want to work over the full map of attributes coming from a message source or connector",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "http:listener",
-      "lineNumber": 49,
+      "lineNumber": 55,
       "columnNumber": 94,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 56,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 63,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "wsc:consume",
-      "lineNumber": 59,
+      "lineNumber": 71,
       "columnNumber": 92,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     }
   ]
 }

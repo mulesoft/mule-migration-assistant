@@ -208,7 +208,7 @@ public final class XmlDslUtils {
         buildAttributesToInboundProperties(report, element.getParent(), index + 2);
       }
     } else {
-      report.report("nocompatibility.notfullyimplemented", element, element);
+      report.report("noCompatibility.notFullyImplemented", element, element);
     }
   }
 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${httpPort}" />
+    </http:listener-config>
+
+    <!--Migration WARN: consoleEnabled property do not exist in Mule 4.-->
+    <!--<apikit:config xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" name="api-config" raml="api.raml" consoleEnabled="false" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus">
+        <apikit:flow-mapping resource="/resource" action="post" flow-ref="post/resource" />
+        <apikit:flow-mapping resource="/resource/{id}" action="get" content-type="application/json" flow-ref="get-specific-resource" />
+    </apikit:config>-->
+    <apikit:config name="api-config" raml="api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus">
+        <apikit:flow-mappings>
+            <apikit:flow-mapping resource="/resource" action="post" flow-ref="post\resource" />
+            <apikit:flow-mapping resource="/resource/{id}" action="get" content-type="application/json" flow-ref="get-specific-resource" />
+        </apikit:flow-mappings>
+    </apikit:config>
+
+    <flow name="api-main">
+        <http:listener config-ref="httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[vars.outboundHeaders default {} ++ migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:response>
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <http:error-response statusCode="#[vars.httpStatus default vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <http:body>#[payload]</http:body>
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[vars.outboundHeaders default {} ++ migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
+            </http:error-response>
+        </http:listener>
+
+        <apikit:router config-ref="api-config" />
+
+        <error-handler ref="apiKitGlobalExceptionMapping" />
+
+    </flow>
+
+    <flow name="post\resource">
+        <set-variable variableName="outbound_Content-Type" value="application/json" />
+
+        <set-payload value="{&#xD;&#xA;  &quot;response&quot; :{&#xD;&#xA;    &quot;status&quot;: &quot;success&quot;,&#xD;&#xA;    &quot;http-status&quot; : 201,&#xD;&#xA;    &quot;message_ID&quot;: &quot;a7a756040 10/07/2017-14:40:01.6Z&quot;,&#xD;&#xA;    &quot;summary&quot;: &quot;The new customer record was written successfully&quot;,&#xD;&#xA;    &quot;timestamp&quot; : &quot;2000-01-01T00:00:00.0Z&quot;&#xD;&#xA;  }&#xD;&#xA;}" />
+
+    </flow>
+
+    <flow name="get-specific-resource">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:name="URI Params to Variables">
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+
+        <set-variable variableName="outbound_Content-Type" value="application/json" />
+
+        <set-payload value="{&#xD;&#xA;  &quot;response&quot; :{&#xD;&#xA;    &quot;status&quot;: &quot;success&quot;,&#xD;&#xA;    &quot;http-status&quot; : 201,&#xD;&#xA;    &quot;message_ID&quot;: &quot;a7a756040 10/07/2017-14:40:01.6Z&quot;,&#xD;&#xA;    &quot;summary&quot;: &quot;The new customer record was written successfully&quot;,&#xD;&#xA;    &quot;timestamp&quot; : &quot;2000-01-01T00:00:00.0Z&quot;&#xD;&#xA;  }&#xD;&#xA;}" />
+
+    </flow>
+
+    <error-handler name="apiKitGlobalExceptionMapping">
+        <on-error-propagate type="APIKIT:NOT_FOUND">
+            <set-variable variableName="httpStatus" value="404" />
+            <set-variable variableName="outbound_Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" />
+        </on-error-propagate>
+        <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+            <set-variable variableName="httpStatus" value="405" />
+            <set-variable variableName="outbound_Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" />
+        </on-error-propagate>
+        <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+            <set-variable variableName="httpStatus" value="415" />
+            <set-variable variableName="outbound_Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" />
+        </on-error-propagate>
+        <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+            <set-variable variableName="httpStatus" value="406" />
+            <set-variable variableName="outbound_Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" />
+        </on-error-propagate>
+        <on-error-propagate type="APIKIT:BAD_REQUEST">
+            <set-variable variableName="httpStatus" value="400" />
+            <set-variable variableName="outbound_Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" />
+        </on-error-propagate>
+        <on-error-propagate when="#[mel:exception.causedBy(java.lang.ClassNotFoundException)]">
+            <set-variable variableName="httpStatus" value="500" />
+            <set-variable variableName="outbound_Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" />
+        </on-error-propagate>
+    </error-handler>
+
+</mule>

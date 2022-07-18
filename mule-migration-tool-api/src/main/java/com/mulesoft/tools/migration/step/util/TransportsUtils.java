@@ -216,7 +216,7 @@ public final class TransportsUtils {
     if (appModel.getApplicationGraph() == null) {
       migrateSourceStructureForCompatibility(appModel, inboundEndpoint, report, expectsOutboundProperties, consumeStreams);
     } else {
-      report.report("nocompatibility.notfullyimplemented", inboundEndpoint, inboundEndpoint);
+      report.report("noCompatibility.notFullyImplemented", inboundEndpoint, inboundEndpoint);
     }
   }
 

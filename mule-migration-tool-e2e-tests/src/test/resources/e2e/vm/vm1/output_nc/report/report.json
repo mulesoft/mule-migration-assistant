@@ -51,7 +51,7 @@
   "detailedMessages": [
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "vm:listener",
       "lineNumber": 17,
       "columnNumber": 63,
@@ -61,7 +61,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "vm:publish",
       "lineNumber": 24,
       "columnNumber": 63,
