@@ -8,17 +8,16 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.NO_COMPATIBILITY_OUTBOUND_MAP_EXPRESSION;
 import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.outboundVariable;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructureForCompatibility;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
-
-import org.jdom2.Attribute;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 import com.google.common.collect.ImmutableList;
 
@@ -26,6 +25,10 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the listener source of the HTTP Connector
@@ -37,8 +40,6 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
 
   public static final String XPATH_SELECTOR =
       "/*/mule:flow/*[namespace-uri()='" + HTTP_NAMESPACE_URI + "' and local-name()='listener']";
-  public static final String NO_COMPATIBILITY_HEADERS_EXPRESSION =
-      "vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}";
 
   @Override
   public String getDescription() {
@@ -162,7 +163,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
   public static void httpListenerLib(ApplicationModel appModel) {
     try {
       String headersMap =
-          appModel.noCompatibilityMode() ? NO_COMPATIBILITY_HEADERS_EXPRESSION : "vars.compatibility_outboundProperties";
+          appModel.noCompatibilityMode() ? NO_COMPATIBILITY_OUTBOUND_MAP_EXPRESSION : "vars.compatibility_outboundProperties";
       String varStatus =
           appModel.noCompatibilityMode() ? outboundVariable("http.status")
               : "vars.compatibility_outboundProperties['http.status']";

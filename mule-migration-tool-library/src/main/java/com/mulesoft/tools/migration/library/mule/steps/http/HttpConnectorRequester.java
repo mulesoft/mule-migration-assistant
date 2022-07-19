@@ -8,7 +8,7 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
-import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.NO_COMPATIBILITY_HEADERS_EXPRESSION;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.NO_COMPATIBILITY_OUTBOUND_MAP_EXPRESSION;
 import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.outboundVariable;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
@@ -187,7 +187,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
   public static void httpRequesterLib(ApplicationModel appModel) {
     try {
       String headersMap =
-          appModel.noCompatibilityMode() ? NO_COMPATIBILITY_HEADERS_EXPRESSION : "vars.compatibility_outboundProperties";
+          appModel.noCompatibilityMode() ? NO_COMPATIBILITY_OUTBOUND_MAP_EXPRESSION : "vars.compatibility_outboundProperties";
       String varMethod =
           appModel.noCompatibilityMode() ? outboundVariable("http.method")
               : "vars.compatibility_outboundProperties['http.method']";
