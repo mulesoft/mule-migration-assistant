@@ -65,7 +65,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "vm:listener",
       "lineNumber": 24,
       "columnNumber": 63,
@@ -75,7 +75,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "vm:publish-consume",
       "lineNumber": 30,
       "columnNumber": 101,

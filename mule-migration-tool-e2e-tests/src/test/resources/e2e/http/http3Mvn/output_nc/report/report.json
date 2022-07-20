@@ -1,61 +1,49 @@
 {
   "projectType": "MULE_THREE_MAVEN_APPLICATION",
   "projectName": "input",
-  "connectorsMigrated":
-  [
-    "org.mule.connectors:mule-http-connector:VERSION"
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0"
   ],
   "numberOfMuleComponents": 13,
-  "numberOfMuleComponentsMigrated": 13,
-  "componentDetails":
-  {
-    "mule":
-    {
+  "numberOfMuleComponentsMigrated": 9,
+  "componentDetails": {
+    "mule": {
       "success": 1,
       "failure": 0
     },
-    "flow":
-    {
+    "flow": {
       "success": 1,
       "failure": 0
     },
-    "http:listener-config":
-    {
+    "http:listener-config": {
       "success": 1,
       "failure": 0
     },
-    "http:request-config":
-    {
+    "http:request-config": {
       "success": 1,
       "failure": 0
     },
-    "http:listener":
-    {
+    "http:listener": {
       "success": 1,
       "failure": 0
     },
-    "http:request":
-    {
+    "http:request": {
       "success": 1,
       "failure": 0
     },
-    "set-variable":
-    {
+    "set-variable": {
       "success": 1,
       "failure": 0
     },
-    "compatibility:multipart-to-vars":
-    {
-      "success": 2,
-      "failure": 0
+    "copy-attachments": {
+      "success": 0,
+      "failure": 2
     },
-    "copy-properties":
-    {
-      "success": 2,
-      "failure": 0
+    "copy-properties": {
+      "success": 0,
+      "failure": 2
     },
-    "remove-variable":
-    {
+    "remove-variable": {
       "success": 2,
       "failure": 0
     }
@@ -68,73 +56,86 @@
   "numberOfDWTransformationsMigrated": 0,
   "numberOfDWTransformationLines": 0,
   "numberOfDWTransformationLinesMigrated": 0,
-  "detailedMessages":
-  [
+  "detailedMessages": [
     {
       "level": "WARN",
-      "key": "nocompatibility.copyproperties",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "http:request",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "noCompatibility.copyProperties",
       "component": "flow",
       "lineNumber": 12,
       "columnNumber": 38,
-      "message": "When migrating copy properties headers sent by the user or implicit properties are not converted to variables, if there is any specific reference to them as outbound properties they will be need to be migrated manually",
+      "message": "Instead of copying inbound properties in the flow, use the \u0027attributes\u0027 of the message directly.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
-      "level": "WARN",
-      "key": "nocompatibility.copyproperties",
+      "level": "ERROR",
+      "key": "noCompatibility.copyProperties",
       "component": "flow",
       "lineNumber": 12,
       "columnNumber": 38,
-      "message": "When migrating copy properties headers sent by the user or implicit properties are not converted to variables, if there is any specific reference to them as outbound properties they will be need to be migrated manually",
+      "message": "Instead of copying inbound properties in the flow, use the \u0027attributes\u0027 of the message directly.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "message.outboundAttachments",
+      "component": "flow",
+      "lineNumber": 12,
+      "columnNumber": 38,
+      "message": "Refer to the documentation for the specific connector or operation to learn how to send attachments.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "message.outboundAttachments",
+      "component": "flow",
+      "lineNumber": 12,
+      "columnNumber": 38,
+      "message": "Refer to the documentation for the specific connector or operation to learn how to send attachments.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "http:listener",
       "lineNumber": 13,
       "columnNumber": 63,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
-      "component": "http:request",
-      "lineNumber": 33,
-      "columnNumber": 100,
-      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 14,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "WARN",
-      "key": "message.inboundAttachments",
-      "component": "compatibility:multipart-to-vars",
-      "lineNumber": 61,
-      "columnNumber": 55,
-      "message": "Identify the received (inbound) attachments, and set them as variables.",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 21,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
-    },
-    {
-      "level": "WARN",
-      "key": "message.inboundAttachments",
-      "component": "compatibility:multipart-to-vars",
-      "lineNumber": 84,
-      "columnNumber": 55,
-      "message": "Identify the received (inbound) attachments, and set them as variables.",
-      "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     }
   ]
 }

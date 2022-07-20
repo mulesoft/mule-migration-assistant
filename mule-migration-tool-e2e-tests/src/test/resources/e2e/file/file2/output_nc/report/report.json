@@ -43,7 +43,7 @@
   "detailedMessages": [
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "file:write",
       "lineNumber": 13,
       "columnNumber": 246,

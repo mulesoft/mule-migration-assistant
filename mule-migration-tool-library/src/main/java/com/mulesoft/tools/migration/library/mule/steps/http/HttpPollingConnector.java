@@ -142,7 +142,7 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
         migrateInboundEndpointStructure(getApplicationModel(), pollingEndpoint, report, false);
         addAttributesToInboundProperties(pollingEndpoint, getApplicationModel(), report);
       } else {
-        report.report("nocompatibility.notfullyimplemented", object, object);
+        report.report("noCompatibility.notFullyImplemented", object, object);
       }
 
       pollingEndpoint.getParentElement().addContent(0, asList(pollingSource, requestOperation));

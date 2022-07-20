@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+
+    <configuration />
+
+    <wsc:config name="consumerConfig">
+        <!--Migration ERROR: Web Service Consumer only supports HTTP or JMS transports.-->
+        <wsc:connection service="TestService" port="TestPort" wsdlLocation="Test.wsdl" address="http://localhost:${httpPort}/services/Test">
+            <wsc:web-service-security>
+                <wsc:sign-security-strategy>
+                    <wsc:key-store-configuration keyStorePath="clientKeystore" keyPassword="mulepassword" password="mulepassword" alias="muleclient" type="jks" />
+                </wsc:sign-security-strategy>
+                <wsc:verify-signature-security-strategy>
+                    <wsc:trust-store-configuration trustStorePath="trustStore" password="mulepassword" type="jks" />
+                </wsc:verify-signature-security-strategy>
+                <wsc:username-token-security-strategy username="admin" password="textPassword" passwordType="TEXT" addCreated="true" addNonce="true" />
+                <wsc:timestamp-security-strategy timeToLive="60" />
+                <wsc:decrypt-security-strategy>
+                    <wsc:key-store-configuration keyStorePath="ssltest-keystore.jks" keyPassword="changeit" password="changeit" alias="s1as" type="jks" />
+                </wsc:decrypt-security-strategy>
+                <wsc:encrypt-security-strategy>
+                    <wsc:key-store-configuration keyStorePath="ssltest-cacerts.jks" password="changeit" type="jks" alias="s1as" />
+                </wsc:encrypt-security-strategy>
+            </wsc:web-service-security>
+        </wsc:connection>
+    </wsc:config>
+
+    <flow name="request">
+        <wsc:consume operation="echo" config-ref="consumerConfig">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+        </wsc:consume>
+
+    </flow>
+
+</mule>

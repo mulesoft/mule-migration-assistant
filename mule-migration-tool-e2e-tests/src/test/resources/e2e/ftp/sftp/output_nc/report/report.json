@@ -43,7 +43,7 @@
   "detailedMessages": [
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "sftp:listener",
       "lineNumber": 17,
       "columnNumber": 67,
@@ -53,7 +53,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "sftp:write",
       "lineNumber": 27,
       "columnNumber": 183,

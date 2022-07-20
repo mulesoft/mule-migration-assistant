@@ -153,7 +153,7 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
           .setAttribute("destination", "#[migration::JmsTransport::jmsPublishReplyTo(vars)]"));
     }
 
-    outboundBuilder.addContent(compatibilityProperties(appModel));
+    outboundBuilder.addContent(mule3Properties(appModel));
 
     outboundBuilder.setAttribute("correlationId", "#[migration::JmsTransport::jmsCorrelationId(correlationId, vars)]");
     object.setAttribute("sendCorrelationId", "#[migration::JmsTransport::jmsSendCorrelationId(vars)]");
@@ -171,8 +171,9 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
         String defaultDeliveryMode = "true".equals(m3c.getAttributeValue("persistentDelivery")) ? "2" : "1";
 
         object.setAttribute("persistentDelivery",
-                            "#[(vars.compatibility_inboundProperties.JMSDeliveryMode default " + defaultDeliveryMode + ") == 2]");
-        object.setAttribute("priority", "#[vars.compatibility_inboundProperties.JMSPriority default 4]");
+                            "#[(" + inboundProperty("JMSDeliveryMode", appModel) + " default " + defaultDeliveryMode
+                                + ") == 2]");
+        object.setAttribute("priority", "#[" + inboundProperty("JMSPriority", appModel) + " default 4]");
       }
 
       handleConnectorChildElements(m3c,
@@ -196,6 +197,13 @@ public class JmsOutboundEndpoint extends AbstractJmsEndpoint {
     object.removeAttribute("name");
 
     object.removeAttribute("exchange-pattern");
+  }
+
+  private static String inboundProperty(String name, ApplicationModel model) {
+    if (model.noCompatibilityMode()) {
+      return inboundToAttributesExpressions().get(name);
+    }
+    return "vars.compatibility_inboundProperties." + name;
   }
 
   private static void configureTopicPublisher(Element object) {

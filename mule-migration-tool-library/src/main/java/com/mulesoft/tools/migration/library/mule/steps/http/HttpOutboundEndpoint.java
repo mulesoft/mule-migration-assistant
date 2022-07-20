@@ -7,7 +7,9 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
-import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.*;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.addAttributesToInboundProperties;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.addHeadersElement;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorRequester.httpRequesterLib;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.SOCKETS_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.SocketsConfig.addSocketsModule;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
@@ -18,28 +20,22 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addTopLevelElem
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
 import static java.util.Collections.emptyList;
 
-import com.google.common.collect.Lists;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
-import com.mulesoft.tools.migration.project.model.applicationgraph.FlowComponent;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
-import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the outbound endpoint of the HTTP Transport
@@ -66,13 +62,12 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    ApplicationGraph graph = getApplicationModel().getApplicationGraph();
-    if (graph == null) {
-      httpRequesterLib(getApplicationModel());
+    httpRequesterLib(getApplicationModel());
+    if (!getApplicationModel().noCompatibilityMode()) {
       migrateOutboundEndpointStructure(getApplicationModel(), object, report, true);
       addAttributesToInboundProperties(object, getApplicationModel(), report);
     } else {
-      report.report("nocompatibility.notfullyimplemented", object, object);
+      report.report("noCompatibility.notFullyImplemented", object, object);
     }
 
     object.setNamespace(HTTP_NAMESPACE);
@@ -144,10 +139,9 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
     if (object.getAttribute("method") == null) {
       // Logic from org.mule.transport.http.transformers.ObjectToHttpClientMethodRequest.detectHttpMethod(MuleMessage)
-      String translatedMethod = migrateMethod(graph, object, report);
-      object.setAttribute("method", translatedMethod);
+      object.setAttribute("method", "#[migration::HttpRequester::httpRequesterMethod(vars)]");
       object.setAttribute("sendBodyMode", getExpressionMigrator()
-          .wrap(String.format("if (%s == 'DELETE') 'NEVER' else 'AUTO'", getExpressionMigrator().unwrap(translatedMethod))));
+          .wrap("if (migration::HttpRequester::httpRequesterMethod(vars) == 'DELETE') 'NEVER' else 'AUTO'"));
       report.report("http.method", object, object);
       report.report("http.sendBodyMode", object, object);
     } else {
@@ -186,7 +180,7 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
       object.removeAttribute("contentType");
     }
     object
-        .addContent(addHeadersElement(HTTP_NAMESPACE, graph, "#[migration::HttpRequester::httpRequesterTransportHeaders(vars)]"));
+        .addContent(addHeadersElement(HTTP_NAMESPACE, "#[migration::HttpRequester::httpRequesterTransportHeaders(vars)]"));
 
     if (object.getAttribute("exceptionOnMessageError") != null
         && "false".equals(object.getAttributeValue("exceptionOnMessageError"))) {
@@ -198,25 +192,6 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
     }
     if (object.getAttribute("name") != null) {
       object.removeAttribute("name");
-    }
-  }
-
-  private String migrateMethod(ApplicationGraph graph, Element element, MigrationReport report) {
-    if (graph != null) {
-      FlowComponent flowComponent = graph.findFlowComponent(element);
-      List<String> possibleTranslations =
-          flowComponent.getPropertiesMigrationContext().getOutboundTranslation("http.method", false);
-      String methodTranslation = "POST";
-      if (!possibleTranslations.isEmpty()) {
-        if (possibleTranslations.size() > 1) {
-          report.report("nocompatibility.collidingProperties", element, element, element.getName());
-        }
-
-        methodTranslation = possibleTranslations.get(0);
-      }
-      return methodTranslation;
-    } else {
-      return "#[migration::HttpRequester::httpRequesterMethod(vars)]";
     }
   }
 
@@ -345,8 +320,7 @@ public class HttpOutboundEndpoint extends AbstractApplicationModelMigrationStep
 
     if ("request-builder".equals(object.getName())) {
       handleReferencedRequestBuilder(object, httpNamespace);
-      object.addContent(addHeadersElement(httpNamespace, getApplicationModel().getApplicationGraph(),
-                                          "#[migration::HttpRequester::httpRequesterTransportHeaders(vars)]"));
+      object.addContent(addHeadersElement(httpNamespace, "#[migration::HttpRequester::httpRequesterTransportHeaders(vars)]"));
     }
   }
 

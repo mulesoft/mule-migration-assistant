@@ -96,10 +96,10 @@ public class ApplicationGraphCreator {
         if (destinationFlow.isPresent()) {
           return new FlowRef(xmlElement, parentFlow, destinationFlow.get(), applicationGraph);
         } else {
-          report.report("nocompatibility.missingflow", xmlElement, xmlElement);
+          report.report("noCompatibility.missingFlow", xmlElement, xmlElement);
         }
       } else {
-        report.report("nocompatibility.dynamicflowref", xmlElement, xmlElement);
+        report.report("noCompatibility.dynamicFlowRef", xmlElement, xmlElement);
       }
     } else if (isPropertySource(xmlElement, parentFlow)) {
       component =

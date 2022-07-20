@@ -70,7 +70,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "file:listener",
       "lineNumber": 11,
       "columnNumber": 120,
@@ -80,7 +80,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "sftp:listener",
       "lineNumber": 52,
       "columnNumber": 76,

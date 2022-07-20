@@ -43,7 +43,7 @@
   "detailedMessages": [
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "ftp:listener",
       "lineNumber": 17,
       "columnNumber": 60,
@@ -53,7 +53,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "ftp:write",
       "lineNumber": 29,
       "columnNumber": 165,
