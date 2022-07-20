@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:httpn="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:httpn="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <http:listener-config name="httpConf">
         <http:listener-connection host="localhost" port="${httpPort}" />
@@ -11,82 +11,48 @@
 
     <flow name="listenerContentType">
         <http:listener config-ref="httpConf" path="testInput">
-            <http:response statusCode="#[200]">
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:response>
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:error-response>
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:error-response>
         </http:listener>
 
-        <!--Migration WARN: When migrating copy properties headers sent by the user or implicit properties are not converted to variables, if there is any specific reference to them as outbound properties they will be need to be migrated manually-->
+        <!--Migration ERROR: Instead of copying inbound properties in the flow, use the 'attributes' of the message directly.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
         <!--<copy-properties xmlns="http://www.mulesoft.org/schema/mule/core" propertyName="*" />-->
-        <set-variable variableName="outbound_LOCAL_CERTIFICATES" value="#[([message.attributes.clientCertificate])]" />
-
-        <set-variable variableName="outbound_PEER_CERTIFICATES" value="#[([message.attributes.clientCertificate])]" />
-
-        <set-variable variableName="outbound_http.client.cert" value="#[message.attributes.clientCertificate]" />
-
-        <set-variable variableName="outbound_http.context.path" value="#[(if (endsWith(message.attributes.listenerPath, '/*')) message.attributes.listenerPath[0 to -3] default '/' else message.attributes.listenerPath)]" />
-
-        <set-variable variableName="outbound_http.headers" value="#[message.attributes.headers]" />
-
-        <set-variable variableName="outbound_http.listener.path" value="#[message.attributes.listenerPath]" />
-
-        <set-variable variableName="outbound_http.method" value="#[message.attributes.method]" />
-
-        <set-variable variableName="outbound_http.query.params" value="#[message.attributes.queryParams]" />
-
-        <set-variable variableName="outbound_http.query.string" value="#[message.attributes.queryString]" />
-
-        <set-variable variableName="outbound_http.relative.path" value="#[(message.attributes.requestPath[1 + sizeOf(if (endsWith(message.attributes.listenerPath, '/*')) message.attributes.listenerPath[0 to -3] default '/' else message.attributes.listenerPath) to -1])]" />
-
-        <set-variable variableName="outbound_http.remote.address" value="#[message.attributes.remoteAddress]" />
-
-        <set-variable variableName="outbound_http.request" value="#[message.attributes.requestPath]" />
-
-        <set-variable variableName="outbound_http.request.path" value="#[message.attributes.requestPath]" />
-
-        <set-variable variableName="outbound_http.request.uri" value="#[message.attributes.requestUri]" />
-
-        <set-variable variableName="outbound_http.scheme" value="#[message.attributes.scheme]" />
-
-        <set-variable variableName="outbound_http.uri.params" value="#[message.attributes.uriParams]" />
-
-        <set-variable variableName="outbound_http.version" value="#[message.attributes.version]" />
-
         <remove-variable variableName="outbound_http.*" />
 
-        <compatibility:multipart-to-vars partName="*">
-            <!--Migration WARN: Identify the received (inbound) attachments, and set them as variables.-->
-            <!--    For more information refer to:-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_attachments-->
-        </compatibility:multipart-to-vars>
-
+        <!--Migration ERROR: Refer to the documentation for the specific connector or operation to learn how to send attachments.-->
+        <!--    For more information refer to:-->
+        <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_attachments-->
+        <!--<copy-attachments xmlns="http://www.mulesoft.org/schema/mule/core" attachmentName="*" />-->
         <set-variable variableName="outbound_X-Forwarded-For" value="#[message.attributes.remoteAddress]" />
 
         <http:request config-ref="requesterConfig" path="/get" method="GET">
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            <http:headers>#[migration::HttpRequester::httpRequesterHeaders(vars)]</http:headers>
         </http:request>
 
-        <!--Migration WARN: When migrating copy properties headers sent by the user or implicit properties are not converted to variables, if there is any specific reference to them as outbound properties they will be need to be migrated manually-->
+        <!--Migration ERROR: Instead of copying inbound properties in the flow, use the 'attributes' of the message directly.-->
+        <!--    For more information refer to:-->
+        <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
         <!--<copy-properties xmlns="http://www.mulesoft.org/schema/mule/core" propertyName="*" />-->
-        <set-variable variableName="outbound_http.headers" value="#[message.attributes.headers]" />
-
-        <set-variable variableName="outbound_http.reason" value="#[message.attributes.reasonPhrase]" />
-
-        <set-variable variableName="outbound_http.status" value="#[message.attributes.statusCode]" />
-
         <remove-variable variableName="outbound_http.*" />
 
-        <compatibility:multipart-to-vars partName="*">
-            <!--Migration WARN: Identify the received (inbound) attachments, and set them as variables.-->
-            <!--    For more information refer to:-->
-            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_attachments-->
-        </compatibility:multipart-to-vars>
-
+        <!--Migration ERROR: Refer to the documentation for the specific connector or operation to learn how to send attachments.-->
+        <!--    For more information refer to:-->
+        <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_attachments-->
+        <!--<copy-attachments xmlns="http://www.mulesoft.org/schema/mule/core" attachmentName="*" />-->
     </flow>
 
 </mule>

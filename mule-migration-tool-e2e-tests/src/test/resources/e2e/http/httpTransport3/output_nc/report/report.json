@@ -1,41 +1,33 @@
 {
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
-  "connectorsMigrated":
-  [
-    "org.mule.connectors:mule-http-connector:VERSION"
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0"
   ],
   "numberOfMuleComponents": 12,
   "numberOfMuleComponentsMigrated": 12,
-  "componentDetails":
-  {
-    "mule":
-    {
+  "componentDetails": {
+    "mule": {
       "success": 1,
       "failure": 0
     },
-    "logger":
-    {
+    "logger": {
       "success": 2,
       "failure": 0
     },
-    "flow":
-    {
+    "flow": {
       "success": 2,
       "failure": 0
     },
-    "http:endpoint":
-    {
+    "http:endpoint": {
       "success": 4,
       "failure": 0
     },
-    "http:listener":
-    {
+    "http:listener": {
       "success": 2,
       "failure": 0
     },
-    "http:header":
-    {
+    "http:header": {
       "success": 1,
       "failure": 0
     }
@@ -48,51 +40,86 @@
   "numberOfDWTransformationsMigrated": 0,
   "numberOfDWTransformationLines": 0,
   "numberOfDWTransformationLinesMigrated": 0,
-  "detailedMessages":
-  [
+  "detailedMessages": [
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "http:listener",
       "lineNumber": 13,
       "columnNumber": 76,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 15,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 21,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
     },
     {
       "level": "WARN",
       "key": "http.checkPayload",
       "component": "choice",
-      "lineNumber": 23,
+      "lineNumber": 29,
       "columnNumber": 17,
       "message": "This replicates logic from the HTTP transport. Remove it if it is not needed.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "http:listener",
-      "lineNumber": 39,
+      "lineNumber": 45,
       "columnNumber": 77,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 47,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 53,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
     },
     {
       "level": "WARN",
       "key": "http.checkPayload",
       "component": "choice",
-      "lineNumber": 49,
+      "lineNumber": 61,
       "columnNumber": 17,
       "message": "This replicates logic from the HTTP transport. Remove it if it is not needed.",
       "filePath": "src/main/mule/mule-config.xml",
-      "documentationLinks":
-      []
+      "documentationLinks": []
     }
   ]
 }

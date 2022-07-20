@@ -58,14 +58,14 @@ public abstract class PropertiesNoCompatibilityResolver
       try {
         // in case we match part of the expression as referencing the full map of properties we log a message that the expression needs to be changed
         if (mapPattern.matcher(original).matches()) {
-          report.report("nocompatibility.mapPattern", element, element, element.getName());
+          report.report("noCompatibility.mapPattern", element, element, element.getName());
           success = false;
         }
         translatedExpression = translatePropertyReferences(original, element, report, model.getApplicationGraph());
       } catch (MigrationException e) {
         success = false;
       } catch (Exception e) {
-        report.report("nocompatibility.unsupportedproperty", element.getParentElement(), element.getParentElement(),
+        report.report("noCompatibility.unsupportedProperty", element.getParentElement(), element.getParentElement(),
                       element.getName());
         success = false;
       }
@@ -88,18 +88,18 @@ public abstract class PropertiesNoCompatibilityResolver
         } else {
           matcher = patternWithExpression.matcher(expression);
           if (matcher.find()) {
-            report.report("nocompatibility.melexpression", element, element, elementName);
+            report.report("noCompatibility.melExpression", element, element, elementName);
             report.melExpressionFailure(expression);
           }
         }
       } catch (MigrationException e) {
         throw e;
       } catch (Exception e) {
-        report.report("nocompatibility.unsupportedproperty", element, element, elementName);
+        report.report("noCompatibility.unsupportedProperty", element, element, elementName);
         throw new MigrationException(e.getMessage());
       }
     } else {
-      report.report("nocompatibility.unsupportedproperty", element, element, elementName);
+      report.report("noCompatibility.unsupportedProperty", element, element, elementName);
       throw new MigrationException("There was an issue trying to resolve expression to no compatibility. Application graph is not correctly populated");
     }
 
@@ -125,7 +125,7 @@ public abstract class PropertiesNoCompatibilityResolver
 
       if (specificPropMatcher.matches()) {
         if (containsExpression(referenceToProperty)) {
-          report.report("nocompatibility.unsupportedproperty", element, element, element.getName());
+          report.report("noCompatibility.unsupportedProperty", element, element, element.getName());
           failedCompleteTranslation = true;
         }
 
@@ -140,11 +140,11 @@ public abstract class PropertiesNoCompatibilityResolver
           }
 
           if (possibleTranslations.size() > 1) {
-            report.report("nocompatibility.collidingProperties", element, element, propertyToTranslate);
+            report.report("noCompatibility.collidingProperties", element, element, propertyToTranslate);
           }
 
           if (propertyTranslation == null) {
-            report.report("nocompatibility.unsupportedproperty", element, element, element.getName());
+            report.report("noCompatibility.unsupportedProperty", element, element, element.getName());
             failedCompleteTranslation = true;
           }
 
@@ -152,7 +152,7 @@ public abstract class PropertiesNoCompatibilityResolver
             contentTranslation = content.replace(specificPropMatcher.group(0), propertyTranslation);
           }
         } catch (Exception e) {
-          report.report("nocompatibility.unsupportedproperty", element, element, element.getName());
+          report.report("noCompatibility.unsupportedProperty", element, element, element.getName());
           failedCompleteTranslation = true;
         }
       }

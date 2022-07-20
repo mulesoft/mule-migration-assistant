@@ -12,11 +12,17 @@
     <flow name="flowWithSource">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/file" doc:name="HTTP">
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:response statusCode="#[200]">
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'isTest' : message.attributes.headers.myOutbound == 'test'} ++ {'secondHeader' : message.inboundProperties[message.attributes.headers.myOutbound]}]]]></http:headers>
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers><![CDATA[#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'isTest' : message.attributes.headers.myOutbound == 'test'} ++ {'secondHeader' : message.inboundProperties[message.attributes.headers.myOutbound]}]]]></http:headers>
             </http:response>
-            <http:error-response>
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:error-response>
         </http:listener>
 
@@ -27,11 +33,17 @@
     <flow name="Test">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/testinbound" allowedMethods="GET" doc:name="HTTP">
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:response statusCode="#[200]">
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'isTest' : message.attributes.headers.isTest}]]]></http:headers>
+            <http:response statusCode="#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers><![CDATA[#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'isTest' : message.attributes.headers.isTest}]]]></http:headers>
             </http:response>
-            <http:error-response>
-                <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}]]]></http:headers>
+            <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
+                <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <http:headers>#[migration::HttpListener::httpListenerResponseHeaders(vars)]</http:headers>
             </http:error-response>
         </http:listener>
 
@@ -39,7 +51,7 @@
 
         <http:request config-ref="HTTP_Request_Configuration" path="/subflow" method="GET" doc:name="HTTP">
             <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
-            <http:headers><![CDATA[#[vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $} ++ {'isTest' : vars.outbound_myOutbound == 'test'}]]]></http:headers>
+            <http:headers><![CDATA[#[migration::HttpRequester::httpRequesterHeaders(vars) ++ {'isTest' : vars.outbound_myOutbound == 'test'}]]]></http:headers>
         </http:request>
 
     </flow>

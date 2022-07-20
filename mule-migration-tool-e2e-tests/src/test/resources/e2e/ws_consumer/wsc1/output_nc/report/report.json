@@ -1,0 +1,65 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-wsc-connector:1.6.9"
+  ],
+  "numberOfMuleComponents": 6,
+  "numberOfMuleComponentsMigrated": 5,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "configuration": {
+      "success": 1,
+      "failure": 0
+    },
+    "wsc:config": {
+      "success": 0,
+      "failure": 1
+    },
+    "wsc:consume": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:config": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "ERROR",
+      "key": "wsc.unsupportedProtocol",
+      "component": "wsc:config",
+      "lineNumber": 6,
+      "columnNumber": 39,
+      "message": "Web Service Consumer only supports HTTP or JMS transports.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "wsc:consume",
+      "lineNumber": 29,
+      "columnNumber": 67,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

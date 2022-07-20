@@ -56,7 +56,7 @@
   "detailedMessages": [
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "email:send",
       "lineNumber": 0,
       "columnNumber": 0,
@@ -96,7 +96,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "email:listener-pop3",
       "lineNumber": 21,
       "columnNumber": 20,
@@ -106,7 +106,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "vm:publish",
       "lineNumber": 36,
       "columnNumber": 64,
@@ -116,7 +116,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "vm:listener",
       "lineNumber": 44,
       "columnNumber": 61,
@@ -126,7 +126,7 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "vm:publish",
       "lineNumber": 53,
       "columnNumber": 74,

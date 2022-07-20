@@ -7,7 +7,11 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE;
 import static com.mulesoft.tools.migration.library.mule.steps.http.AbstractHttpConnectorMigrationStep.HTTP_NAMESPACE_URI;
-import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.*;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.addAttributesToInboundProperties;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.addHeadersElement;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.addStatusCodeAttribute;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.handleReferencedResponseBuilder;
+import static com.mulesoft.tools.migration.library.mule.steps.http.HttpConnectorListener.httpListenerLib;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateInboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -19,20 +23,19 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIf
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.function.Supplier;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * Migrates the inbound endpoint of the HTTP Transport
@@ -59,7 +62,6 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    ApplicationGraph graph = getApplicationModel().getApplicationGraph();
     object.setNamespace(HTTP_NAMESPACE);
     object.setName("listener");
 
@@ -129,10 +131,9 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
           copyAttributeIfPresent(rb, response, "statusCode");
           copyAttributeIfPresent(rb, response, "reasonPhrase");
 
-          addStatusCodeAttribute(response, graph, report, "200",
-                                 "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]",
-                                 getExpressionMigrator());
-          response.addContent(addHeadersElement(HTTP_NAMESPACE, graph));
+          addStatusCodeAttribute(response, report,
+                                 "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
+          response.addContent(addHeadersElement(HTTP_NAMESPACE));
         });
 
     getApplicationModel()
@@ -145,11 +146,10 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
           copyAttributeIfPresent(rb, errorResponse, "statusCode");
           copyAttributeIfPresent(rb, errorResponse, "reasonPhrase");
 
-          addStatusCodeAttribute(errorResponse, graph, report, "",
-                                 "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]",
-                                 getExpressionMigrator());
+          addStatusCodeAttribute(errorResponse, report,
+                                 "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
 
-          errorResponse.addContent(addHeadersElement(HTTP_NAMESPACE, graph));
+          errorResponse.addContent(addHeadersElement(HTTP_NAMESPACE));
         });
 
     if (object.getAttribute("contentType") != null) {
@@ -157,33 +157,32 @@ public class HttpInboundEndpoint extends AbstractApplicationModelMigrationStep
       response.addContent(new Element("header", HTTP_NAMESPACE)
           .setAttribute("headerName", "Content-Type")
           .setAttribute("value", object.getAttributeValue("contentType")));
-      addStatusCodeAttribute(response, graph, report, "200",
-                             "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]", getExpressionMigrator());
-      response.addContent(addHeadersElement(HTTP_NAMESPACE, graph));
+      addStatusCodeAttribute(response, report,
+                             "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
+      response.addContent(addHeadersElement(HTTP_NAMESPACE));
       object.removeAttribute("contentType");
     }
 
     Element response = object.getChild("response", HTTP_NAMESPACE);
     if (response == null) {
       response = getResponse(object, HTTP_NAMESPACE);
-      addStatusCodeAttribute(response, graph, report, "200",
-                             "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]", getExpressionMigrator());
-      response.addContent(addHeadersElement(HTTP_NAMESPACE, graph));
+      addStatusCodeAttribute(response, report,
+                             "#[migration::HttpListener::httpListenerResponseSuccessStatusCode(vars)]");
+      response.addContent(addHeadersElement(HTTP_NAMESPACE));
     }
     Element errorResponse = object.getChild("error-response", HTTP_NAMESPACE);
     if (errorResponse == null) {
       errorResponse = getErrorResponse(object, HTTP_NAMESPACE);
-      addStatusCodeAttribute(errorResponse, graph, report, "",
-                             "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]",
-                             getExpressionMigrator());
-      errorResponse.addContent(addHeadersElement(HTTP_NAMESPACE, graph));
+      addStatusCodeAttribute(errorResponse, report,
+                             "#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]");
+      errorResponse.addContent(addHeadersElement(HTTP_NAMESPACE));
     }
 
     migrateInboundEndpointStructure(getApplicationModel(), object, report, true);
 
-    if (graph == null) {
+    httpListenerLib(getApplicationModel());
+    if (!getApplicationModel().noCompatibilityMode()) {
       addAttributesToInboundProperties(object, getApplicationModel(), report);
-      httpListenerLib(getApplicationModel());
     }
 
     // Replicates logic from org.mule.transport.http.HttpMuleMessageFactory#extractPayloadFromHttpRequest

@@ -1,0 +1,108 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0"
+  ],
+  "numberOfMuleComponents": 42,
+  "numberOfMuleComponentsMigrated": 42,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "error-handler": {
+      "success": 2,
+      "failure": 0
+    },
+    "flow": {
+      "success": 3,
+      "failure": 0
+    },
+    "set-payload": {
+      "success": 8,
+      "failure": 0
+    },
+    "http:listener-config": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener": {
+      "success": 1,
+      "failure": 0
+    },
+    "set-variable": {
+      "success": 9,
+      "failure": 0
+    },
+    "apikit:config": {
+      "success": 2,
+      "failure": 0
+    },
+    "apikit:router": {
+      "success": 2,
+      "failure": 0
+    },
+    "apikit:mapping-exception-strategy": {
+      "success": 1,
+      "failure": 0
+    },
+    "apikit:mapping": {
+      "success": 6,
+      "failure": 0
+    },
+    "apikit:exception": {
+      "success": 6,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "component": "mule",
+      "lineNumber": 2,
+      "columnNumber": 633,
+      "message": "consoleEnabled property do not exist in Mule 4.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "http:listener",
+      "lineNumber": 13,
+      "columnNumber": 70,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 14,
+      "columnNumber": 137,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 21,
+      "columnNumber": 165,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

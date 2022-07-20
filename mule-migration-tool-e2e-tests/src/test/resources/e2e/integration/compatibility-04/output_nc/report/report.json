@@ -64,7 +64,7 @@
   "detailedMessages": [
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "http:listener",
       "lineNumber": 19,
       "columnNumber": 94,
@@ -74,9 +74,29 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 20,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 27,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "http:request",
-      "lineNumber": 33,
+      "lineNumber": 39,
       "columnNumber": 105,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -86,7 +106,7 @@
       "level": "INFO",
       "key": "file.responseTimeout",
       "component": "file:listener",
-      "lineNumber": 41,
+      "lineNumber": 47,
       "columnNumber": 177,
       "message": "\u0027responseTimeout\u0027 was not being used by the file transport.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -94,9 +114,9 @@
     },
     {
       "level": "WARN",
-      "key": "nocompatibility.notfullyimplemented",
+      "key": "noCompatibility.notFullyImplemented",
       "component": "file:listener",
-      "lineNumber": 41,
+      "lineNumber": 47,
       "columnNumber": 177,
       "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
       "filePath": "src/main/mule/mule-config.xml",
