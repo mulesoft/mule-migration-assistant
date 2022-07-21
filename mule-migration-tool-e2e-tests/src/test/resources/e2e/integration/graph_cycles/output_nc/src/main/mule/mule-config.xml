@@ -16,7 +16,9 @@
 
     <sub-flow name="flow2">
         <logger message="#['Source called with queryParams' ++ message.attributes.queryParams]" level="INFO" doc:name="Logger" />
-        <set-variable variableName="outbound_propertyFlow2" value="#[message.attributes.headers]" doc:name="Property" />
+        <set-variable variableName="outbound_propertyFlow2" value="#[message.attributes.headers]" doc:name="Property">
+            <!--Migration WARN: There are multiple possible translations of http.headers due to app ambiguity. Defaulting to the first one, please revise if this needs to be changed-->
+        </set-variable>
         <flow-ref name="flow3" doc:name="Flow Reference" />
     </sub-flow>
 

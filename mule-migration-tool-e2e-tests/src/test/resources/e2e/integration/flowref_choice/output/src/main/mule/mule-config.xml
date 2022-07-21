@@ -28,7 +28,7 @@
             <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
         </compatibility:attributes-to-inbound-properties>
 
-        <compatibility:set-property propertyName="at-file-level1" value="doh">
+        <compatibility:set-property propertyName="at-file.level1" value="doh">
             <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
             <!--    For more information refer to:-->
             <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
@@ -42,10 +42,11 @@
 
         <flow-ref name="sub\flow" />
 
-        <logger message="#[vars.compatibility_outboundProperties['at-sftp-level1']]" />
-
         <!-- never -->
-        <logger message="#[vars.compatibility_outboundProperties['at-file-level1']]" />
+        <logger message="#[vars.compatibility_outboundProperties['at-sftp.level1']]" />
+
+        <!-- always -->
+        <logger message="#[vars.compatibility_outboundProperties['at-file.level1']]" />
 
         <!-- always -->
         <logger message="#[vars.compatibility_outboundProperties['common-level1']]" />
@@ -53,13 +54,12 @@
         <!-- always -->
         <logger message="#[vars.compatibility_outboundProperties['at-sub-flow-level2']]" />
 
-        <!-- always -->
+        <!-- both file and sftp: translate to different attributes -->
         <logger message="#[vars.compatibility_inboundProperties['filename']]" />
 
-        <!-- both file and sftp: translate to different attributes -->
+        <!-- only file -->
         <logger message="#[vars.compatibility_inboundProperties['fileSize']]" />
 
-        <!-- only file -->
         <compatibility:outbound-properties-to-var>
             <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
             <!--    For more information refer to:-->
@@ -82,7 +82,7 @@
             <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
         </compatibility:attributes-to-inbound-properties>
 
-        <compatibility:set-property propertyName="at-sftp-level1" value="doh">
+        <compatibility:set-property propertyName="at-sftp.level1" value="doh">
             <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
             <!--    For more information refer to:-->
             <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
@@ -97,6 +97,10 @@
         <choice>
             <when expression="#[length(payload) &gt; 0]">
                 <flow-ref name="sub\flow" />
+                <!-- transport not used by app -->
+                <logger message="#[vars.compatibility_inboundProperties['http.headers']]" />
+                <!-- property with dot -->
+                <logger message="#[vars.compatibility_outboundProperties['http.headers']]" />
             </when>
             <otherwise>
                 <compatibility:set-property propertyName="otherwise" value="doh">
@@ -107,27 +111,27 @@
             </otherwise>
         </choice>
 
-        <logger message="#[vars.compatibility_outboundProperties['at-sftp-level1']]" />
-
         <!-- always -->
-        <logger message="#[vars.compatibility_outboundProperties['at-file-level1']]" />
+        <logger message="#[vars.compatibility_outboundProperties['at-sftp.level1']]" />
 
         <!-- never -->
-        <logger message="#[vars.compatibility_outboundProperties['common-level1']]" />
+        <logger message="#[vars.compatibility_outboundProperties['at-file.level1']]" />
 
         <!-- always -->
+        <logger message="#[vars.compatibility_outboundProperties['common-level1']]" />
+
+        <!-- sometimes -->
         <logger message="#[vars.compatibility_outboundProperties['otherwise']]" />
 
         <!-- sometimes -->
         <logger message="#[vars.compatibility_outboundProperties['at-sub-flow-level2']]" />
 
-        <!-- sometimes -->
+        <!-- both file and sftp: translate to different attributes -->
         <logger message="#[vars.compatibility_inboundProperties['filename']]" />
 
-        <!-- both file and sftp: translate to different attributes -->
+        <!-- only file -->
         <logger message="#[vars.compatibility_inboundProperties['fileSize']]" />
 
-        <!-- only file -->
         <compatibility:outbound-properties-to-var>
             <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
             <!--    For more information refer to:-->
@@ -142,18 +146,18 @@
             <!--    For more information refer to:-->
             <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
         </compatibility:set-property>
-        <logger message="#[vars.compatibility_outboundProperties['at-sftp-level1']]" />
         <!-- sometimes -->
-        <logger message="#[vars.compatibility_outboundProperties['at-file-level1']]" />
+        <logger message="#[vars.compatibility_outboundProperties['at-sftp.level1']]" />
         <!-- sometimes -->
+        <logger message="#[vars.compatibility_outboundProperties['at-file.level1']]" />
+        <!-- always -->
         <logger message="#[vars.compatibility_outboundProperties['common-level1']]" />
         <!-- always -->
         <logger message="#[vars.compatibility_outboundProperties['at-sub-flow-level2']]" />
-        <!-- always -->
-        <logger message="#[vars.compatibility_inboundProperties['filename']]" />
         <!-- both file and sftp: translate to different attributes -->
-        <logger message="#[vars.compatibility_inboundProperties['fileSize']]" />
+        <logger message="#[vars.compatibility_inboundProperties['filename']]" />
         <!-- only file -->
+        <logger message="#[vars.compatibility_inboundProperties['fileSize']]" />
     </sub-flow>
 
 </mule>

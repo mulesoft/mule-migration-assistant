@@ -5,15 +5,15 @@
     "org.mule.connectors:mule-file-connector:1.3.4",
     "org.mule.connectors:mule-sftp-connector:1.4.1"
   ],
-  "numberOfMuleComponents": 35,
-  "numberOfMuleComponentsMigrated": 35,
+  "numberOfMuleComponents": 37,
+  "numberOfMuleComponentsMigrated": 37,
   "componentDetails": {
     "mule": {
       "success": 1,
       "failure": 0
     },
     "logger": {
-      "success": 19,
+      "success": 21,
       "failure": 0
     },
     "flow": {
@@ -49,15 +49,25 @@
       "failure": 0
     }
   },
-  "numberOfMELExpressions": 20,
-  "numberOfMELExpressionsMigrated": 20,
-  "numberOfMELExpressionLines": 20,
-  "numberOfMELExpressionLinesMigrated": 20,
+  "numberOfMELExpressions": 22,
+  "numberOfMELExpressionsMigrated": 21,
+  "numberOfMELExpressionLines": 22,
+  "numberOfMELExpressionLinesMigrated": 21,
   "numberOfDWTransformations": 0,
   "numberOfDWTransformationsMigrated": 0,
   "numberOfDWTransformationLines": 0,
   "numberOfDWTransformationLinesMigrated": 0,
   "detailedMessages": [
+    {
+      "level": "ERROR",
+      "key": "noCompatibility.unsupportedProperty",
+      "component": "logger",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
     {
       "level": "INFO",
       "key": "file.responseTimeout",

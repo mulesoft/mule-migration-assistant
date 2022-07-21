@@ -5,22 +5,6 @@
  */
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
-import guru.nidi.graphviz.engine.Format;
-import guru.nidi.graphviz.engine.Graphviz;
-import guru.nidi.graphviz.engine.GraphvizJdkEngine;
-import guru.nidi.graphviz.model.MutableGraph;
-import guru.nidi.graphviz.parse.Parser;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.nio.Attribute;
-import org.jgrapht.nio.DefaultAttribute;
-import org.jgrapht.nio.ExportException;
-import org.jgrapht.nio.dot.DOTExporter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import scala.xml.Atom;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -28,6 +12,20 @@ import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.engine.GraphvizJdkEngine;
+import guru.nidi.graphviz.model.MutableGraph;
+import guru.nidi.graphviz.parse.Parser;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.nio.Attribute;
+import org.jgrapht.nio.DefaultAttribute;
+import org.jgrapht.nio.ExportException;
+import org.jgrapht.nio.dot.DOTExporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Util class to render an application graph
@@ -46,6 +44,7 @@ public class GraphRenderer {
 
   public static void render(ApplicationGraph graph, String filePrefix) throws IOException {
     String dot = generateDot(graph.applicationGraph);
+
     logger.info("\n" + filePrefix + ".dot:\n" + dot);
     MutableGraph g = new Parser().read(dot);
     Graphviz.fromGraph(g).width(1280).render(Format.PNG)

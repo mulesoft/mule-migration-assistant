@@ -5,15 +5,13 @@
  */
 package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyMigrationContext;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**

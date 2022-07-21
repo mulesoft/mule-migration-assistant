@@ -20,16 +20,15 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.changeDefault;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.copyAttributeIfPresent;
 import static java.util.Arrays.asList;
 
-import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import java.util.List;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.List;
 
 /**
  * Migrates the polling connector of the http transport
@@ -55,8 +54,6 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
-    ApplicationGraph graph = getApplicationModel().getApplicationGraph();
-
     Namespace httpNamespace = Namespace.getNamespace("http", "http://www.mulesoft.org/schema/mule/http");
     handleServiceOverrides(object, report);
 
@@ -138,11 +135,11 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
             .setAttribute("value", prop.getAttributeValue("value")));
       }
 
-      if (graph == null) {
+      if (getApplicationModel().noCompatibilityMode()) {
+        report.report("noCompatibility.notFullyImplemented", object, object);
+      } else {
         migrateInboundEndpointStructure(getApplicationModel(), pollingEndpoint, report, false);
         addAttributesToInboundProperties(pollingEndpoint, getApplicationModel(), report);
-      } else {
-        report.report("noCompatibility.notFullyImplemented", object, object);
       }
 
       pollingEndpoint.getParentElement().addContent(0, asList(pollingSource, requestOperation));

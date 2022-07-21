@@ -5,21 +5,39 @@
  */
 package com.mulesoft.tools.migration.library.applicationgraph;
 
-import com.google.common.collect.ImmutableList;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getAllElementsFromNamespaceXpathSelector;
+
 import com.mulesoft.tools.migration.library.nocompatibility.InboundToAttributesTranslator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.applicationgraph.*;
+import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
+import com.mulesoft.tools.migration.project.model.applicationgraph.CopyPropertiesProcessor;
+import com.mulesoft.tools.migration.project.model.applicationgraph.Flow;
+import com.mulesoft.tools.migration.project.model.applicationgraph.FlowComponent;
+import com.mulesoft.tools.migration.project.model.applicationgraph.FlowRef;
+import com.mulesoft.tools.migration.project.model.applicationgraph.MessageProcessor;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesSource;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesSourceComponent;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
+import com.mulesoft.tools.migration.project.model.applicationgraph.RemovePropertyProcessor;
+import com.mulesoft.tools.migration.project.model.applicationgraph.SetPropertyProcessor;
+import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
+import com.mulesoft.tools.migration.project.model.applicationgraph.SyntheticMessageProcessor;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.util.XmlDslUtils;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jdom2.*;
-import org.jdom2.filter.Filters;
 
-import java.util.*;
+import com.google.common.collect.ImmutableList;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.filter.Filters;
 
 /**
  * Step that creates an application graph and uses it to translate properties and variables into the mule 4 model

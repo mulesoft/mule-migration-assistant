@@ -5,7 +5,7 @@
  */
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
-import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.VARS_OUTBOUND_PREFIX;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.outboundVariableExpression;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -101,7 +101,7 @@ public class PropertiesMigrationContext {
                                   source -> outboundContext.get(source).get(key).getTranslation()));
     if (potentialTranslations == null || potentialTranslations.isEmpty()) {
       if (useFallback) {
-        potentialTranslations = tryFallBackTranslation(key, (k, sourceType) -> VARS_OUTBOUND_PREFIX + k);
+        potentialTranslations = tryFallBackTranslation(key, (k, sourceType) -> outboundVariableExpression(k));
       } else {
         potentialTranslations = Maps.newHashMap();
       }
@@ -235,7 +235,7 @@ public class PropertiesMigrationContext {
 
   private Map<PropertiesSource, String> tryFallBackTranslation(String key,
                                                                BiFunction<String, SourceType, String> fallbackTranslationFunction) {
-    return originatingSources.stream()
+    return originatingSources.stream().filter(source -> fallbackTranslationFunction.apply(key, source.getType()) != null)
         .collect(Collectors.toMap(
                                   Function.identity(),
                                   source -> {

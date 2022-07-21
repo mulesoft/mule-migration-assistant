@@ -22,16 +22,17 @@
             </scheduling-strategy>
         </file:listener>
 
-        <set-variable variableName="outbound_at-file-level1" value="doh" />
+        <set-variable variableName="outbound_at-file.level1" value="doh" />
 
         <set-variable variableName="outbound_common-level1" value="doh" />
 
         <flow-ref name="sub\flow" />
 
-        <logger message="#[vars.outbound_at-sftp-level1]" />
-
         <!-- never -->
-        <logger message="#[vars.outbound_at-file-level1]" />
+        <logger message="#[vars['outbound_at-sftp.level1']]" />
+
+        <!-- always -->
+        <logger message="#[vars['outbound_at-file.level1']]" />
 
         <!-- always -->
         <logger message="#[vars.outbound_common-level1]" />
@@ -39,13 +40,12 @@
         <!-- always -->
         <logger message="#[vars.outbound_at-sub-flow-level2]" />
 
-        <!-- always -->
+        <!-- both file and sftp: translate to different attributes -->
         <logger message="#[message.attributes.fileName]" />
 
-        <!-- both file and sftp: translate to different attributes -->
+        <!-- only file -->
         <logger message="#[message.attributes.size]" />
 
-        <!-- only file -->
     </flow>
 
     <flow name="sftp-level1">
@@ -56,56 +56,62 @@
             </scheduling-strategy>
         </sftp:listener>
 
-        <set-variable variableName="outbound_at-sftp-level1" value="doh" />
+        <set-variable variableName="outbound_at-sftp.level1" value="doh" />
 
         <set-variable variableName="outbound_common-level1" value="doh" />
 
         <choice>
             <when expression="#[length(payload) &gt; 0]">
                 <flow-ref name="sub\flow" />
+                <!-- transport not used by app -->
+                <logger message="#[message.inboundProperties['http.headers']]">
+                    <!--Migration ERROR: Cannot migrate logger. At least 1 referenced property was emitted by an unsupported connector or source-->
+                </logger>
+                <!-- property with dot -->
+                <logger message="#[vars['outbound_http.headers']]" />
             </when>
             <otherwise>
                 <set-variable variableName="outbound_otherwise" value="doh" />
             </otherwise>
         </choice>
 
-        <logger message="#[vars.outbound_at-sftp-level1]" />
-
         <!-- always -->
-        <logger message="#[vars.outbound_at-file-level1]" />
+        <logger message="#[vars['outbound_at-sftp.level1']]" />
 
         <!-- never -->
-        <logger message="#[vars.outbound_common-level1]" />
+        <logger message="#[vars['outbound_at-file.level1']]" />
 
         <!-- always -->
+        <logger message="#[vars.outbound_common-level1]" />
+
+        <!-- sometimes -->
         <logger message="#[vars.outbound_otherwise]" />
 
         <!-- sometimes -->
         <logger message="#[vars.outbound_at-sub-flow-level2]" />
 
-        <!-- sometimes -->
+        <!-- both file and sftp: translate to different attributes -->
         <logger message="#[message.attributes.name]" />
 
-        <!-- both file and sftp: translate to different attributes -->
+        <!-- only file -->
         <logger message="#[message.attributes.size]" />
 
-        <!-- only file -->
     </flow>
 
     <sub-flow name="sub\flow">
         <set-variable variableName="outbound_at-sub-flow-level2" value="doh" />
-        <logger message="#[vars.outbound_at-sftp-level1]" />
         <!-- sometimes -->
-        <logger message="#[vars.outbound_at-file-level1]" />
+        <logger message="#[vars['outbound_at-sftp.level1']]" />
         <!-- sometimes -->
+        <logger message="#[vars['outbound_at-file.level1']]" />
+        <!-- always -->
         <logger message="#[vars.outbound_common-level1]" />
         <!-- always -->
         <logger message="#[vars.outbound_at-sub-flow-level2]" />
-        <!-- always -->
-        <logger message="#[message.attributes.fileName]" />
         <!-- both file and sftp: translate to different attributes -->
-        <logger message="#[message.attributes.size]" />
+        <logger message="#[message.attributes.fileName]" />
         <!-- only file -->
+        <logger message="#[message.attributes.size]" />
     </sub-flow>
 
 </mule>
