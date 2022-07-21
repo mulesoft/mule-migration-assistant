@@ -31,6 +31,9 @@ public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
   private static final boolean TEST_COMPATIBILITY = true;
   private static final boolean TEST_NO_COMPATIBILITY = true;
 
+  // render the application graph in no compatibility mode
+  private static final boolean RENDER_APPLICATION_GRAPH = false;
+
   @Parameterized.Parameters(name = "{0}-no-compat={1}")
   public static Object[][] params() throws Exception {
     File[] e2eResources = requireNonNull(new File(getResourceUri("e2e")).listFiles());
@@ -94,6 +97,9 @@ public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
   public void test() throws Exception {
     String additionalParams = resolveParams(new File(getResourceUri("e2e/" + artifactName)));
     additionalParams += noCompatibility ? " -noCompatibility" : "";
+    if (noCompatibility && RENDER_APPLICATION_GRAPH) {
+      GraphRenderer.render(artifactName);
+    }
     simpleCase(artifactName, additionalParams.trim().split("\\s"));
   }
 }

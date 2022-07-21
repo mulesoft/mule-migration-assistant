@@ -5,9 +5,10 @@
  */
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
-import org.jdom2.Element;
-
 import java.util.List;
+import java.util.Objects;
+
+import org.jdom2.Element;
 
 /**
  * Models a mule flow
@@ -36,5 +37,31 @@ public class Flow {
 
   public void setComponents(List<FlowComponent> flowComponents) {
     this.flowComponents = flowComponents;
+  }
+
+  public List<FlowComponent> getComponents() {
+    return flowComponents;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    Flow flow = (Flow) o;
+    return name.equals(flow.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name);
+  }
+
+  @Override
+  public String toString() {
+    return "Flow{" +
+        "name='" + name + '\'' +
+        '}';
   }
 }

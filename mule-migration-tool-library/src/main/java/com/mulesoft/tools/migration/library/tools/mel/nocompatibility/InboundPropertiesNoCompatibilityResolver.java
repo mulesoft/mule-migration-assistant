@@ -6,8 +6,8 @@
 package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
 
 import com.google.common.collect.ImmutableList;
 
@@ -51,8 +51,7 @@ public class InboundPropertiesNoCompatibilityResolver extends PropertiesNoCompat
   @Override
   protected List<String> getPropertyTranslations(PropertiesMigrationContext context, String propertyToTranslate,
                                                  PropertyTranslator translator) {
-    return context.getInboundTranslation(propertyToTranslate, true);
+    return context.getInboundTranslation(propertyToTranslate);
   }
-
 
 }

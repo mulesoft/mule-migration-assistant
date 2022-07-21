@@ -16,7 +16,7 @@
                 <!--Migration WARN: Avoid using an outbound property to determine the status code.-->
                 <!--    For more information refer to:-->
                 <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
-                <http:headers><![CDATA[#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'isTest' : message.attributes.headers.myOutbound == 'test'} ++ {'secondHeader' : message.inboundProperties[message.attributes.headers.myOutbound]}]]]></http:headers>
+                <http:headers><![CDATA[#[migration::HttpListener::httpListenerResponseHeaders(vars) ++ {'isTest' : message.attributes.headers.myHeader == 'test'} ++ {'secondHeader' : message.attributes.headers['my.Header']}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.statusCode default migration::HttpListener::httpListenerResponseErrorStatusCode(vars)]">
                 <!--Migration WARN: Avoid using an outbound property to determine the status code.-->

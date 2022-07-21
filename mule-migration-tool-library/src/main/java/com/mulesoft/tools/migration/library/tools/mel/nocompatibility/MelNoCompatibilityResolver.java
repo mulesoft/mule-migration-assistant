@@ -6,15 +6,15 @@
 package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
-import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.CompatibilityResolver;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.jdom2.Element;
 
 /**
  * No compatibility mode resolver for general MEL expressions,

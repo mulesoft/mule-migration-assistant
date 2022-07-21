@@ -16,7 +16,15 @@
         <file:inbound-endpoint path="someDir/subdir" connector-ref="File" responseTimeout="10000" moveToDirectory="someDir/subdir/output" />
         <set-property propertyName="at-file.level1" value="doh" />
         <set-property propertyName="common-level1" value="doh" />
-        <flow-ref name="sub/flow" />
+
+        <choice>
+            <when expression="#[payload.length() > 0]">
+                <flow-ref name="sub/flow" />
+            </when>
+            <otherwise>
+                <set-property propertyName="otherwise" value="doh" />
+            </otherwise>
+        </choice>
 
         <!-- never -->
         <logger message="#[message.outboundProperties['at-sftp.level1']]" />
@@ -30,7 +38,7 @@
         <!-- always -->
         <logger message="#[message.outboundProperties['at-sub-flow-level2']]" />
 
-        <!-- both file and sftp: translate to different attributes -->
+        <!-- both file and sftp: translate to different attributes, should use file -->
         <logger message="#[message.inboundProperties['filename']]" />
 
         <!-- only file -->
@@ -72,7 +80,7 @@
         <!-- sometimes -->
         <logger message="#[message.outboundProperties['at-sub-flow-level2']]" />
 
-        <!-- both file and sftp: translate to different attributes -->
+        <!-- both file and sftp: translate to different attributes, should use sftp -->
         <logger message="#[message.inboundProperties['filename']]" />
 
         <!-- only file -->
@@ -94,7 +102,7 @@
         <!-- always -->
         <logger message="#[message.outboundProperties['at-sub-flow-level2']]" />
 
-        <!-- both file and sftp: translate to different attributes -->
+        <!-- both file and sftp: translate to different attributes, should report warn -->
         <logger message="#[message.inboundProperties['filename']]" />
 
         <!-- only file -->

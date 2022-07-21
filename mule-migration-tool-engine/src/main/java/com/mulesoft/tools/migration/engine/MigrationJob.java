@@ -32,7 +32,6 @@ import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
-import com.mulesoft.tools.migration.project.model.applicationgraph.GraphRenderer;
 import com.mulesoft.tools.migration.project.model.pom.Parent;
 import com.mulesoft.tools.migration.report.html.HTMLReport;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
@@ -57,7 +56,7 @@ import org.slf4j.LoggerFactory;
 public class MigrationJob implements Executable {
 
   private static final String HTML_REPORT_FOLDER = "report";
-  private transient Logger logger = LoggerFactory.getLogger(this.getClass());
+  private transient final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private final Path project;
   private final Path parentDomainProject;
@@ -70,12 +69,11 @@ public class MigrationJob implements Executable {
   private final Parent projectParentGAV;
   private final String projectGAV;
   private final boolean jsonReportEnabled;
-  private final boolean renderGraph;
   private final ApplicationGraphCreator applicationGraphCreator;
 
   private MigrationJob(Path project, Path parentDomainProject, Path outputProject, List<AbstractMigrationTask> migrationTasks,
                        String muleVersion, boolean cancelOnError, Parent projectParentGAV, String projectGAV,
-                       boolean jsonReportEnabled, boolean noCompatibility, boolean renderGraph) {
+                       boolean jsonReportEnabled, boolean noCompatibility) {
     this.migrationTasks = migrationTasks;
     this.muleVersion = muleVersion;
     this.outputProject = outputProject;
@@ -91,7 +89,6 @@ public class MigrationJob implements Executable {
       this.runnerVersion = "n/a";
     }
     this.applicationGraphCreator = noCompatibility ? new ApplicationGraphCreator() : null;
-    this.renderGraph = noCompatibility ? renderGraph : false;
   }
 
   @Override
@@ -110,12 +107,8 @@ public class MigrationJob implements Executable {
                                        true);
 
     if (applicationGraphCreator != null) {
-      applicationGraphCreator.setExpressionMigrator(new MelToDwExpressionMigrator(report, applicationModel));
       applicationGraph = applicationGraphCreator.create(applicationModel, report);
       applicationModel.setApplicationGraph(applicationGraph);
-      if (renderGraph) {
-        GraphRenderer.render(applicationGraph, project.getFileName().toString());
-      }
     }
 
     try {
@@ -278,7 +271,6 @@ public class MigrationJob implements Executable {
     private List<AbstractMigrationTask> migrationTasks = new ArrayList<>();
     private Parent projectParentGAV = null;
     private String projectGAV;
-    private boolean renderGraph;
 
     public MigrationJobBuilder withProject(Path project) {
       this.project = project;
@@ -330,11 +322,6 @@ public class MigrationJob implements Executable {
       return this;
     }
 
-    public MigrationJobBuilder withRenderGraph(boolean renderGraph) {
-      this.renderGraph = renderGraph;
-      return this;
-    }
-
     public MigrationJob build() throws Exception {
       checkState(project != null, "The project must not be null");
       if (!project.toFile().exists()) {
@@ -371,7 +358,7 @@ public class MigrationJob implements Executable {
 
       return new MigrationJob(project, parentDomainProject, outputProject, migrationTasks, outputVersion,
                               this.cancelOnError, this.projectParentGAV, this.projectGAV, this.jsonReportEnabled,
-                              this.noCompatibility, this.renderGraph);
+                              this.noCompatibility);
     }
 
 

@@ -75,26 +75,4 @@ public class SetPropertyTest {
     assertThat("The attribute was renamed", node.getAttribute("propertyName"), is(notNullValue()));
   }
 
-  @Test
-  public void execute_noCompatibility() throws Exception {
-    Document doc = getDocument(this.getClass().getClassLoader().getResource(FILE_SAMPLE_PATH.toString()).toURI().getPath());
-    node = getElementsFromDocument(doc, setProperty.getAppliedTo().getExpression()).get(0);
-    ApplicationGraph mockApplicationGraph = mock(ApplicationGraph.class);
-    when(mockApplicationModel.noCompatibilityMode()).thenReturn(true);
-
-    SetPropertyProcessor flowComponent = new SetPropertyProcessor(node, mock(Flow.class), mockApplicationGraph);
-    PropertiesMigrationContext propertiesMigrationContext = new PropertiesMigrationContext(new InboundToAttributesTranslator());
-    propertiesMigrationContext.addToOutbound("propertyName", new PropertyMigrationContext("vars.outbound_propertyName"));
-    when(mockApplicationGraph.findFlowComponent(isA(Element.class))).thenReturn(flowComponent);
-
-    setProperty.execute(node, report.getReport());
-
-    assertThat("The node namespace changed", node.getNamespaceURI(),
-               is("http://www.mulesoft.org/schema/mule/core"));
-    assertThat("The node namespace changed", node.getNamespacePrefix(), is(""));
-    assertThat("The node name didn't changed", node.getName(), is("set-variable"));
-    assertThat("The attribute was not renamed", node.getAttribute("variableName"), is(notNullValue()));
-    assertThat("The attribute was not translated", node.getAttribute("variableName").getValue(), is("outbound_propertyName"));
-    assertThat("The attribute value is wrong", node.getAttributeValue("value"), is("#[2]"));
-  }
 }
