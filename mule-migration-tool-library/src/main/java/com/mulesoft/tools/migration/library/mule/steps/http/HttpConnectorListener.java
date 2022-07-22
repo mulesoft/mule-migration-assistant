@@ -9,7 +9,7 @@ import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveH
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
 import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.NO_COMPATIBILITY_OUTBOUND_MAP_EXPRESSION;
-import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.outboundVariable;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.outboundVariableExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addMigrationAttributeToElement;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateSourceStructureForCompatibility;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
@@ -165,7 +165,7 @@ public class HttpConnectorListener extends AbstractHttpConnectorMigrationStep {
       String headersMap =
           appModel.noCompatibilityMode() ? NO_COMPATIBILITY_OUTBOUND_MAP_EXPRESSION : "vars.compatibility_outboundProperties";
       String varStatus =
-          appModel.noCompatibilityMode() ? outboundVariable("http.status")
+          appModel.noCompatibilityMode() ? outboundVariableExpression("http.status")
               : "vars.compatibility_outboundProperties['http.status']";
 
       library(getMigrationScriptFolder(appModel.getProjectBasePath()), "HttpListener.dwl",

@@ -6,7 +6,17 @@
 package com.mulesoft.tools.migration.engine;
 
 
-import com.google.common.collect.Lists;
+import static com.google.common.base.Preconditions.checkState;
+import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
+import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
+import static com.mulesoft.tools.migration.library.mule.steps.spring.AbstractSpringMigratorStep.SPRING_FOLDER;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_APPLICATION;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_DOMAIN;
+import static com.mulesoft.tools.migration.project.ProjectType.MULE_FOUR_POLICY;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
+import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionValid;
+import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTasksDeclaredNamespaces;
+
 import com.mulesoft.tools.migration.Executable;
 import com.mulesoft.tools.migration.engine.exception.MigrationJobException;
 import com.mulesoft.tools.migration.engine.project.ProjectTypeFactory;
@@ -17,12 +27,12 @@ import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourD
 import com.mulesoft.tools.migration.engine.project.structure.mule.four.MuleFourPolicy;
 import com.mulesoft.tools.migration.exception.MigrationTaskException;
 import com.mulesoft.tools.migration.library.applicationgraph.ApplicationGraphCreator;
-import com.mulesoft.tools.migration.project.model.applicationgraph.GraphRenderer;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.ProjectType;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.ApplicationModel.ApplicationModelBuilder;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
+import com.mulesoft.tools.migration.project.model.applicationgraph.GraphRenderer;
 import com.mulesoft.tools.migration.project.model.pom.Parent;
 import com.mulesoft.tools.migration.report.html.HTMLReport;
 import com.mulesoft.tools.migration.report.html.model.ReportEntryModel;
@@ -30,22 +40,13 @@ import com.mulesoft.tools.migration.report.json.JSONReport;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkState;
-import static com.mulesoft.tools.migration.engine.project.MuleProjectFactory.getMuleProject;
-import static com.mulesoft.tools.migration.engine.project.structure.BasicProject.getFiles;
-import static com.mulesoft.tools.migration.library.mule.steps.spring.AbstractSpringMigratorStep.SPRING_FOLDER;
-import static com.mulesoft.tools.migration.project.ProjectType.*;
-import static com.mulesoft.tools.migration.util.version.VersionUtils.MIN_MULE4_VALID_VERSION;
-import static com.mulesoft.tools.migration.util.version.VersionUtils.isVersionValid;
-import static com.mulesoft.tools.migration.xml.AdditionalNamespacesFactory.getTasksDeclaredNamespaces;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * It represent a migration job which is composed by one or more {@link AbstractMigrationTask}
@@ -185,7 +186,8 @@ public class MigrationJob implements Executable {
   }
 
   private ApplicationModel generateTargetApplicationModel(Path project, ProjectType type, Path sourceProjectBasePath,
-                                                          Parent projectParentGAV, String projectGAV, ApplicationGraph graph,
+                                                          Parent projectParentGAV, String projectGAV,
+                                                          ApplicationGraph graph,
                                                           boolean generateElementIds)
       throws Exception {
     ApplicationModelBuilder appModelBuilder = new ApplicationModelBuilder()

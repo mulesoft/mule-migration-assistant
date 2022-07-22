@@ -5,7 +5,7 @@
  */
 package com.mulesoft.tools.migration.project.model.applicationgraph;
 
-import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.VARS_OUTBOUND_PREFIX;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.outboundVariableExpression;
 
 import org.jdom2.Element;
 
@@ -30,7 +30,7 @@ public class SetPropertyProcessor extends MessageProcessor {
   }
 
   public String getPropertyTranslation() {
-    return VARS_OUTBOUND_PREFIX + this.propertyName;
+    return outboundVariableExpression(this.propertyName);
   }
 
   @Override

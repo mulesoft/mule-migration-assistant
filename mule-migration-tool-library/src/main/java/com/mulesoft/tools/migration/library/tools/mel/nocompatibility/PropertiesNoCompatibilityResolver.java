@@ -6,18 +6,19 @@
 package com.mulesoft.tools.migration.library.tools.mel.nocompatibility;
 
 import com.mulesoft.tools.migration.exception.MigrationException;
-import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.project.model.applicationgraph.ApplicationGraph;
 import com.mulesoft.tools.migration.project.model.applicationgraph.FlowComponent;
 import com.mulesoft.tools.migration.project.model.applicationgraph.PropertiesMigrationContext;
+import com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
-import org.jdom2.Element;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.jdom2.Element;
 
 /**
  * Abstract class that resolves mel expressions using properties in no compatibility mode.
@@ -84,7 +85,8 @@ public abstract class PropertiesNoCompatibilityResolver
     if (flowComponent != null) {
       try {
         if (matcher.find()) {
-          return replaceAllOccurencesOfProperty(expression, matcher, flowComponent, report, getTranslator(applicationGraph));
+          return replaceAllOccurencesOfProperty(element, expression, matcher, flowComponent, report,
+                                                getTranslator(applicationGraph));
         } else {
           matcher = patternWithExpression.matcher(expression);
           if (matcher.find()) {
@@ -107,12 +109,12 @@ public abstract class PropertiesNoCompatibilityResolver
     return expression;
   }
 
-  private String replaceAllOccurencesOfProperty(String content, Matcher outerMatcher, FlowComponent flowComponent,
+  private String replaceAllOccurencesOfProperty(Element element, String content, Matcher outerMatcher,
+                                                FlowComponent flowComponent,
                                                 MigrationReport report, PropertyTranslator translator)
       throws MigrationException {
     outerMatcher.reset();
     String contentTranslation = content;
-    Element element = flowComponent.getXmlElement();
     boolean failedCompleteTranslation = false;
     while (outerMatcher.find()) {
       String referenceToProperty = outerMatcher.group();

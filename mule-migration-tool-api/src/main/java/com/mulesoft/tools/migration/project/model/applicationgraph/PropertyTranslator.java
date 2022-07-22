@@ -24,7 +24,7 @@ public interface PropertyTranslator {
   String NO_COMPATIBILITY_OUTBOUND_MAP_EXPRESSION =
       "vars filterObject ($$ startsWith 'outbound_') mapObject {($$ dw::core::Strings::substringAfter '_'): $}";
 
-  static String outboundVariable(String property) {
+  static String outboundVariableExpression(String property) {
     if (property.contains(".")) {
       return String.format("vars['%s%s']", OUTBOUND_PREFIX, property);
     } else {

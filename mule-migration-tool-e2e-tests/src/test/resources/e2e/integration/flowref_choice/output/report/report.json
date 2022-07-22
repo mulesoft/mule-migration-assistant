@@ -5,15 +5,15 @@
     "org.mule.connectors:mule-file-connector:1.3.4",
     "org.mule.connectors:mule-sftp-connector:1.4.1"
   ],
-  "numberOfMuleComponents": 35,
-  "numberOfMuleComponentsMigrated": 35,
+  "numberOfMuleComponents": 37,
+  "numberOfMuleComponentsMigrated": 37,
   "componentDetails": {
     "mule": {
       "success": 1,
       "failure": 0
     },
     "logger": {
-      "success": 19,
+      "success": 21,
       "failure": 0
     },
     "flow": {
@@ -49,10 +49,10 @@
       "failure": 0
     }
   },
-  "numberOfMELExpressions": 20,
-  "numberOfMELExpressionsMigrated": 20,
-  "numberOfMELExpressionLines": 20,
-  "numberOfMELExpressionLinesMigrated": 20,
+  "numberOfMELExpressions": 22,
+  "numberOfMELExpressionsMigrated": 22,
+  "numberOfMELExpressionLines": 22,
+  "numberOfMELExpressionLinesMigrated": 22,
   "numberOfDWTransformations": 0,
   "numberOfDWTransformationsMigrated": 0,
   "numberOfDWTransformationLines": 0,
@@ -142,7 +142,7 @@
       "level": "WARN",
       "key": "message.outboundProperties",
       "component": "compatibility:set-property",
-      "lineNumber": 102,
+      "lineNumber": 106,
       "columnNumber": 82,
       "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -152,7 +152,7 @@
       "level": "WARN",
       "key": "message.outboundProperties",
       "component": "compatibility:outbound-properties-to-var",
-      "lineNumber": 131,
+      "lineNumber": 135,
       "columnNumber": 51,
       "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
       "filePath": "src/main/mule/mule-config.xml",
@@ -162,7 +162,7 @@
       "level": "WARN",
       "key": "message.outboundProperties",
       "component": "compatibility:set-property",
-      "lineNumber": 140,
+      "lineNumber": 144,
       "columnNumber": 83,
       "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
       "filePath": "src/main/mule/mule-config.xml",
