@@ -41,6 +41,7 @@ jobs:
       #GH RELEASE
       - name: Create Release
         id: create_release
+
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -61,6 +62,17 @@ jobs:
           asset_name: mule-migration-assistant-runner-${{env.RELEASE_VERSION}}.tar.gz
           asset_content_type: application/gzip
 
+      - name: Upload Release Asset tgz sha256
+        id: upload-release-asset-tgz-sha256
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./runner/target/mule-migration-assistant-runner-${{env.RELEASE_VERSION}}.tar.gz.sha256
+          asset_name: mule-migration-assistant-runner-${{env.RELEASE_VERSION}}.tar.gz.sha256
+          asset_content_type: text/plain
+
       - name: Upload Release Asset zip
         id: upload-release-asset-zip
         uses: actions/upload-release-asset@v1
@@ -71,3 +83,14 @@ jobs:
           asset_path: ./runner/target/mule-migration-assistant-runner-${{env.RELEASE_VERSION}}.zip
           asset_name: mule-migration-assistant-runner-${{env.RELEASE_VERSION}}.zip
           asset_content_type: application/zip
+
+      - name: Upload Release Asset zip sha256
+        id: upload-release-asset-zip-sha256
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./runner/target/mule-migration-assistant-runner-${{env.RELEASE_VERSION}}.zip.sha256
+          asset_name: mule-migration-assistant-runner-${{env.RELEASE_VERSION}}.zip.sha256
+          asset_content_type: text/plain
