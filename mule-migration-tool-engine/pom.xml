@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.mulesoft.tools</groupId>
         <artifactId>mule-migration-tool</artifactId>
-        <version>1.3.2-SNAPSHOT</version>
+        <version>1.4.0-alpha</version>
     </parent>
     <artifactId>mule-migration-tool-engine</artifactId>
     <name>Mule Migration Assistant Engine</name>
