@@ -54,7 +54,7 @@
         <mule.federation.extension.version>1.3.0</mule.federation.extension.version>
         <mule.ip-filter.extension.version>2.0.0</mule.ip-filter.extension.version>
         <mule.http-policy-transform.extension.version>3.0.0</mule.http-policy-transform.extension.version>
-        <mule.threat-protection.extension.version>1.1.2</mule.threat-protection.extension.version>
+        <mule.threat-protection.extension.version>1.1.3</mule.threat-protection.extension.version>
         <mule.throttling.extension.version>2.0.3</mule.throttling.extension.version>
         <mule.rest-validator.extension.version>2.2.1</mule.rest-validator.extension.version>
         <mule.http-proxy.extension.version>1.1.3</mule.http-proxy.extension.version>
