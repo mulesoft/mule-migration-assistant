@@ -24,7 +24,7 @@
         <mule.file.connector.version>1.3.4</mule.file.connector.version>
         <mule.jms.connector.version>1.8.2</mule.jms.connector.version>
         <mule.vm.connector.version>2.0.0</mule.vm.connector.version>
-        <mule.amqp.connector.version>1.7.3</mule.amqp.connector.version>
+        <mule.amqp.connector.version>1.7.4</mule.amqp.connector.version>
         <mule.db.connector.version>1.12.1</mule.db.connector.version>
         <mule.wsc.connector.version>1.6.9</mule.wsc.connector.version>
         <mule.email.connector.version>1.5.2</mule.email.connector.version>
