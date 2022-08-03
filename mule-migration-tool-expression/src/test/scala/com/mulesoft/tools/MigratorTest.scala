@@ -195,4 +195,8 @@ class MigratorTest extends FlatSpec with Matchers {
   it should "migrate mel expression with isCausedBy function" in {
     Migrator.migrate("exception.causedBy(org.mule.RuntimeException)").getGeneratedCode() shouldBe "%dw 2.0\n---\nJava::isCausedBy(error.cause, 'org.mule.RuntimeException', false)"
   }
+
+  it should "fail with empty literal" in {
+    Migrator.migrate("payload == empty").metadata.children.head shouldBe NonMigratable("expressions.emptyLiteral")
+  }
 }

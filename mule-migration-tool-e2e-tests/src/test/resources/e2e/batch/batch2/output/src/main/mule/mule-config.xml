@@ -77,7 +77,7 @@
             <!--        * https://blogs.mulesoft.com/dev/mule-dev/why-dataweave-main-expression-language-mule-4-->
             <!--Migration WARN: The MEL expression contains a method invocation that could not be migrated to a Dataweave expression.-->
             <!--    For more information refer to:-->
-            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/dataweave-cookbook-java-methods-->
+            <!--        * https://docs.mulesoft.com/dataweave/2.4/dataweave-cookbook-java-methods-->
             <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-mel-->
         </set-payload>
     </sub-flow>

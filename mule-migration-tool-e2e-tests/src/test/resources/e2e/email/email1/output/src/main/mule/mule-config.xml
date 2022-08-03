@@ -3,7 +3,7 @@
 
     <!--Migration INFO: Email transformers are no longer needed. The payload already has the type information.-->
     <!--    For more information refer to:-->
-    <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-transformations#data-types-and-object-to-string-byte-inputstream-transformers-->
+    <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-transformations#data-types-and-object-to-stringbyteinputstream-transformers-->
     <!--<custom-transformer xmlns="http://www.mulesoft.org/schema/mule/core" name="rfc822-mime" class="org.mule.transport.email.transformers.Rfc822ByteArraytoMimeMessage" />-->
     <email:pop3-config name="Pop3Config">
         <email:pop3-connection host="localhost" port="${pop3Port}" user="bob" password="secret" />

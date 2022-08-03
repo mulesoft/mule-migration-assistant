@@ -57,6 +57,9 @@ case class ContainsNode(left: MelExpressionNode, right: MelExpressionNode) exten
 case class DWFunctionNode(script: StringNode) extends MelExpressionNode {
 }
 
+case class EmptyLiteralNode() extends MelExpressionNode {
+}
+
 object OperatorType {
   val plus = 0
   val minus = 1

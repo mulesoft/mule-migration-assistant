@@ -26,7 +26,7 @@ object Migrator {
   val DEFAULT_HEADER = HeaderNode(Seq(VersionDirective(VersionMajor("2"), VersionMinor("0"))))
   val CLASS_PROPERTY_NAME = "class"
 
-  def bindingContextVariable: List[String] = List("message", "exception", "payload", "flowVars", "sessionVars", "recordVars", "null");
+  def bindingContextVariable: List[String] = List("message", "exception", "payload", "flowVars", "sessionVars", "recordVars", "null", "empty");
   var counter = 0
 
 
@@ -47,7 +47,12 @@ object Migrator {
       case mel.MethodInvocationNode(canonicalName, arguments) => toDataweaveMethodInvocation(canonicalName, arguments)
       case mel.PropertyNode(name) => toDataweaveProperty(name.map(_.literal).mkString("."))
       case mel.ContainsNode(left, right) => toContainsInvocation(left, right)
+      case mel.EmptyLiteralNode() => toEmptyLiteral()
     }
+  }
+
+  def toEmptyLiteral() = {
+    new MigrationResult(toDataweaveNameIdentifierNode("empty").dwAstNode, DefaultMigrationMetadata(Seq(NonMigratable("expressions.emptyLiteral"))))
   }
 
   def toContainsInvocation(left: MelExpressionNode, right: MelExpressionNode): MigrationResult = {
