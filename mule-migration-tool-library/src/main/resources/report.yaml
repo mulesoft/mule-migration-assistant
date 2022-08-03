@@ -104,10 +104,11 @@ expressions:
       - https://docs.mulesoft.com/dataweave/2.4/dataweave-cookbook-java-methods
       - https://docs.mulesoft.com/mule-runtime/4.3/migration-mel
   emptyLiteral:
-    type: ERROR
-    message: "Cannot migrate emptiness test using 'empty' literal. Consider using the 'isEmpty' DataWeave function."
+    type: WARN
+    message: "DataWeave 'isEmpty' function yields different results than MEL '== empty' comparison when tested against 0, strings with only whitespace and false."
     docLinks:
       - https://docs.mulesoft.com/dataweave/2.3/dw-core-functions-isempty
+
 dataWeave:
   migrationErrorFile:
     type: ERROR

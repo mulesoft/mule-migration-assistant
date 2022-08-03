@@ -11,3 +11,5 @@ case class DefaultMigrationMetadata(override val children: Seq[MigrationMetadata
 case class JavaModuleRequired() extends MigrationMetadata
 
 case class NonMigratable(reason: String) extends MigrationMetadata
+
+case class MigratableWithWarning(warning: String) extends MigrationMetadata

@@ -52,7 +52,7 @@ object Migrator {
   }
 
   def toEmptyLiteral() = {
-    new MigrationResult(toDataweaveNameIdentifierNode("empty").dwAstNode, DefaultMigrationMetadata(Seq(NonMigratable("expressions.emptyLiteral"))))
+    new MigrationResult(toDataweaveNameIdentifierNode("empty").dwAstNode, DefaultMigrationMetadata(Seq(MigratableWithWarning("expressions.emptyLiteral"))))
   }
 
   def toContainsInvocation(left: MelExpressionNode, right: MelExpressionNode): MigrationResult = {
@@ -196,7 +196,7 @@ object Migrator {
       case mel.OperatorType.dot => toDataweaveBinaryOpNode(ValueSelectorOpId, left, right)
       case mel.OperatorType.subscript => toDataweaveBinaryOpNode(DynamicSelectorOpId, left, right)
       case mel.OperatorType.plus => toDataweaveBinaryOpNode(AdditionOpId, left, right)
-      case mel.OperatorType.equals => toDataweaveBinaryOpNode(EqOpId, left, right)
+      case mel.OperatorType.equals => toDataweaveEqualsNode(left, right)
       case mel.OperatorType.notEquals => toDataweaveBinaryOpNode(NotEqOpId, left, right)
       case mel.OperatorType.lessThanOrEqual => toDataweaveBinaryOpNode(LessOrEqualThanOpId, left, right)
       case mel.OperatorType.greaterThanOrEqual => toDataweaveBinaryOpNode(GreaterOrEqualThanOpId, left, right)
@@ -229,6 +229,27 @@ object Migrator {
     val lRes = toDataweaveAst(left)
     val rRes = toDataweaveAst(right)
     new MigrationResult(AndNode(lRes.dwAstNode, rRes.dwAstNode), DefaultMigrationMetadata(lRes.metadata.children ++ rRes.metadata.children))
+  }
+
+  private def toDataweaveEqualsNode(left: MelExpressionNode, right: MelExpressionNode): MigrationResult = {
+    val lRes = toDataweaveAst(left)
+    val rRes = toDataweaveAst(right)
+
+    val nonEmptyRes = if (left.isInstanceOf[EmptyLiteralNode]) {
+      Some(rRes)
+    } else if (right.isInstanceOf[EmptyLiteralNode]) {
+      Some(lRes)
+    } else {
+      None
+    }
+
+    if (nonEmptyRes.isDefined) {
+      val param = FunctionCallParametersNode(Seq(nonEmptyRes.get.dwAstNode))
+      val variableReferenceNode = VariableReferenceNode(NameIdentifier("isEmpty"))
+      new MigrationResult(dw.functions.FunctionCallNode(variableReferenceNode, param),DefaultMigrationMetadata(lRes.metadata.children ++ rRes.metadata.children))
+    } else {
+      new MigrationResult(dw.operators.BinaryOpNode(EqOpId, lRes.dwAstNode, rRes.dwAstNode), DefaultMigrationMetadata(lRes.metadata.children ++ rRes.metadata.children))
+    }
   }
 
   private def toDataweaveBinaryOpNode(opId: BinaryOpIdentifier, left: MelExpressionNode, right: MelExpressionNode, metadata: MigrationMetadata = Empty()): MigrationResult = {

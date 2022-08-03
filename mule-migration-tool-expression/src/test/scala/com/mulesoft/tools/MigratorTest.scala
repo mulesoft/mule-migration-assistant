@@ -197,6 +197,6 @@ class MigratorTest extends FlatSpec with Matchers {
   }
 
   it should "fail with empty literal" in {
-    Migrator.migrate("payload == empty").metadata.children.head shouldBe NonMigratable("expressions.emptyLiteral")
+    Migrator.migrate("payload == empty").metadata.children.head shouldBe MigratableWithWarning("expressions.emptyLiteral")
   }
 }
