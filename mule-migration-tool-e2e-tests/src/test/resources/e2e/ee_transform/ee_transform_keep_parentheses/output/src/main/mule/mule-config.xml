@@ -15,7 +15,7 @@ output application/json
       (vars.var1.groupData filter ($.name == data01.data and $.value == data01.value) map ((data02, indexOfPayload02) -> {
         data: data02.name
       }))
-    }) filter (not $ == {})
+    }) filter ($ != {})
   }
 }]]></ee:set-payload>
             </ee:message>
