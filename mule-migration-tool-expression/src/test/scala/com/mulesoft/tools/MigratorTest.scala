@@ -196,7 +196,9 @@ class MigratorTest extends FlatSpec with Matchers {
     Migrator.migrate("exception.causedBy(org.mule.RuntimeException)").getGeneratedCode() shouldBe "%dw 2.0\n---\nJava::isCausedBy(error.cause, 'org.mule.RuntimeException', false)"
   }
 
-  it should "fail with empty literal" in {
-    Migrator.migrate("payload == empty").metadata.children.head shouldBe MigratableWithWarning("expressions.emptyLiteral")
+  it should "migrate empty literal and generate warning" in {
+    val migrated = Migrator.migrate("payload == empty")
+    migrated.getGeneratedCode() shouldBe "%dw 2.0\n---\nisEmpty(payload)"
+    migrated.metadata.children.head shouldBe MigratableWithWarning("expressions.emptyLiteral")
   }
 }
