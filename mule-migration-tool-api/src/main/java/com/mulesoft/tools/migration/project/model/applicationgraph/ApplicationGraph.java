@@ -8,100 +8,34 @@ package com.mulesoft.tools.migration.project.model.applicationgraph;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_ID_ATTRIBUTE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
 
-import com.google.common.collect.Iterables;
-
-import java.util.Comparator;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.jdom2.Element;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
-import org.jgrapht.graph.DefaultWeightedEdge;
 
 /**
  * Mule application graph model
  *
  * @author Mulesoft Inc.
- * @since 1.3.0
  */
 public class ApplicationGraph {
 
-  DefaultDirectedGraph<FlowComponent, DefaultWeightedEdge> applicationGraph;
-  PropertyTranslator inboundTranslator;
+  private final PropertyTranslator inboundTranslator;
 
-  public ApplicationGraph(PropertyTranslator inboundTranslator) {
-    applicationGraph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
-    this.inboundTranslator = inboundTranslator;
+  private final Map<String, FlowComponent> flowComponentIds = new HashMap<>();
+  private final List<MessageSourceFlowComponent> sources = new ArrayList<>();
+  private List<Flow> applicationFlows;
+
+  public ApplicationGraph(PropertyTranslator translator, List<Flow> applicationFlows) {
+    this.inboundTranslator = translator;
+    this.applicationFlows = applicationFlows;
   }
 
-  // Graph Access
-
-  /**
-   * Retrieves the first flow component in a Flow (the one that has no incoming edges)
-   * @param flow
-   * @return
-   */
-  public FlowComponent getStartingFlowComponent(Flow flow) {
-    FlowComponent destinationMessageProcessor = getOneComponentOfFlow(flow);
-    Set<DefaultWeightedEdge> incomingEdges = applicationGraph.incomingEdgesOf(destinationMessageProcessor).stream()
-        .filter(edge -> applicationGraph.getEdgeSource(edge).getParentFlow().equals(flow)).collect(Collectors.toSet());
-    while (!incomingEdges.isEmpty()) {
-      DefaultWeightedEdge singleIncomingEdge = Iterables.getOnlyElement(incomingEdges);
-      destinationMessageProcessor = applicationGraph.getEdgeSource(singleIncomingEdge);
-      incomingEdges = applicationGraph.incomingEdgesOf(destinationMessageProcessor);
-    }
-
-    return destinationMessageProcessor;
-  }
-
-  /**
-   * Retrieves the last flow component in a flow (the one that has no outgoing edges)
-   * @param flow
-   * @return
-   */
-  public FlowComponent getLastFlowComponent(Flow flow) {
-    FlowComponent nextMessageProcessor = getOneComponentOfFlow(flow);
-    Set<DefaultWeightedEdge> outgoingEdges = getOutgoingEdgesInFlow(nextMessageProcessor, flow);
-    while (!outgoingEdges.isEmpty()) {
-      DefaultWeightedEdge singleOutgoingEdge = Iterables.getOnlyElement(outgoingEdges);
-      nextMessageProcessor = applicationGraph.getEdgeTarget(singleOutgoingEdge);
-      outgoingEdges = getOutgoingEdgesInFlow(nextMessageProcessor, flow);
-    }
-
-    return nextMessageProcessor;
-  }
-
-  /**
-  * Retrieves all the node from one type
-  * @param typeOfComponent
-  * @param <T>
-  * @return
-  */
-  public <T> List<T> getAllFlowComponents(Class<T> typeOfComponent) {
-    return this.applicationGraph.vertexSet().stream()
-        .filter(c -> typeOfComponent.isInstance(c))
-        .map(typeOfComponent::cast)
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * Retrieves all starting points of the full application
-   * @return
-   */
-  public List<FlowComponent> getAllStartingFlowComponents() {
-    return this.applicationGraph.vertexSet().stream()
-        .filter(v -> this.applicationGraph.inDegreeOf(v) == 0)
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * Retrieves a flow component from an XML element
-   * @param element
-   * @return
-   */
   public FlowComponent findFlowComponent(Element element) {
     String elementId = element.getAttributeValue(MIGRATION_ID_ATTRIBUTE, MIGRATION_NAMESPACE);
     FlowComponent flowComponent = findFlowComponent(elementId);
@@ -114,155 +48,52 @@ public class ApplicationGraph {
     return flowComponent;
   }
 
-  /**
-   * Given a flow component it will get the next component in a flow (after the next flow is executed)
-   * @param flowRef
-   * @param flow
-   * @return
-   */
-  public FlowComponent getNextComponent(FlowComponent flowRef, Flow flow) {
-    return applicationGraph.outgoingEdgesOf(flowRef)
-        .stream()
-        .map(e -> applicationGraph.getEdgeTarget(e))
-        .filter(flowComponent -> flowComponent.getParentFlow().equals(flow))
-        .findFirst()
-        .orElse(null);
+  private FlowComponent findFlowComponent(String elementId) {
+    return flowComponentIds.get(elementId);
   }
 
-  /**
-   * Finds all existing flow components with the same base name
-   * @param prefix
-   * @return
-   */
-  public List<String> getAllVertexNamesWithBaseName(String prefix) {
-    return this.applicationGraph.vertexSet().stream()
-        .map(FlowComponent::getName)
-        .filter(name -> name.equals(prefix) || name.startsWith(prefix + "-"))
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * Get all flow components that have incoming edges to a certain component
-   * @param component
-   * @return
-   */
-  public List<FlowComponent> getAllIncomingNodes(FlowComponent component) {
-    return applicationGraph.incomingEdgesOf(component).stream()
-        .map(edge -> applicationGraph.getEdgeSource(edge))
-        .collect(Collectors.toList());
-  }
-
-  public WeightedPathIterator getWeightedPathIterator(FlowComponent start) {
-    return new WeightedPathIterator(this.applicationGraph, start);
-  }
-
-  /**
-   * Determines if a component is a leaf (no outgoing edges)
-   * @param component
-   * @return
-   */
-  public boolean isLeafComponent(FlowComponent component) {
-    return applicationGraph.outgoingEdgesOf(component).isEmpty();
-  }
-
-  public PropertyTranslator getInboundTranslator() {
-    return this.inboundTranslator;
-  }
-
-  // Graph Manipulation
-
-  public void addEdge(FlowComponent source, FlowComponent destination) {
-    if (applicationGraph.getEdge(source, destination) == null) {
-      Optional<DefaultWeightedEdge> lastAddedEdge = applicationGraph.outgoingEdgesOf(source).stream()
-          .filter(e -> applicationGraph.getEdgeTarget(e).getParentFlow().equals(destination.getParentFlow()))
-          .sorted(Comparator.comparingDouble(e -> applicationGraph.getEdgeWeight(e)))
-          .findFirst();
-      double weight = 1.0d;
-
-      if (lastAddedEdge.isPresent()) {
-        weight = applicationGraph.getEdgeWeight(lastAddedEdge.get()) + 1.0d;
-      }
-
-      this.addEdge(source, destination, weight);
+  public void linealFlowWiring(Flow flow) {
+    List<FlowComponent> flowComponents = (List<FlowComponent>) flow.getComponents();
+    if (flowComponents.isEmpty())
+      return;
+    FlowComponent firstFlowComponent = flowComponents.get(0);
+    if (firstFlowComponent instanceof MessageSourceFlowComponent) {
+      sources.add((MessageSourceFlowComponent) firstFlowComponent);
+      flowComponents.add(DummyFlowTerminalComponent.build(flow, this));
+    } else if (flowComponents.get(flowComponents.size() - 1) instanceof FlowRefFlowComponent) {
+      flowComponents.add(DummyFlowRefReturnComponent.build(flow, this));
     }
-  }
-
-  public void addFlowComponent(FlowComponent component) {
-    this.applicationGraph.addVertex(component);
-  }
-
-  public void removeEdgeIfExists(FlowRef flowRefComponent, FlowComponent originalFlowContinuation) {
-    if (flowRefComponent != null && originalFlowContinuation != null
-        && applicationGraph.getEdge(flowRefComponent, originalFlowContinuation) != null) {
-      this.applicationGraph.removeEdge(flowRefComponent, originalFlowContinuation);
-    }
-  }
-
-  public void addConnections(List<FlowComponent> flowComponents) {
     FlowComponent previousFlowComp = null;
     for (FlowComponent comp : flowComponents) {
-      applicationGraph.addVertex(comp);
+      flowComponentIds.put(comp.getElementId(), comp);
       if (previousFlowComp != null) {
-        applicationGraph.addEdge(previousFlowComp, comp);
+        previousFlowComp.next(comp);
       }
       previousFlowComp = comp;
     }
   }
 
-  private Set<DefaultWeightedEdge> getOutgoingEdgesInFlow(FlowComponent nextMessageProcessor, Flow flow) {
-    return applicationGraph.outgoingEdgesOf(nextMessageProcessor).stream()
-        .filter(e -> applicationGraph.getEdgeTarget(e).getParentFlow().equals(flow))
-        .collect(Collectors.toSet());
-  }
-
-  private FlowComponent getOneComponentOfFlow(Flow flow) {
-    return this.applicationGraph.vertexSet().stream()
-        .filter(flowComponent -> flowComponent.getParentFlow() == flow)
-        .findFirst()
-        .orElseThrow(() -> new RuntimeException("Cannot find referenced flow in current application"));
-  }
-
-  private FlowComponent findFlowComponent(String elementId) {
-    return this.applicationGraph.vertexSet().stream()
-        .filter(fc -> matchesElementId(fc, elementId))
-        .findFirst()
-        .map(fc -> getComponent(fc, elementId))
-        .orElse(null);
-  }
-
-  private FlowComponent getComponent(FlowComponent flowComponent, String elementId) {
-    if (matchesIdInResponseComponent(flowComponent, elementId)) {
-      return ((PropertiesSourceComponent) flowComponent).getResponseComponent();
-    } else if (matchesIdInErrorResponseComponent(flowComponent, elementId)) {
-      return ((PropertiesSourceComponent) flowComponent).getErrorResponseComponent();
-    } else {
-      return flowComponent;
+  public void muleFlowWiring() {
+    Deque<Flow> flowStack = new ArrayDeque<>();
+    for (MessageSourceFlowComponent source : sources) {
+      FlowComponent current = source;
+      while (!(current instanceof DummyFlowTerminalComponent)) {
+        current = current.rewire(flowStack);
+      }
+      source.setTerminalComponent(current);
+      flowComponentIds.put(current.getElementId(), current);
     }
   }
 
-  private boolean matchesElementId(FlowComponent flowComp, String elementId) {
-    return flowComp.getElementId().equals(elementId) || matchesIdInResponseComponent(flowComp, elementId)
-        || matchesIdInErrorResponseComponent(flowComp, elementId);
+  public PropertyTranslator getInboundTranslator() {
+    return inboundTranslator;
   }
 
-  private boolean matchesIdInResponseComponent(FlowComponent flowComp, String elementId) {
-    if (PropertiesSourceComponent.class.isInstance(flowComp)) {
-      MessageProcessor responseComponent = ((PropertiesSourceComponent) flowComp).getResponseComponent();
-      return responseComponent != null && elementId.equals(responseComponent.getElementId());
-    }
-    return false;
+  public Map<String, FlowComponent> getFlowComponentIds() {
+    return new HashMap<>(flowComponentIds);
   }
 
-  private boolean matchesIdInErrorResponseComponent(FlowComponent flowComp, String elementId) {
-    if (PropertiesSourceComponent.class.isInstance(flowComp)) {
-      MessageProcessor exceptionResponseComponent = ((PropertiesSourceComponent) flowComp).getErrorResponseComponent();
-      return exceptionResponseComponent != null && elementId.equals(exceptionResponseComponent.getElementId());
-    }
-    return false;
-  }
-
-  private void addEdge(FlowComponent source, FlowComponent destination, Double weight) {
-    this.applicationGraph.addEdge(source, destination);
-    this.applicationGraph.setEdgeWeight(source, destination, weight);
+  public Optional<Flow> getFlow(String flowName) {
+    return applicationFlows.stream().filter(f -> f.getName().equals(flowName)).findFirst();
   }
 }

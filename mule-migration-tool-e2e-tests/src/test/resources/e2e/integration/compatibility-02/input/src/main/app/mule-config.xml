@@ -7,8 +7,8 @@
     <flow name="flowWithSource">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/file" doc:name="HTTP">
             <http:response-builder>
-                <http:header headerName="isTest" value="#[message.inboundProperties.myOutbound == 'test']"/>
-                <http:header headerName="secondHeader" value="#[message.inboundProperties[message.inboundProperties.myOutbound]]"/>
+                <http:header headerName="isTest" value="#[message.inboundProperties.myHeader == 'test']"/>
+                <http:header headerName="secondHeader" value="#[message.inboundProperties['my.Header']]"/>
             </http:response-builder>
         </http:listener>
 

@@ -5,12 +5,6 @@
  */
 package com.mulesoft.tools.migration.library.applicationgraph;
 
-import com.google.common.collect.ImmutableSet;
-import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
-
-import java.util.Objects;
-import java.util.Set;
-
 import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.IMAP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.email.AbstractEmailMigrator.POP3_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.file.FileConfig.FILE_NAMESPACE_URI;
@@ -19,7 +13,15 @@ import static com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEnd
 import static com.mulesoft.tools.migration.library.mule.steps.quartz.QuartzInboundEndpoint.QUARTZ_NS_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.sftp.AbstractSftpEndpoint.SFTP_NS_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer.WS_NAMESPACE_URI;
-import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.HTTP_NAMESPACE_URI;
+
+import com.mulesoft.tools.migration.project.model.applicationgraph.SourceType;
+
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Models an inbound properties source type
@@ -27,7 +29,7 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.*;
  * @author Mulesoft Inc.
  * @since 1.3.0
  */
-public class PropertiesSourceType implements SourceType {
+public class PropertiesSourceType implements SourceType, Comparable<PropertiesSourceType> {
 
   public static final PropertiesSourceType HTTP_LISTENER =
       new PropertiesSourceType(HTTP_NAMESPACE_URI, "listener", true, "headers", true);
@@ -52,7 +54,7 @@ public class PropertiesSourceType implements SourceType {
   public static final PropertiesSourceType SFTP_INBOUND = new PropertiesSourceType(SFTP_NS_URI, "inbound-endpoint", true);
   public static final PropertiesSourceType WS_CONSUMER = new PropertiesSourceType(WS_NAMESPACE_URI, "consumer", false);
 
-  public static Set<PropertiesSourceType> registeredSourceTypes = new ImmutableSet.Builder<PropertiesSourceType>()
+  public static List<PropertiesSourceType> registeredSourceTypes = new ImmutableList.Builder<PropertiesSourceType>()
       .add(HTTP_LISTENER)
       .add(HTTP_TRANSPORT)
       .add(HTTP_CONNECTOR_REQUESTER)
@@ -142,6 +144,11 @@ public class PropertiesSourceType implements SourceType {
 
   @Override
   public String toString() {
-    return String.format("%s:%s", namespaceUri, type);
+    return String.format("%s:%s", namespaceUri.substring(namespaceUri.lastIndexOf("/") + 1), type);
+  }
+
+  @Override
+  public int compareTo(PropertiesSourceType o) {
+    return registeredSourceTypes.indexOf(this) - registeredSourceTypes.indexOf(o);
   }
 }

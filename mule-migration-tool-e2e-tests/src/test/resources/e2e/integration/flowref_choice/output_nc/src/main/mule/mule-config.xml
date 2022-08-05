@@ -26,7 +26,14 @@
 
         <set-variable variableName="outbound_common-level1" value="doh" />
 
-        <flow-ref name="sub\flow" />
+        <choice>
+            <when expression="#[length(payload) &gt; 0]">
+                <flow-ref name="sub\flow" />
+            </when>
+            <otherwise>
+                <set-variable variableName="outbound_otherwise" value="doh" />
+            </otherwise>
+        </choice>
 
         <!-- never -->
         <logger message="#[vars['outbound_at-sftp.level1']]" />
@@ -40,7 +47,7 @@
         <!-- always -->
         <logger message="#[vars.outbound_at-sub-flow-level2]" />
 
-        <!-- both file and sftp: translate to different attributes -->
+        <!-- both file and sftp: translate to different attributes, should use file -->
         <logger message="#[message.attributes.fileName]" />
 
         <!-- only file -->
@@ -90,7 +97,7 @@
         <!-- sometimes -->
         <logger message="#[vars.outbound_at-sub-flow-level2]" />
 
-        <!-- both file and sftp: translate to different attributes -->
+        <!-- both file and sftp: translate to different attributes, should use sftp -->
         <logger message="#[message.attributes.name]" />
 
         <!-- only file -->
@@ -108,8 +115,10 @@
         <logger message="#[vars.outbound_common-level1]" />
         <!-- always -->
         <logger message="#[vars.outbound_at-sub-flow-level2]" />
-        <!-- both file and sftp: translate to different attributes -->
-        <logger message="#[message.attributes.fileName]" />
+        <!-- both file and sftp: translate to different attributes, should report warn -->
+        <logger message="#[message.attributes.fileName]">
+            <!--Migration WARN: There are multiple possible translations of filename due to app ambiguity. Defaulting to the first one, please revise if this needs to be changed-->
+        </logger>
         <!-- only file -->
         <logger message="#[message.attributes.size]" />
     </sub-flow>

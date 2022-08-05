@@ -7,15 +7,13 @@ package com.mulesoft.tools.migration.project.model.applicationgraph;
 
 import org.jdom2.Element;
 
-import java.util.Map;
-
 /**
  * Models a mule message source or message processor
  *
  * @author Mulesoft Inc.
  * @since 1.3.0
  */
-public interface FlowComponent {
+public interface FlowComponent extends GraphNode<FlowComponent, Flow> {
 
   String getElementId();
 
@@ -27,5 +25,4 @@ public interface FlowComponent {
 
   String getName();
 
-  void accept(FlowComponentVisitor visitor);
 }
