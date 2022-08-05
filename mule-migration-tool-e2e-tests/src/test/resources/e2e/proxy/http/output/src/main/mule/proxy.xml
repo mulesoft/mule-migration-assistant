@@ -75,7 +75,7 @@
             <!--Migration WARN: 'parseResponse' is not needed in Mule 4 because DataWeave 2.0 now handles those MIME types.-->
             <!--    For more information refer to:-->
             <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-connectors-http#http-mime-types-->
-            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/dataweave-formats#format_form_data-->
+            <!--        * https://docs.mulesoft.com/dataweave/2.4/dataweave-formats-->
             <http:headers>#[migration::HttpRequester::httpRequesterHeaders(vars)]</http:headers>
             <!--Migration WARN: Build the 'query-params' map with a single DataWeave expression.-->
             <!--    For more information refer to:-->

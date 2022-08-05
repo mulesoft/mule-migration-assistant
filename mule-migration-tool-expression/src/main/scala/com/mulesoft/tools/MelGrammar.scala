@@ -22,6 +22,7 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
   private val createIfNode = (condition : MelExpressionNode, ifExpr : MelExpressionNode, elseExpr : MelExpressionNode) => IfNode(ifExpr, condition, elseExpr)
   private val createPropertyNode = (identifiers: Seq[IdentifierNode]) => PropertyNode(identifiers)
   private val createContainsNode = (left: MelExpressionNode, right: MelExpressionNode) => ContainsNode(left, right)
+  private val createEmptyLiteralNode = () => EmptyLiteralNode()
 
 
   private val whiteSpaceChar = CharPredicate(" \f\t")
@@ -249,8 +250,12 @@ class MelGrammar(val input: ParserInput) extends Parser with StringBuilding {
     booleanNode | numberNode | values
   }
 
+  def emptyLiteral: Rule1[EmptyLiteralNode] = rule {
+    ws ~ str("empty") ~> createEmptyLiteralNode
+  }
+
   def values = rule {
-    (property | constructor | methodInvocation  | stringNodePreserveEscaping | stringNodeSimple | list | map | varReference | enclosedExpression) ~ zeroOrMore(selector)
+    (property | constructor | methodInvocation  | stringNodePreserveEscaping | stringNodeSimple | list | map | emptyLiteral | varReference | enclosedExpression) ~ zeroOrMore(selector)
   }
 
   def constructor: Rule1[ConstructorNode] = rule {

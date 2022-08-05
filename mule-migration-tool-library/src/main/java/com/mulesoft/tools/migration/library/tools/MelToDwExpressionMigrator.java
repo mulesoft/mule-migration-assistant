@@ -110,6 +110,16 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
       return new DefaultMelCompatibilityResolver().resolve(unwrappedExpression, element, report, model, this, enricher);
     }
 
+    if (result.metadata().children().exists(a -> a instanceof MigratableWithWarning)) {
+      List<MigratableWithWarning> metadata =
+          (List<MigratableWithWarning>) (List<?>) JavaConverters.seqAsJavaList(result.metadata().children())
+              .stream()
+              .filter(a -> a instanceof MigratableWithWarning)
+              .collect(toList());
+
+      metadata.forEach(a -> report.report(a.warning(), element, element));
+    }
+
     if (migratedExpression.contains("message.inboundAttachments")) {
       report.report("message.expressionsAttachments", element, element);
     }
