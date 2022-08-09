@@ -10,8 +10,6 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilit
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.join;
 
 import com.mulesoft.tools.*;
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;
@@ -29,7 +27,6 @@ import scala.collection.JavaConverters;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -138,7 +135,7 @@ public class MelToDwExpressionMigrator implements ExpressionMigrator {
     migratedExpression = resolveIdentifiers(migratedExpression);
 
     if (dataWeaveBodyOnly) {
-      migratedExpression = migratedExpression.replaceFirst("%dw 2\\.0\n---", "").trim();
+      migratedExpression = migratedExpression.replaceFirst(String.format("%%dw 2\\.0%s---", System.lineSeparator()), "").trim();
     }
 
     report.melExpressionSuccess(unwrappedExpression);
