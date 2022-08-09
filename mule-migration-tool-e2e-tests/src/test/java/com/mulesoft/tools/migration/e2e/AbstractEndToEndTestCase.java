@@ -243,6 +243,7 @@ public abstract class AbstractEndToEndTestCase {
   private void compareXml(Path output, Path expected) {
     Diff d = DiffBuilder.compare(Input.fromFile(expected.toFile()))
         .withTest(Input.fromFile(output.toFile()))
+        .normalizeWhitespace()
         .ignoreWhitespace()
         .ignoreElementContentWhitespace()
         .build();
