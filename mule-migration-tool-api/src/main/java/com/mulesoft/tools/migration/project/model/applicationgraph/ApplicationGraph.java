@@ -77,6 +77,7 @@ public class ApplicationGraph {
     Deque<Flow> flowStack = new ArrayDeque<>();
     for (MessageSourceFlowComponent source : sources) {
       FlowComponent current = source;
+      flowStack.clear();
       while (!(current instanceof DummyFlowTerminalComponent)) {
         current = current.rewire(flowStack);
       }

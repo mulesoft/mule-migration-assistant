@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.Optional;
 
 import org.jdom2.Element;
 import org.slf4j.Logger;
@@ -114,18 +115,30 @@ public class BasicFlowComponent implements FlowComponent {
   }
 
   public FlowComponent nextComponentToProcess(Deque<Flow> flowStack) {
-    if (next.peek() instanceof DummyFlowTerminalComponent) {
-      ((DummyFlowTerminalComponent) next.peek()).updatePropertiesContext();
+    if (flowRefCaller != null) {
+      flowStack.remove(getParentFlow());
     }
-    if (this instanceof FlowRefFlowComponent && !getParentFlow().equals(next().peek().getParentFlow())) {
+    FlowComponent nextComponent = next.peek();
+    if (next.size() > 1) {
+      // next picked matching flow stack
+      Optional<FlowComponent> any = next.stream().filter(fc -> fc.getParentFlow().equals(flowStack.peekLast())).findAny();
+      if (any.isPresent()) {
+        nextComponent = any.get();
+      } else {
+        LOGGER.warn("Could not find next component for {}", this);
+      }
+    }
+    if (nextComponent instanceof DummyFlowTerminalComponent) {
+      ((DummyFlowTerminalComponent) nextComponent).updatePropertiesContext();
+    }
+    if (this instanceof FlowRefFlowComponent && !getParentFlow().equals(nextComponent.getParentFlow())) {
       if (flowStack.contains(getParentFlow())) {
         throw new InvalidGraphStateException("Loop detected");
       }
       flowStack.offer(getParentFlow());
-    } else if (flowRefCaller != null) {
-      flowStack.remove(getParentFlow());
     }
-    return next().peek();
+    LOGGER.debug("Current flow stack: {}", flowStack);
+    return nextComponent;
   }
 
   public void updatePropertiesContext() {
@@ -133,7 +146,6 @@ public class BasicFlowComponent implements FlowComponent {
   }
 
   public void updatePropertiesContext(PropertiesMigrationContext outputContext) {
-    LOGGER.warn("updating context for node " + this);
     if (previous.isEmpty()) {
       LOGGER.warn("No previous nodes");
       return;
@@ -154,6 +166,7 @@ public class BasicFlowComponent implements FlowComponent {
     } else {
       this.outputContext = this.inputContext;
     }
+    LOGGER.debug("context for node {} -- inputCtx: {} -- outputCtx: {}", this, this.inputContext, this.outputContext);
   }
 
   @Override

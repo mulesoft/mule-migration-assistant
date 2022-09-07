@@ -60,8 +60,6 @@ public class Flow {
 
   @Override
   public String toString() {
-    return "Flow{" +
-        "name='" + name + '\'' +
-        '}';
+    return name;
   }
 }

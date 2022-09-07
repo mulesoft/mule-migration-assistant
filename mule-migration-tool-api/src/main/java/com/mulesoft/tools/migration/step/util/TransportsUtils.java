@@ -213,10 +213,10 @@ public final class TransportsUtils {
     inboundEndpoint.removeAttribute("exchange-pattern");
     inboundEndpoint.removeAttribute("disableTransportTransformer");
     extractInboundChildren(inboundEndpoint, appModel);
-    if (appModel.getApplicationGraph() == null) {
-      migrateSourceStructureForCompatibility(appModel, inboundEndpoint, report, expectsOutboundProperties, consumeStreams);
-    } else {
+    if (appModel.noCompatibilityMode()) {
       report.report("noCompatibility.notFullyImplemented", inboundEndpoint, inboundEndpoint);
+    } else {
+      migrateSourceStructureForCompatibility(appModel, inboundEndpoint, report, expectsOutboundProperties, consumeStreams);
     }
   }
 
