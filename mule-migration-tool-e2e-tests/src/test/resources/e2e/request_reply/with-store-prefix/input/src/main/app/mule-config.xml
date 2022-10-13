@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <message-properties-transformer name="Message_Properties">
+        <add-message-property key="someId" value="#[flowVars.someid]" />
+    </message-properties-transformer>
+
+    <flow name="post_Flow">
+        <request-reply timeout="600000" storePrefix="storePrefix">
+            <processor-chain>
+                <collection-splitter />
+                <vm:outbound-endpoint exchange-pattern="one-way"
+                                      path="vm-request"
+                                      transformer-refs="Message_Properties" />
+            </processor-chain>
+            <vm:inbound-endpoint exchange-pattern="one-way" path="vm-response">
+                <collection-aggregator storePrefix="storePrefix"></collection-aggregator>
+            </vm:inbound-endpoint>
+        </request-reply>
+    </flow>
+
+</mule>
