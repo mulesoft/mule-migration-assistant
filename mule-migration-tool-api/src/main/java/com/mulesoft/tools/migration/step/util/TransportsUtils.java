@@ -335,7 +335,7 @@ public final class TransportsUtils {
     }
 
     if (endpoint.getAttribute("transformer-refs") != null) {
-      String[] transformerNames = endpoint.getAttributeValue("transformer-refs").split(",");
+      String[] transformerNames = endpoint.getAttributeValue("transformer-refs").split("\\s");
 
       for (String transformerName : transformerNames) {
         Element transformer = appModel.getNode("/*/*[@name = '" + transformerName + "']");
@@ -368,7 +368,7 @@ public final class TransportsUtils {
     }
 
     if (endpoint.getAttribute("responseTransformer-refs") != null) {
-      String[] transformerNames = endpoint.getAttributeValue("responseTransformer-refs").split(",");
+      String[] transformerNames = endpoint.getAttributeValue("responseTransformer-refs").split("\\s");
 
       for (String transformerName : transformerNames) {
         Element transformer = appModel.getNode("/*/*[@name = '" + transformerName + "']");

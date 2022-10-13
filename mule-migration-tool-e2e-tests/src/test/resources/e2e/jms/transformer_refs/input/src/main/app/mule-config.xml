@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+
+    <gzip-compress-transformer name="space" mimeType="application/json" />
+    <gzip-uncompress-transformer name="separated" mimeType="application/xml" />
+
+    <flow name="flow">
+        <jms:outbound-endpoint address="jms://out" exchange-pattern="one-way"  transformer-refs="space separated" />
+    </flow>
+
+</mule>
