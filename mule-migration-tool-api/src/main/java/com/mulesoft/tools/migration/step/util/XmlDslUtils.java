@@ -804,4 +804,17 @@ public final class XmlDslUtils {
     }
   }
 
+  public static boolean isAncestorOf(Element ancestor, Element descendant) {
+    if (ancestor == null || descendant == null) {
+      return false;
+    }
+    Element element = descendant;
+    while (element != null) {
+      if (element == ancestor) {
+        return true;
+      }
+      element = element.getParentElement();
+    }
+    return false;
+  }
 }

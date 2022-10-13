@@ -154,7 +154,7 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
           }
         }
 
-        if (element != elementToComment) {
+        if (!XmlDslUtils.isAncestorOf(element, elementToComment)) {
           XmlDslUtils.removeNestedComments(element);
           elementToComment.addContent(i, new Comment(sanitize(outp.outputString(element))));
         }

@@ -1,0 +1,175 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-vm-connector:2.0.0"
+  ],
+  "numberOfMuleComponents": 12,
+  "numberOfMuleComponentsMigrated": 10,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "processor-chain": {
+      "success": 1,
+      "failure": 0
+    },
+    "collection-splitter": {
+      "success": 1,
+      "failure": 0
+    },
+    "collection-aggregator": {
+      "success": 0,
+      "failure": 1
+    },
+    "request-reply": {
+      "success": 0,
+      "failure": 1
+    },
+    "vm:listener": {
+      "success": 1,
+      "failure": 0
+    },
+    "vm:publish": {
+      "success": 1,
+      "failure": 0
+    },
+    "message-properties-transformer": {
+      "success": 2,
+      "failure": 0
+    },
+    "migration:splitterGlobalValues": {
+      "success": 1,
+      "failure": 0
+    },
+    "migration:splitterGlobalIndexes": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "ERROR",
+      "key": "aggregator.noSplitter",
+      "component": "collection-aggregator",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Could not find a non-custom splitter associated with this aggregator and there is no way of knowing the expected aggregation size. If the splitter and aggregator are in different flows, they might not be migrated. If that is not the case, the aggregators module should provide the required functionality.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.attributesToInboundProperties",
+      "component": "compatibility:attributes-to-inbound-properties",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Expressions that query \u0027inboundProperties\u0027 from the message should instead query the message \u0027attributes\u0027. Remove this component if there are no uses of \u0027inboundProperties\u0027 in expressions or components that rely on \u0027inboundProperties\u0027 (such as \u0027copy-properties\u0027).",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "compatibility:outbound-properties-to-var",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "async",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "vm.sessionVars",
+      "component": "vm:content",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "You can remove this if this flow is not using \u0027sessionVariables\u0027 or after migrating them to variables.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "vm.sessionVars",
+      "component": "vm:content",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "message": "You can remove this if this flow is not using \u0027sessionVariables\u0027 or after migrating them to variables.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "message.outboundProperties",
+      "component": "mule",
+      "lineNumber": 2,
+      "columnNumber": 774,
+      "message": "Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as \u0027method\u0027) of the operation or listener that accepts the expression.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "aggregator.missing",
+      "component": "foreach",
+      "lineNumber": 21,
+      "columnNumber": 18,
+      "message": "Could not find any associated aggregator for the splitter. Might produce unexpected behavior.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "transports.requestReplySplit",
+      "component": "flow-ref",
+      "lineNumber": 64,
+      "columnNumber": 48,
+      "message": "\u0027request-reply\u0027 was split into 2 different flows. Review the migration result for correctness.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "INFO",
+      "key": "transports.requestReplyStorePrefix",
+      "component": "flow-ref",
+      "lineNumber": 64,
+      "columnNumber": 48,
+      "message": "The migration target of \u0027request-reply\u0027 doesn\u0027t need an object store.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

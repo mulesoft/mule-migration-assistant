@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:aggregators="http://www.mulesoft.org/schema/mule/aggregators" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/aggregators http://www.mulesoft.org/schema/mule/aggregators/current/mule-aggregators.xsd http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+    <!--    For more information refer to:-->
+    <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+    <!--<message-properties-transformer xmlns="http://www.mulesoft.org/schema/mule/core" name="Message_Properties">
+        <add-message-property key="someId" value="#[flowVars.someid]" />
+    </message-properties-transformer>-->
+    <compatibility:set-property propertyName="someId" value="#[flowVars.someid]" />
+
+    <vm:config name="VmConfig">
+        <vm:queues>
+            <vm:queue queueName="vm-response" queueType="TRANSIENT" />
+            <vm:queue queueName="vm-request" queueType="TRANSIENT" />
+        </vm:queues>
+    </vm:config>
+
+    <sub-flow name="MMA_processor_chain_1">
+        <set-variable variableName="collection-splitter0-group-size" value="#[sizeOf(payload)]" />
+        <foreach>
+            <!--Migration WARN: Could not find any associated aggregator for the splitter. Might produce unexpected behavior.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-core-splitter-aggregator-->
+            <!--<collection-splitter xmlns="http://www.mulesoft.org/schema/mule/core" />-->
+            <async>
+                <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+                <!--    For more information refer to:-->
+                <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                <!--<message-properties-transformer xmlns="http://www.mulesoft.org/schema/mule/core">
+                    <add-message-property key="someId" value="#[flowVars.someid]" />
+                </message-properties-transformer>-->
+                <compatibility:set-property propertyName="someId" value="#[flowVars.someid]" />
+                <compatibility:outbound-properties-to-var consumeStreams="true">
+                    <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+                    <!--    For more information refer to:-->
+                    <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+                </compatibility:outbound-properties-to-var>
+                <vm:publish config-ref="VmConfig" queueName="vm-request">
+                    <vm:content>
+                        <!--Migration WARN: You can remove this if this flow is not using 'sessionVariables' or after migrating them to variables.-->
+                        <!--    For more information refer to:-->
+                        <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#session_variables-->
+                        <![CDATA[#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType, 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]]]>
+                    </vm:content>
+                </vm:publish>
+                <compatibility:attributes-to-inbound-properties>
+                    <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+                    <!--    For more information refer to:-->
+                    <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+                    <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+                </compatibility:attributes-to-inbound-properties>
+                <aggregators:group-based-aggregator evictionTime="0" name="collection-splitter0-aggregator" groupSize="#[vars.'collection-splitter0-group-size']">
+                    <aggregators:aggregation-complete>
+                        <set-variable variableName="collection-splitter0-aggregator-aggregation" value="#[payload]" />
+                    </aggregators:aggregation-complete>
+                </aggregators:group-based-aggregator>
+            </async>
+        </foreach>
+        <set-payload value="#[vars.'collection-splitter0-aggregator-aggregation']" />
+    </sub-flow>
+
+    <flow name="post_Flow">
+        <flow-ref name="MMA_processor_chain_1">
+            <!--Migration ERROR: 'request-reply' was split into 2 different flows. Review the migration result for correctness.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-core-->
+            <!--Migration INFO: The migration target of 'request-reply' doesn't need an object store.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-core-->
+        </flow-ref>
+
+    </flow>
+
+    <flow name="flow_reply">
+        <vm:listener config-ref="VmConfig" queueName="vm-response">
+            <collection-aggregator storePrefix="storePrefix">
+                <!--Migration ERROR: Could not find a non-custom splitter associated with this aggregator and there is no way of knowing the expected aggregation size. If the splitter and aggregator are in different flows, they might not be migrated. If that is not the case, the aggregators module should provide the required functionality.-->
+                <!--    For more information refer to:-->
+                <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-core-splitter-aggregator-->
+                <!--        * https://docs.mulesoft.com/aggregators-module/1.0/-->
+            </collection-aggregator>
+            <vm:response>
+                <vm:content>
+                    <!--Migration WARN: You can remove this if this flow is not using 'sessionVariables' or after migrating them to variables.-->
+                    <!--    For more information refer to:-->
+                    <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#session_variables-->
+                    <![CDATA[#[output application/java --- {'_vmTransportMode': true, 'payload': payload.^raw, 'mimeType': payload.^mimeType, 'session': vars.compatibility_outboundProperties['MULE_SESSION']}]]]>
+                </vm:content>
+            </vm:response>
+        </vm:listener>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+    </flow>
+
+</mule>
