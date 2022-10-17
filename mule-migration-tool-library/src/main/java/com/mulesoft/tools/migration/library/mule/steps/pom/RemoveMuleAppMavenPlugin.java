@@ -9,7 +9,10 @@ import com.mulesoft.tools.migration.project.model.pom.PomModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.step.category.PomContribution;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.model.Profile;
 
 /**
  * Removes the Mule App Maven Plugin from pom
@@ -19,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class RemoveMuleAppMavenPlugin implements PomContribution {
 
-  private String MULE_APP_MAVEN_PLUGIN_ARTIFACT_ID = "mule-app-maven-plugin";
+  private static final String MULE_APP_MAVEN_PLUGIN_ARTIFACT_ID = "mule-app-maven-plugin";
 
   @Override
   public String getDescription() {
@@ -29,7 +32,7 @@ public class RemoveMuleAppMavenPlugin implements PomContribution {
   @Override
   public void execute(PomModel pomModel, MigrationReport report) throws RuntimeException {
     pomModel.removePlugin(p -> StringUtils.equals(p.getArtifactId(), MULE_APP_MAVEN_PLUGIN_ARTIFACT_ID));
-    pomModel.getProfiles().stream().map(profile -> profile.getBuild()).forEach(b -> {
+    pomModel.getProfiles().stream().map(Profile::getBuild).filter(Objects::nonNull).forEach(b -> {
       b.getPlugins().removeIf(p -> StringUtils.equals(p.getArtifactId(), MULE_APP_MAVEN_PLUGIN_ARTIFACT_ID));
     });
   }
