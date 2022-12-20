@@ -6,11 +6,14 @@
 package com.mulesoft.tools.migration.report;
 
 import static com.mulesoft.tools.migration.library.gateway.steps.GatewayNamespaces.THROTTLING_MULE_4_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.amqp.AbstractAmqpEndpoint.AMQP_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.batch.BatchJob.BATCH_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.db.DbConfig.DB_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.jms.AbstractJmsEndpoint.JMS_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.scripting.ScriptingModuleMigration.SCRIPT_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.security.oauth2.OAuth2ProviderConfig.OAUTH2_PROVIDER_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.spring.AbstractSpringMigratorStep.SPRING_NAMESPACE_URI;
+import static com.mulesoft.tools.migration.library.mule.steps.vm.AbstractVmEndpoint.VM_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.mule.steps.wsc.WsConsumer.WSC_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.library.munit.steps.MUnitNamespaces.MUNIT_TOOLS_URI;
 import static com.mulesoft.tools.migration.step.category.MigrationReport.Level.ERROR;
@@ -93,6 +96,7 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
 
   static {
     PROCESSED_BY_PARENT = new HashSet<>();
+    PROCESSED_BY_PARENT.add(AMQP_NAMESPACE_URI + ":publish-consume");
     PROCESSED_BY_PARENT.add(BATCH_NAMESPACE_URI + ":history");
     PROCESSED_BY_PARENT.add(BATCH_NAMESPACE_URI + ":on-complete");
     PROCESSED_BY_PARENT.add(BATCH_NAMESPACE_URI + ":process-records");
@@ -108,6 +112,7 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
     PROCESSED_BY_PARENT.add(HTTP_NAMESPACE_URI + ":error-response");
     PROCESSED_BY_PARENT.add(HTTP_NAMESPACE_URI + ":response");
     PROCESSED_BY_PARENT.add(HTTP_NAMESPACE_URI + ":success-status-code-validator");
+    PROCESSED_BY_PARENT.add(JMS_NAMESPACE_URI + ":publish-consume");
     PROCESSED_BY_PARENT.add(MUNIT_TOOLS_URI + ":with-attributes");
     PROCESSED_BY_PARENT.add(MUNIT_TOOLS_URI + ":with-attribute");
     PROCESSED_BY_PARENT.add(MUNIT_TOOLS_URI + ":then-return");
@@ -123,6 +128,7 @@ public class DefaultMigrationReport implements MigrationReport<ReportEntryModel>
     PROCESSED_BY_PARENT.add(SPRING_NAMESPACE_URI + ":delegate-security-provider");
     PROCESSED_BY_PARENT.add(SPRING_NAMESPACE_URI + ":security-property");
     PROCESSED_BY_PARENT.add(THROTTLING_MULE_4_NAMESPACE_URI + ":tier");
+    PROCESSED_BY_PARENT.add(VM_NAMESPACE_URI + ":publish-consume");
     PROCESSED_BY_PARENT.add(WSC_NAMESPACE_URI + ":web-service-security");
     PROCESSED_BY_PARENT.add(WSC_NAMESPACE_URI + ":sign-security-strategy");
     PROCESSED_BY_PARENT.add(WSC_NAMESPACE_URI + ":verify-signature-security-strategy");

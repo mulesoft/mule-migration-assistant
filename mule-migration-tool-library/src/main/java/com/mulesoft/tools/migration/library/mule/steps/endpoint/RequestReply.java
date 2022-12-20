@@ -207,7 +207,8 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     }
 
     migrateOutboundEndpointStructure(getApplicationModel(), request, report, true, true);
-    extractInboundChildren(reply, request.getParentElement().indexOf(request) + 2, request.getParentElement(),
+    int offset = getApplicationModel().noCompatibilityMode() ? 1 : 2;
+    extractInboundChildren(reply, request.getParentElement().indexOf(request) + offset, request.getParentElement(),
                            getApplicationModel());
 
   }
