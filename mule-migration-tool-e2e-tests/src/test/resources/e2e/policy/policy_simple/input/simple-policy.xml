@@ -21,5 +21,6 @@
 
     <pointcut>
         <api-platform-gw:api-pointcut apiName="sampleApi2" apiVersion="1.0.0"/>
+        <resource methodRegex="{{methodRegex}}" uriTemplateRegex="{{uriTemplateRegex}}"/>
     </pointcut>
 </policy>
