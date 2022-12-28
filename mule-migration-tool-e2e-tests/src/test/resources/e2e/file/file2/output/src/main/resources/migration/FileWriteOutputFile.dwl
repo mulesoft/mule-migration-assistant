@@ -4,7 +4,7 @@
  * Emulates the outbound endpoint logic for determining the output filename of the Mule 3.x File transport.
  */
 fun fileWriteOutputfile(vars: {}, pathDslParams: {}) = do {
-    ((vars.compatibility_outboundProperties['writeToDirectoryName']
+    ((vars.compatibility_outboundProperties.writeToDirectoryName
         default pathDslParams.writeToDirectory)
         default pathDslParams.address)
     ++ '/' ++

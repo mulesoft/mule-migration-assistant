@@ -2,7 +2,7 @@
   "projectType": "MULE_THREE_APPLICATION",
   "projectName": "input",
   "connectorsMigrated": [],
-  "numberOfMuleComponents": 9,
+  "numberOfMuleComponents": 10,
   "numberOfMuleComponentsMigrated": 6,
   "componentDetails": {
     "unknown:source": {
@@ -24,6 +24,10 @@
     "flow": {
       "success": 2,
       "failure": 0
+    },
+    "unknown:nested": {
+      "success": 0,
+      "failure": 1
     }
   },
   "numberOfMELExpressions": 0,
@@ -41,7 +45,7 @@
       "component": "unknown:source",
       "lineNumber": 5,
       "columnNumber": 25,
-      "message": "The migration of \u0027unknown\u0027 is not supported.",
+      "message": "The migration of \u0027unknown:source\u0027 is not supported.",
       "filePath": "src/main/mule/mule-config-2.xml",
       "documentationLinks": []
     },
@@ -51,7 +55,17 @@
       "component": "unknown:source",
       "lineNumber": 5,
       "columnNumber": 25,
-      "message": "The migration of \u0027unknown\u0027 is not supported.",
+      "message": "The migration of \u0027unknown:source\u0027 is not supported.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "ERROR",
+      "key": "components.unsupported",
+      "component": "unknown:nested",
+      "lineNumber": 11,
+      "columnNumber": 29,
+      "message": "The migration of \u0027unknown:nested\u0027 is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks": []
     },
@@ -59,9 +73,9 @@
       "level": "ERROR",
       "key": "components.unsupported",
       "component": "unknown:operation",
-      "lineNumber": 16,
+      "lineNumber": 21,
       "columnNumber": 28,
-      "message": "The migration of \u0027unknown\u0027 is not supported.",
+      "message": "The migration of \u0027unknown:operation\u0027 is not supported.",
       "filePath": "src/main/mule/mule-config.xml",
       "documentationLinks": []
     }

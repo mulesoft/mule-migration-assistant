@@ -5,19 +5,17 @@
  */
 package com.mulesoft.tools.migration.e2e;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import static java.util.Objects.requireNonNull;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
-import static java.util.Objects.requireNonNull;
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 
 @RunWith(Parameterized.class)
@@ -29,30 +27,41 @@ public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
   // e.g. use "" to avoid exclusions; "apikit/.*|domain1app1" OR excludes
   private static final String TEST_EXCLUDE = "";
 
-  @Parameterized.Parameters(name = "{0}")
+  // types of test to run
+  private static final boolean TEST_COMPATIBILITY = true;
+  private static final boolean TEST_NO_COMPATIBILITY = true;
+
+  // render the application graph in no compatibility mode
+  private static final boolean RENDER_APPLICATION_GRAPH = false;
+
+  @Parameterized.Parameters(name = "{0}-no-compat={1}")
   public static Object[][] params() throws Exception {
     File[] e2eResources = requireNonNull(new File(getResourceUri("e2e")).listFiles());
-    Map<String, String> e2eTests = new TreeMap<>();
+    List<Object[]> e2eTests = new ArrayList<>();
     collectTests(e2eResources, e2eTests);
 
-    Object[][] parameters = new String[e2eTests.size()][2];
+    Object[][] parameters = new Object[e2eTests.size()][2];
     int count = 0;
-    for (Map.Entry<String, String> entry : e2eTests.entrySet()) {
-      parameters[count][0] = entry.getKey();
-      parameters[count][1] = entry.getValue();
+    for (Object[] entry : e2eTests) {
+      parameters[count][0] = entry[0];
+      parameters[count][1] = entry[1];
       count++;
     }
     return parameters;
   }
 
-  private static void collectTests(File[] dirs, Map<String, String> acu) throws Exception {
+  private static void collectTests(File[] dirs, List<Object[]> acu) throws Exception {
     for (File dir : dirs) {
       if (!dir.isDirectory())
         return;
-      if (Arrays.asList(dir.list()).contains("input")) {
+      List<String> subDirs = Arrays.asList(dir.list());
+      if (subDirs.contains("input")) {
         String test = dir.getPath().replaceFirst(".*[/\\\\]e2e[/\\\\]", "");
         if (test.matches(TEST_INCLUDE) && !test.matches(TEST_EXCLUDE)) {
-          acu.put(test, resolveParams(dir));
+          if (subDirs.contains("output") && TEST_COMPATIBILITY)
+            acu.add(new Object[] {test, false});
+          if (subDirs.contains("output" + NO_COMPATIBILITY_SUFFIX) && TEST_NO_COMPATIBILITY)
+            acu.add(new Object[] {test, true});
         }
       } else {
         collectTests(dir.listFiles(), acu);
@@ -77,16 +86,20 @@ public class AllEndToEndTestCase extends AbstractEndToEndTestCase {
   }
 
   private final String artifactName;
-  private final String additionalParams;
+  private final Boolean noCompatibility;
 
-  public AllEndToEndTestCase(String artifactToMigrate, String additionalParams) {
+  public AllEndToEndTestCase(String artifactToMigrate, Boolean noCompatibility) {
     this.artifactName = artifactToMigrate;
-    this.additionalParams = additionalParams;
+    this.noCompatibility = noCompatibility;
   }
 
   @Test
   public void test() throws Exception {
-    simpleCase(artifactName, additionalParams.split("\\s"));
+    String additionalParams = resolveParams(new File(getResourceUri("e2e/" + artifactName)));
+    additionalParams += noCompatibility ? " -noCompatibility" : "";
+    if (noCompatibility && RENDER_APPLICATION_GRAPH) {
+      GraphRenderer.render(artifactName);
+    }
+    simpleCase(artifactName, additionalParams.trim().split("\\s"));
   }
-
 }

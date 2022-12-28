@@ -6,12 +6,12 @@
 package com.mulesoft.tools.migration.library.mule.steps.core.filter;
 
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NS_URI;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
 import org.jdom2.Element;
-import org.jdom2.Namespace;
 
 /**
  * Migrate global message filters
@@ -36,7 +36,7 @@ public class MessageFilterReference extends AbstractFilterMigrator {
   public void execute(Element element, MigrationReport report) throws RuntimeException {
     getApplicationModel().getNodeOptional("/*/mule:message-filter[@name = '" + element.getAttributeValue("ref") + "']")
         .ifPresent(globalFilter -> {
-          globalFilter.setAttribute("globalProcessed", "true", Namespace.getNamespace("migration", "migration"));
+          globalFilter.setAttribute("globalProcessed", "true", MIGRATION_NAMESPACE);
           Element clonedFilter = globalFilter.clone();
           clonedFilter.removeAttribute("name");
           addElementAfter(clonedFilter, element);

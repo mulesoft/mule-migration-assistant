@@ -22,21 +22,21 @@
     <flow name="flow1">
         <compatibility:outbound-properties-to-var/>
         <email:send config-ref="smtpsConnector"
-                    fromAddress="#[vars.compatibility_outboundProperties.fromAddress default 'cde@example.com']"
-                    subject="#[vars.compatibility_outboundProperties.subject default 'subject']">
+                    fromAddress="#[migration::SmtpTransport::smtpFromAddress(vars) default 'cde@example.com']"
+                    subject="#[migration::SmtpTransport::smtpSubject(vars) default 'subject']">
             <email:to-addresses>
-                <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars)]"/>
+                <email:to-address value="#[migration::SmtpTransport::smtpToAddress(vars)]"/>
             </email:to-addresses>
             <email:cc-addresses>
-                <email:cc-address value="#[migration::SmtpTransport::smptCcAddress(vars) default 'bcd@example.com']"/>
+                <email:cc-address value="#[migration::SmtpTransport::smtpCcAddress(vars) default 'bcd@example.com']"/>
             </email:cc-addresses>
             <email:bcc-addresses>
-                <email:bcc-address value="#[migration::SmtpTransport::smptBccAddress(vars) default 'abc@example.com']"/>
+                <email:bcc-address value="#[migration::SmtpTransport::smtpBccAddress(vars) default 'abc@example.com']"/>
             </email:bcc-addresses>
             <email:reply-to-addresses>
-                <email:reply-to-address value="#[migration::SmtpTransport::smptReplyToAddress(vars) default 'def@example.com']"/>
+                <email:reply-to-address value="#[migration::SmtpTransport::smtpReplyToAddress(vars) default 'def@example.com']"/>
             </email:reply-to-addresses>
-            <email:headers>#[vars.compatibility_outboundProperties.customHeaders]</email:headers>
+            <email:headers>#[migration::SmtpTransport::smtpCustomHeaders(vars)]</email:headers>
             <email:body contentType="#[payload.^mimeType]">
                 <email:content>#[payload]</email:content>
             </email:body>
@@ -47,21 +47,21 @@
     <flow name="flow2">
         <compatibility:outbound-properties-to-var/>
         <email:send config-ref="smtpsConnector"
-                    fromAddress="#[vars.compatibility_outboundProperties.fromAddress default 'cde@example.com']"
-                    subject="#[vars.compatibility_outboundProperties.subject default 'subject']">
+                    fromAddress="#[migration::SmtpTransport::smtpFromAddress(vars) default 'cde@example.com']"
+                    subject="#[migration::SmtpTransport::smtpSubject(vars) default 'subject']">
             <email:to-addresses>
-                <email:to-address value="#[migration::SmtpTransport::smptToAddress(vars)]"/>
+                <email:to-address value="#[migration::SmtpTransport::smtpToAddress(vars)]"/>
             </email:to-addresses>
             <email:cc-addresses>
-                <email:cc-address value="#[migration::SmtpTransport::smptCcAddress(vars) default 'bcd@example.com']"/>
+                <email:cc-address value="#[migration::SmtpTransport::smtpCcAddress(vars) default 'bcd@example.com']"/>
             </email:cc-addresses>
             <email:bcc-addresses>
-                <email:bcc-address value="#[migration::SmtpTransport::smptBccAddress(vars) default 'abc@example.com']"/>
+                <email:bcc-address value="#[migration::SmtpTransport::smtpBccAddress(vars) default 'abc@example.com']"/>
             </email:bcc-addresses>
             <email:reply-to-addresses>
-                <email:reply-to-address value="#[migration::SmtpTransport::smptReplyToAddress(vars) default 'def@example.com']"/>
+                <email:reply-to-address value="#[migration::SmtpTransport::smtpReplyToAddress(vars) default 'def@example.com']"/>
             </email:reply-to-addresses>
-            <email:headers>#[vars.compatibility_outboundProperties.customHeaders]</email:headers>
+            <email:headers>#[migration::SmtpTransport::smtpCustomHeaders(vars)]</email:headers>
             <email:body contentType="#[payload.^mimeType]">
                 <email:content>#[payload]</email:content>
             </email:body>

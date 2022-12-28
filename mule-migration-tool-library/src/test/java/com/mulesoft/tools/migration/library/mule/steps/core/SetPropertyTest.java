@@ -10,11 +10,18 @@ import static com.mulesoft.tools.migration.helper.DocumentHelper.getElementsFrom
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.mulesoft.tools.migration.exception.MigrationStepException;
+import com.mulesoft.tools.migration.library.nocompatibility.InboundToAttributesTranslator;
 import com.mulesoft.tools.migration.library.tools.MelToDwExpressionMigrator;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
+import com.mulesoft.tools.migration.project.model.applicationgraph.*;
+import com.mulesoft.tools.migration.project.model.applicationgraph.Flow;
 import com.mulesoft.tools.migration.tck.ReportVerification;
 
 import org.jdom2.Document;
@@ -38,11 +45,15 @@ public class SetPropertyTest {
 
   private SetProperty setProperty;
   private Element node;
+  private ApplicationModel mockApplicationModel;
 
   @Before
   public void setUp() throws Exception {
     setProperty = new SetProperty();
     setProperty.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    mockApplicationModel = mock(ApplicationModel.class);
+
+    setProperty.setApplicationModel(mockApplicationModel);
   }
 
   @Ignore
@@ -63,4 +74,5 @@ public class SetPropertyTest {
     assertThat("The node name changed", node.getName(), is("set-property"));
     assertThat("The attribute was renamed", node.getAttribute("propertyName"), is(notNullValue()));
   }
+
 }

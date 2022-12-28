@@ -25,10 +25,10 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import java.util.List;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-
-import java.util.List;
 
 /**
  * Migrates the polling connector of the http transport
@@ -55,7 +55,6 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     Namespace httpNamespace = Namespace.getNamespace("http", "http://www.mulesoft.org/schema/mule/http");
-
     handleServiceOverrides(object, report);
 
     Element requestConnection = new Element("request-connection", httpNamespace);
@@ -136,8 +135,13 @@ public class HttpPollingConnector extends AbstractApplicationModelMigrationStep 
             .setAttribute("value", prop.getAttributeValue("value")));
       }
 
-      migrateInboundEndpointStructure(getApplicationModel(), pollingEndpoint, report, false);
-      addAttributesToInboundProperties(pollingEndpoint, getApplicationModel(), report);
+      if (getApplicationModel().noCompatibilityMode()) {
+        report.report("noCompatibility.notFullyImplemented", object, object);
+      } else {
+        migrateInboundEndpointStructure(getApplicationModel(), pollingEndpoint, report, false);
+        addAttributesToInboundProperties(pollingEndpoint, getApplicationModel(), report);
+      }
+
       pollingEndpoint.getParentElement().addContent(0, asList(pollingSource, requestOperation));
       pollingEndpoint.detach();
     }

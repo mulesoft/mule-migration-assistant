@@ -1,0 +1,55 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-file-connector:1.3.4"
+  ],
+  "numberOfMuleComponents": 6,
+  "numberOfMuleComponentsMigrated": 6,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "logger": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "file:endpoint": {
+      "success": 1,
+      "failure": 0
+    },
+    "file:config": {
+      "success": 1,
+      "failure": 0
+    },
+    "file:write": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "file:write",
+      "lineNumber": 13,
+      "columnNumber": 246,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

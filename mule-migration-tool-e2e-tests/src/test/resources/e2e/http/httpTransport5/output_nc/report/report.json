@@ -1,0 +1,43 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0"
+  ],
+  "numberOfMuleComponents": 3,
+  "numberOfMuleComponentsMigrated": 3,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "flow": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:request": {
+      "success": 1,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 0,
+  "numberOfMELExpressionsMigrated": 0,
+  "numberOfMELExpressionLines": 0,
+  "numberOfMELExpressionLinesMigrated": 0,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "http:request",
+      "lineNumber": 9,
+      "columnNumber": 100,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:ws="http://www.mulesoft.org/schema/mule/ws"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration" doc:name="HTTP Listener Configuration" host="0.0.0.0" port="8081" />
+
+    <ws:consumer-config wsdlLocation="http://www.dneonline.com/calculator.asmx?WSDL" service="Calculator" port="CalculatorSoap12"
+                        serviceAddress="http://www.dneonline.com/calculator.asmx" name="wsConfig" doc:name="Web Service Consumer"/>
+
+    <sub-flow name="flow3">
+        <logger message="#[&quot;Source called with queryParams&quot; + message.inboundProperties.'http.query.params']" level="INFO" doc:name="Logger"/>
+    </sub-flow>
+
+    <sub-flow name="flow2">
+        <logger message="#[&quot;Source called with queryParams&quot; + message.inboundProperties.'http.query.params']" level="INFO" doc:name="Logger"/>
+        <set-property propertyName="propertyFlow2" value="#[message.inboundProperties['http.headers']]" doc:name="Property" />
+        <flow-ref name="flow3" doc:name="Flow Reference"/>
+    </sub-flow>
+
+    <flow name="mainFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api" doc:name="HTTP">
+            <http:response-builder>
+                <http:header headerName="testHeader" value="#[message.inboundProperties.'http.query.params'.'message']"/>
+            </http:response-builder>
+        </http:listener>
+        <set-property propertyName="mainFlowOutbound" value="#[message.inboundProperties.'http.query.params'.'type']" doc:name="Property" />
+        <flow-ref name="flow2" doc:name="Flow Reference"/>
+        <logger message="#['Outbound is ' + message.outboundProperties]" level="INFO" doc:name="Logger"/>
+        <flow-ref name="flow2" doc:name="Flow Reference"/>
+        <logger level="INFO" doc:name="Logger"/>
+    </flow>
+
+    <flow name="secondFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api2" doc:name="HTTP"/>
+        <ws:consumer config-ref="wsConfig" operation="Add" doc:name="Web Service Consumer"/>
+        <set-property propertyName="secondFlowOutbound" value="test" doc:name="Property" />
+        <flow-ref name="flow2" doc:name="Flow Reference"/>
+        <logger message="#['Outbound is' ++ message.outboundProperties.secondFlowOutbound]" level="INFO" doc:name="Logger"/>
+    </flow>
+</mule>

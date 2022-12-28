@@ -8,6 +8,8 @@ package com.mulesoft.tools.migration.library.mule.steps.http;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
 import static com.mulesoft.tools.migration.library.mule.steps.core.properties.InboundPropertiesHelper.addAttributesMapping;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.NO_COMPATIBILITY_OUTBOUND_MAP_EXPRESSION;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.outboundVariableExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateExpression;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.setText;
@@ -15,20 +17,21 @@ import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.mulesoft.tools.migration.library.tools.mel.MelCompatibilityResolver;
 import com.mulesoft.tools.migration.project.model.ApplicationModel;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
-import org.jdom2.Content;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.jdom2.Content;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Migrates the requester operation of the HTTP Connector
@@ -52,6 +55,13 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
   @Override
   public void execute(Element object, MigrationReport report) throws RuntimeException {
     httpRequesterLib(getApplicationModel());
+    if (!getApplicationModel().noCompatibilityMode()) {
+      migrateOperationStructure(getApplicationModel(), object, report, true, getExpressionMigrator(),
+                                new MelCompatibilityResolver());
+      addAttributesToInboundProperties(object, getApplicationModel(), report);
+    } else {
+      report.report("noCompatibility.notFullyImplemented", object, object);
+    }
 
     final Namespace httpNamespace = Namespace.getNamespace("http", HTTP_NAMESPACE_URI);
     object.setNamespace(httpNamespace);
@@ -73,10 +83,6 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     migrateExpression(object.getAttribute("method"), getExpressionMigrator());
     migrateExpression(object.getAttribute("followRedirects"), getExpressionMigrator());
 
-    migrateOperationStructure(getApplicationModel(), object, report, true, getExpressionMigrator(),
-                              new MelCompatibilityResolver());
-    addAttributesToInboundProperties(object, getApplicationModel(), report);
-
     object.getChildren().forEach(c -> {
       if (HTTP_NAMESPACE_URI.equals(c.getNamespaceURI())) {
         executeChild(c, report, httpNamespace);
@@ -84,7 +90,8 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
     });
 
     if (object.getChild("request-builder", httpNamespace) == null) {
-      object.addContent(new Element("request-builder", httpNamespace).addContent(compatibilityHeaders(httpNamespace)));
+      object.addContent(new Element("request-builder", httpNamespace)
+          .addContent(addHeadersElement(httpNamespace, "#[migration::HttpRequester::httpRequesterHeaders(vars)]")));
     }
 
     if (object.getAttribute("source") != null) {
@@ -144,17 +151,20 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
   }
 
   public static void addAttributesToInboundProperties(Element object, ApplicationModel appModel, MigrationReport report) {
-    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
-    expressionsPerProperty.put("http.status", "message.attributes.statusCode");
-    expressionsPerProperty.put("http.reason", "message.attributes.reasonPhrase");
-    expressionsPerProperty.put("http.headers", "message.attributes.headers");
-
     try {
-      addAttributesMapping(appModel, "org.mule.extension.http.api.HttpResponseAttributes", expressionsPerProperty,
+      addAttributesMapping(appModel, "org.mule.extension.http.api.HttpResponseAttributes", inboundToAttributesExpressions(),
                            "message.attributes.headers mapObject ((value, key, index) -> { (if(upper(key as String) startsWith 'X-MULE_') upper((key as String) [2 to -1]) else key) : value })");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static Map<String, String> inboundToAttributesExpressions() {
+    Map<String, String> expressionsPerProperty = new LinkedHashMap<>();
+    expressionsPerProperty.put("http.status", "message.attributes.statusCode");
+    expressionsPerProperty.put("http.reason", "message.attributes.reasonPhrase");
+    expressionsPerProperty.put("http.headers", "message.attributes.headers");
+    return expressionsPerProperty;
   }
 
   public void executeChild(Element object, MigrationReport report, Namespace httpNamespace) throws RuntimeException {
@@ -166,16 +176,22 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
 
     if ("request-builder".equals(object.getName())) {
       handleReferencedRequestBuilder(object, httpNamespace);
-      object.addContent(compatibilityHeaders(httpNamespace));
+      object.addContent(addHeadersElement(httpNamespace, "#[migration::HttpRequester::httpRequesterHeaders(vars)]"));
     }
   }
 
-  private Element compatibilityHeaders(Namespace httpNamespace) {
-    return setText(new Element("headers", httpNamespace), "#[migration::HttpRequester::httpRequesterHeaders(vars)]");
+  public static Element addHeadersElement(Namespace httpNamespace, String headersExpression) {
+    return setText(new Element("headers", httpNamespace), headersExpression);
   }
 
   public static void httpRequesterLib(ApplicationModel appModel) {
     try {
+      String headersMap =
+          appModel.noCompatibilityMode() ? NO_COMPATIBILITY_OUTBOUND_MAP_EXPRESSION : "vars.compatibility_outboundProperties";
+      String varMethod =
+          appModel.noCompatibilityMode() ? outboundVariableExpression("http.method")
+              : "vars.compatibility_outboundProperties['http.method']";
+
       library(getMigrationScriptFolder(appModel.getProjectBasePath()), "HttpRequester.dwl",
               "" +
                   "/**" + lineSeparator() +
@@ -184,7 +200,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
                   "fun httpRequesterHeaders(vars: {}) = do {" + lineSeparator() +
                   "    var matcher_regex = /(?i)http\\..*|Connection|Host|Transfer-Encoding/" + lineSeparator() +
                   "    ---" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties filterObject" + lineSeparator() +
+                  "    " + headersMap + " filterObject" + lineSeparator() +
                   "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
                   "        mapObject ((value, key, index) -> {" + lineSeparator() +
                   "            (if (upper(key as String) startsWith 'MULE_') upper('X-' ++ key as String) else key) : value"
@@ -201,7 +217,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
                   + "Proxy-Authenticate|Retry-After|Server|Vary|WWW-Authenticate/"
                   + lineSeparator() +
                   "    ---" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties filterObject" + lineSeparator() +
+                  "    " + headersMap + " filterObject" + lineSeparator() +
                   "        ((value,key) -> not ((key as String) matches matcher_regex))" + lineSeparator() +
                   "        mapObject ((value, key, index) -> {" + lineSeparator() +
                   "            (if (upper(key as String) startsWith 'MULE_') upper('X-' ++ key as String) else key) : value"
@@ -213,7 +229,7 @@ public class HttpConnectorRequester extends AbstractHttpConnectorMigrationStep {
                   " * Emulates the request method logic of the Mule 3.x HTTP Connector." + lineSeparator() +
                   " */" + lineSeparator() +
                   "fun httpRequesterMethod(vars: {}) = do {" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties['http.method'] default 'POST'" + lineSeparator() +
+                  "    " + varMethod + " default 'POST'" + lineSeparator() +
                   "}" + lineSeparator() +
                   lineSeparator());
     } catch (IOException e) {

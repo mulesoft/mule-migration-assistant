@@ -7,6 +7,7 @@ package com.mulesoft.tools.migration.library.mule.steps.email;
 
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.getMigrationScriptFolder;
 import static com.mulesoft.tools.migration.library.mule.steps.core.dw.DataWeaveHelper.library;
+import static com.mulesoft.tools.migration.project.model.applicationgraph.PropertyTranslator.VARS_OUTBOUND_PREFIX;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.handleServiceOverrides;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
@@ -20,12 +21,12 @@ import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
+import java.io.IOException;
+import java.util.Optional;
+
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Text;
-
-import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Migrates the outbound smtp endpoint of the email Transport
@@ -135,30 +136,29 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
 
     report.report("email.outbound", object, object);
     object.setAttribute("fromAddress",
-                        smtpAttributeExpr("#[vars.compatibility_outboundProperties.fromAddress]",
+                        smtpAttributeExpr("#[migration::SmtpTransport::smtpFromAddress(vars)]",
                                           object.getAttribute("fromAddress")));
     object.setAttribute("subject",
-                        smtpAttributeExpr("#[vars.compatibility_outboundProperties.subject]",
-                                          object.getAttribute("subject")));
+                        smtpAttributeExpr("#[migration::SmtpTransport::smtpSubject(vars)]", object.getAttribute("subject")));
     object.addContent(new Element("to-addresses", EMAIL_NAMESPACE)
         .addContent(new Element("to-address", EMAIL_NAMESPACE)
             .setAttribute("value",
-                          smtpAttributeExpr("#[migration::SmtpTransport::smptToAddress(vars)]", object.getAttribute("to")))));
+                          smtpAttributeExpr("#[migration::SmtpTransport::smtpToAddress(vars)]", object.getAttribute("to")))));
     object.addContent(new Element("cc-addresses", EMAIL_NAMESPACE)
         .addContent(new Element("cc-address", EMAIL_NAMESPACE)
             .setAttribute("value",
-                          smtpAttributeExpr("#[migration::SmtpTransport::smptCcAddress(vars)]", object.getAttribute("cc")))));
+                          smtpAttributeExpr("#[migration::SmtpTransport::smtpCcAddress(vars)]", object.getAttribute("cc")))));
     object.addContent(new Element("bcc-addresses", EMAIL_NAMESPACE)
         .addContent(new Element("bcc-address", EMAIL_NAMESPACE)
             .setAttribute("value",
-                          smtpAttributeExpr("#[migration::SmtpTransport::smptBccAddress(vars)]", object.getAttribute("bcc")))));
+                          smtpAttributeExpr("#[migration::SmtpTransport::smtpBccAddress(vars)]", object.getAttribute("bcc")))));
     object.addContent(new Element("reply-to-addresses", EMAIL_NAMESPACE)
         .addContent(new Element("reply-to-address", EMAIL_NAMESPACE)
             .setAttribute("value",
-                          smtpAttributeExpr("#[migration::SmtpTransport::smptReplyToAddress(vars)]",
+                          smtpAttributeExpr("#[migration::SmtpTransport::smtpReplyToAddress(vars)]",
                                             object.getAttribute("replyTo")))));
     object.addContent(new Element("headers", EMAIL_NAMESPACE)
-        .addContent(new Text("#[vars.compatibility_outboundProperties.customHeaders]")));
+        .addContent(new Text("#[migration::SmtpTransport::smtpCustomHeaders(vars)]")));
     object.addContent(new Element("body", EMAIL_NAMESPACE)
         .setAttribute("contentType", "#[payload.^mimeType]")
         .addContent(new Element("content", EMAIL_NAMESPACE).addContent(new Text("#[payload]"))));
@@ -238,34 +238,37 @@ public class SmtpOutboundEndpoint extends AbstractEmailMigrator
 
   public static void smtpTransportLib(ApplicationModel appModel) {
     try {
+      String varPrefix = appModel.noCompatibilityMode() ? VARS_OUTBOUND_PREFIX : "vars.compatibility_outboundProperties.";
       // Replicates logic from org.mule.transport.email.transformers.StringToEmailMessage
       library(getMigrationScriptFolder(appModel.getProjectBasePath()), "SmtpTransport.dwl",
               "" +
-                  "fun smptToAddress(vars: {}) = do {" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties.toAddresses[0]" + lineSeparator() +
+                  "fun smtpToAddress(vars: {}) = do {" + lineSeparator() +
+                  "    " + varPrefix + "toAddresses[0]" + lineSeparator() +
                   "}" + lineSeparator() +
                   "" + lineSeparator() +
-                  "fun smptCcAddress(vars: {}) = do {" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties.ccAddresses[0]" + lineSeparator() +
+                  "fun smtpCcAddress(vars: {}) = do {" + lineSeparator() +
+                  "    " + varPrefix + "ccAddresses[0]" + lineSeparator() +
                   "}" + lineSeparator() +
                   "" + lineSeparator() +
-                  "fun smptBccAddress(vars: {}) = do {" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties.bccAddresses[0]" + lineSeparator() +
+                  "fun smtpBccAddress(vars: {}) = do {" + lineSeparator() +
+                  "    " + varPrefix + "bccAddresses[0]" + lineSeparator() +
                   "}" + lineSeparator() +
                   "" + lineSeparator() +
-                  "fun smptFromAddress(vars: {}) = do {" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties.fromAddress" + lineSeparator() +
+                  "fun smtpFromAddress(vars: {}) = do {" + lineSeparator() +
+                  "    " + varPrefix + "fromAddress" + lineSeparator() +
                   "}" + lineSeparator() +
                   "" + lineSeparator() +
-                  "fun smptReplyToAddress(vars: {}) = do {" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties.replyToAddresses[0]" + lineSeparator() +
+                  "fun smtpReplyToAddress(vars: {}) = do {" + lineSeparator() +
+                  "    " + varPrefix + "replyToAddresses[0]" + lineSeparator() +
                   "}" + lineSeparator() +
                   "" + lineSeparator() +
-                  "fun smptSubject(vars: {}) = do {" + lineSeparator() +
-                  "    vars.compatibility_outboundProperties.subject" + lineSeparator() +
+                  "fun smtpSubject(vars: {}) = do {" + lineSeparator() +
+                  "    " + varPrefix + "subject" + lineSeparator() +
                   "}" + lineSeparator() +
                   "" + lineSeparator() +
-                  lineSeparator());
+                  "fun smtpCustomHeaders(vars: {}) = do {" + lineSeparator() +
+                  "    " + varPrefix + "customHeaders" + lineSeparator() +
+                  "}" + lineSeparator());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

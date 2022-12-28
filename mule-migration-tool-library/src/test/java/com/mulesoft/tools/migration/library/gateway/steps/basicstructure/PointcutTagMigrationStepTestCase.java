@@ -58,58 +58,64 @@ public class PointcutTagMigrationStepTestCase extends BasicPolicyStructureMigrat
   public void convertApiPlatformPoinctuTag() {
     final PointcutTagMigrationStep step = new PointcutTagMigrationStep();
     step.setApplicationModel(appModel);
-    Element element = getTestElement().addContent(new Element(API_POINTCUT_TAG_NAME, API_PLATFORM_GW_NAMESPACE)
-        .setAttribute(API_NAME_ATTR_NAME, API_NAME_ATTR_VALUE).setAttribute(API_VERSION_ATTR_NAME, API_VERSION_ATTR_VALUE));
+    Element apiPointcut = new Element(API_POINTCUT_TAG_NAME, API_PLATFORM_GW_NAMESPACE)
+        .setAttribute(API_NAME_ATTR_NAME, API_NAME_ATTR_VALUE).setAttribute(API_VERSION_ATTR_NAME, API_VERSION_ATTR_VALUE);
+    Element element = getTestElement().addContent(apiPointcut);
 
     step.execute(element, reportMock);
 
     assertProxyAndSourceElements(element, 1);
     assertExecuteNextElement((Element) element.getContent(0), 0);
-    verify(reportMock).report("basicStructure.pointcutMigrationStepResolvedByRuntime", element, element, "Api");
+    verify(reportMock).report("basicStructure.pointcutMigrationStepResolvedByRuntime", apiPointcut, apiPointcut, "Api");
   }
 
   @Test
   public void convertResourcePoinctuTag() {
     final PointcutTagMigrationStep step = new PointcutTagMigrationStep();
     step.setApplicationModel(appModel);
-    Element element = getTestElement().addContent(new Element(API_POINTCUT_TAG_NAME, API_PLATFORM_GW_NAMESPACE)
-        .setAttribute(API_NAME_ATTR_NAME, API_NAME_ATTR_VALUE).setAttribute(API_VERSION_ATTR_NAME, API_VERSION_ATTR_VALUE))
-        .addContent(new Element(RESOURCE_TAG_NAME)
-            .setAttribute(METHOD_REGEX_ATTR_NAME, METHOD_REGEX_ATTR_VALUE)
-            .setAttribute(URI_TEMPLATE_REGEX_ATTR_NAME, URI_TEMPLATE_REGEX_ATTR_VALUE));
+    Element apiPointcut = new Element(API_POINTCUT_TAG_NAME, API_PLATFORM_GW_NAMESPACE)
+        .setAttribute(API_NAME_ATTR_NAME, API_NAME_ATTR_VALUE).setAttribute(API_VERSION_ATTR_NAME, API_VERSION_ATTR_VALUE);
+    Element resource = new Element(RESOURCE_TAG_NAME)
+        .setAttribute(METHOD_REGEX_ATTR_NAME, METHOD_REGEX_ATTR_VALUE)
+        .setAttribute(URI_TEMPLATE_REGEX_ATTR_NAME, URI_TEMPLATE_REGEX_ATTR_VALUE);
+    Element element = getTestElement().addContent(apiPointcut)
+        .addContent(resource);
 
     step.execute(element, reportMock);
 
     assertProxyAndSourceElements(element, 1);
     assertExecuteNextElement((Element) element.getContent(0), 0);
-    verify(reportMock).report("basicStructure.pointcutMigrationStepResolvedByRuntime", element, element, "Resource");
+    verify(reportMock).report("basicStructure.pointcutMigrationStepResolvedByRuntime", apiPointcut, apiPointcut, "Api");
+    verify(reportMock).report("basicStructure.pointcutMigrationStepResolvedByRuntime", resource, resource, "Resource");
   }
 
   @Test
   public void convertAppPoinctuTag() {
     final PointcutTagMigrationStep step = new PointcutTagMigrationStep();
     step.setApplicationModel(appModel);
-    Element element = getTestElement().addContent(new Element(APP_TAG_NAME)
-        .setAttribute(REGEX_ATTR_NAME, REGEX_ATTR_VALUE));
+    Element app = new Element(APP_TAG_NAME)
+        .setAttribute(REGEX_ATTR_NAME, REGEX_ATTR_VALUE);
+    Element element = getTestElement().addContent(app);
 
     step.execute(element, reportMock);
 
     assertProxyAndSourceElements(element, 1);
     assertExecuteNextElement((Element) element.getContent(0), 0);
-    verify(reportMock).report("basicStructure.pointcutMigrationStepNoEquivalent", element, element, "App");
+    verify(reportMock).report("basicStructure.pointcutMigrationStepNoEquivalent", app, app, "App");
   }
 
   @Test
   public void convertEndpointPoinctuTag() {
     final PointcutTagMigrationStep step = new PointcutTagMigrationStep();
     step.setApplicationModel(appModel);
-    Element element = getTestElement().addContent(new Element(ENDPOINT_TAG_NAME)
-        .setAttribute(REGEX_ATTR_NAME, REGEX_ATTR_VALUE));
+    Element endpoint = new Element(ENDPOINT_TAG_NAME)
+        .setAttribute(REGEX_ATTR_NAME, REGEX_ATTR_VALUE);
+    Element element = getTestElement().addContent(endpoint);
 
     step.execute(element, reportMock);
 
     assertProxyAndSourceElements(element, 1);
     assertExecuteNextElement((Element) element.getContent(0), 0);
-    verify(reportMock).report("basicStructure.pointcutMigrationStepNoEquivalent", element, element, "Endpoint");
+    verify(reportMock).report("basicStructure.pointcutMigrationStepNoEquivalent", endpoint, endpoint, "Endpoint");
   }
 }

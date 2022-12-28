@@ -9,6 +9,7 @@ import static java.util.Collections.emptyList;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 
+import com.mulesoft.tools.migration.step.util.LocatedIdJDOMFactory;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -32,11 +33,18 @@ import java.util.List;
  */
 public class DocumentHelper {
 
-  public static Document getDocument(String path) throws Exception {
+  public static Document getDocument(String path, boolean generateElementMigrationIds) throws Exception {
     SAXBuilder saxBuilder = new SAXBuilder();
     File file = new File(path);
+    if (generateElementMigrationIds) {
+      saxBuilder.setJDOMFactory(new LocatedIdJDOMFactory());
+    }
     Document document = saxBuilder.build(file);
     return document;
+  }
+
+  public static Document getDocument(String path) throws Exception {
+    return getDocument(path, false);
   }
 
   public static void restoreTestDocument(Document doc, String path) throws Exception {

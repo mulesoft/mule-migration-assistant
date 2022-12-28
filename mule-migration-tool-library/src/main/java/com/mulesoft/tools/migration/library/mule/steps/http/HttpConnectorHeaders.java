@@ -22,7 +22,7 @@ public class HttpConnectorHeaders extends AbstractHttpConnectorMigrationStep {
 
   public static final String XPATH_SELECTOR =
       "//*[namespace-uri()='" + HTTP_NAMESPACE_URI
-          + "' and (local-name()='header' or (local-name()='headers' and normalize-space(text())=''))]";
+          + "' and (local-name()='header' or (local-name()='headers' and normalize-space(text())='' and @expression))]";
 
   @Override
   public String getDescription() {
@@ -39,7 +39,8 @@ public class HttpConnectorHeaders extends AbstractHttpConnectorMigrationStep {
 
     int idx = object.getParent().indexOf(object);
 
-    if ("headers".equals(object.getName()) && StringUtils.isEmpty(object.getText())) {
+    if ("headers".equals(object.getName()) && StringUtils.isEmpty(object.getText())
+        && object.getAttributeValue("expression") != null) {
       String headersExpr = object.getAttributeValue("expression");
 
       setMule4MapBuilderTagText(idx, "headers", object.getParentElement(), HTTP_NAMESPACE, report,

@@ -18,46 +18,7 @@ import com.mulesoft.tools.migration.library.gateway.tasks.RamlProxyMigrationTask
 import com.mulesoft.tools.migration.library.gateway.tasks.ThreatProtectionMigrationTask;
 import com.mulesoft.tools.migration.library.gateway.tasks.ThrottlingMigrationTask;
 import com.mulesoft.tools.migration.library.mule.steps.compression.CompressionMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.AmqpMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.BatchMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.DbMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.DomainAppMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.EmailMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.EndpointsMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.ExpressionTransformerMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.FileMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.FiltersMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.FtpMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.HTTPCleanupTask;
-import com.mulesoft.tools.migration.library.mule.tasks.HTTPMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.JmsDomainMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.JmsMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.JsonMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.MigrationCleanTask;
-import com.mulesoft.tools.migration.library.mule.tasks.MuleCoreComponentsMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.MuleDeprecatedCoreComponentsMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.ObjectStoreMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.PostprocessGeneral;
-import com.mulesoft.tools.migration.library.mule.tasks.PostprocessMuleApplication;
-import com.mulesoft.tools.migration.library.mule.tasks.PreprocessMuleApplication;
-import com.mulesoft.tools.migration.library.mule.tasks.PropertiesMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.QuartzMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.RequestReplyMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SalesforceMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.ScriptingMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SecurePropertiesMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SecurityCrc32MigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SecurityFiltersMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SecurityOAuth2ProviderMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SftpMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SocketsMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SplitterAggregatorTask;
-import com.mulesoft.tools.migration.library.mule.tasks.SpringMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.TransformersMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.VMMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.ValidationMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.VmDomainMigrationTask;
-import com.mulesoft.tools.migration.library.mule.tasks.WscMigrationTask;
+import com.mulesoft.tools.migration.library.mule.tasks.*;
 import com.mulesoft.tools.migration.library.munit.tasks.MunitMigrationTask;
 import com.mulesoft.tools.migration.library.soapkit.tasks.SoapkitMigrationTask;
 import com.mulesoft.tools.migration.task.AbstractMigrationTask;
@@ -82,17 +43,23 @@ public class MigrationTaskLocator {
 
   private final String from;
   private final String to;
+  private final boolean noCompatibility;
 
   public MigrationTaskLocator(String from, String to) {
+    this(from, to, false);
+  }
+
+  public MigrationTaskLocator(String from, String to, boolean noCompatibility) {
     checkArgument(from != null, "From must not be null");
     checkArgument(to != null, "To must not be null");
 
     this.from = from;
     this.to = to;
+    this.noCompatibility = noCompatibility;
   }
 
   public List<AbstractMigrationTask> locate() {
-    List<AbstractMigrationTask> migrationTasks = newArrayList(new PreprocessMuleApplication());
+    List<AbstractMigrationTask> migrationTasks = newArrayList(getPreMigrationTasks());
     migrationTasks.addAll(getCoreMigrationTasks());
     migrationTasks.addAll(getGatewayMigrationTasks());
     migrationTasks.addAll(getCoreAfterMigrationTasks());
@@ -117,6 +84,13 @@ public class MigrationTaskLocator {
     return FALSE;
   }
 
+  public List<AbstractMigrationTask> getPreMigrationTasks() {
+    List<AbstractMigrationTask> coreMigrationTasks = new ArrayList<>();
+    coreMigrationTasks.add(new PreprocessMuleApplication());
+
+    return coreMigrationTasks;
+  }
+
   public List<AbstractMigrationTask> getCoreMigrationTasks() {
     List<AbstractMigrationTask> coreMigrationTasks = new ArrayList<>();
 
@@ -124,7 +98,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new SecurityCrc32MigrationTask());
     coreMigrationTasks.add(new SecurityFiltersMigrationTask());
     coreMigrationTasks.add(new PropertiesMigrationTask());
-    coreMigrationTasks.add(new MuleCoreComponentsMigrationTask());
+    coreMigrationTasks.add(new MuleCoreComponentsMigrationTask(noCompatibility));
     coreMigrationTasks.add(new SplitterAggregatorTask());
     coreMigrationTasks.add(new BatchMigrationTask());
     coreMigrationTasks.add(new ValidationMigrationTask());
@@ -157,7 +131,7 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new SalesforceMigrationTask());
 
     coreMigrationTasks.add(new DomainAppMigrationTask());
-    coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask());
+    coreMigrationTasks.add(new MuleDeprecatedCoreComponentsMigrationTask(noCompatibility));
     coreMigrationTasks.add(new MunitMigrationTask());
     coreMigrationTasks.add(new TransformersMigrationTask());
     coreMigrationTasks.add(new ExpressionTransformerMigrationTask());
@@ -179,7 +153,9 @@ public class MigrationTaskLocator {
     coreMigrationTasks.add(new HTTPCleanupTask());
     coreMigrationTasks.add(new MigrationCleanTask());
     coreMigrationTasks.add(new PostprocessGeneral());
-    coreMigrationTasks.add(new PostprocessMuleApplication());
+    if (!noCompatibility) {
+      coreMigrationTasks.add(new PostprocessMuleApplication());
+    }
     return coreMigrationTasks;
   }
 

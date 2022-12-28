@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:compatibility="http://www.mulesoft.org/schema/mule/compatibility" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd http://www.mulesoft.org/schema/mule/compatibility http://www.mulesoft.org/schema/mule/compatibility/current/mule-compatibility.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <flow name="Test">
+        <file:listener directory="${workingDirectory}" applyPostActionWhenFailed="false" recursive="false" autoDelete="true">
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000" />
+            </scheduling-strategy>
+        </file:listener>
+
+        <compatibility:attributes-to-inbound-properties>
+            <!--Migration WARN: Expressions that query 'inboundProperties' from the message should instead query the message 'attributes'. Remove this component if there are no uses of 'inboundProperties' in expressions or components that rely on 'inboundProperties' (such as 'copy-properties').-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/intro-mule-message#inbound-properties-are-now-attributes-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#inbound_properties-->
+        </compatibility:attributes-to-inbound-properties>
+
+        <validation:is-true expression="#[true /* replicate the logic of 'org.mule.transport.file.FileRecursiveFileFilterTestCase$TxtFileFilter' in DataWeave */]">
+            <!--Migration ERROR: Filters are replaced with the Validations module.-->
+            <!--    For more information refer to:-->
+            <!--        * https://docs.mulesoft.com/mule-runtime/4.3/migration-filters#migrating_custom_or_complex_filters-->
+        </validation:is-true>
+
+        <logger />
+
+        <compatibility:outbound-properties-to-var>
+            <!--Migration WARN: Instead of using outbound properties in the flow, move the expression that sets the property into the XML attribute (such as 'method') of the operation or listener that accepts the expression.-->
+            <!--    For more information refer to:-->
+            <!--        * https://github.com/mulesoft/mule-migration-assistant/blob/master/docs/user-docs/migration-tool-post-mig.adoc#outbound_properties-->
+        </compatibility:outbound-properties-to-var>
+
+        <error-handler>
+            <on-error-propagate type="MULE:VALIDATION" logException="false">
+                <set-variable variableName="filtered" value="#[true]" />
+            </on-error-propagate>
+        </error-handler>
+
+    </flow>
+
+</mule>

@@ -10,7 +10,7 @@
         <!-- Apache Commons tend to make a lot of noise which can clutter the log-->
         <AsyncLogger name="org.apache" level="WARN"/>
 
-        <AsyncRoot level="DEBUG">
+        <AsyncRoot level="INFO">
             <AppenderRef ref="Console"/>
         </AsyncRoot>
     </Loggers>

@@ -5,6 +5,7 @@
  */
 package com.mulesoft.tools.migration.library.mule.steps.db;
 
+import static com.mulesoft.tools.migration.library.mule.steps.db.DbConfig.DB_NAMESPACE_URI;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.migrateOperationStructure;
 
 import com.mulesoft.tools.migration.library.tools.mel.DefaultMelCompatibilityResolver;

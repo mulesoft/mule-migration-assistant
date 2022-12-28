@@ -54,8 +54,9 @@ public class GatewayNamespaces {
       Namespace.getNamespace("client-id-enforcement", "http://www.mulesoft.org/schema/mule/client-id-enforcement");
   public static final Namespace THROTTLING_GW_MULE_3_NAMESPACE =
       Namespace.getNamespace("throttling-gw", "http://www.mulesoft.org/schema/mule/throttling-gw");
+  public static final String THROTTLING_MULE_4_NAMESPACE_URI = "http://www.mulesoft.org/schema/mule/throttling";
   public static final Namespace THROTTLING_MULE_4_NAMESPACE =
-      Namespace.getNamespace("throttling", "http://www.mulesoft.org/schema/mule/throttling");
+      Namespace.getNamespace("throttling", THROTTLING_MULE_4_NAMESPACE_URI);
   public static final Namespace OAUTH2_GW_NAMESPACE =
       Namespace.getNamespace("oauth2-gw", "http://www.mulesoft.org/schema/mule/oauth2-gw");
   public static final Namespace OPENAM_GW_NAMESPACE =

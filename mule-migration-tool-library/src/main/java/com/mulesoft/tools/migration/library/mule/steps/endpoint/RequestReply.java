@@ -20,17 +20,17 @@ import static com.mulesoft.tools.migration.step.util.TransportsUtils.extractInbo
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.migrateOutboundEndpointStructure;
 import static com.mulesoft.tools.migration.step.util.TransportsUtils.processAddress;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.CORE_NAMESPACE;
+import static com.mulesoft.tools.migration.step.util.XmlDslUtils.MIGRATION_NAMESPACE;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addElementAfter;
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getContainerElement;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
 
+import java.util.Optional;
+
 import org.jdom2.Content;
 import org.jdom2.Element;
-import org.jdom2.Namespace;
-
-import java.util.Optional;
 
 /**
  * Migrates the request-reply construct
@@ -85,7 +85,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
             return "TOPIC:" + reply.getAttributeValue("topic");
           }
         });
-        request.setAttribute("reply-to", destination, Namespace.getNamespace("migration", "migration"));
+        request.setAttribute("reply-to", destination, MIGRATION_NAMESPACE);
 
         migrateToReplyFlow(object, report, request, reply);
         return;
@@ -194,7 +194,7 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
 
     final String configName = getVmConfigName(object, requestConnector);
     Element vmConfig = migrateVmConfig(object, requestConnector, configName, getApplicationModel());
-    migrateOutboundVmEndpoint(request, report, requestConnector, configName, vmConfig);
+    migrateOutboundVmEndpoint(request, report, requestConnector, configName, vmConfig, getApplicationModel());
 
     request.detach();
     addElementAfter(request, object);
@@ -207,7 +207,8 @@ public class RequestReply extends AbstractApplicationModelMigrationStep {
     }
 
     migrateOutboundEndpointStructure(getApplicationModel(), request, report, true, true);
-    extractInboundChildren(reply, request.getParentElement().indexOf(request) + 2, request.getParentElement(),
+    int offset = getApplicationModel().noCompatibilityMode() ? 1 : 2;
+    extractInboundChildren(reply, request.getParentElement().indexOf(request) + offset, request.getParentElement(),
                            getApplicationModel());
 
   }

@@ -30,7 +30,6 @@ public class InboundPropertiesCompatibilityResolver implements CompatibilityReso
   public String resolve(String original, Element element, MigrationReport report, ApplicationModel model,
                         ExpressionMigrator expressionMigrator) {
     String propertyName = original.trim().replaceFirst("(?i)^header:inbound:", EMPTY);
-    report.melExpressionSuccess(original);
     return "vars.compatibility_inboundProperties." + propertyName;
   }
 }

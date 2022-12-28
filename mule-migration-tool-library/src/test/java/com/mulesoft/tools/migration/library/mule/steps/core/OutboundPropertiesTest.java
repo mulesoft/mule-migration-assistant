@@ -70,11 +70,15 @@ public class OutboundPropertiesTest {
 
   @Before
   public void setUp() throws Exception {
+    ApplicationModel mockModel = mock(ApplicationModel.class);
     setProperty = new SetProperty();
-    setProperty.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    setProperty.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mockModel));
+    setProperty.setApplicationModel(mockModel);
     copyProperties = new CopyProperties();
+    copyProperties.setApplicationModel(mockModel);
     mpt = new MessagePropertiesTransformer();
-    mpt.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mock(ApplicationModel.class)));
+    mpt.setExpressionMigrator(new MelToDwExpressionMigrator(report.getReport(), mockModel));
+    mpt.setApplicationModel(mockModel);
   }
 
   @Ignore

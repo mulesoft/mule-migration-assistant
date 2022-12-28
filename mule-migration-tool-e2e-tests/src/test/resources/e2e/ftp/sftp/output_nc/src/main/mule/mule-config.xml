@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <sftp:config name="sftpSource">
+        <sftp:connection host="localhost" port="${sftpSourcePort}" username="muletest1" password="muletest1">
+            <reconnection failsDeployment="true" />
+        </sftp:connection>
+    </sftp:config>
+
+    <sftp:config name="sftpDestination">
+        <sftp:connection host="localhost" port="${sftpDestinationPort}" username="muletest1" password="muletest1" connectionTimeout="5000" connectionTimeoutUnit="MILLISECONDS">
+            <reconnection failsDeployment="true" />
+        </sftp:connection>
+    </sftp:config>
+
+    <flow name="flow">
+        <sftp:listener config-ref="sftpSource" directory="source">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+            <redelivery-policy maxRedeliveryCount="2" />
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000" />
+            </scheduling-strategy>
+        </sftp:listener>
+
+        <logger />
+
+        <sftp:write path="#['/target/' ++ migration::SftpWriteOutputFile::sftpWriteOutputfile(vars, { outputPattern: null, outputPatternConfig: null})]" config-ref="sftpDestination">
+            <!--Migration WARN: No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.-->
+        </sftp:write>
+
+        <error-handler>
+            <on-error-propagate type="REDELIVERY_EXHAUSTED">
+                <logger message="I'm dead! :(" />
+            </on-error-propagate>
+        </error-handler>
+
+    </flow>
+
+</mule>

@@ -1,0 +1,113 @@
+{
+  "projectType": "MULE_THREE_APPLICATION",
+  "projectName": "input",
+  "connectorsMigrated": [
+    "org.mule.connectors:mule-http-connector:1.6.0"
+  ],
+  "numberOfMuleComponents": 15,
+  "numberOfMuleComponentsMigrated": 15,
+  "componentDetails": {
+    "mule": {
+      "success": 1,
+      "failure": 0
+    },
+    "logger": {
+      "success": 3,
+      "failure": 0
+    },
+    "flow": {
+      "success": 2,
+      "failure": 0
+    },
+    "sub-flow": {
+      "success": 2,
+      "failure": 0
+    },
+    "flow-ref": {
+      "success": 2,
+      "failure": 0
+    },
+    "set-variable": {
+      "success": 2,
+      "failure": 0
+    },
+    "http:listener-config": {
+      "success": 1,
+      "failure": 0
+    },
+    "http:listener": {
+      "success": 2,
+      "failure": 0
+    }
+  },
+  "numberOfMELExpressions": 2,
+  "numberOfMELExpressionsMigrated": 2,
+  "numberOfMELExpressionLines": 2,
+  "numberOfMELExpressionLinesMigrated": 2,
+  "numberOfDWTransformations": 0,
+  "numberOfDWTransformationsMigrated": 0,
+  "numberOfDWTransformationLines": 0,
+  "numberOfDWTransformationLinesMigrated": 0,
+  "detailedMessages": [
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "http:listener",
+      "lineNumber": 9,
+      "columnNumber": 94,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 10,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 17,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "noCompatibility.notFullyImplemented",
+      "component": "http:listener",
+      "lineNumber": 42,
+      "columnNumber": 93,
+      "message": "No compatibility mode is not fully implemented so connectors might experience issues with missing inbound/outbound property migrations.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:response",
+      "lineNumber": 43,
+      "columnNumber": 113,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    },
+    {
+      "level": "WARN",
+      "key": "http.statusCode",
+      "component": "http:error-response",
+      "lineNumber": 50,
+      "columnNumber": 141,
+      "message": "Avoid using an outbound property to determine the status code.",
+      "filePath": "src/main/mule/mule-config.xml",
+      "documentationLinks": []
+    }
+  ]
+}

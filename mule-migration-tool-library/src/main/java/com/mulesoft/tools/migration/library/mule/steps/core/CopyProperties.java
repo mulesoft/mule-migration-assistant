@@ -11,7 +11,9 @@ import static com.mulesoft.tools.migration.step.util.XmlDslUtils.addCompatibilit
 import static com.mulesoft.tools.migration.step.util.XmlDslUtils.getCoreXPathSelector;
 
 import com.mulesoft.tools.migration.step.AbstractApplicationModelMigrationStep;
+import com.mulesoft.tools.migration.step.ExpressionMigratorAware;
 import com.mulesoft.tools.migration.step.category.MigrationReport;
+import com.mulesoft.tools.migration.util.ExpressionMigrator;
 
 import org.jdom2.Element;
 
@@ -21,9 +23,10 @@ import org.jdom2.Element;
  * @author Mulesoft Inc.
  * @since 1.0.0
  */
-public class CopyProperties extends AbstractApplicationModelMigrationStep {
+public class CopyProperties extends AbstractApplicationModelMigrationStep implements ExpressionMigratorAware {
 
   public static final String XPATH_SELECTOR = getCoreXPathSelector("copy-properties");
+  private ExpressionMigrator expressionMigrator;
 
   @Override
   public String getDescription() {
@@ -37,8 +40,23 @@ public class CopyProperties extends AbstractApplicationModelMigrationStep {
 
   @Override
   public void execute(Element element, MigrationReport report) throws RuntimeException {
-    addCompatibilityNamespace(element.getDocument());
-    report.report("message.copyProperties", element, element);
-    element.setNamespace(COMPATIBILITY_NAMESPACE);
+    if (getApplicationModel().noCompatibilityMode()) {
+      report.report("noCompatibility.copyProperties", element, element.getParentElement());
+      element.detach();
+    } else {
+      addCompatibilityNamespace(element.getDocument());
+      report.report("message.copyProperties", element, element);
+      element.setNamespace(COMPATIBILITY_NAMESPACE);
+    }
+  }
+
+  @Override
+  public void setExpressionMigrator(ExpressionMigrator expressionMigrator) {
+    this.expressionMigrator = expressionMigrator;
+  }
+
+  @Override
+  public ExpressionMigrator getExpressionMigrator() {
+    return expressionMigrator;
   }
 }
