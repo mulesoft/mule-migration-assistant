@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.mulesoft.tools</groupId>
         <artifactId>mule-migration-tool</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.4.0</version>
     </parent>
     <artifactId>mule-migration-tool-e2e-tests</artifactId>
     <name>Mule Migration Assistant End-to-End Tests</name>
