@@ -9,7 +9,7 @@
   <name>db-ddl_sp</name>
   <description>Application migrated with MMA</description>
   <properties>
-    <derbyVersion>10.11.1.1</derbyVersion>
+    <derbyVersion>10.14.2.0</derbyVersion>
     <mule.tools.version>1.2</mule.tools.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <mule.version>3.8.4</mule.version>
