@@ -9,7 +9,7 @@
     <name>db-ddl_sp</name>
 
     <properties>
-        <derbyVersion>10.11.1.1</derbyVersion>
+        <derbyVersion>10.14.2.0</derbyVersion>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
