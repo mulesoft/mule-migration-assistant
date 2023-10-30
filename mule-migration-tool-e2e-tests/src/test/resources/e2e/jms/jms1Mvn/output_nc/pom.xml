@@ -12,7 +12,7 @@
     <mule.tools.version>1.2</mule.tools.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <mule.version>3.8.4</mule.version>
-    <activemqVersion>5.15.9</activemqVersion>
+    <activemqVersion>5.15.16</activemqVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
