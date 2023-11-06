@@ -74,7 +74,7 @@
         <powermock.module.junit4>2.0.9</powermock.module.junit4>
         <snakeyaml.version>1.29</snakeyaml.version>
 
-        <maven.model.version>3.5.0</maven.model.version>
+        <maven.model.version>3.8.4</maven.model.version>
 
         <mule.runtime.version>4.3.0</mule.runtime.version>
         <munit.version>2.2.1</munit.version>
