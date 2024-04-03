@@ -50,7 +50,7 @@
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
         <checksum.plugin.version>1.9</checksum.plugin.version>
 
-        <jacoco.maven.plugin.version>0.8.7</jacoco.maven.plugin.version>
+        <jacoco.maven.plugin.version>0.8.12</jacoco.maven.plugin.version>
         <jacoco.report.location>${session.executionRootDirectory}/target/site/jacoco/jacoco.xml</jacoco.report.location>
 
         <!-- Dependencies -->
