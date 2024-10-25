@@ -4,7 +4,7 @@ include::_attributes.adoc[]
 endif::[]
 
 Important::
-*Mule Migration Assistant (MMA) is subject to the terms and conditions described for https://www.mulesoft.com/legal/versioning-back-support-policy#community[Community^] connectors. Additionally, Mule Migration Assistant is distributed under the terms of the https://github.com/mulesoft/mule-migration-assistant/blob/master/LICENSE.txt[3-Clause BSD License^].*
+*Mule Migration Assistant (MMA) is subject to the terms and conditions described for https://www.mulesoft.com/legal/versioning-back-support-policy#community[Community^] connectors. Additionally, Mule Migration Assistant is distributed under the terms of the https://github.com/mulesoft/mule-migration-assistant/blob/master/LICENSE.txt[Apache 2.0 License^].*
 
 Mule 4 introduces many changes, so plan accordingly before attempting to migrate from Mule 3.
 
