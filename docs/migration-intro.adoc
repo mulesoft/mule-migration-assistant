@@ -27,7 +27,7 @@ in the xref:user-docs/migration-tutorial.adoc[Mule Migration Assistant Tutorial]
 == Understand the MMA Migration Process
 
 Important::
-*Mule Migration Assistant (MMA) is subject to the terms and conditions described for https://www.mulesoft.com/legal/versioning-back-support-policy#community[Community^] connectors. Additionally, Mule Migration Assistant is distributed under the terms of the https://github.com/mulesoft/mule-migration-assistant/blob/master/LICENSE.txt[3-Clause BSD License^].*
+*Mule Migration Assistant (MMA) is subject to the terms and conditions described for https://www.mulesoft.com/legal/versioning-back-support-policy#community[Community^] connectors. Additionally, Mule Migration Assistant is distributed under the terms of the https://github.com/mulesoft/mule-migration-assistant/blob/master/LICENSE.txt[Apache 2.0 License^].*
 
 Before beginning the migration process on your Mule 3 apps, review documentation on how to
 prepare for the migration and understand the basic steps of the migration.

@@ -6,7 +6,7 @@ Mule Migration Assistant is a command-line tool that helps migrate Mule 3.x appl
 
 ## License
 
-Mule Migration Assistant is distributed under the terms of the [3-Clause BSD License](https://github.com/mulesoft/mule-migration-assistant/blob/master/LICENSE.txt)
+Mule Migration Assistant is distributed under the terms of the [Apache 2.0 License](https://github.com/mulesoft/mule-migration-assistant/blob/master/LICENSE.txt)
 
 Important:
 Mule Migration Assistant (MMA) is subject to the terms and conditions described for [Community](https://www.mulesoft.com/legal/versioning-back-support-policy#community) connectors.
