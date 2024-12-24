@@ -14,7 +14,7 @@
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
 
-        <freemarker.version>2.3.31</freemarker.version>
+        <freemarker.version>2.3.34</freemarker.version>
     </properties>
     <build>
         <plugins>
