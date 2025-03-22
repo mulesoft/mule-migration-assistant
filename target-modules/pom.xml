@@ -43,7 +43,7 @@
         <mule.soapkit.module.version>1.2.11</mule.soapkit.module.version>
         <mule.json.module.version>2.1.5</mule.json.module.version>
         <mule.java.module.version>1.2.9</mule.java.module.version>
-        <mule.cryptography.module.version>1.3.10</mule.cryptography.module.version>
+        <mule.cryptography.module.version>1.3.22</mule.cryptography.module.version>
         <mule.oauth2-provider.module.version>1.0.8</mule.oauth2-provider.module.version>
         <mule.compatibility.module.version>1.4.0</mule.compatibility.module.version>
 
