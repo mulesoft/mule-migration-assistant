@@ -8,7 +8,7 @@
     display: none;
 }
 html {
-  font-family: sans-serif;
+  font-family: var(--lume-g-font-family);
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
 }
@@ -107,7 +107,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: monospace, monospace;
+  font-family: var(--lume-g-font-family-code);
   font-size: 1em;
 }
 button,
@@ -203,7 +203,7 @@ html {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 body {
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 14px;
   line-height: 1.42857143;
   color: #414042;
@@ -4402,7 +4402,7 @@ button.close {
   z-index: 1070;
   display: block;
   visibility: visible;
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 12px;
   font-weight: normal;
   line-height: 1.4;
@@ -4509,7 +4509,7 @@ button.close {
   display: none;
   max-width: 276px;
   padding: 1px;
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 14px;
   font-weight: normal;
   line-height: 1.42857143;
@@ -4765,7 +4765,7 @@ button.close {
   width: 20px;
   height: 20px;
   margin-top: -10px;
-  font-family: serif;
+  font-family: var(--lume-g-font-family);
 }
 .carousel-control .icon-prev:before {
   content: '\2039';
@@ -5170,7 +5170,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: "Source Code Pro", monospace;
+  font-family: var(--lume-g-font-family-code);
 }
 code {
   padding: 2px 4px;
@@ -5623,7 +5623,7 @@ input[type="button"].btn-block {
   display: inline-block;
   padding: 2px;
   background: #e0e0e0;
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 12px;
   line-height: 16px;
   border-radius: 3px;
@@ -5898,37 +5898,37 @@ label {
   bottom: 0;
 }
 @font-face {
-  font-family: "Open Sans";
+  font-family: var(--lume-g-font-family);
   src: url('../fonts/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-Light-webfont.woff') format('woff'), url('../fonts/OpenSans-Light-webfont.ttf') format('truetype'), url('../fonts/OpenSans-Light-webfont.svg#@{svgFontName') format('svg');
   font-weight: 300;
   font-style: normal;
 }
 @font-face {
-  font-family: "Open Sans";
+  font-family: var(--lume-g-font-family);
   src: url('../fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-Regular-webfont.woff') format('woff'), url('../fonts/OpenSans-Regular-webfont.ttf') format('truetype'), url('../fonts/OpenSans-Regular-webfont.svg#@{svgFontName') format('svg');
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
-  font-family: "Open Sans";
+  font-family: var(--lume-g-font-family);
   src: url('../fonts/OpenSans-Semibold-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-Semibold-webfont.woff') format('woff'), url('../fonts/OpenSans-Semibold-webfont.ttf') format('truetype'), url('../fonts/OpenSans-Semibold-webfont.svg#@{svgFontName') format('svg');
   font-weight: 600;
   font-style: normal;
 }
 @font-face {
-  font-family: "Open Sans";
+  font-family: var(--lume-g-font-family);
   src: url('../fonts/OpenSans-Bold-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/OpenSans-Bold-webfont.woff') format('woff'), url('../fonts/OpenSans-Bold-webfont.ttf') format('truetype'), url('../fonts/OpenSans-Bold-webfont.svg#@{svgFontName') format('svg');
   font-weight: 700;
   font-style: normal;
 }
 @font-face {
-  font-family: "Source Code Pro";
+  font-family: var(--lume-g-font-family-code);
   src: url('../fonts/SourceCodePro-Regular.eot?#iefix') format('embedded-opentype'), url('../fonts/SourceCodePro-Regular.woff') format('woff'), url('../fonts/SourceCodePro-Regular.ttf') format('truetype'), url('../fonts/SourceCodePro-Regular.svg#@{svgFontName') format('svg');
   font-style: normal;
   font-weight: 400;
 }
 @font-face {
-  font-family: 'Ubuntu';
+  font-family: var(--lume-g-font-family);
   src: url('../fonts/Ubuntu-Light-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/Ubuntu-Light-webfont.woff') format('woff'), url('../fonts/Ubuntu-Light-webfont.ttf') format('truetype'), url('../fonts/Ubuntu-Light-webfont.svg#@{svgFontName') format('svg');
   font-style: normal;
   font-weight: 300;
@@ -6015,7 +6015,7 @@ ul.list-styled > li:before {
   content: "\2022";
   position: absolute;
   left: -15px;
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 130%;
   color: #00a3e0;
   line-height: 20px;
@@ -6548,11 +6548,11 @@ th {
   line-height: 30px;
   vertical-align: top;
   color: white;
-  font-family: "Ubuntu", "Open Sans", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
 }
 .mulesoft-topbar .mulesoft-appbar .anypoint-brand:before {
   content: "|";
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   display: inline-block;
   margin: -2px 5px 0 5px;
   color: rgba(255, 255, 255, 0.3);
